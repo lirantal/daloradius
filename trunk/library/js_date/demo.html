@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Javascript Date Chooser Demo</title>
+<script src="date-functions.js" type="text/javascript"></script>
+<script src="datechooser.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="datechooser.css">
+<link rel="stylesheet" href="/var/www/daloradius/css/1.css" type="text/css" media="screen,projection" />
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" href="/var/www/daloradius/css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="select-free.css"/>
+<![endif]-->
+</head>
+<body>
+
+<p>Here are some demos of the Javascript date chooser functionality.</p>
+
+<form action="/" method="get">
+
+<p>Here&#8217;s one that chooses dates in ISO-8601 format.</p>
+
+<input id="dob" name="dob" size="10" maxlength="10" type="text"><img src="calendar.gif" onclick="showChooser(this, 'dob', 'chooserSpan', 1950, 2010, 'Y-m-d', false);"> 
+<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;">
+</div>
+
+<p>Here&#8217;s one that chooses dates with time in ISO-8601 format.  It uses the pattern defined as a static property of the Date class.</p>
+
+<input id="datetime" name="datetime" type="text"><img src="calendar.gif" onclick="showChooser(this, 'datetime', 'chooserSpan2', 1950, 2010, Date.patterns.ISO8601LongPattern, true);"> 
+
+<div id="chooserSpan2" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;">
+</div>
+
+<p>Here&#8217;s another that chooses dates in a format with which most
+Americans will be familiar. It uses the pattern defined as a static
+property of the Date class.</p>
+
+<input id="datetime2" size="10" maxlength="10" name="datetime2" type="text"><img src="calendar.gif" onclick="showChooser(this, 'datetime2', 'chooserSpan3', 1950, 2010, Date.patterns.ShortDatePattern, false);"> 
+
+<div id="chooserSpan3" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;">
+</div>
+
+<p>Finally, these form fields are to test whether the date chooser shows up correctly when there is a form field behind it.</p>
+
+<input name="ignore" style="margin-left: 100px;" type="text">
+<br><select name="ignore2" style="margin-left: 100px;">
+    <option>Dummy option</option>
+</select>
+
+</form>
+
+</body></html>

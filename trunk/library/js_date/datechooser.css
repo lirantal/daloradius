@@ -1,0 +1,32 @@
+.dateChooser td {
+    cursor:default;
+    text-align:center;
+}
+.dateChooser td.dateChooserActive:hover {
+    color:white;
+    background:#0A246A;
+}
+.dateChooser td.dateChooserActiveToday {
+    border: 1px solid red;
+}
+.dateChooser th {
+    background: #aaa;
+    color: white;
+    padding: 2px;
+    width: 18px;
+    border: none;
+}
+.dateChooser option, .dateChooser select {
+    font-size:10px;
+    width:100px;
+    border:2px solid #f6f6f6;
+
+}
+.dateChooser {
+    border: 1px outset #aaa;
+    background: white;
+    padding: 1px;
+}
+.dateChooser table {
+    width:160px;
+}
