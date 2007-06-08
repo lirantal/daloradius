@@ -1,0 +1,455 @@
+<?php 
+
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+
+    require "library/datepicker/class.datepicker.php";
+
+    // instantiate the object
+    $db=new datepicker();
+
+    // set the selectable range
+    // users will not be able to select dates outside those ranges
+
+    // set the first day of week to Monday
+    // users from the United States will set this to 0 (Sunday)
+    $db->firstDayOfWeek = 0;
+
+    // set the format in which the date to be returned
+    $db->dateFormat = "d M Y";
+
+
+	if ($_POST['submit']) {
+		$username = $_POST['username'];
+		$password = $_POST['password'];
+		$expiration = $_POST['expiration'];
+		$maxallsession = $_POST['maxallsession'];
+		$sessiontimeout = $_POST['sessiontimeout'];
+		$calledstationid = $_POST['calledstationid'];
+		$callingstationid = $_POST['callingstationid'];
+		$idletimeout = $_POST['idletimeout'];
+		$wisprredirectionurl = $_POST['wisprredirectionurl'];
+		$wisprbandwidthmaxup = $_POST['wisprbandwidthmaxup'];
+		$wisprbandwidthmaxdown = $_POST['wisprbandwidthmaxdown'];
+		$wisprsessionterminatetime = $_POST['wisprsessionterminatetime'];
+
+		include 'library/config.php';
+		include 'library/opendb.php';
+
+
+		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
+		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+
+		if (mysql_num_rows($res) == 0) {
+		
+			if (trim($username) != "" and trim($password) != "") {
+
+				// insert username/password
+				$sql = "insert into radcheck values (0, '$username', 'User-Password', '==', '$password')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	
+				// insert username/password
+				if ($expiration) {
+				$sql = "insert into radcheck values (0, '$username', 'Expiration', ':=', '$expiration')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+	
+				if ($maxallsession) {
+				// insert username/password
+				$sql = "insert into radcheck values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+				if ($sessiontimeout) {
+				// insert username/password
+				$sql = "insert into radreply values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+				if ($idletimeout) {
+				// insert username/password
+				$sql = "insert into radreply values (0, '$username', 'Idle-Timeout', ':=', '$idletimeout')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+
+				if ($calledstationid) {
+				// insert called-station-id
+				$sql = "insert into radcheck values (0, '$username', 'Called-Station-Id', '==', '$calledstationid')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+
+				if ($callingstationid) {
+				// insert calling-station-id
+				$sql = "insert into radcheck values (0, '$username', 'Calling-Station-Id', '==', '$callingstationid')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+				if ($wisprredirectionurl) {
+				// insert WISPr-Redirection-URL
+				$sql = "insert into radreply values (0, '$username', 'WISPr-Redirection-URL', '=', '$wisprredirectionurl')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+				if ($wisprbandwidthmaxup) {
+				// insert WISPr-Bandwidth-Max-Up
+				$sql = "insert into radreply values (0, '$username', 'WISPr-Bandwidth-Max-Up', '=', '$wisprbandwidthmaxup')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+
+				if ($wisprbandwidthmaxdown) {
+				// insert WISPr-Bandwidth-Max-Down
+				$sql = "insert into radreply values (0, '$username', 'WISPr-Bandwidth-Max-Down', '=', '$wisprbandwidthmaxdown')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+				if ($wisprsessionterminatetime) {
+				// insert WISPr-Session-Terminate-Time
+				$sql = "insert into radreply values (0, '$username', 'WISPr-Session-Terminate-Time', '=', '$wisprsessionterminatetime')";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				}
+
+
+
+
+	
+				echo "<font color='#0000FF'>success<br/></font>";
+			}
+		} else { 
+			echo "<font color='#FF0000'>error: user [$username] already exist <br/></font>"; 
+			echo "
+				<script language='JavaScript'>
+				<!--
+				alert('You have tried to add a user that already exist in the database.\\nThe user $username already exist'); 
+				-->
+				</script>
+				";
+		}
+		
+		include 'library/closedb.php';
+
+	}
+
+?>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>daloRADIUS</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+</head>
+ 
+
+<SCRIPT TYPE="text/javascript">
+<!--
+
+function randomPassword()
+{
+  length = 8;
+  chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
+  pass = "";
+  for(x=0;x<length;x++)
+  {
+    i = Math.floor(Math.random() * 62);
+    pass += chars.charAt(i);
+  }
+  document.newuser.password.value = pass;
+}
+
+function randomUsername()
+{
+  length = 8;
+  chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
+  user = "";
+  for(x=0;x<length;x++)
+  {
+    i = Math.floor(Math.random() * 62);
+    user += chars.charAt(i);
+  }
+  document.newuser.username.value = user;
+}
+
+
+
+function sessiontimeout(time)
+{
+  document.newuser.sessiontimeout.value = time;
+}
+
+function idletimeout(time)
+{
+  document.newuser.idletimeout.value = time;
+}
+
+
+function maxallsession(time)
+{
+  document.newuser.maxallsession.value = time;
+}
+
+function wisprbandwidthmaxup(speed)
+{
+  document.newuser.wisprbandwidthmaxup.value = speed;
+}
+
+
+function wisprbandwidthmaxdown(speed)
+{
+  document.newuser.wisprbandwidthmaxdown.value = speed;
+}
+
+
+// -->
+</script>
+
+
+<body>
+
+<div id="wrapper">
+<div id="innerwrapper">
+
+		<div id="header">
+		
+				<form action="">
+				<input value="Search" />
+				</form>
+				
+				<h1><a href="index.php">daloRADIUS</a></h1>
+				
+				<h2>
+				
+						Radius Reporting, Billing and Management by <a href="http://www.enginx.com">Enginx</a>
+				
+				</h2>
+
+				<ul id="nav">
+				
+						<li><a href="index.php"><em>H</em>ome</a></li>
+						
+						<li><a href="mng-main.php" class="active"><em>M</em>anagment</a></li>
+						
+						<li><a href="rep-main.php"><em>R</em>eports</a></li>
+						
+						<li><a href="acct-main.php"><em>A</em>ccounting</a></li>
+
+						<li><a href="bill-main.php"><em>B</em>illing</a></li>
+						<li><a href="gis-main.php"><em>GIS</em></a></li>
+						<li><a href="graph-main.php"><em>G</em>raphs</a></li>
+
+						<li><a href="help-main.php"><em>H</em>elp</a></li>
+				
+				</ul>
+				<ul id="subnav">
+				
+						<li>Welcome, <?php echo $operator; ?></li>
+
+						<li><a href="logout.php">[logout]</a></li>
+				
+				</ul>
+		
+		</div>
+		
+		<div id="sidebar">
+		
+				<h2>Management</h2>
+				
+				<h3>Users Management</h3>
+				<ul class="subnav">
+				
+						<li><a href="mng-new.php"><b>&raquo;</b>New User</a></li>
+						<li><a href="mng-new-quick.php"><b>&raquo;</b>New User - Quick add </a></li>
+						<li><a href="mng-batch.php"><b>&raquo;</b>Batch-Add Users <a></li>
+						<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit User<a>
+							<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
+							<input name="username" type="text">
+							</form></li>
+
+
+						<li><a href="mng-del.php"><b>&raquo;</b>Remove User</a></li>	
+				</ul>
+		
+				<h3>Hotspots Management</h3>
+				<ul class="subnav">
+				
+						<li><a href="mng-hs-list.php"><b>&raquo;</b>List Hotspots</a></li>
+						<li><a href="mng-hs-new.php"><b>&raquo;</b>New Hotspot</a></li>
+						<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b>Edit Hotspot<a>
+							<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
+							<input name="name" type="text">
+							</form></li>
+
+
+						<li><a href="mng-hs-del.php"><b>&raquo;</b>Remove Hotspot</a></li>
+				</ul>
+				
+				<br/><br/>
+				<h2>Search</h2>
+				
+				<input name="" type="text" value="Search" />
+		
+		</div>
+		
+		<div id="contentnorightbar">
+		
+				<h2 id="Intro">New User</h2>
+				
+				<p>
+				You may fill below details for new user addition to database
+				<br/><br/>
+				</p>
+				<form name="newuser" action="mng-new.php" method="post">
+
+						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Username</b>
+						<input value="<?php echo $username ?>" name="username"/>
+<a href="javascript:randomUsername()"> genuser</a><br/>
+						</font>
+
+						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Password</b>
+						<input value="<?php echo $password ?>" name="password" />
+<a href="javascript:randomPassword()"> genpass</a><br/>
+						</font>
+
+						<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Expiration</b>
+<input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>">
+<a href="#" onclick="<?=$db->show("expiration")?>"> pick date</a>
+						<br/>
+						</font>
+
+						<br/>
+
+						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Max-All-Session</b> <br/>
+						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
+<a href="javascript:maxallsession(86400)">1day(s)</a>
+<a href="javascript:maxallsession(259200)">3day(s)</a>
+<a href="javascript:maxallsession(604800)">1week(s)</a>
+<a href="javascript:maxallsession(1209600)">2week(s)</a>
+<a href="javascript:maxallsession(1814400)">3week(s)</a>
+<a href="javascript:maxallsession(2592000)">1month(s)</a>
+<a href="javascript:maxallsession(5184000)">2month(s)</a>
+<a href="javascript:maxallsession(7776000)">3month(s)</a>
+						<br/>
+						</font>
+
+						<?php if (trim($sessiontimeout) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Session Timeout</b><br/>
+						<input value="<?php echo $sessiontimeout ?>" name="sessiontimeout" />
+<a href="javascript:sessiontimeout(86400)">1day(s)</a>
+<a href="javascript:sessiontimeout(259200)">3day(s)</a>
+<a href="javascript:sessiontimeout(604800)">1week(s)</a>
+<a href="javascript:sessiontimeout(1209600)">2week(s)</a>
+<a href="javascript:sessiontimeout(1814400)">3week(s)</a>
+<a href="javascript:sessiontimeout(2592000)">1month(s)</a>
+<a href="javascript:sessiontimeout(5184000)">2month(s)</a>
+<a href="javascript:sessiontimeout(7776000)">3month(s)</a>
+						<br/>
+						</font>
+
+
+						<?php if (trim($idletimeout) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Idle Timeout</b><br/>
+						<input value="<?php echo $idletimeout ?>" name="idletimeout" />
+<a href="javascript:idletimeout(86400)">1day(s)</a>
+<a href="javascript:idletimeout(259200)">3day(s)</a>
+<a href="javascript:idletimeout(604800)">1week(s)</a>
+<a href="javascript:idletimeout(1209600)">2week(s)</a>
+<a href="javascript:idletimeout(1814400)">3week(s)</a>
+<a href="javascript:idletimeout(2592000)">1month(s)</a>
+<a href="javascript:idletimeout(5184000)">2month(s)</a>
+<a href="javascript:idletimeout(7776000)">3month(s)</a>
+						<br/>
+						</font>
+						<br/>
+
+
+
+
+						<?php if (trim($callingstationid) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Calling-Station-Id</b><br/>
+						<input value="<?php echo $callingstationid ?>" name="callingstationid" />
+						</font> force the user to login from this computer/nic MAC addresss only <br/>
+
+						<?php if (trim($calledstationid) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Called-Station-Id</b><br/>
+						<input value="<?php echo $calledstationid ?>" name="calledstationid" />
+						</font> force the user to login from this AP only <br/>
+
+						<br/>
+
+
+						<?php if (trim($wisprredirectionurl) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>WISPr-Redirection-URL</b><br/>
+						<input value="<?php echo $wisprredirectionurl ?>" name="wisprredirectionurl" />
+						</font> If present the client will be redirected to this URL once authenticated. <br/><br/>
+
+						<?php if (trim($wisprbandwidthmaxup) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>WISPr-Bandwidth-Max-Up</b><br/>
+						<input value="<?php echo $wisprbandwidthmaxup ?>" name="wisprbandwidthmaxup" />
+<a href="javascript:wisprbandwidthmaxup(128000)">128kbit</a>
+<a href="javascript:wisprbandwidthmaxup(256000)">256kbit</a>
+<a href="javascript:wisprbandwidthmaxup(512000)">512kbit</a>
+<a href="javascript:wisprbandwidthmaxup(1048576)">1mbit</a>
+<a href="javascript:wisprbandwidthmaxup(1572864)">1.5mbit</a>
+<a href="javascript:wisprbandwidthmaxup(2097152)">2mbit</a>
+<a href="javascript:wisprbandwidthmaxup(3145728)">3mbit</a>
+<a href="javascript:wisprbandwidthmaxup(10485760)">10mbit</a>
+						</font> <br/> Maximum transmit rate (b/s). This attribute is specified in bits per second. <br/><br/>
+
+
+						<?php if (trim($wisprbandwidthmaxdown) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>WISPr-Bandwidth-Max-Down</b><br/>
+						<input value="<?php echo $wisprbandwidthmaxdown ?>" name="wisprbandwidthmaxdown" />
+<a href="javascript:wisprbandwidthmaxdown(128000)">128kbit</a>
+<a href="javascript:wisprbandwidthmaxdown(256000)">256kbit</a>
+<a href="javascript:wisprbandwidthmaxdown(512000)">512kbit</a>
+<a href="javascript:wisprbandwidthmaxdown(1048576)">1mbit</a>
+<a href="javascript:wisprbandwidthmaxdown(1572864)">1.5mbit</a>
+<a href="javascript:wisprbandwidthmaxdown(2097152)">2mbit</a>
+<a href="javascript:wisprbandwidthmaxdown(3145728)">3mbit</a>
+<a href="javascript:wisprbandwidthmaxdown(10485760)">10mbit</a>
+						</font> <br/> Maximum receiving rate (b/s). This attribute is specified in bits per second. <br/><br/>
+
+
+						<?php if (trim($wisprsessionterminatetime) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>WISPr-Session-Terminate-Time</b><br/>
+<input name="wisprsessionterminatetime" type="text" id="wisprsessionterminatetime" value="<?php echo $wisprsessionterminatetime ?>">
+<a href="#" onclick="<?=$db->show("wisprsessionterminatetime")?>"> pick date</a> </font> the time when the user should be disconnected in ISO 8601 format (YYYY-MM-DDThh:mm:ssTZD) (example: 2001-12-18T19:00:00+00:00) <br/><br/>
+
+						<br/>
+
+
+						<br/><br/>
+						<input type="submit" name="submit" value="Apply"/>
+
+				</form>
+		
+		</div>
+		
+		<div id="footer">
+		
+								<?php
+        include 'page-footer.php';
+?>
+
+		
+		</div>
+		
+</div>
+</div>
+
+
+</body>
+</html>
+
+
+
+
+
