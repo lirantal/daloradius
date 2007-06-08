@@ -1,0 +1,85 @@
+release 0.8 - May 2007
+	- moved from using the Password attribute to the more widely accepted
+	User-Password attribute as well as keeping compatibility with Password attribute
+	- fixed mng-edit.php file to check if attribute exists on db and to
+	create it if it doesn't (thanks ismail)
+	- added more info in the README/INSTALL to make it easier to install
+	- added premature initialization of several variables so that php's
+	error handling E_STRICT or E_NOTICE isn't triggerd on some systems
+	which have these turned on by default
+	- moved to use isset() to be more compatible with php standards.
+	- added for gis-main.php file opening check to make sure the file is writable
+	by the webserver's user/group, an error message appears if there is a
+	problem.
+	- fixed small bug in mng-del.php where it wouldn't receive external
+	values when called from other pages. 
+	- moved to using a different date library, this one doesn't popup a
+	window and should integrate good with most browsers as well.
+	- as to request from ismail regarding interface colors I've changed
+	all grey's to either white or black, as well as text in input boxs
+	so it should be more easy on the eyes now :)
+	- added javascript for showing/hiding input boxs in forms to give
+	a more comfortable and professional look.
+	- added to reports page per username another table to display the
+	attributes for a certain user on both radcheck and radreply tables
+	- fixed issues with un-initialized values in the $_REQUEST of several
+	pages so now they check for a valid request (this prevents php notices
+	to appear)
+	- fixed problem in library/graph-alltime_upload.php where it didn't
+	show the statistics for the year graph cause of a missing , (comma)
+	- fixed in all the upload/download graphs the statistics to show the
+	usage per the user that was entered in the inputbox and not the
+	overall usage (this was confusing before but now it's fixed)
+
+
+release 0.7 - April 2007
+	- public release on sourceforge
+
+release 0.6 - April 2007
+	- added page-footer.php for easier modifications to the files.
+	  in the future more modularity is planned like this with the menus.
+	- improvements on the 'home' webpage, adding server and radius status
+	  pages as well as displaying logfiles.
+	- fixed a bug in the way the php's are handled: instead of using if
+	  ($submit) which doesn't always works, I changed it to if ($_POST['submit'])
+	  which works best, always.
+	- added the 'welcome, <user> [logout]' option to all pages as the
+	  submenu links
+	- fixed bug in graphs-overall_logins.php that didn't display the day
+	  of the week in the graph image and applied it to all other graphs.
+
+release 0.5 - April 2007
+	- added a whole lot of graphical reports to the Graphs section, among
+	  them are: Per User's Logins, Downloads and Uploads and an All-time
+	  Logins, Downloads and Uploads.
+	- fixed the 'look&feel' of user addition in the management page
+	- added informational graphs to the main pages
+	- fixed typos
+	- added pie charts graphs and other cross-referrence graphs to billing
+	  and accounting pages
+	- fixed silly bug in gis-editmap.php where the $type value wasn't
+	  checked when headers were read
+	- fixed bug in sql statement when displaying top users's statistics
+
+release 0.4 - March 2007
+	- fixed bug in generating the code snippet for googlemaps api.
+	- added GIS section to visualize hotspot locations with googlemaps api.
+
+release 0.3 - January 2007
+	- added more radius attributes to user management: Idle Timeout, Calling-Station-Id, WISPr-Redirection-URL, 
+	  WISPr-Bandwidth-Max-Up, WISPr-Bandwidth-Max-Down, WISPr-Session-Terminate-Time
+	- added javascript popup buttons to ease on date selection with a date applet
+	- added javascript functions to automatically generate random passwords and usernames
+
+release 0.2 - December 2006
+	- when adding users, check that the user doesn't already exist, if it does, deny addition to db.
+	- accounting menu has been broaden to provide an extenssive list of reports based on the radacct table
+	- management support has been added the Called-Station-Id attribute for users
+	- accounting menu has been added the functionality of listing all hotspots in a combo box
+	- added javascript for alert message-box on errors
+	- added the ability to edit/del a user from reports listings
+
+release 0.1 - initial work
+	- management support for a few radius attributes
+	- management support for hotspots (to distinguish users logging in from different hotspot access points)
+

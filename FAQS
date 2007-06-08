@@ -1,0 +1,22 @@
+Copyright Liran Tal 2007. All rights reserved.
+For release information and license, read LICENSE.
+
+
+  daloRADIUS version 0.8 stable release
+ by Liran Tal of Enginx <liran@enginx.com>
+ =========================================
+
+
+
+FAQs
+====
+
+1. After I login with the administrator account I receive an error page
+   "Fatal error: Call to undefined function: mysql_connect()"
+
+   This is because the mysql.so extension isn't loaded in /etc/php5/apache2/php.ini
+   To fix it, edit that file and comment out the mysql.so and possibly the gd.so modules
+   then restart apache2.
+
+
+
