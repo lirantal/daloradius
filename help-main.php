@@ -66,7 +66,7 @@
 				<h3>Support</h3>
 				
 				<p class="news">
-					daloRADIUS version 0.7
+					daloRADIUS version svn-trnk
 					RADIUS Management 
 					<a href="http://www.enginx.com" class="more">Read More &raquo;</a>
 				</p>
