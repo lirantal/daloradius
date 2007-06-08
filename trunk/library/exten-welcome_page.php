@@ -15,7 +15,7 @@ echo "
 <br/>
 <center>
 <h2> daloRADIUS Web Management Server </h2>
-<h3> version 0.7 stable release - 07/05/2007 </h3>
+<h3> version svn-trnk </h3>
 <br/><br/>
 <h4> Liran Tal <br/>
      liran@enginx.com  <br/>
