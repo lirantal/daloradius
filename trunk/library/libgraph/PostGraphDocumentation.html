@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <title>Post Graph documentation</title>
+  </head>
+  <body>
+<table width=800 border=0>
+<tr><td>
+<pre>
+<font size=4><b>PostGraph
+--------------------</b></font>
+easy to use PHP class for creating bar graphs
+ 
+<img src="graph1.png" border="0">
+
+<b>Quick example
+--------------------</b>
+&lt;?
+include('postgraph.class.php'); 
+
+$data = array(1 => 0, 1, 2, 4, 16, 20, 22,.17, 7, 2, 1, 0);
+
+// creates graph object
+$graph = new PostGraph(550,330);
+
+// set titles
+$graph->setGraphTitles('My Title', 'x axis description', 'y axis description');
+
+// set format of number on Y axe
+$graph->setYNumberFormat('integer');
+
+// set number of ticks on Y axe
+$graph->setYTicks(10);
+
+// set data
+$graph->setData($data);
+
+$graph->setBackgroundColor(array(255,255,0));
+
+$graph->setTextColor(array(144,144,144));
+
+// set orientation of text on X axe
+$graph->setXTextOrientation('horizontal');
+
+// prepare image
+$graph->drawImage();
+
+// print image to the screem
+$graph->printImage();
+?&gt;
+
+
+<b>Public Functions
+--------------------</b>
+
+<b>PostGraph</b>($width, $height)
+constructor, creates an PostGraph object.
+Parameter width for width of graph image. If it is not defined, width is set to 400.
+Parameter height for height of graph image. If it is not defined, height is set to 300.
+
+<b>setGraphTitles</b>($mainTitle, $xTitle, $yTitle)
+Set graph titles defined by user - main, x axis, y axis.
+Parameter mainTitle is a main title of graph.
+Parameter xTitle is a title of graph at x axe.
+Parameter yTitle is a title of graph at y axe.
+
+<b>setColors</b>($userColors)
+Set all graph colors defined by user.
+Parameter userColors is a RGB Color array for 8 colors - white, lines, bars, background, style, text, above bar and inside bar. Must be defined all.
+
+<b>setWhiteColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setLinesColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setBarsColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setBackgroundColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setStyleColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setTextColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setAboveBarColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setInsideBarColor</b>($userRGB)
+Set graph colors defined by user.
+Parameter userRGB is a RGB Color array.
+
+<b>setYTicks</b>($ticks)
+Set ticks on y axe.
+Parameter ticks is a default value. Set ticks to max value of data. If max value is 0 then ticks is set to 1.
+
+<b>setYNumberFormat</b>($format)
+Set number format at y axe.
+If parameter format is set to 'integer' then y axe have integer numbers. Otherwise, it can have floating point numbers.
+
+<b>setData</b>($data)
+Set data for post graph. $data is array of values.
+Parameter data is used as graph data. Compute data summary, data count, find max value and set number of y ticks.
+
+<b>setXTextOrientation</b>($orientation)
+Set orientation of digits at graph x axe. Allowed parameters - 'horizontal', 'vertical'.
+Parameter orientation specify orientation of digits at x axe.
+
+<b>drawImage</b>()
+Create graph image with functions. Create the image, initialise Colors and area, draw axis, bars and titles.
+
+<b>printImage</b>()
+Draw graph to the output.
+
+
+
+<b>Private functions and properties
+--------------------</b>
+edit only if you know what you are doing
+
+<b>graphWidth</b> Graph Image Width.
+<b>graphHeight</b> Graph Image Height.
+<b>textPadding</b> Graph Text Padding.
+<b>graphTitle</b> Graph main Title at the top center.
+<b>$graphXTitle</b> Graph Title at x axe.
+<b>graphYTitle</b> Graph Title at y axe.
+<b>yTicks</b> Number of Ticks on y axe.
+<b>yNumberFormat</b> Format numbers at y axe.
+<b>yValueMode</b> Mode that defines place of y numbers. 3 for outside of bar, 2 inside, 1 inside if bar height is bigger then 13.
+<b>textXOrientation</b> Text orientation at x axe. Usually 'horizontal'.
+<b>data</b> Graph data.
+<b>countData</b> Count of data.
+<b>dataSum</b> Summary of data.
+<b>maxData</b> Maximum value of data.
+<b>maxTextLength</b> Lenght of maximum value.
+<b>colorWhiteArray</b> White color in RGB format.
+<b>colorLinesArray</b> Line color in RGB format.
+<b>colorBarsArray</b> Bar color in RGB format.
+<b>colorBackgroundArray</b> Background color in RGB format.
+<b>colorStyleArray</b> Style color in RGB format.
+<b>colorTextArray</b> Text color in RGB format.
+<b>colorAboveBarArray</b> Number color above the bar in RGB format.
+<b>colorInsideBarArray</b> Number color inside the bar in RGB format.
+
+
+<b>initColors</b>
+Initialise all graph colors. White, lines, bars, background, style, text, above bar and inside bar.
+
+<b>initArea</b>
+Initialise graph area, draw background rectangle and fill with background color.
+
+<b>drawXAxe</b>
+Draw x axe with lines and numbers.
+
+<b>drawYAxe</b>
+Draw y axe with lines and numbers.
+
+<b>drawBars</b>
+Draw bars with number at top. Bars value is in variable data.
+
+<b>drawTitles</b>
+Draw titles of graph. Main title on the top center, verticaly on the left side and horizontaly on the botton.
+
+<b>computeDataSum</b>
+Compute data summary.
+
+<b>findMaxValues</b>
+Find maximum value of data and do special round with him.
+
+<b>specialRound</b>
+Do special round on max value of data. Round at first digit for 2 digit int number. Round at second digit for bigger int number.
+Parameter number can be float or int number.
+Returns variable number with special round number.
+
+</td>
+</tr>
+</table>
+  </body>
+</html>
