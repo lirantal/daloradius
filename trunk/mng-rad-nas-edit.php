@@ -62,16 +62,25 @@
 
 			}
 
-                } else {
+                } elseif (mysql_num_rows($res) > 1) {
                         echo "<font color='#FF0000'>error: NAS IP/Host [$nashost] already exist <br/></font>";
-			echo "
+						echo "
                                 <script language='JavaScript'>
                                 <!--
                                 alert('The NAS IP/Host $nashost already exists in the database.\\nPlease check that there are no duplicate entries in the database.');
                                 -->
                                 </script>
                                 ";
-                }
+                } else {
+                        echo "<font color='#FF0000'>error: NAS IP/Host [$nashost] doesn't exist <br/></font>";
+						echo "
+                                <script language='JavaScript'>
+                                <!--
+                                alert('The NAS IP/Host $nashost doesn't exist at all in the database.\\nPlease re-check the username.');
+                                -->
+                                </script>
+                                ";
+				}
 
                 include 'library/closedb.php';
         }
