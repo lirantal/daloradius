@@ -17,7 +17,7 @@
 	$groupOld = $_REQUEST['group'];
 
         // fill-in nashost details in html textboxes
-        $sql = "SELECT * FROM usergroup WHERE UserName='$username' AND GroupName='$group'";
+        $sql = "SELECT * FROM usergroup WHERE UserName='$username' AND GroupName='$groupOld'";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
         $row = mysql_fetch_array($res);		// array fetched with values from $sql query
 
@@ -46,7 +46,7 @@
 				}
 
                                 // insert nas details
-                                $sql = "UPDATE usergroup SET GroupName='$group', priority='$priority' WHERE UserName='$username'";
+                                $sql = "UPDATE usergroup SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
                                 $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
                         
 			echo "<font color='#0000FF'>success<br/></font>";
@@ -62,7 +62,7 @@
                                 -->
                                 </script>
                                 ";
-                }
+                } 
 
                 include 'library/closedb.php';
         }
@@ -181,7 +181,8 @@ function toggleShowDiv(pass) {
                                                 <li><a href="mng-rad-usergroup-add-multi.php"><b>&raquo;</b>New Multi User-Group Mapping</a></li>
                                                 <li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b>Edit User-Group Mapping<a>
                                                         <form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
-                                                        <input name="username" type="text">
+                                                        <input name="username" type="text" value="[username]">
+                                                        <input name="group" type="text" value="[groupname]">
                                                         </form></li>
 
 
@@ -196,7 +197,7 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Edit User-Group Mapping for User: $username</a></h2>
+				<h2 id="Intro"><a href="#">Edit User-Group Mapping for User: <?php echo $username ?></a></h2>
 				
 				<p>
 
