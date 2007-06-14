@@ -7,8 +7,13 @@
 	$group = "";
 	$username = "";
 
-	$username = $_REQUEST['username'];
-	$group = $_REQUEST['group'];
+	if (isset($_REQUEST['username'])) {
+		$username = $_REQUEST['username'];
+	}
+
+	if (isset($_REQUEST['group'])) {
+		$group = $_REQUEST['group'];
+ 	}
 
         if (isset($_POST['submit'])) {
                 if (trim($username) != "") {
@@ -188,6 +193,12 @@ function toggleShowDiv(pass) {
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Username</b>
                                                 <input value="<?php echo $username ?>" name="username"/><br/>
+                                                </font>
+
+                                                <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
+                                                <b>Groupname</b>
+                                                <input value="<?php echo $group ?>" name="group"/><br/>
+						If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!
                                                 </font>
 
                                                 <br/><br/>
