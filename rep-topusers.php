@@ -6,8 +6,10 @@
 
 <?php
 
-	$limit = $_POST['limit'];
-	$order = $_POST['order'];
+	if (isset($_POST['limit']))
+		$limit = $_POST['limit'];
+	if (isset($_POST['order']))		
+		$order = $_POST['order'];
 
 ?>
 		
