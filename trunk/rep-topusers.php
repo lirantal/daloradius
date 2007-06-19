@@ -1,13 +1,13 @@
 <?php
 
-	$limit = $_POST['limit'];
-	$order = $_POST['order'];
+    include ("menu-reports.php");
 
 ?>
 
 <?php
 
-    include ("menu-reports.php");
+	$limit = $_POST['limit'];
+	$order = $_POST['order'];
 
 ?>
 		
