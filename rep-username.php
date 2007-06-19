@@ -1,16 +1,14 @@
 <?php
 
-	$username = $_POST['username'];
-
-?>
-
-<?php
-
     include ("menu-reports.php");
 
 ?>
 		
-		
+<?php
+
+	$username = $_POST['username'];
+
+?>		
 		
 		
 		<div id="contentnorightbar">
