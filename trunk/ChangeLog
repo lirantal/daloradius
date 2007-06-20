@@ -1,3 +1,11 @@
+release 0.9 - July 2007
+	- thanks to Erick Otto the sql dump is fixed (there was a missing /)
+	- added more management interfaces for radius's sql database (radgroupchk, etc)
+	- moved to a more OOP design by moduling all the pages to use the same group-wise
+	header menus which makes customizing and changing very easy and quick.
+	
+
+
 release 0.8 - May 2007
 	- moved from using the Password attribute to the more widely accepted
 	User-Password attribute as well as keeping compatibility with Password attribute
