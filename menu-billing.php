@@ -69,7 +69,7 @@
 				<h3>Billing Engine</h3>
 				<ul class="subnav">
 				
-						<li><a href="javascript:document.billprepaidhotspot.submit();""><b>&raquo;</b>Prepaid Accounting<a>
+						<li><a href="javascript:document.billprepaidhotspot.submit();""><b>&raquo;</b>Prepaid Accounting</a>
 							<form name="billprepaidhotspot" action="bill-prepaid.php" method="get" class="sidebar">
 							<select name="hotspot" size="3">
 								<option value='%'> all
@@ -108,7 +108,7 @@
 							</form></li>
 
 
-						<li><a href="javascript:document.billpersecondhotspot.submit();""><b>&raquo;</b>Per-second Accounting<a>
+						<li><a href="javascript:document.billpersecondhotspot.submit();""><b>&raquo;</b>Per-second Accounting</a>
 							<form name="billpersecondhotspot" action="bill-persecond.php" method="get" class="sidebar">
 							<select name="ps-hotspot" size="3">
 								<option value='%'> all
@@ -144,8 +144,6 @@
 
 							</form></li>
 
-
-						<li><a href="mng-del.php"><b>&raquo;</b>Remove User</a></li>	
 				</ul>
 		
 				<h3>Rates Management</h3>
@@ -153,7 +151,7 @@
 				
 						<li><a href="bill-rates-list.php"><b>&raquo;</b>Show rates</a></li>
 						<li><a href="bill-rates-new.php"><b>&raquo;</b>New rate</a></li>
-						<li><a href="javascript:document.billratesedit.submit();""><b>&raquo;</b>Edit Rate<a>
+						<li><a href="javascript:document.billratesedit.submit();""><b>&raquo;</b>Edit Rate</a>
 							<form name="billratesedit" action="bill-rates-edit.php" method="get" class="sidebar">
 							<input name="type" type="text">
 							</form></li>
