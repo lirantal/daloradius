@@ -33,8 +33,6 @@
 
         include 'library/closedb.php';
 		
-	include "library/googlemaps.php";
-
 ?>
 
 
