@@ -32,23 +32,8 @@
 	}		
 
         include 'library/closedb.php';
-
-/*
-    require "library/datepicker/class.datepicker.php";
-
-    // instantiate the object
-    $db=new datepicker();
-
-    // set the selectable range
-    // users will not be able to select dates outside those ranges
-
-    // set the first day of week to Monday
-    // users from the United States will set this to 0 (Sunday)
-    $db->firstDayOfWeek = 0;
-
-    // set the format in which the date to be returned
-    $db->dateFormat = "Y-m-d";
-*/
+		
+	include "library/googlemaps.php";
 
 ?>
 
