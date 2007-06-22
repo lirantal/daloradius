@@ -2,8 +2,6 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	
-	include "library/googlemaps.php";
 
 ?>
 
