@@ -4,13 +4,12 @@
 <head>
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
+<?php
+	include "library/googlemaps.php";
+?>
 </head>
-
- 
-<body>
-
+<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<body onload="load()" onunload="GUnload()">
 <div id="wrapper">
 <div id="innerwrapper">
 
