@@ -47,93 +47,11 @@
 
 </head>
  
-<body>
+<?php
 
-<div id="wrapper">
-<div id="innerwrapper">
-
-		<div id="header">
-		
-				<form action="">
-				<input value="Search" />
-				</form>
-				
-				<h1><a href="index.php">daloRADIUS</a></h1>
-				
-				<h2>
-				
-						Radius Reporting, Billing and Management by <a href="http://www.enginx.com">Enginx</a>
-				
-				</h2>
-				
-				<ul id="nav">
-				
-						<li><a href="index.php"><em>H</em>ome</a></li>
-						
-						<li><a href="mng-main.php" class="active"><em>M</em>anagment</a></li>
-						
-						<li><a href="rep-main.php"><em>R</em>eports</a></li>
-						
-						<li><a href="acct-main.php"><em>A</em>ccounting</a></li>
-
-						<li><a href="bill-main.php"><em>B</em>illing</a></li>
-						<li><a href="gis-main.php"><em>GIS</em></a></li>
-						<li><a href="graph-main.php"><em>G</em>raphs</a></li>
-
-						<li><a href="help-main.php"><em>H</em>elp</a></li>
-				
-				</ul>
-				<ul id="subnav">
-				
-						<li>Welcome, <?php echo $operator; ?></li>
-
-						<li><a href="logout.php">[logout]</a></li>
-				
-				</ul>
-		
-		</div>
-		
-		<div id="sidebar">
-		
-				<h2>Management</h2>
-				
-				<h3>Users Management</h3>
-				<ul class="subnav">
-				
-						<li><a href="mng-new.php"><b>&raquo;</b>New User</a></li>
-						<li><a href="mng-new-quick.php"><b>&raquo;</b>New User - Quick add </a></li>
-						<li><a href="mng-batch.php"><b>&raquo;</b>Batch-Add Users <a></li>
-						<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit User<a>
-							<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
-							<input name="username" type="text">
-							</form></li>
-
-
-						<li><a href="mng-del.php"><b>&raquo;</b>Remove User</a></li>	
-				</ul>
-		
-				<h3>Hotspots Management</h3>
-				<ul class="subnav">
-				
-						<li><a href="mng-hs-list.php"><b>&raquo;</b>List Hotspots</a></li>
-						<li><a href="mng-hs-new.php"><b>&raquo;</b>New Hotspot</a></li>
-						<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b>Edit Hotspot<a>
-							<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
-							<input name="name" type="text">
-							</form></li>
-
-
-						<li><a href="mng-hs-del.php"><b>&raquo;</b>Remove Hotspot</a></li>
-				</ul>
-				
-				<br/><br/>
-				<h2>Search</h2>
-				
-				<input name="" type="text" value="Search" />
-		
-		</div>
-		
-		
+	include ("menu-mng-main.php");
+	
+?>
 		
 		<div id="contentnorightbar">
 		
