@@ -59,7 +59,7 @@
                                 <ul class="subnav">
 
                                                 <li><a href="mng-rad-groupreply-list.php"><b>&raquo;</b>List Group Reply Mappings</a></li>
-                                                <li><a href="mng-rad-groupreply-new.php"><b>&raquo;</b>New User-Group Mapping</a></li>
+                                                <li><a href="mng-rad-groupreply-new.php"><b>&raquo;</b>New Group Reply Mapping</a></li>
                                                 <li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b>Edit User-Group Mapping<a>
                                                         <form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
                                                         <input name="username" type="text" value="[username]">
