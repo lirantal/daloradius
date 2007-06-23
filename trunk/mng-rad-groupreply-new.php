@@ -32,11 +32,11 @@
 						$counter++;
 					}
 				} else {
-                        echo "<font color='#FF0000'>error: the group [$groupname] already exist in the database <br/></font>";
+                        echo "<font color='#FF0000'>error: the group [$groupname[$counter]] already exist in the database with value [$value[$counter]] <br/></font>";
 						echo "
                                 <script language='JavaScript'>
                                 <!--
-                                alert('The user $groupname already exists in the database');
+                                alert('The group $groupname[$counter] already exists in the database with value $value[$counter]');
                                 -->
                                 </script>
                         ";
@@ -105,22 +105,22 @@ function toggleShowDiv(pass) {
 
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b>Groupname</b>
-                                                <input value="<?php echo $groupname ?>" name="groupname[]"/>
+                                                <input value="<?php echo $groupname[0] ?>" name="groupname[]"/>
                                                 </font><br/>
 
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>Attribute</b>
-                                                <input value="<?php echo $attribute ?>" name="attribute[]" /> 
+                                                <input value="<?php echo $attribute[0] ?>" name="attribute[]" /> 
                                                 </font><br/>
 												
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Operator</b>
-                                                <input value="<?php echo $op ?>" name="op[]" />
+                                                <input value="<?php echo $op[0] ?>" name="op[]" />
                                                 </font><br/>
 
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Value</b>
-                                                <input value="<?php echo $value ?>" name="value[]" />
+                                                <input value="<?php echo $value[0] ?>" name="value[]" />
                                                 </font><br/>
 
                                                 <br/><br/>
