@@ -18,36 +18,33 @@
             include 'library/config.php';
             include 'library/opendb.php';
 
-            $sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupname' AND Value='$value'";
-            $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-
-            if (mysql_num_rows($res) == 0) {
-
-				if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
-
-				$counter = 0;
-				foreach ($groupname as $group) {
-                    // insert usergroup details
-                    $sql = "INSERT INTO radgroupreply values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
-                    $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-					$counter++;
-				}
-			}
-                        
-			echo "<font color='#0000FF'>success<br/></font>";
-
-                } else {
+			$counter = 0;
+			foreach ($groupname as $group) {
+				
+				$sql = "SELECT * FROM radgroupreply WHERE GroupName='$group' AND Value='$value[$counter]'";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				
+				if (mysql_num_rows($res) == 0) {
+					if (trim($group) != "" and trim($value[$counter]) != "" and trim($op[$counter]) != "" and trim($attribute[$counter]) != "") {								
+						// insert usergroup details
+						$sql = "INSERT INTO radgroupreply values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
+						$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+						$counter++;
+					}
+				} else {
                         echo "<font color='#FF0000'>error: the group [$groupname] already exist in the database <br/></font>";
-			echo "
+						echo "
                                 <script language='JavaScript'>
                                 <!--
                                 alert('The user $groupname already exists in the database');
                                 -->
                                 </script>
-                                ";
+                        ";
                 }
-
-                include 'library/closedb.php';
+				
+			}
+                        
+            include 'library/closedb.php';
         }
 
 ?>
@@ -119,12 +116,12 @@ function toggleShowDiv(pass) {
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Operator</b>
                                                 <input value="<?php echo $op ?>" name="op[]" />
-                                                </font>
+                                                </font><br/>
 
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Value</b>
                                                 <input value="<?php echo $value ?>" name="value[]" />
-                                                </font>
+                                                </font><br/>
 
                                                 <br/><br/>
                                                 <input type="submit" name="submit" value="Apply"/>
