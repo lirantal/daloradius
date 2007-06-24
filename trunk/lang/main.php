@@ -1,0 +1,3 @@
+<?
+include ("lang/en.php");
+?>
