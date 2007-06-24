@@ -10,7 +10,7 @@
     // declaring variables
     $groupname = "";
     $value = "";
-    $operator = "";
+    $op = "";
     $attribute = "";
 
 	$groupname = $_REQUEST['groupname'];
@@ -29,7 +29,7 @@
 	        $groupname = $_POST['groupname'];
 	        $value = $_POST['value'];;
 	        $valueOld = $_POST['valueOld'];;			
-	        $operator = $_POST['operator'];;
+	        $op = $_POST['op'];;
 	        $attribute = $_POST['attribute'];;
 
                 include 'library/config.php';
@@ -40,9 +40,9 @@
 
                 if (mysql_num_rows($res) == 1) {
 
-                        if (trim($groupname) != "" and trim($value) != "" and trim($operator) != "" and trim($attribute) != "") {
+                        if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
-                            $sql = "UPDATE radgroupreply SET Value='$value', op='$operator', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
+                            $sql = "UPDATE radgroupreply SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
                             $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
                         
 			echo "<font color='#0000FF'>success<br/></font>";
@@ -129,9 +129,9 @@ function toggleShowDiv(pass) {
                                                 <input value="<?php echo $attribute ?>" name="attribute" />
                                                 </font><br/>
 
-                                                <?php if (trim($operator) == "") { echo "<font color='#FF0000'>";  }?>
+                                                <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>Operator</b>
-                                                <input value="<?php echo $operator ?>" name="operator" /> 
+                                                <input value="<?php echo $op ?>" name="op" /> 
                                                 </font><br/>
 												
                                                 <?php if (trim($valueOld) == "") { echo "<font color='#FF0000'>";  }?>
