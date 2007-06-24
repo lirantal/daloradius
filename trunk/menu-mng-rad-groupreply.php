@@ -60,10 +60,10 @@
 
                                                 <li><a href="mng-rad-groupreply-list.php"><b>&raquo;</b>List Group Reply Mappings</a></li>
                                                 <li><a href="mng-rad-groupreply-new.php"><b>&raquo;</b>New Group Reply Mapping</a></li>
-                                                <li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b>Edit User-Group Mapping<a>
-                                                        <form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
-                                                        <input name="username" type="text" value="[username]">
-                                                        <input name="group" type="text" value="[groupname]">
+                                                <li><a href="javascript:document.mngradgrprplyedit.submit();""><b>&raquo;</b>Edit Group Reply Mapping<a>
+                                                        <form name="mngradgrprplyedit" action="mng-rad-groupreply-edit.php" method="get" class="sidebar">
+                                                        <input name="groupname" type="text" value="[groupname]">
+                                                        <input name="value" type="text" value="[value]">
                                                         </form></li>
 
 
