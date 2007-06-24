@@ -55,7 +55,7 @@
 	
                                 <h2>Management</h2>
 
-                                <h3>User-Group Management</h3>
+                                <h3>Group Reply Management</h3>
                                 <ul class="subnav">
 
                                                 <li><a href="mng-rad-groupreply-list.php"><b>&raquo;</b>List Group Reply Mappings</a></li>
