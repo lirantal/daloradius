@@ -35,7 +35,7 @@
                 include 'library/config.php';
                 include 'library/opendb.php';
 
-                $sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupname' AND Value='$value'";
+                $sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupname' AND Value='$valueOld'";
                 $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
                 if (mysql_num_rows($res) == 1) {
