@@ -1,5 +1,6 @@
 <?php
     include ("library/checklogin.php");
+    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 
@@ -13,7 +14,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Rates Table</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][billrateslist.php]; ?></a></h2>
 				
 				<p>
 
@@ -30,17 +31,17 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='15'>Rates Table</th>
+                                <th colspan='15'>".$l[Intro][billrateslist.php]."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ID </th>
-                        <th scope='col'> Type </th>
-                        <th scope='col'> Cardbank </th>
-                        <th scope='col'> Rate</th>
-                        <th scope='col'> Action </th>
+                        <th scope='col'> ".$l[all][ID]." </th>
+                        <th scope='col'> ".$l[all][Type]." </th>
+                        <th scope='col'> ".$l[all][CardBank]." </th>
+                        <th scope='col'> ".$l[all][Rate]." </th>
+                        <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>

@@ -1,6 +1,7 @@
 <?php
 
     include ("library/checklogin.php");
+    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 
@@ -18,7 +19,7 @@
 			$sql = "DELETE FROM rates WHERE type='$type'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
-			echo "success<br/>";
+			echo $l[messages][success]"<br/>";
 			include 'library/closedb.php';
 
 		}
@@ -37,13 +38,13 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Delete Rate entry</h2>
+		<h2 id="Intro"><?echo $l[Intro][billratesdel.php]; ?></h2>
 				
 				<p>
-				Provide the rate entry type which you would like to remove
+				<?echo $l[captions][providebillratetodel]; ?>
 				<br/><br/>
 <?php
-		if (trim($type) == "") { echo "error: missing rate type to delete <br/>";  }
+		if (trim($type) == "") { echo $l[messages][missingratetype]." <br/>";  }
 
 ?>
 				</p>
