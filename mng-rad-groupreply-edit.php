@@ -15,11 +15,15 @@
 
 	$groupname = $_REQUEST['groupname'];
 	$value = $_REQUEST['value'];
+	$valueOld = $_REQUEST['value'];	
 
         // fill-in nashost details in html textboxes
         $sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupname' AND Value='$value'";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
         $row = mysql_fetch_array($res);		// array fetched with values from $sql query
+			$op = $row['op'];
+			$attribute = $row['Attribute'];
+		
 
         if (isset($_POST['submit'])) {
 	        $groupname = $_POST['groupname'];
@@ -117,6 +121,8 @@ function toggleShowDiv(pass) {
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
                                                 <input type="hidden" value="<?php echo $groupname ?>" name="groupname" /><br/>
+                                                <input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" /><br/>
+												
 
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>Attribue</b>
@@ -129,8 +135,8 @@ function toggleShowDiv(pass) {
                                                 </font><br/>
 												
                                                 <?php if (trim($valueOld) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b>Current Value</b>
-                                                <input value="<?php echo $valueOld ?>" name="valueOld" /> (Old/Current Value)
+	                                        <b>New Value</b>
+                                                <input value="<?php echo $value ?>" name="value" />
                                                 </font><br/>
 
                                                 <input type="submit" name="submit" value="Apply"/>
