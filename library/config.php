@@ -7,4 +7,7 @@ $dbhost = 'localhost';
 $dbuser = 'root';
 $dbpass = '';
 $dbname = 'radius';
+
+$lang = 'en';
+
 ?>

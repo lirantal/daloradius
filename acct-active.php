@@ -1,6 +1,7 @@
 <?php
 
     include ("library/checklogin.php");
+    include ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 ?>
@@ -15,7 +16,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Active Records Accounting</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][acctactive.php]; ?></a></h2>
 				
 				<p>
 				</p>
@@ -43,12 +44,12 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> Username </th>
-                        <th scope='col'> Attribute </th>
-                        <th scope='col'> Max Time / Expiration</th>
-                        <th scope='col'> Used Time </th>
-                        <th scope='col'> Status </th>
-                        <th scope='col'> Usage </th>
+                        <th scope='col'> ".$l[all][Username]." </th>
+                        <th scope='col'> ".$l[all][Attribute]." </th>
+                        <th scope='col'> ".$l[all][MaxTimeExpiration]."</th>
+                        <th scope='col'> ".$l[all][UsedTime]." </th>
+                        <th scope='col'> ".$l[all][Status]." </th>
+                        <th scope='col'> ".$l[all][Usage]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
 		$status="Active";
