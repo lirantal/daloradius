@@ -23,7 +23,7 @@
 			if (trim($value) != "") {
 
 	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM groupreply WHERE GroupName='$groupname' AND Value='$value'";
+	                        $sql = "DELETE FROM radgroupreply WHERE GroupName='$groupname' AND Value='$value'";
 	                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	
 	                        echo "<font color='#0000FF'>success<br/></font>";
@@ -32,7 +32,7 @@
 			} else {
 
 	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM groupreply WHERE GroupName='$groupname'";
+	                        $sql = "DELETE FROM radgroupreply WHERE GroupName='$groupname'";
 	                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	
 	                        echo "<font color='#0000FF'>success<br/></font>";
