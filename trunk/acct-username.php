@@ -1,6 +1,7 @@
 <?php
 
     include ("library/checklogin.php");
+    include ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 
@@ -16,7 +17,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Users Accounting</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][acctusername.php]; ?></a></h2>
 				
 				<p>
 				</p>
@@ -43,20 +44,20 @@
 	        <table border='2' class='table1'>
                         <thead>
                                 <tr>
-                                <th colspan='15'>Statistics</th>
+                                <th colspan='15'>".$l[all][Statistics]."</th>
                                 </tr>
                         </thead>
 	        <thead><tr >
-	        <td> Id </td>
-	        <td> UserName </td>
-                <td> Password </td>
-                <td> Credit </td>
-                <td> Used </td>
-                <td> Left *T </td>
-                <td> Left *% </td>
-                <td> Total Sessions </td>
-                <td> Upload (Bytes) </td>
-                <td> Download (Bytes) </td>
+	        <td> ".$l[all][ID]." </td>
+	        <td> ".$l[all][Username]." </td>
+                <td> ".$l[all][Password]." </td>
+                <td> ".$l[all][Credit]." </td>
+                <td> ".$l[all][Used]." </td>
+                <td> ".$l[all][LeftTime]." </td>
+                <td> ".$l[all][LeftPercent]." </td>
+                <td> ".$l[all][TotalSessions]." </td>
+                <td> ".$l[all][Upload]." (".$l[all][Bytes].")</td>
+                <td> ".$l[all][Download]." (".$l[all][Bytes].") </td>
         	</tr></thead>
         ";
         while($nt = mysql_fetch_array($res)) {
@@ -120,18 +121,19 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ID </th>
-                        <th scope='col'> HotSpot </th>
-                        <th scope='col'> Username </th>
-                        <th scope='col'> IP Address</th>
-                        <th scope='col'> Start Time </th>
-                        <th scope='col'> Stop Time </th>
-                        <th scope='col'> Total Time </th>
-                        <th scope='col'> Upload (Bytes) </th>
-                        <th scope='col'> Download (Bytes)</th>
-                        <th scope='col'> Termination </th>
-                        <th scope='col'> NAS IP Address </th>
-                        <th scope='col'> Action </th>
+		<th scope='col'> ".$l[all][ID]." </th>
+		<th scope='col'> ".$l[all][HotSpot]." </th>
+		<th scope='col'> ".$l[all][Username]." </th>
+		<th scope='col'> ".$l[all][IPAddress]."</th>
+		<th scope='col'> ".$l[all][StartTime]." </th>
+		<th scope='col'> ".$l[all][StopTime]." </th>
+		<th scope='col'> ".$l[all][TotalTime]." </th>
+		<th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].") </th>
+		<th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].") </th>
+		<th scope='col'> ".$l[all][Termination]." </th>
+		<th scope='col'> ".$l[all][NASIPAddress]." </th>
+		<th scope='col'> ".$l[all][Action]." </th
+
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
