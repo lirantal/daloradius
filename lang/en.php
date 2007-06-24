@@ -36,6 +36,9 @@ $l[all][Billed] = "Billed";
 $l[all][TotalUsers] = "Total Users";
 $l[all][TotalBilled] = "Total Billed";
 $l[all][CardBank] = "Card Bank";
+$l[all][Type] = "Type";
+$l[all][CardBank] = "CardBank";
+
 
 $l[Intro][acctactive.php] = "Active Records Accounting";
 $l[Intro][acctall.php] = "Users Accounting";
@@ -49,8 +52,24 @@ $l[Intro][acctusername.php] = "Users Accounting";
 
 $l[Intro][billmain.php] = "Billing Page";
 $l[Intro][billpersecond.php] = "Prepaid Accounting";
-$l[Intro][bill-prepaid.php] = "Prepaid Accounting";
+$l[Intro][billprepaid.php] = "Prepaid Accounting";
+$l[Intro][billratesdel.php] = "Delete Rate entry";
+$l[Intro][billratesedit.php] = "Edit Rate Details";
+$l[Intro][billrateslist.php] = "Rates Table";
+$l[Intro][billratesnew.php] = "New Rate entry";
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
+$l[captions][providebillratetodel] = "Provide the rate entry type which you would like to remove";
+$l[captions][detailsofnewrate] = "You may fill below details for the new rate";
+$l[captions][filldetailsofnewrate] = "Fill below the details for the new rate entry";
+
+$l[messages][missingratetype] = "error: missing rate type to delete";
+$l[messages][missingtype] = "error: missing type";
+$l[messages][missingcardbank] = "error: missing cardbank";
+$l[messages][missingrate] = "error: missing rate";
+$l[messages][success] = "success";
+
+$l[buttons][savesettings] = "Save Settings";
+$l[buttons][apply] = "Apply";
 
 ?>

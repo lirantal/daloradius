@@ -1,5 +1,6 @@
 <?php
     include ("library/checklogin.php");
+    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 
@@ -32,7 +33,7 @@
 				$sql = "INSERT INTO rates VALUES (0, '$type', $cardbank, $rate)";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 		
-				echo "success<br/>";
+				echo $l[messages][success]."<br/>";
 	
 			}
 		} 
@@ -53,30 +54,30 @@
 		
 		<div id="contentnorightbar">
 
-				<h2 id="Intro">New Rate entry</h2>
+		<h2 id="Intro"><? echo $l[Intro][billratesnew.php]; ?></h2>
 				
 				<p>
-				Fill below the details for the new rate entry
+				<? echo $l[captions][filldetailsofnewrate]; ?>
 				<br/><br/>
 <?php
-		if (trim($type) == "") { echo "error: missing type <br/>";  }
-		if (trim($cardbank) == "") { echo "error: missing cardbank <br/>";  }
-		if (trim($rate) == "") { echo "error: missing rate <br/>";  }
+		if (trim($type) == "") { echo $l[messages][missingtype]."<br/>";  }
+		if (trim($cardbank) == "") { echo $l[messages][missingcardbank]."<br/>";  }
+		if (trim($rate) == "") { echo $l[messages][missingrate]."<br/>";  }
 ?>
 				</p>
 				<form action="bill-rates-new.php" method="post">
 
-						<b>Type</b>
+						<b><?echo $l[all][Type]; ?></b>
 						<input value="<?php echo $type ?>" name="type"/><br/>
 
-						<b>Cardbank</b>
+						<b><?echo $l[all][CardBank]; ?></b>
 						<input value="<?php echo $cardbank ?>" name="cardbank" /><br/>
 
-						<b>Rate</b>
+						<b><?echo $l[all][Rate]; ?></b>
 						<input value="<?php echo $rate ?>" name="rate" /><br/>
 
 						<br/>
-						<input type="submit" name="submit" value="Apply"/>
+						<input type="submit" name="submit" value="<?echo $l[buttons][apply]; ?>"/>
 
 				</form>
 		

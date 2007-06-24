@@ -1,6 +1,7 @@
 <?php
 
     include ("library/checklogin.php");
+    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 
@@ -53,23 +54,23 @@
 ?>		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Edit Rate Details</h2>
+		<h2 id="Intro"><?echo $l[Intro][billratesedit.php]; ?></h2>
 				
 				<p>
-				You may fill below details for the new rate
+				<?echo $l[captions][detailsofnewrate]; ?>
 				<br/><br/>			</p>
 				<form action="bill-rates-edit.php" method="post">
-						<b>Type</b>
+						<b><?echo $l[all][Type]; ?></b>
 						<input value="<?php echo $type ?>" name="type" /><br/>
 
-						<b>Cardbank</b>
+						<b><? echo $l[all][CardBank];?></b>
 						<input value="<?php echo $cardbank ?>" name="cardbank" /><br/>
 
-						<b>Rate</b>
+						<b><? echo $l[all][Rate];?></b>
 						<input value="<?php echo $rate ?>" name="rate" /><br/>
 						
 						<br/>
-						<input type="submit" name="submit" value="Save Settings"/>
+						<input type="submit" name="submit" value="<?echo $l[buttons][savesettings];?>"/>
 
 				</form>
 		

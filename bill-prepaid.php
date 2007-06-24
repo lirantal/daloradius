@@ -1,7 +1,7 @@
 <?php
 
     include ("library/checklogin.php");
-    include ("lang/main.php");
+    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 	$hotspot = "";
@@ -22,7 +22,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><?echo $l[Intro][bill-prepaid.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><?echo $l[Intro][billprepaid.php]; ?></a></h2>
 				
 				<p>
                                                 <?php echo $l[captions][acctrecsforhotspot]." <i>".$hotspot."</i>" ?>
