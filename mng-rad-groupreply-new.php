@@ -109,13 +109,18 @@ function toggleShowDiv(pass) {
                                                 </font><br/>
 
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b>Attribute</b>
+												<b>Attribute</b>
                                                 <input value="<?php echo $attribute[0] ?>" name="attribute[]" /> 
                                                 </font><br/>
 												
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Operator</b>
-                                                <input value="<?php echo $op[0] ?>" name="op[]" />
+												<select name="op[]" />
+													<option value="==">==</option>
+													<option value=":=">:=</option>
+													<option value="=">=</option>
+													<option value=":">:</option>
+												</select>
                                                 </font><br/>
 
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
