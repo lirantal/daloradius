@@ -22,12 +22,20 @@ $l[all][UniqueUsers] = "Unique Users";
 $l[all][TotalHits] = "Total Hits";
 $l[all][AverageTime] = "Average Time";
 $l[all][Records] = "Records";
+$l[all][Summary] = "Summary";
 $l[all][Statistics] = "Statistics";
 $l[all][Credit] = "Credit";
 $l[all][Used] = "Used";
 $l[all][LeftTime] = "Left *T";
 $l[all][LeftPercent] = "Left *%";
 $l[all][TotalSessions] = "Total Sessions";
+$l[all][LastLoginTime] = "Last Login Time";
+$l[all][TotalSessionTime] = "Total Session Time";
+$l[all][Rate] = "Rate";
+$l[all][Billed] = "Billed";
+$l[all][TotalUsers] = "Total Users";
+$l[all][TotalBilled] = "Total Billed";
+$l[all][CardBank] = "Card Bank";
 
 $l[Intro][acctactive.php] = "Active Records Accounting";
 $l[Intro][acctall.php] = "Users Accounting";
@@ -38,4 +46,11 @@ $l[Intro][accthotspotcompare.php] = "Hotspot Comparison";
 $l[Intro][acctmain.php] = "Accounting Page";
 $l[Intro][acctnasipaddress.php] = "Users Accounting";
 $l[Intro][acctusername.php] = "Users Accounting";
+
+$l[Intro][billmain.php] = "Billing Page";
+$l[Intro][billpersecond.php] = "Prepaid Accounting";
+$l[Intro][bill-prepaid.php] = "Prepaid Accounting";
+
+$l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
+
 ?>
