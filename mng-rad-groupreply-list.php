@@ -45,15 +45,17 @@
         echo "<thread> <tr>
                         <th scope='col'> GroupName </th>
                         <th scope='col'> Attribute </th>
+                        <th scope='col'> Op </th>						
                         <th scope='col'> Value </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
                         <td> $nt[GroupName] </td>
                         <td> $nt[Attribute] </td>
+                        <td> $nt[op] </td>						
                         <td> $nt[Value] </td>						
-                        <td> <a href='mng-rad-groupreply-edit.php?groupname=$nt[UserName]&value=$nt[Value]'> edit </a>
-                             <a href='mng-rad-groupreply-del.php?groupname=$nt[UserName]&value=$nt[Value]'> del </a>
+                        <td> <a href='mng-rad-groupreply-edit.php?groupname=$nt[GroupName]&value=$nt[Value]'> edit </a>
+                             <a href='mng-rad-groupreply-del.php?groupname=$nt[GroupName]&value=$nt[Value]'> del </a>
                              </td>
 
                 </tr>";
