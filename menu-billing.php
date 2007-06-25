@@ -17,7 +17,9 @@
 
 
 <body>
-
+<?php
+    include_once ("lang/main.php");
+?>
 <div id="wrapper">
 <div id="innerwrapper">
 
