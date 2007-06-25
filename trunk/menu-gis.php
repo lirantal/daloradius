@@ -10,6 +10,9 @@
 </head>
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 <body onload="load()" onunload="GUnload()">
+<?php
+    include_once ("lang/main.php");
+?>
 <div id="wrapper">
 <div id="innerwrapper">
 
