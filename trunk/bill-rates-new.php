@@ -1,6 +1,5 @@
 <?php
     include ("library/checklogin.php");
-    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 
