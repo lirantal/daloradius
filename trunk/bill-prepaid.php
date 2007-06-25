@@ -46,7 +46,7 @@
                         <th scope='col'> ".$l[all][Username]." </th>
                         <th scope='col'> ".$l[all][HotSpot]." </th>
                         <th scope='col'> ".$l[all][CardBank]." <br/> (Max-All-Session attribute) </th>
-                        <th scope='col'> ".$l[all][Rate]" </th>
+                        <th scope='col'> ".$l[all][Rate]." </th>
                         <th scope='col'> ".$l[all][Billed]." </th>
                 </tr> </thread>";
 
