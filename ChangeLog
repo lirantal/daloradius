@@ -3,6 +3,8 @@ release 0.9 - July 2007
 	- added more management interfaces for radius's sql database (radgroupchk, etc)
 	- moved to a more OOP design by moduling all the pages to use the same group-wise
 	header menus which makes customizing and changing very easy and quick.
+	- Evgeniy Kozhuhovskiy has introduced a new feature which enables support for multiple
+	languages, also congrads for joining the development team :)
 	
 
 
