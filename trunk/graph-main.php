@@ -1,6 +1,7 @@
 <?php
 
     include ("library/checklogin.php");
+    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
 ?>
@@ -14,7 +15,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Introduction</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphmain.php]; ?></a></h2>
 				
 				<p>
 				

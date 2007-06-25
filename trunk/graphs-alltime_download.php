@@ -1,6 +1,7 @@
 <?php
 
     include ("library/checklogin.php");
+    include_once ("lang/main.php");
     $operator = $_SESSION['operator_user'];
 
         $username = $_POST['username'];
@@ -18,7 +19,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Overall Usage</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsalltimedownload.php]; ?></a></h2>
 
 <?php
 
