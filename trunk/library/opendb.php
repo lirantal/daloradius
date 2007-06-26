@@ -1,7 +1,4 @@
 <?php
-// This is an example opendb.php
-
-$conn = mysql_connect($dbhost, $dbuser, $dbpass) or die                      ('Error connecting to mysql');
-mysql_select_db($dbname);
-
+$conn = mysql_connect($config_db_host, $config_db_user, $config_db_pass) or die ('Error connecting to mysql');
+mysql_select_db($config_db_name);
 ?>

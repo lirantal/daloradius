@@ -1,13 +1,18 @@
 <?php
 
-// Database configuration file for daloRADIUS
-// Please fill in the details that match your setup configuration.
+// Application-wide configuration file for daloRADIUS
 
-$dbhost = 'localhost';
-$dbuser = 'root';
-$dbpass = '';
-$dbname = 'radius';
+//Database Configuration =================================================================================
+$config_db_host = 'localhost';
+$config_db_user = 'root';
+$config_db_pass = '';
+$config_db_name = 'radius';
+// =====================================================================================================
 
-$lang = 'en';
+
+
+//Language Configuration =================================================================================
+$config_lang = 'en';
+// =====================================================================================================
 
 ?>

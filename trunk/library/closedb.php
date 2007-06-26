@@ -1,8 +1,4 @@
 <?php
-// an example of closedb.php
-// it does nothing but closing
-// a mysql database connection
-
-mysql_close($conn);
+mysql_close($conn);		// closing a previuosly-opened mysql database connection
 ?>
 
