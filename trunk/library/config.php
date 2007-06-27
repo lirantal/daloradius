@@ -3,8 +3,7 @@
 // Application-wide configuration file for daloRADIUS
 
 //Database Configuration =================================================================================
-//$config_db='localhost';
-$dbhost = 'localhost';
+$config_db_host = 'localhost';
 $config_db_user = 'root';
 $config_db_pass = '';
 $config_db_name = 'radius';
