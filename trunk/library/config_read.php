@@ -1,6 +1,6 @@
 <?php
 
-$configFile = "daloradius.conf";
+$configFile = "library/daloradius.conf";
 $commentChar = "#";
 
 $fp = fopen($configFile, "r");
@@ -16,11 +16,13 @@ while (!feof($fp)) {
 }
 fclose($fp);
 
+/*
 if ($configValues['CONFIG_DB_HOST'] == "y")
-  echo "CONFIG_IDE is set";
+  echo "config option is set";
 else 
-  echo "CONFIG_IDE is not set";
+  echo "config option is not set";
 
-  echo "$configValues['CONFIG_DB_HOST']";
+  //echo $configValues['CONFIG_DB_HOST'];
+  */
 
 ?>
