@@ -16,9 +16,9 @@
 				<br/><br/>
 <?php
 
-	echo $configValues['CONFIG_DB_NAME'];
+	echo "$configValues['CONFIG_DB_NAME']";
 	echo "<br/>";
-	echo $configValues['CONFIG_LANG'];
+	echo "$configValues['CONFIG_LANG']";
 	
 ?>				
 				<br/><br/>
