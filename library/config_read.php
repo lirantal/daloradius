@@ -5,10 +5,6 @@ $commentChar = "#";
 
 $fp = fopen($configFile, "r");
 
-if (!($fp)) {
-	echo "error!";
-	}
-
 while (!feof($fp)) {
   $line = trim(fgets($fp));
   if ($line && !ereg("^$commentChar", $line)) {
@@ -19,11 +15,12 @@ while (!feof($fp)) {
   }
 }
 fclose($fp);
-/*
-if ($configValues['CONFIG_IDE'] == "y")
-  echo "CONFIG_IDE is set&lt;br /&gt;"";
-else
-  echo "CONFIG_IDE is not set&lt;br /&gt;";
-  */
+
+if ($configValues['CONFIG_DB_HOST'] == "y")
+  echo "CONFIG_IDE is set";
+else 
+  echo "CONFIG_IDE is not set";
+
+  echo "$configValues['CONFIG_DB_HOST']";
 
 ?>
