@@ -5,6 +5,10 @@ $commentChar = "#";
 
 $fp = fopen($configFile, "r");
 
+if (!($fp)) {
+	echo "error!";
+	}
+
 while (!feof($fp)) {
   $line = trim(fgets($fp));
   if ($line && !ereg("^$commentChar", $line)) {
