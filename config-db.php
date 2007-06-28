@@ -31,17 +31,19 @@
 </td></tr>
 <tr><td>
 						<?php if (!($configValues['CONFIG_DB_NAME'])) { echo "<font color='#FF0000'>";  }?>
-</td><td>
+
 						<b>Database Name</b>
+</td><td>
 						<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="dbname" />
 						</font>
 </td></tr>
-<tr><td>
 
+
+</table>
 						<br/>
 						<input type="submit" name="submit" value="Apply" />
-</td></tr>
-</table>
+
+
 				</form>
 
 	
