@@ -29,6 +29,30 @@
 						<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="dbhost"/>
 						</font>
 </td></tr>
+
+<tr><td>
+						<?php if (!($configValues['CONFIG_DB_USER'])) { echo "<font color='#FF0000'>";  }?>
+
+						<b>Database User</b>
+</td><td>
+						<input value="<?php echo $configValues['CONFIG_DB_USER'] ?>" name="dbuser" />
+						</font>
+</td></tr>
+
+
+
+<tr><td>
+						<?php if (!($configValues['CONFIG_DB_PASS'])) { echo "<font color='#FF0000'>";  }?>
+
+						<b>Database Pass</b>
+</td><td>
+						<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="dbpass" />
+						</font>
+</td></tr>
+
+
+
+
 <tr><td>
 						<?php if (!($configValues['CONFIG_DB_NAME'])) { echo "<font color='#FF0000'>";  }?>
 
@@ -37,6 +61,7 @@
 						<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="dbname" />
 						</font>
 </td></tr>
+
 
 
 </table>
