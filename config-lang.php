@@ -32,14 +32,14 @@
 </li></li>
 
 
-
+<br/><br/>
 
 <li>
-						<?php if (!($configValues['CONFIG_LANG'])) { echo "<font color='#FF0000'>";  }?>
+						<?php if (!($configValues['CONFIG_DB_PASS'])) { echo "<font color='#FF0000'>";  }?>
 
 						<b>Secondary Language</b>
 </li><li>
-						<input value="<?php echo $configValues['CONFIG_LANG'] ?>" name="lang" />
+						<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="lang" />
 						</font>
 </li>
 
