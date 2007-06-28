@@ -65,8 +65,13 @@
 
 
 </table>
+
+						<center>
+						
 						<br/>
 						<input type="submit" name="submit" value="Apply" />
+						
+						</center>
 
 
 				</form>
