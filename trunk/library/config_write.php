@@ -1,6 +1,6 @@
 <?php
 
-$configFile = "library/daloradius.confe";
+$configFile = "library/daloradius.conf";
 $commentChar = "#";
 
 $fp = fopen($configFile, "w");

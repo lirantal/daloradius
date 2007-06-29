@@ -14,6 +14,7 @@ while (!feof($fp)) {
     $configValues[$option] = $value;
   }
 }
+
 fclose($fp);
 
 ?>
