@@ -74,7 +74,7 @@
 				You may fill below details for new hotspot addition to database
 				<br/><br/>
 				</p>
-				<form action="mng-hs-new.php" method="post">
+				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Hotspot Name</b>
