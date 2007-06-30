@@ -54,7 +54,7 @@
 	
                                 <h2>Management</h2>
 
-                                <h3>Group Reply Management</h3>
+                                <h3>Group Check Management</h3>
                                 <ul class="subnav">
 
                                                 <li><a href="mng-rad-groupcheck-list.php"><b>&raquo;</b>List Group Check Mappings</a></li>
@@ -66,7 +66,7 @@
                                                         </form></li>
 
 
-                                                <li><a href="mng-rad-groupcheck-del.php"><b>&raquo;</b>Remove Groupl Check Mapping</a></li>
+                                                <li><a href="mng-rad-groupcheck-del.php"><b>&raquo;</b>Remove Group Check Mapping</a></li>
                                 </ul>
 
 
