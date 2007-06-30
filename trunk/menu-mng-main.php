@@ -56,6 +56,7 @@
 				<h3>Users Management</h3>
 				<ul class="subnav">
 				
+						<li><a href="mng-list-all.php"><b>&raquo;</b>List Users</a></li>
 						<li><a href="mng-new.php"><b>&raquo;</b>New User</a></li>
 						<li><a href="mng-new-quick.php"><b>&raquo;</b>New User - Quick add </a></li>
 						<li><a href="mng-batch.php"><b>&raquo;</b>Batch-Add Users <a></li>
