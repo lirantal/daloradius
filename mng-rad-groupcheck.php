@@ -15,12 +15,12 @@
  
  
 <?php
-	include ("menu-mng-rad-groupreply.php");
+	include ("menu-mng-rad-groupcheck.php");
 ?>
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Group Reply Configuration</a></h2>
+				<h2 id="Intro"><a href="#">Group Check Configuration</a></h2>
 				
 				<p>
 	<table><center><br/>
