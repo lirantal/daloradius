@@ -1,3 +1,15 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>daloRADIUS</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
+<![endif]-->
+</head>
+
 <?php
 
     include ("menu-mng-main.php");
