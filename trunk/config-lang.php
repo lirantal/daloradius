@@ -3,6 +3,14 @@
 	include ("menu-config.php");
 	include ("library/config_read.php");
 
+    if (isset($_REQUEST['submit'])) {
+
+		if (isset($_REQUEST['config_lang']))
+			$configValues['CONFIG_LANG'] = $_REQUEST['config_lang'];
+			
+            include ("library/config_write.php");
+    }
+	
 
 	
 ?>		
@@ -17,36 +25,29 @@
 
 				<br/><br/>
 
-				<form name="dbsettings" action="config-db.php" method="post">
+				<form name="langsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 
 
-
-<li>
+<table>
+<tr><td>
 						<?php if (!($configValues['CONFIG_LANG'])) { echo "<font color='#FF0000'>";  }?>
 
 						<b>Primary Language</b>
-<li>
-						<input value="<?php echo $configValues['CONFIG_LANG'] ?>" name="lang" />
+</td><td>
+						<select name="config_lang">
+						<option value="en"> en </option>
+						</select>
 						</font>
-</li></li>
+</td></tr>
 
 
-<br/><br/>
+</table>
 
-<li>
-						<?php if (!($configValues['CONFIG_DB_PASS'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>Secondary Language</b>
-</li><li>
-						<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="lang" />
-						</font>
-</li>
-
-
-						
+						<center>						
 						<br/>
 						<input type="submit" name="submit" value="Apply" />
+						</center>						
 
 
 				</form>
