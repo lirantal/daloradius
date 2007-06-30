@@ -3,6 +3,23 @@
 	include ("menu-config.php");
 	include ("library/config_read.php");
 
+    if (isset($_REQUEST['submit'])) {
+
+		if (isset($_REQUEST['config_dbhost']))
+			$configValues['CONFIG_DB_HOST'] = $_REQUEST['config_dbhost'];
+
+		if (isset($_REQUEST['config_dbuser']))
+			$configValues['CONFIG_DB_USER'] = $_REQUEST['config_dbuser'];
+
+		if (isset($_REQUEST['config_dbpass']))
+			$configValues['CONFIG_DB_PASS'] = $_REQUEST['config_dbpass'];
+
+		if (isset($_REQUEST['config_dbname']))
+			$configValues['CONFIG_DB_NAME'] = $_REQUEST['config_dbname'];
+
+			
+            include ("library/config_write.php");
+    }	
 
 	
 ?>		
@@ -17,7 +34,7 @@
 
 				<br/><br/>
 
-				<form name="dbsettings" action="config-db.php" method="post">
+				<form name="dbsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <table>
 <tr><td>
@@ -26,7 +43,7 @@
 						<b>Database Hostname</b>
 
 </td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="dbhost"/>
+						<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost"/>
 						</font>
 </td></tr>
 
@@ -35,7 +52,7 @@
 
 						<b>Database User</b>
 </td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_USER'] ?>" name="dbuser" />
+						<input value="<?php echo $configValues['CONFIG_DB_USER'] ?>" name="config_dbuser" />
 						</font>
 </td></tr>
 
@@ -46,7 +63,7 @@
 
 						<b>Database Pass</b>
 </td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="dbpass" />
+						<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="config_dbpass" />
 						</font>
 </td></tr>
 
@@ -58,7 +75,7 @@
 
 						<b>Database Name</b>
 </td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="dbname" />
+						<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="config_dbname" />
 						</font>
 </td></tr>
 
