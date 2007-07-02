@@ -64,6 +64,14 @@ $l[Intro][gisviewmap.php] = "View MAP Mode";
 
 $l[Intro][graphmain.php] = "Introduction";
 $l[Intro][graphsalltimedownload.php] = "Overall Usage";
+$l[Intro][graphsalltimetrafficcompare.php] = "Overall Usage";
+$l[Intro][graphsalltimelogins.php] = "Overall Usage";
+$l[Intro][graphsalltimeupload.php] = "Overall Usage";
+$l[Intro][graphsoveralldownload.php] = "Overall Usage";
+$l[Intro][graphsoveralllogins.php] = "Overall Usage";
+$l[Intro][graphsoverallupload.php] = "Overall Usage";
+
+
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
 $l[captions][providebillratetodel] = "Provide the rate entry type which you would like to remove";

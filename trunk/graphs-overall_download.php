@@ -18,7 +18,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Overall Usage</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsoveralldownload.php]; ?></a></h2>
 
 <?php
         echo "<img src=\"library/exten-alltime_traffic_user_download.php?type=$type&user=$username\" />";

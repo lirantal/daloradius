@@ -18,7 +18,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Overall Usage</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsalltimetrafficcompare.php]; ?></a></h2>
 
 	<?php echo "<img src=\"library/exten-alltime_traffic_compare.php?type=$type\" "; ?><br/><br/><br/>
 	<?php echo "<img src=\"library/exten-alltime_traffic_stat_upload.php?type=$type\" "; ?><br/><br/><br/>
