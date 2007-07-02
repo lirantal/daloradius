@@ -36,7 +36,7 @@
 
 				<form name="dbsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-<table>
+<table border='2' class='table1'>
 <tr><td>
 
 						<?php if (!($configValues['CONFIG_DB_HOST'])) { echo "<font color='#FF0000'>";  }?>
