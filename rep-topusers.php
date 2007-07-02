@@ -19,10 +19,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Top Users</a></h2>
+		<h2 id="Intro"><a href="#"><?php echo $l[Intro][reptopusers.php]; ?></a></h2>
 				
 				<p>
-				Records for Top User in category of: <?php echo $order ?> <br/>
+				<?php echo $l[captions][recordsfortopusers]." ".$order ?> <br/>
 				</p>
 
 

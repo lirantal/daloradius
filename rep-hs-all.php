@@ -7,10 +7,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Hotspots Listing</a></h2>
+		<h2 id="Intro"><a href="#"><?echo $l[Intro][rephsall.php]; ?></a></h2>
 				
 				<p>
-				Listing hotspots in database<br/>
+				<?echo $l[captions][listhotspotsindb]; ?><br/>
 				</p>
 
 
@@ -33,10 +33,10 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> Account ID </th>
-                        <th scope='col'> HotSpots Name </th>
-                        <th scope='col'> MAC Address </th>
-                        <th scope='col'> Geocode </th>
+                        <th scope='col'> ".$l[all][ID]." </th>
+                        <th scope='col'> ".$l[all][HotSpot]." </th>
+                        <th scope='col'> ".$l[all][MACAddress]." </th>
+                        <th scope='col'> ".$l[all][Geocode]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
@@ -44,8 +44,8 @@
                         <td> $nt[name] </td>
                         <td> $nt[mac] </td>
                         <td> $nt[geocode] </td>
-                        <td> <a href='mng-hs-edit.php?name=$nt[name]'> edit </a>
-	                     <a href='mng-hs-del.php?name=$nt[name]'> del </a>
+                        <td> <a href='mng-hs-edit.php?name=$nt[name]'> ".$l[all][edit]." </a>
+	                     <a href='mng-hs-del.php?name=$nt[name]'> ".$l[all][del]." </a>
 			     </td>
 
                 </tr>";
