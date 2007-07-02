@@ -7,7 +7,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">RADIUS Server Logfile</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][indexradiuslog.php]; ?></a></h2>
 				<p>
 
 <?php

@@ -29,11 +29,11 @@
 				<input value="Search" />
 				</form>
 				
-				<h1><a href="index.php">daloRADIUS</a></h1>
+				<h1><a href="index.php"><? echo $l[all][daloRADIUS]; ?></a></h1>
 				
 				<h2>
 				
-						Radius Reporting, accting and Management by <a href="http://www.enginx.com">Enginx</a>
+				<? echo $l[all][copyright1]; ?>
 				
 				</h2>
 				

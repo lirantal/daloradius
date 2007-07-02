@@ -1,4 +1,6 @@
 <?
+$l[all][daloRADIUS] = "daloRADIUS";
+$l[all][copyright1] = "Radius Reporting, Billing and Management by <a href=\"http://www.enginx.com\">Enginx</a>";
 $l[all][ID] = "ID";
 $l[all][HotSpot] = "HotSpot";
 $l[all][Username] = "Username";
@@ -71,6 +73,11 @@ $l[Intro][graphsoveralldownload.php] = "Overall Usage";
 $l[Intro][graphsoveralllogins.php] = "Overall Usage";
 $l[Intro][graphsoverallupload.php] = "Overall Usage";
 
+$l[Intro][indexlastconnect.php] = "Last 50 Connection Attempts";
+$l[Intro][indexradiuslog.php] = "RADIUS Server Logfile";
+$l[Intro][indexradiusstat.php] = "Daemons Information";
+$l[Intro][indexserverstat.php] = "Server Status and Information";
+$l[Intro][indexsystemlog.php] = "System Logfile";
 
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
@@ -94,6 +101,9 @@ daloRADIUS application on your server. Once you have obtained that code from Goo
 Registration box and click the 'Register code' button to write it.<br/>
 Then you may be able to use Google Maps services. <br/><br/>";
 
+$l[captions][loginpage] = "Login Page:";
+$l[captions][loginrequired] = "Login Required";
+$l[captions][loginplease] = "Log-in please";
 
 $l[messages][missingratetype] = "error: missing rate type to delete";
 $l[messages][missingtype] = "error: missing type";
@@ -111,6 +121,12 @@ $l[messages][gismain1] = "Successfully updated GoogleMaps API Registration code"
 $l[messages][gismain2] = "error: could not open the file for writing:";
 $l[messages][gismain3] = "Check file permissions. The file should be writable by the webserver's user/group";
 $l[messages][gisviewwelcome] = "Welcome to Enginx Visual Maps";
+
+$l[messages][loginerror] = "<br/><br/>either of the following:<br/>
+1. bad username/password<br/>
+2. an administrator is already logged-in (only one instance is allowed) <br/>
+3. there appears to be more than one 'administrator' user in the database <br/>
+";
 
 $l[buttons][savesettings] = "Save Settings";
 $l[buttons][apply] = "Apply";
