@@ -1,12 +1,15 @@
 <?
 $l[all][daloRADIUS] = "daloRADIUS";
 $l[all][copyright1] = "Radius Reporting, Billing and Management by <a href=\"http://www.enginx.com\">Enginx</a>";
+$l[all][copyright2] = "Copyright of <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
+Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l[all][ID] = "ID";
 $l[all][HotSpot] = "HotSpot";
 $l[all][Username] = "Username";
 $l[all][Password] = "Password";
 $l[all][IPAddress] = "IP Address";
 $l[all][Attribute] = "Attribute";
+$l[all][Value] = "Value";
 $l[all][MaxTimeExpiration] = "Max Time / Expiration";
 $l[all][UsedTime] = "Used Time";
 $l[all][Status] = "Status";
@@ -40,7 +43,10 @@ $l[all][TotalBilled] = "Total Billed";
 $l[all][CardBank] = "Card Bank";
 $l[all][Type] = "Type";
 $l[all][CardBank] = "CardBank";
-
+$l[all][MACAddress] = "MAC Address";
+$l[all][Geocode] = "Geocode";
+$l[all][edit] = "edit";
+$l[all][del] = "del";
 
 $l[Intro][acctactive.php] = "Active Records Accounting";
 $l[Intro][acctall.php] = "Users Accounting";
@@ -79,6 +85,11 @@ $l[Intro][indexradiusstat.php] = "Daemons Information";
 $l[Intro][indexserverstat.php] = "Server Status and Information";
 $l[Intro][indexsystemlog.php] = "System Logfile";
 
+$l[Intro][repall.php] = "Users Listing";
+$l[Intro][rephsall.php] = "Hotspots Listing";
+$l[Intro][repmain.php] = "Reports Page";
+$l[Intro][reptopusers.php] = "Top Users";
+$l[Intro][repusername.php] = "Users Listing";
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
 $l[captions][providebillratetodel] = "Provide the rate entry type which you would like to remove";
@@ -104,6 +115,12 @@ Then you may be able to use Google Maps services. <br/><br/>";
 $l[captions][loginpage] = "Login Page:";
 $l[captions][loginrequired] = "Login Required";
 $l[captions][loginplease] = "Log-in please";
+
+$l[captions][listingusersindb] = "Listing users in database";
+$l[captions][listhotspotsindb] = "Listing hotspots in database";
+$l[captions][recordsfortopusers] = "Records for Top User in category of:";
+$l[captions][recordsforuser] = "Records found for user:";
+$l[captions][radcheckrecords] = "RADIUS radcheck Records";
 
 $l[messages][missingratetype] = "error: missing rate type to delete";
 $l[messages][missingtype] = "error: missing type";
