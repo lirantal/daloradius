@@ -181,13 +181,21 @@ function toggleShowDiv(pass) {
 				</p>
 				<form name="batchuser" action="mng-batch.php" method="post">
 
+<table border='2' class='table1'>
+<tr><td>
 						<b>Username Prefix</b>
+</td><td>
 						<input value="<?php echo $username_prefix ?>" name="username_prefix"/><br/>
-
+</td></tr>
+<tr><td>
 						<b>Number of instances to create</b>
+</td><td>
 						<input value="<?php echo $number ?>" name="number" /><br/>
+</td></tr>
+<tr><td>
 
 						<b>Length of username string</b>
+</td><td>
 	<SELECT name="length_user">
           <OPTION id="4"> 4 </OPTION>
           <OPTION id="5"> 5 </OPTION>
@@ -196,8 +204,11 @@ function toggleShowDiv(pass) {
           <OPTION id="10"> 10 </OPTION>
           <OPTION id="12"> 12 </OPTION>
         </SELECT><br/>
+</td></tr>
+<tr><td>
 
 						<b>Length of password string</b>
+</td><td>
 	<SELECT name="length_pass">
           <OPTION id="4"> 4 </OPTION>
           <OPTION id="5"> 5 </OPTION>
@@ -206,7 +217,8 @@ function toggleShowDiv(pass) {
           <OPTION id="10"> 10 </OPTION>
           <OPTION id="12"> 12 </OPTION>
         </SELECT><br/>
-
+</td></tr>
+</table>
 
 <br/>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesExpiration')">
