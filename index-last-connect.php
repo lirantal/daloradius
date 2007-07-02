@@ -7,7 +7,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Last 50 Connection Attempts</a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l[Intro][indexlastconnect.php]; ?></a></h2>
 				<p>
 
 <?php

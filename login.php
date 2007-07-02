@@ -12,23 +12,25 @@
 </head>
  
 <body>
+<?php
+    include_once ("lang/main.php");
+?>
 
 <div id="wrapper">
 <div id="innerwrapper">
 
 		<div id="header">
-						<h1><a href="index.php">daloRADIUS</a></h1>
+		<h1><a href="index.php"><? echo $l[all][daloRADIUS]; ?></a></h1>
 				
 				<h2>
 				
-						Radius Reporting, Billing and Management by <a href="http://www.enginx.com">Enginx</a>
-				
+				<?echo $l[all][copyright1]; ?>	
 				</h2>
 				<br/>
 				
 				<ul id="subnav">
 				
-						<li>daloRADIUS Login Page:</li>
+				<li><? echo $l[all][daloRADIUS]." ".$l[captions][loginpage]?></li>
 				
 				</ul>
 		
@@ -36,9 +38,9 @@
 		
 		<div id="sidebar">
 		
-				<h2>Login Required</h2>
+		<h2><? echo $l[captions][loginrequired]; ?></h2>
 				
-				<h3>Log-in please</h3>
+		<h3><? echo $l[captions][loginplease]; ?></h3>
 
 				<form action="dologin.php" class="sidebar" method="post" >
 
@@ -63,10 +65,7 @@
 <?php
 	 if ($error) { 
 		echo $error;
-		echo "<br/><br/>either of the following:<br/>";
-		echo "1. bad username/password<br/>";
-		echo "2. an administrator is already logged-in (only one instance is allowed) <br/>";
-		echo "3. there appears to be more than one 'administrator' user in the database <br/>";
+		echo $l[messages][loginerror];
 	}
 ?>
 				
