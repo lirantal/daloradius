@@ -17,6 +17,7 @@
 <div id="innerwrapper">
 
 <?php
+        $m_active = "Graphs";
         include_once ("include/menu/header.php");
 ?>      
 

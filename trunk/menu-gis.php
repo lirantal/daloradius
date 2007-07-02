@@ -17,7 +17,8 @@
 <div id="innerwrapper">
 
 <?php
-	    include_once ("include/menu/header.php");
+	 $m_active = "Gis";
+	 include_once ("include/menu/header.php");
 ?>      
 
 		<div id="sidebar">

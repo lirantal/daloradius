@@ -22,6 +22,7 @@
 <div id="innerwrapper">
 		
 <?php
+    $m_active = "Config";
     include_once ("include/menu/header.php");
 ?>      
 

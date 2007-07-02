@@ -22,7 +22,8 @@ include_once ("lang/main.php");
 <div id="innerwrapper">
 
 <?php
-    include_once ("include/menu/header.php");
+	$m_active = "Reports";
+	include_once ("include/menu/header.php");
 ?>      
 
 		<div id="sidebar">
