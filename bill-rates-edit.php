@@ -59,17 +59,28 @@
 				<?echo $l[captions][detailsofnewrate]; ?>
 				<br/><br/>			</p>
 				<form action="bill-rates-edit.php" method="post">
+<table border='2' class='table1'>
+<tr><td>
 						<b><?echo $l[all][Type]; ?></b>
+</td><td>
 						<input value="<?php echo $type ?>" name="type" /><br/>
-
+</td></tr>
+<tr><td>
 						<b><? echo $l[all][CardBank];?></b>
+</td><td>
 						<input value="<?php echo $cardbank ?>" name="cardbank" /><br/>
-
+</td></tr>
+<tr><td>
 						<b><? echo $l[all][Rate];?></b>
+</td><td>
 						<input value="<?php echo $rate ?>" name="rate" /><br/>
-						
+</td></tr>
+</table>						
 						<br/>
+<center>
 						<input type="submit" name="submit" value="<?echo $l[buttons][savesettings];?>"/>
+
+</center>
 
 				</form>
 		

@@ -48,13 +48,17 @@
 ?>
 				</p>
 				<form action="bill-rates-del.php" method="post">
-
+<table border='2' class='table1'>
+<tr><td>
 						<b>Type</b>
+</td><td>
 						<input value="<?php echo $type ?>" name="type"/><br/>
-
+</td></tr>
+</table>
 						<br/><br/>
+<center>
 						<input type="submit" name="submit" value="Apply"/>
-
+</center>
 				</form>
 		
 		</div>
