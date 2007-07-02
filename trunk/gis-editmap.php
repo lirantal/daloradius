@@ -76,7 +76,7 @@ map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 
 
-//map.setCenter(new GLatLng(8.497245425737093, -13.288897275924683), 13, G_HYBRID_MAP);
+//map.setCenter(new GLatLng(35.460669951495305, -81.5625), 13, G_HYBRID_MAP);
 map.setCenter(new GLatLng(0,0), 1, G_HYBRID_MAP);
 
 function createMarker(point,html) {

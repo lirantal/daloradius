@@ -93,7 +93,7 @@ function createMarker(point,html) {
 
 
 
-var point_sl1 = new GLatLng(8.497245425737093, -13.288897275924683);
+var point_sl1 = new GLatLng(35.460669951495305, -81.5625);
 // for tabbed windows
 // var marker = createTabbedMarker(point, ["Tab 1 contents", "Tab 2 contents","Tab 3 contents"],["One","Two","Three"]);
 //var marker_sl1 = createMarker(point_sl1, 'Solar Hotel <br/> 60 Users');
