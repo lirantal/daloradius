@@ -63,17 +63,25 @@
 				You may edit below details for hotspot 
 				<br/><br/>			</p>
 				<form action="mng-hs-edit.php" method="post">
+<table border='2' class='table1'>
+<tr><td>
 						<b>MAC Address</b>
+</td><td>
 						<input value="<?php echo $macaddress ?>" name="macaddress" /><br/>
-
+</td></tr>
+<tr><td>
 						<b>Geocode</b>
+</td><td>
 						<input value="<?php echo $geocode ?>" name="geocode" /><br/>
 
 						<input type="hidden" value="<?php echo $name ?>" name="name" /><br/>
 						
+</td></tr>
+</table>
 						<br/><br/>
+<center>
 						<input type="submit" name="submit" value="Save Settings"/>
-
+</center>
 				</form>
 		
 		</div>
