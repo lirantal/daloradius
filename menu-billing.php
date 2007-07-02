@@ -24,6 +24,7 @@
 <div id="innerwrapper">
 
 <?php
+        $m_active = "Billing";
         include_once ("include/menu/header.php");
 ?>      
 

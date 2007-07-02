@@ -131,4 +131,12 @@ $l[messages][loginerror] = "<br/><br/>either of the following:<br/>
 $l[buttons][savesettings] = "Save Settings";
 $l[buttons][apply] = "Apply";
 
+$l[menu][Home] = "<em>H</em>ome</a>";
+$l[menu][Managment] = "<em>M</em>anagment</a>";
+$l[menu][Reports] = "<em>R</em>eports</a>";
+$l[menu][Accounting] = "<em>A</em>ccounting</a>";
+$l[menu][Billing] = "<em>B</em>illing</a>";
+$l[menu][Gis] = "<em>GIS</em></a>";
+$l[menu][Graphs] = "<em>G</em>raphs</a>";
+$l[menu][Help] = "<em>H</em>elp</a>";
 ?>
