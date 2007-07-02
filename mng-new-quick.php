@@ -255,19 +255,25 @@ radius attributes
 				</p>
 				<form name="newuser" action="mng-new-quick.php" method="post">
 
-
+<table border='2' class='table1'>
+<tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Username</b>
+</td><td>
 						<input value="<?php echo $username ?>" name="username"/>
 <a href="javascript:randomUsername()"> genuser</a><br/>
 						</font>
-
+</td></tr>
+<tr><td>
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Password</b>
+</td><td>
 						<input value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/><br/>
 						</font>
 
+</td></tr>
+</table>
 <br/>
 						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
