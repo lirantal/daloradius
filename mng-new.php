@@ -288,7 +288,6 @@ function toggleShowDiv(pass) {
 						</font>
 </td></tr>
 </table>
-<center>
 	<br/><br/>
 	<h4> Session Attributes </h4>
 
@@ -423,7 +422,7 @@ function toggleShowDiv(pass) {
 						<br/><br/>
 						<input type="submit" name="submit" value="Apply"/>
 
-				<center>
+
 				</form>
 		
 		</div>

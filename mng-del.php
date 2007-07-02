@@ -62,15 +62,19 @@
 				<br/><br/>
 				</p>
 				<form action="mng-del.php" method="post">
-
+<table border='2' class='table1'>
+<tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Username</b>
+</td><td>
 						<input value="<?php echo $username ?>" name="username"/><br/>
 						</font>
-
+</td></tr>
+</table>
 						<br/><br/>
+<center>
 						<input type="submit" name="submit" value="Apply"/>
-
+</center>
 				</form>
 		
 		</div>

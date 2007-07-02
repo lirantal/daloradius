@@ -76,22 +76,31 @@
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+<table border='2' class='table1'>
+<tr><td>
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Hotspot Name</b>
+</td><td>
 						<input value="<?php echo $name ?>" name="name"/><br/>
 						</font>
-
+</td></tr>
+<tr><td>
 						<?php if (trim($macaddress) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>MAC Address</b>
+</td><td>
 						<input value="<?php echo $macaddress ?>" name="macaddress" /><br/>
 						</font>
-
+</td></tr>
+<tr><td>
 						<b>Geocode</b>
+</td><td>
 						<input value="<?php echo $geocode ?>" name="geocode" /><br/>
-
+</td></tr>
+</table>
 						<br/><br/>
+<center>
 						<input type="submit" name="submit" value="Apply"/>
-
+</center>
 				</form>
 		
 		</div>

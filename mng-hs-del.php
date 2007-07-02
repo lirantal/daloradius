@@ -59,14 +59,19 @@
 				</p>
 				<form action="mng-hs-del.php" method="post">
 
+<table border='2' class='table1'>
+<tr><td>
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Hotspots Name</b>
+</td><td>
 						<input value="<?php echo $name ?>" name="name"/><br/>
 						</font>
-
+</td></tr>
+</table>
 						<br/><br/>
+<center>
 						<input type="submit" name="submit" value="Apply"/>
-
+</center>
 				</form>
 		
 		</div>
