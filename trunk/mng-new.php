@@ -260,26 +260,35 @@ function toggleShowDiv(pass) {
 				</p>
 				<form name="newuser" action="mng-new.php" method="post">
 
+<table border='2' class='table1'>
+<tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Username</b>
+</td><td>
 						<input value="<?php echo $username ?>" name="username"/>
 <a href="javascript:randomUsername()"> genuser</a><br/>
 						</font>
-
+</td></tr>
+<tr><td>
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Password</b>
+</td><td>
 						<input value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/>
 						</font>
-
+</td></tr>
+<tr><td
 						<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Expiration</b>
+</td><td>
 <input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 						<br/>
 						</font>
-
+</td></tr>
+</table>
+<center>
 	<br/><br/>
 	<h4> Session Attributes </h4>
 
@@ -414,6 +423,7 @@ function toggleShowDiv(pass) {
 						<br/><br/>
 						<input type="submit" name="submit" value="Apply"/>
 
+				<center>
 				</form>
 		
 		</div>
