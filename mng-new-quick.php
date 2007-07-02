@@ -274,6 +274,7 @@ radius attributes
 
 </td></tr>
 </table>
+<center>
 <br/>
 						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
@@ -296,6 +297,8 @@ radius attributes
 						</font>
 
 						<input type="submit" name="submit" value="Create" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
+
+				</center>
 
 				</form>
 		
