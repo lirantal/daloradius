@@ -44,7 +44,7 @@ function daily($username) {
 		// | Upload | Day  |
 		// +--------+------+
 
-        	$uploads = ($ent[0]/1024/1024);	// total uploads on that specific day
+        	$uploads = floor($ent[0]/1024/1024);	// total uploads on that specific day
         	$day = $ent[1];		// day of the month [1-31]
 
 		$total_uploads = $total_uploads + $uploads;
@@ -116,7 +116,7 @@ function monthly($username) {
 		// | Upload | Month  |
 		// +--------+--------+
 
-        	$uploads = ($ent[0]/1024/1024);	// total uploads on that specific month
+        	$uploads = floor($ent[0]/1024/1024);	// total uploads on that specific month
         	$month = $ent[1];	// Month of year [1-12]
 
 		$total_uploads = $total_uploads + $uploads;
@@ -194,7 +194,7 @@ function yearly($username) {
 		// | Upload | Year  |
 		// +--------+-------+
 
-        	$uploads = ($ent[0]/1024/1024);	// total uploads on that specific month
+        	$uploads = floor($ent[0]/1024/1024);	// total uploads on that specific month
         	$year = $ent[1];	// Year
 
 		$total_uploads = $total_uploads + $uploads;
