@@ -1,6 +1,13 @@
 release 0.9 - July 2007
+	- this release is named after Erick Otto who has taken part of daloRADIUS
+	and passed away on 24th of June 2007, may him rest in peace.
 	- thanks to Erick Otto the sql dump is fixed (there was a missing /)
-	- added more management interfaces for radius's sql database (radgroupchk, etc)
+	- added more management interfaces for radius's sql database:
+	nas page, radgroupreply page, radgroupcheck page and usergroup page
+	- moved/copied the report's list all user's page to the management page as
+	requested by DTE and Giso
+	- moved to a new graphing library called libchart, credit goes to Jean-Marc Trémeaux
+	(see information at: http://naku.dohcrew.com/libchart/pages/introduction/)
 	- moved to a more OOP design by moduling all the pages to use the same group-wise
 	header menus which makes customizing and changing very easy and quick.
 	- Evgeniy Kozhuhovskiy has introduced a new feature which enables support for multiple
