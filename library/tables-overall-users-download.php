@@ -45,7 +45,7 @@ function daily($username) {
 		// | Download | Day  |
 		// +--------+------+
 
-        	$downloads = ($ent[0]/1024/1024);	// total downloads on that specific day
+        	$downloads = floor($ent[0]/1024/1024);	// total downloads on that specific day
         	$day = $ent[1];		// day of the month [1-31]
 
 		$total_downloads = $total_downloads + $downloads;
@@ -114,7 +114,7 @@ function monthly($username) {
 		// | Download | Month  |
 		// +--------+--------+
 
-        	$downloads = ($ent[0]/1024/1024);	// total downloads on that specific month
+        	$downloads = floor($ent[0]/1024/1024);	// total downloads on that specific month
         	$month = $ent[1];	// Month of year [1-12]
 
 		$total_downloads = $total_downloads + $downloads;
@@ -192,7 +192,7 @@ function yearly($username) {
 		// | Download | Year  |
 		// +--------+-------+
 
-        	$downloads = ($ent[0]/1024/1024);	// total downloads on that specific month
+        	$downloads = floor($ent[0]/1024/1024);	// total downloads on that specific month
         	$year = $ent[1];	// Year
 
 		$total_downloads = $total_downloads + $downloads;
