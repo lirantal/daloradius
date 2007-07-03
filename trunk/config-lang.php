@@ -20,8 +20,7 @@
 		
 				<h2 id="Intro"><a href="#">Database Configuration</a></h2>
 				<p>
-				Below are the settings that daloRADIUS will make use of to connect to your
-				MySQL database server and manage it.
+				Below you can choose between different support languages for daloRADIUS translation.
 
 				<br/><br/>
 
