@@ -121,6 +121,8 @@ $l[captions][listhotspotsindb] = "Listing hotspots in database";
 $l[captions][recordsfortopusers] = "Records for Top User in category of:";
 $l[captions][recordsforuser] = "Records found for user:";
 $l[captions][radcheckrecords] = "RADIUS radcheck Records";
+$l[captions][totallogins] = "Total Logins/Hits";
+$l[captions][dailyloginsdistrib] = "alltime record of logins based on daily distribution";
 
 $l[messages][missingratetype] = "error: missing rate type to delete";
 $l[messages][missingtype] = "error: missing type";

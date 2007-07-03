@@ -9,6 +9,8 @@
 *                                                                  *
 *******************************************************************/
 
+include_once ("lang/main.php");
+
 $type = $_REQUEST['type'];
 
 if ($type == "daily") {
@@ -54,8 +56,8 @@ function daily() {
 
   $graph->img->SetMargin(80,30,60,40);
 
-  $graph->title->Set("Total Logins/Hits ");
-  $graph->subtitle->Set("alltime record of logins based on daily distribution");
+  $graph->title->Set($l[captions][totallogins]." ");
+  $graph->subtitle->Set($l[captions][dailyloginsdistrib]);
 
   $graph->xaxis->SetTitle("Days in a week", "middle");
   $graph->xaxis->SetTickLabels($array_days);
