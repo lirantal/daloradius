@@ -21,9 +21,14 @@
 		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsoveralldownload.php]; ?></a></h2>
 
 <?php
-        echo "<img src=\"library/exten-alltime_traffic_user_download.php?type=$type&user=$username\" />";
-        include ('library/graph-alltime_download.php');
+//        echo "<img src=\"library/exten-alltime_traffic_user_download.php?type=$type&user=$username\" />";
+//        include ('library/graph-alltime_download.php');
 
+	echo "<br/>";
+    echo "<center>";
+    echo "<img src=\"library/graphs-overall-users-download.php?type=$type&user=$username\" />";
+    echo "</center>";
+    include 'library/tables-overall-users-download.php';
 ?>
 
 		

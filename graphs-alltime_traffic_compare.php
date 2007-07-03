@@ -20,9 +20,20 @@
 		
 		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsalltimetrafficcompare.php]; ?></a></h2>
 
-	<?php echo "<img src=\"library/exten-alltime_traffic_compare.php?type=$type\" "; ?><br/><br/><br/>
-	<?php echo "<img src=\"library/exten-alltime_traffic_stat_upload.php?type=$type\" "; ?><br/><br/><br/>
-	<?php echo "<img src=\"library/exten-alltime_traffic_stat_download.php?type=$type\" "; ?><br/><br/><br/>
+<?php		
+	// echo "<img src=\"library/exten-alltime_traffic_compare.php?type=$type\" "; <br/><br/><br/>
+	// echo "<img src=\"library/exten-alltime_traffic_stat_upload.php?type=$type\" "; <br/><br/><br/>
+	// echo "<img src=\"library/exten-alltime_traffic_stat_download.php?type=$type\" "; <br/><br/><br/>
+	
+        echo "<br/><br/>";
+        echo "<center>";
+//        echo "<img src=\"library/graphs-alltime-traffic-compare.php?type=$type\" />";
+        echo "<img src=\"library/graphs-alltime-traffic-download.php?type=$type\" />";
+        echo "<img src=\"library/graphs-alltime-traffic-upload.php?type=$type\" />";
+        echo "</center>";
+		
+?>
+	
 
 		</div>
 		
