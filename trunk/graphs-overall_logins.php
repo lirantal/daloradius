@@ -21,9 +21,12 @@
 		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsoveralllogins.php]; ?></a></h2>
 
 <?php
-	echo "<img src=\"library/exten-alltime_user_logins.php?type=$type&user=$username\" />";
+//	echo "<img src=\"library/exten-alltime_user_logins.php?type=$type&user=$username\" />";
 
-	include 'library/graph-user_login_overall.php';
+	echo "<center>";
+	echo "<img src=\"library/graphs-overall-users-login.php?type=$type&user=$username\" />";
+	echo "</center>";
+	include 'library/tables-overall-users-login.php';
 ?>
 		
 

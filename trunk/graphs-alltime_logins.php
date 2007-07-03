@@ -23,9 +23,14 @@
 
 <?php
 
-        echo "<img src=\"library/exten-alltime_logins.php?type=$type\" />";
+//    echo "<img src=\"library/exten-alltime_logins.php?type=$type\" />";
+//	include 'library/graph-alltime_logins.php';
 
-	include 'library/graph-alltime_logins.php';
+        echo "<br/>";
+        echo "<center>";
+        echo "<img src=\"library/graphs-alltime-users-login.php?type=$type\" />";
+        echo "</center>";
+        include 'library/tables-alltime-users-login.php';
 ?>
 		
 
