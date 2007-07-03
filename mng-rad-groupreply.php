@@ -24,7 +24,7 @@
 				
 				<p>
 	<table><center><br/>
-	<img src="library/exten-get_total_users.php" />
+	<img src="library/chart-mng-total-users.php" />
 	</table></center>
 
 				</p>
