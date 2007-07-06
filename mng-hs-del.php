@@ -57,7 +57,7 @@
 				To remove a user from the database you must provide the username or the account id
 				<br/><br/>
 				</p>
-				<form action="mng-hs-del.php" method="post">
+				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <table border='2' class='table1'>
 <tr><td>
