@@ -107,7 +107,7 @@ function toggleShowDiv(pass) {
                                 To remove a user entry from the database you must provide the username of the account.
                                 <br/><br/>
                                 </p>
-                                <form action="mng-rad-usergroup-del.php" method="post">
+                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
                                                 <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
 
