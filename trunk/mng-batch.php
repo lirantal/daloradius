@@ -179,7 +179,7 @@ function toggleShowDiv(pass) {
 		if (trim($sessiontimeout) == "") { echo "error: missing session <br/>";  }
 ?>
 				</p>
-				<form name="batchuser" action="mng-batch.php" method="post">
+				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <table border='2' class='table1'>
 <tr><td>
