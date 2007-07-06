@@ -284,7 +284,7 @@
 				<p>
 				You may fill below details for new user addition to database
 				<br/><br/>			</p>
-				<form action="mng-edit.php" method="post">
+				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 						<b>Password</b>
 						<input value="<?php echo $password ?>" name="password" /><br/>
 

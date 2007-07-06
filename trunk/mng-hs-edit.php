@@ -62,7 +62,7 @@
 				<p>
 				You may edit below details for hotspot 
 				<br/><br/>			</p>
-				<form action="mng-hs-edit.php" method="post">
+				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
 						<b>MAC Address</b>

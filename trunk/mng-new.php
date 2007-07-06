@@ -258,7 +258,7 @@ function toggleShowDiv(pass) {
 				You may fill below details for new user addition to database
 				<br/><br/>
 				</p>
-				<form name="newuser" action="mng-new.php" method="post">
+				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <table border='2' class='table1'>
 <tr><td>
