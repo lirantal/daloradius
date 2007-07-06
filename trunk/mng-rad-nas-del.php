@@ -88,7 +88,7 @@ function toggleShowDiv(pass) {
                                 To remove a nas ip/host entry from the database you must provide the ip/host of the account.
                                 <br/><br/>
                                 </p>
-                                <form action="mng-rad-nas-del.php" method="post">
+                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>NAS IP/Host</b>
