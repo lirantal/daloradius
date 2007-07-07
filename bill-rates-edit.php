@@ -58,7 +58,7 @@
 				<p>
 				<?echo $l[captions][detailsofnewrate]; ?>
 				<br/><br/>			</p>
-				<form action="bill-rates-edit.php" method="post">
+				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
 						<b><?echo $l[all][Type]; ?></b>

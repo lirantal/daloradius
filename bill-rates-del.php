@@ -47,7 +47,7 @@
 
 ?>
 				</p>
-				<form action="bill-rates-del.php" method="post">
+				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
 						<b>Type</b>
