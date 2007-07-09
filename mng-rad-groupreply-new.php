@@ -22,6 +22,9 @@
 		$counter = 0;
 		foreach ($groupname as $group) {
 
+			if ($groupExtra == "")
+					continue;
+					
 			echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> ";
 				
 			$sql = "SELECT * FROM radgroupreply WHERE GroupName='$group' AND Value='$value[$counter]'";
@@ -190,7 +193,9 @@ function toggleShowDiv(pass) {
 </table>
 
 <br/>
+<center>
 <input type="button" value="Add Groups" onclick="addStuff()"/>
+</center>
 <br/><br/>
 
 <div id="mydiv">
