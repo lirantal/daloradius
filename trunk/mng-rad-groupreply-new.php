@@ -54,32 +54,37 @@
 	    $attributeExtra = $_POST['attributeExtra'];
 		$valueExtra = $_POST['valueExtra'];
 		
-		$counter = 0;
-		foreach ($groupnameExtra as $groupExtra) {
+		if ($groupnameExtra) {
+		
+			$counter = 0;
+		
+			foreach ($groupnameExtra as $groupExtra) {
 
-			echo "$groupExtra $attributeExtra[$counter] $opExtra[$counter] $valueExtra[$counter] <br/> ";
-				
-			$sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-				
-			if (mysql_num_rows($res) == 0) {
-				if (trim($groupExtra) != "" and trim($valueExtra[$counter]) != "" and trim($opExtra[$counter]) != "" and trim($attributeExtra[$counter]) != "") {								
-					// insert usergroup details
-					$sql = "INSERT INTO radgroupreply values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
-					$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-					$counter++;
-				} // end if trim
-			} else { 
-                    echo "<font color='#FF0000'>error: the group [$groupnameExtra[$counter]] already exist in the database with value [$valueExtra[$counter]] <br/></font>";
-					echo "
-                        <script language='JavaScript'>
-                        <!--
-                            alert('The group $groupnameExtra[$counter] already exists in the database with value $valueExtra[$counter]');
-                        -->
-                        </script>
-                        ";
-            } // end else if mysql
-				
+				echo "$groupExtra $attributeExtra[$counter] $opExtra[$counter] $valueExtra[$counter] <br/> ";
+					
+				$sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+					
+				if (mysql_num_rows($res) == 0) {
+					if (trim($groupExtra) != "" and trim($valueExtra[$counter]) != "" and trim($opExtra[$counter]) != "" and trim($attributeExtra[$counter]) != "") {								
+						// insert usergroup details
+						$sql = "INSERT INTO radgroupreply values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
+						$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+						$counter++;
+					} // end if trim
+				} else { 
+	                    echo "<font color='#FF0000'>error: the group [$groupnameExtra[$counter]] already exist in the database with value [$valueExtra[$counter]] <br/></font>";
+						echo "
+	                        <script language='JavaScript'>
+	                        <!--
+	                            alert('The group $groupnameExtra[$counter] already exists in the database with value $valueExtra[$counter]');
+	                        -->
+	                        </script>
+	                        ";
+	            } // end else if mysql
+					
+			}
+		
 		}
 
         include 'library/closedb.php';
