@@ -13,6 +13,7 @@ release 0.9 - July 2007
 	the int isn't rounded, it's actually a double/float)
 	- moved to a more OOP design by moduling all the pages to use the same group-wise
 	header menus which makes customizing and changing very easy and quick.
+	- completely changed the way the management pages are working to be more dynamic (mng-edit)
 	- Evgeniy Kozhuhovskiy has introduced a new feature which enables support for multiple
 	languages, also congrads for joining the development team :)
 	
