@@ -1,260 +1,76 @@
 <?php 
+
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
 	include 'library/config.php';
 	include 'library/opendb.php';
+	include 'include/management/attributes.php';				// required for checking if an attribute belongs to the
+										// radcheck table or the radreply based upon it's name
+
+        if (isset($_REQUEST['submit'])) {
+
+                $username = $_REQUEST['username'];
+	        if (trim($username) != "") {
+
+		 foreach( $_POST as $attribute=>$value ) { 
+
+			if ( ($attribute == "username") || ($attribute == "submit") )	// we skip these post variables as they are not important
+				continue;	
+				
+				$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
+											// or radcheck table (using include/management/attributes.php function)
+
+		                $counter = 0;
+
+				$sql = "UPDATE $useTable SET Value='$value' WHERE UserName='$username' AND Attribute='$attribute'";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+
+				$counter++;
+
+        	  } //foreach $_POST
+
+		} // if username != ""
+
+	} // if isset post submit
+
 
 	$username = "";
-	$username = $_GET['username'];
+	$username = $_REQUEST['username'];
 
-	/* fill-in username and password in the textboxes
 
-        /* We are searching for both kind of attributes for the password, being User-Password, the more
-           common one and the other which is Password, this is also done for considerations of backwards
-           compatibility with version 0.7        */
+	/* fill-in all the user radcheck attributes */
 
-	$sql = "SELECT * FROM radcheck WHERE UserName='$username' AND (Attribute='User-Password' or Attribute='Password')";
+	$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$password = $nt['Value'];
 
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Expiration'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$expiration = $nt['Value'];
+	$arrAttr = array();
+	$arrOp = array();
+	$arrValue = array();
 
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Max-All-Session'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$maxallsession = $nt['Value'];
-
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='Session-Timeout'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$sessiontimeout = $nt['Value'];
-
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='Idle-Timeout'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$idletimeout = $nt['Value'];
-
-	// fill-in called-station-id in the textboxes
-	$sql = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Called-Station-Id'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$calledstationid = $nt['Value'];
-
-	// fill-in called-station-id in the textboxes
-	$sql = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Calling-Station-Id'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$callingstationid = $nt['Value'];
-
-
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Redirection-URL'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$wisprredirectionurl = $nt['Value'];
-
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Bandwidth-Max-Up'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$wisprbandwidthmaxup = $nt['Value'];
-
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Bandwidth-Max-Down'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$wisprbandwidthmaxdown = $nt['Value'];
-
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Session-Terminate-Time'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	$nt = mysql_fetch_array($res);
-	$wisprsessionterminatetime = $nt['Value'];
-
-
-
-	if (isset($_POST['submit'])) {
-
-		$username = $_POST['username'];
-		$password = $_POST['password'];
-		$expiration = $_POST['expiration'];
-		$maxallsession = $_POST['maxallsession'];
-		$sessiontimeout = $_POST['sessiontimeout'];
-		$calledstationid = $_POST['calledstationid'];
-		$callingstationid = $_POST['callingstationid'];
-		$idletimeout = $_POST['idletimeout'];
-		$wisprredirectionurl = $_POST['wisprredirectionurl'];
-		$wisprbandwidthmaxup = $_POST['wisprbandwidthmaxup'];
-		$wisprbandwidthmaxdown = $_POST['wisprbandwidthmaxdown'];
-		$wisprsessionterminatetime = $_POST['wisprsessionterminatetime'];
-
-
-		if (trim($username) != "") {
-
-
-			if (trim($password) != "") {
-
-			// Like before we want to find either User-Password or Password 
-
-			$sql = "UPDATE radcheck SET Value='$password' WHERE UserName='$username' AND (Attribute='User-Password' or Attribute='Password')";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-			}
+        while($nt = mysql_fetch_array($res)) {
+		array_push($arrAttr, $nt['Attribute']);
+		array_push($arrOp, $nt['op']);
+		array_push($arrValue, $nt['Value']);
+	}	
 		
-			if (trim($expiration) != "") {
-			
-			$query = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Expiration'";
-			$result = mysql_query($query) or die('Query failed: ' . mysql_error());
-			
-				if (mysql_num_rows($result) == 1) {
-					$sql = "UPDATE radcheck SET Value='$expiration' WHERE UserName='$username' AND Attribute='Expiration'";
-					$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-				} elseif (mysql_num_rows($result) < 1 ) {
-					$sql = "INSERT INTO radcheck values (0, '$username', 'Expiration', ':=', '$expiration')";
-					$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-				}
-			}
-
-			if (trim($maxallsession) != "") {
-
-                        $query = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Max-All-Session'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-                                if (mysql_num_rows($result) == 1) {
-					$sql = "UPDATE radcheck SET Value='$maxallsession' WHERE UserName='$username' AND Attribute='Max-All-Session'";
-					$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radcheck values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
-
-			if (trim($sessiontimeout) != "") {
-
-                        $query = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='Session-Timeout'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radreply SET Value='$sessiontimeout' WHERE UserName='$username' AND Attribute='Session-Timeout'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radreply values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
-
-			if (trim($idletimeout) != "") {
-
-                        $query = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='Idle-Timeout'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radreply SET Value='$idletimeout' WHERE UserName='$username' AND Attribute='Idle-Timeout'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radreply values (0, '$username', 'Idle-Timeout', ':=', '$idletimeout')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
-
-			if (trim($calledstationid) != "") {
-
-                        $query = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Called-Station-Id'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radcheck SET Value='$calledstationid' WHERE UserName='$username' AND Attribute='Called-Station-Id'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radcheck values (0, '$username', 'Called-Station-Id', '==', '$calledstationid')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
-
-			if (trim($callingstationid) != "") {
-
-                        $query = "SELECT * FROM radcheck WHERE UserName='$username' AND Attribute='Calling-Station-Id'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radcheck SET Value='$callingstationid' WHERE UserName='$username' AND Attribute='Calling-Station-Id'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radcheck values (0, '$username', 'Calling-Station-Id', '==', '$callingstationid')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
-
-			if (trim($wisprsessionterminatetime) != "") {
 
 
-                        $query = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Session-Terminate-Time'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
+	/* fill-in all the user radreply attributes */
 
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radreply SET Value='$wisprsessionterminatetime' WHERE UserName='$username' AND Attribute='WISPr-Session-Terminate-Time'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radreply values (0, '$username', 'WISPr-Session-Terminate-Time', ':=', '$wisprsessionterminatetime')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
+	$sql = "SELECT * FROM radreply WHERE UserName='$username'";
+	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
-			if (trim($wisprbandwidthmaxdown) != "") {
+	$arrAttrReply = array();
+	$arrOpreply = array();
+	$arrValueReply = array();
 
-                        $query = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Bandwidth-Max-Down'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
+        while($nt = mysql_fetch_array($res)) {
+		array_push($arrAttrReply, $nt['Attribute']);
+		array_push($arrOpReply, $nt['op']);
+		array_push($arrValueReply, $nt['Value']);
+	}	
 
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radreply SET Value='$wisprbandwidthmaxdown' WHERE UserName='$username' AND Attribute='WISPr-Bandwidth-Max-Down'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radreply values (0, '$username', 'WISPr-Bandwidth-Max-Down', ':=', '$wisprbandwidthmaxdown')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
-
-
-			if (trim($wisprbandwidthmaxup) != "") {
-
-                        $query = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Bandwidth-Max-Up'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radreply SET Value='$wisprbandwidthmaxup' WHERE UserName='$username' AND Attribute='WISPr-Bandwidth-Max-Up'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radreply values (0, '$username', 'WISPr-Bandwidth-Max-Up', ':=', '$wisprbandwidthmaxup')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }
-			}
-
-
-			if (trim($wisprredirectionurl) != "") {
-
-                        $query = "SELECT * FROM radreply WHERE UserName='$username' AND Attribute='WISPr-Redirection-URL'";
-                        $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-                                if (mysql_num_rows($result) == 1) {
-                                        $sql = "UPDATE radreply SET Value='$wisprredirectionurl' WHERE UserName='$username' AND Attribute='WISPr-Redirection-URL'";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                } elseif (mysql_num_rows($result) < 1 ) {
-                                        $sql = "INSERT INTO radreply values (0, '$username', 'WISPr-Redirection-URL', ':=', '$wisprredirectionurl')";
-                                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-                                }			}
-
-
-
-		}
-	}
 
 	include 'library/closedb.php';
 
@@ -283,47 +99,68 @@
 				
 				<p>
 				You may fill below details for new user addition to database
-				<br/><br/>			</p>
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-						<b>Password</b>
-						<input value="<?php echo $password ?>" name="password" /><br/>
+				</p>
+				<form action="mng-edit.php" method="post">
 
-						<b>Expiration</b>
-						<input value="<?php echo $expiration ?>" name="expiration" /><br/><br/>
+				<input type="hidden" value="<?php echo $username ?>" name="username" />
 
-						<b>Max-All-Session</b>
-						<input value="<?php echo $maxallsession ?>" name="maxallsession" /><br/>
+<?php
 
-						<b>Session Timeout</b>
-						<input value="<?php echo $sessiontimeout ?>" name="sessiontimeout" /><br/>
+		echo "<table border='2' class='table1'>";
+	        echo "
+                        <thead>
+                                <tr>
+                                <th colspan='10'>radcheck</th>
+                                </tr>
+                        </thead>
+                ";
 
-						<b>Idle Timeout</b>
-						<input value="<?php echo $idletimeout ?>" name="idletimeout" /><br/><br/>
+                $counter = 0;
+                foreach ($arrAttr as $attribute) {
 
-						<b>Called-Sation-Id</b>
-						<input value="<?php echo $calledstationid ?>" name="calledstationid" /><br/>
+			echo "<tr><td>";
+			echo "<b>$arrAttr[$counter]</b";
+			echo "</td><td>";
+			echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
+			echo "</td></tr>";
+			$counter++;
 
-						<b>Calling-Sation-Id</b>
-						<input value="<?php echo $callingstationid ?>" name="callingstationid" /><br/><br/>
+		}
 
-						<b>WISPr-Redirection-URL</b>
-						<input value="<?php echo $wisprredirectionurl ?>" name="wisprredirectionurl" /><br/>
+		echo "</table>";
 
-						<b>WISPr-Bandwidth-Max-Up</b>
-						<input value="<?php echo $wisprbandwidthmaxup ?>" name="wisprbandwidthmaxup" /><br/>
+		echo "<br/><br/>";
 
-						<b>WISPr-Bandwidth-Max-Down</b>
-						<input value="<?php echo $wisprbandwidthmaxdown ?>" name="wisprbandwidthmaxdown" /><br/>
+		echo "<table border='2' class='table1'>";
+	        echo "
+                        <thead>
+                                <tr>
+                                <th colspan='10'>radreply </th>
+                                </tr>
+                        </thead>
+                ";
 
-						<b>WISPr-Session-Terminate-Time</b>
-						<input value="<?php echo $wisprsessionterminatetime ?>" name="wisprsessionterminatetime" /><br/>
+                $counter = 0;
+                foreach ($arrAttrReply as $attribute) {
+
+                        echo "<tr><td>";
+			echo "<b>$arrAttrReply[$counter]</b";
+                        echo "</td><td>";
+			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter]' /><br/>";
+                        echo "</td></tr>";
+			$counter++;
+
+		}
+
+		echo "</table>";
 
 
+?>
 
-						<input type="hidden" value="<?php echo $username ?>" name="username" /><br/>
-						
 						<br/><br/>
+<center>
 						<input type="submit" name="submit" value="Save Settings"/>
+</center>
 
 				</form>
 		
@@ -344,8 +181,4 @@
 
 </body>
 </html>
-
-
-
-
 
