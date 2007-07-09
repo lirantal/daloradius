@@ -152,18 +152,26 @@ function toggleShowDiv(pass) {
 
                                 <form name="newgroupreply" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+<table border='2' class='table1'>
+<tr><td>								
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b>Groupname</b>
+</td><td>										
                                                 <input value="<?php echo $groupname[0] ?>" name="groupname[]"/>
                                                 </font><br/>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 												<b>Attribute</b>
+</td><td>												
                                                 <input value="<?php echo $attribute[0] ?>" name="attribute[]" /> 
                                                 </font><br/>
+</td></tr>
+<tr><td>
 												
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Operator</b>
+</td><td>																								
 												<select name="op[]" />
 													<option value="==">==</option>
 													<option value=":=">:=</option>
@@ -171,11 +179,15 @@ function toggleShowDiv(pass) {
 													<option value=":">:</option>
 												</select>
                                                 </font><br/>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Value</b>
+</td><td>												
                                                 <input value="<?php echo $value[0] ?>" name="value[]" />
                                                 </font><br/>
+</td></tr>
+</table>
 
 <br/>
 <input type="button" value="Add Groups" onclick="addStuff()"/>
@@ -185,7 +197,9 @@ function toggleShowDiv(pass) {
 </div>
 
                                                 <br/><br/>
+<center>												
                                                 <input type="submit" name="submit" value="Apply"/>
+</center>											
 
 
 
