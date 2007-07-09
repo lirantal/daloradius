@@ -59,6 +59,9 @@
 			$counter = 0;
 		
 			foreach ($groupnameExtra as $groupExtra) {
+			
+				if ($groupExtra == "")
+					continue; 
 
 				echo "$groupExtra $attributeExtra[$counter] $opExtra[$counter] $valueExtra[$counter] <br/> ";
 					
