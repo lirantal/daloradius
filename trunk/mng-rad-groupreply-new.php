@@ -13,13 +13,21 @@
 	        $groupname = $_POST['groupname'];
 	        $op = $_POST['op'];
 	        $attribute = $_POST['attribute'];
-			$value = $_POST['value'];
+		$value = $_POST['value'];
+
+	        $groupnameExtra = $_POST['groupnameExtra'];
+	        $opExtra = $_POST['opExtra'];
+	        $attributeExtra = $_POST['attributeExtra'];
+		$valueExtra = $_POST['valueExtra'];
+
 
             include 'library/config.php';
             include 'library/opendb.php';
 
 			$counter = 0;
 			foreach ($groupname as $group) {
+
+				echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> ";
 				
 				$sql = "SELECT * FROM radgroupreply WHERE GroupName='$group' AND Value='$value[$counter]'";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -30,8 +38,8 @@
 						$sql = "INSERT INTO radgroupreply values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
 						$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 						$counter++;
-					}
-				} else {
+					} // end if trim
+				} else { 
                         echo "<font color='#FF0000'>error: the group [$groupname[$counter]] already exist in the database with value [$value[$counter]] <br/></font>";
 						echo "
                                 <script language='JavaScript'>
@@ -40,10 +48,45 @@
                                 -->
                                 </script>
                         ";
-                }
+                		} // end else if mysql
 				
 			}
                         
+
+
+
+			$counter = 0;
+			foreach ($groupnameExtra as $groupExtra) {
+
+				echo "$groupExtra $attributeExtra[$counter] $opExtra[$counter] $valueExtra[$counter] <br/> ";
+				
+				$sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				
+				if (mysql_num_rows($res) == 0) {
+					if (trim($groupExtra) != "" and trim($valueExtra[$counter]) != "" and trim($opExtra[$counter]) != "" and trim($attributeExtra[$counter]) != "") {								
+						// insert usergroup details
+						$sql = "INSERT INTO radgroupreply values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
+						$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+						$counter++;
+					} // end if trim
+				} else { 
+                        echo "<font color='#FF0000'>error: the group [$groupnameExtra[$counter]] already exist in the database with value [$valueExtra[$counter]] <br/></font>";
+						echo "
+                                <script language='JavaScript'>
+                                <!--
+                                alert('The group $groupnameExtra[$counter] already exists in the database with value $valueExtra[$counter]');
+                                -->
+                                </script>
+                        ";
+                		} // end else if mysql
+				
+			}
+                        
+
+
+
+
             include 'library/closedb.php';
         }
 
@@ -79,7 +122,9 @@ function toggleShowDiv(pass) {
         }
 }
 
-
+<?php
+	include("dynamicadd_groupreply.js");
+?>
 
 // -->
 </script>
@@ -128,8 +173,17 @@ function toggleShowDiv(pass) {
                                                 <input value="<?php echo $value[0] ?>" name="value[]" />
                                                 </font><br/>
 
+<br/>
+<input type="button" value="Add Groups" onclick="addStuff()"/>
+<br/><br/>
+
+<div id="mydiv">
+</div>
+
                                                 <br/><br/>
                                                 <input type="submit" name="submit" value="Apply"/>
+
+
 
                                 </form>
 
