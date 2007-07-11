@@ -108,20 +108,27 @@ function toggleShowDiv(pass) {
                                 <br/><br/>
                                 </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
+<table border='2' class='table1'>
+<tr><td>
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Groupname</b>
+</td><td>												
                                                 <input value="<?php echo $groupname ?>" name="groupname"/><br/>
                                                 </font>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Value</b>
+</td><td>												
                                                 <input value="<?php echo $value ?>" name="value"/><br/>
 						If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!
                                                 </font>
-
+</td></tr>
+</table>
                                                 <br/><br/>
+<center>												
                                                 <input type="submit" name="submit" value="Apply"/>
+</center>
 
                                 </form>
 				
