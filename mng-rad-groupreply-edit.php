@@ -127,6 +127,7 @@ function toggleShowDiv(pass) {
 <tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>Attribue</b>
+</td><td>											
                                                 <input value="<?php echo $attribute ?>" name="attribute" />
                                                 </font><br/>
 </td></tr>
