@@ -66,13 +66,13 @@
 
 				// echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> "; 	// for debugging purposes
 					
-				$sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
+				$sql = "SELECT * FROM radgroupcheck WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 					
 				if (mysql_num_rows($res) == 0) {
 					if (trim($groupExtra) != "" and trim($valueExtra[$counter]) != "" and trim($opExtra[$counter]) != "" and trim($attributeExtra[$counter]) != "") {								
 						// insert usergroup details
-						$sql = "INSERT INTO radgroupreply values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
+						$sql = "INSERT INTO radgroupcheck values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
 						$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 						$counter++;
 					} // end if trim
