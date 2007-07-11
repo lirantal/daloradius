@@ -102,35 +102,43 @@ function toggleShowDiv(pass) {
 				<p>
 
                                 <form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
+<table border='2' class='table1'>
+<tr><td>
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b>Username</b>
+</td><td>												
                                                 <input value="<?php echo $username ?>" name="username"/>
                                                 </font><br/>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>Group Name</b>
+</td><td>											
                                                 <input value="<?php echo $group ?>" name="group" /> 
                                                 </font><br/>
-
+</td></tr>
+</table>
 
         <br/>
         <h4> Advnaced User-Group Attributes </h4>
-
+<table border='2' class='table1'>
+<tr><td>
 
                                                 <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPriority')">
                                                 <b>Priority</b>
+</td><td>												
 <div id="attributesPriority" style="display:none;visibility:visible" >
 						<br/>
                                                 <input value="<?php echo $priority ?>" name="priority" /> (default: 1)
-                                                </font>
+                                                </font>										
 </div><br/>
-
-
+</td></tr>
+</table>
                                                 <br/><br/>
+<center>												
                                                 <input type="submit" name="submit" value="Apply"/>
-
+</center>
                                 </form>
 
 
