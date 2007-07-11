@@ -120,7 +120,9 @@ function toggleShowDiv(pass) {
 </table>
 
         <br/>
+		<center>
         <h4> Advnaced User-Group Attributes </h4>
+		</center>
 <table border='2' class='table1'>
 <tr><td>
 

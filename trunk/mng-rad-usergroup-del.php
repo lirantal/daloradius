@@ -108,23 +108,30 @@ function toggleShowDiv(pass) {
                                 <br/><br/>
                                 </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
+<table border='2' class='table1'>
+<tr><td>
                                                 <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
 
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Username</b>
+</td><td>													
                                                 <input value="<?php echo $username ?>" name="username"/><br/>
                                                 </font>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Groupname</b>
+</td><td>												
                                                 <input value="<?php echo $group ?>" name="group"/><br/>
 						If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!
                                                 </font>
+</td></tr>
+</table>
 
                                                 <br/><br/>
+<center>												
                                                 <input type="submit" name="submit" value="Apply"/>
-
+</center>
                                 </form>
 				
 		</div>
