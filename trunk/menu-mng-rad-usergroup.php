@@ -63,8 +63,7 @@
                                                         <input name="username" type="text">
                                                         </form></li>
 
-                                                <li><a href="mng-rad-usergroup-add-manual.php"><b>&raquo;</b>New User-Group Mapping</a></li>
-                                                <li><a href="mng-rad-usergroup-add-multi.php"><b>&raquo;</b>New Multi User-Group Mapping</a></li>
+                                                <li><a href="mng-rad-usergroup-new.php"><b>&raquo;</b>New User-Group Mapping</a></li>
                                                 <li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b>Edit User-Group Mapping<a>
                                                         <form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
                                                         <input name="username" type="text" value="[username]">
