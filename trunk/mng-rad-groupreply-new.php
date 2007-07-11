@@ -22,7 +22,7 @@
 		$counter = 0;
 		foreach ($groupname as $group) {
 
-			if ($groupExtra == "")
+			if ($group == "")
 					continue;
 					
 			// echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> "; 	// for debugging purposes
