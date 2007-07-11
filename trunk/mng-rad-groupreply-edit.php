@@ -137,9 +137,9 @@ function toggleShowDiv(pass) {
 </td><td>
 												<select name="op" />
 													<option value="<?php echo $op ?>"><?php echo $op ?></option>
-													<option value=":=">:=</option>
-													<option value="=">=</option>
-													<option value=":">:</option>
+				<?php include ('include/management/op_select_options.php');
+					  drawOptions();
+					  ?>
 												</select>
                                                 </font><br/>												
 </td></tr>
