@@ -9,43 +9,90 @@
 	$attribute = "";
 	$value = "";	
 
-        if (isset($_POST['submit'])) {
-	        $groupname = $_POST['groupname'];
-	        $op = $_POST['op'];
-	        $attribute = $_POST['attribute'];
-			$value = $_POST['value'];
+    if (isset($_POST['submit'])) {
 
-            include 'library/config.php';
-            include 'library/opendb.php';
+	    include 'library/config.php';
+        include 'library/opendb.php';
+		
+	    $groupname = $_POST['groupname'];
+	    $op = $_POST['op'];
+	    $attribute = $_POST['attribute'];
+		$value = $_POST['value'];
 
+		$counter = 0;
+		foreach ($groupname as $group) {
+
+			if ($group == "")
+					continue;
+					
+			$sql = "SELECT * FROM radgroupcheck WHERE GroupName='$group' AND Value='$value[$counter]'";
+			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				
+			if (mysql_num_rows($res) == 0) {
+				if (trim($group) != "" and trim($value[$counter]) != "" and trim($op[$counter]) != "" and trim($attribute[$counter]) != "") {								
+					// insert usergroup details
+					$sql = "INSERT INTO radgroupcheck values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
+					$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+					$counter++;
+				}
+			} else {
+                    echo "<font color='#FF0000'>error: the group [$groupname[$counter]] already exist in the database with value [$value[$counter]] <br/></font>";
+					echo "
+                        <script language='JavaScript'>
+                        <!--
+                        alert('The group $groupname[$counter] already exists in the database with value $value[$counter]');
+                        -->
+                        </script>
+                    ";
+            }
+				
+		}
+		
+		
+		
+	    $groupnameExtra = $_POST['groupnameExtra'];
+	    $opExtra = $_POST['opExtra'];
+	    $attributeExtra = $_POST['attributeExtra'];
+		$valueExtra = $_POST['valueExtra'];
+		
+		if ($groupnameExtra) {
+		
 			$counter = 0;
-			foreach ($groupname as $group) {
-				
-				$sql = "SELECT * FROM radgroupcheck WHERE GroupName='$group' AND Value='$value[$counter]'";
+		
+			foreach ($groupnameExtra as $groupExtra) {
+			
+				if ($groupExtra == "")
+					continue; 
+
+				// echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> "; 	// for debugging purposes
+					
+				$sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-				
+					
 				if (mysql_num_rows($res) == 0) {
-					if (trim($group) != "" and trim($value[$counter]) != "" and trim($op[$counter]) != "" and trim($attribute[$counter]) != "") {								
+					if (trim($groupExtra) != "" and trim($valueExtra[$counter]) != "" and trim($opExtra[$counter]) != "" and trim($attributeExtra[$counter]) != "") {								
 						// insert usergroup details
-						$sql = "INSERT INTO radgroupcheck values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
+						$sql = "INSERT INTO radgroupreply values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
 						$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 						$counter++;
-					}
-				} else {
-                        echo "<font color='#FF0000'>error: the group [$groupname[$counter]] already exist in the database with value [$value[$counter]] <br/></font>";
+					} // end if trim
+				} else { 
+	                    echo "<font color='#FF0000'>error: the group [$groupnameExtra[$counter]] already exist in the database with value [$valueExtra[$counter]] <br/></font>";
 						echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('The group $groupname[$counter] already exists in the database with value $value[$counter]');
-                                -->
-                                </script>
-                        ";
-                }
-				
+	                        <script language='JavaScript'>
+	                        <!--
+	                            alert('The group $groupnameExtra[$counter] already exists in the database with value $valueExtra[$counter]');
+	                        -->
+	                        </script>
+	                        ";
+	            } // end else if mysql
+					
 			}
+		
+		}		
                         
-            include 'library/closedb.php';
-        }
+        include 'library/closedb.php';
+    }
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -101,36 +148,54 @@ function toggleShowDiv(pass) {
 				
 				<p>
 
-                                <form name="newgroupreply" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
+                                <form name="newgroupcheck" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<table border='2' class='table1'>
+<tr><td>
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b>Groupname</b>
+</td><td>												
                                                 <input value="<?php echo $groupname[0] ?>" name="groupname[]"/>
                                                 </font><br/>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 												<b>Attribute</b>
+</td><td>												
                                                 <input value="<?php echo $attribute[0] ?>" name="attribute[]" /> 
                                                 </font><br/>
-												
+</td></tr>
+<tr><td>												
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Operator</b>
+</td><td>												
 												<select name="op[]" />
-													<option value="==">==</option>
-													<option value=":=">:=</option>
-													<option value="=">=</option>
-													<option value=":">:</option>
+				<?php include ('include/management/op_select_options.php');
+					  drawOptions();
+					  ?>
 												</select>
                                                 </font><br/>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Value</b>
+</td><td>												
                                                 <input value="<?php echo $value[0] ?>" name="value[]" />
                                                 </font><br/>
+</td></tr>
+</table>
 
+<br/>
+<center>
+<input type="button" value="Add Groups" onclick="addStuff()"/>
+</center>
+<br/><br/>
+
+<div id="mydiv">
+</div>
                                                 <br/><br/>
+<center>												
                                                 <input type="submit" name="submit" value="Apply"/>
-
+</center>
                                 </form>
 
 
