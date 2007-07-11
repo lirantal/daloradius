@@ -89,15 +89,19 @@ function toggleShowDiv(pass) {
                                 <br/><br/>
                                 </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
+<table border='2' class='table1'>
+<tr><td>
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>NAS IP/Host</b>
+</td><td>												
                                                 <input value="<?php echo $nashost ?>" name="nashost"/><br/>
                                                 </font>
-
+</td></tr>
+</table>
                                                 <br/><br/>
+<center>
                                                 <input type="submit" name="submit" value="Apply"/>
-
+</center>
                                 </form>
 				
 		</div>
