@@ -25,7 +25,7 @@
 			if ($groupExtra == "")
 					continue;
 					
-			echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> ";
+			// echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> "; 	// for debugging purposes
 				
 			$sql = "SELECT * FROM radgroupreply WHERE GroupName='$group' AND Value='$value[$counter]'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -66,7 +66,7 @@
 				if ($groupExtra == "")
 					continue; 
 
-				echo "$groupExtra $attributeExtra[$counter] $opExtra[$counter] $valueExtra[$counter] <br/> ";
+				// echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> "; 	// for debugging purposes
 					
 				$sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
