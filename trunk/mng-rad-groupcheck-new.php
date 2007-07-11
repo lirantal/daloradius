@@ -126,7 +126,9 @@ function toggleShowDiv(pass) {
         }
 }
 
-
+<?php
+	include("library/javascript/dynamicadd_groupreply.js");
+?>
 
 // -->
 </script>
