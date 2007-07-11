@@ -123,23 +123,33 @@ function toggleShowDiv(pass) {
                                                 <input type="hidden" value="<?php echo $groupname ?>" name="groupname" /><br/>
                                                 <input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" /><br/>
 												
-
+<table border='2' class='table1'>
+<tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>Attribue</b>
                                                 <input value="<?php echo $attribute ?>" name="attribute" />
                                                 </font><br/>
-
+</td></tr>
+<tr><td>
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>Operator</b>
+</td><td>
                                                 <input value="<?php echo $op ?>" name="op" /> 
                                                 </font><br/>
-												
+</td></tr>
+<tr><td>												
                                                 <?php if (trim($valueOld) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b>New Value</b>
+</td><td>											
                                                 <input value="<?php echo $value ?>" name="value" />
                                                 </font><br/>
+</td></tr>
+</table>
 
+<center>
+<br/>
                                                 <input type="submit" name="submit" value="Apply"/>
+</center>												
 
                                 </form>
 
