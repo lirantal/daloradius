@@ -4,7 +4,7 @@ $configFile = "library/daloradius.conf";
 $commentChar = "#";
 
 $fp = fopen($configFile, "r");
-if ($fp)) {
+if ($fp) {
 			while (!feof($fp)) {
 				$line = trim(fgets($fp));
 				if ($line && !ereg("^$commentChar", $line)) {
