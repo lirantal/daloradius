@@ -6,6 +6,9 @@ release 0.9 - July 2007
 	nas page, radgroupreply page, radgroupcheck page and usergroup page
 	- moved/copied the report's list all user's page to the management page as
 	requested by DTE and Giso
+	- introduced new menu item - Config - where you can tweak the configuration of daloradius
+	from the web gui instead of manually editing the file (notice that the filename and
+	style was changed too to daloradius.conf in library/ so you need to migrate properly)
 	- changed form actions in relevant pages to use PHP_SELF for better modularity support
 	- moved to a new graphing library called libchart, credit goes to Jean-Marc Trémeaux
 	(see information at: http://naku.dohcrew.com/libchart/pages/introduction/)
