@@ -2,6 +2,10 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+	if (isset($_REQUEST['task']))
+		$task = $_REQUEST['task'];
+	else 
+		$task = "";
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -104,8 +108,12 @@
 				<h2 id="Intro"><a href="#">Success</a></h2>
 				
 				<p>
-				
-				The operation has been successfuly put to action
+				<br/>
+				<?php 
+					echo $task;
+				?>
+				<br/>
+				The operation was successful
 				
 				</p>
 				

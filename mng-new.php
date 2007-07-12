@@ -113,7 +113,9 @@
 
 
 	
-				echo "<font color='#0000FF'>success<br/></font>";
+				//echo "<font color='#0000FF'>success<br/></font>";
+				$msg = "Added new user <b> $username </b> to database";
+				header("location: mng-success.php?task=$msg");
 			}
 		} else { 
 			echo "<font color='#FF0000'>error: user [$username] already exist <br/></font>"; 
