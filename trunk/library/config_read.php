@@ -14,18 +14,17 @@ if ($fp) {
 			$configValues[$option] = $value;
 		}
 	}
+	fclose($fp);
 } else {
         echo "<font color='#FF0000'>error: could not open the file for reading:<b> $configFile </b><br/></font>";
 		echo "Check file permissions. The file should be readable by the webserver's user/group<br/>";
         echo "
             <script language='JavaScript'>
             <!--
-            alert('could not open the file <b> $configFile </b> for reading!\\nCheck file permissions.');
+            alert('could not open the file $configFile for reading!\\nCheck file permissions.');
             -->
             </script>
             ";
 }
-	
-fclose($fp);
 
 ?>
