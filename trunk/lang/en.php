@@ -157,5 +157,6 @@ $l[menu][Accounting] = "<em>A</em>ccounting</a>";
 $l[menu][Billing] = "<em>B</em>illing</a>";
 $l[menu][Gis] = "<em>GIS</em></a>";
 $l[menu][Graphs] = "<em>G</em>raphs</a>";
+$l[menu][Config] = "<em>C</em>onfig</a>";
 $l[menu][Help] = "<em>H</em>elp</a>";
 ?>
