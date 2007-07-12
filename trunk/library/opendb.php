@@ -1,4 +1,6 @@
 <?php
-$conn = mysql_connect($config_db_host, $config_db_user, $config_db_pass) or die ('Error connecting to mysql');
-mysql_select_db($config_db_name);
+	include ("library/config_read.php");
+	
+	$mysql_conn = mysql_connect($configValues['CONFIG_DB_HOST'], $configValues['CONFIG_DB_USER'], $configValues['CONFIG_DB_PASS']) or die ('Error connecting to MySQL Server');
+	mysql_select_db($configValues['CONFIG_DB_NAME']);
 ?>

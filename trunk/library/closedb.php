@@ -1,4 +1,4 @@
 <?php
-mysql_close($conn);		// closing a previuosly-opened mysql database connection
+	mysql_close($mysql_conn);
 ?>
 
