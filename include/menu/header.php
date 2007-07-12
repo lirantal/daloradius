@@ -21,6 +21,7 @@
 				<li><a href="bill-main.php" <?php echo ($m_active == "Billing") ? "class=\"active\"" : "" ?>><?php echo $l[menu][Billing]; ?></a></li>
 				<li><a href="gis-main.php" <?php echo ($m_active == "Gis") ? "class=\"active\"" : ""?>><?php echo $l[menu][Gis]; ?></a></li>
 				<li><a href="graph-main.php" <?php echo ($m_active == "Graphs") ? "class=\"active\"" : ""?>><?php echo $l[menu][Graphs]; ?></li>
+				<li><a href="config-main.php" <?php echo ($m_active == "Config") ? "class=\"active\"" : ""?>><?php echo $l[menu][Config]; ?></li>
 				<li><a href="help-main.php" <?php echo ($m_active == "Help") ? "class=\"active\"" : ""?>><?php echo $l[menu][Help]; ?></a></li>
 
                                 </ul>
