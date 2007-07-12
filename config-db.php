@@ -17,8 +17,7 @@
 		if (isset($_REQUEST['config_dbname']))
 			$configValues['CONFIG_DB_NAME'] = $_REQUEST['config_dbname'];
 
-			
-            include ("library/config_write.php");
+        include ("library/config_write.php");
     }	
 
 	
