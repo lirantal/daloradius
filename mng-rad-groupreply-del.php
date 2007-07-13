@@ -15,41 +15,41 @@
 		$value = $_REQUEST['value'];
  	}
 
-        if (isset($_POST['submit'])) {
-                if (trim($groupname) != "") {
-                        include 'library/config.php';
-                        include 'library/opendb.php';
+	if (isset($_POST['submit'])) {
+		if (trim($groupname) != "") {
+			include 'library/config.php';
+			include 'library/opendb.php';
 
 			if (trim($value) != "") {
 
-	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM radgroupreply WHERE GroupName='$groupname' AND Value='$value'";
-	                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	
-	                        echo "<font color='#0000FF'>success<br/></font>";
-	                        include 'library/closedb.php';
+				// delete all attributes associated with a username
+				$sql = "DELETE FROM radgroupreply WHERE GroupName='$groupname' AND Value='$value'";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+
+				echo "<font color='#0000FF'>success<br/></font>";
+				include 'library/closedb.php';
 
 			} else {
 
-	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM radgroupreply WHERE GroupName='$groupname'";
-	                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
-	
-	                        echo "<font color='#0000FF'>success<br/></font>";
-	                        include 'library/closedb.php';
+				// delete all attributes associated with a username
+				$sql = "DELETE FROM radgroupreply WHERE GroupName='$groupname'";
+				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+
+				echo "<font color='#0000FF'>success<br/></font>";
+				include 'library/closedb.php';
 			}
 
-                }  else {
-                        echo "<font color='#FF0000'>error: please specify a groupname to remove from database<br/></font>";
-                        echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('No groupname was entered, please specify a groupname to remove from database');
-                                -->
-                                </script>
-                                ";
-                }
-	}
+		}  else {
+			echo "<font color='#FF0000'>error: please specify a groupname to remove from database<br/></font>";
+			echo "
+				<script language='JavaScript'>
+				<!--
+				alert('No groupname was entered, please specify a groupname to remove from database');
+				-->
+				</script>
+				";
+		}
+	}	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
