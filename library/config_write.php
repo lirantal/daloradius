@@ -5,8 +5,8 @@ $commentChar = "#";
 
 $fp = fopen($configFile, "w");
 if ($fp) {
-	foreach ($configValues as $option => $elem) {
-        fwrite($fp, $option . " = " . $configValues[$option] . "\n");
+	foreach ($configValues as $_configOption => $_configElem) {
+        fwrite($fp, $_configOption . " = " . $configValues[$_configOption] . "\n");
 	}
 	fclose($fp);
 } else {
