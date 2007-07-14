@@ -15,7 +15,7 @@
                                 <ul id="nav">
 
 				<li><a href="index.php" <?php echo ($m_active == "Home") ? "class=\"active\"" : ""?>><?php echo $l[menu][Home]; ?></a></li>
-				<li><a href="mng-main.php" <?php echo ($m_active == "Managment") ? "class=\"active\"" : "" ?>><?php echo $l[menu][Managment]; ?></a></li>
+				<li><a href="mng-main.php" <?php echo ($m_active == "Management") ? "class=\"active\"" : "" ?>><?php echo $l[menu][Managment]; ?></a></li>
 				<li><a href="rep-main.php" <?php echo ($m_active == "Reports") ? "class=\"active\"" : "" ?>><?php echo $l[menu][Reports]; ?></a></li>
 				<li><a href="acct-main.php" <?php echo ($m_active == "Accounting") ? "class=\"active\"" : "" ?>><?php echo $l[menu][Accounting]; ?></a></li>
 				<li><a href="bill-main.php" <?php echo ($m_active == "Billing") ? "class=\"active\"" : "" ?>><?php echo $l[menu][Billing]; ?></a></li>
