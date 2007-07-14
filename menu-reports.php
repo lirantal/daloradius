@@ -23,7 +23,8 @@ include_once ("lang/main.php");
 
 <?php
 	$m_active = "Reports";
-	include_once ("include/menu/header.php");
+    include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/reports-subnav.php");
 ?>      
 
 		<div id="sidebar">

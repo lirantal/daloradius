@@ -17,8 +17,9 @@
 <div id="innerwrapper">
 
 <?php
-	 $m_active = "Gis";
-	 include_once ("include/menu/header.php");
+	$m_active = "Gis";
+    include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/gis-subnav.php");
 ?>      
 
 		<div id="sidebar">
