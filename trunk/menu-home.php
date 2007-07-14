@@ -23,7 +23,8 @@
 		
 <?php
     $m_active = "Home";
-    include_once ("include/menu/header.php");
+    include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/home-subnav.php");
 ?>      
 
 		<div id="sidebar">

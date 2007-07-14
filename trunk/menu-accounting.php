@@ -24,7 +24,9 @@
 <div id="innerwrapper">
 
 <?php
-    include_once ("include/menu/header.php");
+	$m_active = "Accounting";
+    include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/accounting-subnav.php");
 ?>	
 		<div id="sidebar">
 		
