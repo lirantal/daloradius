@@ -21,9 +21,6 @@
 		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsoverallupload.php]; ?></a></h2>
 
 <?php
-//      echo "<img src=\"library/exten-alltime_traffic_user_upload.php?type=$type&user=$username\" />";
-//	include 'library/graph-alltime_upload.php';
-
     echo "<br/>";
     echo "<center>";
     echo "<img src=\"library/graphs-overall-users-upload.php?type=$type&user=$username\" />";
