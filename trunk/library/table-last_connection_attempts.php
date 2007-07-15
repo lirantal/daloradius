@@ -11,8 +11,7 @@
 *                                                                  *
 *******************************************************************/
 
-	include 'library/config.php';
-	include 'library/opendb.php';
+	include 'opendb.php';
 
 	$sql = "SELECT user, pass, reply, date from radpostauth order by id desc limit 50;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -76,6 +75,6 @@
 	echo "</table>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 
 
