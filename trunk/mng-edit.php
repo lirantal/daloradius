@@ -62,7 +62,7 @@
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$arrAttrReply = array();
-	$arrOpreply = array();
+	$arrOpReply = array();
 	$arrValueReply = array();
 
         while($nt = mysql_fetch_array($res)) {
