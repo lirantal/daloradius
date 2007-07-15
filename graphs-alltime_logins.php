@@ -22,10 +22,6 @@
 		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsalltimelogins.php]; ?></a></h2>
 
 <?php
-
-//    echo "<img src=\"library/exten-alltime_logins.php?type=$type\" />";
-//	include 'library/graph-alltime_logins.php';
-
         echo "<br/>";
         echo "<center>";
         echo "<img src=\"library/graphs-alltime-users-login.php?type=$type\" />";
