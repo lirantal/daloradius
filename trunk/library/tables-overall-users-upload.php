@@ -23,9 +23,7 @@ if ($type == "daily") {
 
 function daily($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day, UserName from radacct where UserName='$username' group by day;";
 
@@ -87,7 +85,7 @@ function daily($username) {
 	echo "<br/> Total uploads of <u>$total_uploads</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 
@@ -96,9 +94,7 @@ function daily($username) {
 
 function monthly($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
         
 	$sql = "SELECT sum(AcctInputOctets) as Uploads, monthname(AcctStartTime) AS month, UserName from radacct where UserName='$username' group by month;";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -160,7 +156,7 @@ function monthly($username) {
 	echo "<br/> Total uploads of <u>$total_uploads</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 
@@ -172,9 +168,7 @@ function monthly($username) {
 
 function yearly($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year, UserName from radacct where UserName='$username' group by year;";
 
@@ -236,7 +230,7 @@ function yearly($username) {
 	echo "<br/> Total uploads of <u>$total_uploads</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 

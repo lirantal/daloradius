@@ -23,9 +23,7 @@ if ($type == "daily") {
 
 function daily($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-	include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from radacct where UserName='$username' group by day;";
 
@@ -94,9 +92,7 @@ function daily($username) {
 
 function monthly($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
         
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from radacct where UserName='$username' group by month;";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -171,9 +167,7 @@ function monthly($username) {
 
 function yearly($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';	
+	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from radacct where UserName='$username' group by year;";
 
@@ -234,7 +228,7 @@ function yearly($username) {
 	echo "<br/> Total downloads of <u>$total_downloads</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 
