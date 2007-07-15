@@ -24,9 +24,7 @@ if ($type == "daily") {
 
 function daily($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
         $sql = "SELECT UserName, count(AcctStartTime), DAY(AcctStartTime) AS Day from radacct where username='$username' group by Day;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -93,7 +91,7 @@ function daily($username) {
 	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 
@@ -184,9 +182,7 @@ function monthly($username) {
 
 function yearly($username) {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
 
         $sql = "SELECT UserName, count(AcctStartTime), YEAR(AcctStartTime) AS Year from radacct where username='$username' group by Year;";
@@ -253,7 +249,7 @@ function yearly($username) {
 	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 

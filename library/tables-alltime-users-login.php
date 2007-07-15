@@ -23,9 +23,7 @@ if ($type == "daily") {
 
 function daily() {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
 	$sql = "SELECT count(username) as numberoflogins, day(AcctStartTime) AS day from radacct group by day;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -87,7 +85,7 @@ function daily() {
 	echo "<br/> Total logins of <u>$total_logins</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 
@@ -96,9 +94,7 @@ function daily() {
 
 function monthly() {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
         $sql = "SELECT count(username) as numberoflogins, monthname(AcctStartTime) AS month from radacct group by month;";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -156,7 +152,7 @@ function monthly() {
 	echo "<br/> Total logins of <u>$total_logins</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 
@@ -168,9 +164,7 @@ function monthly() {
 
 function yearly() {
 
-	include 'library/config.php';
-	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
+	include 'opendb.php';
 
 	$sql = "SELECT count(username) as numberoflogins, year(AcctStartTime) AS year from radacct group by year;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -230,7 +224,7 @@ function yearly() {
 	echo "<br/> Total logins of <u>$total_logins</u> <br/>";
 
         mysql_free_result($res);
-        include 'library/closedb.php';
+        include 'closedb.php';
 }
 
 
