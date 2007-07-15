@@ -8,7 +8,7 @@
 		$name = $_REQUEST['name'];
 
 		if (trim($name) != "") {
-			include 'library/config.php';
+			
 			include 'library/opendb.php';
 
 			// delete all attributes associated with a username

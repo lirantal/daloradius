@@ -11,7 +11,7 @@
 
     if (isset($_POST['submit'])) {
 	
-        include 'library/config.php';
+        
         include 'library/opendb.php';	
 	
 	    $groupname = $_POST['groupname'];

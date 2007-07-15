@@ -24,8 +24,7 @@
 
 <?php
 
-        include 'library/config.php';
-        include 'library/opendb.php';
+                include 'library/opendb.php';
         include 'library/datediff.php';
 
 	$currdate = date("j M Y");

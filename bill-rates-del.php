@@ -11,8 +11,7 @@
 
 
 		if (trim($type) != "") {
-			include 'library/config.php';
-			include 'library/opendb.php';
+						include 'library/opendb.php';
 
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM rates WHERE type='$type'";

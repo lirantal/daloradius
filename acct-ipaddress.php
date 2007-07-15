@@ -26,8 +26,7 @@
 
 <?php
 
-        include 'library/config.php';
-        include 'library/opendb.php';
+                include 'library/opendb.php';
 
         $sql = "SELECT radacct.RadAcctId, hotspots.name, radacct.UserName, radacct.FramedIPAddress, radacct.AcctStartTime, radacct.AcctStopTime, radacct.AcctSessionTime, radacct.AcctInputOctets, radacct.AcctOutputOctets, radacct.AcctTerminateCause, radacct.NASIPAddress FROM radacct LEFT JOIN hotspots ON radacct.calledstationid = hotspots.mac WHERE FramedIPAddress='$ipaddress'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());

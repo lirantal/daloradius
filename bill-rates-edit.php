@@ -4,8 +4,7 @@
     $operator = $_SESSION['operator_user'];
 
 
-	include 'library/config.php';
-	include 'library/opendb.php';
+		include 'library/opendb.php';
 
 	$type = $_GET['type'];
 

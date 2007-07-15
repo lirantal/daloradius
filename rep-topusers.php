@@ -29,7 +29,7 @@
 
 <?php
 
-        include 'library/config.php';
+        
         include 'library/opendb.php';
 
 	$sql = "SELECT distinct(radacct.UserName), radacct.FramedIPAddress, radacct.AcctStartTime, radacct.AcctStopTime,

@@ -26,8 +26,7 @@
 <div id="map" style="width: 800px; height: 600px"></div>
 
 <?php
-    include 'library/config.php';
-    include 'library/opendb.php';
+        include 'library/opendb.php';
 ?>
 
 <script type="text/javascript">

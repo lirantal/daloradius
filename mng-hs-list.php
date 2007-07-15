@@ -27,7 +27,7 @@
 
 <?php
 
-        include 'library/config.php';
+        
         include 'library/opendb.php';
 
 	$sql = "SELECT * FROM hotspots;";

@@ -20,8 +20,7 @@
 
 <?php
 
-        include 'library/config.php';
-        include 'library/opendb.php';
+                include 'library/opendb.php';
 
 	$sql = "SELECT * FROM rates;";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());

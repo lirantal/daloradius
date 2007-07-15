@@ -4,7 +4,7 @@
     $operator = $_SESSION['operator_user'];
 
 
-	include 'library/config.php';
+	
     include 'library/opendb.php';
 
     // declaring variables
@@ -32,7 +32,7 @@
 	        $op = $_POST['op'];;
 	        $attribute = $_POST['attribute'];;
 
-                include 'library/config.php';
+                
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupname' AND Value='$valueOld'";

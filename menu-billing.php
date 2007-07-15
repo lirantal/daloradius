@@ -42,7 +42,7 @@
 								<option value='%'> all
 <?php
 
-        include 'library/config.php';
+        
         include 'library/opendb.php';
 
 	// Grabing the last 
@@ -81,7 +81,7 @@
 								<option value='%'> all
 <?php
 
-        include 'library/config.php';
+        
         include 'library/opendb.php';
 
 	// Grabing the list of hotspots 
