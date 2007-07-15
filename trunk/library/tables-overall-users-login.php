@@ -100,9 +100,8 @@ function daily($username) {
 
 function monthly($username) {
 
-	include 'library/config.php';
+	
 	include 'library/opendb.php';
-        include 'libgraph/graphs.inc.php';
 
         $sql = "SELECT UserName, count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from radacct where username='$username' group by Month;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
