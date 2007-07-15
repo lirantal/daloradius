@@ -25,7 +25,7 @@ if ($type == "daily") {
 
 function daily() {
 
-	include 'config.php';
+	
 	include 'opendb.php';
         include 'libchart/libchart.php';
 
@@ -58,7 +58,7 @@ function daily() {
 
 function monthly() {
 
-	include 'config.php';
+	
 	include 'opendb.php';
         include 'libchart/libchart.php';
 
@@ -92,7 +92,7 @@ function monthly() {
 function yearly() {
 
 
-        include 'config.php';
+        
         include 'opendb.php';
         include 'libchart/libchart.php';
 
