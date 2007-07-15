@@ -11,7 +11,6 @@
 *******************************************************************/
 
 	include ("checklogin.php");
-	include 'config.php';
 	include 'opendb.php';
 
 	include "libchart/libchart.php";
@@ -34,7 +33,7 @@
 	$chart->setTitle("Total Users");
 	$chart->render();
 
-	include 'library/closedb.php';
+	include 'closedb.php';
 
 
 ?>
