@@ -3,7 +3,7 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include 'library/config.php';
+	
 	include 'library/opendb.php';
 	include 'include/management/attributes.php';				// required for checking if an attribute belongs to the
 										// radcheck table or the radreply based upon it's name

@@ -24,7 +24,7 @@
 
 <?php
 
-        include 'library/config.php';
+        
         include 'library/opendb.php';
 
 	// table to display the radcheck information per the $username

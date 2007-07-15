@@ -94,7 +94,7 @@ Installation
     daloRADIUS's config file.
 
 	cd /var/www/daloradius/library/
-	vi config.php
+	vi daloradius.conf
    
     Fill in the database details and you're done.
     Save the file and exit.

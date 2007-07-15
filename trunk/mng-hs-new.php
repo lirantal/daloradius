@@ -12,7 +12,7 @@
 		$macaddress = $_POST['macaddress'];
 		$geocode = $_POST['geocode'];
 
-		include 'library/config.php';
+		
 		include 'library/opendb.php';
 
 

@@ -18,8 +18,7 @@
 		$cardbank = $_POST['cardbank'];
 		$rate = $_POST['rate'];
 
-		include 'library/config.php';
-		include 'library/opendb.php';
+				include 'library/opendb.php';
 
 		$sql = "SELECT * FROM rates WHERE type='$type'";
 		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());

@@ -16,7 +16,7 @@
 
 <?php
 
-        include 'library/config.php';
+        
         include 'library/opendb.php';
 
 

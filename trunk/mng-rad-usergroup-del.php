@@ -17,7 +17,7 @@
 
         if (isset($_POST['submit'])) {
                 if (trim($username) != "") {
-                        include 'library/config.php';
+                        
                         include 'library/opendb.php';
 
 			if (trim($group) != "") {

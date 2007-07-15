@@ -2,7 +2,7 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include 'library/config.php';
+	
 	include 'library/opendb.php';
 
 	$name = $_GET['name'];

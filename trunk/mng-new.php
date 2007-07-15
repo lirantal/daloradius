@@ -31,7 +31,7 @@
 		$wisprbandwidthmaxdown = $_POST['wisprbandwidthmaxdown'];
 		$wisprsessionterminatetime = $_POST['wisprsessionterminatetime'];
 
-		include 'library/config.php';
+		
 		include 'library/opendb.php';
 
 

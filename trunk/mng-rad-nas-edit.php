@@ -4,7 +4,7 @@
     $operator = $_SESSION['operator_user'];
 
 
-	include 'library/config.php';
+	
         include 'library/opendb.php';
 
 	$nashost = "";
@@ -40,7 +40,7 @@
 	        $nasdescription = $_POST['nasdescription'];;
 	        $nascommunity = $_POST['nascommunity'];;
 
-                include 'library/config.php';
+                
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM nas WHERE nasname='$nashost'";

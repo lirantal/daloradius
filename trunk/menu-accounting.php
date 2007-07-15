@@ -83,7 +83,7 @@
 <select name="hotspot" size="3">
 <?php
 
-        include 'library/config.php';
+        
         include 'library/opendb.php';
 
 	// Grabing the last 

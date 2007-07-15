@@ -29,8 +29,7 @@
 					
 <?php
 
-        include 'library/config.php';
-        include 'library/opendb.php';
+                include 'library/opendb.php';
 
         echo "<table border='2' class='table1'>\n";
         echo "

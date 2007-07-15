@@ -12,7 +12,7 @@
 		$password = $_POST['password'];
 		$maxallsession = $_POST['maxallsession'];
 
-		include 'library/config.php';
+		
 		include 'library/opendb.php';
 
 

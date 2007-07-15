@@ -7,7 +7,7 @@
 	if (isset($_POST['submit'])) {
 
 		if (trim($username) != "") {
-			include 'library/config.php';
+			
 			include 'library/opendb.php';
 
 			// delete all attributes associated with a username

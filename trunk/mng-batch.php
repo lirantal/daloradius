@@ -39,7 +39,7 @@ function createPassword($length) {
 		$maxallsession = $_POST['maxallsession'];
 		$sessiontimeout = $_POST['sessiontimeout'];
 
-		include 'library/config.php';
+		
 		include 'library/opendb.php';
 
 		for ($i=0; $i<$number; $i++) {

@@ -13,7 +13,7 @@
 	        $group = $_POST['group'];;
 	        $priority = $_POST['priority'];;
 
-                include 'library/config.php';
+                
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM usergroup WHERE UserName='$username' AND GroupName='$group'";

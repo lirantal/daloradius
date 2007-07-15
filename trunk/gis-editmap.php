@@ -4,8 +4,7 @@
     $operator = $_SESSION['operator_user'];
     $type = $_REQUEST['type'];
 
-        include 'library/config.php';
-        include 'library/opendb.php';
+    include 'library/opendb.php';
 
 	if ($type == "add") {
 		$hotspot_name = $_REQUEST['hotspotname'];
@@ -55,8 +54,7 @@
 <div id="map" style="width: 800px; height: 600px"></div>
 
 <?php
-    include 'library/config.php';
-    include 'library/opendb.php';
+        include 'library/opendb.php';
 ?>
 
 <script type="text/javascript">
