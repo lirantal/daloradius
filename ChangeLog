@@ -1,24 +1,30 @@
 release 0.9 - July 2007
-	- this release is named after Erick Otto who has taken part of daloRADIUS
-	and passed away on 24th of June 2007, may him rest in peace.
-	- thanks to Erick Otto the sql dump is fixed (there was a missing /)
-	- added more management interfaces for radius's sql database:
-	nas page, radgroupreply page, radgroupcheck page and usergroup page
-	- moved/copied the report's list all user's page to the management page as
-	requested by DTE and Giso
-	- introduced new menu item - Config - where you can tweak the configuration of daloradius
-	from the web gui instead of manually editing the file (notice that the filename and
-	style was changed too to daloradius.conf in library/ so you need to migrate properly)
-	- changed form actions in relevant pages to use PHP_SELF for better modularity support
+	- this release is named after Erick Otto who took part of daloRADIUS
+	and passed away on 24th of June 2007, may he rest in peace.
+	- Major code clean-up, removing deprecated files, as well as removed jpgraph
+	and libgraph as we have moved to using a tiny footprint graph library called libgraph
 	- moved to a new graphing library called libchart, credit goes to Jean-Marc Trémeaux
 	(see information at: http://naku.dohcrew.com/libchart/pages/introduction/)
+	so please take note that jpgraph and libgraph have been removed!
+	- Evgeniy Kozhuhovskiy has introduced a new feature which enables support for multiple
+	languages, also congrads for joining the development team :)	
+	- introduced new menu item - Config - where you can tweak the configuration of daloradius
+	from the web gui instead of manually editing the file (notice that the filename and
+	style was changed too to daloradius.conf in library/ so you need to migrate properly)	
+	- added more management interfaces for radius's sql database:
+	nas page, radgroupreply page, radgroupcheck page and usergroup page
+	- moved to a more OOP design by moduling all the pages to use the same group-wise
+	header menus which makes customizing and changing very easy and quick.	
+	- completely changed the way the management pages are working to be more dynamic (mng-edit)
+	- changed the layout of the table's forms to be formatted with tables
+	- introduced some minor ajax technology for dynamic adding of groups to the 
+	management pages (groupreply and groupcheck)	
+	- moved/copied the report's list all user's page to the management page as
+	requested by DTE and Giso (it will be moved there permenantely in the next release)
+	- thanks to Erick Otto the sql dump is fixed (there was a missing /)	
+	- changed form actions in relevant pages to use PHP_SELF for better modularity support
 	- fixed bug in library/tables* files showing wrong mb count (not using floor() and so
 	the int isn't rounded, it's actually a double/float)
-	- moved to a more OOP design by moduling all the pages to use the same group-wise
-	header menus which makes customizing and changing very easy and quick.
-	- completely changed the way the management pages are working to be more dynamic (mng-edit)
-	- Evgeniy Kozhuhovskiy has introduced a new feature which enables support for multiple
-	languages, also congrads for joining the development team :)
 	
 
 
