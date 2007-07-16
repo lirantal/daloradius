@@ -22,7 +22,7 @@
 
 <?php
 
-                include 'library/opendb.php';
+    include 'library/opendb.php';
 
 	$sql = "select hotspots.name, count(distinct(UserName)), count(radacctid), avg(AcctSessionTime), sum(AcctSessionTime) from radacct join hotspots on (radacct.calledstationid like hotspots.mac) group by hotspots.name;";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -61,9 +61,9 @@
 
 <?php
 	echo "<br/><br/><br/><center>";
-        echo "<img src=\"library/exten-hotspot_compare_unique_users.php\" /><br/><br/>";
-        echo "<img src=\"library/exten-hotspot_compare_hits.php\" /><br/><br/>";
-        echo "<img src=\"library/exten-hotspot_compare_time.php\" /><br/>";
+        echo "<img src=\"library/graphs-hotspot-compare-unique-users.php\" /><br/><br/>";
+        echo "<img src=\"library/graphs-hotspot-compare-hits.php\" /><br/><br/>";
+        echo "<img src=\"library/graphs-hotspot-compare-time.php\" /><br/><br/>";
 	echo "</center>";
 ?>
 
