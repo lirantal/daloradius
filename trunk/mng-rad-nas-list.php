@@ -20,7 +20,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">NAS Listing in Database</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradnaslist.php] ?></a></h2>
 				
 				<p>
 
@@ -43,15 +43,15 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> NAS ID </th>
-                        <th scope='col'> NAS IP/Host </th>
-                        <th scope='col'> NAS Shortname </th>
-                        <th scope='col'> NAS Type </th>
-                        <th scope='col'> NAS Ports</th>
-                        <th scope='col'> NAS Secret</th>
-                        <th scope='col'> NAS Community </th>
-                        <th scope='col'> NAS Description </th>
-                        <th scope='col'> Action </th>
+                        <th scope='col'> ".$l[all][NasID]." </th>
+                        <th scope='col'> ".$l[all][NasIPHost]." </th>
+                        <th scope='col'> ".$l[all][NasShortname]." </th>
+                        <th scope='col'> ".$l[all][NasType]." </th>
+                        <th scope='col'> ".$l[all][NasPorts]." </th>
+                        <th scope='col'> ".$l[all][NasSecret]." </th>
+                        <th scope='col'> ".$l[all][NasCommunity]." </th>
+                        <th scope='col'> ".$l[all][NasDescription]." </th>
+                        <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
@@ -63,8 +63,8 @@
                         <td> $nt[secret] </td>
                         <td> $nt[community] </td>
                         <td> $nt[description] </td>
-                        <td> <a href='mng-rad-nas-edit.php?nashost=$nt[nasname]'> edit </a>
-                             <a href='mng-rad-nas-del.php?nashost=$nt[nasname]'> del </a>
+                        <td> <a href='mng-rad-nas-edit.php?nashost=$nt[nasname]'> ".$l[all][edit]." </a>
+                             <a href='mng-rad-nas-del.php?nashost=$nt[nasname]'> ".$l[all][del]." </a>
                              </td>
 
                 </tr>";
