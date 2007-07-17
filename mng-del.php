@@ -55,10 +55,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mng-del.php] ?></h2>
+				<h2 id="Intro"><?php echo $l[Intro][mngdel.php] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mng-del] ?>
+				<?php echo $l[captions][mngdel] ?>
 				<br/><br/>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
