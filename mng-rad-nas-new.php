@@ -106,7 +106,7 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">New NAS Record</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradnasnew.php] ?></a></h2>
 				
 				<p>
 
@@ -114,23 +114,24 @@ function toggleShowDiv(pass) {
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>"; }?>
-                                                <b>NAS IP/Hostname</b>
+                                                <b><?php echo $l[FormField][mngradnasnew.php][NasIPHost] ?></b>
 </td><td>
                                                 <input value="<?php echo $nashost ?>" name="nashost"/>
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($nassecret) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b>NAS Secret</b>
+	                                        <b><?php echo $l[FormField][mngradnasnew.php][NasSecret] ?></b>
 </td><td>											
                                                 <input value="<?php echo $nassecret ?>" name="nassecret" /> 
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($nasname) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>NAS Shortname</b> 
+                                                <b><?php echo $l[FormField][mngradnasnew.php][NasShortname] ?></b> 
 </td><td>												
-                                                <input value="<?php echo $nasname ?>" name="nasname" /> (descriptive name)
+                                                <input value="<?php echo $nasname ?>" name="nasname" /> 
+												<?php echo $l[FormField][mngradnasnew.php][ToolTip][NasShortname] ?>
                                                 </font><br/>
 </td></tr>
 </table>
@@ -144,7 +145,7 @@ function toggleShowDiv(pass) {
 <tr><td>
                                                 <?php if (trim($nastype) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesNasType')">
-                                                <b>NAS Type</b>
+                                                <b><?php echo $l[FormField][mngradnasnew.php][NasType] ?></b>
 </td><td>												
 <div id="attributesNasType" style="display:none;visibility:visible" >
 						<br/>
@@ -159,7 +160,7 @@ function toggleShowDiv(pass) {
 
                                                 <?php if (trim($nasports) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPorts')">
-                                                <b>NAS Ports</b> 
+                                                <b><?php echo $l[FormField][mngradnasnew.php][NasPorts] ?></b> 
 </td><td>												
 <div id="attributesPorts" style="display:none;visibility:visible" >
 						<br/>
@@ -173,7 +174,7 @@ function toggleShowDiv(pass) {
 
                                                 <?php if (trim($nascommunity) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesCommunity')">
-                                                <b>NAS Community</b> 
+                                                <b><?php echo $l[FormField][mngradnasnew.php][NasCommunity] ?></b> 
 </td><td>												
 <div id="attributesCommunity" style="display:none;visibility:visible" >
 						<br/>
@@ -188,7 +189,7 @@ function toggleShowDiv(pass) {
 
                                                 <?php if (trim($nasdescription) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesDescription')">
-                                                <b>NAS Description</b> 
+                                                <b><?php echo $l[FormField][mngradnasnew.php][NasDescription] ?></b> 
 </td><td>
 <div id="attributesDescription" style="display:none;visibility:visible" >
 						<br/>
@@ -199,7 +200,7 @@ function toggleShowDiv(pass) {
 </table>
                                                 <br/><br/>
 <center>												
-                                                <input type="submit" name="submit" value="Apply"/>
+                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
 
                                 </form>
