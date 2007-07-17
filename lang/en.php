@@ -96,7 +96,7 @@ $l[Intro][mng-batch.php] = "Create batch users";
 
 $l[FormField][all][Expiration] = "Expiration";
 $l[FormField][all][Max-All-Session] = "Max-All-Session";
-$l[FormField][all][Session Timeout] = "Session Timeout";
+$l[FormField][all][SessionTimeout] = "Session Timeout";
 $l[FormField][mng-batch.php][UsernamePrefix] = "Username Prefix";
 $l[FormField][mng-batch.php][NumberInstances] = "Number of instances to create";
 $l[FormField][mng-batch.php][UsernameLength] = "Length of username string";
