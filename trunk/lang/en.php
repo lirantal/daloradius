@@ -96,18 +96,38 @@ $l[Intro][mngdel.php] = "Remove User";
 $l[Intro][mngedit.php] = "Edit User Details";
 $l[Intro][mnglistall.php] = "Users Listing";
 $l[Intro][mngmain.php] = "Users and Hotspots Management";
+$l[Intro][mngnew.php] = "New User";
+
+$l[Intro][mnghsdel.php] = "Remove Hotspots";
+$l[Intro][mnghsedit.php] = "Edit Hotspots Details";
+$l[Intro][mnghslist.php] = "List Hotspots";
+$l[Intro][mnghsnew.php] = "New Hotspot Entry";
+
+
 
 $l[FormField][all][Username] = "Username";
 $l[FormField][all][Password] = "Password";
-
-
 $l[FormField][all][Expiration] = "Expiration";
 $l[FormField][all][MaxAllSession] = "Max-All-Session";
 $l[FormField][all][SessionTimeout] = "Session Timeout";
+$l[FormField][all][IdleTimeout] = "Idle Timeout";
+$l[FormField][all][CallingStationId] = "Calling-Station-Id";
+$l[FormField][all][CalledStationId] = "Called-Station-Id";
+$l[FormField][all][WISPrRedirectionURL] = "WISPr-Redirection-URL";
+$l[FormField][all][WISPrBandwidthMaxUp] = "WISPr-Bandwidth-Max-Up";
+$l[FormField][all][WISPrBandwidthMaxDown] = "WISPr-Bandwidth-Max-Down";
+$l[FormField][all][WISPrSessionTerminateTime] = "WISPr-Session-Terminate-Time";
+
+
 $l[FormField][mngbatch.php][UsernamePrefix] = "Username Prefix";
 $l[FormField][mngbatch.php][NumberInstances] = "Number of instances to create";
 $l[FormField][mngbatch.php][UsernameLength] = "Length of username string";
 $l[FormField][mngbatch.php][PasswordLength] = "Length of password string";
+
+$l[FormField][mnghsdel.php][HotspotName] = "Hotspot name";
+$l[FormField][mnghsedit.php][MACAddress] = "MAC Address";
+$l[FormField][mnghsedit.php][Geocode] = "Geocode";
+
 
 
 $l[captions][mngbatch] = "You may fill below details for new user addition to database.<br/>
@@ -115,6 +135,10 @@ $l[captions][mngbatch] = "You may fill below details for new user addition to da
 $l[captions][mngdel] = "To remove a user from the database you must provide the username or the account id.<br/>";
 $l[captions][mngedit] = "Edit the user details below.<br/>";
 $l[captions][mnglistall] = "Listing users in database.<br/>";
+$l[captions][mngnew] = "You may fill below details for new user addition to database<br/>";
+$l[captions][mnghsdel] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
+$l[captions][mnghsedit] = "You may edit below details for hotspot<br/>";
+$l[captions][mnghsnew] = "You may fill below details for new hotspot addition to database";
 
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
