@@ -254,10 +254,10 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">New User</h2>
+				<h2 id="Intro"><?php echo $l[Intro][mngnew.php] ?></h2>
 				
 				<p>
-				You may fill below details for new user addition to database
+				<?php echo $l[captions][mngnew] ?>
 				<br/><br/>
 				</p>
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -265,7 +265,7 @@ function toggleShowDiv(pass) {
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>Username</b>
+						<b><?php echo $l[FormField][all][Username] ?></b>
 </td><td>
 						<input value="<?php echo $username ?>" name="username"/>
 <a href="javascript:randomUsername()"> genuser</a><br/>
@@ -273,7 +273,7 @@ function toggleShowDiv(pass) {
 </td></tr>
 <tr><td>
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>Password</b>
+						<b><?php echo $l[FormField][all][Password] ?></b>
 </td><td>
 						<input value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/>
@@ -281,7 +281,7 @@ function toggleShowDiv(pass) {
 </td></tr>
 <tr><td
 						<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>Expiration</b>
+						<b><?php echo $l[FormField][all][Expiration] ?></b>
 </td><td>
 <input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
@@ -295,7 +295,7 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?> 
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')"> 
-						<b>Max-All-Session</b> <br/>
+						<b><?php echo $l[FormField][all][MaxAllSession] ?></b> <br/>
 
 <div id="attributesMaxAllSession" style="display:none;visibility:visible" > 
 						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
@@ -314,7 +314,7 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($sessiontimeout) == "") { echo "<font color='#FF0000'>";  }?>
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesSessionTimeout')"> 
-						<b>Session Timeout</b><br/>
+						<b><?php echo $l[FormField][all][SessionTimeout] ?></b><br/>
 <div id="attributesSessionTimeout" style="display:none;visibility:visible" > 
 						<input value="<?php echo $sessiontimeout ?>" name="sessiontimeout" />
 <a href="javascript:sessiontimeout(86400)">1day(s)</a>
@@ -331,7 +331,7 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($idletimeout) == "") { echo "<font color='#FF0000'>";  }?>
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesIdleTimeout')"> 
-						<b>Idle Timeout</b><br/>
+						<b><?php echo $l[FormField][all][IdleTimeout] ?></b><br/>
 <div id="attributesIdleTimeout" style="display:none;visibility:visible" >
 						<input value="<?php echo $idletimeout ?>" name="idletimeout" />
 <a href="javascript:idletimeout(86400)">1day(s)</a>
@@ -353,14 +353,14 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($callingstationid) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesCallingStationId')">
-						<b>Calling-Station-Id</b><br/>
+						<b><?php echo $l[FormField][all][CallingStationId] ?></b><br/>
 <div id="attributesCallingStationId" style="display:none;visibility:visible" >
 						<input value="<?php echo $callingstationid ?>" name="callingstationid" />
 						</font> force the user to login from this computer/nic MAC addresss only <br/><br/>
 </div>
 						<?php if (trim($calledstationid) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesCalledStationId')">
-						<b>Called-Station-Id</b><br/>
+						<b><?php echo $l[FormField][all][CalledStationId] ?></b><br/>
 <div id="attributesCalledStationId" style="display:none;visibility:visible" >
 						<input value="<?php echo $calledstationid ?>" name="calledstationid" />
 						</font> force the user to login from this AP only <br/><br/>
@@ -371,7 +371,7 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($wisprredirectionurl) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesWISPr-Redirection-URL')">
-						<b>WISPr-Redirection-URL</b><br/>
+						<b><?php echo $l[FormField][all][WISPrRedirectionURL] ?></b><br/>
 <div id="attributesWISPr-Redirection-URL" style="display:none;visibility:visible" >
 						<input value="<?php echo $wisprredirectionurl ?>" name="wisprredirectionurl" />
 						</font> If present the client will be redirected to this URL once authenticated. <br/><br/>
@@ -379,7 +379,7 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($wisprbandwidthmaxup) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesWISPr-Bandwidth-Max-Up')">
-						<b>WISPr-Bandwidth-Max-Up</b><br/>
+						<b><?php echo $l[FormField][all][WISPrBandwidthMaxUp] ?></b><br/>
 <div id="attributesWISPr-Bandwidth-Max-Up" style="display:none;visibility:visible" >
 
 						<input value="<?php echo $wisprbandwidthmaxup ?>" name="wisprbandwidthmaxup" />
@@ -397,7 +397,7 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($wisprbandwidthmaxdown) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesWISPr-Bandwidth-Max-Down')">
-						<b>WISPr-Bandwidth-Max-Down</b><br/>
+						<b><?php echo $l[FormField][all][WISPrBandwidthMaxDown] ?></b><br/>
 <div id="attributesWISPr-Bandwidth-Max-Down" style="display:none;visibility:visible" >
 
 						<input value="<?php echo $wisprbandwidthmaxdown ?>" name="wisprbandwidthmaxdown" />
@@ -414,7 +414,7 @@ function toggleShowDiv(pass) {
 
 						<?php if (trim($wisprsessionterminatetime) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesWISPr-Session-Terminate-Time')">
-						<b>WISPr-Session-Terminate-Time</b><br/>
+						<b><?php echo $l[FormField][all][WISPrSessionTerminateTime] ?></b><br/>
 <div id="attributesWISPr-Session-Terminate-Time" style="display:none;visibility:visible" >
 			<input name="wisprsessionterminatetime" type="text" id="wisprsessionterminatetime" value="<?php echo $wisprsessionterminatetime ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'wisprsessionterminatetime', 'chooserSpan', 1950, 2010, 'd M Y', false);">
@@ -422,7 +422,7 @@ function toggleShowDiv(pass) {
 </div>
 
 						<br/><br/>
-						<input type="submit" name="submit" value="Apply"/>
+						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 
 
 				</form>

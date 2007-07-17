@@ -68,10 +68,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">New Hotspot Entry</h2>
+				<h2 id="Intro"><?php echo $l[Intro][mnghsnew.php] ?></h2>
 				
 				<p>
-				You may fill below details for new hotspot addition to database
+				<?php echo $l[captions][mnghsnew] ?>
 				<br/><br/>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -79,27 +79,27 @@
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>Hotspot Name</b>
+						<b><?php echo $l[FormField][mnghsdel.php][HotspotName] ?></b>
 </td><td>
 						<input value="<?php echo $name ?>" name="name"/><br/>
 						</font>
 </td></tr>
 <tr><td>
 						<?php if (trim($macaddress) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>MAC Address</b>
+						<b><?php echo $l[FormField][mnghsedit.php][MACAddress] ?></b>
 </td><td>
 						<input value="<?php echo $macaddress ?>" name="macaddress" /><br/>
 						</font>
 </td></tr>
 <tr><td>
-						<b>Geocode</b>
+						<b><?php echo $l[FormField][mnghsedit.php][Geocode] ?></b>
 </td><td>
 						<input value="<?php echo $geocode ?>" name="geocode" /><br/>
 </td></tr>
 </table>
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="Apply"/>
+						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
 				</form>
 		

@@ -57,20 +57,20 @@
 ?>		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Edit Hotspots Details</h2>
+				<h2 id="Intro"><?php echo $l[Intro][mnghsedit.php] ?></h2>
 				
 				<p>
-				You may edit below details for hotspot 
+				<?php echo $l[captions][mnghsedit] ?> 
 				<br/><br/>			</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
-						<b>MAC Address</b>
+						<b><?php echo $l[FormField][mnghsedit.php][MACAddress] ?></b>
 </td><td>
 						<input value="<?php echo $macaddress ?>" name="macaddress" /><br/>
 </td></tr>
 <tr><td>
-						<b>Geocode</b>
+						<b><?php echo $l[FormField][mnghsedit.php][Geocode] ?></b>
 </td><td>
 						<input value="<?php echo $geocode ?>" name="geocode" /><br/>
 
@@ -80,7 +80,7 @@
 </table>
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="Save Settings"/>
+						<input type="submit" name="submit" value="<?php echo $l[buttons][savesettings] ?>"/>
 </center>
 				</form>
 		

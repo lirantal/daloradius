@@ -20,7 +20,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">List Hotspots</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mnghslist.php] ?></a></h2>
 				
 				<p>
 
@@ -43,11 +43,11 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ID </th>
-                        <th scope='col'> Name </th>
-                        <th scope='col'> MAC Address </th>
-                        <th scope='col'> Geocode</th>
-                        <th scope='col'> Action </th>
+                        <th scope='col'> ".$l[all][ID]." </th>
+                        <th scope='col'> ".$l[all][HotSpot]." </th>
+                        <th scope='col'> ".$l[all][MACAddress]." </th>
+                        <th scope='col'> ".$l[all][Geocode]." </th>
+                        <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
@@ -55,7 +55,7 @@
                         <td> $nt[1] </td>
                         <td> $nt[2] </td>
                         <td> $nt[3] </td>
-                        <td> <a href='mng-hs-edit.php?name=$nt[1]'> edit </a> </td>
+                        <td> <a href='mng-hs-edit.php?name=$nt[1]'> ".$l[all][edit]." </a> </td>
                 </tr>";
         }
         echo "</table>";

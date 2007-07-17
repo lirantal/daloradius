@@ -188,7 +188,7 @@ function toggleShowDiv(pass) {
 						<input value="<?php echo $username_prefix ?>" name="username_prefix"/><br/>
 </td></tr>
 <tr><td>
-						<b><?php echo $l[FormField][mng-batch.php][NumberInstances] ?></b>
+						<b><?php echo $l[FormField][mngbatch.php][NumberInstances] ?></b>
 </td><td>
 						<input value="<?php echo $number ?>" name="number" /><br/>
 </td></tr>
@@ -267,7 +267,7 @@ function toggleShowDiv(pass) {
 </div>
 
 						<br/><br/>
-						<input type="submit" name="submit" value="Apply"/>
+						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 
 				</form>
 		
