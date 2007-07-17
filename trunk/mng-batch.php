@@ -163,10 +163,10 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">New User</h2>
+				<h2 id="Intro"><?php echo $l[Intro][mng-batch.php] ?></h2>
 				
 				<p>
-				You may fill below details for new user addition to database
+				<?php echo $l[captions][mng-batch] ?><br/>
 				<br/><br/>
 <?php
 		if (trim($username_prefix) == "") { echo "error: missing username prefix<br/>";  }
@@ -183,18 +183,18 @@ function toggleShowDiv(pass) {
 
 <table border='2' class='table1'>
 <tr><td>
-						<b>Username Prefix</b>
+						<b><?php echo $l[FormField][mng-batch.php][UsernamePrefix] ?></b>
 </td><td>
 						<input value="<?php echo $username_prefix ?>" name="username_prefix"/><br/>
 </td></tr>
 <tr><td>
-						<b>Number of instances to create</b>
+						<b><?php echo $l[FormField][mng-batch.php][NumberInstances] ?></b>
 </td><td>
 						<input value="<?php echo $number ?>" name="number" /><br/>
 </td></tr>
 <tr><td>
 
-						<b>Length of username string</b>
+						<b><?php echo $l[FormField][mng-batch.php][UsernameLength] ?></b>
 </td><td>
 	<SELECT name="length_user">
           <OPTION id="4"> 4 </OPTION>
@@ -207,7 +207,7 @@ function toggleShowDiv(pass) {
 </td></tr>
 <tr><td>
 
-						<b>Length of password string</b>
+						<b><?php echo $l[FormField][mng-batch.php][PasswordLength] ?></b>
 </td><td>
 	<SELECT name="length_pass">
           <OPTION id="4"> 4 </OPTION>
@@ -222,7 +222,7 @@ function toggleShowDiv(pass) {
 
 <br/>
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesExpiration')">
-						<b>Expiration</b>
+						<b><?php echo $l[FormField][all][Expiration] ?></b>
 <div id="attributesExpiration" style="display:none;visibility:visible" >
 <input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
@@ -235,7 +235,7 @@ function toggleShowDiv(pass) {
 
 
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
-						<b>Max-All-Session</b><br/>
+						<b><?php echo $l[FormField][all][Max-All-Session] ?></b><br/>
 <div id="attributesMaxAllSession" style="display:none;visibility:visible" >
 						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
 
@@ -252,7 +252,7 @@ function toggleShowDiv(pass) {
 
 
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesSessionTimeout')">
-						<b>Session Timeout</b><br/>
+						<b><?php echo $l[FormField][all][Session Timeout] ?></b><br/>
 <div id="attributesSessionTimeout" style="display:none;visibility:visible" >
 						<input value="<?php echo $sessiontimeout ?>" name="sessiontimeout" />
 <a href="javascript:sessiontimeout(86400)">1day(s)</a>
