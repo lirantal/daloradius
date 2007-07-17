@@ -252,7 +252,7 @@ function toggleShowDiv(pass) {
 
 
                                                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesSessionTimeout')">
-						<b><?php echo $l[FormField][all][Session Timeout] ?></b><br/>
+						<b><?php echo $l[FormField][all][SessionTimeout] ?></b><br/>
 <div id="attributesSessionTimeout" style="display:none;visibility:visible" >
 						<input value="<?php echo $sessiontimeout ?>" name="sessiontimeout" />
 <a href="javascript:sessiontimeout(86400)">1day(s)</a>
