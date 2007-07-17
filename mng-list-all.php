@@ -18,10 +18,10 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Users Listing</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mng-list-all.php] ?></a></h2>
 				
 				<p>
-				Listing users in database<br/>
+				<?php echo $l[captions][mng-list-all] ?><br/>
 				</p>
 
 
@@ -49,18 +49,18 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> Account ID </th>
-                        <th scope='col'> Username </th>
-                        <th scope='col'> Password </th>
-                        <th scope='col'> Action </th>
+                        <th scope='col'> ".$l[all][ID]. " </th>
+                        <th scope='col'> ".$l[all][Username]." </th>
+                        <th scope='col'> ".$l[all][Password]." </th>
+                        <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
                         <td> $nt[id] </td>
                         <td> $nt[UserName] </td>
                         <td> $nt[Value] </td>
-                        <td> <a href='mng-edit.php?username=$nt[UserName]'> edit </a>
-	                     <a href='mng-del.php?username=$nt[UserName]'> del </a>
+                        <td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a>
+	                     <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
 			     </td>
 
                 </tr>";
