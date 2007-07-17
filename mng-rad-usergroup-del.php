@@ -101,10 +101,10 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Remove User-Group Mapping</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradusergroupdel.php] ?></a></h2>
 				
                                 <p>
-                                To remove a user entry from the database you must provide the username of the account.
+                                <?php echo $l[captions][mngradusergroupdel] ?>
                                 <br/><br/>
                                 </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -113,24 +113,24 @@ function toggleShowDiv(pass) {
                                                 <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
 
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Username</b>
+                                                <b><?php echo $l[FormField][all][Username] ?></b>
 </td><td>													
                                                 <input value="<?php echo $username ?>" name="username"/><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Groupname</b>
+                                                <b><?php echo $l[FormField][all][Groupname]?></b>
 </td><td>												
                                                 <input value="<?php echo $group ?>" name="group"/><br/>
-						If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!
+												<?php echo $l[FormField][mngradusergroupdel.php][ToolTip][Groupname] ?>
                                                 </font>
 </td></tr>
 </table>
 
                                                 <br/><br/>
 <center>												
-                                                <input type="submit" name="submit" value="Apply"/>
+                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
                                 </form>
 				

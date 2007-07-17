@@ -20,7 +20,7 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">User-Group Configuration</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradusergroup.php] ?></a></h2>
 				
 				<p>
 	<table><center><br/>
