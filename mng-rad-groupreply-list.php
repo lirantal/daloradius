@@ -20,7 +20,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Group Reply Mapping in Database</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradgroupreplylist.php] ?></a></h2>
 				
 				<p>
 
@@ -37,16 +37,16 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>Records</th>
+                                <th colspan='10'> ".$l[all][Records]."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> GroupName </th>
-                        <th scope='col'> Attribute </th>
-                        <th scope='col'> Op </th>						
-                        <th scope='col'> Value </th>
+                        <th scope='col'> ".$l[all][Groupname]." </th>
+                        <th scope='col'> ".$l[all][Attribute]." </th>
+                        <th scope='col'> ".$l[all][Operator]." </th>						
+                        <th scope='col'> "$l[all][Value]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
@@ -54,8 +54,8 @@
                         <td> $nt[Attribute] </td>
                         <td> $nt[op] </td>						
                         <td> $nt[Value] </td>						
-                        <td> <a href='mng-rad-groupreply-edit.php?groupname=$nt[GroupName]&value=$nt[Value]'> edit </a>
-                             <a href='mng-rad-groupreply-del.php?groupname=$nt[GroupName]&value=$nt[Value]'> del </a>
+                        <td> <a href='mng-rad-groupreply-edit.php?groupname=$nt[GroupName]&value=$nt[Value]'> ".$l[all][edit]." </a>
+                             <a href='mng-rad-groupreply-del.php?groupname=$nt[GroupName]&value=$nt[Value]'> ".$l[all][del]." </a>
                              </td>
 
                 </tr>";

@@ -20,7 +20,7 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Group Reply Configuration</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradgroupreply.php] ?></a></h2>
 				
 				<p>
 	<table><center><br/>
