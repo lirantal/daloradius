@@ -91,6 +91,22 @@ $l[Intro][repmain.php] = "Reports Page";
 $l[Intro][reptopusers.php] = "Top Users";
 $l[Intro][repusername.php] = "Users Listing";
 
+$l[Intro][mng-batch.php] = "Create batch users";
+
+
+$l[FormField][all][Expiration] = "Expiration";
+$l[FormField][all][Max-All-Session] = "Max-All-Session";
+$l[FormField][all][Session Timeout] = "Session Timeout";
+$l[FormField][mng-batch.php][UsernamePrefix] = "Username Prefix";
+$l[FormField][mng-batch.php][NumberInstances] = "Number of instances to create";
+$l[FormField][mng-batch.php][UsernameLength] = "Length of username string";
+$l[FormField][mng-batch.php][PasswordLength] = "Length of password string";
+
+
+$l[captions][mng-batch] = "You may fill below details for new user addition to database.<br/>
+							Note that these settings will apply for all the users that you are creating.<br/>";
+
+
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
 $l[captions][providebillratetodel] = "Provide the rate entry type which you would like to remove";
 $l[captions][detailsofnewrate] = "You may fill below details for the new rate";
