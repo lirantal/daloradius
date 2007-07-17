@@ -55,17 +55,17 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Remove User</h2>
+				<h2 id="Intro"><?php echo $l[Intro][mng-del.php] ?></h2>
 				
 				<p>
-				To remove a user from the database you must provide the username or the account id
+				<?php echo $l[captions][mng-del] ?>
 				<br/><br/>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>Username</b>
+						<b><?php echo $l[FormField][all][Username] ?></b>
 </td><td>
 						<input value="<?php echo $username ?>" name="username"/><br/>
 						</font>

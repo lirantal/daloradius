@@ -95,10 +95,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Edit User Details</h2>
+				<h2 id="Intro"><?php echo $l[Intro][mng-edit.php] ?></h2>
 				
 				<p>
-				You may fill below details for new user addition to database
+				<?php echo $l[captions][mng-edit] ?>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
