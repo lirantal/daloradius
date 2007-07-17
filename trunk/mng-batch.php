@@ -163,10 +163,10 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mng-batch.php] ?></h2>
+				<h2 id="Intro"><?php echo $l[Intro][mngbatch.php] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mng-batch] ?><br/>
+				<?php echo $l[captions][mngbatch] ?><br/>
 				<br/><br/>
 <?php
 		if (trim($username_prefix) == "") { echo "error: missing username prefix<br/>";  }
@@ -183,7 +183,7 @@ function toggleShowDiv(pass) {
 
 <table border='2' class='table1'>
 <tr><td>
-						<b><?php echo $l[FormField][mng-batch.php][UsernamePrefix] ?></b>
+						<b><?php echo $l[FormField][mngbatch.php][UsernamePrefix] ?></b>
 </td><td>
 						<input value="<?php echo $username_prefix ?>" name="username_prefix"/><br/>
 </td></tr>
@@ -194,7 +194,7 @@ function toggleShowDiv(pass) {
 </td></tr>
 <tr><td>
 
-						<b><?php echo $l[FormField][mng-batch.php][UsernameLength] ?></b>
+						<b><?php echo $l[FormField][mngbatch.php][UsernameLength] ?></b>
 </td><td>
 	<SELECT name="length_user">
           <OPTION id="4"> 4 </OPTION>
@@ -207,7 +207,7 @@ function toggleShowDiv(pass) {
 </td></tr>
 <tr><td>
 
-						<b><?php echo $l[FormField][mng-batch.php][PasswordLength] ?></b>
+						<b><?php echo $l[FormField][mngbatch.php][PasswordLength] ?></b>
 </td><td>
 	<SELECT name="length_pass">
           <OPTION id="4"> 4 </OPTION>
@@ -235,7 +235,7 @@ function toggleShowDiv(pass) {
 
 
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
-						<b><?php echo $l[FormField][all][Max-All-Session] ?></b><br/>
+						<b><?php echo $l[FormField][all][MaxAllSession] ?></b><br/>
 <div id="attributesMaxAllSession" style="display:none;visibility:visible" >
 						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
 

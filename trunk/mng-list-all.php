@@ -18,10 +18,10 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mng-list-all.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mnglistall.php] ?></a></h2>
 				
 				<p>
-				<?php echo $l[captions][mng-list-all] ?><br/>
+				<?php echo $l[captions][mnglistall] ?><br/>
 				</p>
 
 

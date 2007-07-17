@@ -95,10 +95,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mng-edit.php] ?></h2>
+				<h2 id="Intro"><?php echo $l[Intro][mngedit.php] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mng-edit] ?>
+				<?php echo $l[captions][mngedit] ?>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
