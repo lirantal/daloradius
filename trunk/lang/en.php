@@ -4,10 +4,22 @@ $l[all][copyright1] = "Radius Reporting, Billing and Management by <a href=\"htt
 $l[all][copyright2] = "Copyright of <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l[all][ID] = "ID";
+$l[all][NasID] = "NAS ID";
+$l[all][Nas] = "NAS ";
+$l[all][NasIPHost] = "NAS IP/Host";
+$l[all][NasShortname] = "NAS Shortname";
+$l[all][NasType] = "NAS Type";
+$l[all][NasPorts] = "NAS Ports";
+$l[all][NasSecret] = "NAS Secret";
+$l[all][NasCommunity] = "NAS Community";
+$l[all][NasDescription] = "NAS Description";
+
 $l[all][HotSpot] = "HotSpot";
 $l[all][Username] = "Username";
 $l[all][Password] = "Password";
 $l[all][IPAddress] = "IP Address";
+$l[all][Groupname] = "Groupname";
+$l[all][Priority] = "Priority";
 $l[all][Attribute] = "Attribute";
 $l[all][Value] = "Value";
 $l[all][MaxTimeExpiration] = "Max Time / Expiration";
@@ -103,10 +115,24 @@ $l[Intro][mnghsedit.php] = "Edit Hotspots Details";
 $l[Intro][mnghslist.php] = "List Hotspots";
 $l[Intro][mnghsnew.php] = "New Hotspot Entry";
 
+$l[Intro][mngradusergroupdel.php] = "Remove User-Group Mapping";
+$l[Intro][mngradusergroup.php] = "User-Group Configuration";
+$l[Intro][mngradusergroupnew.php] = "New User-Group Mapping";
+$l[Intro][mngradusergrouplist] = "User-Group Mapping in Database";
+$l[Intro][mngradusergrouplistuser] = "User-Group Mapping in Database";
+$l[Intro][mngradusergroupedit] = "Edit User-Group Mapping for User:";
+
+$l[Intro][mngradnas.php] = "NAS Configuration";
+$l[Intro][mngradnasnew.php] = "New NAS Record";
+$l[Intro][mngradnaslist.php] = "NAS Listing in Database";
+$l[Intro][mngradnasedit.php] = "Edit NAS Record";
+$l[Intro][mngradnasdel.php] = "Remove NAS Record";
 
 
 $l[FormField][all][Username] = "Username";
+$l[FormField][all][Groupname] = "Groupname";
 $l[FormField][all][Password] = "Password";
+$l[FormField][all][Priority] = "Priority";
 $l[FormField][all][Expiration] = "Expiration";
 $l[FormField][all][MaxAllSession] = "Max-All-Session";
 $l[FormField][all][SessionTimeout] = "Session Timeout";
@@ -128,6 +154,21 @@ $l[FormField][mnghsdel.php][HotspotName] = "Hotspot name";
 $l[FormField][mnghsedit.php][MACAddress] = "MAC Address";
 $l[FormField][mnghsedit.php][Geocode] = "Geocode";
 
+$l[FormField][mngradusergroupedit.php][CurrentGroupname] = "Current Groupname";
+$l[FormField][mngradusergroupedit.php][NewGroupname] = "New Groupname";
+
+$l[FormField][mngradnasnew.php][NasIPHost] = "NAS IP/Hostname";
+$l[FormField][mngradnasnew.php][NasSecret] = "NAS Secret";
+$l[FormField][mngradnasnew.php][NasShortname] = "NAS Shortname";
+$l[FormField][mngradnasnew.php][NasType] = "NAS Type";
+$l[FormField][mngradnasnew.php][NasPorts] = "NAS Ports";
+$l[FormField][mngradnasnew.php][NasCommunity] = "NAS Community";
+$l[FormField][mngradnasnew.php][NasDescription] = "NAS Description";
+
+
+$l[FormField][mngradnasnew.php][ToolTip][NasShortname] = "(descriptive name)";
+$l[FormField][mngradusergroupdel.php][ToolTip][Groupname] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
+
 
 
 $l[captions][mngbatch] = "You may fill below details for new user addition to database.<br/>
@@ -140,6 +181,9 @@ $l[captions][mnghsdel] = "To remove a hotspot from the database you must provide
 $l[captions][mnghsedit] = "You may edit below details for hotspot<br/>";
 $l[captions][mnghsnew] = "You may fill below details for new hotspot addition to database";
 
+$l[captions][mngradusergroupdel] = "To remove a user entry from the database you must provide the username of the account";
+
+$l[captions][mngradnasdel] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
 $l[captions][providebillratetodel] = "Provide the rate entry type which you would like to remove";
