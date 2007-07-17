@@ -118,7 +118,7 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Edit User-Group Mapping for User: <?php echo $username ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradusergroupedit] ?> <?php echo $username ?></a></h2>
 				
 				<p>
 
@@ -128,14 +128,14 @@ function toggleShowDiv(pass) {
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($groupOld) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b>Current Group Name</b>
+	                                        <b><?php echo $l[FormField][mngradusergroupedit.php][CurrentGroupname] ?></b>
 </td><td>											
                                                 <input value="<?php echo $groupOld ?>" name="groupOld" /> (Old Group Name)
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b>New Group Name</b>
+	                                        <b><?php echo $l[FormField][mngradusergroupedit.php][NewGroupname] ?></b>
 </td><td>											
                                                 <input value="<?php echo $group ?>" name="group" /> 
                                                 </font><br/>
@@ -151,7 +151,7 @@ function toggleShowDiv(pass) {
 <tr><td>
                                                 <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPriority')">
-                                                <b>Priority</b>
+                                                <b><?php echo $l[FormField][all][Priority] ?></b>
 </td><td>
 <div id="attributesPriority" style="display:none;visibility:visible" >
 						<br/>
@@ -162,7 +162,7 @@ function toggleShowDiv(pass) {
 </table>
 
 <center>
-                                                <input type="submit" name="submit" value="Apply"/>
+                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
                                 </form>
 

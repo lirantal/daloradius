@@ -23,7 +23,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">User-Group Mapping in Database</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradusergrouplistuser] ?></a></h2>
 				
 				<p>
 
@@ -40,24 +40,24 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>Records</th>
+                                <th colspan='10'>".$l[all][Records]."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> Username </th>
-                        <th scope='col'> Group </th>
-                        <th scope='col'> Priority </th>
-                        <th scope='col'> Action </th>
+                        <th scope='col'> ".$l[all][Username]." </th>
+                        <th scope='col'> ".$l[all][Groupname]." </th>
+                        <th scope='col'> ".$l[all][Priority]." </th>
+                        <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
                         <td> $nt[UserName] </td>
                         <td> $nt[GroupName] </td>
                         <td> $nt[priority] </td>
-                        <td> <a href='mng-rad-usergroup-edit.php?username=$nt[UserName]&group=$nt[GroupName]'> edit </a>
-                             <a href='mng-rad-usergroup-del.php?username=$nt[UserName]&group=$nt[GroupName]'> del </a>
+                        <td> <a href='mng-rad-usergroup-edit.php?username=$nt[UserName]&group=$nt[GroupName]'> ".$l[all][edit]." </a>
+                             <a href='mng-rad-usergroup-del.php?username=$nt[UserName]&group=$nt[GroupName]'> ".$l[all][del]." </a>
                              </td>
 
                 </tr>";
