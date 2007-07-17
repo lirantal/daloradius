@@ -92,6 +92,13 @@ $l[Intro][reptopusers.php] = "Top Users";
 $l[Intro][repusername.php] = "Users Listing";
 
 $l[Intro][mng-batch.php] = "Create batch users";
+$l[Intro][mng-del.php] = "Remove User";
+$l[Intro][mng-edit.php] = "Edit User Details";
+$l[Intro][mng-list-all.php] = "Users Listing";
+$l[Intro][mng-main.php] = "Users and Hotspots Management";
+
+$l[FormField][all][Username] = "Username";
+$l[FormField][all][Password] = "Password";
 
 
 $l[FormField][all][Expiration] = "Expiration";
@@ -105,6 +112,9 @@ $l[FormField][mng-batch.php][PasswordLength] = "Length of password string";
 
 $l[captions][mng-batch] = "You may fill below details for new user addition to database.<br/>
 							Note that these settings will apply for all the users that you are creating.<br/>";
+$l[captions][mng-del] = "To remove a user from the database you must provide the username or the account id.<br/>";
+$l[captions][mng-edit] = "Edit the user details below.<br/>";
+$l[captions][mng-list-all] = "Listing users in database.<br/>";
 
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
