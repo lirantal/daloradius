@@ -21,6 +21,7 @@ $l[all][IPAddress] = "IP Address";
 $l[all][Groupname] = "Groupname";
 $l[all][Priority] = "Priority";
 $l[all][Attribute] = "Attribute";
+$l[all][Operator] = "Operator";
 $l[all][Value] = "Value";
 $l[all][MaxTimeExpiration] = "Max Time / Expiration";
 $l[all][UsedTime] = "Used Time";
@@ -128,10 +129,20 @@ $l[Intro][mngradnaslist.php] = "NAS Listing in Database";
 $l[Intro][mngradnasedit.php] = "Edit NAS Record";
 $l[Intro][mngradnasdel.php] = "Remove NAS Record";
 
+$l[Intro][mngradgroupreply.php] = "Group Reply Configuration";
+$l[Intro][mngradgroupreplynew.php] = "New Group Reply Mapping";
+$l[Intro][mngradgroupreplylist.php] = "Group Reply Mapping in Database";
+$l[Intro][mngradgroupreplyedit.php] = "Edit Group Reply Mapping for Group:";
+$l[Intro][mngradgroupreplydel.php] = "Remove Group Reply Mapping";
 
-$l[FormField][all][Username] = "Username";
 $l[FormField][all][Groupname] = "Groupname";
+$l[FormField][all][Username] = "Username";
 $l[FormField][all][Password] = "Password";
+$l[FormField][all][Attribute] = "Attribute";
+$l[FormField][all][Operator] = "Operator";
+$l[FormField][all][Value] = "Value";
+$l[FormField][all][NewValue] = "New Value";
+
 $l[FormField][all][Priority] = "Priority";
 $l[FormField][all][Expiration] = "Expiration";
 $l[FormField][all][MaxAllSession] = "Max-All-Session";
@@ -166,6 +177,8 @@ $l[FormField][mngradnasnew.php][NasCommunity] = "NAS Community";
 $l[FormField][mngradnasnew.php][NasDescription] = "NAS Description";
 
 
+
+$l[FormField][mngradgroupreplydel.php][ToolTip][Value] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 $l[FormField][mngradnasnew.php][ToolTip][NasShortname] = "(descriptive name)";
 $l[FormField][mngradusergroupdel.php][ToolTip][Groupname] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
@@ -184,6 +197,8 @@ $l[captions][mnghsnew] = "You may fill below details for new hotspot addition to
 $l[captions][mngradusergroupdel] = "To remove a user entry from the database you must provide the username of the account";
 
 $l[captions][mngradnasdel] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
+
+$l[captions][mngradgroupreplydel] = "To remove a group entry from the database you must provide the groupname of the account";
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
 $l[captions][providebillratetodel] = "Provide the rate entry type which you would like to remove";
