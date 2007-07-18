@@ -47,6 +47,7 @@
                         <th scope='col'> ".$l[all][Attribute]." </th>
                         <th scope='col'> ".$l[all][Operator]." </th>						
                         <th scope='col'> "$l[all][Value]." </th>
+                        <th scope='col'> "$l[all][Action]." </th>						
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
