@@ -101,33 +101,33 @@ function toggleShowDiv(pass) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Remove Group Check Mapping</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradgroupcheckdel.php] ?></a></h2>
 				
                                 <p>
-                                To remove a group entry from the database you must provide the groupname of the account.
+                                <?php echo $l[captions][mngradgroupcheckdel] ?>
                                 <br/><br/>
                                 </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Groupname</b>
+                                                <b><?php echo $l[FormField][all][Groupname] ?></b>
 </td><td>												
                                                 <input value="<?php echo $groupname ?>" name="groupname"/><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Value</b>
+                                                <b><?php echo $l[FormField][all][Value] ?></b>
 </td><td>												
                                                 <input value="<?php echo $value ?>" name="value"/><br/>
-						If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!
+												<?php echo $l[FormField][mngradgroupcheck.php][ToolTip][Value] ?>
                                                 </font>
 </td></tr>
 </table>
                                                 <br/><br/>
 <center>												
-                                                <input type="submit" name="submit" value="Apply"/>
+                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
 
                                 </form>
