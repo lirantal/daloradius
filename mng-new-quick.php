@@ -155,102 +155,18 @@ function toggleShowDiv(pass) {
 
 // -->
 </script>
+<?php
 
+	include ("menu-mng-main.php");
+	
+?>
 
-<body>
-
-<div id="wrapper">
-<div id="innerwrapper">
-
-		<div id="header">
-		
-				<form action="">
-				<input value="Search" />
-				</form>
-				
-				<h1><a href="index.php">daloRADIUS</a></h1>
-				
-				<h2>
-				
-						Radius Reporting, Billing and Management by <a href="http://www.enginx.com">Enginx</a>
-				
-				</h2>
-
-				<ul id="nav">
-				
-						<li><a href="index.php"><em>H</em>ome</a></li>
-						
-						<li><a href="mng-main.php" class="active"><em>M</em>anagment</a></li>
-						
-						<li><a href="rep-main.php"><em>R</em>eports</a></li>
-						
-						<li><a href="acct-main.php"><em>A</em>ccounting</a></li>
-
-						<li><a href="bill-main.php"><em>B</em>illing</a></li>
-						<li><a href="gis-main.php"><em>GIS</em></a></li>
-						<li><a href="graph-main.php"><em>G</em>raphs</a></li>
-
-						<li><a href="help-main.php"><em>H</em>elp</a></li>
-				
-				</ul>
-				<ul id="subnav">
-				
-						<li>Welcome, <?php echo $operator; ?></li>
-
-						<li><a href="logout.php">[logout]</a></li>
-				
-				</ul>
-		
-		</div>
-		
-		<div id="sidebar">
-		
-				<h2>Management</h2>
-				
-				<h3>Users Management</h3>
-				<ul class="subnav">
-				
-						<li><a href="mng-new.php"><b>&raquo;</b>New User</a></li>
-						<li><a href="mng-new-quick.php"><b>&raquo;</b>New User - Quick add </a></li>
-						<li><a href="mng-batch.php"><b>&raquo;</b>Batch-Add Users <a></li>
-						<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit User<a>
-							<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
-							<input name="username" type="text">
-							</form></li>
-
-
-						<li><a href="mng-del.php"><b>&raquo;</b>Remove User</a></li>	
-				</ul>
-		
-				<h3>Hotspots Management</h3>
-				<ul class="subnav">
-				
-						<li><a href="mng-hs-list.php"><b>&raquo;</b>List Hotspots</a></li>
-						<li><a href="mng-hs-new.php"><b>&raquo;</b>New Hotspot</a></li>
-						<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b>Edit Hotspot<a>
-							<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
-							<input name="name" type="text">
-							</form></li>
-
-
-						<li><a href="mng-hs-del.php"><b>&raquo;</b>Remove Hotspot</a></li>
-				</ul>
-				
-				<br/><br/>
-				<h2>Search</h2>
-				
-				<input name="" type="text" value="Search" />
-		
-		</div>
-		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Quick User Add</h2>
+				<h2 id="Intro"><?php echo $l[Intro][mngnewquick.php] ?></h2>
 				
 				<p>
-				The following user/card is of type prepaid.<br/>
-				The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
-radius attributes
+				<?php echo $l[captions][mngnewquick] ?>
 				<br/><br/>
 				</p>
 				<form name="newuser" action="mng-new-quick.php" method="post">
@@ -258,7 +174,7 @@ radius attributes
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>Username</b>
+						<b><?php echo $l[FormField][all][Username] ?></b>
 </td><td>
 						<input value="<?php echo $username ?>" name="username"/>
 <a href="javascript:randomUsername()"> genuser</a><br/>
@@ -266,7 +182,7 @@ radius attributes
 </td></tr>
 <tr><td>
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
-						<b>Password</b>
+						<b><?php echo $l[FormField][all][Password] ?></b>
 </td><td>
 						<input value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/><br/>
@@ -278,7 +194,7 @@ radius attributes
 <br/>
 						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
 						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
-						<b>Time Credit (Max-All-Session) </b><br/>
+						<b><?php echo $l[FormField][mngnewquick.php][MaxAllSession] ?></b><br/>
 <div id="attributesMaxAllSession" style="display:none;visibility:visible" >
 
 						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
@@ -296,7 +212,7 @@ radius attributes
 <br/>
 						</font>
 
-						<input type="submit" name="submit" value="Create" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
+						<input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
 
 				</center>
 
