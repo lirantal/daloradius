@@ -13,7 +13,6 @@ $l[all][NasPorts] = "NAS Ports";
 $l[all][NasSecret] = "NAS Secret";
 $l[all][NasCommunity] = "NAS Community";
 $l[all][NasDescription] = "NAS Description";
-
 $l[all][HotSpot] = "HotSpot";
 $l[all][Username] = "Username";
 $l[all][Password] = "Password";
@@ -135,6 +134,12 @@ $l[Intro][mngradgroupreplylist.php] = "Group Reply Mapping in Database";
 $l[Intro][mngradgroupreplyedit.php] = "Edit Group Reply Mapping for Group:";
 $l[Intro][mngradgroupreplydel.php] = "Remove Group Reply Mapping";
 
+$l[Intro][mngradgroupcheck.php] = "Group Check Configuration";
+$l[Intro][mngradgroupchecknew.php] = "New Group Check Mapping";
+$l[Intro][mngradgroupchecklist.php] = "Group Check Mapping in Database";
+$l[Intro][mngradgroupcheckedit.php] = "Edit Group Check Mapping for Group:";
+$l[Intro][mngradgroupcheckdel.php] = "Remove Group Check Mapping";
+
 $l[FormField][all][Groupname] = "Groupname";
 $l[FormField][all][Username] = "Username";
 $l[FormField][all][Password] = "Password";
@@ -182,7 +187,7 @@ $l[FormField][mngradgroupreplydel.php][ToolTip][Value] = "If you specify value t
 $l[FormField][mngradnasnew.php][ToolTip][NasShortname] = "(descriptive name)";
 $l[FormField][mngradusergroupdel.php][ToolTip][Groupname] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
-
+$l[FormField][mngradgroupcheck.php][ToolTip][Value] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 
 $l[captions][mngbatch] = "You may fill below details for new user addition to database.<br/>
 							Note that these settings will apply for all the users that you are creating.<br/>";
@@ -199,6 +204,8 @@ $l[captions][mngradusergroupdel] = "To remove a user entry from the database you
 $l[captions][mngradnasdel] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
 
 $l[captions][mngradgroupreplydel] = "To remove a group entry from the database you must provide the groupname of the account";
+$l[captions][mngradgroupcheckdel] = "To remove a group entry from the database you must provide the groupname of the account";
+
 
 $l[captions][acctrecsforhotspot] = "Accounting records for hotspot";
 $l[captions][providebillratetodel] = "Provide the rate entry type which you would like to remove";
