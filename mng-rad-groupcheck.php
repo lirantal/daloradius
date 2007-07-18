@@ -20,7 +20,7 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Group Check Configuration</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradgroupcheck.php] ?></a></h2>
 				
 				<p>
 	<table><center><br/>
