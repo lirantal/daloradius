@@ -109,11 +109,12 @@ $l[Intro][mngedit.php] = "Edit User Details";
 $l[Intro][mnglistall.php] = "Users Listing";
 $l[Intro][mngmain.php] = "Users and Hotspots Management";
 $l[Intro][mngnew.php] = "New User";
+$l[Intro][mngnew.php] = "New User";
+$l[Intro][mngnewquick.php] = "Quick User Add";
 
 $l[Intro][mnghsdel.php] = "Remove Hotspots";
 $l[Intro][mnghsedit.php] = "Edit Hotspots Details";
 $l[Intro][mnghslist.php] = "List Hotspots";
-$l[Intro][mnghsnew.php] = "New Hotspot Entry";
 
 $l[Intro][mngradusergroupdel.php] = "Remove User-Group Mapping";
 $l[Intro][mngradusergroup.php] = "User-Group Configuration";
@@ -165,6 +166,7 @@ $l[FormField][mngbatch.php][UsernamePrefix] = "Username Prefix";
 $l[FormField][mngbatch.php][NumberInstances] = "Number of instances to create";
 $l[FormField][mngbatch.php][UsernameLength] = "Length of username string";
 $l[FormField][mngbatch.php][PasswordLength] = "Length of password string";
+$l[FormField][mngnewquick.php][MaxAllSession] = "Time Credit (Max-All-Session) ";
 
 $l[FormField][mnghsdel.php][HotspotName] = "Hotspot name";
 $l[FormField][mnghsedit.php][MACAddress] = "MAC Address";
@@ -198,6 +200,9 @@ $l[captions][mngnew] = "You may fill below details for new user addition to data
 $l[captions][mnghsdel] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
 $l[captions][mnghsedit] = "You may edit below details for hotspot<br/>";
 $l[captions][mnghsnew] = "You may fill below details for new hotspot addition to database";
+$l[captions][mngnewquick] = "The following user/card is of type prepaid.<br/>
+The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
+radius attributes";
 
 $l[captions][mngradusergroupdel] = "To remove a user entry from the database you must provide the username of the account";
 
