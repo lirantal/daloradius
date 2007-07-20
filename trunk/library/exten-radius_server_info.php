@@ -11,20 +11,19 @@
 *                                                                  *
 *******************************************************************/
 
-system("netstat -tanlpu | grep -i mysql", $ret_mysql);
-system("netstat -tanlpu | grep -i radius", $ret_rad);
+system("pgrep mysql >/dev/null 2>&1", $ret_mysql);
+system("pgrep radius >/dev/null 2>&1", $ret_rad);
 
-if ($ret_rad == FALSE) {
-	echo "RADIUS is down <br/>";
+if ($ret_rad == 0) {
+        echo "RADIUS is up <br/>";
 } else {
-	echo "RADIUS is up <br/>";	
+        echo "RADIUS is down <br/>";
 }
 
-if ($ret_mysql == FALSE) {
-	echo "MySQL is down <br/>";
+if ($ret_mysql == 0) {
+        echo "MySQL is up <br/>";
 } else {
-	echo "MySQL is up <br/>";	
+        echo "MySQL is down <br/>";
 }
 
 ?>
-
