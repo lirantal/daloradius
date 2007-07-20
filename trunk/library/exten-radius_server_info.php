@@ -14,16 +14,16 @@
 system("netstat -tanlpu | grep -i mysql", $ret_mysql);
 system("netstat -tanlpu | grep -i radius", $ret_rad);
 
-if ($ret_rad) {
-	echo "RADIUS is up <br/>";
-} else {
+if ($ret_rad == FALSE) {
 	echo "RADIUS is down <br/>";
+} else {
+	echo "RADIUS is up <br/>";	
 }
 
-if ($ret_mysql) {
-	echo "MySQL is up <br/>";
-} else {
+if ($ret_mysql == FALSE) {
 	echo "MySQL is down <br/>";
+} else {
+	echo "MySQL is up <br/>";	
 }
 
 ?>
