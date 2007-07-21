@@ -1,7 +1,6 @@
 <?php
 
-	include ("menu-config.php");
-	include ("library/config_read.php");
+    include ("library/config_read.php");
 
     if (isset($_REQUEST['submit'])) {
 
@@ -23,10 +22,15 @@
 	
 ?>		
 		
-		
+<?php
+
+    include ("menu-config.php");
+
+?>		
+			
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Database Configuration</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][configdb.php]?></a></h2>
 				<p>
 				Below are the settings that daloRADIUS will make use of to connect to your
 				MySQL database server and manage it.
