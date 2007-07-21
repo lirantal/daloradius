@@ -31,12 +31,7 @@
                                 <ul class="subnav">
                                 
                                                 <li><a href="config-db.php"><b>&raquo;</b>Database Settings</a></li>
-												<li><a href="config-lang.php"><b>&raquo;</b>Language Settings</a></li>
-
-			
-				<h2>Search</h2>
-				
-				<input name="" type="text" value="Search" />
+						<li><a href="config-lang.php"><b>&raquo;</b>Language Settings</a></li>
 		
 		</div>
 		
