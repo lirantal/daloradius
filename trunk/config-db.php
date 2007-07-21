@@ -1,5 +1,9 @@
 <?php
 
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+
+
     include ("library/config_read.php");
 
     if (isset($_REQUEST['submit'])) {

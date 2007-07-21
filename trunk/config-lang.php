@@ -1,7 +1,9 @@
 <?php
 
-	include ("menu-config.php");
-	include ("library/config_read.php");
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+
+    include ("library/config_read.php");
 
     if (isset($_REQUEST['submit'])) {
 
@@ -13,6 +15,12 @@
 	
 
 	
+?>		
+
+<?php
+
+    include ("menu-config.php");
+
 ?>		
 		
 		
