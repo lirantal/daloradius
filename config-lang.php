@@ -26,9 +26,9 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Database Configuration</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l[Intro][configlang.php] ?></a></h2>
 				<p>
-				Below you can choose between different support languages for daloRADIUS translation.
+				<?php echo $l[captions][configlang] ?>
 
 				<br/><br/>
 
@@ -40,7 +40,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_LANG'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b>Primary Language</b>
+						<b><?php echo $l[FormField][configlang.php][PrimaryLanguage] ?></b>
 </td><td>
 						<select name="config_lang">
 						<option value="en"> en </option>
