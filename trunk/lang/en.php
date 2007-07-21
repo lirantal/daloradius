@@ -142,7 +142,7 @@ $l[Intro][mngradgroupcheckedit.php] = "Edit Group Check Mapping for Group:";
 $l[Intro][mngradgroupcheckdel.php] = "Remove Group Check Mapping";
 
 $l[Intro][configdb.php] = "Database Configuration";
-
+$l[Intro][configlang.php] = "Language Configuration";
 
 $l[FormField][all][Groupname] = "Groupname";
 $l[FormField][all][Username] = "Username";
@@ -186,10 +186,12 @@ $l[FormField][mngradnasnew.php][NasPorts] = "NAS Ports";
 $l[FormField][mngradnasnew.php][NasCommunity] = "NAS Community";
 $l[FormField][mngradnasnew.php][NasDescription] = "NAS Description";
 
-$l[FormField][config-db.php][DatabaseHostname] = "Database Hostname";
-$l[FormField][config-db.php][DatabaseUser] = "Database User";
-$l[FormField][config-db.php][DatabasePass] = "Database Pass";
-$l[FormField][config-db.php][DatabaseName] = "Database Name";
+$l[FormField][configdb.php][DatabaseHostname] = "Database Hostname";
+$l[FormField][configdb.php][DatabaseUser] = "Database User";
+$l[FormField][configdb.php][DatabasePass] = "Database Pass";
+$l[FormField][configdb.php][DatabaseName] = "Database Name";
+
+$l[FormField][configlang.php][PrimaryLanguage] = "Primary Language";
 
 
 $l[FormField][mngradgroupreplydel.php][ToolTip][Value] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
@@ -201,6 +203,8 @@ $l[FormField][mngradgroupcheck.php][ToolTip][Value] = "If you specify value then
 $l[captions][configdb][db] = "Settings that daloRADIUS will make use of to connect to your
 				MySQL database server and manage it.";
 $l[captions][configdb][tables] = "The radius database tables settings";
+
+$l[captions][configlang] = "Below you can choose between different support languages for daloRADIUS translation.";
 
 $l[captions][mngbatch] = "You may fill below details for new user addition to database.<br/>
 							Note that these settings will apply for all the users that you are creating.<br/>";
