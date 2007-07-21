@@ -141,6 +141,9 @@ $l[Intro][mngradgroupchecklist.php] = "Group Check Mapping in Database";
 $l[Intro][mngradgroupcheckedit.php] = "Edit Group Check Mapping for Group:";
 $l[Intro][mngradgroupcheckdel.php] = "Remove Group Check Mapping";
 
+$l[Intro][configdb.php] = "Database Configuration";
+
+
 $l[FormField][all][Groupname] = "Groupname";
 $l[FormField][all][Username] = "Username";
 $l[FormField][all][Password] = "Password";
