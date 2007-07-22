@@ -14,6 +14,7 @@ $l[all][NasSecret] = "NAS Secret";
 $l[all][NasCommunity] = "NAS Community";
 $l[all][NasDescription] = "NAS Description";
 $l[all][HotSpot] = "HotSpot";
+$l[all][HotSpots] = "HotSpots";
 $l[all][Username] = "Username";
 $l[all][Password] = "Password";
 $l[all][IPAddress] = "IP Address";
