@@ -20,7 +20,7 @@
 
 				include 'library/opendb.php';
 
-		$sql = "SELECT * FROM rates WHERE type='$type'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 		if (mysql_num_rows($res) == 0) {
@@ -28,7 +28,7 @@
 			if (trim($type) != "" and trim($cardbank) != "") {
 
 				// insert username/password
-				$sql = "INSERT INTO rates VALUES (0, '$type', $cardbank, $rate)";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES']." VALUES (0, '$type', $cardbank, $rate)";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 		
 				echo $l[messages][success]."<br/>";

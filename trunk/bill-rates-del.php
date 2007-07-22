@@ -14,7 +14,7 @@
 						include 'library/opendb.php';
 
 			// delete all attributes associated with a username
-			$sql = "DELETE FROM rates WHERE type='$type'";
+			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 			echo $l[messages][success]"<br/>";
