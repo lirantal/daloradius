@@ -23,7 +23,7 @@
 			if (trim($group) != "") {
 
 	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM usergroup WHERE UserName='$username' AND GroupName='$group'";
+	                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
 	                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	
 	                        echo "<font color='#0000FF'>success<br/></font>";
@@ -32,7 +32,7 @@
 			} else {
 
 	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM usergroup WHERE UserName='$username'";
+	                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username'";
 	                        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	
 	                        echo "<font color='#0000FF'>success<br/></font>";
