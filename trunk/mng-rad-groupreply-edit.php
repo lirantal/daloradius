@@ -18,7 +18,7 @@
 	$valueOld = $_REQUEST['value'];	
 
         // fill-in nashost details in html textboxes
-        $sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupname' AND Value='$value'";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
         $row = mysql_fetch_array($res);		// array fetched with values from $sql query
 			$op = $row['op'];
@@ -35,14 +35,14 @@
                 
                 include 'library/opendb.php';
 
-                $sql = "SELECT * FROM radgroupreply WHERE GroupName='$groupname' AND Value='$valueOld'";
+                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$valueOld'";
                 $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
                 if (mysql_num_rows($res) == 1) {
 
                         if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
-                            $sql = "UPDATE radgroupreply SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
+                            $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
                             $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
                         
 			echo "<font color='#0000FF'>success<br/></font>";

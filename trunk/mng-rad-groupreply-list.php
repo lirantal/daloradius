@@ -30,7 +30,7 @@
         include 'library/opendb.php';
 
 
-        $sql = "select GroupName, Attribute, op, Value FROM radgroupreply ORDER BY GroupName ASC";
+        $sql = "select GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." ORDER BY GroupName ASC";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         echo "<table border='2' class='table1'>\n";
