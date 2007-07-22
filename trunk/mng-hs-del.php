@@ -13,7 +13,7 @@
 
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			echo "<font color='#0000FF'>success<br/></font>";
 
 			include 'library/closedb.php';

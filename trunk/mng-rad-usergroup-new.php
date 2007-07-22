@@ -17,7 +17,7 @@
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
-                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
                 if (mysql_num_rows($res) == 0) {
 
@@ -28,7 +28,7 @@
 			}
                                 // insert usergroup details
                                 $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('$username', '$group', $priority)";
-                                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
                         
 			echo "<font color='#0000FF'>success<br/></font>";

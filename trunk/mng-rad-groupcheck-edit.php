@@ -19,7 +19,7 @@
 
         // fill-in nashost details in html textboxes
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname' AND Value='$value'";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
         $row = mysql_fetch_array($res);		// array fetched with values from $sql query
 			$op = $row['op'];
 			$attribute = $row['Attribute'];
@@ -36,14 +36,14 @@
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname' AND Value='$valueOld'";
-                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
                 if (mysql_num_rows($res) == 1) {
 
                         if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
                             $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
-                            $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                            $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
                         
 			echo "<font color='#0000FF'>success<br/></font>";
 

@@ -19,7 +19,7 @@
 
         // fill-in nashost details in html textboxes
         $sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
         $row = mysql_fetch_array($res);		// array fetched with values from $sql query
 
 						// assignment of values from query to local variables
@@ -44,7 +44,7 @@
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
                 if (mysql_num_rows($res) == 1) {
 
@@ -56,7 +56,7 @@
 
                                 // insert nas details
                                 $sql = "UPDATE nas SET shortname='$nasname', type='$nastype', ports=$nasports, secret='$nassecret', community='$nascommunity', description='$nasdescription' WHERE nasname='$nashost'";
-                                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
                         
 			echo "<font color='#0000FF'>success<br/></font>";
 

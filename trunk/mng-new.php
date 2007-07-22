@@ -36,7 +36,7 @@
 
 
 		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
-		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		if (mysql_num_rows($res) == 0) {
 		
@@ -44,69 +44,69 @@
 
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	
 				// insert username/password
 				if ($expiration) {
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 	
 				if ($maxallsession) {
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 				if ($sessiontimeout) {
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 				if ($idletimeout) {
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Idle-Timeout', ':=', '$idletimeout')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 
 				if ($calledstationid) {
 				// insert called-station-id
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Called-Station-Id', '==', '$calledstationid')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 
 				if ($callingstationid) {
 				// insert calling-station-id
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Calling-Station-Id', '==', '$callingstationid')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 				if ($wisprredirectionurl) {
 				// insert WISPr-Redirection-URL
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Redirection-URL', '=', '$wisprredirectionurl')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 				if ($wisprbandwidthmaxup) {
 				// insert WISPr-Bandwidth-Max-Up
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Bandwidth-Max-Up', '=', '$wisprbandwidthmaxup')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 
 				if ($wisprbandwidthmaxdown) {
 				// insert WISPr-Bandwidth-Max-Down
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Bandwidth-Max-Down', '=', '$wisprbandwidthmaxdown')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 				if ($wisprsessionterminatetime) {
 				// insert WISPr-Session-Terminate-Time
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Session-Terminate-Time', '=', '$wisprsessionterminatetime')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 

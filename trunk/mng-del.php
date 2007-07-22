@@ -12,10 +12,10 @@
 
 			// delete all attributes associated with a username
 			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='$username'";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 			echo "<font color='#0000FF'>success<br/></font>";
 			include 'library/closedb.php';

@@ -53,7 +53,7 @@ function createPassword($length) {
 			echo "password: $password <br/>";
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		if (mysql_num_rows($res) > 0) {
 	                print "skipping matching entry: $username\n";
@@ -61,23 +61,23 @@ function createPassword($length) {
 		
 			// insert username/password
 			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 			if ($expiration) { 
 			// insert username/password
 			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
 	
 			if ($maxallsession) {
 			// insert username/password
 			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
 	
 			if ($sessiontimeout) {
 			// insert username/password
-			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
 
 			echo "success<br/>";

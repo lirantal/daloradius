@@ -100,7 +100,7 @@ var point_sl1 = new GLatLng(35.460669951495305, -81.5625);
 <?php
 
     $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
-    $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+    $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         while($nt = mysql_fetch_array($res)) {
                 echo "
