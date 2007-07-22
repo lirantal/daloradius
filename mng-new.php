@@ -43,18 +43,18 @@
 			if (trim($username) != "" and trim($password) != "") {
 
 				// insert username/password
-				$sql = "insert into radcheck values (0, '$username', 'User-Password', '==', '$password')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	
 				// insert username/password
 				if ($expiration) {
-				$sql = "insert into radcheck values (0, '$username', 'Expiration', ':=', '$expiration')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 	
 				if ($maxallsession) {
 				// insert username/password
-				$sql = "insert into radcheck values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
@@ -73,14 +73,14 @@
 
 				if ($calledstationid) {
 				// insert called-station-id
-				$sql = "insert into radcheck values (0, '$username', 'Called-Station-Id', '==', '$calledstationid')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Called-Station-Id', '==', '$calledstationid')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
 
 				if ($callingstationid) {
 				// insert calling-station-id
-				$sql = "insert into radcheck values (0, '$username', 'Calling-Station-Id', '==', '$callingstationid')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Calling-Station-Id', '==', '$callingstationid')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 

@@ -24,7 +24,7 @@
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-        $sql = "SELECT * FROM radcheck WHERE (Attribute='User-Password' or Attribute='Password')";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute='User-Password' or Attribute='Password')";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         echo "<table border='2' class='table1'>\n";

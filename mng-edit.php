@@ -41,7 +41,7 @@
 
 	/* fill-in all the user radcheck attributes */
 
-	$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$arrAttr = array();

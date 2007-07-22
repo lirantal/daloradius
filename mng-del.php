@@ -11,7 +11,7 @@
 			include 'library/opendb.php';
 
 			// delete all attributes associated with a username
-			$sql = "delete from radcheck where Username='$username'";
+			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 			$sql = "delete from radreply where Username='$username'";

@@ -52,7 +52,7 @@ function createPassword($length) {
 			echo "username: $username <br/>";
 			echo "password: $password <br/>";
 
-		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 		if (mysql_num_rows($res) > 0) {
@@ -60,18 +60,18 @@ function createPassword($length) {
 		} else {
 		
 			// insert username/password
-			$sql = "insert into radcheck values (0, '$username', 'User-Password', '==', '$password')";
+			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 			if ($expiration) { 
 			// insert username/password
-			$sql = "insert into radcheck values (0, '$username', 'Expiration', ':=', '$expiration')";
+			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
 	
 			if ($maxallsession) {
 			// insert username/password
-			$sql = "insert into radcheck values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
+			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
 	
