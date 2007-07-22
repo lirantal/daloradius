@@ -14,7 +14,7 @@
 	include 'opendb.php';
 
 	$sql = "SELECT user, pass, reply, date from radpostauth order by id desc limit 50;";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$array_users = array();
 	$array_pass = array();

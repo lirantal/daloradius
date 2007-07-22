@@ -36,7 +36,7 @@ function daily($username) {
         $chart = new VerticalChart(920,500);
 
         $sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by day;";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         while($ent = mysql_fetch_array($res)) {
                 $downloads = floor($ent[1]/1024/1024);
@@ -69,7 +69,7 @@ function monthly($username) {
         $chart = new VerticalChart(920,500);
 	
         $sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by month;";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         while($ent = mysql_fetch_array($res)) {
                 $downloads = floor($ent[1]/1024/1024);
@@ -103,7 +103,7 @@ function yearly($username) {
         $chart = new VerticalChart(920,500);
 
         $sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by year;";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         while($ent = mysql_fetch_array($res)) {
                 $downloads = floor($ent[1]/1024/1024);

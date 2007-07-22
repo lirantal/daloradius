@@ -28,7 +28,7 @@ function daily($username) {
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by day;";
 
 
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$total_downloads = 0;		// initialize variables
 	$count = 0;			
@@ -95,7 +95,7 @@ function monthly($username) {
 	include 'opendb.php';
         
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month;";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$total_downloads = 0;		// initialize variables
 	$count = 0;			
@@ -171,7 +171,7 @@ function yearly($username) {
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year;";
 
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$total_downloads = 0;		// initialize variables
 	$count = 0;			
