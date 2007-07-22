@@ -16,7 +16,7 @@
 		include 'library/opendb.php';
 
 
-		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 		if (mysql_num_rows($res) == 0) {
@@ -24,11 +24,11 @@
 			if (trim($username) != "" and trim($password) != "") {
 
 				// insert username/password
-				$sql = "insert into radcheck values (0, '$username', 'User-Password', '==', '$password')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	
 				if ($maxallsession) {
-				$sql = "insert into radcheck values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
