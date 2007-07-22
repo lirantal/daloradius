@@ -32,8 +32,8 @@
         
         include 'library/opendb.php';
 
-	$sql = "SELECT distinct(radacct.UserName), radacct.FramedIPAddress, radacct.AcctStartTime, radacct.AcctStopTime,
-sum(radacct.AcctSessionTime) as Time, sum(radacct.AcctInputOctets) as Upload,sum(radacct.AcctOutputOctets) as Download, radacct.AcctTerminateCause, radacct.NASIPAddress, sum(radacct.AcctInputOctets+radacct.AcctOutputOctets) as Bandwidth FROM radacct group by UserName order by $order desc limit $limit";
+	$sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime,
+sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $order desc limit $limit";
 
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
