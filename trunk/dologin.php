@@ -3,7 +3,6 @@
 session_start();
 
 $errorMessage = '';
-   include 'library/config.php';
    include 'library/opendb.php';
 
    $operator_user = $_REQUEST['operator_user'];
@@ -11,7 +10,7 @@ $errorMessage = '';
 
    // check if the user id and password combination exist in database
    $sql = "SELECT username
-           FROM operators
+           FROM ".CONFIG_DB_TBL_DALOOPERATOR."
            WHERE username = '$operator_user'
                   AND password = '$operator_pass'";
 
