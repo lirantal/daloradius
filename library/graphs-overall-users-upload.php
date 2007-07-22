@@ -35,7 +35,7 @@ function daily($username) {
 
         $chart = new VerticalChart(920,500);
 
-        $sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day from radacct where username='$username' group by day;";
+        $sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by day;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 
@@ -69,7 +69,7 @@ function monthly($username) {
 
         $chart = new VerticalChart(920,500);
 	
-        $sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, MONTHNAME(AcctStartTime) AS month from radacct where username='$username' group by month;";
+        $sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by month;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {
@@ -103,7 +103,7 @@ function yearly($username) {
 
         $chart = new VerticalChart(920,500);
 
-        $sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year from radacct where username='$username' group by year;";
+        $sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by year;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {

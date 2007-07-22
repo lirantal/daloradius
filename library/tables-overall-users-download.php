@@ -25,7 +25,7 @@ function daily($username) {
 
 	include 'opendb.php';
 
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from radacct where UserName='$username' group by day;";
+	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by day;";
 
 
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
@@ -94,7 +94,7 @@ function monthly($username) {
 
 	include 'opendb.php';
         
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from radacct where UserName='$username' group by month;";
+	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month;";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$total_downloads = 0;		// initialize variables
@@ -169,7 +169,7 @@ function yearly($username) {
 
 	include 'opendb.php';
 
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from radacct where UserName='$username' group by year;";
+	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year;";
 
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 

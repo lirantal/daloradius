@@ -33,7 +33,7 @@ function daily() {
 
         $chart = new VerticalChart(920,500);
 
-        $sql = "SELECT sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day from radacct group by day;";
+        $sql = "SELECT sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by day;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {
@@ -66,7 +66,7 @@ function monthly() {
 
         $chart = new VerticalChart(920,500);
 
-        $sql = "SELECT sum(AcctInputOctets) as Uploads, MONTHNAME(AcctStartTime) AS month from radacct group by month;";
+        $sql = "SELECT sum(AcctInputOctets) as Uploads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by month;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {
@@ -100,7 +100,7 @@ function yearly() {
 
         $chart = new VerticalChart(920,500);
 
-        $sql = "SELECT sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year from radacct group by year;";
+        $sql = "SELECT sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by year;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {
