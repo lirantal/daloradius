@@ -10,9 +10,9 @@ $errorMessage = '';
 
    // check if the user id and password combination exist in database
    $sql = "SELECT username
-           FROM ".CONFIG_DB_TBL_DALOOPERATOR."
+           FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']."
            WHERE username = '$operator_user'
-                  AND password = '$operator_pass'";
+                AND password = '$operator_pass'";
 
    $result = mysql_query($sql)
              or die('Query failed. ' . mysql_error());
