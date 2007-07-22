@@ -41,21 +41,21 @@ sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>Records</th>
+                                <th colspan='10'>".$l[all][Records]."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> Username </th>
-                        <th scope='col'> IP Address</th>
-                        <th scope='col'> Start Time </th>
-                        <th scope='col'> Stop Time </th>
-                        <th scope='col'> Total Time </th>
-                        <th scope='col'> Upload (Bytes) </th>
-                        <th scope='col'> Download (Bytes) </th>
-                        <th scope='col'> Termination </th>
-                        <th scope='col'> NAS IP Address </th>
+                        <th scope='col'> ".$l[all][Username]." </th>
+                        <th scope='col'> ".$l[all][IPAddress]."</th>
+                        <th scope='col'> ".$l[all][StartTime]." </th>
+                        <th scope='col'> ".$l[all][StopTime]." </th>
+                        <th scope='col'> ".$l[all][TotalTime]." </th>
+                        <th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].") </th>
+                        <th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].") </th>
+                        <th scope='col'> ".$l[all][Termination]." </th>
+                        <th scope='col'> ".$l[all][NASIPAddress]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>
