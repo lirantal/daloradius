@@ -37,7 +37,7 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='15'>Hotspots</th>
+                                <th colspan='15'>".$l[all][HotSpots]."</th>
                                 </tr>
                         </thead>
                 ";

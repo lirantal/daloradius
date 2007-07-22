@@ -33,7 +33,7 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='15'>Records</th>
+                                <th colspan='15'>".$l[all][Records]."</th>
                                 </tr>
                         </thead>
                 ";
@@ -65,7 +65,7 @@
                         <td> $nt[8] </td>
                         <td> $nt[9] </td>
                         <td> $nt[10] </td>
-                        <td> <a href='mng-edit.php?username=$nt[UserName]'> edit </a> </td>
+                        <td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a> </td>
                 </tr>";
         }
         echo "</table>";
