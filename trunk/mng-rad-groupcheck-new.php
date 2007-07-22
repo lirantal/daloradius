@@ -25,13 +25,13 @@
 			if ($group == "")
 					continue;
 					
-			$sql = "SELECT * FROM radgroupcheck WHERE GroupName='$group' AND Value='$value[$counter]'";
+			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$group' AND Value='$value[$counter]'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				
 			if (mysql_num_rows($res) == 0) {
 				if (trim($group) != "" and trim($value[$counter]) != "" and trim($op[$counter]) != "" and trim($attribute[$counter]) != "") {								
 					// insert usergroup details
-					$sql = "INSERT INTO radgroupcheck values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
 					$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 					$counter++;
 				}
@@ -66,13 +66,13 @@
 
 				// echo "$group $attribute[$counter] $op[$counter] $value[$counter] <br/> "; 	// for debugging purposes
 					
-				$sql = "SELECT * FROM radgroupcheck WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
+				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 					
 				if (mysql_num_rows($res) == 0) {
 					if (trim($groupExtra) != "" and trim($valueExtra[$counter]) != "" and trim($opExtra[$counter]) != "" and trim($attributeExtra[$counter]) != "") {								
 						// insert usergroup details
-						$sql = "INSERT INTO radgroupcheck values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
+						$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
 						$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 						$counter++;
 					} // end if trim
