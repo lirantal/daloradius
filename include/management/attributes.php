@@ -12,9 +12,9 @@
 *********************************************************************/
 
 	function checkTables($attribute) {
-	
-		$table = "radcheck";
 
+		$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+		
 		switch ($attribute) {
 			case "Session-Timeout":
 				$table = "radreply";
