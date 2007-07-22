@@ -66,7 +66,7 @@
 	
 	
 	// table to display the radreply information per the $username
-        $sql = "SELECT * FROM radreply WHERE UserName='$username'";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         echo "<table border='2' class='table1'>\n";

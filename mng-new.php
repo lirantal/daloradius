@@ -60,13 +60,13 @@
 
 				if ($sessiontimeout) {
 				// insert username/password
-				$sql = "insert into radreply values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
 				if ($idletimeout) {
 				// insert username/password
-				$sql = "insert into radreply values (0, '$username', 'Idle-Timeout', ':=', '$idletimeout')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Idle-Timeout', ':=', '$idletimeout')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
@@ -86,26 +86,26 @@
 
 				if ($wisprredirectionurl) {
 				// insert WISPr-Redirection-URL
-				$sql = "insert into radreply values (0, '$username', 'WISPr-Redirection-URL', '=', '$wisprredirectionurl')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Redirection-URL', '=', '$wisprredirectionurl')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
 				if ($wisprbandwidthmaxup) {
 				// insert WISPr-Bandwidth-Max-Up
-				$sql = "insert into radreply values (0, '$username', 'WISPr-Bandwidth-Max-Up', '=', '$wisprbandwidthmaxup')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Bandwidth-Max-Up', '=', '$wisprbandwidthmaxup')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
 
 				if ($wisprbandwidthmaxdown) {
 				// insert WISPr-Bandwidth-Max-Down
-				$sql = "insert into radreply values (0, '$username', 'WISPr-Bandwidth-Max-Down', '=', '$wisprbandwidthmaxdown')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Bandwidth-Max-Down', '=', '$wisprbandwidthmaxdown')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
 				if ($wisprsessionterminatetime) {
 				// insert WISPr-Session-Terminate-Time
-				$sql = "insert into radreply values (0, '$username', 'WISPr-Session-Terminate-Time', '=', '$wisprsessionterminatetime')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Session-Terminate-Time', '=', '$wisprsessionterminatetime')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 				}
 
