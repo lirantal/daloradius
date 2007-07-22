@@ -15,7 +15,7 @@ $errorMessage = '';
                 AND password = '$operator_pass'";
 
    $result = mysql_query($sql)
-             or die('Query failed. ' . mysql_error());
+             or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
    if (mysql_num_rows($result) == 1) {
       // the user id and password match,
