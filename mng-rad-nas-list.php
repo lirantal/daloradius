@@ -31,7 +31,7 @@
 
 
         $sql = "SELECT * FROM nas";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
         echo "

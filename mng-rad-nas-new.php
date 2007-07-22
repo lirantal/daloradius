@@ -25,7 +25,7 @@
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
                 if (mysql_num_rows($res) == 0) {
 
@@ -36,7 +36,7 @@
 			}
                                 // insert nas details
                                 $sql = "INSERT INTO nas values (0, '$nashost', '$nasname', '$nastype', $nasports, '$nassecret', '$nascommunity', '$nasdescription')";
-                                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
                         
 			echo "<font color='#0000FF'>success<br/></font>";

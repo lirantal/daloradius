@@ -10,7 +10,7 @@
 
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	$nt = mysql_fetch_array($res);
 	$cardbank = $nt[2];
 	$rate = $nt[3];
@@ -26,12 +26,12 @@
 
 			if (trim($cardbank) != "") {
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET cardbank=$cardbank WHERE type='$type'";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
 		
 			if (trim($rate) != "") {
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET rate=$rate WHERE type='$type'";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
 
 		}

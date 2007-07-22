@@ -17,7 +17,7 @@
 
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		if (mysql_num_rows($res) == 0) {
 		
@@ -25,16 +25,16 @@
 
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	
 				if ($maxallsession) {
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 				if ($maxallsession) {
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$maxallsession')";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 	

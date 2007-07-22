@@ -1,3 +1,14 @@
+release 1.0 - August 2007
+	- added support for configurable table names of radius database throughout the code
+	
+TBD	* added better notifications of error messages when mysql queries die, 
+	they are now shown with a red colored font so the errors are more obvious to see
+	
+	
+	
+	
+
+
 release 0.9 - July 2007
 	- this release is named after Erick Otto who took part of daloRADIUS
 	and passed away on 24th of June 2007, may he rest in peace.

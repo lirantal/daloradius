@@ -15,7 +15,7 @@
 
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
-			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 			echo $l[messages][success]"<br/>";
 			include 'library/closedb.php';

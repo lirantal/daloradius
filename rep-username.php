@@ -30,7 +30,7 @@
 	// table to display the radcheck information per the $username
 
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -67,7 +67,7 @@
 	
 	// table to display the radreply information per the $username
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
         echo "

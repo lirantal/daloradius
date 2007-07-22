@@ -18,7 +18,7 @@
 
         // fill-in nashost details in html textboxes
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
-        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
         $row = mysql_fetch_array($res);		// array fetched with values from $sql query
 
 						// assignment of values from query to local variables
@@ -35,7 +35,7 @@
                 include 'library/opendb.php';
 
                 $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
-                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
                 if (mysql_num_rows($res) == 1) {
 
@@ -47,7 +47,7 @@
 
                                 // insert nas details
                                 $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
-                                $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
                         
 			echo "<font color='#0000FF'>success<br/></font>";
 

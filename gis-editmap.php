@@ -19,7 +19,7 @@
 	        $hotspot_geo = substr($hotspot_geo, 0, strlen($hotspot_geo)-1);
 	
         	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
-	        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	}
 
@@ -27,7 +27,7 @@
 		$hotspot_name = $_REQUEST['hotspotname'];
 		
 		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$hotspot_name'";
-		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	}		
 
         include 'library/closedb.php';
@@ -130,7 +130,7 @@ GEvent.addListener(map, "click", function(marker, point) {
 
 <?php
     $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
-    $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+    $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         while($nt = mysql_fetch_array($res)) {
                 echo "

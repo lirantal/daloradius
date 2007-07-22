@@ -48,7 +48,7 @@
 	// Grabing the last 
 
 	$sql = "select name from ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']."";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         while($nt = mysql_fetch_array($res)) {
                 echo "
@@ -87,7 +87,7 @@
 	// Grabing the list of hotspots 
 
 	$sql = "select name from ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']."";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         while($nt = mysql_fetch_array($res)) {
                 echo "

@@ -21,7 +21,7 @@
 				include 'library/opendb.php';
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
-		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		if (mysql_num_rows($res) == 0) {
 		
@@ -29,7 +29,7 @@
 
 				// insert username/password
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES']." VALUES (0, '$type', $cardbank, $rate)";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 		
 				echo $l[messages][success]."<br/>";
 	

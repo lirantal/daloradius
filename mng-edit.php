@@ -24,7 +24,7 @@
 		                $counter = 0;
 
 				$sql = "UPDATE $useTable SET Value='$value' WHERE UserName='$username' AND Attribute='$attribute'";
-				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 				$counter++;
 
@@ -42,7 +42,7 @@
 	/* fill-in all the user radcheck attributes */
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$arrAttr = array();
 	$arrOp = array();
@@ -59,7 +59,7 @@
 	/* fill-in all the user radreply attributes */
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
-	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$arrAttrReply = array();
 	$arrOpReply = array();
