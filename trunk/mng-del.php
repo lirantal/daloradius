@@ -14,7 +14,7 @@
 			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
-			$sql = "delete from radreply where Username='$username'";
+			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='$username'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 			echo "<font color='#0000FF'>success<br/></font>";

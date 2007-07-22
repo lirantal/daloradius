@@ -10,7 +10,7 @@
 
         if (isset($_REQUEST['submit'])) {
 
-                $username = $_REQUEST['username'];
+            $username = $_REQUEST['username'];
 	        if (trim($username) != "") {
 
 		 foreach( $_POST as $attribute=>$value ) { 
@@ -58,7 +58,7 @@
 
 	/* fill-in all the user radreply attributes */
 
-	$sql = "SELECT * FROM radreply WHERE UserName='$username'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$arrAttrReply = array();

@@ -77,7 +77,7 @@ function createPassword($length) {
 	
 			if ($sessiontimeout) {
 			// insert username/password
-			$sql = "insert into radreply values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
+			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
 
 			echo "success<br/>";
