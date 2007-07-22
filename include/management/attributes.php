@@ -17,22 +17,22 @@
 		
 		switch ($attribute) {
 			case "Session-Timeout":
-				$table = "radreply";
+				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 				break;
 			case "Idle-Timeout":
-				$table = "radreply";
+				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 				break;
 			case "WISPr-Redirection-URL":
-				$table = "radreply";
+				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 				break;
 			case "WISPr-Bandwidth-Max-Up":
-				$table = "radreply";
+				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 				break;
 			case "WISPr-Bandwidth-Max-Down":
-				$table = "radreply";
+				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 				break;
 			case "WISPr-Session-Terminate-Time":
-				$table = "radreply";
+				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 				break;
 		}
 
