@@ -9,7 +9,7 @@
 	$type = $_GET['type'];
 
 	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM rates WHERE type='$type'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	$nt = mysql_fetch_array($res);
 	$cardbank = $nt[2];
@@ -25,12 +25,12 @@
 		if (trim($type) != "") {
 
 			if (trim($cardbank) != "") {
-			$sql = "UPDATE rates SET cardbank=$cardbank WHERE type='$type'";
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET cardbank=$cardbank WHERE type='$type'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
 		
 			if (trim($rate) != "") {
-			$sql = "UPDATE rates SET rate=$rate WHERE type='$type'";
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET rate=$rate WHERE type='$type'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
 
