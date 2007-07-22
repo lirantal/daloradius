@@ -24,12 +24,12 @@
 
 <?php
 
-                include 'library/opendb.php';
-        include 'library/datediff.php';
+	include 'library/opendb.php';
+    include 'library/datediff.php';
 
 	$currdate = date("j M Y");
 
-	$sql = "select distinct(radacct.UserName), radcheck.attribute, radcheck.Value, sum(radacct.AcctSessionTime) from radacct, radcheck where (radacct.Username = radcheck.UserName) and (radcheck.Attribute = 'Max-All-Session' or radcheck.Attribute = 'Expiration') group by radacct.UserName";
+	$sql = "select distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value, sum(radacct.AcctSessionTime) from radacct, ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (radacct.Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Max-All-Session' or ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Expiration') group by radacct.UserName";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         echo "<table border='2' class='table1'>\n";

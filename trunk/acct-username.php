@@ -25,17 +25,17 @@
 
 <?php
 
-        include 'library/opendb.php';
+    include 'library/opendb.php';
 
 
 	//checking if the username exist in the db
-	$sql = "select * FROM radcheck where UserName like '$username'";
+	$sql = "select * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName like '$username'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	if (mysql_num_rows($res) != 0) {		//if the user exist display information
 
 	$credit = 0;
 
-	$sql = "SELECT id, UserName, Value FROM radcheck WHERE UserName LIKE '$username' AND (Attribute='User-Password' or Attribute='Password')";
+	$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName LIKE '$username' AND (Attribute='User-Password' or Attribute='Password')";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	echo "
@@ -66,7 +66,7 @@
                 ";
 	}
 
-	$sql = "select Value from radcheck where UserName='$username' and Attribute='Max-All-Session'";
+	$sql = "select Value from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName='$username' and Attribute='Max-All-Session'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());	
         while($nt = mysql_fetch_array($res)) {
 	        echo "<td> $nt[0] </td>";
@@ -102,11 +102,7 @@
 
 
 	
-
-
-
-
-        $sql = "SELECT radacct.RadAcctId, hotspots.name, radacct.UserName, radacct.FramedIPAddress, radacct.AcctStartTime, radacct.AcctStopTime, radacct.AcctSessionTime, radacct.AcctInputOctets, radacct.AcctOutputOctets, radacct.AcctTerminateCause, radacct.NASIPAddress FROM radacct LEFT JOIN hotspots ON radacct.calledstationid = hotspots.mac WHERE UserName='$username';";
+    $sql = "SELECT radacct.RadAcctId, hotspots.name, radacct.UserName, radacct.FramedIPAddress, radacct.AcctStartTime, radacct.AcctStopTime, radacct.AcctSessionTime, radacct.AcctInputOctets, radacct.AcctOutputOctets, radacct.AcctTerminateCause, radacct.NASIPAddress FROM radacct LEFT JOIN hotspots ON radacct.calledstationid = hotspots.mac WHERE UserName='$username';";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         echo "<table border='2' class='table1'>\n";
