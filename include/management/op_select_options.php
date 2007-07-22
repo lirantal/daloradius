@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************
-* Name: attributes.php
+* Name: op_select_options.php
 * Author: Liran tal <liran.tal@gmail.com>
 * 
 * This file is used by the management page (edit user) 
