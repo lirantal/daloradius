@@ -17,7 +17,7 @@
         $chart = new PieChart(800,450);
 
 	// getting total downloads of days in a month
-	$sql = "select hotspots.name, count(distinct(UserName)), count(radacctid), avg(AcctSessionTime), sum(AcctSessionTime) from radacct join hotspots on (radacct.calledstationid like hotspots.mac) group by hotspots.name;";
+	$sql = "select hotspots.name, count(distinct(UserName)), count(radacctid), avg(AcctSessionTime), sum(AcctSessionTime) from ".$configValues['CONFIG_DB_TBL_RADACCT']." join hotspots on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid like hotspots.mac) group by hotspots.name;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {

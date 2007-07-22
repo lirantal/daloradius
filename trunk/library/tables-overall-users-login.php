@@ -26,7 +26,7 @@ function daily($username) {
 
 	include 'opendb.php';
 
-        $sql = "SELECT UserName, count(AcctStartTime), DAY(AcctStartTime) AS Day from radacct where username='$username' group by Day;";
+        $sql = "SELECT UserName, count(AcctStartTime), DAY(AcctStartTime) AS Day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Day;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$total_logins = 0;		// initialize variables
@@ -103,7 +103,7 @@ function monthly($username) {
 	
 	include 'library/opendb.php';
 
-        $sql = "SELECT UserName, count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from radacct where username='$username' group by Month;";
+        $sql = "SELECT UserName, count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Month;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$total_logins = 0;		// initialize variables
@@ -184,7 +184,7 @@ function yearly($username) {
 	include 'opendb.php';
 
 
-        $sql = "SELECT UserName, count(AcctStartTime), YEAR(AcctStartTime) AS Year from radacct where username='$username' group by Year;";
+        $sql = "SELECT UserName, count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Year;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$total_logins = 0;		// initialize variables

@@ -33,7 +33,7 @@ function daily() {
 
         $chart = new VerticalChart(920,500);
 
-        $sql = "SELECT count(AcctStartTime), DAY(AcctStartTime) AS Day from radacct group by Day;";
+        $sql = "SELECT count(AcctStartTime), DAY(AcctStartTime) AS Day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Day;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {
@@ -65,7 +65,7 @@ function monthly() {
 
         $chart = new VerticalChart(920,500);
 	
-        $sql = "SELECT count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from radacct group by Month;";
+        $sql = "SELECT count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Month;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {
@@ -98,7 +98,7 @@ function yearly() {
 
         $chart = new VerticalChart(920,500);
 
-        $sql = "SELECT count(AcctStartTime), YEAR(AcctStartTime) AS Year from radacct group by Year;";
+        $sql = "SELECT count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Year;";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($ent = mysql_fetch_array($res)) {
