@@ -99,7 +99,7 @@ var point_sl1 = new GLatLng(35.460669951495305, -81.5625);
 
 <?php
 
-    $sql = "SELECT * FROM hotspots WHERE geocode > ''";
+    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
     $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($nt = mysql_fetch_array($res)) {

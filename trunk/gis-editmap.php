@@ -18,7 +18,7 @@
 	        $hotspot_geo = substr($hotspot_geo, 1);
 	        $hotspot_geo = substr($hotspot_geo, 0, strlen($hotspot_geo)-1);
 	
-        	$sql = "INSERT INTO hotspots values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
+        	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
 	        $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	}
@@ -26,7 +26,7 @@
 	if ($type == "del") {
 		$hotspot_name = $_REQUEST['hotspotname'];
 		
-		$sql = "DELETE FROM hotspots WHERE name='$hotspot_name'";
+		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$hotspot_name'";
 		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	}		
 
@@ -129,7 +129,7 @@ GEvent.addListener(map, "click", function(marker, point) {
 
 
 <?php
-    $sql = "SELECT * FROM hotspots WHERE geocode > ''";
+    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
     $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($nt = mysql_fetch_array($res)) {

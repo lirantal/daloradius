@@ -8,7 +8,7 @@
 	$name = $_GET['name'];
 
 	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM hotspots WHERE name='$name'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 	$nt = mysql_fetch_array($res);
 	$macaddress = $nt[2];
@@ -23,12 +23,12 @@
 		if (trim($name) != "") {
 
 			if (trim($macaddress) != "") {
-			$sql = "UPDATE hotspots SET mac='$macaddress' WHERE name='$name'";
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='$macaddress' WHERE name='$name'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
 
 			if (trim($geocode) != "") {
-			$sql = "UPDATE hotspots SET geocode='$geocode' WHERE name='$name'";
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET geocode='$geocode' WHERE name='$name'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
 

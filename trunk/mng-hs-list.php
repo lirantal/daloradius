@@ -30,7 +30,7 @@
         
         include 'library/opendb.php';
 
-	$sql = "SELECT * FROM hotspots;";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].";";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         echo "<table border='2' class='table1'>\n";

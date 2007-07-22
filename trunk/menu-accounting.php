@@ -88,7 +88,7 @@
 
 	// Grabing the last 
 
-	$sql = "select name from hotspots";
+	$sql = "select name from ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']."";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         while($nt = mysql_fetch_array($res)) {
