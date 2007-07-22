@@ -24,7 +24,7 @@
 		<h2 id="Intro"><a href="#"><?echo $l[Intro][billprepaid.php]; ?></a></h2>
 				
 				<p>
-                                                <?php echo $l[captions][acctrecsforhotspot]." <i>".$hotspot."</i>" ?>
+					<?php echo $l[captions][acctrecsforhotspot]." <i>".$hotspot."</i>" ?>
 				</p>
 
 					
@@ -53,7 +53,7 @@
 	// then we get their max-all-session attribute to see to how long their time is limited (they're card bank, represented in secs)
 	// BUT this will only list rates that have a max-all-session defined for them.
 
-	$sql = "select distinct(radacct.UserName), hotspots.name, radcheck.Value, rates.rate from radacct, rates, hotspots, radcheck where (radacct.Username = radcheck.UserName) and (radcheck.Attribute = 'Max-All-Session') and (radacct.calledstationid = hotspots.mac) and (hotspots.name like '$hotspot') and (rates.cardbank = radcheck.value) and (radacct.AcctStartTime >= '$startdate') and (radacct.AcctStartTime <= '$enddate' ) group by radacct.UserName";
+	$sql = "select distinct(radacct.UserName), hotspots.name, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value, rates.rate from radacct, rates, hotspots, ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (radacct.Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Max-All-Session') and (radacct.calledstationid = hotspots.mac) and (hotspots.name like '$hotspot') and (rates.cardbank = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".value) and (radacct.AcctStartTime >= '$startdate') and (radacct.AcctStartTime <= '$enddate' ) group by radacct.UserName";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$sum = 0;

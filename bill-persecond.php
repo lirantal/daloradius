@@ -53,7 +53,7 @@
 	// then we get their max-all-session attribute to see to how long their time is limited (they're card bank, represented in secs)
 	// BUT this will only list rates that have a max-all-session defined for them.
 
-	$sql = "select distinct(radacct.UserName), hotspots.name, radacct.AcctStartTime, Sum(radacct.AcctSessionTime), rates.rate from radacct, rates, hotspots, radcheck where (radacct.Username = radcheck.UserName) and (radcheck.Attribute = 'User-Password' OR radcheck.Attribute = 'Password') and (radacct.AcctStartTime >= '$startdate') and (radacct.AcctStartTime <= '$enddate' ) and (rates.type = 'per second') and (radacct.calledstationid = hotspots.mac) and (hotspots.name like '$hotspot') group by radacct.UserName";
+	$sql = "select distinct(radacct.UserName), hotspots.name, radacct.AcctStartTime, Sum(radacct.AcctSessionTime), rates.rate from radacct, rates, hotspots, ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (radacct.Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'User-Password' OR ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Password') and (radacct.AcctStartTime >= '$startdate') and (radacct.AcctStartTime <= '$enddate' ) and (rates.type = 'per second') and (radacct.calledstationid = hotspots.mac) and (hotspots.name like '$hotspot') group by radacct.UserName";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$sum = 0;
