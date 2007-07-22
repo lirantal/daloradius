@@ -24,7 +24,7 @@
 
     include 'library/opendb.php';
 
-	$sql = "select hotspots.name, count(distinct(UserName)), count(radacctid), avg(AcctSessionTime), sum(AcctSessionTime) from ".$configValues['CONFIG_DB_TBL_RADACCT']." join hotspots on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid like hotspots.mac) group by hotspots.name;";
+	$sql = "select ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name, count(distinct(UserName)), count(radacctid), avg(AcctSessionTime), sum(AcctSessionTime) from ".$configValues['CONFIG_DB_TBL_RADACCT']." join ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid like ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) group by ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name;";
 	$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
         echo "<table border='2' class='table1'>\n";

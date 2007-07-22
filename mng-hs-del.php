@@ -12,7 +12,7 @@
 			include 'library/opendb.php';
 
 			// delete all attributes associated with a username
-			$sql = "DELETE FROM hotspots WHERE name='$name'";
+			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 			$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			echo "<font color='#0000FF'>success<br/></font>";
 

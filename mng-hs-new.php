@@ -16,7 +16,7 @@
 		include 'library/opendb.php';
 
 
-		$sql = "SELECT * FROM hotspots WHERE name='$name'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 		$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 		if (mysql_num_rows($res) == 0) {
@@ -24,7 +24,7 @@
 			if (trim($name) != "" and trim($macaddress) != "") {
 
 				// insert username/password
-				$sql = "insert into hotspots values (0, '$name', '$macaddress', '$geocode')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$name', '$macaddress', '$geocode')";
 				$res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 			echo "<font color='#0000FF'>success<br/></font>";
