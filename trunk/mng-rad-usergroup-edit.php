@@ -17,7 +17,7 @@
 	$groupOld = $_REQUEST['group'];
 
         // fill-in nashost details in html textboxes
-        $sql = "SELECT * FROM usergroup WHERE UserName='$username' AND GroupName='$groupOld'";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
         $row = mysql_fetch_array($res);		// array fetched with values from $sql query
 
@@ -34,7 +34,7 @@
                 
                 include 'library/opendb.php';
 
-                $sql = "SELECT * FROM usergroup WHERE UserName='$username' AND GroupName='$groupOld'";
+                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
                 $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
                 if (mysql_num_rows($res) == 1) {
@@ -46,7 +46,7 @@
 				}
 
                                 // insert nas details
-                                $sql = "UPDATE usergroup SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
+                                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
                                 $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
                         
 			echo "<font color='#0000FF'>success<br/></font>";

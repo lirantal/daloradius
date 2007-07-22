@@ -16,7 +16,7 @@
                 
                 include 'library/opendb.php';
 
-                $sql = "SELECT * FROM usergroup WHERE UserName='$username' AND GroupName='$group'";
+                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
                 $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
                 if (mysql_num_rows($res) == 0) {
@@ -27,7 +27,7 @@
 				$priority = 1;		// default in mysql table for usergroup
 			}
                                 // insert usergroup details
-                                $sql = "INSERT INTO usergroup values ('$username', '$group', $priority)";
+                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('$username', '$group', $priority)";
                                 $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 			}
                         
