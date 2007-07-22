@@ -408,6 +408,11 @@ input[type='checkbox'] {
 	color:#777;
 }
 
+option {
+        padding:2px;
+}
+
+
 textarea {
 	width:400px;
 	padding:4px;
