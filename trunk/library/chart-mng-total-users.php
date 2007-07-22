@@ -19,7 +19,7 @@
 	
 	$chart = new VerticalChart(500,250);
 
-        $sql = "SELECT COUNT(DISTINCT(UserName)) from radcheck;";
+        $sql = "SELECT COUNT(DISTINCT(UserName)) from ".$configValues['CONFIG_DB_TBL_RADCHECK'].";";
         $res = mysql_query($sql) or die('Query failed: ' . mysql_error());
 
 	$array_users = array();
