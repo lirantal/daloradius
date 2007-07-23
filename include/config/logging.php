@@ -15,9 +15,12 @@ function logMessage($msg, $logFile) {
 * @return $table                The table name, either radcheck or radreply
 */
 
+        $date = date('M d G:i:s');
+        $msgString = $date . " " . $msg;
+
         $fp = fopen($logFile, "a");
         if ($fp) {
-        fwrite($fp, $msg . "\n");
+        fwrite($fp, $msgString  . "\n");
                 fclose($fp);
         } else {
                 echo "<font color='#FF0000'>error: could not open the file for writing:<b> $logFile </b><br/></font>";
