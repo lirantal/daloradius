@@ -1,7 +1,11 @@
 <?php
 
     include ("menu-home.php");
-	
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
 ?>
 		
 		
