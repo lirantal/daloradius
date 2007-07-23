@@ -55,8 +55,6 @@ include_once ("lang/main.php");
 								<option value="AcctSessionTime"> time
 							</select>
 							</form></li>
-						<li><a href="rep-all.php"><b>&raquo;</b>List All Users</a></li>
-	
 				</ul>
 		
 
