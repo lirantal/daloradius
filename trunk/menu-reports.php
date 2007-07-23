@@ -28,12 +28,12 @@ include_once ("lang/main.php");
 				<h3>Users Reports</h3>
 				<ul class="subnav">
 				
-						<li><a href="javascript:document.searchusername.submit();"><b>&raquo;</b>Search User<a>
+						<li><a href="javascript:document.searchusername.submit();"><b>&raquo;</b>Search User</a>
 							<form name="searchusername" action="rep-username.php" method="post" class="sidebar">
 							<input name="username" type="text">
 							</form></li>
 
-						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>Top User<a>
+						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>Top User</a>
 							<form name="topusers" action="rep-topusers.php" method="post" class="sidebar">
 							<select name="limit" type="text">
 								<option value="5"> 5
