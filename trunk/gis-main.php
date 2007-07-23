@@ -22,14 +22,14 @@
                 echo "
                                 <script language='JavaScript'>
                                 <!--
-				alert('".$l[messages][gismain1]."');
+				alert("Successfully updated GoogleMaps API Registration code");
                                 -->
                                 </script>
                                 ";
 
 	} else {
-                        echo "<font color='#FF0000'>".$l[messages][gismain2]."<b> $myfile </b><br/></font>";
-			echo $l[messages][gismain3]."<br/>";
+                        echo "<font color='#FF0000'>error: could not open the file for writing:<b> $myfile </b><br/></font>";
+			echo "Check file permissions. The file should be writable by the webserver's user/group<br/>";
                         echo "
                                 <script language='JavaScript'>
                                 <!--
