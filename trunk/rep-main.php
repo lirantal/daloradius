@@ -1,5 +1,12 @@
 <?php
 
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+
+?>
+
+<?php
+
     include ("menu-reports.php");
 
 ?>
