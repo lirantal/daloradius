@@ -47,7 +47,7 @@
                         <td> $nt[1] </td>
                         <td> $nt[2] </td>
                         <td> $nt[3] </td>
-                        <td> <a href='bill-rates-edit.php?type=$nt[1]'> edit </a> </td>
+                        <td> <a href='bill-rates-edit.php?type=$nt[1]'> ".$l[all][edit]." </a> </td>
                 </tr>";
         }
         echo "</table>";
