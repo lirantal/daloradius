@@ -8,7 +8,7 @@
 *********************************************************************/
 
 
-function logMessage($msg, $logFile) {
+function logMessageNotice($msg, $logFile) {
 /*
 * @param $msg           The message string which should be logged to the file
 * @param $logFile               The full path for the filename to write logs to
@@ -16,7 +16,7 @@ function logMessage($msg, $logFile) {
 */
 
         $date = date('M d G:i:s');
-        $msgString = $date . " " . $msg;
+        $msgString = $date . " NOTICE " . $msg;
 
         $fp = fopen($logFile, "a");
         if ($fp) {
