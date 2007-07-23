@@ -30,19 +30,21 @@
 
 if ($configValues['CONFIG_LOG_PAGES'] == "yes") {
         $msg = $operator . " " . $log;
-        logMessage("NOTICE", $msg, $configValues['CONFIG_LOG_FILE']);
+        logMessage("NOTICE", $msg, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
 }
 
 
-function logMessage($type, $msg, $logFile) {
+function logMessage($type, $msg, $logFile, $currPage) {
 /*
-* @param $msg           The message string which should be logged to the file
-* @param $logFile               The full path for the filename to write logs to
-* @return $table                The table name, either radcheck or radreply
+* @param $type               The message type, for example, NOTICE, DEBUG, ERROR, ACTION, etc...
+* @param $msg           	The message string which should be logged to the file
+* @param $logFile           The full path for the filename to write logs to
+* @param $currPage       The current page that we included from
+* @return $table              The table name, either radcheck or radreply
 */
 
         $date = date('M d G:i:s');
-        $msgString = $date . " " . $type . " " . $msg;
+        $msgString = $date . " " . $type . " " . $msg . " " . $currPage;
 
         $fp = fopen($logFile, "a");
         if ($fp) {
