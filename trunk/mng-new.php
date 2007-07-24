@@ -273,6 +273,15 @@ function toggleShowDiv(pass) {
 </td><td>
 						<input value="<?php echo $username ?>" name="username"/>
 <a href="javascript:randomUsername()"> genuser</a><br/>
+
+<a href="javascript:toggleShowDiv('showPasswordType')">advanced</a><br/>
+<div id="showPasswordType" style="display:none;visibility:visible" >
+<br/>
+<input type="radio" name="passwordType" value="User-Password" checked>User-Password<br>
+<input type="radio" name="passwordType" value="Chap-Password">Chap-Password<br>
+<input type="radio" name="passwordType" value="Cleartext-Password">Cleartext-Password<br>
+</div>
+
 						</font>
 </td></tr>
 <tr><td>
