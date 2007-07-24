@@ -280,7 +280,11 @@ function toggleShowDiv(pass) {
 <input type="radio" name="passwordType" value="User-Password" checked>User-Password<br>
 <input type="radio" name="passwordType" value="Chap-Password">Chap-Password<br>
 <input type="radio" name="passwordType" value="Cleartext-Password">Cleartext-Password<br>
+<input type="radio" name="passwordType" value="Crypt-Password">Crypt-Password<br>
+<input type="radio" name="passwordType" value="MD5-Password">MD5-Password<br>
+<input type="radio" name="passwordType" value="SHA1-Password">SHA1-Password<br>
 </div>
+
 
 						</font>
 </td></tr>
