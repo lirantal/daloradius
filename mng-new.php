@@ -24,6 +24,7 @@
 	if (isset($_POST['submit'])) {
 		$username = $_POST['username'];
 		$password = $_POST['password'];
+        $passwordtype = $_POST['passwordType'];	
 		$expiration = $_POST['expiration'];
 		$maxallsession = $_POST['maxallsession'];
 		$sessiontimeout = $_POST['sessiontimeout'];
@@ -47,7 +48,7 @@
 			if (trim($username) != "" and trim($password) != "") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', '$password')";
 				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	
 				// insert username/password
