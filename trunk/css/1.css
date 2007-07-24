@@ -399,6 +399,10 @@ input {
 	color:#000000;
 }
 
+input[type="radio"] {
+        width:20px;
+}
+
 input[type='checkbox'] {
 	width:15px;
 	padding:4px;
