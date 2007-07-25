@@ -25,7 +25,8 @@ function drawAttributes() {
 			<div id="attributes$attrib" style="display:none;visibility:visible" >
 					<input value="" id="$attrib" name="$attrib">
 EOA;
-		drawSelectSeconds($attrib, $cnt);
+		if ($help == "seconds") 
+			drawSelectSeconds($attrib, $cnt);
 		echo "
 		<br/><br/>
 		</div>
