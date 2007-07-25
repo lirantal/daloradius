@@ -33,8 +33,8 @@ function drawAttributes() {
 	 
 	 
 echo <<<EOF
-        <table border='2' class='table1' width='600'>
-        <tr><td>
+	<table border='2' class='table1' width='600'>
+	<tr><td>		
     <input type="checkbox" onclick="javascript:toggleShowDiv('categorySession')">
     <b> Session Attributes </b> <br/>
     <div id="categorySession" style="display:none;visibility:visible" >
@@ -54,14 +54,14 @@ EOF;
 		";
 		$cnt++;
 	}
-	echo "</td></tr>
+echo "</td></tr>
 		</table>
-		</div><br/>";	
+		</div><br/>";
 	
 	
 echo <<<EOF
-        <table border='2' class='table1' width='600'>
-        <tr><td>
+	<table border='2' class='table1' width='600'>
+	<tr><td>	
     <input type="checkbox" onclick="javascript:toggleShowDiv('categoryNas')">
     <b> NAS Attributes </b> <br/>
     <div id="categoryNas" style="display:none;visibility:visible" >
@@ -82,18 +82,19 @@ EOF;
 		";
 		$cnt++;
 	}	
-	echo "</td></tr>
+echo "</td></tr>
 		</table>
 		</div><br/>";
 	
-	
+
 echo <<<EOF
-        <table border='2' class='table1' width='600'>
-        <tr><td>
+	<table border='2' class='table1' width='600'>
+	<tr><td>
     <input type="checkbox" onclick="javascript:toggleShowDiv('categoryWISPr')">
     <b> WISPr Attributes </b> <br/>
     <div id="categoryWISPr" style="display:none;visibility:visible" >
-EOF;	
+EOF;
+	
 	$cnt = 0;
 	foreach ( $arrayWISPrAttr as $attrib => $help ) {
 		drawAttributesHtml($attrib);
@@ -109,10 +110,9 @@ EOF;
 		";
 		$cnt++;
 	}		
-	echo "</td></tr>
+echo "</td></tr>
 		</table>
 		</div><br/>";	
-
 
 	
 }
