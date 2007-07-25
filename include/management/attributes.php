@@ -31,8 +31,8 @@ function drawAttributes() {
 	 'WISPr-Session-Terminate-Time' => 'date'
 	 );	 
 	 
+	 
 	echo "<h4> Session Attributes </h4>";
-
 	$cnt = 0;
 	foreach ( $arraySessionAttr as $attrib => $help ) {
 		drawAttributesHtml($attrib);
@@ -49,9 +49,43 @@ function drawAttributes() {
 		$cnt++;
 	}
 	
+	echo "<h4> NAS Attributes </h4>";
 	
+	$cnt = 0;
+	foreach ( $arrayNasAttr as $attrib => $help ) {
+		drawAttributesHtml($attrib);
+		if ($help == "seconds") 
+			drawSelectSeconds($attrib, $cnt);
+		if ($help == "speed") 
+			drawSelectSpeed($attrib, $cnt);
+		if ($help == "date") 
+			drawDateHtml($attrib);			
+		echo "
+		<br/><br/></font>
+		</div>
+		";
+		$cnt++;
+	}	
 	
 
+	
+	echo "<h4> WISPr Attributes </h4>";
+	
+	$cnt = 0;
+	foreach ( $arrayWISPrAttr as $attrib => $help ) {
+		drawAttributesHtml($attrib);
+		if ($help == "seconds") 
+			drawSelectSeconds($attrib, $cnt);
+		if ($help == "speed") 
+			drawSelectSpeed($attrib, $cnt);
+		if ($help == "date") 
+			drawDateHtml($attrib);			
+		echo "
+		<br/><br/></font>
+		</div>
+		";
+		$cnt++;
+	}		
 }
 
 
