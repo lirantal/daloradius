@@ -75,7 +75,7 @@
 				<p>
 
                                 <form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1' width='600'>
+<table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b><?php echo $l[FormField][all][Username] ?></b>
@@ -96,7 +96,7 @@
 		<center>
         <h4> Advnaced User-Group Attributes </h4>
 		</center>
-<table border='2' class='table1'>
+<table border='2' class='table1' width='600'>
 <tr><td>
 
                                                 <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
