@@ -70,36 +70,12 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 </head>
- 
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
+
 
 <SCRIPT TYPE="text/javascript">
 <!--
-
-function randomPassword()
-{
-  length = 8;
-  chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
-  pass = "";
-  for(x=0;x<length;x++)
-  {
-    i = Math.floor(Math.random() * 62);
-    pass += chars.charAt(i);
-  }
-  document.newuser.password.value = pass;
-}
-
-function randomUsername()
-{
-  length = 8;
-  chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
-  user = "";
-  for(x=0;x<length;x++)
-  {
-    i = Math.floor(Math.random() * 62);
-    user += chars.charAt(i);
-  }
-  document.newuser.username.value = user;
-}
 
 function maxallsession(time)
 {
@@ -129,32 +105,6 @@ function small_window(user,pass,time) {
   newWindow.document.write("Enginx HotSpot System ");
   newWindow.document.write("<br/>");
   newWindow.document.write(" </body></html>");
-}
-
-
-function toggleShowDiv(pass) {
-
-        var divs = document.getElementsByTagName('div');
-        for(i=0;i<divs.length;i++) {
-                if (divs[i].id.match(pass)) {
-                        if (document.getElementById) {                                                  
-                                if (divs[i].style.display=="inline")
-                                        divs[i].style.display="none";
-                                else
-                                        divs[i].style.display="inline";
-                        } else if (document.layers) {                                                   
-                                if (document.layers[divs[i]].display=='visible')
-                                        document.layers[divs[i]].display = 'hidden';
-                                else
-                                        document.layers[divs[i]].display = 'visible';
-                        } else {
-                                if (document.all.hideShow.divs[i].visibility=='visible')                
-                                        document.all.hideShow.divs[i].visibility = 'hidden';
-                                else
-                                        document.all.hideShow.divs[i].visibility = 'visible';
-                        }
-                }
-        }
 }
 
 // -->
