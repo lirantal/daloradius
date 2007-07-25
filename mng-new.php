@@ -218,7 +218,7 @@ function toggleShowDiv(pass) {
 <a href="javascript:randomPassword()"> genpass</a><br/>
 						</font>
 </td></tr>
-<tr><td
+<tr><td>
 						<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l[FormField][all][Expiration] ?></b>
 </td><td>
@@ -230,15 +230,15 @@ function toggleShowDiv(pass) {
 </td></tr>
 </table>
 	<br/><br/>
-
+	<center>
+						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+	</center>
 <?php
         include_once('include/management/attributes.php');
         drawAttributes();
 ?>
 		
-						<br/><br/>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
-
+							<br/><br/>
 
 				</form>
 		
