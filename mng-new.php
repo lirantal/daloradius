@@ -160,6 +160,18 @@
 <SCRIPT TYPE="text/javascript">
 <!--
 
+function setText(srcObj,dstObj) {
+
+var srcElem = document.getElementById(srcObj);
+var elemVal = srcElem.options[srcElem.selectedIndex].value;
+alert(elemVal);
+
+var dstElem = document.getElementById(dstObj);
+dstElem.value = elemVal;
+
+}
+
+
 function randomPassword()
 {
   length = 8;
