@@ -11,25 +11,31 @@
 
 function drawAttributes() {
 
-echo <<<EOF
+	$attributesArray = array('Max-All-Session' => 'seconds',
+	                         'Session-Timeout' => 'seconds'
+	                        );
 
-<h4> Session Attributes </h4>
-                       <input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
-                               <b>MaxAllSession</b><br/>
-<div id="attributesMaxAllSession" style="display:none;visibility:visible" >
-                                 <input value="" id="maxallsession" name="maxallsession">
-<select onChange="javascript:setText(this.id,'maxallsession')" id="option1">
-<option value="86400">1day(s)</option>
-<option value="259200">3day(s)</option>
-<option value="604800">1week(s)</option>
-</select>
-                 <br/><br/>
-</div>
+	echo "<h4> Session Attributes </h4>";
 
+	$cnt = 0;
+	foreach ( $attributesArray as $attrib => $help ) {
+		echo <<<EOA
+			<input type="checkbox" onclick="javascript:toggleShowDiv('attributes$attrib')">
+			<b>$attrib</b><br/>
+			<div id="attributes$attrib" style="display:none;visibility:visible" >
+					<input value="" id="$attrib" name="$attrib">
+EOA;
+		drawSelectSeconds($attrib, $cnt);
+		echo "
+		<br/><br/>
+		</div>
+		";
 
-EOF;
+	$cnt++;
+	}
 
 }
+
 
 
 
