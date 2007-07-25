@@ -32,8 +32,13 @@ function drawAttributes() {
 	 );	 
 	 
 	 
-	echo "<br/><br/><h4> Session Attributes </h4>";
-	$cnt = 0;
+    echo <<<EOF
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categorySession')">
+    <b> Session Attributes </b> <br/>
+    <div id="categorySession" style="display:none;visibility:visible" >
+EOF;
+
+	 $cnt = 0;
 	foreach ( $arraySessionAttr as $attrib => $help ) {
 		drawAttributesHtml($attrib);
 		if ($help == "seconds") 
@@ -48,8 +53,15 @@ function drawAttributes() {
 		";
 		$cnt++;
 	}
+	echo "</div><br/>";
 	
-	echo "<br/><br/><h4> NAS Attributes </h4>";
+	
+	
+	echo <<<EOF
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryNas')">
+    <b> NAS Attributes </b> <br/>
+    <div id="categoryNas" style="display:none;visibility:visible" >
+EOF;
 	
 	$cnt = 0;
 	foreach ( $arrayNasAttr as $attrib => $help ) {
@@ -66,11 +78,15 @@ function drawAttributes() {
 		";
 		$cnt++;
 	}	
-	
+	echo "</div><br/>";	
 
 	
-	echo "<br/><br/><h4> WISPr Attributes </h4>";
 	
+echo <<<EOF
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryWISPr')">
+    <b> WISPr Attributes </b> <br/>
+    <div id="categoryWISPr" style="display:none;visibility:visible" >
+EOF;	
 	$cnt = 0;
 	foreach ( $arrayWISPrAttr as $attrib => $help ) {
 		drawAttributesHtml($attrib);
@@ -86,6 +102,10 @@ function drawAttributes() {
 		";
 		$cnt++;
 	}		
+	echo "</div><br/>";	
+
+
+	
 }
 
 
