@@ -31,7 +31,7 @@ function drawAttributes() {
 	 'WISPr-Session-Terminate-Time' => 'date'
 	 );	 
 	 
-echo "	<table border='2' class='table1' width='600'>";	 
+echo "<br/><table border='2' class='table1' width='600'>";
 echo <<<EOF
 	<tr><td>		
     <input type="checkbox" onclick="javascript:toggleShowDiv('categorySession')">
@@ -53,7 +53,7 @@ EOF;
 		";
 		$cnt++;
 	}
-echo "</td></tr>
+	echo "</td></tr>
 		</div>";
 	
 	
@@ -80,11 +80,11 @@ EOF;
 		$cnt++;
 	}	
 echo "</td></tr>
-		</table>
 		</div>";
 	
 
 echo <<<EOF
+	<table border='2' class='table1' width='600'>
 	<tr><td>
     <input type="checkbox" onclick="javascript:toggleShowDiv('categoryWISPr')">
     <b> WISPr Attributes </b> <br/>
@@ -106,10 +106,9 @@ EOF;
 		";
 		$cnt++;
 	}		
-echo "</td></tr>
-		</table>
+	echo "</td></tr>
 		</div>";	
-echo "</table>"
+echo "</table>";
 
 	
 }
