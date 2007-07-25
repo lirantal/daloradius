@@ -11,34 +11,15 @@
     $username = "";
     $password = "";
     $expiration = "";
-    $maxallsession = "";
-    $sessiontimeout = "";
-    $calledstationid = "";
-    $callingstationid = "";
-    $idletimeout = "";
-    $wisprredirectionurl = "";
-    $wisprbandwidthmaxup = "";
-    $wisprbandwidthmaxdown = "";
-    $wisprsessionterminatetime = "";
 
 	if (isset($_POST['submit'])) {
 		$username = $_POST['username'];
 		$password = $_POST['password'];
         $passwordtype = $_POST['passwordType'];	
 		$expiration = $_POST['expiration'];
-		$maxallsession = $_POST['maxallsession'];
-		$sessiontimeout = $_POST['sessiontimeout'];
-		$calledstationid = $_POST['calledstationid'];
-		$callingstationid = $_POST['callingstationid'];
-		$idletimeout = $_POST['idletimeout'];
-		$wisprredirectionurl = $_POST['wisprredirectionurl'];
-		$wisprbandwidthmaxup = $_POST['wisprbandwidthmaxup'];
-		$wisprbandwidthmaxdown = $_POST['wisprbandwidthmaxdown'];
-		$wisprsessionterminatetime = $_POST['wisprsessionterminatetime'];
 
-		
 		include 'library/opendb.php';
-
+        include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
 
 		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
@@ -51,73 +32,34 @@
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', '$password')";
 				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	
-				// insert username/password
+				// insert expiration
 				if ($expiration) {
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
+					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
-	
-				if ($maxallsession) {
-				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
+			
+				 foreach( $_POST as $attribute=>$value ) { 
 
-				if ($sessiontimeout) {
-				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
+					if ( ($attribute == "username") || ($attribute == "password") || ($attribute == "passwordType") || ($attribute == "expiration") || ($attribute == "submit") )	
+						continue; // we skip these post variables as they are not important
 
-				if ($idletimeout) {
-				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Idle-Timeout', ':=', '$idletimeout')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
+					if (!($value[0]))
+						continue;
+						
+						$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
+																		// or radcheck table (using include/management/attributes.php function)
 
+				        $counter = 0;
 
-				if ($calledstationid) {
-				// insert called-station-id
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Called-Station-Id', '==', '$calledstationid')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
+						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
+                        //$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+						echo "<br/> " .$sql . "<br/>";
 
+						$counter++;
 
-				if ($callingstationid) {
-				// insert calling-station-id
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Calling-Station-Id', '==', '$callingstationid')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
+				} // foreach
+				
 
-				if ($wisprredirectionurl) {
-				// insert WISPr-Redirection-URL
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Redirection-URL', '=', '$wisprredirectionurl')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
-
-				if ($wisprbandwidthmaxup) {
-				// insert WISPr-Bandwidth-Max-Up
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Bandwidth-Max-Up', '=', '$wisprbandwidthmaxup')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
-
-
-				if ($wisprbandwidthmaxdown) {
-				// insert WISPr-Bandwidth-Max-Down
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Bandwidth-Max-Down', '=', '$wisprbandwidthmaxdown')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
-
-				if ($wisprsessionterminatetime) {
-				// insert WISPr-Session-Terminate-Time
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'WISPr-Session-Terminate-Time', '=', '$wisprsessionterminatetime')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-				}
-
-
-
-
-	
 				//echo "<font color='#0000FF'>success<br/></font>";
 				$msg = "Added new user <b> $username </b> to database";
 				header("location: mng-success.php?task=$msg");
@@ -164,7 +106,6 @@ function setText(srcObj,dstObj) {
 
 var srcElem = document.getElementById(srcObj);
 var elemVal = srcElem.options[srcElem.selectedIndex].value;
-alert(elemVal);
 
 var dstElem = document.getElementById(dstObj);
 dstElem.value = elemVal;
@@ -196,37 +137,6 @@ function randomUsername()
     user += chars.charAt(i);
   }
   document.newuser.username.value = user;
-}
-
-
-
-function sessiontimeout(time)
-{
-  document.newuser.sessiontimeout.value = time;
-}
-
-function idletimeout(time)
-{
-  document.newuser.idletimeout.value = time;
-}
-
-
-
-function maxallsession(time)
-{
-  document.newuser.maxallsession.value = time;
-
-}
-
-function wisprbandwidthmaxup(speed)
-{
-  document.newuser.wisprbandwidthmaxup.value = speed;
-}
-
-
-function wisprbandwidthmaxdown(speed)
-{
-  document.newuser.wisprbandwidthmaxdown.value = speed;
 }
 
 
@@ -323,7 +233,7 @@ function toggleShowDiv(pass) {
 	<br/><br/>
 
 <?php
-        include('include/management/attributes.php');
+        include_once('include/management/attributes.php');
         drawAttributes();
 ?>
 		
