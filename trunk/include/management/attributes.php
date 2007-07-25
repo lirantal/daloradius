@@ -17,6 +17,13 @@ function drawAttributes() {
 	 'Idle-Timeout' => 'seconds'
 	 );
 
+	 
+	$arrayNasAttr = array(
+	 'Calling-Station-Id' => 'none',
+	 'Called-Station-Id' => 'none',
+	 );	 
+	 
+	 
 	echo "<h4> Session Attributes </h4>";
 
 	$cnt = 0;
