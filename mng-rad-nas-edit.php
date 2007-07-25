@@ -115,7 +115,7 @@
 				<p>
 
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
+<table border='2' class='table1' width='600'>
 <tr><td>
                                                 <input type="hidden" value="<?php echo $nashost ?>" name="nashost" /><br/>
 

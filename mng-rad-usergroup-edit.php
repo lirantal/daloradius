@@ -98,7 +98,7 @@
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
                                                 <input type="hidden" value="<?php echo $username ?>" name="username" /><br/>
-<table border='2' class='table1'>
+<table border='2' class='table1' width='600'>
 <tr><td>
                                                 <?php if (trim($groupOld) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b><?php echo $l[FormField][mngradusergroupedit.php][CurrentGroupname] ?></b>
