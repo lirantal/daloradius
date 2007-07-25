@@ -114,7 +114,9 @@ function createPassword($length) {
 
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
- 
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+
+
 
 <SCRIPT TYPE="text/javascript">
 <!--
@@ -128,31 +130,6 @@ function sessiontimeout(time)
 function maxallsession(time)
 {
   document.batchuser.maxallsession.value = time;
-}
-
-function toggleShowDiv(pass) {
-
-        var divs = document.getElementsByTagName('div');
-        for(i=0;i<divs.length;i++) {
-                if (divs[i].id.match(pass)) {
-                        if (document.getElementById) {                                                  
-                                if (divs[i].style.display=="inline")
-                                        divs[i].style.display="none";
-                                else
-                                        divs[i].style.display="inline";
-                        } else if (document.layers) {                                                   
-                                if (document.layers[divs[i]].display=='visible')
-                                        document.layers[divs[i]].display = 'hidden';
-                                else
-                                        document.layers[divs[i]].display = 'visible';
-                        } else {
-                                if (document.all.hideShow.divs[i].visibility=='visible')                
-                                        document.all.hideShow.divs[i].visibility = 'hidden';
-                                else
-                                        document.all.hideShow.divs[i].visibility = 'visible';
-                        }
-                }
-        }
 }
 
 // -->

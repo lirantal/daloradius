@@ -56,38 +56,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 
-<SCRIPT TYPE="text/javascript">
-<!--
-function toggleShowDiv(pass) {
-
-        var divs = document.getElementsByTagName('div');
-        for(i=0;i<divs.length;i++) {
-                if (divs[i].id.match(pass)) {
-                        if (document.getElementById) {                                         
-                                if (divs[i].style.display=="inline")
-                                        divs[i].style.display="none";
-                                else
-                                        divs[i].style.display="inline";
-                        } else if (document.layers) {                                           
-                                if (document.layers[divs[i]].display=='visible')
-                                        document.layers[divs[i]].display = 'hidden';
-                                else
-                                        document.layers[divs[i]].display = 'visible';
-                        } else {
-                                if (document.all.hideShow.divs[i].visibility=='visible')     
-                                        document.all.hideShow.divs[i].visibility = 'hidden';
-                                else
-                                        document.all.hideShow.divs[i].visibility = 'visible';
-                        }
-                }
-        }
-}
-
-
-
-// -->
-</script>
-
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
