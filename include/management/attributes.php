@@ -29,8 +29,19 @@ echo <<<EOF
 
 EOF;
 
+}
 
 
+
+function drawSelectSeconds($attribute, $counter) {
+
+	echo <<<EOS
+		<select onChange="javascript:setText(this.id,'$attribute')" id="option$counter">
+		<option value="86400">1day(s)</option>
+		<option value="259200">3day(s)</option>
+		<option value="604800">1week(s)</option>
+		</select>
+EOS;
 
 }
 
