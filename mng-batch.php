@@ -149,16 +149,7 @@ function maxallsession(time)
 				<p>
 				<?php echo $l[captions][mngbatch] ?><br/>
 				<br/><br/>
-<?php
-		if (trim($username_prefix) == "") { echo "error: missing username prefix<br/>";  }
-		if (trim($number) == "") { echo "error: missing number of instances to create <br/>";  }
-		if (trim($length_user) == "") { echo "error: missing username length<br/>";  }
-		if (trim($length_pass) == "") { echo "error: missing password length<br/>";  }
 
-		if (trim($expiration) == "") { echo "error: missing expiration <br/>";  }
-		if (trim($maxallsession) == "") { echo "error: missing max-all-session <br/>";  }
-		if (trim($sessiontimeout) == "") { echo "error: missing session <br/>";  }
-?>
 				</p>
 				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
