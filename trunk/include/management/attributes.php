@@ -28,7 +28,7 @@ function drawAttributes() {
 
 	$cnt = 0;
 	foreach ( $arraySessionAttr as $attrib => $help ) {
-		drawAttributesBody($attrib);
+		drawAttributesHtml($attrib);
 		if ($help == "seconds") 
 			drawSelectSeconds($attrib, $cnt);
 		echo "
@@ -44,7 +44,7 @@ function drawAttributes() {
 }
 
 
-function drawAttributesBody($attrib) {
+function drawAttributesHtml($attrib) {
 
 	echo <<<EOA
 		<font color='#FF0000'>
