@@ -9,38 +9,64 @@
 *
 *********************************************************************/
 
-	function checkTables($attribute) {
-	/*
-	* @param $attribute	The attribute name, Session-Timeout for example
-	* @return $table		The table name, either radcheck or radreply
-	*/
-		$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-		
-		switch ($attribute) {
-			case "Session-Timeout":
-				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-				break;
-			case "Idle-Timeout":
-				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-				break;
-			case "WISPr-Redirection-URL":
-				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-				break;
-			case "WISPr-Bandwidth-Max-Up":
-				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-				break;
-			case "WISPr-Bandwidth-Max-Down":
-				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-				break;
-			case "WISPr-Session-Terminate-Time":
-				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-				break;
-		}
+function drawAttributes() {
 
-		return $table;
+echo <<<EOF
+
+<h4> Session Attributes </h4>
+                       <input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
+                               <b>MaxAllSession</b><br/>
+<div id="attributesMaxAllSession" style="display:none;visibility:visible" >
+                                 <input value="" id="maxallsession" name="maxallsession">
+<select onChange="javascript:setText(this.id,'maxallsession')" id="option1">
+<option value="86400">1day(s)</option>
+<option value="259200">3day(s)</option>
+<option value="604800">1week(s)</option>
+</select>
+                 <br/><br/>
+</div>
 
 
+EOF;
+
+
+
+
+}
+
+
+function checkTables($attribute) {
+/*
+* @param $attribute	The attribute name, Session-Timeout for example
+* @return $table		The table name, either radcheck or radreply
+*/
+	$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+	
+	switch ($attribute) {
+		case "Session-Timeout":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "Idle-Timeout":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "WISPr-Redirection-URL":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "WISPr-Bandwidth-Max-Up":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "WISPr-Bandwidth-Max-Down":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "WISPr-Session-Terminate-Time":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
 	}
+
+	return $table;
+
+
+}
 
 
 
