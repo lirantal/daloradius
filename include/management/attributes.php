@@ -20,9 +20,16 @@ function drawAttributes() {
 	 
 	$arrayNasAttr = array(
 	 'Calling-Station-Id' => 'none',
-	 'Called-Station-Id' => 'none',
+	 'Called-Station-Id' => 'none'
 	 );	 
 	 
+	 
+	$arrayWISPrAttr = array(
+	 'WISPr-Redirection-URL' => 'none',
+	 'WISPr-Bandwidth-Max-Up' => 'speed',
+	 'WISPr-Bandwidth-Max-Down' => 'speed',
+	 'WISPr-Session-Terminate-Time' => 'date'
+	 );	 
 	 
 	echo "<h4> Session Attributes </h4>";
 
@@ -74,6 +81,15 @@ EOS;
 
 }
 
+
+function drawDateHtml($attribute) {
+
+	echo <<<EOS
+		<img src="library/js_date/calendar.gif" onclick="showChooser(this, '$attribute', 'chooserSpan', 1950, 2010, 'd M Y', false);">
+<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+EOS;
+
+}
 
 
 function drawSelectSeconds($attribute, $counter) {
