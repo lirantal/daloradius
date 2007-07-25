@@ -40,6 +40,25 @@ EOA;
 
 
 
+function drawSelectSpeed($attribute, $counter) {
+
+	echo <<<EOS
+		<select onChange="javascript:setText(this.id,'$attribute')" id="option$counter">
+		<option value="128000">128kbit</option>
+		<option value="256000">256kbit</option>
+		<option value="512000">512kbit</option>
+		<option value="1048576">1mbit</option>
+		<option value="1572864">1.5mbit</option>
+		<option value="2097152">2mbit</option>
+		<option value="3145728">3mbit</option>
+		<option value="10485760">10mbit</option>
+		</select>
+EOS;
+
+}
+
+
+
 function drawSelectSeconds($attribute, $counter) {
 
 	echo <<<EOS
