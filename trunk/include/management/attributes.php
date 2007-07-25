@@ -28,21 +28,14 @@ function drawAttributes() {
 
 	$cnt = 0;
 	foreach ( $arraySessionAttr as $attrib => $help ) {
-		echo <<<EOA
-			<font color='#FF0000'>
-			<input type="checkbox" onclick="javascript:toggleShowDiv('attributes$attrib')">
-			<b>$attrib</b><br/>
-			<div id="attributes$attrib" style="display:none;visibility:visible" >
-					<input value="" id="$attrib" name="$attrib">
-EOA;
+		drawAttributesBody($attrib);
 		if ($help == "seconds") 
 			drawSelectSeconds($attrib, $cnt);
 		echo "
 		<br/><br/></font>
 		</div>
 		";
-
-	$cnt++;
+		$cnt++;
 	}
 	
 	
@@ -51,6 +44,17 @@ EOA;
 }
 
 
+function drawAttributesBody($attrib) {
+
+	echo <<<EOA
+		<font color='#FF0000'>
+		<input type="checkbox" onclick="javascript:toggleShowDiv('attributes$attrib')">
+		<b>$attrib</b><br/>
+		<div id="attributes$attrib" style="display:none;visibility:visible" >
+		<input value="" id="$attrib" name="$attrib">
+EOA;
+
+}
 
 
 function drawSelectSpeed($attribute, $counter) {
