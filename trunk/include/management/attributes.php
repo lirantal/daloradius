@@ -32,7 +32,7 @@ function drawAttributes() {
 	 );	 
 	 
 	 
-	echo "<h4> Session Attributes </h4>";
+	echo "<br/><br/><h4> Session Attributes </h4>";
 	$cnt = 0;
 	foreach ( $arraySessionAttr as $attrib => $help ) {
 		drawAttributesHtml($attrib);
@@ -49,7 +49,7 @@ function drawAttributes() {
 		$cnt++;
 	}
 	
-	echo "<h4> NAS Attributes </h4>";
+	echo "<br/><br/><h4> NAS Attributes </h4>";
 	
 	$cnt = 0;
 	foreach ( $arrayNasAttr as $attrib => $help ) {
@@ -69,7 +69,7 @@ function drawAttributes() {
 	
 
 	
-	echo "<h4> WISPr Attributes </h4>";
+	echo "<br/><br/><h4> WISPr Attributes </h4>";
 	
 	$cnt = 0;
 	foreach ( $arrayWISPrAttr as $attrib => $help ) {
