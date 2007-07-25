@@ -91,11 +91,17 @@ function drawAttributes() {
 
 function drawAttributesHtml($attrib) {
 
+	include ('op_select_options.php');
 	echo <<<EOA
 		<font color='#FF0000'>
 		<input type="checkbox" onclick="javascript:toggleShowDiv('attributes$attrib')">
 		<b>$attrib</b><br/>
 		<div id="attributes$attrib" style="display:none;visibility:visible" >
+EOA;
+	echo "<select name='$attrib_op>";
+	drawOptions();
+	echo "</select>";
+	echo <<<EOA
 		<input value="" id="$attrib" name="$attrib">
 EOA;
 
@@ -153,6 +159,7 @@ function checkTables($attribute) {
 * @param $attribute	The attribute name, Session-Timeout for example
 * @return $table		The table name, either radcheck or radreply
 */
+    include ('library/config_read.php');
 	$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
 	
 	switch ($attribute) {
