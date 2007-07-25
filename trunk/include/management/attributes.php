@@ -20,6 +20,7 @@ function drawAttributes() {
 	$cnt = 0;
 	foreach ( $attributesArray as $attrib => $help ) {
 		echo <<<EOA
+			<font color='#FF0000'>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributes$attrib')">
 			<b>$attrib</b><br/>
 			<div id="attributes$attrib" style="display:none;visibility:visible" >
@@ -28,7 +29,7 @@ EOA;
 		if ($help == "seconds") 
 			drawSelectSeconds($attrib, $cnt);
 		echo "
-		<br/><br/>
+		<br/><br/></font>
 		</div>
 		";
 
