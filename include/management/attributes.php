@@ -46,6 +46,11 @@ function drawSelectSeconds($attribute, $counter) {
 		<option value="86400">1day(s)</option>
 		<option value="259200">3day(s)</option>
 		<option value="604800">1week(s)</option>
+		<option value="1209600">2week(s)</option>
+		<option value="1814400">3week(s)</option>
+		<option value="2592000">1month(s)</option>
+		<option value="5184000">2month(s)</option>
+		<option value="7776000">3month(s)</option>
 		</select>
 EOS;
 
