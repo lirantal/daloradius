@@ -11,14 +11,16 @@
 
 function drawAttributes() {
 
-	$attributesArray = array('Max-All-Session' => 'seconds',
-	                         'Session-Timeout' => 'seconds'
-	                        );
+	$arraySessionAttr = array(
+	 'Max-All-Session' => 'seconds',
+	 'Session-Timeout' => 'seconds',
+	 'Idle-Timeout' => 'seconds'
+	 );
 
 	echo "<h4> Session Attributes </h4>";
 
 	$cnt = 0;
-	foreach ( $attributesArray as $attrib => $help ) {
+	foreach ( $arraySessionAttr as $attrib => $help ) {
 		echo <<<EOA
 			<font color='#FF0000'>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributes$attrib')">
@@ -35,6 +37,9 @@ EOA;
 
 	$cnt++;
 	}
+	
+	
+	
 
 }
 
