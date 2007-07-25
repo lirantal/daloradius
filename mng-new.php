@@ -97,80 +97,8 @@
  
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
-
-<SCRIPT TYPE="text/javascript">
-<!--
-
-function setText(srcObj,dstObj) {
-
-var srcElem = document.getElementById(srcObj);
-var elemVal = srcElem.options[srcElem.selectedIndex].value;
-
-var dstElem = document.getElementById(dstObj);
-dstElem.value = elemVal;
-
-}
-
-
-function randomPassword()
-{
-  length = 8;
-  chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
-  pass = "";
-  for(x=0;x<length;x++)
-  {
-    i = Math.floor(Math.random() * 62);
-    pass += chars.charAt(i);
-  }
-  document.newuser.password.value = pass;
-}
-
-function randomUsername()
-{
-  length = 8;
-  chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
-  user = "";
-  for(x=0;x<length;x++)
-  {
-    i = Math.floor(Math.random() * 62);
-    user += chars.charAt(i);
-  }
-  document.newuser.username.value = user;
-}
-
-
-function toggleShowDiv(pass) {
-
-	var divs = document.getElementsByTagName('div');
-	for(i=0;i<divs.length;i++) {
-		if (divs[i].id.match(pass)) {
-			if (document.getElementById) {							// compatible with IE5 and NS6
-//				if (divs[i].style.visibility=="visible")
-				if (divs[i].style.display=="inline")
-//					divs[i].style.visibility="hidden";
-					divs[i].style.display="none";
-				else
-//					divs[i].style.visibility="visible";
-	 				divs[i].style.display="inline";
-			} else if (document.layers) {							// compatible with Netscape 4
-				if (document.layers[divs[i]].display=='visible')
-					document.layers[divs[i]].display = 'hidden';
-				else
-					document.layers[divs[i]].display = 'visible';
-			} else {
-				if (document.all.hideShow.divs[i].visibility=='visible')		// compatible with IE4
-					document.all.hideShow.divs[i].visibility = 'hidden';
-				else
-					document.all.hideShow.divs[i].visibility = 'visible';
-			}
-		}
-	}
-}
-
-
-
-// -->
-</script>
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
 
 <?php
 
@@ -229,7 +157,7 @@ function toggleShowDiv(pass) {
 						</font>
 </td></tr>
 </table>
-	<br/><br/>
+	<br/>
 	<center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 	</center>
@@ -238,7 +166,7 @@ function toggleShowDiv(pass) {
         drawAttributes();
 ?>
 		
-							<br/><br/>
+							<br/>
 
 				</form>
 		
