@@ -114,7 +114,7 @@
         <h4> Advnaced NAS Attributes </h4>
 		</center>
 
-<table border='2' class='table1'>
+<table border='2' class='table1' width='600'>
 <tr><td>
                                                 <?php if (trim($nastype) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesNasType')">
