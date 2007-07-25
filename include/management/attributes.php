@@ -38,6 +38,10 @@ function drawAttributes() {
 		drawAttributesHtml($attrib);
 		if ($help == "seconds") 
 			drawSelectSeconds($attrib, $cnt);
+		if ($help == "speed") 
+			drawSelectSpeed($attrib, $cnt);
+		if ($help == "date") 
+			drawDateHtml($attrib);			
 		echo "
 		<br/><br/></font>
 		</div>
