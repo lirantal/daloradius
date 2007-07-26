@@ -73,37 +73,6 @@
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
 
-
-<SCRIPT TYPE="text/javascript">
-<!--
-
-function small_window(user,pass,time) {
-  var newWindow;
-  var currentTime = new Date();
-  var props = 'scrollBars=yes,resizable=yes,toolbar=no,menubar=no,location=no,directories=no,width=500,height=200';
-  newWindow = window.open("", "Client Receipt", props);
-  newWindow.document.write("<html><title>Customer Receipt</title><body><br/>");
-  newWindow.document.write("Thank you. <br/>");
-  newWindow.document.write("Your username is: ");
-  newWindow.document.write(user);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Your password is: ");
-  newWindow.document.write(pass);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Your timecredit is: ");
-  newWindow.document.write(time);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Receipt produced on: ");
-  newWindow.document.write(currentTime);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Enginx HotSpot System ");
-  newWindow.document.write("<br/>");
-  newWindow.document.write(" </body></html>");
-}
-
-// -->
-</script>
 <?php
 
 	include ("menu-mng-main.php");
