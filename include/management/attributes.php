@@ -117,6 +117,43 @@ EOF;
 	}		
 	echo "</td></tr>
 		</div>";	
+
+
+
+echo <<<EOF
+	<tr><td>	
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryChillispot')">
+    <b> Chillispot Attributes </b> <br/>
+    <div id="categoryChillispot" style="display:none;visibility:visible" >
+EOF;
+	
+	$cnt = 0;
+	foreach ( $arrayChillispotAttr as $attrib => $help ) {
+		drawAttributesHtml($attrib);
+		if ($help == "seconds") 
+			drawSelectSeconds($attrib, $cnt);
+		if ($help == "speed") 
+			drawSelectSpeed($attrib, $cnt);
+		if ($help == "date") 
+			drawDateHtml($attrib);			
+		echo "
+		<br/><br/></font>
+		</div>
+		";
+		$cnt++;
+	}	
+echo "</td></tr>
+		</div>";
+
+
+
+
+
+
+
+
+
+
 echo "</table>";
 
 	
