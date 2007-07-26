@@ -138,10 +138,14 @@ function small_window(user,pass,time) {
 						</font>
 
 </td></tr>
-<tr><td>
+</table>
+<br/>
+
+	<table border='2' class='table1' width='600'>
+	<tr><td>
 						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l[FormField][mngnewquick.php][MaxAllSession] ?></b><br/>
-<div id="attributesMaxAllSession" style="display:none;visibility:visible" >
+<div id="attributesmaxallsession" style="display:none;visibility:visible" >
 
 						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="maxallsession">
@@ -158,8 +162,8 @@ function small_window(user,pass,time) {
 </div>
 <br/>
 						</font>
-</td></tr>
-</table>
+echo "</td></tr></table>";
+
 <center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
 
