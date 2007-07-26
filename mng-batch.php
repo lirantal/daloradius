@@ -48,8 +48,8 @@ function createPassword($length) {
 			// append the prefix to the username
 			$username  = $username_prefix . $username;
 
-			echo "username: $username <br/>";
-			echo "password: $password <br/>";
+//			echo "username: $username <br/>";
+//			echo "password: $password <br/>";
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
