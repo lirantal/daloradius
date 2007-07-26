@@ -46,7 +46,7 @@
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute='User-Password' or Attribute='Password')";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password')";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
