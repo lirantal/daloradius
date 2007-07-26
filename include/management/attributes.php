@@ -253,7 +253,26 @@ function checkTables($attribute) {
 		case "WISPr-Session-Terminate-Time":
 			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 			break;
+		case "ChilliSpot-Max-Input-Octets":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "ChilliSpot-Max-Output-Octets":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "ChilliSpot-Max-Total-Octets":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "ChilliSpot-UAM-Allowed":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "ChilliSpot-MAC-Allowed":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "ChilliSpot-MAC-Interval":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
 	}
+
 
 	return $table;
 
