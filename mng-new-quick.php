@@ -144,6 +144,7 @@ function small_window(user,pass,time) {
 	<table border='2' class='table1' width='600'>
 	<tr><td>
 						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')">
 						<b><?php echo $l[FormField][mngnewquick.php][MaxAllSession] ?></b><br/>
 <div id="attributesmaxallsession" style="display:none;visibility:visible" >
 
@@ -162,7 +163,7 @@ function small_window(user,pass,time) {
 </div>
 <br/>
 						</font>
-echo "</td></tr></table>";
+</td></tr></table>
 
 <center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
