@@ -12,9 +12,6 @@
 	$number = "";
 	$length_pass = "";
 	$length_user = "";
-	$expiration = "";
-	$maxallsession = "";
-	$sessiontimeout = "";
 
 function createPassword($length) {
 
@@ -34,17 +31,15 @@ function createPassword($length) {
 
 }
 
+
 	if (isset($_POST['submit'])) {
 		$username_prefix = $_POST['username_prefix'];
 		$number = $_POST['number'];
 		$length_pass = $_POST['length_pass'];
 		$length_user = $_POST['length_user'];
-		$expiration = $_POST['expiration'];
-		$maxallsession = $_POST['maxallsession'];
-		$sessiontimeout = $_POST['sessiontimeout'];
-
 		
 		include 'library/opendb.php';
+	        include 'include/management/attributes.php';                            // required for checking if an attribute
 
 		for ($i=0; $i<$number; $i++) {
 			$username = createPassword($length_user);
@@ -67,22 +62,27 @@ function createPassword($length) {
 			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
 			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-			if ($expiration) { 
-			// insert username/password
-			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-			}
-	
-			if ($maxallsession) {
-			// insert username/password
-			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-			}
-	
-			if ($sessiontimeout) {
-			// insert username/password
-			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-			}
+				 foreach( $_POST as $attribute=>$value ) { 
+
+					if ( ($attribute == "username_prefix") || ($attribute == "length_pass") || ($attribute == "length_user") || ($attribute == "number") || ($attribute == "submit") )	
+						continue; // we skip these post variables as they are not important
+
+					if (!($value[0]))
+						continue;
+						
+						$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
+																		// or radcheck table (using include/management/attributes.php function)
+
+				        $counter = 0;
+
+						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
+                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+
+						$counter++;
+
+				} // foreach
+
+
 
 			echo "success<br/>";
 		} 
@@ -111,29 +111,9 @@ function createPassword($length) {
 
 </head>
 
-
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
-
-
-
-<SCRIPT TYPE="text/javascript">
-<!--
-
-function sessiontimeout(time)
-{
-  document.batchuser.sessiontimeout.value = time;
-}
-
-
-function maxallsession(time)
-{
-  document.batchuser.maxallsession.value = time;
-}
-
-// -->
-</script>
 
 <?php
 
@@ -192,54 +172,18 @@ function maxallsession(time)
 </td></tr>
 </table>
 
+			<br/><br/>
+<center>
+			<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?> "/>
+</center>
+<br/><br/>
+
+<?php
+        include_once('include/management/attributes.php');
+        drawAttributes();
+?>
 <br/>
-                                                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesExpiration')">
-						<b><?php echo $l[FormField][all][Expiration] ?></b>
-<div id="attributesExpiration" style="display:none;visibility:visible" >
-<input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
-<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
-</div>
-						<br/>
 
-
-
-
-
-						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
-						<b><?php echo $l[FormField][all][MaxAllSession] ?></b><br/>
-<div id="attributesMaxAllSession" style="display:none;visibility:visible" >
-						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
-
-<a href="javascript:maxallsession(86400)">1day(s)</a>
-<a href="javascript:maxallsession(259200)">3day(s)</a>
-<a href="javascript:maxallsession(604800)">1week(s)</a>
-<a href="javascript:maxallsession(1209600)">2week(s)</a>
-<a href="javascript:maxallsession(1814400)">3week(s)</a>
-<a href="javascript:maxallsession(2592000)">1month(s)</a>
-<a href="javascript:maxallsession(5184000)">2month(s)</a>
-<a href="javascript:maxallsession(7776000)">3month(s)</a>
-						<br/>
-</div>
-
-
-                                                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesSessionTimeout')">
-						<b><?php echo $l[FormField][all][SessionTimeout] ?></b><br/>
-<div id="attributesSessionTimeout" style="display:none;visibility:visible" >
-						<input value="<?php echo $sessiontimeout ?>" name="sessiontimeout" />
-<a href="javascript:sessiontimeout(86400)">1day(s)</a>
-<a href="javascript:sessiontimeout(259200)">3day(s)</a>
-<a href="javascript:sessiontimeout(604800)">1week(s)</a>
-<a href="javascript:sessiontimeout(1209600)">2week(s)</a>
-<a href="javascript:sessiontimeout(1814400)">3week(s)</a>
-<a href="javascript:sessiontimeout(2592000)">1month(s)</a>
-<a href="javascript:sessiontimeout(5184000)">2month(s)</a>
-<a href="javascript:sessiontimeout(7776000)">3month(s)</a>
-						<br/>
-</div>
-
-						<br/><br/>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 
 				</form>
 		
