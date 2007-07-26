@@ -164,7 +164,7 @@ function small_window(user,pass,time) {
 <br/>
 						</font>
 </td></tr></table>
-
+<br/>
 <center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
 
