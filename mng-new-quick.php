@@ -77,11 +77,6 @@
 <SCRIPT TYPE="text/javascript">
 <!--
 
-function maxallsession(time)
-{
-  document.newuser.maxallsession.value = time;
-}
-
 function small_window(user,pass,time) {
   var newWindow;
   var currentTime = new Date();
@@ -143,32 +138,32 @@ function small_window(user,pass,time) {
 						</font>
 
 </td></tr>
-</table>
-<center>
-<br/>
+<tr><td>
 						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
-						<input type="checkbox" onclick="javascript:toggleShowDiv('attributesMaxAllSession')">
 						<b><?php echo $l[FormField][mngnewquick.php][MaxAllSession] ?></b><br/>
 <div id="attributesMaxAllSession" style="display:none;visibility:visible" >
 
 						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
-<a href="javascript:maxallsession(1800)">1/2hour(s)</a>
-<a href="javascript:maxallsession(3600)">1hour(s)</a>
-<a href="javascript:maxallsession(10800)">3hour(s)</a>
-<a href="javascript:maxallsession(18000)">5hour(s)</a>
-<a href="javascript:maxallsession(86400)">1day(s)</a>
-<a href="javascript:maxallsession(259200)">3day(s)</a>
-<a href="javascript:maxallsession(604800)">1week(s)</a>
-<a href="javascript:maxallsession(1209600)">2week(s)</a>
-<a href="javascript:maxallsession(2592000)">1month(s)</a>
+		<select onChange="javascript:setText(this.id,'maxallsession')" id="maxallsession">
+		<option value="86400">1day(s)</option>
+		<option value="259200">3day(s)</option>
+		<option value="604800">1week(s)</option>
+		<option value="1209600">2week(s)</option>
+		<option value="1814400">3week(s)</option>
+		<option value="2592000">1month(s)</option>
+		<option value="5184000">2month(s)</option>
+		<option value="7776000">3month(s)</option>
+		</select>
 						<br/>
 </div>
 <br/>
 						</font>
-
+</td></tr>
+</table>
+<center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
 
-				</center>
+</center>
 
 				</form>
 		
