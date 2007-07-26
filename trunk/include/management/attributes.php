@@ -30,6 +30,15 @@ function drawAttributes() {
 	 'WISPr-Bandwidth-Max-Down' => 'speed',
 	 'WISPr-Session-Terminate-Time' => 'date'
 	 );	 
+
+	$arrayChillispotAttr = array(
+	 'ChilliSpot-Max-Input-Octets' => 'none',
+	 'ChilliSpot-Max-Output-Octets' => 'none',
+	 'ChilliSpot-Max-Total-Octets' => 'none',
+	 'ChilliSpot-UAM-Allowed' => 'none',
+	 'ChilliSpot-MAC-Allowed' => 'none',
+	 'ChilliSpot-MAC-Interval' => 'none'
+	 );	 
 	 
 echo "<br/><table border='2' class='table1' width='600'>";
 echo <<<EOF
