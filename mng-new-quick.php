@@ -150,7 +150,7 @@ function small_window(user,pass,time) {
 
 		<input value="<?php echo $maxallsession ?>" id="maxallsession" name="maxallsession" />
 
-		<select onChange="javascript:setText(this.id,'maxallsession')" id="maxallsession">
+		<select onChange="javascript:setText(this.id,'maxallsession')" id="option0">
 		<option value="86400">1day(s)</option>
 		<option value="259200">3day(s)</option>
 		<option value="604800">1week(s)</option>
