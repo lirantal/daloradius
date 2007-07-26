@@ -143,12 +143,13 @@ function small_window(user,pass,time) {
 
 	<table border='2' class='table1' width='600'>
 	<tr><td>
-						<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
+		<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')">
-						<b><?php echo $l[FormField][mngnewquick.php][MaxAllSession] ?></b><br/>
-<div id="attributesmaxallsession" style="display:none;visibility:visible" >
+		<b><?php echo $l[FormField][mngnewquick.php][MaxAllSession] ?></b><br/>
+		<div id="attributesmaxallsession" style="display:none;visibility:visible" >
 
-						<input value="<?php echo $maxallsession ?>" name="maxallsession" />
+		<input value="<?php echo $maxallsession ?>" id="maxallsession" name="maxallsession" />
+
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="maxallsession">
 		<option value="86400">1day(s)</option>
 		<option value="259200">3day(s)</option>
