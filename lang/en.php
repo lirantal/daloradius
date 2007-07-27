@@ -1,4 +1,13 @@
-<?
+<?php
+
+error_reporting(0);	// because we're not using a proper way for the translation variables right now we set this error_repoting to 0 level
+					// in the future we will re-design it to work something like:
+					//
+					// define('l[Help][Max-All-Session]', "blabablabla");
+					// echo constant('l[Help][Max-All-Session]');
+					//
+					// which is acceptiable for php without errors
+
 $l[all][daloRADIUS] = "daloRADIUS";
 $l[all][copyright1] = "Radius Reporting, Billing and Management by <a href=\"http://www.enginx.com\">Enginx</a>";
 $l[all][copyright2] = "Copyright of <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
