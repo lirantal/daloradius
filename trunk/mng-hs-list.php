@@ -33,7 +33,7 @@
 <?php
 
         
-        include 'library/opendb.php';
+    include 'library/opendb.php';
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].";";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");

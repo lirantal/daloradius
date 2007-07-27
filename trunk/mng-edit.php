@@ -7,41 +7,49 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 
-	
 	include 'library/opendb.php';
-	include 'include/management/attributes.php';				// required for checking if an attribute belongs to the
-										// radcheck table or the radreply based upon it's name
+		// required for checking if an attribute belongs to the
+		// radcheck table or the radreply based upon it's name	
+	include 'include/management/attributes.php';				
 
-        if (isset($_REQUEST['submit'])) {
+	if (isset($_REQUEST['submit'])) {
 
-            $username = $_REQUEST['username'];
-	        if (trim($username) != "") {
+		$username = $_REQUEST['username'];
+		if (trim($username) != "") {
 
-		 foreach( $_POST as $attribute=>$value ) { 
+			 foreach( $_POST as $attribute=>$value ) { 
 
-			if ( ($attribute == "username") || ($attribute == "submit") )	// we skip these post variables as they are not important
-				continue;	
-				
-				$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
-											// or radcheck table (using include/management/attributes.php function)
+				if ( ($attribute == "username") || ($attribute == "submit") )	// we skip these post variables as they are not important
+					continue;	
+					
+					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
+												// or radcheck table (using include/management/attributes.php function)
 
-		                $counter = 0;
+			                $counter = 0;
 
-				$sql = "UPDATE $useTable SET Value='$value' WHERE UserName='$username' AND Attribute='$attribute'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+					$sql = "UPDATE $useTable SET Value='$value' WHERE UserName='$username' AND Attribute='$attribute'";
+					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-				$counter++;
+					$counter++;
 
-        	  } //foreach $_POST
+	        } //foreach $_POST
 
-		} // if username != ""
-
+			$actionStatus = "success";
+			$actionMsg = "Updated attributes for: <b> $username";
+			
+		} else { // if username != ""
+			$actionStatus = "failure";
+			$actionMsg = "no user was entered, please specify a username to edit </b>";		
+		}
 	} // if isset post submit
 
 
-	$username = "";
-	$username = $_REQUEST['username'];
-
+	if (isset($_REQUEST['username']))
+		$username = $_REQUEST['username'];
+	else {
+		$actionStatus = "failure";
+		$actionMsg = "no user was entered, please specify a username to edit </b>";	
+	}
 
 	/* fill-in all the user radcheck attributes */
 

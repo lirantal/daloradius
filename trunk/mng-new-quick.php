@@ -16,10 +16,8 @@
 		$password = $_POST['password'];
 		$maxallsession = $_POST['maxallsession'];
 
-		
 		include 'library/opendb.php';
-
-
+		
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
@@ -32,27 +30,24 @@
 				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	
 				if ($maxallsession) {
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
+					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
 				if ($maxallsession) {
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$maxallsession')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$maxallsession')";
+					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 				}
 
-	
-				echo "<font color='#0000FF'>success<br/></font>";
+				$actionStatus = "success";
+				$actionMsg = "Added to database new user: <b> $username";
+			} else {
+				$actionStatus = "failure";
+				$actionMsg = "username or password are empty";
 			}
 		} else { 
-			echo "<font color='#FF0000'>error: user [$username] already exist <br/></font>"; 
-			echo "
-				<script language='JavaScript'>
-				<!--
-				alert('You have tried to add a user that already exist in the database.\\nThe user $username already exist'); 
-				-->
-				</script>
-				";
+			$actionStatus = "failure";
+			$actionMsg = "user already exist in database: <b> $username </b>";
 		}
 		
 		include 'library/closedb.php';
