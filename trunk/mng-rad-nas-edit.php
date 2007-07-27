@@ -7,88 +7,95 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 
-
-	
-        include 'library/opendb.php';
+    include 'library/opendb.php';
 
 	$nashost = "";
-        $nassecret = "";
-        $nasname = "";
-        $nasports = "";
-        $nastype = "";
-        $nasdescription = "";
-        $nascommunity = "";
+	$nassecret = "";
+	$nasname = "";
+	$nasports = "";
+	$nastype = "";
+	$nasdescription = "";
+	$nascommunity = "";
 
 	$nashost = $_REQUEST['nashost'];
 
-        // fill-in nashost details in html textboxes
-        $sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-        $row = mysql_fetch_array($res);		// array fetched with values from $sql query
+	// fill-in nashost details in html textboxes
+	$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$row = mysql_fetch_array($res);		// array fetched with values from $sql query
 
-						// assignment of values from query to local variables
-						// to be later used in html to display on textboxes (input)
-        $nassecret = $row['secret'];
-        $nasname = $row['shortname'];
-        $nasports = $row['ports'];
-        $nastype = $row['type'];
-        $nascommunity = $row['community'];
-        $nasdescription = $row['description'];
+					// assignment of values from query to local variables
+					// to be later used in html to display on textboxes (input)
+	$nassecret = $row['secret'];
+	$nasname = $row['shortname'];
+	$nasports = $row['ports'];
+	$nastype = $row['type'];
+	$nascommunity = $row['community'];
+	$nasdescription = $row['description'];
 
-        if (isset($_POST['submit'])) {
-	        $nashost = $_POST['nashost'];
-	        $nassecret = $_POST['nassecret'];;
-	        $nasname = $_POST['nasname'];;
-	        $nasports = $_POST['nasports'];;
-	        $nastype = $_POST['nastype'];;
-	        $nasdescription = $_POST['nasdescription'];;
-	        $nascommunity = $_POST['nascommunity'];;
+	if (isset($_POST['submit'])) {
+	
+		$nashost = $_POST['nashost'];
+		$nassecret = $_POST['nassecret'];;
+		$nasname = $_POST['nasname'];;
+		$nasports = $_POST['nasports'];;
+		$nastype = $_POST['nastype'];;
+		$nasdescription = $_POST['nasdescription'];;
+		$nascommunity = $_POST['nascommunity'];;
 
-                
-                include 'library/opendb.php';
+			
+		include 'library/opendb.php';
 
-                $sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-                if (mysql_num_rows($res) == 1) {
+		if (mysql_num_rows($res) == 1) {
 
-                        if (trim($nashost) != "" and trim($nassecret) != "") {
+			if (trim($nashost) != "" and trim($nassecret) != "") {
 
 				if (!$nasports) {
 					$nasports = 0;
 				}
 
-                                // insert nas details
-                                $sql = "UPDATE nas SET shortname='$nasname', type='$nastype', ports=$nasports, secret='$nassecret', community='$nascommunity', description='$nasdescription' WHERE nasname='$nashost'";
-                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-                        
-			echo "<font color='#0000FF'>success<br/></font>";
+				// insert nas details
+				$sql = "UPDATE nas SET shortname='$nasname', type='$nastype', ports=$nasports, secret='$nassecret', community='$nascommunity', description='$nasdescription' WHERE nasname='$nashost'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
+				$actionStatus = "success";
+				$actionMsg = "Updated NAS settings in database: <b> $nashost </b>  ";
+			} else {
+				$actionStatus = "failure";
+				$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
 			}
+			
+		} elseif (mysql_num_rows($res) > 1) {
+			$actionStatus = "failure";
+			$actionMsg = "The NAS IP/Host <b> $nashost </b> already exists in the database
+			<br/> Please check that there are no duplicate entries in the database";
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "The NAS IP/Host <b> $nashost </b> doesn't exist at all in the database.
+			<br/>Please re-check the nashost ou specified.";
+		}
 
-                } elseif (mysql_num_rows($res) > 1) {
-                        echo "<font color='#FF0000'>error: NAS IP/Host [$nashost] already exist <br/></font>";
-						echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('The NAS IP/Host $nashost already exists in the database.\\nPlease check that there are no duplicate entries in the database.');
-                                -->
-                                </script>
-                                ";
-                } else {
-                        echo "<font color='#FF0000'>error: NAS IP/Host [$nashost] doesn't exist <br/></font>";
-						echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('The NAS IP/Host $nashost doesn't exist at all in the database.\\nPlease re-check the username.');
-                                -->
-                                </script>
-                                ";
-				}
+		include 'library/closedb.php';
+	}
 
-                include 'library/closedb.php';
-        }
+	if (isset($_REQUEST['nashost']))
+		$nashost = $_REQUEST['nashost'];
+	else
+		$nashost = "";
 
+	if (isset($_REQUEST['nassecret']))
+		$nassecret = $_REQUEST['nassecret'];
+	else
+		$nassecret = "";
+		
+	if (trim($nashost) != "" OR trim($nassecret) != "") {
+		$actionStatus = "failure";
+		$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
+	}		
+	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
