@@ -50,6 +50,18 @@
 	
 	include 'library/closedb.php';
 
+	if (isset($_REQUEST['name']))
+		$name = $_REQUEST['name'];
+	else
+		$name = "";
+
+	if (trim($name) != "") {
+		$name = $_REQUEST['name'];
+	} else {
+		$actionStatus = "failure";
+		$actionMsg = "no hotspot name was entered, please specify a hotspot name to edit</b>";
+	}	
+	
 ?>
 
 
