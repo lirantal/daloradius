@@ -32,6 +32,7 @@
                                 
                                                 <li><a href="config-db.php"><b>&raquo;</b>Database Settings</a></li>
 						<li><a href="config-lang.php"><b>&raquo;</b>Language Settings</a></li>
+						<li><a href="config-logging.php"><b>&raquo;</b>Logging Settings</a></li>
 		
 		</div>
 		
