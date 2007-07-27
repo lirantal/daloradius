@@ -37,11 +37,13 @@
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
 					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 					$counter++;
-				}
-				
-				$actionStatus = "success";
-				$actionMsg = "Added to database new group: <b> $groupname";
-				
+					
+					$actionStatus = "success";
+					$actionMsg = "Added to database new group: <b> $groupname[$counter] ";						
+				} else {
+					$actionStatus = "failure";
+					$actionMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
+				}				
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "The group <b> $groupname[$counter] </b> already exists in the database with value <b> $value[$counter] </b>";
@@ -50,11 +52,25 @@
 		}
 		
 		
+		if (isset($_POST['groupnameExtra']))
+			$groupnameExtra = $_POST['groupnameExtra'];
+		else
+			$groupnameExtra = "";
 		
-	    $groupnameExtra = $_POST['groupnameExtra'];
-	    $opExtra = $_POST['opExtra'];
-	    $attributeExtra = $_POST['attributeExtra'];
-		$valueExtra = $_POST['valueExtra'];
+		if (isset($_POST['opExtra']))
+			$opExtra = $_POST['opExtra'];
+		else
+			$opExtra = "";
+			
+		if (isset($_POST['attributeExtra']))
+			$attributeExtra = $_POST['attributeExtra'];
+		else
+			$attributeExtra = "";
+			
+		if (isset($_POST['valueExtra']))
+			$valueExtra = $_POST['valueExtra'];
+		else
+			$valueExtra = "";
 		
 		if ($groupnameExtra) {
 		
