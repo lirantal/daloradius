@@ -22,7 +22,7 @@
                 echo "
                                 <script language='JavaScript'>
                                 <!--
-				alert("Successfully updated GoogleMaps API Registration code");
+				alert('".$l[messages][gismain1]."');
                                 -->
                                 </script>
                                 ";
