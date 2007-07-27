@@ -46,10 +46,16 @@
 
 	if (isset($_REQUEST['username']))
 		$username = $_REQUEST['username'];
-	else {
+	else
+		$username = "";
+
+	if (trim($username) != "") {
+		$username = $_REQUEST['username'];
+	} else {
 		$actionStatus = "failure";
-		$actionMsg = "no user was entered, please specify a username to edit </b>";	
+		$actionMsg = "no user was entered, please specify a username to edit </b>";
 	}
+
 
 	/* fill-in all the user radcheck attributes */
 
