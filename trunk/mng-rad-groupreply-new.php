@@ -86,14 +86,15 @@
 				} else { 
 					$actionStatus = "failure";
 					$actionMsg = "The group <b> $groupnameExtra[$counter] </b> already exists in the database with value <b> $valueExtra[$counter] </b>";
-					
-			}
+				}
 		
-		}
+			}	
 
         include 'library/closedb.php';
 		
     }
+	
+	}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
