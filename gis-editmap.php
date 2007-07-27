@@ -2,9 +2,13 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    $type = $_REQUEST['type'];
-        
-	include_once('library/config_read.php');
+
+    if (isset($_REQUEST['type']))
+	$type = $_REQUEST['type'];
+    else 
+        $type = "";
+
+    include_once('library/config_read.php');
     $log = "visited page: ";
     include('include/config/logging.php');
 	
