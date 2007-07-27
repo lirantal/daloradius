@@ -55,7 +55,9 @@ function createPassword($length) {
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		if (mysql_num_rows($res) > 0) {
-	                print "skipping matching entry: $username\n";
+			$actionStatus = "failure";
+			$actionMsgBadUsernames = $actionMsgBadUsernames . " ," . $username;
+			$actionMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
 		} else {
 		
 			// insert username/password
@@ -82,9 +84,9 @@ function createPassword($length) {
 
 				} // foreach
 
-
-
-			echo "success<br/>";
+				$actionMsgGoodUsernames = $actionMsgGoodUsernames . " ," . $username;
+				$actionStatus = "success";
+				$actionMsg = "Added to database new user: <b> $actionMsgGoodUsernames";
 		} 
 		
 		}
