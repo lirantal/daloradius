@@ -9,7 +9,7 @@
 
 	$type = "";
 	if (isset($_POST['submit'])) {
-		// $type = $_POST['type'];
+
 	        $type = !empty($_REQUEST['type']) ? $_REQUEST['type'] : '';
 
 
@@ -20,12 +20,32 @@
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-			echo $l[messages][success]"<br/>";
+			$actionStatus = "success";
+			$actionMsg = "Deleted user from database: <b> $username </b>";
+
 			include 'library/closedb.php';
+
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "you didn't specify a rate type";
 
 		}
 
 
+	}
+
+
+
+	if (isset($_REQUEST['type']))
+		$type = $_REQUEST['type'];
+	else
+		$type = "";
+
+	if (trim($type) != "") {
+		$type = $_REQUEST['type'];
+	} else {
+		$actionStatus = "failure";
+		$actionMsg = "no type was entered, please specify a rate type to delete";
 	}
 
 
