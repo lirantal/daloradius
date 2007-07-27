@@ -284,9 +284,9 @@ $l[messages][gisedit4] = "Add current marker to database?";
 $l[messages][gisedit5] = "Please enter name of HotSpot";
 $l[messages][gisedit6] = "Please enter the MAC Address of the Hotspot";
 
-#$l[messages][gismain1] = "Successfully updated GoogleMaps API Registration code";
-#$l[messages][gismain2] = "error: could not open the file for writing:";
-#$l[messages][gismain3] = "Check file permissions. The file should be writable by the webserver's user/group";
+$l[messages][gismain1] = "Successfully updated GoogleMaps API Registration code";
+$l[messages][gismain2] = "error: could not open the file for writing:";
+$l[messages][gismain3] = "Check file permissions. The file should be writable by the webserver's user/group";
 $l[messages][gisviewwelcome] = "Welcome to Enginx Visual Maps";
 
 $l[messages][loginerror] = "<br/><br/>either of the following:<br/>
