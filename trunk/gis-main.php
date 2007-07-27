@@ -19,24 +19,13 @@
 			type='text/javascript'></script>";
 		fwrite($fh, $strCode);
 	        fclose($fh);
-                echo "
-                                <script language='JavaScript'>
-                                <!--
-				alert('".$l[messages][gismain1]."');
-                                -->
-                                </script>
-                                ";
 
+		$actionStatus = "success";
+		$actionMsg = "Successfully updated GoogleMaps API Registration code";
 	} else {
-                        echo "<font color='#FF0000'>error: could not open the file for writing:<b> $myfile </b><br/></font>";
-			echo "Check file permissions. The file should be writable by the webserver's user/group<br/>";
-                        echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('could not open the file <b> $myfile </b> for writing!\\nCheck file permissions.');
-                                -->
-                                </script>
-                                ";
+		$actionStatus = "failure";
+		$actionMsg = "error: could not open the file for writing: $myfile
+		<br/> Check file permissions. The file should be writable by the webserver's user/group";
 	}
     }
 
