@@ -25,7 +25,6 @@
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		if (mysql_num_rows($res) == 0) {
-		
 			if (trim($username) != "" and trim($password) != "") {
 
 				// insert username/password
@@ -39,7 +38,6 @@
 				}
 			
 				 foreach( $_POST as $attribute=>$value ) { 
-
 					if ( ($attribute == "username") || ($attribute == "password") || ($attribute == "passwordType") || ($attribute == "expiration") || ($attribute == "submit") )	
 						continue; // we skip these post variables as they are not important
 
@@ -55,23 +53,17 @@
                         $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 						$counter++;
-
 				} // foreach
 				
-
-				//echo "<font color='#0000FF'>success<br/></font>";
-				$msg = "Added new user <b> $username </b> to database";
-				header("location: mng-success.php?task=$msg");
+				$actionStatus = "success";
+				$actionMsg = "Added to database new user: <b> $username";
+			} else {
+				$actionStatus = "failuire";
+				$actionMsg = "username or password are empty";
 			}
 		} else { 
-			echo "<font color='#FF0000'>error: user [$username] already exist <br/></font>"; 
-			echo "
-				<script language='JavaScript'>
-				<!--
-				alert('You have tried to add a user that already exist in the database.\\nThe user $username already exist'); 
-				-->
-				</script>
-				";
+			$actionStatus = "failure";
+			$actionMsg = "user already exist in database: <b> $username </b>";
 		}
 		
 		include 'library/closedb.php';
