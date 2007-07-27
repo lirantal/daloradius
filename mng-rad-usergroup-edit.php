@@ -7,69 +7,80 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 
+	include 'library/opendb.php';
 
-	
-        include 'library/opendb.php';
-
-        // declaring variables
-        $username = "";
-        $group = "";
-        $groupOld = "";
-        $priority = "";
+	// declaring variables
+	$username = "";
+	$group = "";
+	$groupOld = "";
+	$priority = "";
 
 	$username = $_REQUEST['username'];
 	$groupOld = $_REQUEST['group'];
 
-        // fill-in nashost details in html textboxes
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-        $row = mysql_fetch_array($res);		// array fetched with values from $sql query
+	// fill-in nashost details in html textboxes
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$row = mysql_fetch_array($res);		// array fetched with values from $sql query
 
-						// assignment of values from query to local variables
-						// to be later used in html to display on textboxes (input)
-        $priority = $row['priority'];
+					// assignment of values from query to local variables
+					// to be later used in html to display on textboxes (input)
+					
+	$priority = $row['priority'];
 
-        if (isset($_POST['submit'])) {
-	        $username = $_POST['username'];
-	        $groupOld = $_POST['groupOld'];;
-	        $group = $_POST['group'];;
-	        $priority = $_POST['priority'];;
+	if (isset($_POST['submit'])) {
+		$username = $_POST['username'];
+		$groupOld = $_POST['groupOld'];;
+		$group = $_POST['group'];;
+		$priority = $_POST['priority'];;
 
-                
-                include 'library/opendb.php';
+		
+		include 'library/opendb.php';
 
-                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
-                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-                if (mysql_num_rows($res) == 1) {
+		if (mysql_num_rows($res) == 1) {
 
-                        if (trim($username) != "" and trim($group) != "") {
+			if (trim($username) != "" and trim($group) != "") {
 
 				if (!$priority) {
 					$priority = 1;
 				}
 
-                                // insert nas details
-                                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
-                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-                        
-			echo "<font color='#0000FF'>success<br/></font>";
-
+				// insert nas details
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+					
+				$actionStatus = "success";
+				$actionMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
+			} else {
+				$actionStatus = "failure";
+				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
 			}
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "The user $username already exists in the user-group mapping database
+			<br/> It seems that you have duplicate entries for User-Group mapping. Check your database";
+		} 
 
-                } else {
-                        echo "<font color='#FF0000'>error: user $username already exist <br/></font>";
-			echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('The user $username already exists in the database.\\nPlease check that there are no duplicate entries in the database.');
-                                -->
-                                </script>
-                                ";
-                } 
+		include 'library/closedb.php';
+	}
+	
+	if (isset($_REQUEST['username']))
+		$username = $_REQUEST['username'];
+	else
+		$username = "";
 
-                include 'library/closedb.php';
-        }
+	if (isset($_REQUEST['group']))
+		$group = $_REQUEST['group'];
+	else
+		$group = "";
+		
+	if (trim($username) != "" OR trim($group) != "") {
+		$actionStatus = "failure";
+		$actionMsg = "no username or groupname was entered, please specify a username and groupname to edit </b>";
+	}	
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

@@ -12,44 +12,42 @@
 	$group = "";
 	$priority = "";
 
-        if (isset($_POST['submit'])) {
-	        $username = $_POST['username'];
-	        $group = $_POST['group'];;
-	        $priority = $_POST['priority'];;
+	if (isset($_POST['submit'])) {
+	
+		$username = $_POST['username'];
+		$group = $_POST['group'];;
+		$priority = $_POST['priority'];;
 
-                
-                include 'library/opendb.php';
+		include 'library/opendb.php';
 
-                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
-                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-                if (mysql_num_rows($res) == 0) {
+		if (mysql_num_rows($res) == 0) {
 
-                        if (trim($username) != "" and trim($group) != "") {
+			if (trim($username) != "" and trim($group) != "") {
 
-			if (!$priority) {
-				$priority = 1;		// default in mysql table for usergroup
+				if (!$priority) {
+					$priority = 1;		// default in mysql table for usergroup
+				}
+				
+				// insert usergroup details
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('$username', '$group', $priority)";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				
+				$actionStatus = "success";
+				$actionMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";
+			} else {
+				$actionStatus = "failure";
+				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
 			}
-                                // insert usergroup details
-                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('$username', '$group', $priority)";
-                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-			}
-                        
-			echo "<font color='#0000FF'>success<br/></font>";
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "The user $username already exists in the user-group mapping database";
+		}
 
-                } else {
-                        echo "<font color='#FF0000'>error: user [$username] already exist <br/></font>";
-			echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('The user $username already exists in the database');
-                                -->
-                                </script>
-                                ";
-                }
-
-                include 'library/closedb.php';
-        }
+		include 'library/closedb.php';
+	}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
