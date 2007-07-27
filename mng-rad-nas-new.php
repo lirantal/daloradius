@@ -16,48 +16,49 @@
 	$nasdescription = "";
 	$nascommunity = "";
 
-        if (isset($_POST['submit'])) {
-	        $nashost = $_POST['nashost'];
-	        $nassecret = $_POST['nassecret'];;
-	        $nasname = $_POST['nasname'];;
-	        $nasports = $_POST['nasports'];;
-	        $nastype = $_POST['nastype'];;
-	        $nasdescription = $_POST['nasdescription'];;
-	        $nascommunity = $_POST['nascommunity'];;
+	if (isset($_POST['submit'])) {
+	
+		$nashost = $_POST['nashost'];
+		$nassecret = $_POST['nassecret'];;
+		$nasname = $_POST['nasname'];;
+		$nasports = $_POST['nasports'];;
+		$nastype = $_POST['nastype'];;
+		$nasdescription = $_POST['nasdescription'];;
+		$nascommunity = $_POST['nascommunity'];;
 
-                
-                include 'library/opendb.php';
+		
+		include 'library/opendb.php';
 
-                $sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-                if (mysql_num_rows($res) == 0) {
+		if (mysql_num_rows($res) == 0) {
 
-                        if (trim($nashost) != "" and trim($nassecret) != "") {
+			if (trim($nashost) != "" and trim($nassecret) != "") {
 
-			if (!$nasports) {
-				$nasports = 0;
+				if (!$nasports) {
+					$nasports = 0;
+				}
+				
+				// insert nas details
+				$sql = "INSERT INTO nas values (0, '$nashost', '$nasname', '$nastype', $nasports, '$nassecret', '$nascommunity', '$nasdescription')";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			
+				$actionStatus = "success";
+				$actionMsg = "Added new NAS to database: <b> $nashost </b>  ";
+			} else {
+				$actionStatus = "failure";
+				$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
 			}
-                                // insert nas details
-                                $sql = "INSERT INTO nas values (0, '$nashost', '$nasname', '$nastype', $nasports, '$nassecret', '$nascommunity', '$nasdescription')";
-                                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-			}
-                        
-			echo "<font color='#0000FF'>success<br/></font>";
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "The NAS IP/Host $nashost already exists in the database";		
+		}
 
-                } else {
-                        echo "<font color='#FF0000'>error: nas ip/host $nashost already exist <br/></font>";
-			echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('The NAS IP/Host $nashost already exists in the database');
-                                -->
-                                </script>
-                                ";
-                }
-
-                include 'library/closedb.php';
-        }
+		include 'library/closedb.php';
+	}
+	
+	
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

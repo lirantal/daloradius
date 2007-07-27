@@ -8,32 +8,40 @@
     include('include/config/logging.php');
 
 	$nashost = "";
-        $nashost = $_REQUEST['nashost'];
+    $nashost = $_REQUEST['nashost'];
 
 
-        if (isset($_POST['submit'])) {
-                if (trim($nashost) != "") {
-                        
-                        include 'library/opendb.php';
+	if (isset($_POST['submit'])) {
+		if (trim($nashost) != "") {
+				
+			include 'library/opendb.php';
 
-                        // delete all attributes associated with a username
-                        $sql = "DELETE FROM nas WHERE nasname='$nashost'";
-                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			// delete all attributes associated with a username
+			$sql = "DELETE FROM nas WHERE nasname='$nashost'";
+			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-                        echo "<font color='#0000FF'>success<br/></font>";
-                        include 'library/closedb.php';
+			$actionStatus = "success";
+			$actionMsg = "Deleted all NAS from database: <b> $nashost </b>";
+				
+			include 'library/closedb.php';
 
-                }  else {
-                        echo "<font color='#FF0000'>error: no nashost was entered, please specify a nas ip/host to remove from database<br/></font>";
-                        echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('No nas ip/host was entered, please specify a nas ip/host to remove from database');
-                                -->
-                                </script>
-                                ";
-                }
+		}  else {
+			$actionStatus = "failure";
+			$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";				
+		}
 	}
+	
+	
+	if (isset($_REQUEST['nashost']))
+		$nashost = $_REQUEST['nashost'];
+	else
+		$nashost = "";
+		
+	if (trim($nashost)) {
+		$actionStatus = "failure";
+		$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
+	}	
+	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
