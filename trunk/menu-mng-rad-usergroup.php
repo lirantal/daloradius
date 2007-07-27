@@ -41,4 +41,34 @@
 	
 		</div>
 
-		
+<?php
+
+        if ($actionStatus == "success") {
+                echo <<<EOF
+                        <div id="contentnorightbar">
+                        <h9 id="Intro"> Success </h9>
+                        <br/><br/>
+                        <font color='#0000FF'>
+EOF;
+        echo $actionMsg;
+
+        echo "</font></div>";
+
+        }
+
+
+        if ($actionStatus == "failure") {
+                echo <<<EOF
+                        <div id="contentnorightbar">
+                        <h8 id="Intro"> Failure </h8>
+                        <br/><br/>
+                        <font color='#FF0000'>
+EOF;
+        echo $actionMsg;
+
+        echo "</font></div>";
+
+        }
+
+
+?>
