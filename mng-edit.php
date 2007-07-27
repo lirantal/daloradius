@@ -39,7 +39,7 @@
 			
 		} else { // if username != ""
 			$actionStatus = "failure";
-			$actionMsg = "no user was entered, please specify a username to edit </b>";		
+			$actionMsg = "no user was entered, please specify a username to edit";		
 		}
 	} // if isset post submit
 
@@ -53,7 +53,7 @@
 		$username = $_REQUEST['username'];
 	} else {
 		$actionStatus = "failure";
-		$actionMsg = "no user was entered, please specify a username to edit </b>";
+		$actionMsg = "no user was entered, please specify a username to edit";
 	}
 
 
