@@ -39,8 +39,11 @@ function createPassword($length) {
 		$length_user = $_POST['length_user'];
 		
 		include 'library/opendb.php';
-	        include 'include/management/attributes.php';                            // required for checking if an attribute
+	    include 'include/management/attributes.php';                            // required for checking if an attribute
 
+		$actionMsgBadUsernames = ""
+		$actionMsgGoodUsernames = "";
+		
 		for ($i=0; $i<$number; $i++) {
 			$username = createPassword($length_user);
 			$password = createPassword($length_pass);
@@ -56,7 +59,7 @@ function createPassword($length) {
 
 		if (mysql_num_rows($res) > 0) {
 			$actionStatus = "failure";
-			$actionMsgBadUsernames = $actionMsgBadUsernames . " ," . $username;
+			$actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
 			$actionMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
 		} else {
 		
@@ -84,7 +87,7 @@ function createPassword($length) {
 
 				} // foreach
 
-				$actionMsgGoodUsernames = $actionMsgGoodUsernames . " ," . $username;
+				$actionMsgGoodUsernames = $actionMsgGoodUsernames . $username . ", " ;
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $actionMsgGoodUsernames";
 		} 
