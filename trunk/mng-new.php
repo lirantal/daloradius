@@ -56,10 +56,9 @@
 				} // foreach
 				
 				$actionStatus = "success";
-				$actionMsg = "Added to database new user: <b> $username";
+				$actionMsg = "Added to database new user: <b> $username </b>";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "username or password are empty";
+1
 			}
 		} else { 
 			$actionStatus = "failure";
