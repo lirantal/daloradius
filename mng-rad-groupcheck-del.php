@@ -19,41 +19,54 @@
 		$value = $_REQUEST['value'];
  	}
 
-        if (isset($_POST['submit'])) {
-                if (trim($groupname) != "") {
-                        
-                        include 'library/opendb.php';
+	if (isset($_POST['submit'])) {
+	
+		if (trim($groupname) != "") {
+
+			include 'library/opendb.php';
 
 			if (trim($value) != "") {
 
-	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname' AND Value='$value'";
-	                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	
-	                        echo "<font color='#0000FF'>success<br/></font>";
-	                        include 'library/closedb.php';
+				// delete only a specific groupname and it's attribute
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname' AND Value='$value'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+
+				$actionStatus = "success";
+				$actionMsg = "Deleted Group: <b> $groupname </b> and it's Value: <b> $value </b>";
+
+				include 'library/closedb.php';
 
 			} else {
 
-	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname'";
-	                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	
-	                        echo "<font color='#0000FF'>success<br/></font>";
-	                        include 'library/closedb.php';
+				// delete all attributes associated with a groupname
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+
+				$actionStatus = "success";
+				$actionMsg = "Deleted all instances for Group: <b> $groupname </b>";
+
+				include 'library/closedb.php';
 			}
 
-                }  else {
-                        echo "<font color='#FF0000'>error: please specify a groupname to remove from database<br/></font>";
-                        echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('No groupname was entered, please specify a groupname to remove from database');
-                                -->
-                                </script>
-                                ";
-                }
+		}  else {
+			$actionStatus = "failure";
+			$actionMsg = "No groupname was entered, please specify a groupname to remove from database";	
+		}
 	}
+	
+	if (isset($_REQUEST['groupname']))
+		$groupname = $_REQUEST['groupname'];
+	else
+		$groupname = "";
+
+	if (trim($groupname) != "") {
+		$groupname = $_REQUEST['groupname'];
+	} else {
+		$actionStatus = "failure";
+		$actionMsg = "no Groupname was entered, please specify a Groupname to delete </b>";
+	}	
+
+	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
