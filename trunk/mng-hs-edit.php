@@ -6,11 +6,12 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 	
-
-	
 	include 'library/opendb.php';
 
-	$name = $_GET['name'];
+	if (isset($_REQUEST['name']))
+		$name = $_REQUEST['name'];
+	else
+		$name = "";
 
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
