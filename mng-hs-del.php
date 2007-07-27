@@ -18,21 +18,16 @@
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-			echo "<font color='#0000FF'>success<br/></font>";
+			
+			$actionStatus = "success";
+			$actionMsg = "Deleted hotspot: <b> $name";
 
 			include 'library/closedb.php';
+			
 		} else { 
-			echo "<font color='#FF0000'>error: no hotspot was entered, please specify a hotspot name to remove from database<br/></font>"; 
-			echo "
-				<script language='JavaScript'>
-				<!--
-				alert('No hotspot was entered, please specify a hotspot name to remove from database'); 
-				-->
-				</script>
-				";
+			$actionStatus = "failure";
+			$actionMsg = "no hotspot was entered, please specify a hotspot name to remove from database";	
 		}
-
-
 	}
 
 ?>

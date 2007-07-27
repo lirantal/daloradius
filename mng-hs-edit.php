@@ -28,18 +28,25 @@
 		if (trim($name) != "") {
 
 			if (trim($macaddress) != "") {
-			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='$macaddress' WHERE name='$name'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='$macaddress' WHERE name='$name'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
 
 			if (trim($geocode) != "") {
-			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET geocode='$geocode' WHERE name='$name'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET geocode='$geocode' WHERE name='$name'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
-
-		
+			
+			$actionStatus = "success";
+			$actionMsg = "Updated attributes for: <b> $name";
+			
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "no hotspot name was entered, please specify a hotspot name to edit </b>";			
 		}
+		
 	}
+	
 	include 'library/closedb.php';
 
 ?>

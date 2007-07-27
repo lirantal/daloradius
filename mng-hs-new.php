@@ -15,36 +15,28 @@
 		$name = $_POST['name'];
 		$macaddress = $_POST['macaddress'];
 		$geocode = $_POST['geocode'];
-
 		
 		include 'library/opendb.php';
-
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		if (mysql_num_rows($res) == 0) {
-		
 			if (trim($name) != "" and trim($macaddress) != "") {
 
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$name', '$macaddress', '$geocode')";
 				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-			echo "<font color='#0000FF'>success<br/></font>";
+				$actionStatus = "success";
+				$actionMsg = "Added to database new hotspot: <b> $name";
 			} else {
-				echo "<font color='#FF0000'>error: you must provide atleast a hotspot name and mac-address <br/></font>"; 
+				$actionStatus = "failure";
+				$actionMsg = "you must provide atleast a hotspot name and mac-address";		
 			}
-
 		} else { 
-			echo "<font color='#FF0000'>error: hotspot [$name] already exist <br/></font>"; 
-			echo "
-				<script language='JavaScript'>
-				<!--
-				alert('You have tried to add a hotspot that already exist in the database.\\nHotspot $name already exist'); 
-				-->
-				</script>
-				";
+			$actionStatus = "failure";
+			$actionMsg = "You have tried to add a hotspot that already exist in the database: $name";			
 		}
 	
 		include 'library/closedb.php';
