@@ -52,11 +52,17 @@
 				
 		}
 
+		if (isset($_POST['groupnameExtra']))
+			$groupnameExtra = $_POST['groupnameExtra'];
 		
-	    $groupnameExtra = $_POST['groupnameExtra'];
-	    $opExtra = $_POST['opExtra'];
-	    $attributeExtra = $_POST['attributeExtra'];
-		$valueExtra = $_POST['valueExtra'];
+		if (isset($_POST['opExtra']))
+			$opExtra = $_POST['opExtra'];
+
+		if (isset($_POST['attributeExtra']))
+			$attributeExtra = $_POST['attributeExtra'];
+			
+		if (isset($_POST['valueExtra']))
+			$valueExtra = $_POST['valueExtra'];
 		
 		if ($groupnameExtra) {
 		
