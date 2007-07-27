@@ -29,6 +29,9 @@
         	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
 	        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
+		$actionStatus = "success";
+		$actionMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
+
 	}
 
 	if ($type == "del") {
@@ -36,6 +39,10 @@
 		
 		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$hotspot_name'";
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+
+		$actionStatus = "success";
+		$actionMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
+
 	}		
 
         include 'library/closedb.php';
