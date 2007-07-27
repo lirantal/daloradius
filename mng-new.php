@@ -58,7 +58,7 @@
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $username";
 			} else {
-				$actionStatus = "failuire";
+				$actionStatus = "failure";
 				$actionMsg = "username or password are empty";
 			}
 		} else { 
