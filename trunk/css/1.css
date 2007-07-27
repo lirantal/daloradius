@@ -372,6 +372,21 @@ h3 {
 	color:#444;
 }
 
+#contentnorightbar h9 {
+        font:150% Arial;
+        color:#0066CC;
+        padding:16px 0 0 0;
+        border:none;
+}
+
+#contentnorightbar h8 {
+        font:150% Arial;
+        color:#FF0000;
+        padding:16px 0 0 0;
+        border:none;
+}
+
+
 form {
 	padding:10px;
 	border:1px solid #f6f6f6;
