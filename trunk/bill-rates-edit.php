@@ -7,7 +7,7 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 
-		include 'library/opendb.php';
+	include 'library/opendb.php';
 
 	$type = $_GET['type'];
 
@@ -28,21 +28,40 @@
 		if (trim($type) != "") {
 
 			if (trim($cardbank) != "") {
-			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET cardbank=$cardbank WHERE type='$type'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET cardbank=$cardbank WHERE type='$type'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			}
 		
 			if (trim($rate) != "") {
-			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET rate=$rate WHERE type='$type'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-			}
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET rate=$rate WHERE type='$type'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
+				$actionStatus = "success";
+				$actionMsg = "Updated rates of type: <b> $type</b>";
+
+			} 
+
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "you didn't specify a rate type";
 		}
 	}
 
 	include 'library/closedb.php';
 
 
+
+	if (isset($_REQUEST['type']))
+		$type = $_REQUEST['type'];
+	else
+		$type = "";
+
+	if (trim($type) != "") {
+		$type = $_REQUEST['type'];
+	} else {
+		$actionStatus = "failure";
+		$actionMsg = "no type was entered, please specify a rate type to edit";
+	}
 
 
 

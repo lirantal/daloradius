@@ -34,10 +34,18 @@
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES']." VALUES (0, '$type', $cardbank, $rate)";
 				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 		
-				echo $l[messages][success]."<br/>";
-	
+				$actionStatus = "success";
+				$actionMsg = "Added rate type: <b> $type </b> with cardbank: <b> $cardbank </b>";	
+			} else {
+				$actionStatus = "failure";
+				$actionMsg = "you didn't specify a rate type or a cardbank, both are required";
 			}
-		} 
+
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "rate type <b> $type </b> already exist in database, 
+			<br/> please check for duplicate entries";
+		}
 		
 		include 'library/closedb.php';
 
