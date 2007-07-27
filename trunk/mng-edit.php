@@ -35,7 +35,7 @@
 	        } //foreach $_POST
 
 			$actionStatus = "success";
-			$actionMsg = "Updated attributes for: <b> $username";
+			$actionMsg = "Updated attributes for: <b> $username </b>";
 			
 		} else { // if username != ""
 			$actionStatus = "failure";
