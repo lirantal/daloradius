@@ -124,9 +124,10 @@
 				</p>
 
 				<p>
+				<br/><br/>
 				<?php echo $l[captions][configdb][tables] ?>
 
-				<br/><br/>
+				<br/>
 
 <table border='2' class='table1'>
 <tr><td>
