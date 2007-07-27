@@ -14,7 +14,6 @@
 	$value = "";	
 
     if (isset($_POST['submit'])) {
-
 	    
         include 'library/opendb.php';
 		
@@ -27,7 +26,7 @@
 		foreach ($groupname as $group) {
 
 			if ($group == "")
-					continue;
+				continue;
 					
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$group' AND Value='$value[$counter]'";
 			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
@@ -39,16 +38,14 @@
 					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 					$counter++;
 				}
+				
+				$actionStatus = "success";
+				$actionMsg = "Added to database new group: <b> $groupname";
+				
 			} else {
-                    echo "<font color='#FF0000'>error: the group [$groupname[$counter]] already exist in the database with value [$value[$counter]] <br/></font>";
-					echo "
-                        <script language='JavaScript'>
-                        <!--
-                        alert('The group $groupname[$counter] already exists in the database with value $value[$counter]');
-                        -->
-                        </script>
-                    ";
-            }
+				$actionStatus = "failure";
+				$actionMsg = "The group <b> $groupname[$counter] </b> already exists in the database with value <b> $value[$counter] </b>";
+			}
 				
 		}
 		
@@ -80,16 +77,15 @@
 						$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 						$counter++;
 					} // end if trim
+					
+					$actionStatus = "success";
+					$actionMsg = "Added to database new group: <b> $groupname";					
+					
 				} else { 
-	                    echo "<font color='#FF0000'>error: the group [$groupnameExtra[$counter]] already exist in the database with value [$valueExtra[$counter]] <br/></font>";
-						echo "
-	                        <script language='JavaScript'>
-	                        <!--
-	                            alert('The group $groupnameExtra[$counter] already exists in the database with value $valueExtra[$counter]');
-	                        -->
-	                        </script>
-	                        ";
-	            } // end else if mysql
+					$actionStatus = "failure";
+					$actionMsg = "The group <b> $groupnameExtra[$counter] </b> already exists in the database with value <b> $valueExtra[$counter] </b>";
+
+					} // end else if mysql
 					
 			}
 		

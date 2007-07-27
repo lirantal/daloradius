@@ -7,8 +7,6 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 
-
-	
     include 'library/opendb.php';
 
     // declaring variables
@@ -21,51 +19,63 @@
 	$value = $_REQUEST['value'];
 	$valueOld = $_REQUEST['value'];	
 
-        // fill-in nashost details in html textboxes
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-        $row = mysql_fetch_array($res);		// array fetched with values from $sql query
-			$op = $row['op'];
-			$attribute = $row['Attribute'];
-		
+	// fill-in nashost details in html textboxes
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$row = mysql_fetch_array($res);		// array fetched with values from $sql query
+		$op = $row['op'];
+		$attribute = $row['Attribute'];
+	
 
-        if (isset($_POST['submit'])) {
-	        $groupname = $_POST['groupname'];
-	        $value = $_POST['value'];;
-	        $valueOld = $_POST['valueOld'];;			
-	        $op = $_POST['op'];;
-	        $attribute = $_POST['attribute'];;
+	if (isset($_POST['submit'])) {
+		$groupname = $_POST['groupname'];
+		$value = $_POST['value'];;
+		$valueOld = $_POST['valueOld'];;			
+		$op = $_POST['op'];;
+		$attribute = $_POST['attribute'];;
 
-                
-                include 'library/opendb.php';
+			
+		include 'library/opendb.php';
 
-                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$valueOld'";
-                $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$valueOld'";
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-                if (mysql_num_rows($res) == 1) {
+		if (mysql_num_rows($res) == 1) {
 
-                        if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
+			if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
-                            $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
-                            $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-                        
-			echo "<font color='#0000FF'>success<br/></font>";
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			
+			$actionStatus = "success";
+			$actionMsg = "Updated group attributes for: <b> $groupname </b>";
 
+			} else { // if groupname  != ""
+				$actionStatus = "failure";
+				$actionMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
 			}
 
-                } else {
-                        echo "<font color='#FF0000'>error: more than one instance of $groupname and $value <br/></font>";
-			echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('The group $groupname already exists in the database with value $value.\\nPlease check that there are no duplicate entries in the database.');
-                                -->
-                                </script>
-                                ";
-                } 
+		} else {
+			$actionStatus = "failure";
+			$actionMsg = "The group <b> $groupname </b> already exists in the database with value <b> $value </b>
+			<br/> Please check that there are no duplicate entries in the database";
+		} 
 
-                include 'library/closedb.php';
-        }
+		include 'library/closedb.php';
+	}
+	
+	if (isset($_REQUEST['groupname']))
+		$groupname = $_REQUEST['groupname'];
+	else
+		$groupname = "";
+
+	if (trim($groupname) != "") {
+		$groupname = $_REQUEST['groupname'];
+	} else {
+		$actionStatus = "failure";
+		$actionMsg = "no Groupname was entered, please specify a Groupname to edit </b>";
+	}
+	
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
