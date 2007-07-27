@@ -43,10 +43,10 @@
 		<h3><? echo $l[captions][loginplease]; ?></h3>
 
 				<form action="dologin.php" class="sidebar" method="post" >
-
-						<label>Username</label>
+					<ul class="subnav">
+						<li><a href="#" >Username</a> </li>
 						<input name="operator_user" value="administrator" type="text" />
-						<label>Password</label>
+						<li><a href="#" >Password</a> </li>
 						<input name="operator_pass" value="" type="password"/>
 						<br/><br/>
 						<input type="submit" value="Login"/>
