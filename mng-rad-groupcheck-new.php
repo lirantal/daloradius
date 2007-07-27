@@ -39,7 +39,7 @@
 					$counter++;
 					
 					$actionStatus = "success";
-					$actionMsg = "Added to database new group: <b> $groupname[$counter] ";						
+					$actionMsg = "Added to database new group: <b> $group </b>";						
 				} else {
 					$actionStatus = "failure";
 					$actionMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
@@ -95,7 +95,7 @@
 					} // end if trim
 					
 					$actionStatus = "success";
-					$actionMsg = "Added to database new group: <b> $groupname";					
+					$actionMsg = "Added to database new group: <b> $groupExtra </b>";					
 					
 				} else { 
 					$actionStatus = "failure";
