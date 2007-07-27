@@ -19,41 +19,42 @@
 		$group = $_REQUEST['group'];
  	}
 
-        if (isset($_POST['submit'])) {
-                if (trim($username) != "") {
-                        
-                        include 'library/opendb.php';
+	if (isset($_POST['submit'])) {
+
+		if (trim($username) != "") {
+				
+			include 'library/opendb.php';
 
 			if (trim($group) != "") {
 
-	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
-	                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	
-	                        echo "<font color='#0000FF'>success<br/></font>";
-	                        include 'library/closedb.php';
+				// // delete only a specific groupname and it's attribute
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
+				$actionStatus = "success";
+				$actionMsg = "Deleted Username: <b> $username </b> and it's Groupname: <b> $group </b>";
+
+				include 'library/closedb.php';
+							
 			} else {
 
-	                        // delete all attributes associated with a username
-	                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username'";
-	                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	
-	                        echo "<font color='#0000FF'>success<br/></font>";
-	                        include 'library/closedb.php';
+				// delete all attributes associated with a username
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username'";
+				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+
+				$actionStatus = "success";
+				$actionMsg = "Deleted all instances for Username: <b> $username </b>";
+
+				include 'library/closedb.php';
 			}
 
-                }  else {
-                        echo "<font color='#FF0000'>error: user $username, please specify a username to remove from database<br/></font>";
-                        echo "
-                                <script language='JavaScript'>
-                                <!--
-                                alert('No user was entered, please specify a username to remove from database');
-                                -->
-                                </script>
-                                ";
-                }
+		}  else {
+			$actionStatus = "failure";
+			$actionMsg = "No user was entered, please specify a username to remove from database";
+		}
 	}
+	
+	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
