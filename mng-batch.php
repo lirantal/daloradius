@@ -41,7 +41,7 @@ function createPassword($length) {
 		include 'library/opendb.php';
 	    include 'include/management/attributes.php';                            // required for checking if an attribute
 
-		$actionMsgBadUsernames = ""
+		$actionMsgBadUsernames = "";
 		$actionMsgGoodUsernames = "";
 		
 		for ($i=0; $i<$number; $i++) {
