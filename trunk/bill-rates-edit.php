@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	include 'library/opendb.php';
 
@@ -38,12 +35,14 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Updated rates of type: <b> $type</b>";
+				$logAction = "Successfully updated rates of type [$type] on page: ";
 
 			} 
 
 		} else {
 			$actionStatus = "failure";
 			$actionMsg = "you didn't specify a rate type";
+			$logAction = "Failed updating empty rate type on page: ";
 		}
 	}
 
@@ -63,6 +62,13 @@
 		$actionMsg = "no type was entered, please specify a rate type to edit";
 	}
 
+
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 
 ?>

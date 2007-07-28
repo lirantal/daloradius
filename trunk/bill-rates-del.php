@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	$type = "";
 	if (isset($_POST['submit'])) {
@@ -21,13 +18,15 @@
 			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 			$actionStatus = "success";
-			$actionMsg = "Deleted user from database: <b> $username </b>";
+			$actionMsg = "Deleted rate type from database: <b> $type </b>";
+			$logAction = "Successfully deleted rate type [$type] on page: ";
 
 			include 'library/closedb.php';
 
 		} else {
 			$actionStatus = "failure";
 			$actionMsg = "you didn't specify a rate type";
+			$logAction = "Failed deleting empty rate type on page: ";
 
 		}
 
@@ -47,6 +46,12 @@
 		$actionStatus = "failure";
 		$actionMsg = "no type was entered, please specify a rate type to delete";
 	}
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
 
 
 ?>
