@@ -61,6 +61,7 @@
                         <td> $nt[2] </td>
                         <td> $nt[3] </td>
                         <td> <a href='mng-hs-edit.php?name=$nt[1]'> ".$l[all][edit]." </a> </td>
+                        <td> <a href='mng-hs-del.php?name=$nt[1]'> ".$l[all][del]." </a> </td>
                 </tr>";
         }
         echo "</table>";
