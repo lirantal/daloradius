@@ -77,7 +77,7 @@
 	else
 		$group = "";
 		
-	if (trim($username) != "" OR trim($group) != "") {
+	if (trim($username) == "" OR trim($group) == "") {
 		$actionStatus = "failure";
 		$actionMsg = "no username or groupname was entered, please specify a username and groupname to edit ";
 	}	
