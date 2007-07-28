@@ -2,9 +2,12 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
+
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
     include('include/config/logging.php');
 
 ?>
