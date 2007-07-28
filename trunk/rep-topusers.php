@@ -3,14 +3,16 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-
 	if (isset($_POST['limit']))
 		$limit = $_POST['limit'];
 	if (isset($_POST['order']))		
 		$order = $_POST['order'];
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    $logQuery = "performed query for [$order : $limit] on page: ";
+    include('include/config/logging.php');
 
 ?>
 
