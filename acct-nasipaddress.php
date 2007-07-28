@@ -3,12 +3,14 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 	
+	$nasipaddress = $_POST['nasipaddress'];
+
+
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
+    $logQuery = "performed query for nas [$nasipaddress] on page: ";
     include('include/config/logging.php');
-
-
-	$nasipaddress = $_POST['nasipaddress'];
 
 ?>
 

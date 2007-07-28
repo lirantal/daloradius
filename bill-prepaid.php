@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 	$hotspot = "";
 	$startdate = "";
 	$enddate = "";
@@ -13,6 +10,13 @@
 	$hotspot = !empty($_REQUEST['hotspot']) ? $_REQUEST['hotspot'] : '';
 	$startdate = $_GET['startdate'];
 	$enddate = $_GET['enddate'];
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    $logQuery = "performed query for hotspot [$hotspot] with start date [$startdate] and end date [$enddate] on page: ";
+    include('include/config/logging.php');
 
 ?>
 

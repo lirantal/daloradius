@@ -3,13 +3,14 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 	
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	$hotspot = $_POST['hotspot'];
 
 
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    $logQuery = "performed query for hotspot [$hotspot] on page: ";
+    include('include/config/logging.php');
 
 ?>
 

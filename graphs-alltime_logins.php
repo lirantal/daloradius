@@ -2,14 +2,17 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-	
-        //$username = $_POST['username'];
+        	
+
 	$username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '';
         $type = $_POST['type'];
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    include('include/config/logging.php');
 
 
 ?>
