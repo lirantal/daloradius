@@ -141,7 +141,7 @@
 			echo "<b>$arrAttr[$counter]</b";
 			echo "</td><td>";
 
-			if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
+			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) )
 				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
 			else
 				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
