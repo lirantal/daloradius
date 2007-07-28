@@ -7,6 +7,9 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 
+	if (isset($_POST['username']))
+		$username = $_POST['username'];
+
 ?>
 
 <?php
@@ -14,14 +17,7 @@
     include ("menu-reports.php");
 
 ?>
-		
-<?php
 
-	if (isset($_POST['username']))
-		$username = $_POST['username'];
-
-?>		
-		
 		
 		<div id="contentnorightbar">
 		
