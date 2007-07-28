@@ -29,7 +29,7 @@
 */
 
 if ($configValues['CONFIG_LOG_PAGES'] == "yes") {
-	if (isset($log)
+	if (isset($log))
 	        $msgNotice = $operator . " " . $log;
 	else
 	        $msgNotice = $operator . " ";
@@ -37,7 +37,7 @@ if ($configValues['CONFIG_LOG_PAGES'] == "yes") {
 }
 
 if ($configValues['CONFIG_LOG_QUERIES'] == "yes") {
-	if (isset($logQuery)
+	if (isset($logQuery))
 	        $msgQuery = $operator . " " . $logQuery;
 	else 
 	        $msgQuery = $operator . " ";
