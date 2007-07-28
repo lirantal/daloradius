@@ -13,6 +13,8 @@
 
 		if (isset($_REQUEST['config_pageslogging']))
 			$configValues['CONFIG_LOG_PAGES'] = $_REQUEST['config_pageslogging'];
+		if (isset($_REQUEST['config_querieslogging']))
+			$configValues['CONFIG_LOG_QUERIES'] = $_REQUEST['config_querieslogging'];
 		if (isset($_REQUEST['config_actionslogging']))
 			$configValues['CONFIG_LOG_ACTIONS'] = $_REQUEST['config_actionslogging'];
 		if (isset($_REQUEST['config_filenamelogging']))
@@ -57,6 +59,23 @@
 						</font>
 </td></tr>
 <tr><td>
+
+						<?php if (!($configValues['CONFIG_LOG_QUERIES'])) { echo "<font color='#FF0000'>";  }?>
+
+						<b><?php echo $l[FormField][configlogging.php][QueriesLogging] ?></b>
+</td><td>
+						<select name="config_querieslogging">
+						<option value="<?php echo $configValues['CONFIG_LOG_QUERIES'] ?>"> <?php echo $configValues['CONFIG_LOG_QUERIES'] ?> </option>
+						<option value="">  </option>
+						<option value="no"> no </option>
+						<option value="yes"> yes </option>
+						</select>
+						</font>
+
+
+</td></tr>
+<tr><td>
+
 
 						<?php if (!($configValues['CONFIG_LOG_ACTIONS'])) { echo "<font color='#FF0000'>";  }?>
 
