@@ -205,6 +205,7 @@ $l[FormField][configdb.php][DatabaseName] = "Database Name";
 $l[FormField][configlang.php][PrimaryLanguage] = "Primary Language";
 
 $l[FormField][configlogging.php][PagesLogging] = "Logging of Pages (page visits)";
+$l[FormField][configlogging.php][QueriesLogging] = "Logging of Queries (reports and graphs)";
 $l[FormField][configlogging.php][ActionsLogging] = "Logging of Actions (form submits)";
 $l[FormField][configlogging.php][FilenameLogging] = "Logging filename (full path)";
 
