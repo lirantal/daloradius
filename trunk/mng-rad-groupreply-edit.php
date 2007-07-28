@@ -2,10 +2,7 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
+
 
     include 'library/opendb.php';
 
@@ -49,16 +46,19 @@
 			
 			$actionStatus = "success";
 			$actionMsg = "Updated group attributes for: <b> $groupname </b>";
+			$logAction = "Successfully updated attributes for group [$groupname] on page: ";
 
 			} else { // if groupname  != ""
 				$actionStatus = "failure";
 				$actionMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
+				$logAction = "Failed updating (possible missing attributes) attributes for group [$groupname] on page: ";
 			}
 
 		} else {
 			$actionStatus = "failure";
 			$actionMsg = "The group <b> $groupname </b> already exists in the database with value <b> $value </b>
 			<br/> Please check that there are no duplicate entries in the database";
+			$logAction = "Failed updating already existing group [$groupname] with value [$value] on page: ";
 		} 
 
 		include 'library/closedb.php';
@@ -76,6 +76,13 @@
 		$actionMsg = "no Groupname was entered, please specify a Groupname to edit </b>";
 	}
 	
+
+
+        
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

@@ -2,10 +2,6 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 
 	$groupname = "";
@@ -33,6 +29,7 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted Group: <b> $groupname </b> and it's Value: <b> $value </b>";
+				$logAction = "Successfully deleted group [$groupname] and it's value [$value] on page: ";
 
 				include 'library/closedb.php';
 
@@ -44,13 +41,15 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted all instances for Group: <b> $groupname </b>";
+				$logAction = "Successfully deleted all instances for group [$groupname] on page: ";
 
 				include 'library/closedb.php';
 			}
 
 		}  else {
 			$actionStatus = "failure";
-			$actionMsg = "No groupname was entered, please specify a groupname to remove from database";	
+			$actionMsg = "No groupname was entered, please specify a groupname to remove from database";
+			$logAction = "Failed deleting empty group on page: ";
 		}
 	}
 	
@@ -65,6 +64,13 @@
 		$actionStatus = "failure";
 		$actionMsg = "no Groupname was entered, please specify a Groupname to delete </b>";
 	}	
+
+
+
+        
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 	
 ?>

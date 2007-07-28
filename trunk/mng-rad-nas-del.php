@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	$nashost = "";
     $nashost = $_REQUEST['nashost'];
@@ -22,12 +19,14 @@
 
 			$actionStatus = "success";
 			$actionMsg = "Deleted all NAS from database: <b> $nashost </b>";
+			$logAction = "Successfully deleted nas [$nashost] on page: ";
 				
 			include 'library/closedb.php';
 
 		}  else {
 			$actionStatus = "failure";
-			$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";				
+			$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
+			$logAction = "Failed deleting empty nas on page: ";
 		}
 	}
 	
@@ -41,6 +40,13 @@
 		$actionStatus = "failure";
 		$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
 	}	
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
 	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

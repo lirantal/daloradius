@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	$username = "";
 	$password = "";
@@ -41,13 +38,16 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $username";
+				$logAction = "Successfully added new user [$username] on page: ";
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "username or password are empty";
+				$logAction = "Failed adding (possible empty user/pass) new user [$username] on page: ";
 			}
 		} else { 
 			$actionStatus = "failure";
 			$actionMsg = "user already exist in database: <b> $username </b>";
+			$logAction = "Failed adding new user already existing in database [$username] on page: ";
 		}
 		
 		include 'library/closedb.php';
@@ -57,6 +57,15 @@
 
 	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
 		$hiddenPassword = "type=\"password\"";
+
+
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
 
 ?>
 

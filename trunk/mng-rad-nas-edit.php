@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
     include 'library/opendb.php';
 
@@ -63,19 +60,23 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Updated NAS settings in database: <b> $nashost </b>  ";
+				$logAction = "Successfully updated attributes for nas [$nashost] on page: ";
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
+				$logAction = "Failed updating attributes for nas [$nashost] on page: ";
 			}
 			
 		} elseif (mysql_num_rows($res) > 1) {
 			$actionStatus = "failure";
 			$actionMsg = "The NAS IP/Host <b> $nashost </b> already exists in the database
 			<br/> Please check that there are no duplicate entries in the database";
+			$logAction = "Failed updating attributes for already existing nas [$nashost] on page: ";
 		} else {
 			$actionStatus = "failure";
 			$actionMsg = "The NAS IP/Host <b> $nashost </b> doesn't exist at all in the database.
 			<br/>Please re-check the nashost ou specified.";
+			$logAction = "Failed updating empty nas on page: ";
 		}
 
 		include 'library/closedb.php';
@@ -90,6 +91,14 @@
 		$actionStatus = "failure";
 		$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
 	}		
+
+
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

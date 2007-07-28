@@ -2,10 +2,7 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
+
 
 	include 'library/opendb.php';
 
@@ -54,14 +51,17 @@
 					
 				$actionStatus = "success";
 				$actionMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
+				$logAction = "Successfully updated attributes for user-group mapping of user [$username] with group [$group] on page: ";
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
+				$logAction = "Failed updating (missing attributes) attributes on page: ";
 			}
 		} else {
 			$actionStatus = "failure";
 			$actionMsg = "The user $username already exists in the user-group mapping database
 			<br/> It seems that you have duplicate entries for User-Group mapping. Check your database";
+			$logAction = "Failed updating already existing user [$username] with group [$group] on page: ";
 		} 
 
 		include 'library/closedb.php';
@@ -81,6 +81,13 @@
 		$actionStatus = "failure";
 		$actionMsg = "no username or groupname was entered, please specify a username and groupname to edit ";
 	}	
+
+
+
+        
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

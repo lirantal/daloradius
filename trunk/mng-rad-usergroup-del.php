@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 
 	$group = "";
@@ -33,6 +30,7 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted Username: <b> $username </b> and it's Groupname: <b> $group </b>";
+				$logAction = "Successfully deleted user [$username] and it's group [$group] on page: ";
 
 				include 'library/closedb.php';
 							
@@ -44,6 +42,7 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted all instances for Username: <b> $username </b>";
+				$logAction = "Successfully deleted all group instances for user [$username] on page: ";
 
 				include 'library/closedb.php';
 			}
@@ -51,9 +50,15 @@
 		}  else {
 			$actionStatus = "failure";
 			$actionMsg = "No user was entered, please specify a username to remove from database";
+			$logAction = "Failed deleting empty user on page: ";
 		}
 	}
 	
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
 	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

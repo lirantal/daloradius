@@ -20,13 +20,13 @@
 			
 			$actionStatus = "success";
 			$actionMsg = "Deleted user: <b> $username";
-			$logAction = "Successfully deleted user [$username]";
+			$logAction = "Successfully deleted user [$username] on page: ";
 
 			include 'library/closedb.php';
 		}  else { 
 			$actionStatus = "failure";
 			$actionMsg = "no user was entered, please specify a username to remove from database";		
-			$logAction = "Failed deleting user [$username]";
+			$logAction = "Failed deleting user [$username] on page: ";
 		}
 	}
 

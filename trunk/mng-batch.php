@@ -3,10 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-
 
 	$username_prefix = "";
 	$number = "";
@@ -89,7 +85,8 @@ function createPassword($length) {
 
 				$actionMsgGoodUsernames = $actionMsgGoodUsernames . $username . ", " ;
 				$actionStatus = "success";
-				$actionMsg = "Added to database new user: <b> $actionMsgGoodUsernames";
+				$actionMsg = "Added to database new user: <b> $actionMsgGoodUsernames </b>";
+				$logAction = "Successfully added to database new users [$actionMsgGoodUsernames] on page: ";
 		} 
 		
 		}
@@ -97,6 +94,15 @@ function createPassword($length) {
 		include 'library/closedb.php';
 
 	}
+
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
+
 
 ?>
 
