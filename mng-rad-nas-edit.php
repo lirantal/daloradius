@@ -86,12 +86,7 @@
 	else
 		$nashost = "";
 
-	if (isset($_REQUEST['nassecret']))
-		$nassecret = $_REQUEST['nassecret'];
-	else
-		$nassecret = "";
-		
-	if (trim($nashost) != "" OR trim($nassecret) != "") {
+	if (trim($nashost) == "") {
 		$actionStatus = "failure";
 		$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
 	}		
