@@ -29,12 +29,18 @@
 */
 
 if ($configValues['CONFIG_LOG_PAGES'] == "yes") {
-        $msgNotice = $operator . " " . $log;
+	if (isset($log)
+	        $msgNotice = $operator . " " . $log;
+	else
+	        $msgNotice = $operator . " ";
         logMessage("NOTICE", $msgNotice, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
 }
 
 if ($configValues['CONFIG_LOG_QUERIES'] == "yes") {
-        $msgQuery = $operator . " " . $logQuery;
+	if (isset($logQuery)
+	        $msgQuery = $operator . " " . $logQuery;
+	else 
+	        $msgQuery = $operator . " ";
         logMessage("QUERY", $msgQuery, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
 }
 
