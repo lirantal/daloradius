@@ -2,9 +2,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	$username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '[username]';
 
@@ -23,13 +20,22 @@
 			
 			$actionStatus = "success";
 			$actionMsg = "Deleted user: <b> $username";
+			$logAction = "Successfully deleted user [$username]";
 
 			include 'library/closedb.php';
 		}  else { 
 			$actionStatus = "failure";
 			$actionMsg = "no user was entered, please specify a username to remove from database";		
+			$logAction = "Failed deleting user [$username]";
 		}
 	}
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
+
 
 ?>
 
