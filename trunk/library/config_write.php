@@ -9,16 +9,12 @@ if ($fp) {
         fwrite($fp, $_configOption . " = " . $configValues[$_configOption] . "\n");
 	}
 	fclose($fp);
+	$actionStatus = "success";
+	$actionMsg = "Updated database settings for configuration file";
 } else {
-        echo "<font color='#FF0000'>error: could not open the file for writing:<b> $configFile </b><br/></font>";
-		echo "Check file permissions. The file should be writable by the webserver's user/group<br/>";
-        echo "
-            <script language='JavaScript'>
-            <!--
-            alert('could not open the file $configFile for writing!\\nCheck file permissions.');
-            -->
-            </script>
-		";
+	$actionStatus = "failure";
+	$actionMsg = "could not open the file for writing:<b> $configFile </b>
+	<br/> Check file permissions. The file should be writable by the webserver's user/group";
 }
 
 ?>

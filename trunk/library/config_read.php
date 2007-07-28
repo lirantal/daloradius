@@ -16,15 +16,9 @@ if ($_configFp) {
 	}
 	fclose($_configFp);
 } else {
-        echo "<font color='#FF0000'>error: could not open the file for reading:<b> $_configFile </b><br/></font>";
-		echo "Check file permissions. The file should be readable by the webserver's user/group<br/>";
-        echo "
-            <script language='JavaScript'>
-            <!--
-            alert('could not open the file $_configFile for reading!\\nCheck file permissions.');
-            -->
-            </script>
-            ";
+	$actionStatus = "failure";
+	$actionMsg = "could not open the file for reading:<b> $_configFile </b>
+	<br/>Check file permissions. The file should be readable by the webserver's user/group";
 }
 
 ?>
