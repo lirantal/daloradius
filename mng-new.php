@@ -71,6 +71,9 @@
 	}
 
 
+	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
+		$hiddenPassword = "type=\"password\"";
+
 ?>
 
 
@@ -134,7 +137,7 @@
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l[FormField][all][Password] ?></b>
 </td><td>
-						<input value="<?php echo $password ?>" name="password" />
+						<input <?php echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/>
 						</font>
 </td></tr>
