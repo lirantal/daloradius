@@ -2,9 +2,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	$type = "";
 	$cardbank = "";
@@ -35,22 +32,30 @@
 				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 		
 				$actionStatus = "success";
-				$actionMsg = "Added rate type: <b> $type </b> with cardbank: <b> $cardbank </b>";	
+				$actionMsg = "Added rate type: <b> $type </b> with cardbank: <b> $cardbank </b>";
+				$logAction = "Successfully added rate type [$type] with cardbank [$cardbank] on page: ";
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "you didn't specify a rate type or a cardbank, both are required";
+				$logAction = "Failed adding (missing values) rate of type [$type] with cardbank [$cardbank] on page: ";
 			}
 
 		} else {
 			$actionStatus = "failure";
 			$actionMsg = "rate type <b> $type </b> already exist in database, 
 			<br/> please check for duplicate entries";
+			$logAction = "Failed adding already existing rate of type [$type] with cardbank [$cardbank] on page: ";
 		}
 		
 		include 'library/closedb.php';
 
 	}
 
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 
 ?>
