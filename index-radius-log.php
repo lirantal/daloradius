@@ -1,11 +1,17 @@
 <?php
 
-    include ("menu-home.php");
-        
 	include_once('library/config_read.php');
     $log = "visited page: ";
+    $logQuery = "performed query on page: ";
     include('include/config/logging.php');
-	
+
+
+?>
+
+<?php
+
+    include ("menu-home.php");
+  	
 ?>	
 		
 		
