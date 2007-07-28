@@ -7,26 +7,18 @@
     $log = "visited page: ";
     include('include/config/logging.php');
 
-?>
-
-<?php
-
-    include ("menu-reports.php");
-
-?>
-
-<?php
-
 	if (isset($_POST['limit']))
 		$limit = $_POST['limit'];
 	if (isset($_POST['order']))		
 		$order = $_POST['order'];
 
 ?>
-		
-		
-		
-		
+
+<?php
+
+    include ("menu-reports.php");
+
+?>	
 		
 		<div id="contentnorightbar">
 		
