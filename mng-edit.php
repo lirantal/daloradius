@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	include 'library/opendb.php';
 		// required for checking if an attribute belongs to the
@@ -36,10 +33,12 @@
 
 			$actionStatus = "success";
 			$actionMsg = "Updated attributes for: <b> $username </b>";
+			$logAction = "Successfully updates attributes for user [$username] on page: ";
 			
 		} else { // if username != ""
 			$actionStatus = "failure";
 			$actionMsg = "no user was entered, please specify a username to edit";		
+			$logAction = "Failed updating attributes for user [$username] on page: ";
 		}
 	} // if isset post submit
 
@@ -91,6 +90,12 @@
 
 
 	include 'library/closedb.php';
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 
 ?>

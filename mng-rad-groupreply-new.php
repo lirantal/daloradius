@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	// declaring variables
 	$groupname = "";
@@ -42,14 +39,18 @@
 					$counter++;
 					
 					$actionStatus = "success";
-					$actionMsg = "Added to database new group: <b> $group </b>";	
+					$actionMsg = "Added to database new group: <b> $group </b>";
+					$logAction = "Successfully added group [$group] on page: ";
 				} else {
 					$actionStatus = "failure";
 					$actionMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
+					$logAction = "Failed adding (missing values) group [$group] on page: ";
 				}
 			} else { 
 				$actionStatus = "failure";
 				$actionMsg = "The group <b> $groupname[$counter] </b> already exists in the database with value <b> $value[$counter] </b>";
+				$logAction = "Failed adding already existing group [$group] with value [$value[$counter]] on page: ";
+
             } // end else if mysql
 				
 		}
@@ -98,10 +99,12 @@
 					
 					$actionStatus = "success";
 					$actionMsg = "Added to database new group: <b> $groupExtra </b>";
+					$logAction = "Successfully added group [$groupExtra] on page: ";
 					
 				} else { 
 					$actionStatus = "failure";
 					$actionMsg = "The group <b> $groupnameExtra[$counter] </b> already exists in the database with value <b> $valueExtra[$counter] </b>";
+					$logAction = "Failed addin already existing group [$groupnameExtra[$counter]] with value [$valueExtra[$counter]] on page: ";
 				}
 		
 			}	
@@ -111,6 +114,13 @@
     }
 	
 	}
+
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

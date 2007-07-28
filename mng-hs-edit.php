@@ -1,10 +1,8 @@
 <?php 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
+
+
 	
 	include 'library/opendb.php';
 
@@ -39,16 +37,21 @@
 			}
 			
 			$actionStatus = "success";
-			$actionMsg = "Updated attributes for: <b> $name";
+			$actionMsg = "Updated attributes for: <b> $name </b>";
+			$logAction = "Successfully updates attributes for hotspot [$name] on page: ";
 			
 		} else {
 			$actionStatus = "failure";
-			$actionMsg = "no hotspot name was entered, please specify a hotspot name to edit </b>";			
+			$actionMsg = "no hotspot name was entered, please specify a hotspot name to edit";
+			$logAction = "Failed updating attributes for hotspot [$name] on page: ";
 		}
 		
 	}
 	
+
 	include 'library/closedb.php';
+
+
 
 	if (isset($_REQUEST['name']))
 		$name = $_REQUEST['name'];
@@ -61,6 +64,13 @@
 		$actionStatus = "failure";
 		$actionMsg = "no hotspot name was entered, please specify a hotspot name to edit</b>";
 	}	
+
+
+
+        
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 	
 ?>
 

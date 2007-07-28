@@ -2,9 +2,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	$name = !empty($_REQUEST['name']) ? $_REQUEST['name'] : '[hotspot name]';
 
@@ -20,15 +17,23 @@
 			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 			
 			$actionStatus = "success";
-			$actionMsg = "Deleted hotspot: <b> $name";
+			$actionMsg = "Deleted hotspot: <b> $name </b>";
+			$logAction = "Successfully deleted hotpot [$name] on page: ";
 
 			include 'library/closedb.php';
 			
 		} else { 
 			$actionStatus = "failure";
-			$actionMsg = "no hotspot was entered, please specify a hotspot name to remove from database";	
+			$actionMsg = "no hotspot was entered, please specify a hotspot name to remove from database";
+			$logAction = "Failed deleting hotspot [$name] on page: ";
 		}
 	}
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 ?>
 

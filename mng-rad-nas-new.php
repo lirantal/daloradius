@@ -3,9 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
 
 	// declaring variables
 	$nashost = "";
@@ -46,18 +43,25 @@
 			
 				$actionStatus = "success";
 				$actionMsg = "Added new NAS to database: <b> $nashost </b>  ";
+				$logAction = "Successfully added nas [$nashost] on page: ";
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
+				$logAction = "Failed adding (missing nas/secret) nas [$nashost] on page: ";
 			}
 		} else {
 			$actionStatus = "failure";
-			$actionMsg = "The NAS IP/Host $nashost already exists in the database";		
+			$actionMsg = "The NAS IP/Host $nashost already exists in the database";	
+			$logAction = "Failed adding already existing nas [$nashost] on page: ";
 		}
 
 		include 'library/closedb.php';
 	}
 	
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 	
 
 ?>

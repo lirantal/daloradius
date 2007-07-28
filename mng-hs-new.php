@@ -2,10 +2,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-
 
 	$name = "";
 	$macaddress = "";
@@ -30,18 +26,27 @@
 
 				$actionStatus = "success";
 				$actionMsg = "Added to database new hotspot: <b> $name";
+				$logAction = "Successfully added new hotspot [$name] on page: ";
 			} else {
 				$actionStatus = "failure";
-				$actionMsg = "you must provide atleast a hotspot name and mac-address";		
+				$actionMsg = "you must provide atleast a hotspot name and mac-address";	
+				$logAction = "Failed adding new hotspot [$name] on page: ";	
 			}
 		} else { 
 			$actionStatus = "failure";
-			$actionMsg = "You have tried to add a hotspot that already exist in the database: $name";			
+			$actionMsg = "You have tried to add a hotspot that already exist in the database: $name";	
+			$logAction = "Failed adding new hotspot already in database [$username] on page: ";		
 		}
 	
 		include 'library/closedb.php';
 
 	}
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
 ?>
 
