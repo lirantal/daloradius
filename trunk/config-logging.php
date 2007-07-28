@@ -49,6 +49,8 @@
 						<b><?php echo $l[FormField][configlogging.php][PagesLogging] ?></b>
 </td><td>
 						<select name="config_pageslogging">
+						<option value="<?php echo $configValues['CONFIG_LOG_PAGES'] ?>"> <?php echo $configValues['CONFIG_LOG_PAGES'] ?> </option>
+						<option value="">  </option>
 						<option value="no"> no </option>
 						<option value="yes"> yes </option>
 						</select>
@@ -61,6 +63,8 @@
 						<b><?php echo $l[FormField][configlogging.php][ActionsLogging] ?></b>
 </td><td>
 						<select name="config_actionslogging">
+						<option value="<?php echo $configValues['CONFIG_LOG_ACTIONS'] ?>"> <?php echo $configValues['CONFIG_LOG_ACTIONS'] ?> </option>
+						<option value="">  </option>
 						<option value="no"> no </option>
 						<option value="yes"> yes </option>
 						</select>
