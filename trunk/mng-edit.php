@@ -92,6 +92,7 @@
 
 	include 'library/closedb.php';
 
+
 ?>
 
 
@@ -139,7 +140,12 @@
 			echo "<tr><td>";
 			echo "<b>$arrAttr[$counter]</b";
 			echo "</td><td>";
-			echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
+
+			if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
+				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
+			else
+				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
+
 			echo "</td></tr>";
 			$counter++;
 
