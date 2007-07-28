@@ -3,13 +3,16 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 	
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-
 	$username = $_POST['username'];
 	$startdate = $_POST['startdate'];
 	$enddate = $_POST['enddate'];
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
+    include('include/config/logging.php');
 
 ?>
 

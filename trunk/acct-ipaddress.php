@@ -3,12 +3,15 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 	
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-
 
 	$ipaddress = $_POST['ipaddress'];
+
+
+
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+    $logQuery = "performed query for ip address [$ipaddress] on page: ";
+    include('include/config/logging.php');
 
 ?>
 

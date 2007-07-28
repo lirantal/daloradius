@@ -2,12 +2,14 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+        	
+        $type = $_POST['type'];
+
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
+    $logQuery = "performed query of type [$type] on page: ";
     include('include/config/logging.php');
-	
-        $type = $_POST['type'];
 
 
 ?>
