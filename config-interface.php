@@ -49,6 +49,8 @@
 						<select name="config_iface_pass_hidden">
 						<option value="<?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?>"> <?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?> </option>
 						<option value="">  </option>
+						<option value="no"> no </option>
+						<option value="yes"> yes </option>
 						</select>
 						</font>
 </td></tr>
