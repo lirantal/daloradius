@@ -73,15 +73,15 @@
 
 
 
-	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
-		$hiddenPassword = "type=\"password\"";
-
-
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
     include('include/config/logging.php');
 
+	
+	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
+		$hiddenPassword = "type=\"password\"";
+	
 ?>
 
 
