@@ -1,9 +1,10 @@
 release 1.0 - August 2007
 	- added support for configurable table names of radius database throughout the code
-	
-TBD	* added better notifications of error messages when mysql queries die, 
+	- added better notifications of error messages when mysql queries die, 
 	they are now shown with a red colored font so the errors are more obvious to see
-	
+	- added logging capability to all project pages
+	specifically added logging of visited pages
+	- fixed bug 1757441 - ComboBox layout in Language Configuration
 	
 	
 	
