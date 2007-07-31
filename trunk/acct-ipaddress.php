@@ -2,9 +2,13 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	
 
-	$ipaddress = $_POST['ipaddress'];
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
+
+
+	$ipaddress = $_REQUEST['ipaddress'];
 
 
 
@@ -35,7 +39,7 @@
 
                 include 'library/opendb.php';
 
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, radacct.FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, radacct.AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE FramedIPAddress='$ipaddress'";
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, radacct.FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, radacct.AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE FramedIPAddress='$ipaddress'  ORDER BY $orderBy $orderType;";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
@@ -48,17 +52,61 @@
                 ";
 
         echo "<thread> <tr>
-		<th scope='col'> ".$l[all][ID]." </th>
-		<th scope='col'> ".$l[all][HotSpot]." </th>
-		<th scope='col'> ".$l[all][Username]." </th>
-		<th scope='col'> ".$l[all][IPAddress]."</th>
-		<th scope='col'> ".$l[all][StartTime]." </TH>
-		<th scope='col'> ".$l[all][StopTime]." </th>
-		<th scope='col'> ".$l[all][TotalTime]." </th>
-		<th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].") </th>
-		<th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].") </th>
-		<th scope='col'> ".$l[all][Termination]." </th>
-		<th scope='col'> ".$l[all][NASIPAddress]." </th>
+		<th scope='col'> ".$l[all][ID]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=radacctid&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=radacctid&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][HotSpot]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=hotspot&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=hotspot&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][Username]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=username&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=username&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][IPAddress]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=framedipaddress&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=framedipaddress&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][StartTime]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstarttime&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstarttime&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][StopTime]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstoptime&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstoptime&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][TotalTime]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctsessiontime&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctsessiontime&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].")
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctinputoctets&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctinputoctets&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].")
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctoutputoctets&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctoutputoctets&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][Termination]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctterminatecause&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctterminatecause&orderType=desc\"> < </a>
+		</th>
+		<th scope='col'> ".$l[all][NASIPAddress]."
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=nasipaddress&orderType=asc\"> > </a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=nasipaddress&orderType=desc\"> < </a>
+		</th>
 		<th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
