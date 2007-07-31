@@ -7,8 +7,8 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 
-	if (isset($_POST['limit']))
-		$limit = $_POST['limit'];
+	if (isset($_REQUEST['limit']))
+		$limit = $_REQUEST['limit'];
 
 
 	include_once('library/config_read.php');
