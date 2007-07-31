@@ -537,3 +537,12 @@ tbody a:visited:after {
 	font-family: Verdana,sans-serif;
 	content: "\00A0\221A"
 }
+
+tbody a.novisit {
+        border-bottom: 1px dotted #fff
+}
+
+tbody a.novisit:visited:after {
+        font-family: Verdana,sans-serif;
+        content: "\000"
+}
