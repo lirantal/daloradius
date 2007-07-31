@@ -51,12 +51,6 @@ include_once ("lang/main.php");
 							</form></li>
 				</ul>
 		
-
-				<h3>Hotspots Reports</h3>
-				<ul class="subnav">
-				
-						<li><a href="rep-hs-all.php"><b>&raquo;</b>List all Hotspots</a></li>
-				</ul>
 				
 				<br/><br/>
 				<h2>Search</h2>
