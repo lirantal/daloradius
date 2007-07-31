@@ -1,7 +1,12 @@
 <?php
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+
+    
 
 
 	include_once('library/config_read.php');
@@ -51,10 +56,26 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][ID]." </th>
-                        <th scope='col'> ".$l[all][HotSpot]." </th>
-                        <th scope='col'> ".$l[all][MACAddress]." </th>
-                        <th scope='col'> ".$l[all][Geocode]." </th>
+                        <th scope='col'> ".$l[all][ID]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
+						</th>						
+                        <th scope='col'> ".$l[all][HotSpot]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=desc\"> < </a>
+						</th>						
+                        <th scope='col'> ".$l[all][MACAddress]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Geocode]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
+						</th>
                         <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
