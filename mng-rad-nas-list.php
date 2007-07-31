@@ -2,6 +2,10 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+	
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
 
@@ -38,7 +42,7 @@
         include 'library/opendb.php';
 
 
-        $sql = "SELECT * FROM nas";
+        $sql = "SELECT * FROM nas ORDER BY $orderBy $orderType;";
         $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
@@ -51,14 +55,46 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][NasID]." </th>
-                        <th scope='col'> ".$l[all][NasIPHost]." </th>
-                        <th scope='col'> ".$l[all][NasShortname]." </th>
-                        <th scope='col'> ".$l[all][NasType]." </th>
-                        <th scope='col'> ".$l[all][NasPorts]." </th>
-                        <th scope='col'> ".$l[all][NasSecret]." </th>
-                        <th scope='col'> ".$l[all][NasCommunity]." </th>
-                        <th scope='col'> ".$l[all][NasDescription]." </th>
+                        <th scope='col'> ".$l[all][NasID]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NasIPHost]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NasShortname]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NasType]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NasPorts]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NasSecret]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NasCommunity]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NasDescription]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=desc\"> < </a>
+						</th>
                         <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {

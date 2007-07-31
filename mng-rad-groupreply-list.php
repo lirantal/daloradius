@@ -2,7 +2,11 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+
 
 
 	include_once('library/config_read.php');
@@ -38,7 +42,7 @@
         include 'library/opendb.php';
 
 
-        $sql = "select GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." ORDER BY GroupName ASC";
+        $sql = "select GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." $orderBy $orderType;";
         $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
@@ -51,10 +55,26 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][Groupname]." </th>
-                        <th scope='col'> ".$l[all][Attribute]." </th>
-                        <th scope='col'> ".$l[all][Operator]." </th>						
-                        <th scope='col'> ".$l[all][Value]." </th>
+                        <th scope='col'> ".$l[all][Groupname]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Attribute]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Operator]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Value]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=desc\"> < </a>
+						</th>
                         <th scope='col'> ".$l[all][Action]." </th>						
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
