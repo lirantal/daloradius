@@ -44,6 +44,22 @@ Prerequisites
 
 
 
+Upgrading
+=========
+
+ UPGRADE PROCESS
+ ---------------
+    Upgrading is fairly easy and is do-able in a few quick steps:
+	1. create a backup copy of the configuration file daloradius.conf which is
+	   located in the library/ directory.
+	2. extract the tar-ball (daloradius-X.Y.tar.gz) to the same directory of the 
+	   previous copy, over-writing all the files.
+	3. copy the back'ed up daloradius.conf over the one from the extracted archive
+	4. if required, setup the permissions to daloradius.conf so that the webserver's
+	   user/group has write access to it.
+
+
+
 Installation
 ============
 
