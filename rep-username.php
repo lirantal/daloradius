@@ -8,8 +8,8 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 	
-	if (isset($_POST['username']))
-		$username = $_POST['username'];
+	if (isset($_REQUEST['username']))
+		$username = $_REQUEST['username'];
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
