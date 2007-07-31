@@ -2,16 +2,18 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
+
 	if (isset($_POST['limit']))
 		$limit = $_POST['limit'];
-	if (isset($_POST['order']))		
-		$order = $_POST['order'];
 
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    $logQuery = "performed query for [$order : $limit] on page: ";
+    $logQuery = "performed query for [$orderBy : $limit] on page: ";
     include('include/config/logging.php');
 
 ?>
@@ -38,7 +40,7 @@
         include 'library/opendb.php';
 
 	$sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime,
-sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $order desc limit $limit";
+sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $orderBy $orderType limit $limit";
 
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
@@ -52,15 +54,51 @@ sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][Username]." </th>
-                        <th scope='col'> ".$l[all][IPAddress]."</th>
-                        <th scope='col'> ".$l[all][StartTime]." </th>
-                        <th scope='col'> ".$l[all][StopTime]." </th>
-                        <th scope='col'> ".$l[all][TotalTime]." </th>
-                        <th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].") </th>
-                        <th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].") </th>
-                        <th scope='col'> ".$l[all][Termination]." </th>
-                        <th scope='col'> ".$l[all][NASIPAddress]." </th>
+                        <th scope='col'> ".$l[all][Username]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][IPAddress]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][StartTime]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][StopTime]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][TotalTime]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].")
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].")
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Termination]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][NASIPAddress]."
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=desc\"> < </a>
+						</th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
                 echo "<tr>

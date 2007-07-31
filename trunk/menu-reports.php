@@ -44,7 +44,7 @@ include_once ("lang/main.php");
 								<option value="500"> 500
 								<option value="1000"> 1000
 							</select>
-							<select name="order" type="text">
+							<select name="orderBy" type="text">
 								<option value="AcctInputOctets"> bandwidth
 								<option value="AcctSessionTime"> time
 							</select>
