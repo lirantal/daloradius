@@ -3,6 +3,15 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
+	$orderBy = $_REQUEST['orderBy'];		// order by - the group
+	$orderType = $_REQUEST['orderType'];	// order type - ascending or descending
+
+	if (empty($orderBy))
+		$orderBy = "id";
+
+	if (empty($orderType))
+		$orderType = "asc";
+
 
 
 	include_once('library/config_read.php');
@@ -50,7 +59,7 @@
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password')";
+    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password') ORDER BY $orderBy $orderType";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
         echo "<table border='2' class='table1'>\n";
@@ -63,9 +72,21 @@
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][ID]. " </th>
-                        <th scope='col'> ".$l[all][Username]." </th>
-                        <th scope='col'> ".$l[all][Password]." </th>
+                        <th scope='col'> ".$l[all][ID]. " 
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Username]." 
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> ".$l[all][Password]." 
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\"> < </a>
+						</th>
                         <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
         while($nt = mysql_fetch_array($res)) {
