@@ -2,18 +2,13 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	$orderBy = $_REQUEST['orderBy'];		// order by - the group
-	$orderType = $_REQUEST['orderType'];	// order type - ascending or descending
 
-	if (empty($orderBy))
-		$orderBy = "id";
-
-	if (empty($orderType))
-		$orderType = "asc";
-
-
-
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+	
+	
+	
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
