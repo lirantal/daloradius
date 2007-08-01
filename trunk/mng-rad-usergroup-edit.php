@@ -26,10 +26,10 @@
 	$priority = $row['priority'];
 
 	if (isset($_POST['submit'])) {
-		$username = $_POST['username'];
-		$groupOld = $_POST['groupOld'];;
-		$group = $_POST['group'];;
-		$priority = $_POST['priority'];;
+		$username = $_REQUEST['username'];
+		$groupOld = $_REQUEST['groupOld'];;
+		$group = $_REQUEST['group'];;
+		$priority = $_REQUEST['priority'];;
 
 		
 		include 'library/opendb.php';

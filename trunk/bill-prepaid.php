@@ -8,8 +8,8 @@
 	$enddate = "";
 
 	$hotspot = !empty($_REQUEST['hotspot']) ? $_REQUEST['hotspot'] : '';
-	$startdate = $_GET['startdate'];
-	$enddate = $_GET['enddate'];
+	$startdate = $_REQUEST['startdate'];
+	$enddate = $_REQUEST['enddate'];
 
 
 

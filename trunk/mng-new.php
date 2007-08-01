@@ -11,10 +11,10 @@
     $expiration = "";
 
 	if (isset($_POST['submit'])) {
-		$username = $_POST['username'];
-		$password = $_POST['password'];
-        $passwordtype = $_POST['passwordType'];	
-		$expiration = $_POST['expiration'];
+		$username = $_REQUEST['username'];
+		$password = $_REQUEST['password'];
+        $passwordtype = $_REQUEST['passwordType'];	
+		$expiration = $_REQUEST['expiration'];
 
 		include 'library/opendb.php';
         include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the

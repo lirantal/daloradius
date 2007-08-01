@@ -11,9 +11,9 @@
 
 	if (isset($_POST['submit'])) {
 	
-		$username = $_POST['username'];
-		$group = $_POST['group'];;
-		$priority = $_POST['priority'];;
+		$username = $_REQUEST['username'];
+		$group = $_REQUEST['group'];;
+		$priority = $_REQUEST['priority'];;
 
 		include 'library/opendb.php';
 

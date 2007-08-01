@@ -14,10 +14,10 @@
 	    
         include 'library/opendb.php';
 		
-	    $groupname = $_POST['groupname'];
-	    $op = $_POST['op'];
-	    $attribute = $_POST['attribute'];
-		$value = $_POST['value'];
+	    $groupname = $_REQUEST['groupname'];
+	    $op = $_REQUEST['op'];
+	    $attribute = $_REQUEST['attribute'];
+		$value = $_REQUEST['value'];
 
 		$counter = 0;
 		foreach ($groupname as $group) {
@@ -52,23 +52,23 @@
 		}
 		
 		
-		if (isset($_POST['groupnameExtra']))
-			$groupnameExtra = $_POST['groupnameExtra'];
+		if (isset($_REQUEST['groupnameExtra']))
+			$groupnameExtra = $_REQUEST['groupnameExtra'];
 		else
 			$groupnameExtra = "";
 		
-		if (isset($_POST['opExtra']))
-			$opExtra = $_POST['opExtra'];
+		if (isset($_REQUEST['opExtra']))
+			$opExtra = $_REQUEST['opExtra'];
 		else
 			$opExtra = "";
 			
-		if (isset($_POST['attributeExtra']))
-			$attributeExtra = $_POST['attributeExtra'];
+		if (isset($_REQUEST['attributeExtra']))
+			$attributeExtra = $_REQUEST['attributeExtra'];
 		else
 			$attributeExtra = "";
 			
-		if (isset($_POST['valueExtra']))
-			$valueExtra = $_POST['valueExtra'];
+		if (isset($_REQUEST['valueExtra']))
+			$valueExtra = $_REQUEST['valueExtra'];
 		else
 			$valueExtra = "";
 		

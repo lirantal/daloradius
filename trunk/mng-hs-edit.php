@@ -20,9 +20,9 @@
 
 	if (isset($_REQUEST['submit'])) {
 
-		$name = $_POST['name'];
-		$macaddress = $_POST['macaddress'];
-		$geocode = $_POST['geocode'];
+		$name = $_REQUEST['name'];
+		$macaddress = $_REQUEST['macaddress'];
+		$geocode = $_REQUEST['geocode'];
 
 		if (trim($name) != "") {
 
