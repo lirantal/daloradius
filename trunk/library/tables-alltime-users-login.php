@@ -65,7 +65,7 @@ function daily($orderBy, $orderType) {
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Logins/Hitss count
+                        <th scope='col'> Logins/Hits count
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=numberoflogins&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=numberoflogins&orderType=desc\"> < </a>
@@ -221,7 +221,7 @@ function yearly($orderBy, $orderType) {
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Logins/Hitss count</th>
+                        <th scope='col'> Logins/Hits count</th>
                         <th scope='col'> Year </th>
                 </tr> </thread>";
 
