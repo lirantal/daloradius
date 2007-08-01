@@ -2,16 +2,16 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        	
 
-	$username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '';
-        $type = $_POST['type'];
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "numberoflogins";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    $logQuery = "performed query of type [$type] on page: ";
     include('include/config/logging.php');
 
 
