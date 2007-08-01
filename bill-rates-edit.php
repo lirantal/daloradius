@@ -6,7 +6,7 @@
 
 	include 'library/opendb.php';
 
-	$type = $_GET['type'];
+	$type = $_REQUEST['type'];
 
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
@@ -18,9 +18,9 @@
 
 	if (isset($_POST['submit'])) {
 
-		$type = $_POST['type'];
-		$cardbank = $_POST['cardbank'];
-		$rate = $_POST['rate'];
+		$type = $_REQUEST['type'];
+		$cardbank = $_REQUEST['cardbank'];
+		$rate = $_REQUEST['rate'];
 
 		if (trim($type) != "") {
 

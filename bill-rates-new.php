@@ -14,9 +14,9 @@
 	
 	if (isset($_POST['submit'])) {
 
-		$type = $_POST['type'];
-		$cardbank = $_POST['cardbank'];
-		$rate = $_POST['rate'];
+		$type = $_REQUEST['type'];
+		$cardbank = $_REQUEST['cardbank'];
+		$rate = $_REQUEST['rate'];
 
 				include 'library/opendb.php';
 

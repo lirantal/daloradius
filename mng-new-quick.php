@@ -9,9 +9,9 @@
 	$maxallsession = "";
 
 	if (isset($_POST['submit'])) {
-		$username = $_POST['username'];
-		$password = $_POST['password'];
-		$maxallsession = $_POST['maxallsession'];
+		$username = $_REQUEST['username'];
+		$password = $_REQUEST['password'];
+		$maxallsession = $_REQUEST['maxallsession'];
 
 		include 'library/opendb.php';
 		

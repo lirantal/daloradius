@@ -4,8 +4,8 @@
     $operator = $_SESSION['operator_user'];
         
     $hotspot = !empty($_REQUEST['ps-hotspot']) ? $_REQUEST['ps-hotspot'] : '';
-	$startdate = $_GET['ps-startdate'];
-	$enddate = $_GET['ps-enddate'];
+	$startdate = $_REQUEST['ps-startdate'];
+	$enddate = $_REQUEST['ps-enddate'];
 
 
 	include_once('library/config_read.php');

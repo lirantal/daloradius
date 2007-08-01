@@ -25,11 +25,11 @@
 	
 
 	if (isset($_POST['submit'])) {
-		$groupname = $_POST['groupname'];
-		$value = $_POST['value'];;
-		$valueOld = $_POST['valueOld'];;			
-		$op = $_POST['op'];;
-		$attribute = $_POST['attribute'];;
+		$groupname = $_REQUEST['groupname'];
+		$value = $_REQUEST['value'];;
+		$valueOld = $_REQUEST['valueOld'];;			
+		$op = $_REQUEST['op'];;
+		$attribute = $_REQUEST['attribute'];;
 
 			
 		include 'library/opendb.php';

@@ -29,10 +29,10 @@ function createPassword($length) {
 
 
 	if (isset($_POST['submit'])) {
-		$username_prefix = $_POST['username_prefix'];
-		$number = $_POST['number'];
-		$length_pass = $_POST['length_pass'];
-		$length_user = $_POST['length_user'];
+		$username_prefix = $_REQUEST['username_prefix'];
+		$number = $_REQUEST['number'];
+		$length_pass = $_REQUEST['length_pass'];
+		$length_user = $_REQUEST['length_user'];
 		
 		include 'library/opendb.php';
 	    include 'include/management/attributes.php';                            // required for checking if an attribute
