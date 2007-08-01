@@ -12,20 +12,20 @@
 
 
 if ($type == "daily") {
-	daily($username);
+	daily($username, $orderBy, $orderType);
 } elseif ($type == "monthly") {
-	monthly($username);
+	monthly($username, $orderBy, $orderType);
 } elseif ($type == "yearly") {
-	yearly($username);
+	yearly($username, $orderBy, $orderType);
 }
 
 
 
-function daily($username) {
+function daily($username, $orderBy, $orderType) {
 
 	include 'opendb.php';
 
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by day;";
+	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by day ORDER BY $orderBy $orderType;";
 
 
         $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
@@ -65,8 +65,16 @@ function daily($username) {
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Downloads count in MB</th>
-                        <th scope='col'> Day of month </th>
+                        <th scope='col'> Downloads count in MB
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=downloads&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=downloads&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> Day of month
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=desc\"> < </a>
+						</th>
                 </tr> </thread>";
 
 
@@ -90,11 +98,11 @@ function daily($username) {
 
 
 
-function monthly($username) {
+function monthly($username, $orderBy, $orderType) {
 
 	include 'opendb.php';
         
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month;";
+	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month ORDER BY $orderBy $orderType;";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$total_downloads = 0;		// initialize variables
@@ -133,8 +141,16 @@ function monthly($username) {
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Downloads count in MB </th>
-                        <th scope='col'> Month of year </th>
+                        <th scope='col'> Downloads count in MB
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=downloads&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=downloads&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> Month of year
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=month&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=month&orderType=desc\"> < </a>
+						</th>
                 </tr> </thread>";
 
         $i=0;
@@ -165,11 +181,11 @@ function monthly($username) {
 
 
 
-function yearly($username) {
+function yearly($username, $orderBy, $orderType) {
 
 	include 'opendb.php';
 
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year;";
+	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year ORDER BY $orderBy $orderType;";
 
         $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
@@ -207,8 +223,16 @@ function yearly($username) {
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Downloads count in MB</th>
-                        <th scope='col'> Year </th>
+                        <th scope='col'> Downloads count in MB
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=downloads&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=downloads&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> Year
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=desc\"> < </a>
+						</th>
                 </tr> </thread>";
 
 
