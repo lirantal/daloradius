@@ -2,10 +2,15 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "username";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+
+
 	
-        $username = $_POST['username'];
-        $type = $_POST['type'];
+        $username = $_REQUEST['username'];
+        $type = $_REQUEST['type'];
 
 
 
