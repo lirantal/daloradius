@@ -12,20 +12,20 @@
 
 
 if ($type == "daily") {
-	daily();
+	daily($orderBy, $orderType);
 } elseif ($type == "monthly") {
-	monthly();
+	monthly($orderBy, $orderType);
 } elseif ($type == "yearly") {
-	yearly();
+	yearly($orderBy, $orderType);
 }
 
 
 
-function daily() {
+function daily($orderBy, $orderType) {
 
 	include 'opendb.php';
 
-	$sql = "SELECT count(username) as numberoflogins, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by day;";
+	$sql = "SELECT count(username) as numberoflogins, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by day ORDER BY $orderBy $orderType;";
         $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$total_logins = 0;		// initialize variables
@@ -65,8 +65,16 @@ function daily() {
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Logins/Hitss count</th>
-                        <th scope='col'> Day of month </th>
+                        <th scope='col'> Logins/Hitss count
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=numberoflogins&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=numberoflogins&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> Day of month
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=day&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=day&orderType=desc\"> < </a>
+						</th>
                 </tr> </thread>";
 
         $i=0;
@@ -92,11 +100,11 @@ function daily() {
 
 
 
-function monthly() {
+function monthly($orderBy, $orderType) {
 
 	include 'opendb.php';
 
-        $sql = "SELECT count(username) as numberoflogins, monthname(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by month;";
+        $sql = "SELECT count(username) as numberoflogins, monthname(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by month ORDER BY $orderBy $orderType;";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$total_logins = 0;		// initialize variables
@@ -133,8 +141,16 @@ function monthly() {
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Logins/Hitss count</th>
-                        <th scope='col'> Month of year </th>
+                        <th scope='col'> Logins/Hits count
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=numberoflogins&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=numberoflogins&orderType=desc\"> < </a>
+						</th>
+                        <th scope='col'> Month of year
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=month&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=month&orderType=desc\"> < </a>
+						</th>
                 </tr> </thread>";
 
         $i=0;
@@ -162,11 +178,11 @@ function monthly() {
 
 
 
-function yearly() {
+function yearly($orderBy, $orderType) {
 
 	include 'opendb.php';
 
-	$sql = "SELECT count(username) as numberoflogins, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by year;";
+	$sql = "SELECT count(username) as numberoflogins, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by year ORDER BY $orderBy $orderType;";
         $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	$total_logins = 0;		// initialize variables
@@ -212,8 +228,16 @@ function yearly() {
         $i=0;
         foreach ($array_years as $a_year) {
                 echo "<tr>
-                        <td> $array_logins[$i] </td>
-                        <td> $a_year </td>
+                        <td> $array_logins[$i]
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=desc\"> < </a>
+						</th>
+                        <td> $a_year 
+						<br/>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=desc\"> < </a>
+						</th>
                 </tr>";
 
                 $i++;
