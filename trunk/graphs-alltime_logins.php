@@ -7,7 +7,7 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "numberoflogins";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
-
+	isset($_REQUEST['type']) ? $type = $_REQUEST['type'] : $type = "daily";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
