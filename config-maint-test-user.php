@@ -22,9 +22,9 @@
 		$nasport = $_REQUEST['nasport'];
 		$secret = $_REQUEST['secret'];
 
-		$actionStatus = "success";
+		$actionStatus = "informational";
 		$actionMsg = user_login_test($username, $password, $radius, $radiusport, $nasport, $secret);
-		$logAction = "Successfully performed user_login_test on user [$username] on page: ";	
+		$logAction = "Informative action performed on user [$username] on page: ";	
     }
 
 	
@@ -37,7 +37,7 @@
 
 <?php
 
-    include ("menu-config.php");
+    include ("menu-config-maint.php");
 
 ?>		
 		
