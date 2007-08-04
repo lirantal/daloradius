@@ -133,15 +133,15 @@
                 </tr>
 </thead>
 <tr><td>
-        <a href="config-maint-test-user.php?username=<?php echo $username ?>"> Test Connectivity </a>
+        <a class='novisit' href="config-maint-test-user.php?username=<?php echo $username ?>"> Test Connectivity </a>
 </td><td>
-        <a href="acct-username.php?username=<?php echo $username ?>"> Accounting </a>
+        <a class='novisit' href="acct-username.php?username=<?php echo $username ?>"> Accounting </a>
 </td><td>
-        <a href="graphs-overall_logins.php?type=monthly&username=<?php echo $username ?>"> Graphs - Logins </a>
+        <a class='novisit' href="graphs-overall_logins.php?type=monthly&username=<?php echo $username ?>"> Graphs - Logins </a>
 </td><td>
-        <a href="graphs-overall_download.php?type=monthly&username=<?php echo $username ?>"> Graphs - Downloads </a>
+        <a class='novisit' href="graphs-overall_download.php?type=monthly&username=<?php echo $username ?>"> Graphs - Downloads </a>
 </td><td>
-        <a href="graphs-overall_upload.php?type=monthly&username=<?php echo $username ?>"> Graphs - Uploads </a>
+        <a class='novisit' href="graphs-overall_upload.php?type=monthly&username=<?php echo $username ?>"> Graphs - Uploads </a>
 </td></tr>
 </table>
 <br/>
