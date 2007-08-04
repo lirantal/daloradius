@@ -11,12 +11,30 @@ For release information and license, read LICENSE.
 FAQs
 ====
 
-1. After I login with the administrator account I receive an error page
-   "Fatal error: Call to undefined function: mysql_connect()"
+	General
+	=======
 
-   This is because the mysql.so extension isn't loaded in /etc/php5/apache2/php.ini
-   To fix it, edit that file and comment out the mysql.so and possibly the gd.so modules
-   then restart apache2.
+	1. After I login with the administrator account I receive an error page
+	   "Fatal error: Call to undefined function: mysql_connect()"
+
+	   This is because the mysql.so extension isn't loaded in /etc/php5/apache2/php.ini
+	   To fix it, edit that file and comment out the mysql.so and possibly the gd.so modules
+	   then restart apache2.
 
 
 
+
+   
+   
+	Config-Maintenance
+	==================
+	
+	1. When I test for user connectivity, after filling all the information in the table fields
+	   and pressing the Apply button the page seems to be loading forever and never stops to show
+	   results. Why is that?
+	   
+	   Check your radius server to be up and running and properly configured to reply to the
+	   radtest program because otherwise, radtest will continue to send Access-Request packets
+	   until the radius server replies back, which in this case will send packets forever.
+	   
+	   
