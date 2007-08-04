@@ -18,7 +18,7 @@ function user_login_test($user,$pass,$radius,$radiusport,$nasport,$secret){
 
     $tmp = " ".$user." ".$pass." ".$radius.":".$radiusport." ".$nasport." ".$secret;
 
-	$output = system("radtest -d $tmp");
+	$res = shell_exec("radtest $tmp");
 
 	## todo better layout
 	$output_html = nl2br($output);
