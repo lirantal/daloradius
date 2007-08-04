@@ -65,7 +65,7 @@ EOF;
         }
 
 
-        if ($actionStatus == "informative") {
+        if ($actionStatus == "informational") {
                 echo <<<EOF
                         <div id="contentnorightbar">
                         <h8 id="Intro"> Informational </h8>
