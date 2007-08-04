@@ -18,11 +18,11 @@ function user_login_test($user,$pass,$radius,$radiusport,$nasport,$secret){
 
     $tmp = " ".$user." ".$pass." ".$radius.":".$radiusport." ".$nasport." ".$secret;
 
-	system("radtest -d $tmp", $re);
+	$output = system("radtest -d $tmp");
 
 	## todo better layout
-	$re2 = nl2br($re);
-	return $re2;
+	$output_html = nl2br($output);
+	return $output_html;
 }
 
 
