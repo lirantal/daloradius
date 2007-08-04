@@ -27,6 +27,14 @@ Prerequisites
  mysql5		5.0.22-0ubuntu6.06
 
 
+ 
+ daloRADIUS has also been deployed on Windows successfully and is under
+ testing and more QA work, thanks to Gustavo Mariani.
+ To see Gustavo's installation notes regarding a Microsoft Windows deployment
+ please attend to INSTALL.win
+
+
+ 
  DEBIAN USERS
  ============
 
