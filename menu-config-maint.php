@@ -65,4 +65,18 @@ EOF;
         }
 
 
+        if ($actionStatus == "informative") {
+                echo <<<EOF
+                        <div id="contentnorightbar">
+                        <h8 id="Intro"> Informational </h8>
+                        <br/><br/>
+                        <font color='#99F'>
+EOF;
+        echo $actionMsg;
+
+        echo "</font></div>";
+
+        }
+
+
 ?>
