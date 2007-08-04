@@ -387,6 +387,15 @@ h3 {
 }
 
 
+#contentnorightbar h7 {
+        font:150% Arial;
+        color:#666;
+        padding:16px 0 0 0;
+        border:none;
+}
+
+
+
 form {
 	padding:10px;
 	border:1px solid #f6f6f6;
