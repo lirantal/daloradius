@@ -1,6 +1,6 @@
 <?php
 
-    include ("menu-config.php");
+    include ("menu-config-maint.php");
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
