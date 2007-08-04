@@ -21,7 +21,7 @@ function user_login_test($user,$pass,$radius,$radiusport,$nasport,$secret){
 	$res = shell_exec("radtest $tmp");
 
 	## todo better layout
-	$output_html = nl2br($output);
+	$output_html = nl2br($res);
 	return $output_html;
 }
 
