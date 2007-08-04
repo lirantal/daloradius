@@ -3,13 +3,12 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-
-	$username = $_REQUEST['username'];
-	$password = $_REQUEST['password'];
-	$radius = $_REQUEST['radius'];
-	$radiusport = $_REQUEST['radiusport'];
-	$nasport = $_REQUEST['nasport'];
-	$secret = $_REQUEST['secret'];
+	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
+	isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
+	isset($_REQUEST['radius']) ? $radius = $_REQUEST['radius'] : $radius = "";
+	isset($_REQUEST['radiusport']) ? $radiusport = $_REQUEST['radiusport'] : $radiusport = "";
+	isset($_REQUEST['nasport']) ? $nasport = $_REQUEST['nasport'] : $nasport = "";
+	isset($_REQUEST['secret']) ? $secret = $_REQUEST['secret'] : $secret = "";
 		
     if (isset($_REQUEST['submit'])) {
 
