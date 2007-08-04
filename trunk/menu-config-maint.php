@@ -68,7 +68,7 @@ EOF;
         if ($actionStatus == "informational") {
                 echo <<<EOF
                         <div id="contentnorightbar">
-                        <h7 id="Intro"> Informational </h7>
+                        <h2 id="Intro"> Informational </h2>
                         <br/><br/>
                         <font color='#666'>
 EOF;
