@@ -137,11 +137,11 @@
 </td><td>
         <a href="acct-username.php?username=<?php echo $username ?>"> Accounting </a>
 </td><td>
-        <a href="graphs-overall_logins.php?username=<?php echo $username ?>"> Graphs - Logins </a>
+        <a href="graphs-overall_logins.php?type=monthly&username=<?php echo $username ?>"> Graphs - Logins </a>
 </td><td>
-        <a href="graphs-overall_download.php?username=<?php echo $username ?>"> Graphs - Downloads </a>
+        <a href="graphs-overall_download.php?type=monthly&username=<?php echo $username ?>"> Graphs - Downloads </a>
 </td><td>
-        <a href="graphs-overall_upload.php?username=<?php echo $username ?>"> Graphs - Uploads </a>
+        <a href="graphs-overall_upload.php?type=monthly&username=<?php echo $username ?>"> Graphs - Uploads </a>
 </td></tr>
 </table>
 <br/>
