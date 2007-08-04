@@ -7,6 +7,11 @@ release 1.0 - August 2007
 	- fixed bug 1757441 - ComboBox layout in Language Configuration
 	- fixed bug 1763584 - in IE at javascript function randomPassword() and randomUsername()
 	- added  asc/desc sorting capabilities to tables in management, accounting and graphs
+	- improved support for failure/sucess messages on forms
+	- added quick-link to delete hotspots from the hotspot listing page
+	- added new maintenance page to use the 'radtest' program to check for user
+	connectivity (new feature introduced by Giso Kegal).
+	- added a quick-links access called the tool-box to edit user page (mng-edit.php)
 	
 	
 	
