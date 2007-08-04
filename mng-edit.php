@@ -124,11 +124,35 @@
 				<p>
 				<?php echo $l[captions][mngedit] ?>
 				</p>
+
+<br/>
+<table border='2' class='table1'>
+<thead>
+                <tr>
+                <th colspan='10'>Tool-Box</th>
+                </tr>
+</thead>
+<tr><td>
+        <a href="config-maint-test-user.php?username=<?php echo $username ?>"> Test Connectivity </a>
+</td><td>
+        <a href="acct-username.php?username=<?php echo $username ?>"> Accounting </a>
+</td><td>
+        <a href="graphs-overall_logins.php?username=<?php echo $username ?>"> Graphs - Logins </a>
+</td><td>
+        <a href="graphs-overall_download.php?username=<?php echo $username ?>"> Graphs - Downloads </a>
+</td><td>
+        <a href="graphs-overall_upload.php?username=<?php echo $username ?>"> Graphs - Uploads </a>
+</td></tr>
+</table>
+<br/>
+
+
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 				<input type="hidden" value="<?php echo $username ?>" name="username" />
 
 <?php
+
 
 		echo "<table border='2' class='table1'>";
 	        echo "
