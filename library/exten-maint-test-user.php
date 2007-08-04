@@ -14,9 +14,9 @@
 *******************************************************************/
 
  
-function user_login_test($user,$pass ){
+function user_login_test($user,$pass,$radius,$radiusport,$nasport,$secret){
 
-    $tmp = " ".$user." ".$pass." ".$configValues['CONFIG_host_ip'].":".$configValues['CONFIG_host_port']." ".$configValues['CONFIG_nas_port']." ".$configValues['CONFIG_secret'];
+    $tmp = " ".$user." ".$pass." ".$radius.":".$radiusport." ".$nasport." ".$secret;
 
 	system("radtest -d $tmp", $re);
 
