@@ -55,6 +55,13 @@
 		$actionMsg = "no user was entered, please specify a username to edit";
 	}
 
+	
+	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
+	*/
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' AND Attribute like '%Password'";
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$row = mysql_fetch_array($res);
+	$user_password = $row['Value'];
 
 	/* fill-in all the user radcheck attributes */
 
@@ -65,7 +72,7 @@
 	$arrOp = array();
 	$arrValue = array();
 
-        while($nt = mysql_fetch_array($res)) {
+    while($nt = mysql_fetch_array($res)) {
 		array_push($arrAttr, $nt['Attribute']);
 		array_push($arrOp, $nt['op']);
 		array_push($arrValue, $nt['Value']);
@@ -82,7 +89,7 @@
 	$arrOpReply = array();
 	$arrValueReply = array();
 
-        while($nt = mysql_fetch_array($res)) {
+    while($nt = mysql_fetch_array($res)) {
 		array_push($arrAttrReply, $nt['Attribute']);
 		array_push($arrOpReply, $nt['op']);
 		array_push($arrValueReply, $nt['Value']);
@@ -133,7 +140,7 @@
                 </tr>
 </thead>
 <tr><td>
-        <a class='novisit' href="config-maint-test-user.php?username=<?php echo $username ?>"> Test Connectivity </a>
+        <a class='novisit' href="config-maint-test-user.php?username=<?php echo $username ?>&password=<?php echo $user_password ?>"> Test Connectivity </a>
 </td><td>
         <a class='novisit' href="acct-username.php?username=<?php echo $username ?>"> Accounting </a>
 </td><td>
