@@ -63,8 +63,10 @@
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType);	
-	setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 	/* END */
 	
 	
