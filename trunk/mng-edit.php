@@ -136,7 +136,7 @@
 <table border='2' class='table1'>
 <thead>
                 <tr>
-                <th colspan='10'>Tool-Box</th>
+                <th class='info' colspan='10'>Tool-Box</th>
                 </tr>
 </thead>
 <tr><td>
