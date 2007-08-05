@@ -46,9 +46,13 @@
 
 <?php
 
-        
+    include 'include/management/pages_numbering.php';
     include 'library/opendb.php';
 
+	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
+    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password')";
+    $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$numrows = mysql_num_rows($res);	
 
 	/* we are searching for both kind of attributes for the password, being User-Password, the more
 	   common one and the other which is Password, this is also done for considerations of backwards
@@ -57,6 +61,14 @@
     $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password') ORDER BY $orderBy $orderType";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
+	/* START - Related to pages_numbering.php */
+	$maxPage = ceil($numrows/$rowsPerPage);
+	$self = $_SERVER['PHP_SELF'];
+	setupLinks($pageNum, $maxPage);	
+	setupNumbering($numrows, $rowsPerPage, $pageNum);
+	/* END */
+	
+	
         echo "<table border='2' class='table1'>\n";
         echo "
                         <thead>
