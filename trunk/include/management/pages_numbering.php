@@ -12,17 +12,15 @@
 /* Should be called after the include for opendb and before the $sql decleration
 and execution. */
 
-$rowsPerPage = 5;
+$rowsPerPage = $configValues['CONFIG_IFACE_TABLES_LISTING'];
 $pageNum = 1;
 
 if(isset($_REQUEST['page'])) {
-	$pageNum = $_GET['page'];
+	$pageNum = $_REQUEST['page'];
 }
 
 $offset = ($pageNum - 1) * $rowsPerPage;
 $self = $_SERVER['PHP_SELF'];
-
-
 
 function setupLinks($pageNum, $maxPage, $orderBy, $orderType) {
 
