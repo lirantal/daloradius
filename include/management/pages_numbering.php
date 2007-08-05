@@ -20,11 +20,11 @@ if(isset($_REQUEST['page'])) {
 }
 
 $offset = ($pageNum - 1) * $rowsPerPage;
+$self = $_SERVER['PHP_SELF'];
 
 
 
-
-function setupLinks($pageNum, $maxPage) {
+function setupLinks($pageNum, $maxPage, $orderBy, $orderType) {
 
 	// print 'previous' link only if we're not
 	// on page one
@@ -59,14 +59,14 @@ echo "<br/><br/>";
 
 
 
-function setupNumbering($numrows, $rowsPerPage, $pageNum) {
+function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) {
 
 	$numofpages = $numrows / $rowsPerPage;
 	for ($i = 1; $i <= $numofpages; $i++) {
 		if($i == $pageNum) {
 			echo("&nbsp;".$i."&nbsp;");
 		} else {
-			echo("&nbsp; <a href=\"$PHP_SELF?page=$i\">$i</a>&nbsp;");
+			echo("&nbsp; <a href=\"$PHP_SELF?page=$i&orderBy=$orderBy&orderType=$orderType\">$i</a>&nbsp;");
 		}
 	}
 
