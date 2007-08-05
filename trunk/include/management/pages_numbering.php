@@ -48,9 +48,40 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType) {
 	}
 
 
-// print the page navigation link
-echo $first . $prev . " &nbsp;&nbsp;&nbsp; page &nbsp; <strong>$pageNum</strong> of <strong>$maxPage</strong> &nbsp;&nbsp;&nbsp; " . $next . $last;
-echo "<br/><br/>";
+// print the page navigation link (simple view)
+//echo $first . $prev . " &nbsp;&nbsp;&nbsp; page &nbsp; <strong>$pageNum</strong> of <strong>$maxPage</strong> &nbsp;&nbsp;&nbsp; " . $next . $last;
+//echo "<br/><br/>";
+
+
+// print the page navigation links in better looking layout
+echo <<<EOT
+<br/>
+<table border='2' class='table1'>
+<thead>
+                <tr>
+                <th colspan='10'>Navigation Links</th>
+                </tr>
+</thead>
+<tr><td>
+        $first
+</td><td>
+        $prev
+</td><td>
+        <strong> $pageNum </strong> of <strong> $maxPage </strong>
+</td><td>
+        $next
+</td><td>
+        $last
+</td></tr>
+</table>
+<br/>
+
+
+
+
+EOT;
+
+
 
 }
 
