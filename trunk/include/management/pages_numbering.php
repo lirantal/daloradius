@@ -30,9 +30,9 @@ function setupLinks($pageNum, $maxPage) {
 	// on page one
 	if ($pageNum > 1)       {
 		$page = $pageNum - 1;
-		$prev = " <a href=\"$self?page=$page\">[Prev]</a> ";
+		$prev = " <a href=\"$self?page=$page&orderBy=$orderBy&orderType=$orderType\">[Prev]</a> ";
 
-		$first = " <a href=\"$self?page=1\">[First Page]</a> ";
+		$first = " <a href=\"$self?page=1&orderBy=$orderBy&orderType=$orderType\">[First Page]</a> ";
 	} else {
 		$prev  = ' [Prev] ';       // we're on page one, don't enable 'previous' link
 		$first = ' [First Page] '; // nor 'first page' link
@@ -41,9 +41,9 @@ function setupLinks($pageNum, $maxPage) {
 
 	if ($pageNum < $maxPage) {
 		$page = $pageNum + 1;
-		$next = " <a href=\"$self?page=$page\">[Next]</a> ";
+		$next = " <a href=\"$self?page=$page&orderBy=$orderBy&orderType=$orderType\">[Next]</a> ";
 
-		$last = " <a href=\"$self?page=$maxPage\">[Last Page]</a> ";
+		$last = " <a href=\"$self?page=$maxPage&orderBy=$orderBy&orderType=$orderType\">[Last Page]</a> ";
 	} else {
 		$next = ' [Next] ';      // we're on the last page, don't enable 'next' link
 		$last = ' [Last Page] '; // nor 'last page' link
