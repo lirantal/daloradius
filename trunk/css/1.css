@@ -493,6 +493,12 @@ thead th {
 	text-align: center
 }
 
+thead th.info {
+        background-color: #333;
+        color: #FFFFFF;
+        text-align: center
+}
+
 tbody th {
 	padding: 20px 10px
 }
