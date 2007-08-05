@@ -212,6 +212,7 @@ $l[FormField][configlogging.php][ActionsLogging] = "Logging of Actions (form sub
 $l[FormField][configlogging.php][FilenameLogging] = "Logging filename (full path)";
 
 $l[FormField][configinterface.php][PasswordHidden] = "Enable Password Hiding (asterisk will be shown)";
+$l[FormField][configinterface.php][TablesListing] = "Rows/Records per Tables Listing page";
 
 $l[FormField][mngradgroupreplydel.php][ToolTip][Value] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 $l[FormField][mngradnasnew.php][ToolTip][NasShortname] = "(descriptive name)";
