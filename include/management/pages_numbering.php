@@ -61,6 +61,9 @@ echo <<<EOT
                 </tr>
 </thead>
 <tr><td>
+</td><td>
+</td><td>
+</td><td>
         $first
 </td><td>
         $prev
