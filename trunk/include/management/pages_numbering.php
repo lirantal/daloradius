@@ -92,6 +92,7 @@ EOT;
 function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) {
 
 	$numofpages = $numrows / $rowsPerPage;
+	echo "<center>";
 	for ($i = 1; $i <= $numofpages + 1; $i++) {
 		if($i == $pageNum) {
 			echo("&nbsp;".$i."&nbsp;");
@@ -99,6 +100,7 @@ function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) 
 			echo("&nbsp; <a href=\"$self?page=$i&orderBy=$orderBy&orderType=$orderType\">$i</a>&nbsp;");
 		}
 	}
+	echo "</center>";
 
 }
 
