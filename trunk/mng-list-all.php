@@ -63,9 +63,8 @@
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	$self = $_SERVER['PHP_SELF'];
-	setupLinks($pageNum, $maxPage);	
-	setupNumbering($numrows, $rowsPerPage, $pageNum);
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType);	
+	setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 	/* END */
 	
 	
