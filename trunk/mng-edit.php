@@ -140,6 +140,9 @@
                 </tr>
 </thead>
 <tr><td>
+</td><td>
+</td><td>
+</td><td>
         <a class='novisit' href="config-maint-test-user.php?username=<?php echo $username ?>&password=<?php echo $user_password ?>"> Test Connectivity </a>
 </td><td>
         <a class='novisit' href="acct-username.php?username=<?php echo $username ?>"> Accounting </a>
