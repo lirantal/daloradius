@@ -13,6 +13,8 @@
 
 		if (isset($_REQUEST['config_iface_pass_hidden']))
 			$configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = $_REQUEST['config_iface_pass_hidden'];
+		if (isset($_REQUEST['config_iface_tableslisting']))
+			$configValues['CONFIG_IFACE_TABLES_LISTING'] = $_REQUEST['config_iface_tableslisting'];
 			
             include ("library/config_write.php");
     }
@@ -53,6 +55,16 @@
 						<option value="yes"> yes </option>
 						</select>
 						</font>
+</td></tr>
+<tr><td>
+
+						<?php if (!($configValues['CONFIG_IFACE_TABLES_LISTING'])) { echo "<font color='#FF0000'>";  }?>
+
+						<b><?php echo $l[FormField][configinterface.php][TablesListing] ?></b>
+</td><td>
+						<input value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING'] ?>" name="config_iface_tableslisting" />
+						</font>
+
 </td></tr>
 
 
