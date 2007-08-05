@@ -57,7 +57,7 @@ echo <<<EOT
 <table border='2' class='table1'>
 <thead>
                 <tr>
-                <th colspan='10'>Navigation Links</th>
+                <th class='info' colspan='10'>Navigation Links</th>
                 </tr>
 </thead>
 <tr><td>
@@ -93,7 +93,7 @@ function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) 
 		if($i == $pageNum) {
 			echo("&nbsp;".$i."&nbsp;");
 		} else {
-			echo("&nbsp; <a href=\"$PHP_SELF?page=$i&orderBy=$orderBy&orderType=$orderType\">$i</a>&nbsp;");
+			echo("&nbsp; <a href=\"$self?page=$i&orderBy=$orderBy&orderType=$orderType\">$i</a>&nbsp;");
 		}
 	}
 
