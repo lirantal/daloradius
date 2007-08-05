@@ -92,7 +92,7 @@ EOT;
 function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) {
 
 	$numofpages = $numrows / $rowsPerPage;
-	for ($i = 1; $i <= $numofpages; $i++) {
+	for ($i = 1; $i <= $numofpages + 1; $i++) {
 		if($i == $pageNum) {
 			echo("&nbsp;".$i."&nbsp;");
 		} else {
