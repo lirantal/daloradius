@@ -110,7 +110,7 @@
 
 						<center>						
 						<br/>
-						<input type="submit" name="submit" value="Apply" />
+						<input type="submit" name="submit" value="Perform Test" />
 						</center>						
 
 
