@@ -95,7 +95,7 @@ function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) 
 	echo "<center>";
 	for ($i = 1; $i <= $numofpages + 1; $i++) {
 		if($i == $pageNum) {
-			echo("&nbsp;".$i."&nbsp;");
+			echo("&nbsp;<font color='#FF0000'>".$i."</font>&nbsp;");
 		} else {
 			echo("&nbsp; <a href=\"$self?page=$i&orderBy=$orderBy&orderType=$orderType\">$i</a>&nbsp;");
 		}
