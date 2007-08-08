@@ -45,7 +45,7 @@
 	$numrows = mysql_num_rows($res);
 
 	
-	$sql = "SELECT distinct(UserName), GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." GROUP BY UserName ORDER BY $orderBy $orderType  LIMIT $offset, $rowsPerPage;;";
+	$sql = "SELECT distinct(UserName), GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	
 	/* START - Related to pages_numbering.php */
