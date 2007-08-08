@@ -61,52 +61,52 @@
 	/* END */
 	echo "<br/>";
 
-        echo "<table border='2' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='15'>".$l[all][HotSpots]."</th>
-                                </tr>
-                        </thead>
-                ";
+	echo "<table border='2' class='table1'>\n";
+	echo "
+					<thead>
+							<tr>
+							<th colspan='15'>".$l[all][HotSpots]."</th>
+							</tr>
+					</thead>
+			";
 
-        echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][ID]."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][HotSpot]."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][MACAddress]."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Geocode]."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Action]." </th>
-                </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
-                echo "<tr>
-                        <td> $nt[0] </td>
-                        <td> $nt[1] </td>
-                        <td> $nt[2] </td>
-                        <td> $nt[3] </td>
-                        <td> <a href='mng-hs-edit.php?name=$nt[1]'> ".$l[all][edit]." </a> </td>
-                        <td> <a href='mng-hs-del.php?name=$nt[1]'> ".$l[all][del]." </a> </td>
-                </tr>";
-        }
-        echo "</table>";
+	echo "<thread> <tr>
+					<th scope='col'> ".$l[all][ID]."
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][HotSpot]."
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][MACAddress]."
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Geocode]."
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Action]." </th>
+			</tr> </thread>";
+	while($nt = mysql_fetch_array($res)) {
+		echo "<tr>
+				<td> $nt[0] </td>
+				<td> $nt[1] </td>
+				<td> $nt[2] </td>
+				<td> $nt[3] </td>
+				<td> <a href='mng-hs-edit.php?name=$nt[1]'> ".$l[all][edit]." </a> </td>
+				<td> <a href='mng-hs-del.php?name=$nt[1]'> ".$l[all][del]." </a> </td>
+		</tr>";
+	}
+	echo "</table>";
 
-        mysql_free_result($res);
-        include 'library/closedb.php';
+	mysql_free_result($res);
+	include 'library/closedb.php';
 ?>
 				
 						

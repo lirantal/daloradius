@@ -38,55 +38,70 @@
 
 <?php
 
-        
-        include 'library/opendb.php';
+	
+	include 'library/opendb.php';
+	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username';";
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$numrows = mysql_num_rows($res);	
 
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' ORDER BY $orderBy $orderType;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
-        echo "<table border='2' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".$l[all][Records]."</th>
-                                </tr>
-                        </thead>
-                ";
+	/* START - Related to pages_numbering.php */
+	$maxPage = ceil($numrows/$rowsPerPage);
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+	/* END */
+	echo "<br/>";
+	
+	echo "<table border='2' class='table1'>\n";
+	echo "
+					<thead>
+							<tr>
+							<th colspan='10'>".$l[all][Records]."</th>
+							</tr>
+					</thead>
+			";
 
-        echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][Username]."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Groupname]."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Priority]."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Action]." </th>
-                </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
-                echo "<tr>
-                        <td> $nt[UserName] </td>
-                        <td> $nt[GroupName] </td>
-                        <td> $nt[priority] </td>
-                        <td> <a href='mng-rad-usergroup-edit.php?username=$nt[UserName]&group=$nt[GroupName]'> ".$l[all][edit]." </a>
-                             <a href='mng-rad-usergroup-del.php?username=$nt[UserName]&group=$nt[GroupName]'> ".$l[all][del]." </a>
-                             </td>
+	echo "<thread> <tr>
+					<th scope='col'> ".$l[all][Username]."
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Groupname]."
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Priority]."
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Action]." </th>
+			</tr> </thread>";
+	while($nt = mysql_fetch_array($res)) {
+		echo "<tr>
+				<td> $nt[UserName] </td>
+				<td> $nt[GroupName] </td>
+				<td> $nt[priority] </td>
+				<td> <a href='mng-rad-usergroup-edit.php?username=$nt[UserName]&group=$nt[GroupName]'> ".$l[all][edit]." </a>
+					 <a href='mng-rad-usergroup-del.php?username=$nt[UserName]&group=$nt[GroupName]'> ".$l[all][del]." </a>
+					 </td>
 
-                </tr>";
-        }
-        echo "</table>";
+		</tr>";
+	}
+	echo "</table>";
 
-        mysql_free_result($res);
-        include 'library/closedb.php';
+	mysql_free_result($res);
+	include 'library/closedb.php';
 ?>
 
 
