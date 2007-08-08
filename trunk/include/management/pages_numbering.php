@@ -22,14 +22,14 @@ if(isset($_REQUEST['page'])) {
 $offset = ($pageNum - 1) * $rowsPerPage;
 $self = $_SERVER['PHP_SELF'];
 
-function setupLinks($pageNum, $maxPage, $orderBy, $orderType) {
+function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $request2="", $request3="") {
 
 	// print 'previous' link only if we're not
 	// on page one
 	if ($pageNum > 1)       {
 		$page = $pageNum - 1;
-		$prev = " <a class='novisit' href=\"$self?page=$page&orderBy=$orderBy&orderType=$orderType\">[Prev]</a> ";
-		$first = "<a class='novisit' href=\"$self?page=1&orderBy=$orderBy&orderType=$orderType\">[First Page]</a> ";
+		$prev = " <a class='novisit' href=\"$self?page=$page&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[Prev]</a> ";
+		$first = "<a class='novisit' href=\"$self?page=1&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[First Page]</a> ";
 	} else {
 		$prev  = ' [Prev] ';       // we're on page one, don't enable 'previous' link
 		$first = ' [First Page] '; // nor 'first page' link
@@ -38,8 +38,8 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType) {
 
 	if ($pageNum < $maxPage) {
 		$page = $pageNum + 1;
-		$next = " <a class='novisit' href=\"$self?page=$page&orderBy=$orderBy&orderType=$orderType\">[Next]</a> ";
-		$last = " <a class='novisit' href=\"$self?page=$maxPage&orderBy=$orderBy&orderType=$orderType\">[Last Page]</a> ";
+		$next = " <a class='novisit' href=\"$self?page=$page&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[Next]</a> ";
+		$last = " <a class='novisit' href=\"$self?page=$maxPage&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[Last Page]</a> ";
 	} else {
 		$next = ' [Next] ';      // we're on the last page, don't enable 'next' link
 		$last = ' [Last Page] '; // nor 'last page' link
@@ -89,7 +89,7 @@ EOT;
 
 
 
-function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) {
+function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {
 
 	$numofpages = $numrows / $rowsPerPage;
 	echo "<center>";
@@ -97,7 +97,7 @@ function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType) 
 		if($i == $pageNum) {
 			echo("&nbsp;<strong><font color='#FF0000'>".$i."</font></strong>&nbsp;");
 		} else {
-			echo("&nbsp; <a href=\"$self?page=$i&orderBy=$orderBy&orderType=$orderType\">$i</a>&nbsp;");
+			echo("&nbsp; <a href=\"$self?page=$i&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">$i</a>&nbsp;");
 		}
 	}
 	echo "</center>";
