@@ -58,7 +58,8 @@
 	
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-	/* END */	
+	/* END */
+	echo "<br/>";
 
         echo "<table border='2' class='table1'>\n";
         echo "
