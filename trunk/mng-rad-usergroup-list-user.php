@@ -53,10 +53,10 @@
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType, "&username=$username");
 	
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, "&username=$username");
 	/* END */
 	echo "<br/>";
 	
