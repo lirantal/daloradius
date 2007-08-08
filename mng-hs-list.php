@@ -42,9 +42,23 @@
 
         
     include 'library/opendb.php';
+	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ORDER BY $orderBy $orderType;";
+	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].";";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$numrows = mysql_num_rows($res);	
+
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	
+	/* START - Related to pages_numbering.php */
+	$maxPage = ceil($numrows/$rowsPerPage);
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+	/* END */	
 
         echo "<table border='2' class='table1'>\n";
         echo "
