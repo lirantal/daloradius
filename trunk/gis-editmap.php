@@ -4,7 +4,7 @@
     $operator = $_SESSION['operator_user'];
 
     if (isset($_REQUEST['type']))
-	$type = $_REQUEST['type'];
+		$type = $_REQUEST['type'];
     else 
         $type = "";
 
@@ -15,19 +15,15 @@
     include 'library/opendb.php';
 
 	if ($type == "add") {
-		$hotspot_name = $_REQUEST['hotspotname'];
- 		$hotspot_mac = $_REQUEST['hotspotmac'];
-		$hotspot_geo = $_REQUEST['hotspotgeo'];
+		(isset($_REQUEST['hotspotname'])) ? $hotspot_name = $_REQUEST['hotspotname'] : $hotspot_name = " ";
+		(isset($_REQUEST['hotspotmac'])) ? $hotspot_mac = $_REQUEST['hotspotmac'] : $hotspot_mac = " ";
+		(isset($_REQUEST['hotspotgeo'])) ? $hotspot_geo = $_REQUEST['hotspotgeo'] : $hotspot_geo = " ";
 
-		if (!$hotspot_geo) { $hotspot_geo = " "; }
-		if (!$hotspot_name) { $hotspot_geo = " "; }
-		if (!$hotspot_mac) { $hotspot_geo = " "; }
+		$hotspot_geo = substr($hotspot_geo, 1);
+		$hotspot_geo = substr($hotspot_geo, 0, strlen($hotspot_geo)-1);
 
-	        $hotspot_geo = substr($hotspot_geo, 1);
-	        $hotspot_geo = substr($hotspot_geo, 0, strlen($hotspot_geo)-1);
-	
-        	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
-	        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
+		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 		$actionStatus = "success";
 		$actionMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
@@ -35,8 +31,8 @@
 	}
 
 	if ($type == "del") {
-		$hotspot_name = $_REQUEST['hotspotname'];
-		
+		(isset($_REQUEST['hotspotname'])) ? $hotspot_name = $_REQUEST['hotspotname'] : $hotspot_name = " ";
+			
 		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$hotspot_name'";
 		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
@@ -45,7 +41,7 @@
 
 	}		
 
-        include 'library/closedb.php';
+	include 'library/closedb.php';
 		
 ?>
 
