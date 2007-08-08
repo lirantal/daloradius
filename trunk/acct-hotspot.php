@@ -53,10 +53,10 @@ $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&hotspot=$hotspot");
 	
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&hotspot=$hotspot");
 	/* END */
 	echo "<br/>";
 
