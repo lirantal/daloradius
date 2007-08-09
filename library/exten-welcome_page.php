@@ -10,19 +10,13 @@
 *******************************************************************/
 
 echo "
-
-<br/><br/>
-<br/>
 <center>
+
 <h2> daloRADIUS Web Management Server </h2>
 <h3> version svn-trunk </h3>
-<br/><br/>
-<h4> Liran Tal <br/>
-     liran@enginx.com  <br/>
-</h4>
-
-
-<br/><br/>
+<h4> <a href=\"mailto:liran.tal@gmail.com\"> Liran Tal </a> </h4>
+<br/><br/><br/>
+<img src='images/daloradius_logo.jpg' border=0 />
 </center>
 
 ";
