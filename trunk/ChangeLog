@@ -17,9 +17,11 @@ release 1.0 - August 2007
 	  by Gustavo Mariani
 	- added new feature as requested by Giso Kegal which provides tables listing across
 	  multiple pages and easy numbering links to access spanned-pages.
-	
-	
-	
+	- added Igor Grushko's official daloRADIUS logos!
+	- added new include/common/calcs.php page for various calculations required on several
+	  pages like accounting, this provides better readable time in h:m:s format and conversion
+	  of bytes to megabytes for download/upload traffic.
+
 
 
 release 0.9 - July 2007
