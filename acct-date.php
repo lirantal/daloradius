@@ -41,6 +41,7 @@
 <?php
 
 	include 'library/opendb.php';
+	include 'include/common/calcs.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
@@ -147,7 +148,7 @@
 				<td> $nt[3] </td>
 				<td> $nt[4] </td>
 				<td> $nt[5] </td>
-				<td> $nt[6] </td>
+				<td> ".seconds2time($nt[6], true)." </td>
 				<td> $nt[7] </td>
 				<td> $nt[8] </td>
 				<td> $nt[9] </td>
