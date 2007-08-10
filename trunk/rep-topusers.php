@@ -107,8 +107,8 @@ $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_
 				<td> $nt[2] </td>
 				<td> $nt[3] </td>
 				<td> ".seconds2time($nt[4], true)." </td>
-				<td> $nt[5] </td>
-				<td> $nt[6] </td>
+				<td> $nt[5] - ".bytes2megabytes($nt[5])."Mb </td>
+				<td> $nt[6] - ".bytes2megabytes($nt[6])."Mb </td>
 				<td> $nt[7] </td>
 				<td> $nt[8] </td>
 		</tr>";
