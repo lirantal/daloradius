@@ -137,8 +137,8 @@
                         <td> $nt[4] </td>
                         <td> $nt[5] </td>
                         <td> ".seconds2time($nt[6], true)." </td>
-                        <td> $nt[7] </td>
-                        <td> $nt[8] </td>
+                        <td> $nt[7] - ".bytes2megabytes($nt[7])."Mb </td>
+                        <td> $nt[8] - ".bytes2megabytes($nt[8])."Mb </td>
                         <td> $nt[9] </td>
                         <td> $nt[10] </td>
                         <td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a> </td>
