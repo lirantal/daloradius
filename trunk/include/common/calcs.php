@@ -16,7 +16,7 @@ $minutes = 60;
 $h = intval($seconds / $hours);
 $s_remaining = ($seconds - ($h * $hours));
 $m = intval($s_remaining / $minutes);
-$s = ($s_remaining - ($m * minutes));
+$s = ($s_remaining - ($m * $minutes));
 
 $myTime = $h.":".$m.":".$s;
 return $myTime;
