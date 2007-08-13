@@ -1,3 +1,3 @@
 <?
-include ("lang/en.php");
+include ("lang/ru.php");
 ?>
