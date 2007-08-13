@@ -100,9 +100,9 @@
 			</tr> </thread>";
 	while($nt = mysql_fetch_array($res)) {
 			echo "<tr>
-					<td> $nt[id] </td>
-					<td> $nt[UserName] </td>
-					<td> $nt[Value] </td>
+					<td> $nt[2] </td>
+					<td> $nt[0] </td>
+					<td> $nt[1] </td>
 					<td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a>
 					 <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
 			 </td>
