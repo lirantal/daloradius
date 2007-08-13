@@ -52,11 +52,11 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT id, distinct(Username), value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName";
+	$sql = "SELECT distinct(Username), value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");	
 	$numrows = mysql_num_rows($res);
 
-	$sql = "SELECT id, distinct(Username), value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$sql = "SELECT distinct(Username), value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	
