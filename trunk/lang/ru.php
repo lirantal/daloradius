@@ -70,7 +70,7 @@ $l[all][Geocode] = "Геокод";
 $l[all][edit] = "править";
 $l[all][del] = "удалить";
 
-$l[Intro][acctactive.php] = "Active Records Accounting";
+$l[Intro][acctactive.php] = "Активные аккаунтинг-записи";
 $l[Intro][acctall.php] = "Статистика пользователей";
 $l[Intro][acctdate.php] = "Статистика пользователей";
 $l[Intro][accthotspot.php] = "Статистика точек доступа";
@@ -88,18 +88,18 @@ $l[Intro][billratesedit.php] = "Редактировать";
 $l[Intro][billrateslist.php] = "Rates Table";
 $l[Intro][billratesnew.php] = "New Rate entry";
 
-$l[Intro][giseditmap.php] = "Edit MAP Mode";
-$l[Intro][gismain.php] = "GIS Mapping";
-$l[Intro][gisviewmap.php] = "View MAP Mode";
+$l[Intro][giseditmap.php] = "Редактирование";
+$l[Intro][gismain.php] = "Привязка к GIS";
+$l[Intro][gisviewmap.php] = "Просмотр карты";
 
-$l[Intro][graphmain.php] = "Introduction";
-$l[Intro][graphsalltimedownload.php] = "Overall Usage";
-$l[Intro][graphsalltimetrafficcompare.php] = "Overall Usage";
-$l[Intro][graphsalltimelogins.php] = "Overall Usage";
-$l[Intro][graphsalltimeupload.php] = "Overall Usage";
-$l[Intro][graphsoveralldownload.php] = "Overall Usage";
-$l[Intro][graphsoveralllogins.php] = "Overall Usage";
-$l[Intro][graphsoverallupload.php] = "Overall Usage";
+$l[Intro][graphmain.php] = "Введение";
+$l[Intro][graphsalltimedownload.php] = "Всего";
+$l[Intro][graphsalltimetrafficcompare.php] = "Всего";
+$l[Intro][graphsalltimelogins.php] = "Всего";
+$l[Intro][graphsalltimeupload.php] = "Всего";
+$l[Intro][graphsoveralldownload.php] = "Всего";
+$l[Intro][graphsoveralllogins.php] = "Всего";
+$l[Intro][graphsoverallupload.php] = "Всего";
 
 $l[Intro][indexlastconnect.php] = "Последние 50 попыток соединений";
 $l[Intro][indexradiuslog.php] = "Лог RADIUS";
@@ -113,37 +113,36 @@ $l[Intro][repmain.php] = "Отчеты";
 $l[Intro][reptopusers.php] = "Рейтинг пользователей";
 $l[Intro][repusername.php] = "Список пользователей";
 
-$l[Intro][mngbatch.php] = "Create batch users";
-$l[Intro][mngdel.php] = "Remove User";
-$l[Intro][mngedit.php] = "Edit User Details";
-$l[Intro][mnglistall.php] = "Users Listing";
-$l[Intro][mngmain.php] = "Users and Hotspots Management";
-$l[Intro][mngnew.php] = "New User";
-$l[Intro][mngnew.php] = "New User";
-$l[Intro][mngnewquick.php] = "Quick User Add";
+$l[Intro][mngbatch.php] = "Пакетное создание пользователей";
+$l[Intro][mngdel.php] = "Удалить пользователя";
+$l[Intro][mngedit.php] = "Редактировать пользователя";
+$l[Intro][mnglistall.php] = "Список пользователей";
+$l[Intro][mngmain.php] = "Управление пользователями и точками доступа";
+$l[Intro][mngnew.php] = "Новый пользователь";
+$l[Intro][mngnewquick.php] = "Быстрое создание пользователя";
 
-$l[Intro][mnghsdel.php] = "Remove Hotspots";
-$l[Intro][mnghsedit.php] = "Edit Hotspots Details";
-$l[Intro][mnghslist.php] = "List Hotspots";
+$l[Intro][mnghsdel.php] = "Удалить точку доступа";
+$l[Intro][mnghsedit.php] = "Редактировать точку доступа";
+$l[Intro][mnghslist.php] = "Список точек доступа";
 
-$l[Intro][mngradusergroupdel.php] = "Remove User-Group Mapping";
-$l[Intro][mngradusergroup.php] = "User-Group Configuration";
-$l[Intro][mngradusergroupnew.php] = "New User-Group Mapping";
-$l[Intro][mngradusergrouplist] = "User-Group Mapping in Database";
-$l[Intro][mngradusergrouplistuser] = "User-Group Mapping in Database";
-$l[Intro][mngradusergroupedit] = "Edit User-Group Mapping for User:";
+$l[Intro][mngradusergroupdel.php] = "Удалить пользователя из группы";
+$l[Intro][mngradusergroup.php] = "Конфигурация пользовательских групп";
+$l[Intro][mngradusergroupnew.php] = "Добавить пользователя в группу";
+$l[Intro][mngradusergrouplist] = "Группировка пользователей в БД";
+$l[Intro][mngradusergrouplistuser] = "Группировка пользователей в БД";
+$l[Intro][mngradusergroupedit] = "Редактирование списка групп пользователя:";
 
-$l[Intro][mngradnas.php] = "NAS Configuration";
-$l[Intro][mngradnasnew.php] = "New NAS Record";
-$l[Intro][mngradnaslist.php] = "NAS Listing in Database";
-$l[Intro][mngradnasedit.php] = "Edit NAS Record";
-$l[Intro][mngradnasdel.php] = "Remove NAS Record";
+$l[Intro][mngradnas.php] = "Конфигурирование NAS";
+$l[Intro][mngradnasnew.php] = "Новый NAS";
+$l[Intro][mngradnaslist.php] = "Cписок NAS";
+$l[Intro][mngradnasedit.php] = "Редактировать NAS";
+$l[Intro][mngradnasdel.php] = "Удалить NAS";
 
-$l[Intro][mngradgroupreply.php] = "Group Reply Configuration";
-$l[Intro][mngradgroupreplynew.php] = "New Group Reply Mapping";
-$l[Intro][mngradgroupreplylist.php] = "Group Reply Mapping in Database";
-$l[Intro][mngradgroupreplyedit.php] = "Edit Group Reply Mapping for Group:";
-$l[Intro][mngradgroupreplydel.php] = "Remove Group Reply Mapping";
+$l[Intro][mngradgroupreply.php] = "Конфигурация Reply-пар для группы";
+$l[Intro][mngradgroupreplynew.php] = "Новая Reply-пара для группы";
+$l[Intro][mngradgroupreplylist.php] = "Список Reply-пар для групп";
+$l[Intro][mngradgroupreplyedit.php] = "Редактирование Reply-пар для группы:";
+$l[Intro][mngradgroupreplydel.php] = "Удалить Reply-пару";
 
 $l[Intro][mngradgroupcheck.php] = "Group Check Configuration";
 $l[Intro][mngradgroupchecknew.php] = "New Group Check Mapping";
@@ -151,10 +150,10 @@ $l[Intro][mngradgroupchecklist.php] = "Group Check Mapping in Database";
 $l[Intro][mngradgroupcheckedit.php] = "Edit Group Check Mapping for Group:";
 $l[Intro][mngradgroupcheckdel.php] = "Remove Group Check Mapping";
 
-$l[Intro][configdb.php] = "Database Configuration";
-$l[Intro][configlang.php] = "Language Configuration";
-$l[Intro][configlogging.php] = "Logging Configuration";
-$l[Intro][configinterface.php] = "Web Interface Configuration";
+$l[Intro][configdb.php] = "Настройка БД";
+$l[Intro][configlang.php] = "Настройка языковых параметров";
+$l[Intro][configlogging.php] = "Настройка аудита";
+$l[Intro][configinterface.php] = "Настройка web-интерфейса";
 
 $l[FormField][all][Groupname] = "Groupname";
 $l[FormField][all][Username] = "Username";

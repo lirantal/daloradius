@@ -48,6 +48,7 @@
 </td><td>
 						<select name="config_lang">
 						<option value="en"> en </option>
+						<option value="ru"> ru </option>
 						</select>
 						</font>
 </td></tr>
