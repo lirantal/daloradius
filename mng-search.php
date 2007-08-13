@@ -8,12 +8,12 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "%";	
-	$username = ereg_replace("*", "&", $username);
-	
+	$username = str_replace('*', '%', $username);
+
 	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-	
+	$log = "visited page: ";
+	include('include/config/logging.php');
+
 	
 ?>
 
@@ -51,11 +51,11 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT distinct(Username), value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName";
+	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");	
 	$numrows = mysql_num_rows($res);
 
-	$sql = "SELECT distinct(Username), value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 	
@@ -102,8 +102,8 @@
 					<td> $nt[2] </td>
 					<td> $nt[0] </td>
 					<td> $nt[1] </td>
-					<td> <a href='mng-edit.php?username=$nt[2]'> ".$l[all][edit]." </a>
-					 <a href='mng-del.php?username=$nt[2]'> ".$l[all][del]." </a>
+					<td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a>
+					 <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
 			 </td>
 
 			</tr>";
