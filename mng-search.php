@@ -103,8 +103,8 @@
 					<td> $nt[2] </td>
 					<td> $nt[0] </td>
 					<td> $nt[1] </td>
-					<td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a>
-					 <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
+					<td> <a href='mng-edit.php?username=$nt[2]'> ".$l[all][edit]." </a>
+					 <a href='mng-del.php?username=$nt[2]'> ".$l[all][del]." </a>
 			 </td>
 
 			</tr>";
