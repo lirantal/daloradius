@@ -104,7 +104,7 @@
 					<td> $nt[1] </td>
 					<td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a>
 					 <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
-					 <a href='config-maint-test-user.php?username=$nt[UserName]&password=$nt[Value]'> Test User </a>
+					 <a href='config-maint-test-user.php?username=$nt[UserName]&password=$nt[1]'> Test User </a>
 					 <a href='acct-username.php?username=$nt[UserName]'> Accounting </a>
 			 </td>
 
