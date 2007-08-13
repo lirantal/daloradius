@@ -1,15 +1,6 @@
-release 1.0 - August 2007
-	- added support for configurable table names of radius database throughout the code
-	- added better notifications of error messages when mysql queries die, 
-	  they are now shown with a red colored font so the errors are more obvious to see
-	- added logging capability to all project pages
-	  specifically added logging of visited pages
-	- fixed bug 1757441 - ComboBox layout in Language Configuration
+release 0.9-2 - August 13 2007
 	- fixed bug 1763584 - in IE at javascript function randomPassword() and randomUsername()
-
 	- added  asc/desc sorting capabilities to tables in management, accounting and graphs
-	- improved support for failure/sucess messages on forms
-	- added quick-link to delete hotspots from the hotspot listing page
 	- added new maintenance page to use the 'radtest' program to check for user
 	  connectivity (new feature introduced by Giso Kegal).
 	- added a quick-links access called the tool-box to edit user page (mng-edit.php)
@@ -23,7 +14,16 @@ release 1.0 - August 2007
 	  of bytes to megabytes for download/upload traffic.
 	- added new page Search Users which allows to search for users using wildcards (* or % are
 	  welcome), requested by ccesario.
-
+	
+	
+release 0.9-1 - July 29 2007
+	- added support for configurable table names of radius database throughout the code
+	- added better notifications of error messages when mysql queries die, 
+	  they are now shown with a red colored font so the errors are more obvious to see
+	- added logging capability to all project pages specifically added logging of visited pages
+	- fixed bug 1757441 - ComboBox layout in Language Configuration	
+	- improved support for failure/sucess messages on forms
+	- added quick-link to delete hotspots from the hotspot listing page
 
 release 0.9 - July 2007
 	- this release is named after Erick Otto who took part of daloRADIUS
