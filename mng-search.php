@@ -8,8 +8,7 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "%";	
-	
-	
+	$username = ereg_replace("*", "&", $username);
 	
 	include_once('library/config_read.php');
     $log = "visited page: ";
