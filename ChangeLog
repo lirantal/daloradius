@@ -21,7 +21,8 @@ release 1.0 - August 2007
 	- added new include/common/calcs.php page for various calculations required on several
 	  pages like accounting, this provides better readable time in h:m:s format and conversion
 	  of bytes to megabytes for download/upload traffic.
-
+	- added new page Search Users which allows to search for users using wildcards (* or % are
+	  welcome), requested by ccesario.
 
 
 release 0.9 - July 2007
