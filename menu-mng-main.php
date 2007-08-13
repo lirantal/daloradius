@@ -27,6 +27,11 @@
 							<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
 							<input name="username" type="text">
 							</form></li>
+						<li><a href="mng-search.php"><b>&raquo;</b>Search Users <a></li>
+						<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>Search Users<a>
+							<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
+							<input name="username" type="text">
+							</form></li>
 
 
 						<li><a href="mng-del.php"><b>&raquo;</b>Remove User</a></li>	
