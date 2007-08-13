@@ -38,17 +38,23 @@ CONFIG_LANG = en
 #
 #if set to yes then daloradius will write to a log file the actual visits 
 #(pages names) of an operator
-CONFIG_LOG_PAGES = yes
+CONFIG_LOG_PAGES = no
 #
 #if set to yes then daloraidus will write to a log file the actions that
 #were performed on each "action" page. Pages with submit buttons (apply, save, delete, etc)
 #are considered action pages. For example, if an operator deleted a user, that is an action
 #and it will be logged
-CONFIG_LOG_ACTIONS = yes
+CONFIG_LOG_ACTIONS = no
+#
+#if set to yes then daloradius will write to a log file sql quereies that
+#were performed on each page. Pages that belong to the 'queries' category
+#are those of kind for reporting, accounting and general queries which
+#yield tables or graphs
+CONFIG_LOG_QUERIES = no
 #
 #the complete path to the logfile which daloradius will write to
 #please make sure that the webserver running daloradius has write permissions
-CONFIG_LOG_FILE = /var/log/daloradius.log
+CONFIG_LOG_FILE = /tmp/daloradius.log
 # =====================================================================================================
 
 
@@ -59,5 +65,11 @@ CONFIG_LOG_FILE = /var/log/daloradius.log
 #
 #if set to yes then in the web interface password text fields will be hidden with
 #asterisks instead of seeing the password in clear-text
-CONFIG_IFACE_PASSWORD_HIDDEN = yes
+CONFIG_IFACE_PASSWORD_HIDDEN = no
+#
+#sets the number of pages to span the tables listing across pages
+CONFIG_IFACE_TABLES_LISTING = 25
+#
+#sets the number of pages to span the tables listing across pages
+CONFIG_IFACE_TABLES_LISTING_NUM = yes
 # =====================================================================================================
