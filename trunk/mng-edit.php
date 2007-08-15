@@ -12,6 +12,7 @@
 	if (isset($_REQUEST['submit'])) {
 
 		$username = $_REQUEST['username'];
+		$password = "";						// we initialize the $password variable to contain nothing
 		if (trim($username) != "") {
 
 			 foreach( $_POST as $attribute=>$value ) { 
@@ -22,12 +23,61 @@
 					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
 												// or radcheck table (using include/management/attributes.php function)
 
-			                $counter = 0;
+			        $counter = 0;
+
+					// we set the $password variable to the attribute value only if that attribute is actually a password attribute indeed 
+					// and this has to be done because we're looping on all attributes that were submitted with the form
+					switch($attribute) {
+						case "User-Password":
+							$password = "'$value'";
+							break;
+						case "CHAP-Password":
+							$password = "'$value'";
+							break;
+						case "Cleartext-Password":
+							$password = "'$value'";
+							break;							
+						case "Crypt-Password":
+							$password = "'$value'";
+							break;	
+						case "MD5-Password":
+							$password = "'$value'";
+							break;
+						case "SHA1-Password":
+							$password = "'$value'";
+							break;
+						default:
+							$value = "'$value'";
+					}
+					
+					// first we check that the config option is actually set and available in the config file
+					if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) {
+						// if so we need to use different function for each encryption type and so we force it here
+						switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
+							case "cleartext":
+								if ($password != "")
+										$value = "$password";
+								break;
+							case "crypt":
+								if ($password != "")
+										$value = "ENCRYPT($password)";
+								break;
+							case "md5":
+								if ($password != "")
+										$value = "MD5($password)";
+								break;
+						}
+					} else {
+						// if the config option was not set and we encountered a password attribute we set it to default which is cleartext
+						if ($password != "")
+							$value = "$password";
+					}
 
 					$sql = "UPDATE $useTable SET Value='$value' WHERE UserName='$username' AND Attribute='$attribute'";
 					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 					$counter++;
+					$password = "";		// we MUST reset the $password variable to nothing  so that it's not kepy in the loop and will repeat itself as the value to set
 
 	        } //foreach $_POST
 
