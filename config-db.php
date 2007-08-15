@@ -52,6 +52,12 @@
 		if (isset($_REQUEST['config_dbtbl_hotspots']))
 			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = $_REQUEST['config_dbtbl_hotspots'];
 
+			
+			
+		// this should probably move to some other page at some point
+		if (isset($_REQUEST['config_db_pass_encrypt']))
+			$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = $_REQUEST['config_db_pass_encrypt'];
+			
         include ("library/config_write.php");
     }	
 
@@ -238,6 +244,34 @@
 
 
 </table>
+
+
+
+
+
+				<br/>
+
+<table border='2' class='table1'>
+<tr><td>
+
+						<?php if (!($configValues['CONFIG_DB_TBL_RADCHECK'])) { echo "<font color='#FF0000'>";  }?>
+						<b>radcheck</b>
+
+</td><td>
+						<input value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>" name="config_db_pass_encrypt"/>
+						</font>
+						
+						<select name="config_db_pass_encrypt">
+						<option value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>"> <?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?> </option>
+						<option value=""></option>
+						<option value="cleartext"> cleartext </option>
+						<option value="crypt"> unix crypt </option>
+						<option value="md5"> md5 </option>
+						</select>
+						</font>						
+</td></tr>
+</table>
+
 
 						<center>
 						
