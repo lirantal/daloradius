@@ -145,7 +145,7 @@
 <div id="showPasswordType" style="display:none;visibility:visible" >
 <br/>
 <input type="radio" name="passwordType" value="User-Password" checked>User-Password<br>
-<input type="radio" name="passwordType" value="Chap-Password">Chap-Password<br>
+<input type="radio" name="passwordType" value="CHAP-Password">CHAP-Password<br>
 <input type="radio" name="passwordType" value="Cleartext-Password">Cleartext-Password<br>
 <input type="radio" name="passwordType" value="Crypt-Password">Crypt-Password<br>
 <input type="radio" name="passwordType" value="MD5-Password">MD5-Password<br>
