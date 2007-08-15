@@ -28,6 +28,7 @@
 				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
 					case "cleartext":
 						$password = "'$password'";
+						break;
 					case "crypt":
 						$password = "ENCRYPT('$password')";
 						break;
