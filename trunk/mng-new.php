@@ -25,8 +25,19 @@
 		if (mysql_num_rows($res) == 0) {
 			if (trim($username) != "" and trim($password) != "") {
 
+				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
+					case "cleartext":
+						$password = "'$password'";
+					case "crypt":
+						$password = "ENCRYPT('$password')";
+						break;
+					case "md5":
+						$password = "MD5('$password')";
+						break;
+				}
+				
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', '$password')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', $password)";
 				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 	
 				// insert expiration
