@@ -35,6 +35,8 @@
 					case "md5":
 						$password = "MD5('$password')";
 						break;
+					default:
+						$password = "'$password'";
 				}
 				
 				// insert username/password
