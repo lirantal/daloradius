@@ -47,7 +47,7 @@
 							$password = "'$value'";
 							break;
 						default:
-							$value = "$value";
+							$value = "'$value'";
 					}
 					
 					// first we check that the config option is actually set and available in the config file
@@ -73,7 +73,7 @@
 							$value = "$password";
 					}
 
-					$sql = "UPDATE $useTable SET Value='$value' WHERE UserName='$username' AND Attribute='$attribute'";
+					$sql = "UPDATE $useTable SET Value=$value WHERE UserName='$username' AND Attribute='$attribute'";
 					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
 
 					$counter++;
