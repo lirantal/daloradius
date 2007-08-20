@@ -47,7 +47,7 @@
 							$password = "'$value'";
 							break;
 						default:
-							$value = "'$value'";
+							$value = "$value";
 					}
 					
 					// first we check that the config option is actually set and available in the config file
