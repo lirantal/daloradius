@@ -18,13 +18,11 @@
 
 	// getting total downloads of days in a month
 	$sql = "select ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name, count(distinct(UserName)), count(radacctid), avg(AcctSessionTime), sum(AcctSessionTime) from ".$configValues['CONFIG_DB_TBL_RADACCT']." join ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid like ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) group by ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($ent = mysql_fetch_array($res)) {
-                $chart->addPoint(new Point("$ent[0] ($ent[2] users)", "$ent[2]"));
+	while($row = $res->fetchRow()) {
+                $chart->addPoint(new Point("$row[0] ($row[2] users)", "$row[2]"));
         }
-
-        mysql_free_result($res);
 
         $chart->setTitle("Distribution of Hits (Logins) per Hotspot");
         $chart->render();

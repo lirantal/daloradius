@@ -28,7 +28,7 @@ function daily($username, $orderBy, $orderType) {
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by day ORDER BY $orderBy $orderType;";
 
 
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$total_downloads = 0;		// initialize variables
 	$count = 0;			
@@ -36,15 +36,15 @@ function daily($username, $orderBy, $orderType) {
 	$array_downloads = array();
 	$array_days = array();
 
-        while($ent = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 
 		// The table that is being procuded is in the format of:
 		// +--------+------+
 		// | Download | Day  |
 		// +--------+------+
 
-        	$downloads = floor($ent[0]/1024/1024);	// total downloads on that specific day
-        	$day = $ent[1];		// day of the month [1-31]
+        	$downloads = floor($row[0]/1024/1024);	// total downloads on that specific day
+        	$day = $row[1];		// day of the month [1-31]
 
 		$total_downloads = $total_downloads + $downloads;
 		$count = $count + 1;
@@ -90,7 +90,6 @@ function daily($username, $orderBy, $orderType) {
 	echo "</table>";
 	echo "<br/> Total downloads of <u>$total_downloads</u> <br/>";
 
-        mysql_free_result($res);
         include 'library/closedb.php';
 }
 
@@ -103,7 +102,7 @@ function monthly($username, $orderBy, $orderType) {
 	include 'opendb.php';
         
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month ORDER BY $orderBy $orderType;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$total_downloads = 0;		// initialize variables
 	$count = 0;			
@@ -111,15 +110,15 @@ function monthly($username, $orderBy, $orderType) {
         $array_downloads = array();
         $array_months = array();
 
-        while($ent = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 
 		// The table that is being procuded is in the format of:
 		// +--------+--------+
 		// | Download | Month  |
 		// +--------+--------+
 
-        	$downloads = floor($ent[0]/1024/1024);	// total downloads on that specific month
-        	$month = $ent[1];	// Month of year [1-12]
+        	$downloads = floor($row[0]/1024/1024);	// total downloads on that specific month
+        	$month = $row[1];	// Month of year [1-12]
 
 		$total_downloads = $total_downloads + $downloads;
 		$count = $count + 1;
@@ -170,7 +169,6 @@ function monthly($username, $orderBy, $orderType) {
 
 
 
-        mysql_free_result($res);
         include 'library/closedb.php';
 }
 
@@ -187,7 +185,7 @@ function yearly($username, $orderBy, $orderType) {
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year ORDER BY $orderBy $orderType;";
 
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$total_downloads = 0;		// initialize variables
 	$count = 0;			
@@ -195,15 +193,15 @@ function yearly($username, $orderBy, $orderType) {
         $array_downloads = array();
         $array_years = array();
 
-        while($ent = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 
 		// The table that is being procuded is in the format of:
 		// +--------+-------+
 		// | Download | Year  |
 		// +--------+-------+
 
-        	$downloads = floor($ent[0]/1024/1024);	// total downloads on that specific month
-        	$year = $ent[1];	// Year
+        	$downloads = floor($row[0]/1024/1024);	// total downloads on that specific month
+        	$year = $row[1];	// Year
 
 		$total_downloads = $total_downloads + $downloads;
 		$count = $count + 1;
@@ -251,7 +249,6 @@ function yearly($username, $orderBy, $orderType) {
 	echo "</table>";
 	echo "<br/> Total downloads of <u>$total_downloads</u> <br/>";
 
-        mysql_free_result($res);
         include 'closedb.php';
 }
 
