@@ -23,7 +23,7 @@
 		$hotspot_geo = substr($hotspot_geo, 0, strlen($hotspot_geo)-1);
 
 		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
 		$actionStatus = "success";
 		$actionMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
@@ -34,7 +34,7 @@
 		(isset($_REQUEST['hotspotname'])) ? $hotspot_name = $_REQUEST['hotspotname'] : $hotspot_name = " ";
 			
 		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$hotspot_name'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
 		$actionStatus = "success";
 		$actionMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
@@ -141,19 +141,18 @@ GEvent.addListener(map, "click", function(marker, point) {
 
 <?php
     $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
-    $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
                 echo "
-		var point_$nt[0] = new GLatLng($nt[3]);
-		var marker_$nt[0] = createMarker(point_$nt[0], '$nt[1]');
+		var point_$row[0] = new GLatLng($row[3]);
+		var marker_$row[0] = createMarker(point_$row[0], '$row[1]');
 
-		map.addOverlay(marker_$nt[0]);
+		map.addOverlay(marker_$row[0]);
                         ";
 
 
         }
-    mysql_free_result($res);
 ?>
 
 var add = new GLatLng();

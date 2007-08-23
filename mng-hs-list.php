@@ -46,11 +46,11 @@
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].";";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$numrows = mysql_num_rows($res);	
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 	
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -93,19 +93,18 @@
 					</th>
 					<th scope='col'> ".$l[all][Action]." </th>
 			</tr> </thread>";
-	while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $nt[0] </td>
-				<td> $nt[1] </td>
-				<td> $nt[2] </td>
-				<td> $nt[3] </td>
-				<td> <a href='mng-hs-edit.php?name=$nt[1]'> ".$l[all][edit]." </a> </td>
-				<td> <a href='mng-hs-del.php?name=$nt[1]'> ".$l[all][del]." </a> </td>
+				<td> $row[0] </td>
+				<td> $row[1] </td>
+				<td> $row[2] </td>
+				<td> $row[3] </td>
+				<td> <a href='mng-hs-edit.php?name=$row[1]'> ".$l[all][edit]." </a> </td>
+				<td> <a href='mng-hs-del.php?name=$row[1]'> ".$l[all][del]." </a> </td>
 		</tr>";
 	}
 	echo "</table>";
 
-	mysql_free_result($res);
 	include 'library/closedb.php';
 ?>
 				

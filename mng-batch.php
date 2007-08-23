@@ -51,9 +51,9 @@ function createPassword($length) {
 //			echo "password: $password <br/>";
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) > 0) {
+		if ($res->numRows() > 0) {
 			$actionStatus = "failure";
 			$actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
 			$actionMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
@@ -61,7 +61,7 @@ function createPassword($length) {
 		
 			// insert username/password
 			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			$res = $dbSocket->query($sql);
 
 				 foreach( $_POST as $attribute=>$value ) { 
 
@@ -77,7 +77,7 @@ function createPassword($length) {
 				        $counter = 0;
 
 						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+                        $res = $dbSocket->query($sql);
 
 						$counter++;
 

@@ -13,16 +13,17 @@
 
 			// delete all attributes associated with a username
 			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			$res = $dbSocket->query($sql);
 
 			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='$username'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			$res = $dbSocket->query($sql);
 			
 			$actionStatus = "success";
 			$actionMsg = "Deleted user: <b> $username";
 			$logAction = "Successfully deleted user [$username] on page: ";
 
 			include 'library/closedb.php';
+			
 		}  else { 
 			$actionStatus = "failure";
 			$actionMsg = "no user was entered, please specify a username to remove from database";		

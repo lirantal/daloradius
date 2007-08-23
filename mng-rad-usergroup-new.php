@@ -18,9 +18,9 @@
 		include 'library/opendb.php';
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) == 0) {
+		if ($res->numRows() == 0) {
 
 			if (trim($username) != "" and trim($group) != "") {
 
@@ -30,7 +30,7 @@
 				
 				// insert usergroup details
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('$username', '$group', $priority)";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 				
 				$actionStatus = "success";
 				$actionMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";

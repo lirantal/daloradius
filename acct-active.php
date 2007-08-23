@@ -43,12 +43,11 @@
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 
 	$sql = "select distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName) as username, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute as attribute, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value maxtimeexpiration, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as usedtime from ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Max-All-Session' or ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Expiration') group by ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$numrows = mysql_num_rows($res);	
-
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
 	
 	$sql = "select distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName) as username, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute as attribute, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value maxtimeexpiration, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as usedtime from ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Max-All-Session' or ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Expiration') group by ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName  ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -92,38 +91,38 @@
                         <th scope='col'> ".$l[all][Status]." </th>
                         <th scope='col'> ".$l[all][Usage]." </th>
                 </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 		$status="Active";
 
-		if ($nt[1] == "Expiration") {		
-			if (datediff('d', $nt[2], '$currdate', false) > 0) {
+		if ($row[1] == "Expiration") {		
+			if (datediff('d', $row[2], '$currdate', false) > 0) {
 				$status = "Expired";
 			}
 		} 
 
 
-		if ($nt[1] == "Max-All-Session") {		
-			if ($nt[3] >= $nt[2]) {
+		if ($row[1] == "Max-All-Session") {		
+			if ($row[3] >= $row[2]) {
 				$status = "End";
 			}
 		}
 
                 echo "<tr>
-                        <td> $nt[0] </td>
-                        <td> $nt[1] </td>
-                        <td> $nt[2] </td>
-                        <td> $nt[3] </td>
+                        <td> $row[0] </td>
+                        <td> $row[1] </td>
+                        <td> $row[2] </td>
+                        <td> $row[3] </td>
                         <td> $status </td>
 			<td> ";
 
-		if ($nt[1] == "Expiration") {		
-			echo datediff('d', $nt[2], '27 Nov 2006', false);
+		if ($row[1] == "Expiration") {		
+			echo datediff('d', $row[2], '27 Nov 2006', false);
 			echo " days since expired";
 //			echo date("j M Y");
 		} 
 
-		if ($nt[1] == "Max-All-Session") {		
-			echo $nt[2] - $nt[3];
+		if ($row[1] == "Max-All-Session") {		
+			echo $row[2] - $row[3];
 			echo " left on credit";
 		} 
 
@@ -133,7 +132,6 @@
         }
         echo "</table>";
 
-        mysql_free_result($res);
         include 'library/closedb.php';
 ?>
 

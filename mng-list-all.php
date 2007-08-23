@@ -50,16 +50,17 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password')";
-    $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$numrows = mysql_num_rows($res);	
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password')";
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
+
 
 	/* we are searching for both kind of attributes for the password, being User-Password, the more
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password') ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password') ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$res = $dbSocket->query($sql);
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -70,48 +71,49 @@
 	/* END */
 	
 	
-        echo "<table border='2' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".$l[all][Records]."</th>
-                                </tr>
-                        </thead>
-                ";
+	echo "<table border='2' class='table1'>\n";
+	echo "
+					<thead>
+							<tr>
+							<th colspan='10'>".$l[all][Records]."</th>
+							</tr>
+					</thead>
+			";
 
-        echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][ID]. " 
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Username]." 
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Password]." 
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l[all][Action]." </th>
-                </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
-                echo "<tr>
-                        <td> $nt[id] </td>
-                        <td> $nt[UserName] </td>
-                        <td> $nt[Value] </td>
-                        <td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a>
-	                     <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
-			     </td>
+	echo "<thread> <tr>
+					<th scope='col'> ".$l[all][ID]. " 
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Username]." 
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Password]." 
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> ".$l[all][Action]." </th>
+			</tr> </thread>";
 
-                </tr>";
-        }
-        echo "</table>";
+	while($row = $res->fetchRow()) {
+		echo "<tr>
+				<td> $row[0] </td>
+				<td> $row[1] </td>
+				<td> $row[4] </td>
+				<td> <a href='mng-edit.php?username=$row[1]'> ".$l[all][edit]." </a>
+				 <a href='mng-del.php?username=$row[1]'> ".$l[all][del]." </a>
+		 </td>
 
-        mysql_free_result($res);
-        include 'library/closedb.php';
+		</tr>";
+	}
+	
+	echo "</table>";
+	include 'library/closedb.php';
+	
 ?>
 
 

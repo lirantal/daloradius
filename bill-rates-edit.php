@@ -10,10 +10,10 @@
 
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$nt = mysql_fetch_array($res);
-	$cardbank = $nt[2];
-	$rate = $nt[3];
+	$res = $dbSocket->query($sql);
+	$row = $row = $res->fetchRow();
+	$cardbank = $row[2];
+	$rate = $row[3];
 
 
 	if (isset($_POST['submit'])) {
@@ -26,13 +26,13 @@
 
 			if (trim($cardbank) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET cardbank=$cardbank WHERE type='$type'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 			}
 		
 			if (trim($rate) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET rate=$rate WHERE type='$type'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-
+				$res = $dbSocket->query($sql);
+				
 				$actionStatus = "success";
 				$actionMsg = "Updated rates of type: <b> $type</b>";
 				$logAction = "Successfully updated rates of type [$type] on page: ";

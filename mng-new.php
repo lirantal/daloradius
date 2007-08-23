@@ -20,9 +20,9 @@
         include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
 
 		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) == 0) {
+		if ($res->numRows() == 0) {
 			if (trim($username) != "" and trim($password) != "") {
 
 				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
@@ -41,12 +41,12 @@
 				
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', $password)";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 	
 				// insert expiration
 				if ($expiration) {
 					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
-					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+					$res = $dbSocket->query($sql);
 				}
 			
 				 foreach( $_POST as $attribute=>$value ) { 
@@ -62,7 +62,7 @@
 				        $counter = 0;
 
 						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-                        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+                        $res = $dbSocket->query($sql);
 
 						$counter++;
 				} // foreach

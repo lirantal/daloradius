@@ -52,11 +52,11 @@
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");	
-	$numrows = mysql_num_rows($res);
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
 
 	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	
 	/* START - Related to pages_numbering.php */
@@ -97,22 +97,21 @@
 					</th>
 					<th scope='col'> ".$l[all][Action]." </th>
 			</tr> </thread>";
-	while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 			echo "<tr>
-					<td> $nt[2] </td>
-					<td> $nt[0] </td>
-					<td> $nt[1] </td>
-					<td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a>
-					 <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
-					 <a href='config-maint-test-user.php?username=$nt[UserName]&password=$nt[1]'> Test User </a>
-					 <a href='acct-username.php?username=$nt[UserName]'> Accounting </a>
+					<td> $row[2] </td>
+					<td> $row[0] </td>
+					<td> $row[1] </td>
+					<td> <a href='mng-edit.php?username=$row[0]'> ".$l[all][edit]." </a>
+					 <a href='mng-del.php?username=$row[0]'> ".$l[all][del]." </a>
+					 <a href='config-maint-test-user.php?username=$row[0]&password=$row[1]'> Test User </a>
+					 <a href='acct-username.php?username=$row[0]'> Accounting </a>
 			 </td>
 
 			</tr>";
 	}
 	echo "</table>";
 
-	mysql_free_result($res);
 	include 'library/closedb.php';
 
 ?>

@@ -41,13 +41,14 @@
 
 	//checking if the username exist in the db
 	$sql = "select * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName like '$username'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	if (mysql_num_rows($res) != 0) {		//if the user exist display information
+	$res = $dbSocket->query($sql);
+
+	if ($res->numRows() != 0) {		//if the user exist display information
 
 	$credit = 0;
 
 	$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName LIKE '$username' AND (Attribute like '%Password')";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	echo "
 	        <table border='2' class='table1'>
@@ -69,28 +70,28 @@
                 <td> ".$l[all][Download]." (".$l[all][Bytes].") </td>
         	</tr></thead>
         ";
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
         echo "<tr>
-        	<td> $nt[0] </td>
-                <td> $nt[1] </td>
-                <td> $nt[2] </td>
+        	<td> $row[0] </td>
+                <td> $row[1] </td>
+                <td> $row[2] </td>
                 ";
 	}
 
 	$sql = "select Value from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName='$username' and Attribute='Max-All-Session'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");	
-        while($nt = mysql_fetch_array($res)) {
-	        echo "<td> $nt[0] </td>";
-                $credit = $nt[0];
+	$res = $dbSocket->query($sql);
+	while($row = $res->fetchRow()) {
+	        echo "<td> $row[0] </td>";
+                $credit = $row[0];
 	}
 
 	$sql = "select SUM(AcctSessionTime), COUNT(RadAcctId), SUM(AcctInputOctets), SUM(AcctOutputOctets) from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");	
-        while($nt = mysql_fetch_array($res)) {
-	        $used = $nt[0];
-	        $total_sessions = $nt[1];
-	        $total_bytesin = $nt[2];
-	        $total_bytesout = $nt[3];
+	$res = $dbSocket->query($sql);
+	while($row = $res->fetchRow()) {
+	        $used = $row[0];
+	        $total_sessions = $row[1];
+	        $total_bytesin = $row[2];
+	        $total_bytesout = $row[3];
 	}
 
 	if ($credit == 0) { 
@@ -115,14 +116,14 @@
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	
     $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE UserName='$username';";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$numrows = mysql_num_rows($res);	
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
 
 
 
 	
     $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE UserName='$username' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -201,30 +202,27 @@
 		<th scope='col'> ".$l[all][Action]." </th
 
                 </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $nt[0] </td>
-                        <td> $nt[1] </td>
-                        <td> $nt[2] </td>
-                        <td> $nt[3] </td>
-                        <td> $nt[4] </td>
-                        <td> $nt[5] </td>
-                        <td> ".seconds2time($nt[6])." </td>
-                        <td> $nt[7] - ".bytes2megabytes($nt[7])."Mb </td>
-                        <td> $nt[8] - ".bytes2megabytes($nt[8])."Mb </td>
-                        <td> $nt[9] </td>
-                        <td> $nt[10] </td>
-                        <td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a> </td>
+                        <td> $row[0] </td>
+                        <td> $row[1] </td>
+                        <td> $row[2] </td>
+                        <td> $row[3] </td>
+                        <td> $row[4] </td>
+                        <td> $row[5] </td>
+                        <td> ".seconds2time($row[6])." </td>
+                        <td> $row[7] - ".bytes2megabytes($row[7])."Mb </td>
+                        <td> $row[8] - ".bytes2megabytes($row[8])."Mb </td>
+                        <td> $row[9] </td>
+                        <td> $row[10] </td>
+                        <td> <a href='mng-edit.php?username=$row[2]'> ".$l[all][edit]." </a> </td>
                 </tr>";
         }
         echo "</table>";
-        mysql_free_result($res);
 
-
-
-	} else {
+		} else {
 		echo "error: couldn't find this user in the database<br/>";
-	}
+		}
 
         include 'library/closedb.php';
 ?>

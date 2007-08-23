@@ -26,7 +26,7 @@
 
 				// // delete only a specific groupname and it's attribute
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted Username: <b> $username </b> and it's Groupname: <b> $group </b>";
@@ -38,7 +38,7 @@
 
 				// delete all attributes associated with a username
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted all instances for Username: <b> $username </b>";

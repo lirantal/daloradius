@@ -74,7 +74,7 @@
 					}
 
 					$sql = "UPDATE $useTable SET Value=$value WHERE UserName='$username' AND Attribute='$attribute'";
-					$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+					$res = $dbSocket->query($sql);
 
 					$counter++;
 					$password = "";		// we MUST reset the $password variable to nothing  so that it's not kepy in the loop and will repeat itself as the value to set
@@ -109,23 +109,23 @@
 	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
 	*/
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' AND Attribute like '%Password'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$row = mysql_fetch_array($res);
-	$user_password = $row['Value'];
+	$res = $dbSocket->query($sql);
+	$row = $res->numRows();
+	$user_password = $row[4];
 
 	/* fill-in all the user radcheck attributes */
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$arrAttr = array();
 	$arrOp = array();
 	$arrValue = array();
 
-    while($nt = mysql_fetch_array($res)) {
-		array_push($arrAttr, $nt['Attribute']);
-		array_push($arrOp, $nt['op']);
-		array_push($arrValue, $nt['Value']);
+        while($row = $res->fetchRow()) {
+		array_push($arrAttr, $row[2]);
+		array_push($arrOp, $row[3]);
+		array_push($arrValue, $row[4]);
 	}	
 		
 
@@ -133,16 +133,16 @@
 	/* fill-in all the user radreply attributes */
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$arrAttrReply = array();
 	$arrOpReply = array();
 	$arrValueReply = array();
 
-    while($nt = mysql_fetch_array($res)) {
-		array_push($arrAttrReply, $nt['Attribute']);
-		array_push($arrOpReply, $nt['op']);
-		array_push($arrValueReply, $nt['Value']);
+        while($row = $res->fetchRow()) {
+		array_push($arrAttrReply, $row[2]);
+		array_push($arrOpReply, $row[3]);
+		array_push($arrValueReply, $row[4]);
 	}	
 
 

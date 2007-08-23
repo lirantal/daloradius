@@ -15,14 +15,14 @@
 		include 'library/opendb.php';
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) == 0) {
+		if ($res->numRows() == 0) {
 			if (trim($name) != "" and trim($macaddress) != "") {
 
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$name', '$macaddress', '$geocode')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 
 				$actionStatus = "success";
 				$actionMsg = "Added to database new hotspot: <b> $name";

@@ -27,9 +27,9 @@
 		include 'library/opendb.php';
 
 		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) == 0) {
+		if ($res->numRows() == 0) {
 
 			if (trim($nashost) != "" and trim($nassecret) != "") {
 
@@ -39,7 +39,7 @@
 				
 				// insert nas details
 				$sql = "INSERT INTO nas values (0, '$nashost', '$nasname', '$nastype', $nasports, '$nassecret', '$nascommunity', '$nasdescription')";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 			
 				$actionStatus = "success";
 				$actionMsg = "Added new NAS to database: <b> $nashost </b>  ";

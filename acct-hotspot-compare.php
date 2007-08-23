@@ -37,7 +37,7 @@
 	include 'include/common/calcs.php';
 
 	$sql = "select ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, count(distinct(UserName)) as uniqueusers, count(radacctid) as totalhits, avg(AcctSessionTime) as avgsessiontime, sum(AcctSessionTime) as totaltime from ".$configValues['CONFIG_DB_TBL_RADACCT']." join ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid like ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) group by ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name  ORDER BY $orderBy $orderType;;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -75,18 +75,17 @@
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=desc\"> < </a>
 						</th>
                 </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $nt[0] </td>
-                        <td> $nt[1] </td>
-                        <td> $nt[2] </td>
-                        <td> ".seconds2time($nt[3])." </td>
-                        <td> ".seconds2time($nt[4])." </td>
+                        <td> $row[0] </td>
+                        <td> $row[1] </td>
+                        <td> $row[2] </td>
+                        <td> ".seconds2time($row[3])." </td>
+                        <td> ".seconds2time($row[4])." </td>
                 </tr>";
         }
         echo "</table>";
 
-        mysql_free_result($res);
         include 'library/closedb.php';
 ?>
 
