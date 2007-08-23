@@ -43,7 +43,7 @@
 	// table to display the radcheck information per the $username
 
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'  ORDER BY $orderBy $orderType;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -77,14 +77,14 @@
 						</th>
                         <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $nt[id] </td>
-                        <td> $nt[UserName] </td>
-                        <td> $nt[Attribute] </td>
-                        <td> $nt[Value] </td>
-                        <td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a> 
-	                     <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
+                        <td> $row[0] </td>
+                        <td> $row[1] </td>
+                        <td> $row[2] </td>
+                        <td> $row[4] </td>
+                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l[all][edit]." </a> 
+	                     <a href='mng-del.php?username=$row[1]'> ".$l[all][del]." </a>
 			     </td>
                 </tr>";
         }
@@ -96,7 +96,7 @@
 	
 	// table to display the radreply information per the $username
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'  ORDER BY $orderBy $orderType;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -129,28 +129,18 @@
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l[all][Action]." </th>                </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $nt[id] </td>
-                        <td> $nt[UserName] </td>
-                        <td> $nt[Attribute] </td>
-                        <td> $nt[Value] </td>
-                        <td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a> 
-	                     <a href='mng-del.php?username=$nt[UserName]'> ".$l[all][del]." </a>
+                        <td> $row[0] </td>
+                        <td> $row[1] </td>
+                        <td> $row[2] </td>
+                        <td> $row[4] </td>
+                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l[all][edit]." </a> 
+	                     <a href='mng-del.php?username=$row[1]'> ".$l[all][del]." </a>
 			     </td>
                 </tr>";
         }
         echo "</table>";
-
-
-
-        mysql_free_result($res);
-
-
-
-
-
-
 
 
         include 'library/closedb.php';

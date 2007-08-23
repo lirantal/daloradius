@@ -42,7 +42,7 @@
 $sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime,
 sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $orderBy $orderType limit $limit";
 
-$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	echo "<table border='2' class='table1'>\n";
 	echo "
@@ -100,22 +100,21 @@ $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=desc\"> < </a>
 					</th>
 			</tr> </thread>";
-	while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $nt[0] </td>
-				<td> $nt[1] </td>
-				<td> $nt[2] </td>
-				<td> $nt[3] </td>
-				<td> ".seconds2time($nt[4])." </td>
-				<td> $nt[5] - ".bytes2megabytes($nt[5])."Mb </td>
-				<td> $nt[6] - ".bytes2megabytes($nt[6])."Mb </td>
-				<td> $nt[7] </td>
-				<td> $nt[8] </td>
+				<td> $row[0] </td>
+				<td> $row[1] </td>
+				<td> $row[2] </td>
+				<td> $row[3] </td>
+				<td> ".seconds2time($row[4])." </td>
+				<td> $row[5] - ".bytes2megabytes($row[5])."Mb </td>
+				<td> $row[6] - ".bytes2megabytes($row[6])."Mb </td>
+				<td> $row[7] </td>
+				<td> $row[8] </td>
 		</tr>";
 	}
 	echo "</table>";
 
-	mysql_free_result($res);
 	include 'library/closedb.php';
 ?>
 

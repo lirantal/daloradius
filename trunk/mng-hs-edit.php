@@ -13,10 +13,10 @@
 
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$nt = mysql_fetch_array($res);
-	$macaddress = $nt[2];
-	$geocode = $nt[3];
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow();
+	$macaddress = $row[2];
+	$geocode = $row[3];
 
 	if (isset($_REQUEST['submit'])) {
 
@@ -28,12 +28,12 @@
 
 			if (trim($macaddress) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='$macaddress' WHERE name='$name'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 			}
 
 			if (trim($geocode) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET geocode='$geocode' WHERE name='$name'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 			}
 			
 			$actionStatus = "success";

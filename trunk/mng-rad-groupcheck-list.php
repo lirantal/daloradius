@@ -43,11 +43,11 @@
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "select GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].";";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$numrows = mysql_num_rows($res);	
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
 
 	$sql = "select GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -90,21 +90,20 @@
 					</th>
 					<th scope='col'> ".$l[all][Action]." </th>						
 			</tr> </thread>";
-	while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $nt[GroupName] </td>
-				<td> $nt[Attribute] </td>
-				<td> $nt[op] </td>						
-				<td> $nt[Value] </td>						
-				<td> <a href='mng-rad-groupcheck-edit.php?groupname=$nt[GroupName]&value=$nt[Value]'> ".$l[all][edit]." </a>
-					 <a href='mng-rad-groupcheck-del.php?groupname=$nt[GroupName]&value=$nt[Value]'> ".$l[all][del]." </a>
+				<td> $row[0] </td>
+				<td> $row[1] </td>
+				<td> $row[2] </td>						
+				<td> $row[3] </td>						
+				<td> <a href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]'> ".$l[all][edit]." </a>
+					 <a href='mng-rad-groupcheck-del.php?groupname=$row[0]&value=$row[3]'> ".$l[all][del]." </a>
 					 </td>
 
 		</tr>";
 	}
 	echo "</table>";
 
-	mysql_free_result($res);
 	include 'library/closedb.php';
 ?>
 

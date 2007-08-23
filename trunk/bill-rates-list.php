@@ -26,7 +26,7 @@
                 include 'library/opendb.php';
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES'].";";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -44,18 +44,17 @@
                         <th scope='col'> ".$l[all][Rate]." </th>
                         <th scope='col'> ".$l[all][Action]." </th>
                 </tr> </thread>";
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $nt[0] </td>
-                        <td> $nt[1] </td>
-                        <td> $nt[2] </td>
-                        <td> $nt[3] </td>
-                        <td> <a href='bill-rates-edit.php?type=$nt[1]'> ".$l[all][edit]." </a> </td>
+                        <td> $row[0] </td>
+                        <td> $row[1] </td>
+                        <td> $row[2] </td>
+                        <td> $row[3] </td>
+                        <td> <a href='bill-rates-edit.php?type=$row[1]'> ".$l[all][edit]." </a> </td>
                 </tr>";
         }
         echo "</table>";
 
-        mysql_free_result($res);
         include 'library/closedb.php';
 ?>
 				

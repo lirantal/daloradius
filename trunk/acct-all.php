@@ -38,12 +38,12 @@
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$numrows = mysql_num_rows($res);	
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
 
 	
 $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac  ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -121,25 +121,24 @@ $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_
 	</th>
 	<th scope='col'> ".$l[all][Action]." </th>
 			</tr> </thread>";
-	while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $nt[0] </td>
-				<td> $nt[1] </td>
-				<td> $nt[2] </td>
-				<td> $nt[3] </td>
-				<td> $nt[4] </td>
-				<td> $nt[5] </td>
-				<td> ".seconds2time($nt[6])." </td>
-				<td> $nt[7] - ".bytes2megabytes($nt[7])."Mb </td>
-				<td> $nt[8] - ".bytes2megabytes($nt[8])."Mb </td>
-				<td> $nt[9] </td>
-				<td> $nt[10] </td>
-				<td> <a href='mng-edit.php?username=$nt[UserName]'> ".$l[all][edit]." </a> </td>
+				<td> $row[0] </td>
+				<td> $row[1] </td>
+				<td> $row[2] </td>
+				<td> $row[3] </td>
+				<td> $row[4] </td>
+				<td> $row[5] </td>
+				<td> ".seconds2time($row[6])." </td>
+				<td> $row[7] - ".bytes2megabytes($row[7])."Mb </td>
+				<td> $row[8] - ".bytes2megabytes($row[8])."Mb </td>
+				<td> $row[9] </td>
+				<td> $row[10] </td>
+				<td> <a href='mng-edit.php?username=$row[2]'> ".$l[all][edit]." </a> </td>
 		</tr>";
 	}
 	echo "</table>";
 
-	mysql_free_result($res);
 	include 'library/closedb.php';
 ?>
 

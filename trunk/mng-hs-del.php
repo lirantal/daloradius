@@ -14,7 +14,7 @@
 
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			$res = $dbSocket->query($sql);
 			
 			$actionStatus = "success";
 			$actionMsg = "Deleted hotspot: <b> $name </b>";

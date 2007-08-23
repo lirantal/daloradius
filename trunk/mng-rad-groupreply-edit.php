@@ -18,10 +18,10 @@
 
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$row = mysql_fetch_array($res);		// array fetched with values from $sql query
-		$op = $row['op'];
-		$attribute = $row['Attribute'];
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow();		// array fetched with values from $sql query
+		$op = $row[3];
+		$attribute = $row[2];
 	
 
 	if (isset($_POST['submit'])) {
@@ -35,14 +35,14 @@
 		include 'library/opendb.php';
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$valueOld'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) == 1) {
+		if ($res->numRows() == 1) {
 
 			if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 			
 			$actionStatus = "success";
 			$actionMsg = "Updated group attributes for: <b> $groupname </b>";

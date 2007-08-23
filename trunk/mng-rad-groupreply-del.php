@@ -25,7 +25,7 @@
 
                 // delete only a specific groupname and it's attribute
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted Group: <b> $groupname </b> and it's Value: <b> $value </b>";
@@ -37,7 +37,7 @@
 
                 // delete all attributes associated with a groupname
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted all instances for Group: <b> $groupname </b>";

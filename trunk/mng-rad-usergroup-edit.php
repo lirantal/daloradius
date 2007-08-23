@@ -17,13 +17,13 @@
 
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$row = mysql_fetch_array($res);		// array fetched with values from $sql query
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow();		// array fetched with values from $sql query
 
 					// assignment of values from query to local variables
 					// to be later used in html to display on textboxes (input)
 					
-	$priority = $row['priority'];
+	$priority = $row[2];
 
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
@@ -35,9 +35,9 @@
 		include 'library/opendb.php';
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) == 1) {
+		if ($res->numRows() == 1) {
 
 			if (trim($username) != "" and trim($group) != "") {
 
@@ -47,8 +47,8 @@
 
 				// insert nas details
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-					
+				$res = $dbSocket->query($sql);
+						
 				$actionStatus = "success";
 				$actionMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
 				$logAction = "Successfully updated attributes for user-group mapping of user [$username] with group [$group] on page: ";

@@ -2,10 +2,14 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
 
-	$nashost = "";
-    $nashost = $_REQUEST['nashost'];
+	if (isset($_REQUEST['nashost']))
+		$nashost = $_REQUEST['nashost'];
+	else {
+		$nashost = "";
+		$actionStatus = "failure";
+		$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
+	}	
 
 
 	if (isset($_POST['submit'])) {
@@ -15,7 +19,7 @@
 
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM nas WHERE nasname='$nashost'";
-			$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+			$res = $dbSocket->query($sql);
 
 			$actionStatus = "success";
 			$actionMsg = "Deleted all NAS from database: <b> $nashost </b>";
@@ -31,17 +35,6 @@
 	}
 	
 	
-	if (isset($_REQUEST['nashost']))
-		$nashost = $_REQUEST['nashost'];
-	else
-		$nashost = "";
-		
-	if (trim($nashost)) {
-		$actionStatus = "failure";
-		$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
-	}	
-
-
 
 	include_once('library/config_read.php');
     $log = "visited page: ";

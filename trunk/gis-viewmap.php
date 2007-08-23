@@ -103,20 +103,18 @@ var point_sl1 = new GLatLng(35.460669951495305, -81.5625);
 <?php
 
     $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
-    $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
                 echo "
-		var point_$nt[0] = new GLatLng($nt[3]);
-		var marker_$nt[0] = createMarker(point_$nt[0], '$nt[1]');
+		var point_$row[0] = new GLatLng($row[3]);
+		var marker_$row[0] = createMarker(point_$row[0], '$row[1]');
 
-		map.addOverlay(marker_$nt[0]);
+		map.addOverlay(marker_$row[0]);
                         ";
 
 
         }
-    mysql_free_result($res);
-
 ?>
 
 map.addOverlay(new GMarker(point_cus, icon));

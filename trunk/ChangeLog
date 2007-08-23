@@ -1,3 +1,11 @@
+release 0.9-3 - September 13 2007
+	- fixed bug 1763605 - user edit hat a wrong mysql syntax
+	- added support for php's database abstraction layer instead of mysql API.
+	  This provides support for other databases than mysql itself.
+	- added new contrib directory for user's submitted configurations or related.
+	- moved database files to contrib/db and added database schemes for postregsql.
+
+
 release 0.9-2 - August 13 2007
 	- fixed bug 1763584 - in IE at javascript function randomPassword() and randomUsername()
 	- added  asc/desc sorting capabilities to tables in management, accounting and graphs

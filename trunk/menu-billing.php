@@ -48,16 +48,14 @@
 	// Grabing the last 
 
 	$sql = "select name from ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']."";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($nt = mysql_fetch_array($res)) {
+        while($row = $res->fetchRow()) {
                 echo "
-                        <option value='$nt[0]'> $nt[0]
+                        <option value='$row[0]'> $row[0]
 			";
 
 	}
-
-        mysql_free_result($res);
         include 'library/closedb.php';
 ?>							</select><br/>
 
@@ -87,16 +85,15 @@
 	// Grabing the list of hotspots 
 
 	$sql = "select name from ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']."";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($nt = mysql_fetch_array($res)) {
+        while($row = $res->fetchRow()) {
                 echo "
-                        <option value='$nt[0]'> $nt[0]
+                        <option value='$row[0]'> $row[0]
 			";
 
 	}
 
-        mysql_free_result($res);
         include 'library/closedb.php';
 ?>							</select><br/>
 

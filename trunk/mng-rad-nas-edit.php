@@ -14,21 +14,21 @@
 	$nasdescription = "";
 	$nascommunity = "";
 
-	$nashost = $_REQUEST['nashost'];
+	isset($_REQUEST['nashost']) ? $nashost = $_REQUEST['nashost'] : $nashost = "";
 
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$row = mysql_fetch_array($res);		// array fetched with values from $sql query
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow();		// array fetched with values from $sql query
 
 					// assignment of values from query to local variables
 					// to be later used in html to display on textboxes (input)
-	$nassecret = $row['secret'];
-	$nasname = $row['shortname'];
-	$nasports = $row['ports'];
-	$nastype = $row['type'];
-	$nascommunity = $row['community'];
-	$nasdescription = $row['description'];
+	$nassecret = $row[5];
+	$nasname = $row[2];
+	$nasports = $row[4];
+	$nastype = $row[3];
+	$nascommunity = $row[6];
+	$nasdescription = $row[7];
 
 	if (isset($_POST['submit'])) {
 	
@@ -44,9 +44,9 @@
 		include 'library/opendb.php';
 
 		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-		$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-		if (mysql_num_rows($res) == 1) {
+		if ($res->numRows() == 1) {
 
 			if (trim($nashost) != "" and trim($nassecret) != "") {
 
@@ -56,7 +56,7 @@
 
 				// insert nas details
 				$sql = "UPDATE nas SET shortname='$nasname', type='$nastype', ports=$nasports, secret='$nassecret', community='$nascommunity', description='$nasdescription' WHERE nasname='$nashost'";
-				$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+				$res = $dbSocket->query($sql);
 
 				$actionStatus = "success";
 				$actionMsg = "Updated NAS settings in database: <b> $nashost </b>  ";
@@ -67,7 +67,7 @@
 				$logAction = "Failed updating attributes for nas [$nashost] on page: ";
 			}
 			
-		} elseif (mysql_num_rows($res) > 1) {
+		} elseif ($res->numRows() > 1) {
 			$actionStatus = "failure";
 			$actionMsg = "The NAS IP/Host <b> $nashost </b> already exists in the database
 			<br/> Please check that there are no duplicate entries in the database";

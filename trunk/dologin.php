@@ -14,10 +14,9 @@ $errorMessage = '';
            WHERE username = '$operator_user'
                 AND password = '$operator_pass'";
 
-   $result = mysql_query($sql)
-             or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+   $res = $dbSocket->query($sql);
 
-   if (mysql_num_rows($result) == 1) {
+   if ($res->numRows() == 1) {
       // the user id and password match,
       // set the session
       $_SESSION['logged_in'] = true;

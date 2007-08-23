@@ -44,11 +44,11 @@
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT * FROM nas;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
-	$numrows = mysql_num_rows($res);
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
 
 	$sql = "SELECT * FROM nas ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;;";
-	$res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -111,25 +111,24 @@
 					</th>
 					<th scope='col'> ".$l[all][Action]." </th>
 			</tr> </thread>";
-	while($nt = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $nt[id] </td>
-				<td> $nt[nasname] </td>
-				<td> $nt[shortname] </td>
-				<td> $nt[type] </td>
-				<td> $nt[ports] </td>
-				<td> $nt[secret] </td>
-				<td> $nt[community] </td>
-				<td> $nt[description] </td>
-				<td> <a href='mng-rad-nas-edit.php?nashost=$nt[nasname]'> ".$l[all][edit]." </a>
-					 <a href='mng-rad-nas-del.php?nashost=$nt[nasname]'> ".$l[all][del]." </a>
+				<td> $row[0] </td>
+				<td> $row[1] </td>
+				<td> $row[2] </td>
+				<td> $row[3] </td>
+				<td> $row[4] </td>
+				<td> $row[5] </td>
+				<td> $row[6] </td>
+				<td> $row[7] </td>
+				<td> <a href='mng-rad-nas-edit.php?nashost=$row[1]'> ".$l[all][edit]." </a>
+					 <a href='mng-rad-nas-del.php?nashost=$row[1]'> ".$l[all][del]." </a>
 					 </td>
 
 		</tr>";
 	}
 	echo "</table>";
 
-	mysql_free_result($res);
 	include 'library/closedb.php';
 ?>
 
