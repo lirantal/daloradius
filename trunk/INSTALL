@@ -14,6 +14,7 @@ Prerequisites
  Apache 1/2
  PHP 4/5
  PHP GD 
+ PHP DB Abstraction Layer
  MySQL 4/5
 
  daloRADIUS has been tested on Debian sid/unstable and Ubuntu 6.06 LTS
@@ -44,7 +45,7 @@ Prerequisites
 
  apt-get install apache2
  apt-get install libapache2-mod-php5
- apt-get install php5-common php5-gd php5-mysql
+ apt-get install php5-common php5-gd php5-mysql php5-db php5-pear
  apt-get install mysql-server-5.0 
 
  Note: PHP installations are different on different systems, so please consult the OPTIONAL PHP CONFIGURATION section below
@@ -113,14 +114,14 @@ Installation
 
     If you have FreeRADIUS and MySQL with the radius database:
 
-	cd /var/www/daloradius
-	mysql -u root -p radius < daloradius.sql
+	cd /var/www/daloradius/contrib/db
+	mysql -u root -p radius < mysql-daloradius.sql
 
     If you DONT HAVE FreeRADIUS and the radius database in MySQL:
 
-	cd /var/www/daloradius
+	cd /var/www/daloradius/contrib/db
 	mysqladmin create radius
-	mysql -u root -p radius < daloradius-sample-data.sql
+	mysql -u root -p radius < mysql-daloradius-sample-data.sql
 
 
  DALORADIUS SETUP
@@ -175,6 +176,7 @@ Installation
     # comment out both of these as they are required:
     extension=mysql.so
     extension=gd.so
+	extension=db.so
   
  Restart apache and everything should be ok.
 
