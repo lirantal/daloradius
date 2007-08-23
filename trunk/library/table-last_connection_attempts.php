@@ -14,7 +14,7 @@
 	include 'opendb.php';
 
 	$sql = "SELECT user, pass, reply, date from radpostauth order by id desc limit 50;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$array_users = array();
 	$array_pass = array();
@@ -22,7 +22,7 @@
 	$array_reply = array();
 	$count = 0;
 
-        while($ent = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 
 		// The table that is being procuded is in the format of:
 		// +-------------+-------------+---------------+---------------------+
@@ -30,10 +30,10 @@
 		// +-------------+-------------+---------------+---------------------+
 
 
-		$user = $ent[0];
-		$pass = $ent[1];
-		$starttime = $ent[3];
-		$reply = $ent[2];
+		$user = $row[0];
+		$pass = $row[1];
+		$starttime = $row[3];
+		$reply = $row[2];
 
 		array_push($array_users, "$user");
 		array_push($array_pass, "$pass");
@@ -74,7 +74,6 @@
 
 	echo "</table>";
 
-        mysql_free_result($res);
         include 'closedb.php';
 
 

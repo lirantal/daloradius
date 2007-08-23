@@ -20,15 +20,13 @@
 	$chart = new VerticalChart(500,250);
 
         $sql = "SELECT COUNT(DISTINCT(UserName)) from ".$configValues['CONFIG_DB_TBL_RADCHECK'].";";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+		$res = $dbSocket->query($sql);
 
-	$array_users = array();
+		$array_users = array();
 
-        while($ent = mysql_fetch_array($res)) {
-		$chart->addPoint(new Point("Users", "$ent[0]"));
+	while($row = $res->fetchRow()) {
+		$chart->addPoint(new Point("Users", "$row[0]"));
         }
-
-        mysql_free_result($res);
 
 	$chart->setTitle("Total Users");
 	$chart->render();

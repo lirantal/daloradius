@@ -34,14 +34,13 @@ function daily() {
         $chart = new VerticalChart(920,500);
 
         $sql = "SELECT sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by day;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($ent = mysql_fetch_array($res)) {
-                $uploads = floor($ent[0]/1024/1024);
-                $chart->addPoint(new Point("$ent[1]", "$uploads"));
+	while($row = $res->fetchRow()) {
+                $uploads = floor($row[0]/1024/1024);
+                $chart->addPoint(new Point("$row[1]", "$uploads"));
         }
 
-        mysql_free_result($res);
 
         $chart->setTitle("Alltime Uploads based on Daily distribution");
         $chart->render();
@@ -67,14 +66,13 @@ function monthly() {
         $chart = new VerticalChart(920,500);
 
         $sql = "SELECT sum(AcctInputOctets) as Uploads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by month;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($ent = mysql_fetch_array($res)) {
-                $uploads = floor($ent[0]/1024/1024);
-                $chart->addPoint(new Point("$ent[1]", "$uploads"));
+	while($row = $res->fetchRow()) {
+                $uploads = floor($row[0]/1024/1024);
+                $chart->addPoint(new Point("$row[1]", "$uploads"));
         }
 
-        mysql_free_result($res);
 
         $chart->setTitle("Alltime Uploads based on Monthly distribution");
         $chart->render();
@@ -101,14 +99,12 @@ function yearly() {
         $chart = new VerticalChart(920,500);
 
         $sql = "SELECT sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by year;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
-        while($ent = mysql_fetch_array($res)) {
-                $uploads = floor($ent[0]/1024/1024);
-                $chart->addPoint(new Point("$ent[1]", "$uploads"));
+	while($row = $res->fetchRow()) {
+                $uploads = floor($row[0]/1024/1024);
+                $chart->addPoint(new Point("$row[1]", "$uploads"));
         }
-
-        mysql_free_result($res);
 
         $chart->setTitle("Alltime Uploads based on Yearily distribution");
         $chart->render();

@@ -27,7 +27,7 @@ function daily($username, $orderBy, $orderType) {
 	include 'opendb.php';
 
         $sql = "SELECT UserName, count(AcctStartTime) as logins, DAY(AcctStartTime) AS Day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Day ORDER BY $orderBy $orderType;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$total_logins = 0;		// initialize variables
 	$count = 0;			
@@ -36,16 +36,16 @@ function daily($username, $orderBy, $orderType) {
         $array_days = array();
 
 	$user = "";
-        while($ent = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 
 		// The table that is being procuded is in the format of:
 		// +----------+----------------------+------+
 		// | UserName | count(AcctStartTime) | Day  |
 		// +----------+----------------------+------+
 
-        	$user = $ent[0];	// username
-        	$logins = $ent[1];	// total logins on that specific day
-        	$day = $ent[2];		// day of the month [1-31]
+        	$user = $row[0];	// username
+        	$logins = $row[1];	// total logins on that specific day
+        	$day = $row[2];		// day of the month [1-31]
 
 		$total_logins = $total_logins + $logins;
 		$count = $count + 1;
@@ -98,7 +98,6 @@ function daily($username, $orderBy, $orderType) {
 
 	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
-        mysql_free_result($res);
         include 'closedb.php';
 }
 
@@ -112,7 +111,7 @@ function monthly($username, $orderBy, $orderType) {
 	include 'library/opendb.php';
 
         $sql = "SELECT UserName, count(AcctStartTime) as logins, MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Month ORDER BY $orderBy $orderType;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$total_logins = 0;		// initialize variables
 	$count = 0;			
@@ -122,16 +121,16 @@ function monthly($username, $orderBy, $orderType) {
 
         $user = "";
 
-        while($ent = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 
 		// The table that is being procuded is in the format of:
 		// +----------+----------------------+--------+
 		// | UserName | count(AcctStartTime) | Month  |
 		// +----------+----------------------+--------+
 
-        	$user = $ent[0];	// username
-        	$logins = $ent[1];	// total logins on that specific month
-        	$month = $ent[2];		// Month of year [1-12]
+        	$user = $row[0];	// username
+        	$logins = $row[1];	// total logins on that specific month
+        	$month = $row[2];		// Month of year [1-12]
 
 		$total_logins = $total_logins + $logins;
 		$count = $count + 1;
@@ -184,7 +183,6 @@ function monthly($username, $orderBy, $orderType) {
 
 	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
-        mysql_free_result($res);
         include 'library/closedb.php';
 }
 
@@ -201,7 +199,7 @@ function yearly($username, $orderBy, $orderType) {
 
 
         $sql = "SELECT UserName, count(AcctStartTime) as logins, YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Year ORDER BY $orderBy $orderType;";
-        $res = mysql_query($sql) or die('<font color="#FF0000"> Query failed: ' . mysql_error() . "</font>");
+	$res = $dbSocket->query($sql);
 
 	$total_logins = 0;		// initialize variables
 	$count = 0;			
@@ -211,7 +209,7 @@ function yearly($username, $orderBy, $orderType) {
 
         $user = "";
 
-        while($ent = mysql_fetch_array($res)) {
+	while($row = $res->fetchRow()) {
 
 
 		// The table that is being procuded is in the format of:
@@ -219,9 +217,9 @@ function yearly($username, $orderBy, $orderType) {
 		// | UserName | count(AcctStartTime) | Year  |
 		// +----------+----------------------+-------+
 
-        	$user = $ent[0];	// username
-        	$logins = $ent[1];	// total logins on that specific month
-        	$year = $ent[2];	// Year
+        	$user = $row[0];	// username
+        	$logins = $row[1];	// total logins on that specific month
+        	$year = $row[2];	// Year
 
 		$total_logins = $total_logins + $logins;
 		$count = $count + 1;
@@ -271,7 +269,6 @@ function yearly($username, $orderBy, $orderType) {
 
 	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
-        mysql_free_result($res);
         include 'closedb.php';
 }
 
