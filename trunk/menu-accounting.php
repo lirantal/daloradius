@@ -36,7 +36,7 @@
 				<ul class="subnav">
 				
 						<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b>User Accounting<a>
-							<form name="acctusername" action="acct-username.php" method="post" class="sidebar"
+							<form name="acctusername" action="acct-username.php" method="post" class="sidebar">
 							<input name="username" type="text" value="username">
 							</form></li>
 
