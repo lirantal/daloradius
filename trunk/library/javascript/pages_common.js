@@ -43,9 +43,8 @@ function toggleShowDiv(pass) {
 function small_window(user,pass,time) {
   var newWindow;
   var currentTime = new Date();
-  var props = 'scrollBars=yes,resizable=yes,toolbar=no,menubar=no,location=no,directories=no,width=500,height=200';
-  newWindow = window.open("", "Client Receipt", props);
-  newWindow.document.write("<html><title>Customer Receipt</title><body><br/>");
+  var props = "scrollBars=yes,resizable=yes,toolbar=no,menubar=no,location=no,directories=no,width=500,height=200";
+  newWindow = window.open("about:blank","blank",props);
   newWindow.document.write("Thank you. <br/>");
   newWindow.document.write("Your username is: ");
   newWindow.document.write(user);
@@ -62,6 +61,5 @@ function small_window(user,pass,time) {
   newWindow.document.write("<br/>");
   newWindow.document.write("Enginx HotSpot System ");
   newWindow.document.write("<br/>");
-  newWindow.document.write(" </body></html>");
 }
 
