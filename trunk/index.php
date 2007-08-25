@@ -1,4 +1,6 @@
 <?php
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
 
     include ("menu-home.php");
 
