@@ -26,7 +26,7 @@ CREATE TABLE `hotspots` (
   `mac` varchar(32) default NULL,
   `geocode` varchar(128) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `hotspots`
@@ -48,7 +48,7 @@ CREATE TABLE `operators` (
   `username` varchar(32) default NULL,
   `password` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `operators`
@@ -72,7 +72,7 @@ CREATE TABLE `rates` (
   `cardbank` double default NULL,
   `rate` double default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `rates`
