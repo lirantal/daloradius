@@ -26,7 +26,7 @@ CREATE TABLE `hotspots` (
   `mac` varchar(32) default NULL,
   `geocode` varchar(128) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `hotspots`
@@ -55,7 +55,7 @@ CREATE TABLE `nas` (
   `description` varchar(200) default 'RADIUS Client',
   PRIMARY KEY  (`id`),
   KEY `nasname` (`nasname`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `nas`
@@ -77,7 +77,7 @@ CREATE TABLE `operators` (
   `username` varchar(32) default NULL,
   `password` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `operators`
@@ -128,7 +128,7 @@ CREATE TABLE `radacct` (
   KEY `AcctStartTime` (`AcctStartTime`),
   KEY `AcctStopTime` (`AcctStopTime`),
   KEY `NASIPAddress` (`NASIPAddress`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `radacct`
@@ -154,7 +154,7 @@ CREATE TABLE `radcheck` (
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `UserName` (`UserName`(32))
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `radcheck`
@@ -180,7 +180,7 @@ CREATE TABLE `radgroupcheck` (
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `GroupName` (`GroupName`(32))
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `radgroupcheck`
@@ -205,7 +205,7 @@ CREATE TABLE `radgroupreply` (
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `GroupName` (`GroupName`(32))
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `radgroupreply`
@@ -229,7 +229,7 @@ CREATE TABLE `radpostauth` (
   `reply` varchar(32) NOT NULL default '',
   `date` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `radpostauth`
@@ -255,7 +255,7 @@ CREATE TABLE `radreply` (
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `UserName` (`UserName`(32))
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `radreply`
@@ -279,7 +279,7 @@ CREATE TABLE `rates` (
   `cardbank` double default NULL,
   `rate` double default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `rates`
@@ -302,7 +302,7 @@ CREATE TABLE `usergroup` (
   `GroupName` varchar(64) NOT NULL default '',
   `priority` int(11) NOT NULL default '1',
   KEY `UserName` (`UserName`(32))
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `usergroup`
