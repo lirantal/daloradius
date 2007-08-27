@@ -94,8 +94,17 @@
 						<option value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>"> <?php echo $configValues['CONFIG_DB_ENGINE'] ?> </option>
 						<option value=""></option>
 						<option value="mysql"> MySQL </option>
-						<option value="psql"> PostgreSQL </option>
-						<option value="oracle"> Oracle </option>
+						<option value="pgsql"> PostgreSQL </option>
+						<option value="odbc"> ODBC </option>
+						<option value="mssql"> MsSQL </option>
+						<option value="mysqli"> MySQLi </option>
+						<option value="msql"> MsQL </option>
+						<option value="sybase"> Sybase </option>
+						<option value="sqlite"> Sqlite </option>
+						<option value="oci8"> Oci8  </option>
+						<option value="ibase"> ibase </option>
+						<option value="fbsql"> fbsql </option>
+						<option value="informix"> informix </option>
 						</select>
 						</font>						
 </td></tr>
