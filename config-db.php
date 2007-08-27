@@ -90,9 +90,6 @@
 						<b>DB Engine</b>
 
 </td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>" name="config_dbengine"/>
-						</font>
-						
 						<select name="config_dbengine">
 						<option value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>"> <?php echo $configValues['CONFIG_DB_ENGINE'] ?> </option>
 						<option value=""></option>
@@ -279,9 +276,6 @@
 						<b>DB Password Encryption Type</b>
 
 </td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>" name="config_db_pass_encrypt"/>
-						</font>
-						
 						<select name="config_db_pass_encrypt">
 						<option value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>"> <?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?> </option>
 						<option value=""></option>
