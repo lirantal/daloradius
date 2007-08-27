@@ -6,7 +6,7 @@
 	// until everything is completely migrated we will leave these commented out
 	
 	include_once ('DB.php');	
-	$dbConnectString = "mysql://".$configValues['CONFIG_DB_USER'].":".$configValues['CONFIG_DB_PASS']."@".$configValues['CONFIG_DB_HOST']."/".$configValues['CONFIG_DB_NAME'];
+	$dbConnectString = $configValues['CONFIG_DB_ENGINE'] . "://".$configValues['CONFIG_DB_USER'].":".$configValues['CONFIG_DB_PASS']."@".$configValues['CONFIG_DB_HOST']."/".$configValues['CONFIG_DB_NAME'];
 	$dbSocket = DB::connect($dbConnectString);
 
 	// error handling support
