@@ -12,6 +12,9 @@
 
     if (isset($_REQUEST['submit'])) {
 
+		if (isset($_REQUEST['config_dbengine']))
+			$configValues['CONFIG_DB_ENGINE'] = $_REQUEST['config_dbengine'];
+	
 		if (isset($_REQUEST['config_dbhost']))
 			$configValues['CONFIG_DB_HOST'] = $_REQUEST['config_dbhost'];
 
@@ -83,6 +86,24 @@
 <table border='2' class='table1'>
 <tr><td>
 
+						<?php if (!($configValues['CONFIG_DB_ENGINE'])) { echo "<font color='#FF0000'>";  }?>
+						<b>DB Engine</b>
+
+</td><td>
+						<input value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>" name="config_dbengine"/>
+						</font>
+						
+						<select name="config_dbengine">
+						<option value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>"> <?php echo $configValues['CONFIG_DB_ENGINE'] ?> </option>
+						<option value=""></option>
+						<option value="mysql"> MySQL </option>
+						<option value="psql"> PostgreSQL </option>
+						<option value="oracle"> Oracle </option>
+						</select>
+						</font>						
+</td></tr>
+<tr><td>
+
 						<?php if (!($configValues['CONFIG_DB_HOST'])) { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l[FormField][configdb.php][DatabaseHostname] ?></b>
 
@@ -90,7 +111,6 @@
 						<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost"/>
 						</font>
 </td></tr>
-
 <tr><td>
 						<?php if (!($configValues['CONFIG_DB_USER'])) { echo "<font color='#FF0000'>";  }?>
 
