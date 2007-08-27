@@ -41,7 +41,7 @@
 			$configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = $_REQUEST['config_dbtbl_radgroupreply'];
 
 		if (isset($_REQUEST['config_dbtbl_usergroup']))
-			$configValues['CONFIG_DB_TBL_RADUSEGROUP'] = $_REQUEST['config_dbtbl_usergroup'];
+			$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = $_REQUEST['config_dbtbl_usergroup'];
 
 		if (isset($_REQUEST['config_dbtbl_radacct']))
 			$configValues['CONFIG_DB_TBL_RADACCT'] = $_REQUEST['config_dbtbl_radacct'];
