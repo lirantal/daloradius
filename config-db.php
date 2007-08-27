@@ -250,12 +250,13 @@
 
 
 				<br/>
+				<br/>
 
 <table border='2' class='table1'>
 <tr><td>
 
-						<?php if (!($configValues['CONFIG_DB_TBL_RADCHECK'])) { echo "<font color='#FF0000'>";  }?>
-						<b>radcheck</b>
+						<?php if (!($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) { echo "<font color='#FF0000'>";  }?>
+						<b>DB Password Encryption Type</b>
 
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>" name="config_db_pass_encrypt"/>
