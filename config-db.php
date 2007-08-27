@@ -299,7 +299,7 @@
 
 						<center>
 						
-						<br/>
+						<br/><br/>
 						<input type="submit" name="submit" value="Apply" />
 						
 						</center>
