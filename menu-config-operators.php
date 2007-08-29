@@ -4,7 +4,7 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 </head>
  
 <body>
