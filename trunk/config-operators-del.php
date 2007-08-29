@@ -68,7 +68,7 @@
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Username</b>
 </td><td>
-						<input value="<?php echo $username ?>" name="username"/><br/>
+						<input value="<?php echo $username ?>" name="operator_username"/><br/>
 						</font>
 </td></tr>
 </table>
