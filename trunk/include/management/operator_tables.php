@@ -73,7 +73,11 @@ $arrayPagesAvailable = array(
 	 'config_maint_test_user' => 'Configuration Maintenance',
 	 );
 
-function drawPagesPermissions($arrayPagesAvailable) {
+function drawPagesPermissions($arrayPagesAvailable, $operator_username = "") {
+
+if ($operator_username)			// only if this page was called from the config-operators-edit.php page
+	include 'library/opendb.php';   // or some other page which requires looking up the records for a specific operator
+					// then we include the required file for database operations
 
 
 echo "<br/><br/>
@@ -100,7 +104,20 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Home Pages')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+		if ($operator_username) {
+			$sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+			$res = $dbSocket->query($sql);
+			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+			$pageTest = $row[$page];
+			if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+				echo " <input type=checkbox name='$page' checked>$page <br/>";
+			else 
+				echo " <input type=checkbox name='$page'>$page <br/>";
+		} else  {
+			echo " <input type=checkbox name='$page' checked>$page <br/>";
+		}
+		
+				
 	}
 	echo "</td></tr>
 		</div>";
@@ -125,7 +142,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management Core')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -151,7 +179,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management HotSpot')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -176,7 +215,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management NAS')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -202,7 +252,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management UserGroup')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -228,7 +289,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management GroupCheck')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -253,7 +325,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management GroupReply')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -280,7 +363,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Reporting')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -306,7 +400,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Accounting')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -334,7 +439,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Billing')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -361,7 +477,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'GeoLocation')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -386,7 +513,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Graphs')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -411,7 +549,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Configuration')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -435,7 +584,18 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Configuration Maintenance')
 			continue;
-		echo " <input type=checkbox name='$page'>$page <br/>";
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
+                                echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        else
+                                echo " <input type=checkbox name='$page'>$page <br/>";
+                } else  {
+                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                }
 	}
 	echo "</td></tr>
 		</div>";
@@ -450,8 +610,8 @@ EOF;
 echo "</table>";
 
 
-
-
+if ($operator_username)			// same for including opendb.php file, we only require the closedb if the function
+	include 'library/closedb.php';  // was called with a specific operator which requires database look ups
 	
 }
 
