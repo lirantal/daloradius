@@ -6,10 +6,9 @@
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+
 	
-	
-	
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
     include('include/config/logging.php');
@@ -124,7 +123,7 @@
 				<td> $row[4], $row[3] </td>
 				<td> $row[5] </td>
 				<td> <a href='config-operators-edit.php?operator_username=$row[1]'> ".$l[all][edit]." </a>
-				 <a href='config-operators-edit-del.php?operator_username=$row[1]'> ".$l[all][del]." </a>
+				 <a href='config-operators-del.php?operator_username=$row[1]'> ".$l[all][del]." </a>
 		 </td>
 
 		</tr>";
