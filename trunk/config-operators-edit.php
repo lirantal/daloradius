@@ -15,7 +15,7 @@
 
 			 foreach( $_POST as $field=>$value ) { 
 
-				if ( ($field == "operator_username") || ($operator_attribute == "submit") )	// we skip these post variables as they are not important
+				if ( ($field == "operator_username") || ($field == "submit") )	// we skip these post variables as they are not important
 					continue;	
 					
 					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET $field='$value' WHERE username='$operator_username'";
@@ -132,9 +132,9 @@
 
 		<?php
 			if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
-				echo "<input type='password' value='$operator_password' name='operator_password' />";
+				echo "<input type='password' value='$operator_password' name='password' />";
 			else 
-				echo "<input value='$operator_password' name='operator_password' />";
+				echo "<input value='$operator_password' name='password' />";
 		?>
 
                                                 </font>
