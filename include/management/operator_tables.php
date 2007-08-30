@@ -109,13 +109,34 @@ EOF;
 			$res = $dbSocket->query($sql);
 			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 			$pageTest = $row[$page];
-			if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-				echo " <input type=checkbox name='$page' checked>$page <br/>";
-			else 
-				echo " <input type=checkbox name='$page'>$page <br/>";
+			if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+			echo "$page enabled";
+			echo "<select name='$page'>
+			      <option value='yes' selected> Enabled
+			      <option value='no'> Disabled
+			      </select>
+				<br/>
+			";
+			} else {
+			echo "$page disabled";
+			echo "<select name='$page'>
+			      <option value='yes'> Enabled
+			      <option value='no' selected> Disabled
+			      </select>
+				<br/>
+			";
+			}
 		} else  {
-			echo " <input type=checkbox name='$page' checked>$page <br/>";
+			echo "$page ";
+			echo "<select name='$page'>
+			      <option value='yes'> Enabled
+			      <option value='no'> Disabled
+			      </select>
+				<br/>
+			";
+
 		}
+
 		
 				
 	}
@@ -147,12 +168,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page enabled";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page disabled";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -184,12 +224,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -220,12 +279,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ){
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+			} else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -257,12 +335,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -294,12 +391,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -330,12 +446,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -368,12 +503,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -405,12 +559,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -444,12 +617,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -482,12 +674,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -518,12 +729,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -554,12 +784,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
@@ -589,12 +838,31 @@ EOF;
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
-                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) )
-                                echo " <input type=checkbox name='$page' checked>$page <br/>";
-                        else
-                                echo " <input type=checkbox name='$page'>$page <br/>";
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
                 } else  {
-                        echo " <input type=checkbox name='$page' checked>$page <br/>";
+                        echo "$page ";
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
                 }
 	}
 	echo "</td></tr>
