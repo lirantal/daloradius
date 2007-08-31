@@ -1,7 +1,11 @@
-release 0.9-3 - September 13 2007
+release 0.9-3 - September 01 2007
 	- fixed bug 1763605 - user edit hat a wrong mysql syntax
+	- fixed bugs in configuration pages.
 	- added support for php's database abstraction layer instead of mysql API.
 	  This provides support for other databases than mysql itself.
+	- added new page to manage operators information and their permissions (ACL).
+	  It is required to import a .sql schema which erases the old operators table
+	  and creates a new one (contrib/db/mysql-migrate-0.92-to-0.93.sql).
 	- added new contrib directory for user's submitted configurations or related.
 	- moved database files to contrib/db and added database schemes for postregsql.
 
