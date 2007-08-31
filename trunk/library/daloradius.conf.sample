@@ -8,6 +8,7 @@
 
 # Database Configuration
 # =====================================================================================================
+CONFIG_DB_ENGINE = mysql
 CONFIG_DB_HOST = localhost
 CONFIG_DB_USER = root
 CONFIG_DB_PASS = 
@@ -23,6 +24,20 @@ CONFIG_DB_TBL_DALOOPERATOR = operators
 CONFIG_DB_TBL_DALORATES = rates
 CONFIG_DB_TBL_DALOHOTSPOTS = hotspots
 # =====================================================================================================
+
+
+
+# Database-Specific Configuration 
+# =====================================================================================================
+#this directive controls the encryption (if any) to apply to the passwords attributes
+#(User-Password, Chap-Password, etc) when storing them in the database
+#supported options are:
+# cleartext - which doesn't make any changes to the password text
+# crypt     - which encrypts the password using the Unix Crypt 
+# md5       - which encrypts the password using the md5 algorithm
+CONFIG_DB_PASSWORD_ENCRYPTION = cleartext
+# =====================================================================================================
+
 
 
 # Language Configuration 
