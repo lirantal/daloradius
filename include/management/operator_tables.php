@@ -101,19 +101,20 @@ echo <<<EOF
     <b> Home Pages </b> <br/>
     <div id="categoryHome" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Home Pages')
 			continue;
 
+		echo "<tr><td width='350'>";
 		echo "$page";
+		echo "</td><td>";
 
 		if ($operator_username) {
 			$sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
 			$res = $dbSocket->query($sql);
 			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-//echo "<tr><td>";
 			$pageTest = $row[$page];
-//echo "</td><td>";
 			if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
 			echo "<select name='$page'>
 			      <option value='yes' selected> Enabled
@@ -130,19 +131,17 @@ EOF;
 			";
 			}
 		} else  {
-//echo "<tr><td>";
 			echo "<select name='$page'>
 			      <option value='yes'> Enabled
 			      <option value='no'> Disabled
 			      </select>
 				<br/>
 			";
-//echo "</td></tr>";
 		}
-
-		
+echo "</td></tr>";		
 				
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -163,10 +162,15 @@ echo <<<EOF
     <b> Management - Core </b> <br/>
     <div id="categoryManagementCore" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management Core')
 			continue;
+
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
@@ -195,7 +199,10 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
+
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -217,11 +224,14 @@ echo <<<EOF
     <b> Management - HotSpot </b> <br/>
     <div id="categoryManagementHotSpot" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management HotSpot')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -251,7 +261,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -272,11 +284,14 @@ echo <<<EOF
     <b> Management - NAS </b> <br/>
     <div id="categoryManagementNAS" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management NAS')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -306,7 +321,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -328,12 +345,14 @@ echo <<<EOF
     <b> Management - UserGroup </b> <br/>
     <div id="categoryManagementUserGroup" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management UserGroup')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
-
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -347,6 +366,7 @@ EOF;
                               </select>
                                 <br/>
                         ";
+
                         } else {
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
@@ -354,6 +374,7 @@ EOF;
                               </select>
                                 <br/>
                         ";
+
 			}
                 } else  {
                         echo "<select name='$page'>
@@ -362,8 +383,11 @@ EOF;
                               </select>
                                 <br/>
                         ";
+
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -385,11 +409,14 @@ echo <<<EOF
     <b> Management - GroupCheck </b> <br/>
     <div id="categoryManagementGroupCheck" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management GroupCheck')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -419,7 +446,10 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
+
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -440,11 +470,14 @@ echo <<<EOF
     <b> Management - GroupReply </b> <br/>
     <div id="categoryManagementGroupReply" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management GroupReply')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -474,7 +507,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -497,11 +532,14 @@ echo <<<EOF
     <b> Reporting </b> <br/>
     <div id="categoryReporting" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Reporting')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -531,7 +569,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -553,11 +593,14 @@ echo <<<EOF
     <b> Accounting </b> <br/>
     <div id="categoryAccounting" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Accounting')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -587,7 +630,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -611,11 +656,14 @@ echo <<<EOF
     <b> Billing </b> <br/>
     <div id="categoryBilling" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Billing')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -645,7 +693,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -668,11 +718,14 @@ echo <<<EOF
     <b> GeoLocation </b> <br/>
     <div id="categoryGeoLocation" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'GeoLocation')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -702,7 +755,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -723,11 +778,14 @@ echo <<<EOF
     <b> Graphs </b> <br/>
     <div id="categoryGraphs" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Graphs')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -757,7 +815,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -778,11 +838,14 @@ echo <<<EOF
     <b> Configuration </b> <br/>
     <div id="categoryConfiguration" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Configuration')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -812,7 +875,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
@@ -832,11 +897,14 @@ echo <<<EOF
     <b> Configuration - Maintenance </b> <br/>
     <div id="categoryConfigurationMaint" style="display:none;visibility:visible" >
 EOF;
+echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Configuration Maintenance')
 			continue;
 
+                echo "<tr><td width='350'>";
                 echo "$page";
+                echo "</td><td>";
 
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
@@ -866,7 +934,9 @@ EOF;
                                 <br/>
                         ";
                 }
+echo "</td></tr>";
 	}
+echo "</table>";
 	echo "</td></tr>
 		</div>";
 
