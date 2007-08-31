@@ -104,13 +104,17 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Home Pages')
 			continue;
+
+		echo "$page";
+
 		if ($operator_username) {
 			$sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
 			$res = $dbSocket->query($sql);
 			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+//echo "<tr><td>";
 			$pageTest = $row[$page];
+//echo "</td><td>";
 			if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-			echo "$page enabled";
 			echo "<select name='$page'>
 			      <option value='yes' selected> Enabled
 			      <option value='no'> Disabled
@@ -118,7 +122,6 @@ EOF;
 				<br/>
 			";
 			} else {
-			echo "$page disabled";
 			echo "<select name='$page'>
 			      <option value='yes'> Enabled
 			      <option value='no' selected> Disabled
@@ -127,14 +130,14 @@ EOF;
 			";
 			}
 		} else  {
-			echo "$page ";
+//echo "<tr><td>";
 			echo "<select name='$page'>
 			      <option value='yes'> Enabled
 			      <option value='no'> Disabled
 			      </select>
 				<br/>
 			";
-
+//echo "</td></tr>";
 		}
 
 		
@@ -163,13 +166,13 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management Core')
 			continue;
+                echo "$page";
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page enabled";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -177,7 +180,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page disabled";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -186,7 +188,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -219,13 +220,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management HotSpot')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -233,7 +236,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -242,7 +244,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -274,13 +275,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management NAS')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ){
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -288,7 +291,6 @@ EOF;
                                 <br/>
                         ";
 			} else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -297,7 +299,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -330,13 +331,16 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management UserGroup')
 			continue;
+
+                echo "$page";
+
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -344,7 +348,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -353,7 +356,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -386,13 +388,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management GroupCheck')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -400,7 +404,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -409,7 +412,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -441,13 +443,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Management GroupReply')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -455,7 +459,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -464,7 +467,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -498,13 +500,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Reporting')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -512,7 +516,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -521,7 +524,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -554,13 +556,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Accounting')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -568,7 +572,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -577,7 +580,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -612,13 +614,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Billing')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -626,7 +630,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -635,7 +638,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -669,13 +671,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'GeoLocation')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -683,7 +687,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -692,7 +695,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -724,13 +726,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Graphs')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -738,7 +742,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -747,7 +750,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -779,13 +781,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Configuration')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -793,7 +797,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -802,7 +805,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
@@ -833,13 +835,15 @@ EOF;
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Configuration Maintenance')
 			continue;
+
+                echo "$page";
+
                 if ($operator_username) {
                         $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
                         $res = $dbSocket->query($sql);
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                         $pageTest = $row[$page];
                         if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes' selected> Enabled
                               <option value='no'> Disabled
@@ -847,7 +851,6 @@ EOF;
                                 <br/>
                         ";
                         } else {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no' selected> Disabled
@@ -856,7 +859,6 @@ EOF;
                         ";
 			}
                 } else  {
-                        echo "$page ";
                         echo "<select name='$page'>
                               <option value='yes'> Enabled
                               <option value='no'> Disabled
