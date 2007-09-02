@@ -74,6 +74,10 @@ CREATE TABLE `operators` (
   `config_lang` varchar(32) default NULL,
   `config_logging` varchar(32) default NULL,
   `config_maint_test_user` varchar(32) default NULL,
+  `config_operators_del` varchar(128) default NULL,
+  `config_operators_edit` varchar(128) default NULL,
+  `config_operators_list` varchar(128) default NULL,
+  `config_operators_new` varchar(128) default NULL,  
   `firstname` varchar(32) default NULL,
   `lastname` varchar(32) default NULL,
   `title` varchar(32) default NULL,
@@ -85,7 +89,7 @@ CREATE TABLE `operators` (
   `email2` varchar(32) default NULL,
   `messenger1` varchar(32) default NULL,
   `messenger2` varchar(32) default NULL,
-  `notes` varchar(128) default NULL,
+  `notes` varchar(128) default NULL,  
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM;
 
@@ -96,7 +100,7 @@ CREATE TABLE `operators` (
 
 /*!40000 ALTER TABLE `operators` DISABLE KEYS */;
 LOCK TABLES `operators` WRITE;
-INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','System','Administrator','','','','','','','','','',''),(2,'liran','1234','yes','yes','yes','yes','yes','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','Liran','Tal','Developer','daloRADIUS','Enginx','','','liran.tal@gmail.com','liran@enginx.com','','','');
+INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','System','Administrator','','','','','','','','','',''),(2,'liran','1234','yes','yes','yes','yes','yes','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','no','yes','yes','yes','yes','Liran','Tal','Developer','daloRADIUS','Enginx','','','liran.tal@gmail.com','liran@enginx.com','','','');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `operators` ENABLE KEYS */;
 
