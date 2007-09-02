@@ -3,6 +3,9 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+	include('library/check_operator_perm.php');
+
+
 	include 'library/opendb.php';
 		// required for checking if an attribute belongs to the
 		// radcheck table or the radreply based upon it's name	
