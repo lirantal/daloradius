@@ -111,14 +111,14 @@
 	
 	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
 	*/
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' AND Attribute like '%Password'";
+	$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' AND Attribute like '%Password'";
 	$res = $dbSocket->query($sql);
 	$row = $res->numRows();
-	$user_password = $row[4];
+	$user_password = $row[0];
 
 	/* fill-in all the user radcheck attributes */
 
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
+	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 	$res = $dbSocket->query($sql);
 
 	$arrAttr = array();
@@ -126,16 +126,16 @@
 	$arrValue = array();
 
         while($row = $res->fetchRow()) {
-		array_push($arrAttr, $row[2]);
-		array_push($arrOp, $row[3]);
-		array_push($arrValue, $row[4]);
+		array_push($arrAttr, $row[0]);
+		array_push($arrOp, $row[1]);
+		array_push($arrValue, $row[2]);
 	}	
 		
 
 
 	/* fill-in all the user radreply attributes */
 
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
+	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
 	$res = $dbSocket->query($sql);
 
 	$arrAttrReply = array();
@@ -143,9 +143,9 @@
 	$arrValueReply = array();
 
         while($row = $res->fetchRow()) {
-		array_push($arrAttrReply, $row[2]);
-		array_push($arrOpReply, $row[3]);
-		array_push($arrValueReply, $row[4]);
+		array_push($arrAttrReply, $row[0]);
+		array_push($arrOpReply, $row[1]);
+		array_push($arrValueReply, $row[2]);
 	}	
 
 
