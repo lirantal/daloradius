@@ -2,7 +2,10 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
+	include('library/check_operator_perm.php');
+
+
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
 	isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
 	isset($_REQUEST['radius']) ? $radius = $_REQUEST['radius'] : $radius = "";
