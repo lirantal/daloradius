@@ -2,7 +2,9 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
+	include('library/check_operator_perm.php');
+
     $hotspot = !empty($_REQUEST['ps-hotspot']) ? $_REQUEST['ps-hotspot'] : '';
 	$startdate = $_REQUEST['ps-startdate'];
 	$enddate = $_REQUEST['ps-enddate'];
