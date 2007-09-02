@@ -3,6 +3,8 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+	include('library/check_operator_perm.php');
+
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
