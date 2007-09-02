@@ -3,8 +3,6 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-
 	include_once('library/config_read.php');
     $log = "visited page: ";
     include('include/config/logging.php');
