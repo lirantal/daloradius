@@ -15,8 +15,11 @@ About
  general-purpose ISP deployments. It features user management, graphical reporting, accounting, 
  a billing engine and integrates with GoogleMaps for geo-locating.
 
- daloRADIUS is written in PHP and JavaScript and utilizes a MySQL database. 
- It is based on a FreeRADIUS deployment with MySQL serving as the backend.
+ daloRADIUS is written in PHP and JavaScript and utilizes a database abstraction
+ layer which means that it supports many database systems, among them the popular
+ MySQL, PostgreSQL, Sqlite, MsSQL, and many others.
+ 
+ It is based on a FreeRADIUS deployment with a database server serving as the backend.
  Among other features it implements ACLs, GoogleMaps integration for locating 
  hotspots/access points visually and many more features.
 

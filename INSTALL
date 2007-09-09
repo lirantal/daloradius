@@ -14,7 +14,7 @@ Prerequisites
  Apache 1/2
  PHP 4/5
  PHP GD 
- PHP DB Abstraction Layer
+ PHP DB Abstraction Layer (may require PHP Pear)
  MySQL 4/5
 
  daloRADIUS has been tested on Debian sid/unstable and Ubuntu 6.06 LTS
@@ -45,7 +45,7 @@ Prerequisites
 
  apt-get install apache2
  apt-get install libapache2-mod-php5
- apt-get install php5-common php5-gd php5-mysql php5-db php5-pear
+ apt-get install php5-common php5-gd php5-mysql php5-db php-pear php-db
  apt-get install mysql-server-5.0 
 
  Note: PHP installations are different on different systems, so please consult the OPTIONAL PHP CONFIGURATION section below
@@ -64,7 +64,11 @@ Upgrading
 	2. extract the tar-ball (daloradius-X.Y.tar.gz) to the same directory of the 
 	   previous copy, over-writing all the files.
 	3. copy the back'ed up daloradius.conf over the one from the extracted archive
-	4. if required, setup the permissions to daloradius.conf so that the webserver's
+	4. if you are upgrading from 0.9-2 or lower you also need to import to the radius dabase
+	   the file mysql-migrate-0.92-to-0.93.sql
+	   with MySQL you would do something like: 
+	   mysql -u root -p radius < mysql-migrate-0.92-to-0.93.sql
+	5. if required, setup the permissions to daloradius.conf so that the webserver's
 	   user/group has write access to it.
 
 
@@ -117,7 +121,7 @@ Installation
 	cd /var/www/daloradius/contrib/db
 	mysql -u root -p radius < mysql-daloradius.sql
 
-    If you DONT HAVE FreeRADIUS and the radius database in MySQL:
+    If you DONT HAVE the radius database in MySQL:
 
 	cd /var/www/daloradius/contrib/db
 	mysqladmin create radius
