@@ -10,7 +10,7 @@
 	$dbSocket = DB::connect($dbConnectString);
 
 	// error handling support
-    $dbSocket->setErrorHandling(PEAR_ERROR_PRINT, "Database query error: %s");
+    // $dbSocket->setErrorHandling(PEAR_ERROR_PRINT, "Database query error: %s");
 	
 	/*
 	mysql functions are obsolete now
