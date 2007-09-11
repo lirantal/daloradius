@@ -6,7 +6,16 @@ var srcElem = document.getElementById(srcObj);
 var elemVal = srcElem.options[srcElem.selectedIndex].value;
 
 var dstElem = document.getElementById(dstObj);
-dstElem.value = elemVal;
+var dstElemVal = dstElem.value;
+var res = (dstElemVal * elemVal);
+dstElem.value = res;
+
+/*
+	// some debugging information which could be useful:
+dstElem.value = "srcObj: " + srcObj + " - srcElem: " + srcElem;
+dstElem.value = "srcElemVal: " + elemVal + " - dstElemVal: " + dstElemVal;
+*/
+
 
 }
 

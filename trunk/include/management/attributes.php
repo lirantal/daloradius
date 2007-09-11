@@ -183,15 +183,11 @@ EOA;
 function drawSelectSpeed($attribute, $counter) {
 
 	echo <<<EOS
-		<select onChange="javascript:setText(this.id,'$attribute')" id="option$counter">
-		<option value="128000">128kbit</option>
-		<option value="256000">256kbit</option>
-		<option value="512000">512kbit</option>
-		<option value="1048576">1mbit</option>
-		<option value="1572864">1.5mbit</option>
-		<option value="2097152">2mbit</option>
-		<option value="3145728">3mbit</option>
-		<option value="10485760">10mbit</option>
+		<select onChange="javascript:setText(this.id,'$attribute')" id="option$attribute">
+		<option value="1">calculate speed</option>
+		<option value="1">bits</option>
+		<option value="1024">kilobits</option>
+		<option value="1048576">megabits</option>
 		</select>
 EOS;
 
@@ -211,15 +207,14 @@ EOS;
 function drawSelectSeconds($attribute, $counter) {
 
 	echo <<<EOS
-		<select onChange="javascript:setText(this.id,'$attribute')" id="option$counter">
-		<option value="86400">1day(s)</option>
-		<option value="259200">3day(s)</option>
-		<option value="604800">1week(s)</option>
-		<option value="1209600">2week(s)</option>
-		<option value="1814400">3week(s)</option>
-		<option value="2592000">1month(s)</option>
-		<option value="5184000">2month(s)</option>
-		<option value="7776000">3month(s)</option>
+		<select onChange="javascript:setText(this.id,'$attribute')" id="option$attribute">
+		<option value="1">calculate time</option>
+		<option value="1">seconds</option>
+		<option value="60">minutes</option>
+		<option value="3600">hours</option>
+		<option value="86400">days</option>
+		<option value="604800">weeks</option>
+		<option value="2592000">months (30 days)</option>
 		</select>
 EOS;
 
