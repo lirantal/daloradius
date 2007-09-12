@@ -129,6 +129,11 @@ function createPassword($length) {
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 
+
+<?php
+	include_once ("library/tabber/tab-layout.php");
+?>
+
 <?php
 
 	include ("menu-mng-main.php");
@@ -141,12 +146,15 @@ function createPassword($length) {
 				<h2 id="Intro"><?php echo $l[Intro][mngbatch.php] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mngbatch] ?><br/>
-				<br/><br/>
-
+				<?php echo $l[captions][mngbatch] ?>
 				</p>
+
 				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+<div class="tabber">
+
+     <div class="tabbertab" title="Users Information">
+	<br/>
 <table border='2' class='table1'>
 <tr><td>
 						<b><?php echo $l[FormField][mngbatch.php][UsernamePrefix] ?></b>
@@ -186,18 +194,22 @@ function createPassword($length) {
 </td></tr>
 </table>
 
+     </div>
+     <div class="tabbertab" title="Attributes">
+	<?php
+	        include_once('include/management/attributes.php');
+	        drawAttributes();
+	?>
+	<br/>
+
+     </div>
+
+</div>
+
 			<br/><br/>
 <center>
 			<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?> "/>
 </center>
-<br/><br/>
-
-<?php
-        include_once('include/management/attributes.php');
-        drawAttributes();
-?>
-<br/>
-
 
 				</form>
 		
