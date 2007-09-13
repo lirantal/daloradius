@@ -96,8 +96,12 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
 </head>
+
+
+<?php
+        include_once ("library/tabber/tab-layout.php");
+?>
  
 <?php
 
@@ -119,7 +123,10 @@
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 				<input type="hidden" value="<?php echo $operator_username ?>" name="operator_username" />
 
+<div class="tabber">
 
+     <div class="tabbertab" title="Operator Info">
+        <br/>
 
 <table border='2' class='table1'>
 <thead>
@@ -144,7 +151,9 @@
 </td></tr>
 </table>
 
-
+	</div>
+     <div class="tabbertab" title="Contact Info">
+        <br/>
 
 <table border='2' class='table1'>
 <thead>
@@ -241,59 +250,17 @@
 <br/><br/>
 </table>
 
-
-
+	</div>
+     <div class="tabbertab" title="ACL Settings">
+        <br/>
 
 <?php
         include_once('include/management/operator_tables.php');
         drawPagesPermissions($arrayPagesAvailable, $operator_username);
 ?>
 
-
-
-
-
-
-
-
-
-
-
-
-<?php
-/*
-
-		echo "</table>";
-
-		echo "<br/><br/>";
-
-		echo "<table border='2' class='table1'>";
-	        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>radreply </th>
-                                </tr>
-                        </thead>
-                ";
-
-                $counter = 0;
-                foreach ($arrAttrReply as $attribute) {
-
-                        echo "<tr><td>";
-			echo "<b>$arrAttrReply[$counter]</b";
-                        echo "</td><td>";
-			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter]' /><br/>";
-                        echo "</td></tr>";
-			$counter++;
-
-		}
-
-		echo "</table>";
-*/
-
-?>
-
-
+	</div>
+</div>
 
 
 						<br/><br/>
