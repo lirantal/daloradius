@@ -79,7 +79,11 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
+
+
+<?php
+        include_once ("library/tabber/tab-layout.php");
+?> 
  
 <?php
 	include ("menu-mng-rad-nas.php");
@@ -92,6 +96,11 @@
 				<p>
 
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<div class="tabber">
+
+     <div class="tabbertab" title="NAS Information">
+        <br/>
+
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>"; }?>
@@ -117,10 +126,9 @@
 </td></tr>
 </table>
 
-        <br/>
-		<center>
-        <h4> Advnaced NAS Attributes </h4>
-		</center>
+     </div>
+     <div class="tabbertab" title="Attributes">
+	<br/>
 
 <table border='2' class='table1' width='600'>
 <tr><td>
@@ -179,6 +187,9 @@
 </div><br/>
 </td></tr>
 </table>
+
+</div>
+
                                                 <br/><br/>
 <center>												
                                                 <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>

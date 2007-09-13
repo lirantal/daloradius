@@ -68,6 +68,11 @@
 
 	
 ?>		
+
+
+<?php
+        include_once ("library/tabber/tab-layout.php");
+?>
 		
 <?php
 
@@ -81,9 +86,12 @@
 				<p>
 				<?php echo $l[captions][configdb][db] ?>
 
-				<br/><br/>
-
 				<form name="dbsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+
+<div class="tabber">
+
+     <div class="tabbertab" title="Global Settings">
+        <br/>
 
 <table border='2' class='table1'>
 <tr><td>
@@ -151,17 +159,12 @@
 						</font>
 </td></tr>
 
-
-
 </table>
 
-				</p>
+	</div>
 
-				<p>
-				<br/><br/>
-				<?php echo $l[captions][configdb][tables] ?>
-
-				<br/>
+     <div class="tabbertab" title="Tables Settings">
+        <br/>
 
 <table border='2' class='table1'>
 <tr><td>
@@ -273,12 +276,10 @@
 
 </table>
 
+</div>
 
-
-
-
-				<br/>
-				<br/>
+     <div class="tabbertab" title="Advanced Settings">
+        <br/>
 
 <table border='2' class='table1'>
 <tr><td>
@@ -298,6 +299,8 @@
 </td></tr>
 </table>
 
+	</div>
+</div>
 
 						<center>
 						
