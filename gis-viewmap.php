@@ -90,7 +90,7 @@ icon.infoWindowAnchor = new GPoint(5, 1);
 function createMarker(point,html) {
         var marker = new GMarker(point);
         GEvent.addListener(marker, "click", function() {
-          map.setCenter(point, 16);
+          map.setCenter(point, 4);
           marker.openInfoWindowHtml(html);
         });
         return marker;
@@ -98,10 +98,10 @@ function createMarker(point,html) {
 
 
 
-var point_sl1 = new GLatLng(35.460669951495305, -81.5625);
 // for tabbed windows
-// var marker = createTabbedMarker(point, ["Tab 1 contents", "Tab 2 contents","Tab 3 contents"],["One","Two","Three"]);
-//var marker_sl1 = createMarker(point_sl1, 'Solar Hotel <br/> 60 Users');
+//var tabPoint = new GLatLng(-22.22000000, 13.0000003312);
+//var marker = createTabbedMarker(tabPoint, ['Tab 1 contents', 'Tab 2 contents','Tab 3 contents'],['One','Two','Three']);
+//map.addOverlay(marker);
 
 <?php
 
@@ -111,7 +111,18 @@ var point_sl1 = new GLatLng(35.460669951495305, -81.5625);
 	while($row = $res->fetchRow()) {
                 echo "
 		var point_$row[0] = new GLatLng($row[3]);
-		var marker_$row[0] = createMarker(point_$row[0], '$row[1]');
+
+		// original createMarker function which creates a simple marker
+		// var marker_$row[0] = createMarker(point_$row[0], '$row[1]');
+
+		// the new function provides a tabbed marker to be created 
+
+
+		var marker_$row[0] = createTabbedMarker(point_$row[0], ['<b> Hotspot Name: </b> $row[1] <br/> \
+					<b> Mac Addr: </b> $row[2] <br/> \
+					 <b> Geo Loc: </b> $row[3] <br/>', '<a href=acct-hotspot-compare.php> Hotspot Comparison </a> \
+					<br/> <a href=acct-hotspot.php?hotspot=$row[1]> Hotspot Statistics </a> <br/> '], ['Info','Statistics']);
+
 
 		map.addOverlay(marker_$row[0]);
                         ";
@@ -119,8 +130,6 @@ var point_sl1 = new GLatLng(35.460669951495305, -81.5625);
 
         }
 ?>
-
-map.addOverlay(new GMarker(point_cus, icon));
 
 
  }
