@@ -66,10 +66,10 @@ $arrayPagesAvailable = array(
 	 'graphs_overall_download' => 'Graphs',
 	 'graphs_overall_upload' => 'Graphs',
 	 'graphs_overall_logins' => 'Graphs',
-	 'config_db' => 'Configuration',
-	 'config_interface' => 'Configuration',
-	 'config_lang' => 'Configuration',
-	 'config_logging' => 'Configuration',
+	 'config_db' => 'Configuration Core',
+	 'config_interface' => 'Configuration Core',
+	 'config_lang' => 'Configuration Core',
+	 'config_logging' => 'Configuration Core',
 	 'config_maint_test_user' => 'Configuration Maintenance',
 	 'config_operators_del' => 'Configuration Operators',
 	 'config_operators_list' => 'Configuration Operators',
@@ -838,13 +838,13 @@ echo "</table>";
 
 echo <<<EOF
 	<tr><td>		
-    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryConfiguration')">
-    <b> Configuration </b> <br/>
-    <div id="categoryConfiguration" style="display:none;visibility:visible" >
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryConfigurationCore')">
+    <b> Configuration - Core</b> <br/>
+    <div id="categoryConfigurationCore" style="display:none;visibility:visible" >
 EOF;
 echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
-		if ($descr != 'Configuration')
+		if ($descr != 'Configuration Core')
 			continue;
 
                 echo "<tr><td width='350'>";
