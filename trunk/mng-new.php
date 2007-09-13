@@ -121,6 +121,10 @@
 <script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
 
 <?php
+        include_once ("library/tabber/tab-layout.php");
+?>
+
+<?php
 
 	include ("menu-mng-main.php");
 	
@@ -132,9 +136,13 @@
 				
 				<p>
 				<?php echo $l[captions][mngnew] ?>
-				<br/><br/>
 				</p>
+
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<div class="tabber">
+
+     <div class="tabbertab" title="User Information">
+        <br/>
 
 <table border='2' class='table1'>
 <tr><td>
@@ -177,16 +185,23 @@
 						</font>
 </td></tr>
 </table>
-	<br/>
-	<center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
-	</center>
+
+     </div>
+     <div class="tabbertab" title="Attributes">
+
 <?php
         include_once('include/management/attributes.php');
         drawAttributes();
 ?>
-		
-							<br/>
+	<br/>
+     </div>		
+
+</div>
+
+	<br/>
+	<center>
+						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+	</center>
 
 				</form>
 		

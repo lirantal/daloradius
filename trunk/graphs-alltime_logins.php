@@ -21,6 +21,10 @@
 ?>
 
 <?php
+        include_once ("library/tabber/tab-layout.php");
+?>
+
+<?php
 	
 	include ("menu-graphs.php");
 	
@@ -31,13 +35,23 @@
 		
 		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsalltimelogins.php]; ?></a></h2>
 
+<div class="tabber">
+
+     <div class="tabbertab" title="Graph">
+        <br/>
 <?php
-        echo "<br/>";
         echo "<center>";
         echo "<img src=\"library/graphs-alltime-users-login.php?type=$type\" />";
         echo "</center>";
+?>
+	</div>
+     <div class="tabbertab" title="Statistics">	
+	<br/>
+<?php
         include 'library/tables-alltime-users-login.php';
 ?>
+	</div>
+</div>
 		
 
 		</div>

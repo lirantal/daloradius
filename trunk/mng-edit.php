@@ -170,7 +170,11 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
+
+<?php
+        include_once ("library/tabber/tab-layout.php");
+?>
+
 <?php
 
 	include ("menu-mng-main.php");
@@ -185,7 +189,6 @@
 				<?php echo $l[captions][mngedit] ?>
 				</p>
 
-<br/>
 <table border='2' class='table1'>
 <thead>
                 <tr>
@@ -210,9 +213,15 @@
 <br/>
 
 
+
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 				<input type="hidden" value="<?php echo $username ?>" name="username" />
+
+<div class="tabber">
+
+     <div class="tabbertab" title="radcheck table">
+        <br/>
 
 <?php
 
@@ -244,8 +253,11 @@
 		}
 
 		echo "</table>";
+		echo "</div>";
 
-		echo "<br/><br/>";
+		echo "<div class='tabbertab' title='radreply table'>";
+		echo "<br/>";
+
 
 		echo "<table border='2' class='table1'>";
 	        echo "
@@ -269,6 +281,7 @@
 		}
 
 		echo "</table>";
+		echo "</div>";
 
 
 ?>

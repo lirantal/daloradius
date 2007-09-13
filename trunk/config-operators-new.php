@@ -91,6 +91,11 @@
 <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
 <![endif]-->
 </head>
+
+
+<?php
+        include_once ("library/tabber/tab-layout.php");
+?>
  
 <?php
 
@@ -104,10 +109,13 @@
 				
 				<p>
 				You may fill below details for a new operator user addition to database
-				<br/><br/>
 				</p>
 				<form name="newoperator" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+<div class="tabber">
+
+     <div class="tabbertab" title="Operator Info">
+        <br/>
 
 <table border='2' class='table1'>
 <thead>
@@ -131,10 +139,10 @@
 </td></tr>
 </table>
 
+	</div>
 
-
-<br/><br/>
-
+     <div class="tabbertab" title="Contact Info">
+        <br/>
 
 <table border='2' class='table1'>
 <thead>
@@ -236,29 +244,26 @@
 
 
 
+	</div>
+
+     <div class="tabbertab" title="ACL Settings">
+        <br/>
 
 
-
-<br/><br/>
-
-
-
-
-
-
-
-
-	<br/>
-	<center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
-	</center>
 <?php
         include_once('include/management/operator_tables.php');
         drawPagesPermissions($arrayPagesAvailable);
 ?>
-		
-							<br/>
 
+	</div>
+
+</div>
+		
+				<br/>
+				<center>
+					<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+				</center>
+	
 				</form>
 		
 		</div>
