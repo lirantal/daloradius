@@ -8,10 +8,10 @@
 
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
 	isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
-	isset($_REQUEST['radius']) ? $radius = $_REQUEST['radius'] : $radius = "";
-	isset($_REQUEST['radiusport']) ? $radiusport = $_REQUEST['radiusport'] : $radiusport = "";
-	isset($_REQUEST['nasport']) ? $nasport = $_REQUEST['nasport'] : $nasport = "";
-	isset($_REQUEST['secret']) ? $secret = $_REQUEST['secret'] : $secret = "";
+	isset($_REQUEST['radius']) ? $radius = $_REQUEST['radius'] : $radius = $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'];
+	isset($_REQUEST['radiusport']) ? $radiusport = $_REQUEST['radiusport'] : $radiusport = $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'];
+	isset($_REQUEST['nasport']) ? $nasport = $_REQUEST['nasport'] : $nasport = $configValues['CONFIG_MAINT_TEST_USER_NASPORT'];
+	isset($_REQUEST['secret']) ? $secret = $_REQUEST['secret'] : $secret = $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'];
 		
     if (isset($_REQUEST['submit'])) {
 
