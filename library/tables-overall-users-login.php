@@ -93,10 +93,8 @@ function daily($username, $orderBy, $orderType) {
                 $i++;
         }
 
-
+	echo "<tr> <td> </td> <td> <b> $total_logins </b> </td> </tr>";
 	echo "</table>";
-
-	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
         include 'closedb.php';
 }
@@ -178,10 +176,9 @@ function monthly($username, $orderBy, $orderType) {
                 $i++;
         }
 
+        echo "<tr> <td> </td> <td> <b> $total_logins </b> </td> </tr>";
 
 	echo "</table>";
-
-	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
         include 'library/closedb.php';
 }
@@ -264,10 +261,10 @@ function yearly($username, $orderBy, $orderType) {
                 $i++;
         }
 
+
+        echo "<tr> <td> </td> <td> <b> $total_logins </b> </td> </tr>";
  
 	echo "</table>";
-
-	echo "<br/> Total hits of <u>$total_logins</u> for user: <u>$user</u> <br/>";
 
         include 'closedb.php';
 }

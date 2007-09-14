@@ -89,9 +89,8 @@ function daily($username, $orderBy, $orderType) {
         }
 
 
-
+	echo "<tr> <td> <b> $total_uploads </b> </td> </tr>";
 	echo "</table>";
-	echo "<br/> Total uploads of <u>$total_uploads</u> <br/>";
 
         include 'closedb.php';
 }
@@ -166,10 +165,8 @@ function monthly($username, $orderBy, $orderType) {
                 $i++;
         }
 
-
+        echo "<tr> <td> <b> $total_uploads </b> </td> </tr>";
 	echo "</table>";
-
-	echo "<br/> Total uploads of <u>$total_uploads</u> <br/>";
 
         include 'closedb.php';
 }
@@ -248,9 +245,8 @@ function yearly($username, $orderBy, $orderType) {
                 $i++;
         }
 
-
+        echo "<tr> <td> <b> $total_uploads </b> </td> </tr>";
 	echo "</table>";
-	echo "<br/> Total uploads of <u>$total_uploads</u> <br/>";
 
         include 'closedb.php';
 }
