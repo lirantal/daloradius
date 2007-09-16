@@ -1,3 +1,17 @@
+release 0.9-4 - September 01 2007
+	- fixed bug in include/management/attributes.php and library/javascript/pages_common.js
+	  which caused the drop-down select boxes not to update the text input.
+	- added support for time and speed calculations done on select box updates for attributes
+	  like max-all-session, session-timeout, bandwidth related attributes, etc. 
+	  (credit for the idea goes to ut_crom, thanks!)
+	- added support for tabbing layout on several management pages which eases the job in
+	  administrating the system (thanks to the addition of the tabber library by Patrick Fitzgerald
+	  which is hosted at http://www.barelyfitz.com/)
+	- added support for tabbed pop-up window on GIS page to preview hotspots locations details and
+	  statistics information
+	- added support for configurable Test User Connectivity radius settings
+
+
 release 0.9-3 - September 01 2007
 	- fixed bug 1763605 - user edit hat a wrong mysql syntax
 	- fixed bugs in configuration pages.
