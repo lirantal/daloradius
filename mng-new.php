@@ -141,7 +141,7 @@
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="User Information">
+     <div class="tabbertab" title="Account Info">
         <br/>
 
 <table border='2' class='table1'>
@@ -187,6 +187,19 @@
 </table>
 
      </div>
+
+
+     <div class="tabbertab" title="User Info">
+        <br/>
+
+<?php
+	include_once('include/management/userinfo.php');
+	drawUserInfo();
+?>
+     </div>
+
+
+
      <div class="tabbertab" title="Attributes">
 
 <?php
