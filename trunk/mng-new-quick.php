@@ -84,6 +84,10 @@
 <script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
 
 <?php
+        include_once ("library/tabber/tab-layout.php");
+?>
+
+<?php
 
 	include ("menu-mng-main.php");
 	
@@ -95,9 +99,14 @@
 				
 				<p>
 				<?php echo $l[captions][mngnewquick] ?>
-				<br/><br/>
 				</p>
 				<form name="newuser" action="mng-new-quick.php" method="post">
+
+<div class="tabber">
+
+     <div class="tabbertab" title="Account Info">
+        <br/>
+
 
 <table border='2' class='table1'>
 <tr><td>
@@ -143,7 +152,24 @@
 </div>
 <br/>
 						</font>
-</td></tr></table>
+</td></tr>
+</table>
+
+        </div>
+
+     <div class="tabbertab" title="User Info">
+        <br/>
+
+<?php
+        include_once('include/management/userinfo.php');
+        drawUserInfo();
+?>
+     </div>
+
+
+</div>
+
+
 <br/>
 <center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
