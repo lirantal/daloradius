@@ -167,7 +167,6 @@
 
 <?php
         include_once('include/management/userinfo.php');
-        drawUserInfo();
 ?>
      </div>
 
