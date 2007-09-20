@@ -6,8 +6,6 @@
 	include('library/check_operator_perm.php');
 
 
-
-
     // declaring variables
     $username = "";
     $password = "";
@@ -16,11 +14,22 @@
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
 		$password = $_REQUEST['password'];
-        $passwordtype = $_REQUEST['passwordType'];	
+	        $passwordtype = $_REQUEST['passwordType'];	
 		$expiration = $_REQUEST['expiration'];
 
+		$firstname = $_REQUEST['firstname'];
+		$lastname = $_REQUEST['lastname'];
+		$email = $_REQUEST['email'];
+		$department = $_REQUEST['department'];
+		$company = $_REQUEST['company'];
+		$workphone = $_REQUEST['workphone'];
+		$homephone = $_REQUEST['homephone'];
+		$mobilephone = $_REQUEST['mobilephone'];
+		$notes = $_REQUEST['notes'];
+		
+
 		include 'library/opendb.php';
-        include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
+        	include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
 
 		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
 		$res = $dbSocket->query($sql);
@@ -51,23 +60,62 @@
 					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
 					$res = $dbSocket->query($sql);
 				}
-			
+	
+				// insert user information table
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
+				$res = $dbSocket->query($sql);
+		
 				 foreach( $_POST as $attribute=>$value ) { 
+
+
+					// switch case to rise the flag for several $attribute which we do not
+					// wish to process (ie: do any sql related stuff in the db)
+					switch ($attribute) {
+
+						case "firstname":
+						case "lastname":
+						case "email":
+						case "department":
+						case "company":
+						case "workphone":
+						case "homephone":
+						case "mobilephone":
+						case "notes":
+						case "username":
+							$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
+										// to skip the loop (continue) without entering it as
+										// we do not want to process this $attribute in the following
+										// code block
+							break;
+
+					}
+				
+					if ($skipLoopFlag == 1)
+						continue;
+
 					if ( ($attribute == "username") || ($attribute == "password") || ($attribute == "passwordType") || ($attribute == "expiration") || ($attribute == "submit") )	
 						continue; // we skip these post variables as they are not important
+/*
+					if ( ($attribute == "firstname") || ($attribute == "lastname") || ($attribute == "email") || 
+						($attribute == "department") || ($attribute == "company") || ($attribute == "workphone") || 
+						($attribute == "homephone") || ($attribute == "mobilephone") || ($attribute == "notes") )
+							continue;
+*/
 
 					if (!($value[0]))
 						continue;
+
+		
 						
 						$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
 																		// or radcheck table (using include/management/attributes.php function)
 
 				        $counter = 0;
 
-						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-                        $res = $dbSocket->query($sql);
+					$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
+                		        $res = $dbSocket->query($sql);
 
-						$counter++;
+					$counter++;
 				} // foreach
 				
 				$actionStatus = "success";
@@ -141,7 +189,7 @@
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="Account Info">
+     <div class="tabbertab" title="User Information">
         <br/>
 
 <table border='2' class='table1'>
