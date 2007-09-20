@@ -20,8 +20,35 @@
 
 			 foreach( $_POST as $attribute=>$value ) { 
 
-				if ( ($attribute == "username") || ($attribute == "submit") )	// we skip these post variables as they are not important
-					continue;	
+
+                                        // switch case to rise the flag for several $attribute which we do not
+                                        // wish to process (ie: do any sql related stuff in the db)
+                                        switch ($attribute) {
+
+                                                case "submit":
+                                                case "firstname":
+                                                case "lastname":
+                                                case "email":
+                                                case "department":
+                                                case "company":
+                                                case "workphone":
+                                                case "homephone":
+                                                case "mobilephone":
+                                                case "notes":
+                                                case "username":
+                                                        $skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
+                                                                                // to skip the loop (continue) without entering it as
+                                                                                // we do not want to process this $attribute in the following
+                                                                                // code block
+                                                        break;
+
+                                        }
+
+                                        if ($skipLoopFlag == 1) {
+						$skipLoopFlag = 0; 		// resetting the loop flag
+                                                continue;
+					}
+
 					
 					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
 												// or radcheck table (using include/management/attributes.php function)
@@ -286,6 +313,18 @@
 
 ?>
 
+     <div class="tabbertab" title="User Info">
+        <br/>
+
+<?php
+        include_once('include/management/userinfo.php');
+?>
+
+	</div>
+</div>
+
+
+
 						<br/><br/>
 <center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
@@ -293,7 +332,6 @@
 
 				</form>
 		
-		</div>
 		
 		<div id="footer">
 		
