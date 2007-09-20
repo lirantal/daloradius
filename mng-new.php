@@ -95,8 +95,10 @@
 
 					}
 				
-					if ($skipLoopFlag == 1)
+					if ($skipLoopFlag == 1) {
+                                                $skipLoopFlag = 0;              // resetting the loop flag
 						continue;
+					}
 
 					if (!($value[0]))
 						continue;
