@@ -72,6 +72,11 @@
 					// wish to process (ie: do any sql related stuff in the db)
 					switch ($attribute) {
 
+						case "username":
+						case "password":
+						case "passwordType":
+						case "expiration":
+						case "submit":
 						case "firstname":
 						case "lastname":
 						case "email":
@@ -93,19 +98,8 @@
 					if ($skipLoopFlag == 1)
 						continue;
 
-					if ( ($attribute == "username") || ($attribute == "password") || ($attribute == "passwordType") || ($attribute == "expiration") || ($attribute == "submit") )	
-						continue; // we skip these post variables as they are not important
-/*
-					if ( ($attribute == "firstname") || ($attribute == "lastname") || ($attribute == "email") || 
-						($attribute == "department") || ($attribute == "company") || ($attribute == "workphone") || 
-						($attribute == "homephone") || ($attribute == "mobilephone") || ($attribute == "notes") )
-							continue;
-*/
-
 					if (!($value[0]))
 						continue;
-
-		
 						
 						$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
 																		// or radcheck table (using include/management/attributes.php function)
