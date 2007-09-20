@@ -39,6 +39,11 @@
 					$res = $dbSocket->query($sql);
 				}
 
+
+                                // insert user information table
+                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
+                                $res = $dbSocket->query($sql);
+
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $username";
 				$logAction = "Successfully added new user [$username] on page: ";
