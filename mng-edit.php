@@ -25,6 +25,7 @@
                                         // wish to process (ie: do any sql related stuff in the db)
                                         switch ($attribute) {
 
+                                                case "username":
                                                 case "submit":
                                                 case "firstname":
                                                 case "lastname":
@@ -35,7 +36,6 @@
                                                 case "homephone":
                                                 case "mobilephone":
                                                 case "notes":
-                                                case "username":
                                                         $skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
                                                                                 // to skip the loop (continue) without entering it as
                                                                                 // we do not want to process this $attribute in the following
