@@ -102,7 +102,7 @@
 						continue;
 						
 						$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
-																		// or radcheck table (using include/management/attributes.php function)
+													// or radcheck table (using include/management/attributes.php function)
 
 				        $counter = 0;
 
@@ -183,7 +183,7 @@
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="User Information">
+     <div class="tabbertab" title="Account Info">
         <br/>
 
 <table border='2' class='table1'>
