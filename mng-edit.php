@@ -16,7 +16,23 @@
 
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
+
+                $firstname = $_REQUEST['firstname'];
+                $lastname = $_REQUEST['lastname'];
+                $email = $_REQUEST['email'];
+                $department = $_REQUEST['department'];
+                $company = $_REQUEST['company'];
+                $workphone = $_REQUEST['workphone'];
+                $homephone = $_REQUEST['homephone'];
+                $mobilephone = $_REQUEST['mobilephone'];
+                $notes = $_REQUEST['notes'];
+
 		if (trim($username) != "") {
+
+			// update user information table
+                       $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='$firstname', lastname='$lastname', email='$email', department='$department', company='$company', workphone='$workphone', homephone='$homephone', mobilephone='$mobilephone', notes='$notes' WHERE username='$username'";
+                       $res = $dbSocket->query($sql);
+			
 
 			 foreach( $_POST as $attribute=>$value ) { 
 
@@ -176,9 +192,31 @@
 	}	
 
 
+
+	/* fill-in all the user info details */
+
+
+	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName='$username'";
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+                $ui_firstname = $row['firstname'];
+                $ui_lastname = $row['lastname'];
+                $ui_email = $row['email'];
+                $ui_department = $row['department'];
+                $ui_company = $row['company'];
+                $ui_workphone = $row['workphone'];
+                $ui_homephone = $row['homephone'];
+                $ui_mobilephone = $row['mobilephone'];
+                $ui_notes = $row['notes'];
+
+
+
+
+
+
+
 	include 'library/closedb.php';
-
-
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
