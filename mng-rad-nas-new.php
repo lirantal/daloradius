@@ -98,7 +98,7 @@
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="NAS Information">
+     <div class="tabbertab" title="NAS Info">
         <br/>
 
 <table border='2' class='table1'>
@@ -117,6 +117,29 @@
                                                 </font><br/>
 </td></tr>
 <tr><td>
+                                                <?php if (trim($nastype) == "") { echo "<font color='#FF0000'>";  }?>
+                                                <b><?php echo $l[FormField][mngradnasnew.php][NasType] ?></b>
+</td><td>												
+                                                <input value="<?php echo $nastype ?>" name="nastype" id="nastype" />
+
+				                <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele">
+				                <option value="other">other</option>
+				                <option value="cisco">cisco</option>
+				                <option value="livingston">livingston</option>
+				                <option value="computon">computon</option>
+				                <option value="max40xx">max40xx</option>
+				                <option value="multitech">multitech</option>
+				                <option value="natserver">natserver</option>
+				                <option value="pathras">pathras</option>
+				                <option value="patton">patton</option>
+				                <option value="portslave">portslave</option>
+				                <option value="tc">tc</option>
+				                <option value="usrhiper">usrhiper</option>
+			        	        </select>
+
+                                                </font>
+</td></tr>
+<tr><td>
                                                 <?php if (trim($nasname) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l[FormField][mngradnasnew.php][NasShortname] ?></b> 
 </td><td>												
@@ -127,21 +150,10 @@
 </table>
 
      </div>
-     <div class="tabbertab" title="Attributes">
+     <div class="tabbertab" title="Advanced">
 	<br/>
 
 <table border='2' class='table1' width='600'>
-<tr><td>
-                                                <?php if (trim($nastype) == "") { echo "<font color='#FF0000'>";  }?>
-			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesNasType')">
-                                                <b><?php echo $l[FormField][mngradnasnew.php][NasType] ?></b>
-</td><td>												
-<div id="attributesNasType" style="display:none;visibility:visible" >
-						<br/>
-                                                <input value="<?php echo $nastype ?>" name="nastype" />
-                                                </font>
-</div><br/>
-</td></tr>
 <tr><td>
 
 
