@@ -1,5 +1,4 @@
 
-
 function setText(srcObj,dstObj) {
 
 var srcElem = document.getElementById(srcObj);
@@ -18,6 +17,21 @@ dstElem.value = "srcElemVal: " + elemVal + " - dstElemVal: " + dstElemVal;
 
 
 }
+
+
+
+function setStringText(srcObj,dstObj) {
+
+var srcElem = document.getElementById(srcObj);
+var elemVal = srcElem.options[srcElem.selectedIndex].value;
+
+var dstElem = document.getElementById(dstObj);
+var dstElemVal = dstElem.value;
+dstElem.value = elemVal;
+
+}
+
+
 
 
 function toggleShowDiv(pass) {
