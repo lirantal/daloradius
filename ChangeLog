@@ -8,9 +8,10 @@ release 0.9-4 - September 01 2007
 	  administrating the system (thanks to the addition of the tabber library by Patrick Fitzgerald
 	  which is hosted at http://www.barelyfitz.com/)
 	- added support for tabbed pop-up window on GIS page to preview hotspots locations details and
-	  statistics information
+	  statistics information. Also added tabbed layout support to nas pages.
+	- added drop down combo boxes with pre-configured nas types to nas page.
 	- added support for configurable Test User Connectivity radius settings
-
+	- added new table userinfo for general user informatin (contact details)
 
 release 0.9-3 - September 01 2007
 	- fixed bug 1763605 - user edit hat a wrong mysql syntax
