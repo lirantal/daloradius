@@ -54,6 +54,28 @@ if ($configValues['CONFIG_LOG_ACTIONS'] == "yes") {
 }
 
 
+/********************************************************************************
+ * evaluating whether we need to debug SQL queries to the database as well.
+ * $logDebugSQL is set for each $sql = "query statement..." on the actual page
+ * in the following form:         $logDebugSQL += $sql . "\n";
+ *
+ ********************************************************************************/
+if ($configValues['CONFIG_DEBUG_SQL'] == "yes") {
+	if (isset($logDebugSQL)) {
+	        $msgDebugSQL = "- SQL -" . " " . $logDebugSQL . " on page: ";
+	        logMessage("DEBUG", $msgDebugSQL, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
+
+		if (isset($configValues['CONFIG_DEBUG_SQL_ONPAGE'])) {
+			echo "<br/><br/>";
+			echo "Debugging SQL Queries: <br/>";
+			echo $logDebugSQL;
+			echo "<br/><br/>";
+		}
+	}
+}
+
+
+
 function logMessage($type, $msg, $logFile, $currPage) {
 /*
 * @param $type               The message type, for example, NOTICE, DEBUG, ERROR, ACTION, etc...
