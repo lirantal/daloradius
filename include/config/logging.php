@@ -64,15 +64,20 @@ if ($configValues['CONFIG_DEBUG_SQL'] == "yes") {
 	if (isset($logDebugSQL)) {
 	        $msgDebugSQL = "- SQL -" . " " . $logDebugSQL . " on page: ";
 	        logMessage("DEBUG", $msgDebugSQL, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
+	}
+}
 
-		if (isset($configValues['CONFIG_DEBUG_SQL_ONPAGE'])) {
+/* the continuation of the CONFIG_DEBUG_SQL actually, this prints to the page
+ * being viewed */
+if (isset($configValues['CONFIG_DEBUG_SQL_ONPAGE'])) {
+	if (isset($logDebugSQL)) {
 			echo "<br/><br/>";
 			echo "Debugging SQL Queries: <br/>";
 			echo $logDebugSQL;
 			echo "<br/><br/>";
 		}
-	}
 }
+
 
 
 
