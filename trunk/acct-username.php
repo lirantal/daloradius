@@ -15,7 +15,6 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] on page: ";
-    include('include/config/logging.php');
 
 ?>
 
@@ -44,6 +43,7 @@
 	//checking if the username exist in the db
 	$sql = "select * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName like '$username'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	if ($res->numRows() != 0) {		//if the user exist display information
 
@@ -51,6 +51,7 @@
 
 	$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName LIKE '$username' AND (Attribute like '%Password')";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	echo "
 	        <table border='2' class='table1'>
@@ -82,6 +83,7 @@
 
 	$sql = "select Value from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName='$username' and Attribute='Max-All-Session'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 	while($row = $res->fetchRow()) {
 	        echo "<td> $row[0] </td>";
                 $credit = $row[0];
@@ -89,6 +91,7 @@
 
 	$sql = "select SUM(AcctSessionTime), COUNT(RadAcctId), SUM(AcctInputOctets), SUM(AcctOutputOctets) from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 	while($row = $res->fetchRow()) {
 	        $used = $row[0];
 	        $total_sessions = $row[1];
@@ -126,6 +129,7 @@
 	
     $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE UserName='$username' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -231,8 +235,10 @@
 
 
 
+<?php
+	include('include/config/logging.php');
+?>
 
-				
 		</div>
 		
 		<div id="footer">
