@@ -14,7 +14,6 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for hotspot comparison on page: ";
-    include('include/config/logging.php');
 
 ?>
 
@@ -40,6 +39,7 @@
 
 	$sql = "select ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, count(distinct(UserName)) as uniqueusers, count(radacctid) as totalhits, avg(AcctSessionTime) as avgsessiontime, sum(AcctSessionTime) as totaltime from ".$configValues['CONFIG_DB_TBL_RADACCT']." join ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid like ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) group by ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name  ORDER BY $orderBy $orderType;;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -100,7 +100,11 @@
 	echo "</center>";
 ?>
 
-				
+
+<?php
+	include('include/config/logging.php');
+?>
+
 		</div>
 		
 		<div id="footer">
