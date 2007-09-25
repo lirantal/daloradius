@@ -20,7 +20,7 @@
 <div id="innerwrapper">
 
 		<div id="header">
-		<h1><a href="index.php"><? echo $l[all][daloRADIUS]; ?></a></h1>
+                <h1><a href="index.php"> <img src="images/daloradius_small.jpg" border=0/></a></h1>
 				
 				<h2>
 				
