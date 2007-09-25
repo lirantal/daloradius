@@ -18,6 +18,7 @@
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
 			$actionStatus = "success";
 			$actionMsg = "Deleted rate type from database: <b> $type </b>";
@@ -52,7 +53,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 
 
@@ -89,7 +89,11 @@
 						<input type="submit" name="submit" value="Apply"/>
 </center>
 				</form>
-		
+
+				
+<?php
+	include('include/config/logging.php');
+?>				
 		</div>
 		
 		<div id="footer">

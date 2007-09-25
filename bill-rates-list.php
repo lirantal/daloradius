@@ -6,7 +6,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 ?>
 
@@ -29,6 +28,7 @@
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES'].";";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -61,6 +61,9 @@
 ?>
 				
 						
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		
