@@ -13,6 +13,8 @@
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+	
 	$row = $row = $res->fetchRow();
 	$cardbank = $row[2];
 	$rate = $row[3];
@@ -29,11 +31,13 @@
 			if (trim($cardbank) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET cardbank=$cardbank WHERE type='$type'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			}
 		
 			if (trim($rate) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET rate=$rate WHERE type='$type'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 				
 				$actionStatus = "success";
 				$actionMsg = "Updated rates of type: <b> $type</b>";
@@ -70,7 +74,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 
 ?>
@@ -112,7 +115,11 @@
 </center>
 
 				</form>
-		
+
+				
+<?php
+	include('include/config/logging.php');
+?>				
 		</div>
 		
 		<div id="footer">

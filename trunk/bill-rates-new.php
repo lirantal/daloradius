@@ -24,6 +24,7 @@
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->fetchRow() == 0) {
 		
@@ -32,6 +33,7 @@
 				// insert username/password
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES']." VALUES (0, '$type', $cardbank, $rate)";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 		
 				$actionStatus = "success";
 				$actionMsg = "Added rate type: <b> $type </b> with cardbank: <b> $cardbank </b>";
@@ -57,7 +59,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 
 ?>
@@ -104,10 +105,12 @@
 						<input type="submit" name="submit" value="<?echo $l[buttons][apply]; ?>"/>
 </center>
 				</form>
-		
 
-						
-		
+
+
+<?php
+	include('include/config/logging.php');
+?>		
 		</div>
 		
 		<div id="footer">
