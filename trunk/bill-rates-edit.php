@@ -15,7 +15,7 @@
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 	
-	$row = $row = $res->fetchRow();
+	$row = $res->fetchRow();
 	$cardbank = $row[2];
 	$rate = $row[3];
 
