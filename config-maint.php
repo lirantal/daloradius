@@ -4,7 +4,6 @@
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 	
 ?>
 		
@@ -14,10 +13,11 @@
 		
 				<h2 id="Intro"><a href="#"></a></h2>
 				<p>
-
-<?php
-?>
 				</p>
+				
+<?php
+	include('include/config/logging.php');
+?>				
 		</div>
 		
 		<div id="footer">

@@ -17,6 +17,8 @@
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." where Username='$username'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+
 
 			$actionStatus = "success";
 			$actionMsg = "Deleted operator: <b> $username";
@@ -35,7 +37,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 
 ?>
@@ -81,6 +82,9 @@
 </center>
 				</form>
 		
+<?php
+	include('include/config/logging.php');
+?>		
 		</div>
 		
 		<div id="footer">

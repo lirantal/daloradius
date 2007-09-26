@@ -32,7 +32,6 @@
 	
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 	
 ?>		
@@ -123,6 +122,10 @@
 				<br/><br/>
 				
 				</p>
+				
+<?php
+	include('include/config/logging.php');
+?>				
 		</div>
 		
 		<div id="footer">

@@ -20,11 +20,13 @@
 
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
 			if ($res->numRows() == 0) {
 
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." (id, username, password) values (0, '$operator_username', '$operator_password')";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			
 				foreach ($_POST as $field => $value ) { 
 					if ( ($field == "operator_username") || ($field == "operator_password") )
@@ -35,6 +37,7 @@
 			
 					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET $field='$value' WHERE username='$operator_username' ";
 					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
 					echo "<br/> field: $field  - value: $value <br/>";
 						
@@ -70,7 +73,6 @@
 
     include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 	
 	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
@@ -265,7 +267,10 @@
 				</center>
 	
 				</form>
-		
+				
+<?php
+	include('include/config/logging.php');
+?>
 		</div>
 		
 		<div id="footer">
