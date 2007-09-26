@@ -44,8 +44,17 @@ Prerequisites
  are required and which are not.
 
  apt-get install apache2
- apt-get install libapache2-mod-php5
- apt-get install php5-common php5-gd php5-mysql php5-db php-pear php-db
+ apt-get install php5-common php5-gd php-pear php-db libapache2-mod-php5
+ 
+ Now if you plan on working with mysql as the database server then you need
+	1. to install the database server, being mysql.
+	2. to install the php5-mysql package which contains the libraries to talk to it
+ You would have to do the same if you choose another database server, for example PostgreSQL -
+ you would have to install the postgresql database server and php5-pgsql.
+ 
+ Assuming we decide on working with MySQL:
+ 
+ apt-get install php5-mysql
  apt-get install mysql-server-5.0 
 
  Note: PHP installations are different on different systems, so please consult the OPTIONAL PHP CONFIGURATION section below
