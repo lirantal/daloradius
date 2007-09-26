@@ -23,6 +23,7 @@
 					
 					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET $field='$value' WHERE username='$operator_username'";
 					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
 	        } //foreach $_POST
 
@@ -56,8 +57,9 @@
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE UserName='$operator_username'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 	$operator_password = $row['password'];
 	$operator_firstname = $row['firstname'];
 	$operator_lastname = $row['lastname'];
@@ -83,7 +85,6 @@
 
     include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 
 ?>
@@ -269,7 +270,10 @@
 </center>
 
 				</form>
-		
+
+<?php
+	include('include/config/logging.php');
+?>				
 		</div>
 		
 		<div id="footer">

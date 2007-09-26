@@ -14,7 +14,6 @@
     include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
-    include('include/config/logging.php');
 
 
 ?>
@@ -54,6 +53,8 @@
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT id, username, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR'];
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+	
 	$numrows = $res->numRows();
 
 
@@ -63,6 +64,7 @@
 	
 	$sql = "SELECT id, username, password, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -138,9 +140,9 @@
 ?>
 
 
-
-
-				
+<?php
+	include('include/config/logging.php');
+?>	
 		</div>
 		
 		<div id="footer">
