@@ -39,8 +39,6 @@
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
-					echo "<br/> field: $field  - value: $value <br/>";
-						
 				} // foreach
 
                                 $actionStatus = "success";

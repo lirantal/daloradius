@@ -20,6 +20,9 @@
 
 				if ( ($field == "operator_username") || ($field == "submit") )	// we skip these post variables as they are not important
 					continue;	
+
+				if ( ($field == "lastlogin") )
+					continue;	
 					
 					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET $field='$value' WHERE username='$operator_username'";
 					$res = $dbSocket->query($sql);
@@ -73,6 +76,7 @@
 	$operator_messenger1 = $row['messenger1'];
 	$operator_messenger2 = $row['messenger2'];
 	$operator_notes = $row['notes'];
+	$operator_lastlogin = $row['lastlogin'];
 
 
 
@@ -148,6 +152,13 @@
 				echo "<input value='$operator_password' name='password' />";
 		?>
 
+                                                </font>
+</td></tr>
+<tr><td>
+                                                <?php if (trim($operator_lastlogin) == "") { echo "<font color='#FF0000'>";  }?>
+                                                <b>Last Login Time</b>
+</td><td>
+                                                <input disabled value="<?php echo $operator_lastlogin ?>" name="lastlogin"/>
                                                 </font>
 </td></tr>
 </table>

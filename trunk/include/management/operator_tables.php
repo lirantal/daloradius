@@ -45,6 +45,7 @@ $arrayPagesAvailable = array(
 	 'mng_rad_groupreply_edit' => 'Management GroupReply',
 	 'rep_topusers' => 'Reporting',
 	 'rep_username' => 'Reporting',
+	 'rep_online' => 'Reporting',
 	 'acct_active' => 'Accounting',
 	 'acct_username' => 'Accounting',
 	 'acct_all' => 'Accounting',
