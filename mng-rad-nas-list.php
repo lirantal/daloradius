@@ -15,7 +15,7 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
-    include('include/config/logging.php');
+
 
 
 ?>
@@ -48,10 +48,13 @@
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT * FROM nas;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
 	$numrows = $res->numRows();
 
 	$sql = "SELECT * FROM nas ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -137,6 +140,10 @@
 
 
 			</p>
+
+<?php
+	include('include/config/logging.php');
+?>
 			
 	</div>
 	

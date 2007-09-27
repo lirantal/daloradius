@@ -31,6 +31,7 @@
 
 		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
 
@@ -43,6 +44,7 @@
 				// insert nas details
 				$sql = "INSERT INTO nas values (0, '$nashost', '$nasname', '$nastype', $nasports, '$nassecret', '$nascommunity', '$nasdescription')";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			
 				$actionStatus = "success";
 				$actionMsg = "Added new NAS to database: <b> $nashost </b>  ";
@@ -64,7 +66,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 	
 
 ?>
@@ -212,6 +214,10 @@
 
 				</p>
 				
+<?php
+	include('include/config/logging.php');
+?>
+
 		</div>
 		
 		<div id="footer">

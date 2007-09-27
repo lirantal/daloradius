@@ -22,6 +22,8 @@
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
 	$row = $res->fetchRow();		// array fetched with values from $sql query
 
 					// assignment of values from query to local variables
@@ -48,6 +50,7 @@
 
 		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 1) {
 
@@ -60,6 +63,7 @@
 				// insert nas details
 				$sql = "UPDATE nas SET shortname='$nasname', type='$nastype', ports=$nasports, secret='$nassecret', community='$nascommunity', description='$nasdescription' WHERE nasname='$nashost'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
 				$actionMsg = "Updated NAS settings in database: <b> $nashost </b>  ";
@@ -101,7 +105,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -247,6 +251,10 @@
 
 
 				</p>
+
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		
