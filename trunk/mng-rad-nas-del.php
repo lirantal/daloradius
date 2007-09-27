@@ -26,6 +26,7 @@
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM nas WHERE nasname='$nashost'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
 			$actionStatus = "success";
 			$actionMsg = "Deleted all NAS from database: <b> $nashost </b>";
@@ -44,7 +45,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 	
 ?>
@@ -89,6 +89,10 @@
                                                 <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
                                 </form>
+
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		

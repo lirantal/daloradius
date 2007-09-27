@@ -13,7 +13,6 @@
 
     include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 	
     include 'library/opendb.php';
 
@@ -27,6 +26,7 @@
 
 		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		$actionStatus = "success";
 		$actionMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
@@ -38,6 +38,7 @@
 			
 		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$hotspot_name'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		$actionStatus = "success";
 		$actionMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
@@ -143,8 +144,9 @@ GEvent.addListener(map, "click", function(marker, point) {
 
 
 <?php
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	while($row = $res->fetchRow()) {
                 echo "
@@ -182,6 +184,9 @@ map.addOverlay(new GMarker(point_cus, icon));
 
 
 
+<?php
+	include('include/config/logging.php');
+?>
 
 		</div>
 		

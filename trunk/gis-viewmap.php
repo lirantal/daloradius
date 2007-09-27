@@ -8,7 +8,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 ?>
 
 
@@ -105,8 +105,9 @@ function createMarker(point,html) {
 
 <?php
 
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	while($row = $res->fetchRow()) {
                 echo "
@@ -143,6 +144,9 @@ function createMarker(point,html) {
 ?>
 
 
+<?php
+	include('include/config/logging.php');
+?>
 
 		</div>
 		
