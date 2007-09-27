@@ -6,6 +6,9 @@ if (isset($_SESSION['logged_in'])) {
    unset($_SESSION['logged_in']);
 }
 
+// completely destory the session and all it's variables
+session_destroy();
+
 // now that the user is logged out,
 // go to login page
 header('Location: login.php');
