@@ -31,6 +31,9 @@
 <![endif]-->
 </head>
 
+<?php
+        include_once ("library/tabber/tab-layout.php");
+?>
 
 <?php
 
@@ -50,7 +53,11 @@
 				</p>
 
 
+<div class="tabber">
 
+     <div class="tabbertab" title="Statistics">
+        <br/>	
+	
 <?php
 
     include 'library/opendb.php';
@@ -76,8 +83,7 @@
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 	/* END */
-	
-	
+
 	echo "<table border='2' class='table1'>\n";
 	echo "
 					<thead>
@@ -129,9 +135,22 @@
 	
 	echo "</table>";
 	include 'library/closedb.php';
-	
+		
 ?>
 
+	</div>
+
+     <div class="tabbertab" title="Graph">
+        <br/>
+
+<?php
+	echo "<center>";
+	echo "<img src=\"library/graphs-reports-online-users.php\" />";
+	echo "</center>";
+?>
+
+	</div>
+</div>
 
 
 
