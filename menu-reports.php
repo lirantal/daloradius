@@ -28,6 +28,7 @@ include_once ("lang/main.php");
 				<h3>Users Reports</h3>
 				<ul class="subnav">
 				
+						<li><a href="rep-online.php"><b>&raquo;</b>Online Users</a>
 						<li><a href="javascript:document.searchusername.submit();"><b>&raquo;</b>Search User</a>
 							<form name="searchusername" action="rep-username.php" method="post" class="sidebar">
 							<input name="username" type="text">
