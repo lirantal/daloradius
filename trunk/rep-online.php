@@ -15,7 +15,7 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
-    include('include/config/logging.php');
+
 
 
 ?>
@@ -75,6 +75,7 @@
 	
 	$sql = "SELECT Username, FramedIPAddress, AcctStartTime, AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL) ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -140,8 +141,10 @@
 
 	</div>
 
+
      <div class="tabbertab" title="Graph">
         <br/>
+
 
 <?php
 	echo "<center>";
@@ -154,7 +157,10 @@
 
 
 
-				
+<?php
+	include('include/config/logging.php');
+?>
+		
 		</div>
 		
 		<div id="footer">

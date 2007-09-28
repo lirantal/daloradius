@@ -17,7 +17,7 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] on page: ";
-    include('include/config/logging.php');
+
 
 ?>
 
@@ -47,6 +47,7 @@
 
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'  ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -100,6 +101,7 @@
 	// table to display the radreply information per the $username
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'  ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -151,7 +153,9 @@
 
 
 
-
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		
