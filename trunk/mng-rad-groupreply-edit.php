@@ -22,6 +22,8 @@
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
 	$row = $res->fetchRow();		// array fetched with values from $sql query
 		$op = $row[3];
 		$attribute = $row[2];
@@ -39,6 +41,7 @@
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$valueOld'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 1) {
 
@@ -46,6 +49,7 @@
 
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			
 			$actionStatus = "success";
 			$actionMsg = "Updated group attributes for: <b> $groupname </b>";
@@ -84,7 +88,7 @@
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 
 
 ?>
@@ -155,6 +159,11 @@
 
 
 				</p>
+
+
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		
