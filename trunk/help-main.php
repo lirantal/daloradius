@@ -27,7 +27,8 @@
 		
 				<h2 id="Intro"><a href="#">Help</a></h2>
 				<p>
-				still under construction
+				Still under construction, if you would like to help out email me at liran.tal@gmail.com <br/>
+				Otherwise you can check out the wiki at <a href="http://daloradius.wiki.sourceforge.net"> daloradius.wiki.sourceforge.net </a>
 				</p>
 		</div>
 		
