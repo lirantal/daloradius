@@ -22,6 +22,7 @@
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname' AND Value='$value'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 	$row = $res->fetchRow();		// array fetched with values from $sql query
 		$op = $row[3];
 		$attribute = $row[2];
@@ -38,6 +39,7 @@
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname' AND Value='$valueOld'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 1) {
 
@@ -45,6 +47,7 @@
 
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			
 			$actionStatus = "success";
 			$actionMsg = "Updated group attributes for: <b> $groupname </b>";
@@ -84,7 +87,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -153,6 +156,10 @@
 
 
 				</p>
+
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		

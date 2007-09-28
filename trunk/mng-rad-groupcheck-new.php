@@ -30,12 +30,14 @@
 					
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$group' AND Value='$value[$counter]'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 				
 			if ($res->numRows() == 0) {
 				if (trim($group) != "" and trim($value[$counter]) != "" and trim($op[$counter]) != "" and trim($attribute[$counter]) != "") {								
 					// insert usergroup details
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." values (0,'$group', '$attribute[$counter]', '$op[$counter]', '$value[$counter]')";
 					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 					$counter++;
 					
 					$actionStatus = "success";
@@ -88,12 +90,14 @@
 					
 				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupExtra' AND Value='$valueExtra[$counter]'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 					
 				if ($res->numRows() == 0) {
 					if (trim($groupExtra) != "" and trim($valueExtra[$counter]) != "" and trim($opExtra[$counter]) != "" and trim($attributeExtra[$counter]) != "") {								
 						// insert usergroup details
 						$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." values (0,'$groupExtra', '$attributeExtra[$counter]', '$opExtra[$counter]', '$valueExtra[$counter]')";
 						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
 						$counter++;
 					} // end if trim
 					
@@ -120,7 +124,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 
 
 ?>
@@ -198,7 +202,11 @@
 
 
 				</p>
-				
+
+<?php
+	include('include/config/logging.php');
+?>				
+
 		</div>
 		
 		<div id="footer">
