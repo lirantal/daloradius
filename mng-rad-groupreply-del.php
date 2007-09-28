@@ -29,6 +29,7 @@
                 // delete only a specific groupname and it's attribute
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted Group: <b> $groupname </b> and it's Value: <b> $value </b>";
@@ -41,6 +42,7 @@
                 // delete all attributes associated with a groupname
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted all instances for Group: <b> $groupname </b>";
@@ -73,7 +75,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 
 	
 ?>
@@ -123,7 +125,11 @@
 </center>												
 
                                 </form>
-				
+
+
+<?php
+	include('include/config/logging.php');
+?>	
 		</div>
 		
 		<div id="footer">
