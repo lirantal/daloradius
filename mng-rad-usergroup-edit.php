@@ -21,6 +21,7 @@
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 	$row = $res->fetchRow();		// array fetched with values from $sql query
 
 					// assignment of values from query to local variables
@@ -37,8 +38,9 @@
 		
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 1) {
 
@@ -51,6 +53,7 @@
 				// insert nas details
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='$group', priority='$priority' WHERE UserName='$username' AND GroupName='$groupOld'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 						
 				$actionStatus = "success";
 				$actionMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
@@ -87,10 +90,10 @@
 
 
 
-        
+        s
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -163,6 +166,10 @@
 
 
 				</p>
+
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		

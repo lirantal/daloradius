@@ -22,6 +22,7 @@
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
 
@@ -34,6 +35,7 @@
 				// insert usergroup details
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('$username', '$group', $priority)";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 				
 				$actionStatus = "success";
 				$actionMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";
@@ -58,7 +60,7 @@
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -127,6 +129,10 @@
 
 
 				</p>
+
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		
