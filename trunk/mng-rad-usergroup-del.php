@@ -30,6 +30,7 @@
 				// // delete only a specific groupname and it's attribute
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$group'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted Username: <b> $username </b> and it's Groupname: <b> $group </b>";
@@ -42,6 +43,7 @@
 				// delete all attributes associated with a username
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
 				$actionMsg = "Deleted all instances for Username: <b> $username </b>";
@@ -60,7 +62,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 
 	
 ?>
@@ -115,6 +117,12 @@
                                                 <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
                                 </form>
+
+
+
+<?php
+	include('include/config/logging.php');
+?>
 				
 		</div>
 		
