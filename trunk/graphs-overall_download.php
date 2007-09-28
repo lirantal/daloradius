@@ -18,7 +18,7 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] of type [$type] on page: ";
-    include('include/config/logging.php');
+
 
 
 ?>
@@ -58,6 +58,11 @@
 ?>
 	</div>
 </div>		
+
+
+<?php
+	include('include/config/logging.php');
+?>
 
 		</div>
 		
