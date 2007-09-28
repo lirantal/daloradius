@@ -22,6 +22,7 @@
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	$row = $res->fetchRow();		// array fetched with values from $sql query
