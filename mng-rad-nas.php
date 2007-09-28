@@ -25,9 +25,7 @@
 				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradnas.php] ?></a></h2>
 				
 				<p>
-	<table><center><br/>
-	<img src="library/chart-mng-total-users.php" />
-	</table></center>
+
 
 				</p>
 
