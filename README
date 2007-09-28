@@ -51,13 +51,18 @@ Support
 
  IRC chat available at #daloradius on freenode (irc.freenode.net)
  But most developers and users of daloRADIUS are always available on #freeradius as well.
- 
- Wiki: http://daloradius.sourceforge.net/
- The wiki is available for quite some time now, make good use of it and don't 
+
+ Wiki: http://daloradius.wiki.sourceforge.net/
+ The wiki is available for quite some time now, make good use of it and don't
  forget to contribute your 2 cents :)
- 
- Demo: http://daloradius.sourceforge.net/demo/index.php
- Yep! A demo system is up and ready, it is mostly stable.
+
+ Demo: http://daloradius.xdsl.by/
+ A new demo system is up and ready.
+
+ The login details are as follows:
+ Username: administrator
+ Password: radius
+
  The demo system is always the last revision of the SVN so you can
  see the new features (although things may break from time to time as well :) )
  
