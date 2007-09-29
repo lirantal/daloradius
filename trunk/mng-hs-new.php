@@ -4,11 +4,19 @@
 
 	include('library/check_operator_perm.php');
 
-
-
-	$name = "";
-	$macaddress = "";
-	$geocode = "";
+	isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
+	isset($_REQUEST['macaddress']) ? $macaddress = $_REQUEST['macaddress'] : $macaddress = "";
+	isset($_REQUEST['geocode']) ? $geocode = $_REQUEST['geocode'] : $geocode = "";
+	isset($_REQUEST['owner']) ? $owner = $_REQUEST['owner'] : $owner = "";
+	isset($_REQUEST['email_owner']) ? $email_owner = $_REQUEST['email_owner'] : $email_owner = "";
+	isset($_REQUEST['manager']) ? $manager = $_REQUEST['manager'] : $manager = "";
+	isset($_REQUEST['email_manager']) ? $email_manager = $_REQUEST['email_manager'] : $email_manager = "";
+	isset($_REQUEST['address']) ? $address = $_REQUEST['address'] : $address = "";
+	isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
+	isset($_REQUEST['phone1']) ? $phone1 = $_REQUEST['phone1'] : $phone1 = "";
+	isset($_REQUEST['phone2']) ? $phone2 = $_REQUEST['phone2'] : $phone2 = "";
+	isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
+	isset($_REQUEST['website']) ? $website = $_REQUEST['website'] : $website = "";
 
 	if (isset($_POST["submit"])) {
 		$name = $_REQUEST['name'];
@@ -25,7 +33,7 @@
 			if (trim($name) != "" and trim($macaddress) != "") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$name', '$macaddress', '$geocode')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$name', '$macaddress', '$geocode','$owner','$email_owner','$manager','$email_manager','$address','$company','$phone1','$phone2','$hotspot_type','$website')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -64,6 +72,10 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
+
+<?php
+        include_once ("library/tabber/tab-layout.php");
+?>
  
 <?php
 
@@ -77,9 +89,13 @@
 				
 				<p>
 				<?php echo $l[captions][mnghsnew] ?>
-				<br/><br/>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+
+<div class="tabber">
+
+     <div class="tabbertab" title="HotSpot Info">
+        <br/>
 
 <table border='2' class='table1'>
 <tr><td>
@@ -102,6 +118,83 @@
 						<input value="<?php echo $geocode ?>" name="geocode" /><br/>
 </td></tr>
 </table>
+
+
+	</div>
+
+     <div class="tabbertab" title="Contact Info">
+        <br/>
+
+<table border='2' class='table1'>
+<tr><td>
+						<?php if (trim($owner) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Owner Name</b>
+</td><td>
+						<input value="<?php echo $owner ?>" name="owner"/><br/>
+						</font>
+</td></tr>
+<tr><td>
+						<?php if (trim($email_owner) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Owner Email</b>
+</td><td>
+						<input value="<?php echo $email_owner ?>" name="email_owner" /><br/>
+						</font>
+</td></tr>
+<tr><td>
+						<?php if (trim($manager) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Manager Name</b>
+</td><td>
+						<input value="<?php echo $manager ?>" name="manager"/><br/>
+						</font>
+</td></tr>
+<tr><td>
+						<?php if (trim($email_manager) == "") { echo "<font color='#FF0000'>";  }?>
+						<b>Manager Email</b>
+</td><td>
+						<input value="<?php echo $email_manager ?>" name="email_manager" /><br/>
+						</font>
+</td></tr>
+<tr><td>
+						<b>Company</b>
+</td><td>
+						<input value="<?php echo $company ?>" name="company" /><br/>
+</td></tr>
+<tr><td>
+						<b>Address</b>
+</td><td>
+						<input value="<?php echo $address ?>" name="address" /><br/>
+</td></tr>
+<tr><td>
+						<b>Phone 1</b>
+</td><td>
+						<input value="<?php echo $phone1 ?>" name="phone1" /><br/>
+</td></tr>
+<tr><td>
+						<b>Phone 2</b>
+</td><td>
+						<input value="<?php echo $phone2 ?>" name="phone2" /><br/>
+</td></tr>
+<tr><td>
+						<b>HotSpot Type</b>
+</td><td>
+						<input value="<?php echo $hotspot_type ?>" name="hotspot_type" /><br/>
+</td></tr>
+<tr><td>
+						<b>Website</b>
+</td><td>
+						<input value="<?php echo $website ?>" name="website" /><br/>
+</td></tr>
+
+</table>
+
+
+	</div>
+
+</div>
+
+
+
+
 						<br/><br/>
 <center>
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
