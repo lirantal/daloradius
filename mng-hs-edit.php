@@ -17,6 +17,7 @@
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";	// initialize variable
 	$logDebugSQL .= $sql . "\n";
 
 	$row = $res->fetchRow();
@@ -104,6 +105,7 @@
 				<p>
 				<?php echo $l[captions][mnghsedit] ?> 
 				<br/><br/>			</p>
+
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
