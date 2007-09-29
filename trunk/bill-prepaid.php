@@ -16,8 +16,8 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logQuery = "performed query for hotspot [$hotspot] with start date [$startdate] and end date [$enddate] on page: ";
+	$log = "visited page: ";
+	$logQuery = "performed query for hotspot [$hotspot] with start date [$startdate] and end date [$enddate] on page: ";
 
 ?>
 
@@ -38,7 +38,7 @@
 					
 <?php
 
-                include 'library/opendb.php';
+        include 'library/opendb.php';
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -114,24 +114,14 @@
                         <td> $count </td>
                         <td> $sum </td>
 			</tr>
-			</table>";	
-
-
-
-
-
+			</table>";
 
 ?>
 
 
-
-
-
-
-
-
-
-	
+<?php
+	include('include/config/logging.php');
+?>	
 
 		</div>
 		
