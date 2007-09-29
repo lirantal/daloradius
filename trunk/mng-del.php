@@ -17,9 +17,11 @@
 			// delete all attributes associated with a username
 			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
 			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='$username'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 			
 			$actionStatus = "success";
 			$actionMsg = "Deleted user: <b> $username";
@@ -38,8 +40,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
-
 
 ?>
 
@@ -83,6 +83,10 @@
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
 				</form>
+
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		

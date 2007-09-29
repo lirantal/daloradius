@@ -17,6 +17,8 @@
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
 	$row = $res->fetchRow();
 	$macaddress = $row[2];
 	$geocode = $row[3];
@@ -32,11 +34,13 @@
 			if (trim($macaddress) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='$macaddress' WHERE name='$name'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			}
 
 			if (trim($geocode) != "") {
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET geocode='$geocode' WHERE name='$name'";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			}
 			
 			$actionStatus = "success";
@@ -73,7 +77,7 @@
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+
 	
 ?>
 
@@ -121,6 +125,10 @@
 						<input type="submit" name="submit" value="<?php echo $l[buttons][savesettings] ?>"/>
 </center>
 				</form>
+
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		

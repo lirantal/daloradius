@@ -55,6 +55,7 @@ function createPassword($length) {
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() > 0) {
 			$actionStatus = "failure";
@@ -65,6 +66,7 @@ function createPassword($length) {
 			// insert username/password
 			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
 				 foreach( $_POST as $attribute=>$value ) { 
 
@@ -79,10 +81,11 @@ function createPassword($length) {
 
 				        $counter = 0;
 
-						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-                        $res = $dbSocket->query($sql);
+					$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
+		                        $res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
-						$counter++;
+					$counter++;
 
 				} // foreach
 
@@ -103,9 +106,6 @@ function createPassword($length) {
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
-
-
 
 ?>
 
@@ -212,6 +212,11 @@ function createPassword($length) {
 </center>
 
 				</form>
+
+
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		
