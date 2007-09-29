@@ -5,7 +5,7 @@
 
 	include('library/check_operator_perm.php');
 
-
+	$logDebugSQL = ""; 	// initialize variable
 
 	include 'library/opendb.php';
 		// required for checking if an attribute belongs to the
