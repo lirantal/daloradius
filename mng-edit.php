@@ -32,6 +32,7 @@
 			// update user information table
                        $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='$firstname', lastname='$lastname', email='$email', department='$department', company='$company', workphone='$workphone', homephone='$homephone', mobilephone='$mobilephone', notes='$notes' WHERE username='$username'";
                        $res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 			
 
 			 foreach( $_POST as $attribute=>$value ) { 
@@ -121,6 +122,7 @@
 
 					$sql = "UPDATE $useTable SET Value=$value WHERE UserName='$username' AND Attribute='$attribute'";
 					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
 					$counter++;
 					$password = "";		// we MUST reset the $password variable to nothing  so that it's not kepy in the loop and will repeat itself as the value to set
@@ -156,6 +158,8 @@
 	*/
 	$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' AND Attribute like '%Password'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
 	$row = $res->numRows();
 	$user_password = $row[0];
 
@@ -163,6 +167,7 @@
 
 	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	$arrAttr = array();
 	$arrOp = array();
@@ -180,6 +185,7 @@
 
 	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	$arrAttrReply = array();
 	$arrOpReply = array();
@@ -198,6 +204,8 @@
 
 	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName='$username'";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
                 $ui_firstname = $row['firstname'];
@@ -220,8 +228,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
-
 
 ?>
 
@@ -369,11 +375,17 @@
 </center>
 
 				</form>
+
+
+<?php
+	include('include/config/logging.php');
+?>
 		
-		
+		</div>
+	
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 

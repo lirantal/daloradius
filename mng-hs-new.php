@@ -19,6 +19,7 @@
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
 			if (trim($name) != "" and trim($macaddress) != "") {
@@ -26,6 +27,7 @@
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$name', '$macaddress', '$geocode')";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
 				$actionMsg = "Added to database new hotspot: <b> $name";
@@ -49,7 +51,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 ?>
 
@@ -106,6 +107,10 @@
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
 				</form>
+
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		

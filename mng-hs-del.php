@@ -18,6 +18,7 @@
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 			
 			$actionStatus = "success";
 			$actionMsg = "Deleted hotspot: <b> $name </b>";
@@ -36,7 +37,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 ?>
 
@@ -80,6 +80,11 @@
 						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
 </center>
 				</form>
+
+
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		
