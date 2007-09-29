@@ -33,6 +33,7 @@
 
 		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
 			if (trim($username) != "" and trim($password) != "") {
@@ -54,16 +55,19 @@
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', $password)";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 	
 				// insert expiration
 				if ($expiration) {
 					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Expiration', ':=', '$expiration')";
 					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 				}
 	
 				// insert user information table
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 		
 				 foreach( $_POST as $attribute=>$value ) { 
 
@@ -109,6 +113,7 @@
 
 					$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
                 		        $res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
 					$counter++;
 				} // foreach
@@ -136,7 +141,6 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 	
 	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
@@ -259,6 +263,11 @@
 	</center>
 
 				</form>
+
+
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		

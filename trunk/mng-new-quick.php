@@ -20,6 +20,7 @@
 		
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
 		
@@ -28,21 +29,25 @@
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
 				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 	
 				if ($maxallsession) {
 					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
 					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 				}
 
 				if ($maxallsession) {
 					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$maxallsession')";
 					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 				}
 
 
                                 // insert user information table
                                 $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
                                 $res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $username";
@@ -67,12 +72,11 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
 	
 	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
 		$hiddenPassword = "type=\"password\"";
-	
+
 
 ?>
 
@@ -181,6 +185,11 @@
 </center>
 
 				</form>
+
+
+<?php
+	include('include/config/logging.php');
+?>
 		
 		</div>
 		

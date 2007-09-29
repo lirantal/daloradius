@@ -15,8 +15,6 @@
 
 	include_once('library/config_read.php');
 	$log = "visited page: ";
-	include('include/config/logging.php');
-
 	
 ?>
 
@@ -60,6 +58,7 @@
 
 	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
 	
 	/* START - Related to pages_numbering.php */
@@ -117,6 +116,11 @@
 
 	include 'library/closedb.php';
 
+?>
+
+
+<?php
+	include('include/config/logging.php');
 ?>
 		
 		</div>
