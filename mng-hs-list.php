@@ -47,11 +47,11 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].";";
+	$sql = "SELECT id, name, owner, company, type FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].";";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+	$sql = "SELECT id, name, owner, company, type FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 	
@@ -84,12 +84,17 @@
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][MACAddress]."
+					<th scope='col'> Owner
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Geocode]."
+					<th scope='col'> Company
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
+					</th>
+					<th scope='col'> HotSpot Type
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
@@ -102,6 +107,7 @@
 				<td> $row[1] </td>
 				<td> $row[2] </td>
 				<td> $row[3] </td>
+				<td> $row[4] </td>
 				<td> <a href='mng-hs-edit.php?name=$row[1]'> ".$l[all][edit]." </a> </td>
 				<td> <a href='mng-hs-del.php?name=$row[1]'> ".$l[all][del]." </a> </td>
 		</tr>";
