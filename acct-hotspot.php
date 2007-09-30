@@ -21,7 +21,7 @@
 
 <?php
 	
-	include("menu-accounting.php");
+	include("menu-accounting-hotspot.php");
 	
 ?>
 		
