@@ -11,7 +11,22 @@
 *                                                                  *
 *******************************************************************/
 
-$logfile = '/var/log/syslog';
+$logfile_loc1 = '/var/log/syslog';
+$logfile_loc2 = '/var/log/messages';
+
+if (file_exists($logfile_loc1))
+        $logfile = $logfile_loc1;
+else if (file_exists($logfile_loc2))
+        $logfile = $logfile_loc2;
+else
+        {
+        echo "<br/><br/>
+                error reading system log file: <br/><br/>
+                looked for log file in $logfile_loc1 and $logfile_loc2 but couldn't find it.<br/>
+                if you know where your system log file is located, set it's location in " . $_SERVER[SCRIPT_NAME];
+        exit;
+}
+
 if (is_readable($logfile) == false) {
 	echo "<br/><br/>
 		error reading log file: <u>$logfile</u> <br/><br/>
