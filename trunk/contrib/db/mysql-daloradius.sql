@@ -146,6 +146,16 @@ CREATE TABLE `operators` (
 ) ENGINE=MyISAM;
 
 --
+-- Dumping data for table `operators`
+--
+
+/*!40000 ALTER TABLE `operators` DISABLE KEYS */;
+LOCK TABLES `operators` WRITE;
+INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','System','Administrator','','','','','','','','','','','0000-00-00 00:00:00');
+UNLOCK TABLES;
+/*!40000 ALTER TABLE `operators` ENABLE KEYS */;
+
+--
 -- Table structure for table `radacct`
 --
 
