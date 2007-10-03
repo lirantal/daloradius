@@ -15,6 +15,7 @@ $arrayPagesAvailable = array(
 	 'index_radius_stat' => 'Home Pages',
 	 'index_server_stat' => 'Home Pages',
 	 'index_system_log' => 'Home Pages',
+	 'index_boot_log' => 'Home Pages',
 	 'mng_search' => 'Management Core',
 	 'mng_batch' => 'Management Core',
 	 'mng_del' => 'Management Core',
