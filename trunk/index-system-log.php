@@ -16,7 +16,7 @@
 
 <?php
 
-    include ("menu-home.php");
+    include ("menu-reports-logs.php");
   	
 ?>	
 		<div id="contentnorightbar">
