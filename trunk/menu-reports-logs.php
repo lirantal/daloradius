@@ -28,8 +28,9 @@ include_once ("lang/main.php");
 				
                                 <h3>Log Files</h3>
 
-                                                <li><a href="index-radius-log.php"><b>&raquo;</b>radius log</a></li>
-                                                <li><a href="index-system-log.php"><b>&raquo;</b>system log</a></li>
+                                                <li><a href="index-radius-log.php"><b>&raquo;</b>Radius log</a></li>
+                                                <li><a href="index-system-log.php"><b>&raquo;</b>System log</a></li>
+                                                <li><a href="index-boot-log.php"><b>&raquo;</b>Boot log</a></li>
 
 				</ul>
 		
