@@ -22,6 +22,11 @@
 			$configValues['CONFIG_LOG_ACTIONS'] = $_REQUEST['config_actionslogging'];
 		if (isset($_REQUEST['config_filenamelogging']))
 			$configValues['CONFIG_LOG_FILE'] = $_REQUEST['config_filenamelogging'];
+
+		if (isset($_REQUEST['config_debuglogging']))
+			$configValues['CONFIG_DEBUG_SQL'] = $_REQUEST['config_debuglogging'];
+		if (isset($_REQUEST['config_debugpageslogging']))
+			$configValues['CONFIG_DEBUG_SQL_ONPAGE'] = $_REQUEST['config_debugpageslogging'];
 			
             include ("library/config_write.php");
     }
@@ -86,6 +91,36 @@
 </td><td>
 						<select name="config_actionslogging">
 						<option value="<?php echo $configValues['CONFIG_LOG_ACTIONS'] ?>"> <?php echo $configValues['CONFIG_LOG_ACTIONS'] ?> </option>
+						<option value="">  </option>
+						<option value="no"> no </option>
+						<option value="yes"> yes </option>
+						</select>
+						</font>
+</td></tr>
+<tr><td>
+
+
+						<?php if (!($configValues['CONFIG_DEBUG_SQL'])) { echo "<font color='#FF0000'>";  }?>
+
+						<b>Logging of Debug info</b>
+</td><td>
+						<select name="config_debuglogging">
+						<option value="<?php echo $configValues['CONFIG_DEBUG_SQL'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL'] ?> </option>
+						<option value="">  </option>
+						<option value="no"> no </option>
+						<option value="yes"> yes </option>
+						</select>
+						</font>
+</td></tr>
+<tr><td>
+
+
+						<?php if (!($configValues['CONFIG_DEBUG_SQL_ONPAGE'])) { echo "<font color='#FF0000'>";  }?>
+
+						<b>Logging of Debug info on pages</b>
+</td><td>
+						<select name="config_debugpageslogging">
+						<option value="<?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?> </option>
 						<option value="">  </option>
 						<option value="no"> no </option>
 						<option value="yes"> yes </option>

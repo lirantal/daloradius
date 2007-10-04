@@ -69,7 +69,7 @@ if ($configValues['CONFIG_DEBUG_SQL'] == "yes") {
 
 /* the continuation of the CONFIG_DEBUG_SQL actually, this prints to the page
  * being viewed */
-if (isset($configValues['CONFIG_DEBUG_SQL_ONPAGE'])) {
+if ($configValues['CONFIG_DEBUG_SQL_ONPAGE'] == "yes") {
 	if (isset($logDebugSQL)) {
 			echo "<br/><br/>";
 			echo "Debugging SQL Queries: <br/>";
