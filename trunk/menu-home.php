@@ -31,14 +31,14 @@
 
                                 <ul class="subnav">
                                 
-                                                <li><a href="index-server-stat.php"><b>&raquo;</b>Server Status</a></li>
-                                                <li><a href="index-radius-stat.php"><b>&raquo;</b>RADIUS Status </a></li>
-                                                <li><a href="index-last-connect.php"><b>&raquo;</b>Last Connection Attempts</a></li>
+                                                <li><a href="rep-stat-server.php"><b>&raquo;</b>Server Status</a></li>
+                                                <li><a href="rep-stat-radius.php"><b>&raquo;</b>RADIUS Status </a></li>
+                                                <li><a href="rep-lastconnect.php"><b>&raquo;</b>Last Connection Attempts</a></li>
 
 				<h3>Logs</h3>
 				
-                                                <li><a href="index-radius-log.php"><b>&raquo;</b>radius log</a></li>
-                                                <li><a href="index-system-log.php"><b>&raquo;</b>system log</a></li>
+                                                <li><a href="rep-logs-radius.php"><b>&raquo;</b>radius log</a></li>
+                                                <li><a href="rep-logs-system.php"><b>&raquo;</b>system log</a></li>
 				
 				<h3>Support</h3>
 				
