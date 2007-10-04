@@ -10,12 +10,6 @@
 *********************************************************************/
 
 $arrayPagesAvailable = array(
-	 'index_last_connect' => 'Home Pages',
-	 'index_radius_log' => 'Home Pages',
-	 'index_radius_stat' => 'Home Pages',
-	 'index_server_stat' => 'Home Pages',
-	 'index_system_log' => 'Home Pages',
-	 'index_boot_log' => 'Home Pages',
 	 'mng_search' => 'Management Core',
 	 'mng_batch' => 'Management Core',
 	 'mng_del' => 'Management Core',
@@ -44,9 +38,15 @@ $arrayPagesAvailable = array(
 	 'mng_rad_groupreply_list' => 'Management GroupReply',
 	 'mng_rad_groupreply_new' => 'Management GroupReply',
 	 'mng_rad_groupreply_edit' => 'Management GroupReply',
-	 'rep_topusers' => 'Reporting',
-	 'rep_username' => 'Reporting',
-	 'rep_online' => 'Reporting',
+	 'rep_topusers' => 'Reporting Core',
+	 'rep_username' => 'Reporting Core',
+	 'rep_online' => 'Reporting Core',
+	 'rep_lastconnect' => 'Reporting Core',
+	 'rep_logs_radius' => 'Reporting Logs',
+	 'rep_stat_radius' => 'Reporting Status',
+	 'rep_stat_server' => 'Reporting Status',
+	 'rep_logs_system' => 'Reporting Logs',
+	 'rep_logs_boot' => 'Reporting Logs',
 	 'acct_active' => 'Accounting',
 	 'acct_username' => 'Accounting',
 	 'acct_all' => 'Accounting',
@@ -528,19 +528,19 @@ echo "</table>";
 
 
 /* 
- * Reporting category related pages *************************************************
+ * Reporting Core category related pages *************************************************
  *
 */
 
 echo <<<EOF
 	<tr><td>		
-    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryReporting')">
-    <b> Reporting </b> <br/>
-    <div id="categoryReporting" style="display:none;visibility:visible" >
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryReportingCore')">
+    <b> Reporting Core </b> <br/>
+    <div id="categoryReportingCore" style="display:none;visibility:visible" >
 EOF;
 echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
-		if ($descr != 'Reporting')
+		if ($descr != 'Reporting Core')
 			continue;
 
                 echo "<tr><td width='350'>";
@@ -585,6 +585,125 @@ echo "</table>";
  *  block ends ***********************************************************************
 */
 
+
+
+/* 
+ * Reporting Logs category related pages *************************************************
+ *
+*/
+
+echo <<<EOF
+	<tr><td>		
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryReportingLogs')">
+    <b> Reporting Logs </b> <br/>
+    <div id="categoryReportingLogs" style="display:none;visibility:visible" >
+EOF;
+echo "<br/><table border='2' class='table1'>";
+	foreach ($arrayPagesAvailable as $page => $descr) {
+		if ($descr != 'Reporting Logs')
+			continue;
+
+                echo "<tr><td width='350'>";
+                echo "$page";
+                echo "</td><td>";
+
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
+                } else  {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                }
+echo "</td></tr>";
+	}
+echo "</table>";
+	echo "</td></tr>
+		</div>";
+
+/*
+ *  block ends ***********************************************************************
+*/
+
+
+
+/* 
+ * Reporting Status category related pages *************************************************
+ *
+*/
+
+echo <<<EOF
+	<tr><td>		
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryReportingStatus')">
+    <b> Reporting Status </b> <br/>
+    <div id="categoryReportingStatus" style="display:none;visibility:visible" >
+EOF;
+echo "<br/><table border='2' class='table1'>";
+	foreach ($arrayPagesAvailable as $page => $descr) {
+		if ($descr != 'Reporting Status')
+			continue;
+
+                echo "<tr><td width='350'>";
+                echo "$page";
+                echo "</td><td>";
+
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
+                } else  {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                }
+echo "</td></tr>";
+	}
+echo "</table>";
+	echo "</td></tr>
+		</div>";
+
+/*
+ *  block ends ***********************************************************************
+*/
 
 
 

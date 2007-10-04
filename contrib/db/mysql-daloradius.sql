@@ -62,12 +62,6 @@ CREATE TABLE `operators` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(32) default NULL,
   `password` varchar(32) default NULL,
-  `index_last_connect` varchar(32) default NULL,
-  `index_radius_log` varchar(32) default NULL,
-  `index_radius_stat` varchar(32) default NULL,
-  `index_server_stat` varchar(32) default NULL,
-  `index_system_log` varchar(32) default NULL,
-  `index_boot_log` varchar(32) default NULL,
   `mng_search` varchar(32) default NULL,
   `mng_batch` varchar(32) default NULL,
   `mng_del` varchar(32) default NULL,
@@ -99,6 +93,12 @@ CREATE TABLE `operators` (
   `rep_online` varchar(32) default NULL,
   `rep_topusers` varchar(32) default NULL,
   `rep_username` varchar(32) default NULL,
+  `rep_lastconnect` varchar(32) default NULL,
+  `rep_logs_radius` varchar(32) default NULL,
+  `rep_stat_radius` varchar(32) default NULL,
+  `rep_stat_server` varchar(32) default NULL,
+  `rep_logs_system` varchar(32) default NULL,
+  `rep_logs_boot` varchar(32) default NULL,
   `acct_active` varchar(32) default NULL,
   `acct_username` varchar(32) default NULL,
   `acct_all` varchar(32) default NULL,
@@ -144,16 +144,6 @@ CREATE TABLE `operators` (
   `lastlogin` datetime default '0000-00-00 00:00:00',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM;
-
---
--- Dumping data for table `operators`
---
-
-/*!40000 ALTER TABLE `operators` DISABLE KEYS */;
-LOCK TABLES `operators` WRITE;
-INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','System','Administrator','','','','','','','','','','','0000-00-00 00:00:00');
-UNLOCK TABLES;
-/*!40000 ALTER TABLE `operators` ENABLE KEYS */;
 
 --
 -- Table structure for table `radacct`
