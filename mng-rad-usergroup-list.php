@@ -51,6 +51,7 @@
 	
 	$sql = "SELECT distinct(UserName), GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 	
 	/* START - Related to pages_numbering.php */

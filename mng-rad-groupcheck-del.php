@@ -5,10 +5,9 @@
 
 	include('library/check_operator_perm.php');
 
-
-
 	$groupname = "";
 	$value = "";
+	$logDebugSQL = "";
 
 	if (isset($_REQUEST['groupname'])) {
 		$groupname = $_REQUEST['groupname'];

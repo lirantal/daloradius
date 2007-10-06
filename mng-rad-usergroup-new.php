@@ -12,6 +12,8 @@
 	$group = "";
 	$priority = "";
 
+	$logDebugSQL = "";
+
 	if (isset($_POST['submit'])) {
 	
 		$username = $_REQUEST['username'];

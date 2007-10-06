@@ -5,12 +5,12 @@
 
 	include('library/check_operator_perm.php');
 
-
-
 	$username_prefix = "";
 	$number = "";
 	$length_pass = "";
 	$length_user = "";
+
+	$logDebugSQL = "";
 
 function createPassword($length) {
 

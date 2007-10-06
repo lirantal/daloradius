@@ -18,6 +18,7 @@
 			// delete all attributes associated with a username
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 			$res = $dbSocket->query($sql);
+			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
 
 			$actionStatus = "success";

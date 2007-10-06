@@ -58,6 +58,7 @@
 
 	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like '$username%' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	

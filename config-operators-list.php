@@ -5,6 +5,7 @@
 
 	include('library/check_operator_perm.php');
 
+	$logDebugSQL = "";
 
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";

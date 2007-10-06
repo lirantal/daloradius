@@ -75,6 +75,7 @@
 	
 	$sql = "SELECT Username, FramedIPAddress, AcctStartTime, AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL) ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */

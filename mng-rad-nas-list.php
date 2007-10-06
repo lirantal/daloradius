@@ -48,6 +48,7 @@
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT * FROM nas;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	$numrows = $res->numRows();

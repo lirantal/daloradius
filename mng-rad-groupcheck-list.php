@@ -51,6 +51,7 @@
 
 	$sql = "select GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */

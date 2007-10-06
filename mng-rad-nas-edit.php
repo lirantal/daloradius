@@ -19,6 +19,8 @@
 
 	isset($_REQUEST['nashost']) ? $nashost = $_REQUEST['nashost'] : $nashost = "";
 
+	$logDebugSQL = "";
+
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
 	$res = $dbSocket->query($sql);

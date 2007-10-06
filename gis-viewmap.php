@@ -107,6 +107,7 @@ function createMarker(point,html) {
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	while($row = $res->fetchRow()) {

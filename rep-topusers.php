@@ -46,6 +46,7 @@ $sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACC
 sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $orderBy $orderType limit $limit";
 
 	$res = $dbSocket->query($sql);
+	$logDebugSQL .= "";
 	$logDebugSQL .= $sql . "\n";
 
 	echo "<table border='2' class='table1'>\n";

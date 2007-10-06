@@ -19,6 +19,8 @@
 		$group = $_REQUEST['group'];
  	}
 
+	$logDebugSQL = "";
+
 	if (isset($_POST['submit'])) {
 
 		if (trim($username) != "") {

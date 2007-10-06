@@ -62,6 +62,7 @@
 	
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password') ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */

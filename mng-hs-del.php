@@ -4,9 +4,8 @@
 
 	include('library/check_operator_perm.php');
 
-
-
 	$name = !empty($_REQUEST['name']) ? $_REQUEST['name'] : '[hotspot name]';
+	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 		$name = $_REQUEST['name'];

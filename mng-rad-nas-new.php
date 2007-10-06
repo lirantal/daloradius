@@ -16,6 +16,8 @@
 	$nasdescription = "";
 	$nascommunity = "";
 
+	$logDebugSQL = "";
+
 	if (isset($_POST['submit'])) {
 	
 		$nashost = $_REQUEST['nashost'];

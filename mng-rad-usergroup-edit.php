@@ -18,6 +18,8 @@
 	$username = $_REQUEST['username'];
 	$groupOld = $_REQUEST['group'];
 
+	$logDebugSQL = "";
+
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username' AND GroupName='$groupOld'";
 	$res = $dbSocket->query($sql);

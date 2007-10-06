@@ -10,7 +10,7 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 
 	$username = $_REQUEST['username'];
-
+	$logDebugSQL = "";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";

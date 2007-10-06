@@ -5,11 +5,11 @@
 
 	include('library/check_operator_perm.php');
 
-
     // declaring variables
     $username = "";
     $password = "";
     $expiration = "";
+	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
