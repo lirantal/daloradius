@@ -24,6 +24,7 @@
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
 		$res = $dbSocket->query($sql);
+		$logDebugSQL = "";
 		$logDebugSQL .= $sql . "\n";
 
 		if ($res->fetchRow() == 0) {

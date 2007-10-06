@@ -18,6 +18,8 @@
 	isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
 	isset($_REQUEST['website']) ? $website = $_REQUEST['website'] : $website = "";
 
+	$logDebugSQL = "";
+
 	if (isset($_POST["submit"])) {
 		$name = $_REQUEST['name'];
 		$macaddress = $_REQUEST['macaddress'];

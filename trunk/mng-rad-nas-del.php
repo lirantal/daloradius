@@ -13,6 +13,7 @@
 		$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
 	}	
 
+	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 		if (trim($nashost) != "") {

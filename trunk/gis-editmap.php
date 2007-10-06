@@ -16,6 +16,8 @@
 	
     include 'library/opendb.php';
 
+    $logDebugSQL = "";
+
 	if ($type == "add") {
 		(isset($_REQUEST['hotspotname'])) ? $hotspot_name = $_REQUEST['hotspotname'] : $hotspot_name = " ";
 		(isset($_REQUEST['hotspotmac'])) ? $hotspot_mac = $_REQUEST['hotspotmac'] : $hotspot_mac = " ";

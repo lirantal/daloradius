@@ -5,8 +5,6 @@
 
 	include('library/check_operator_perm.php');
 
-
-	
     include 'library/opendb.php';
 
     // declaring variables
@@ -14,6 +12,7 @@
     $value = "";
     $op = "";
     $attribute = "";
+	$logDebugSQL = "";
 
 	$groupname = $_REQUEST['groupname'];
 	$value = $_REQUEST['value'];

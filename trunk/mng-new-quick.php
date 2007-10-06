@@ -5,11 +5,10 @@
 
 	include('library/check_operator_perm.php');
 
-
-
 	$username = "";
 	$password = "";
 	$maxallsession = "";
+	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];

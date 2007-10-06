@@ -5,13 +5,13 @@
         
 	include('library/check_operator_perm.php');
 
-
-
 	// declaring variables
 	$groupname = "";
 	$op = "";
 	$attribute = "";
 	$value = "";	
+	$logDebugSQL = "";
+	
 
     if (isset($_POST['submit'])) {
 	

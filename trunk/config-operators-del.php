@@ -4,9 +4,8 @@
 
 	include('library/check_operator_perm.php');
 
-
-
 	$username = !empty($_REQUEST['operator_username']) ? $_REQUEST['operator_username'] : '[operator_username]';
+	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 
