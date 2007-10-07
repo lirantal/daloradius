@@ -147,14 +147,13 @@
 		<input value="<?php echo $maxallsession ?>" id="maxallsession" name="maxallsession" />
 
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="option0">
-		<option value="86400">1day(s)</option>
-		<option value="259200">3day(s)</option>
-		<option value="604800">1week(s)</option>
-		<option value="1209600">2week(s)</option>
-		<option value="1814400">3week(s)</option>
-		<option value="2592000">1month(s)</option>
-		<option value="5184000">2month(s)</option>
-		<option value="7776000">3month(s)</option>
+                <option value="1">calculate time</option>
+                <option value="1">seconds</option>
+                <option value="60">minutes</option>
+                <option value="3600">hours</option>
+                <option value="86400">days</option>
+                <option value="604800">weeks</option>
+                <option value="2592000">months (30 days)</option>
 		</select>
 						<br/>
 </div>
