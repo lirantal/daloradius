@@ -91,10 +91,26 @@
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Username</th>
-                        <th scope='col'> Password </th>
-                        <th scope='col'> Logged-In Time </th>
-                        <th scope='col'> RADIUS Reply Packet </th>
+                        <th scope='col'> Username 
+			<br/>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=asc\"> > </a>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=desc\"> < </a>
+			</th>
+                        <th scope='col'> Password 
+			<br/>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=asc\"> > </a>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=desc\"> < </a>
+			</th>
+                        <th scope='col'> Logged-In Time 
+			<br/>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=asc\"> > </a>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=desc\"> < </a>
+			</th>
+                        <th scope='col'> RADIUS Reply Packet 
+			<br/>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=asc\"> > </a>
+                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=desc\"> < </a>
+			</th>
                 </tr> </thread>";
 
         $i = 0;
