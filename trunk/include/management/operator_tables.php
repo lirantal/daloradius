@@ -47,6 +47,7 @@ $arrayPagesAvailable = array(
 	 'rep_stat_server' => 'Reporting Status',
 	 'rep_logs_system' => 'Reporting Logs',
 	 'rep_logs_boot' => 'Reporting Logs',
+	 'rep_logs_daloradius' => 'Reporting Logs',
 	 'acct_active' => 'Accounting',
 	 'acct_username' => 'Accounting',
 	 'acct_all' => 'Accounting',
