@@ -99,6 +99,7 @@ CREATE TABLE `operators` (
   `rep_stat_server` varchar(32) default NULL,
   `rep_logs_system` varchar(32) default NULL,
   `rep_logs_boot` varchar(32) default NULL,
+  `rep_logs_daloradius` varchar(32) default NULL,
   `acct_active` varchar(32) default NULL,
   `acct_username` varchar(32) default NULL,
   `acct_all` varchar(32) default NULL,

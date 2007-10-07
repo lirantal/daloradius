@@ -28,6 +28,7 @@ include_once ("lang/main.php");
 				
                                 <h3>Log Files</h3>
 
+                                                <li><a href="rep-logs-daloradius.php"><b>&raquo;</b>daloRADIUS log</a></li>
                                                 <li><a href="rep-logs-radius.php"><b>&raquo;</b>Radius log</a></li>
                                                 <li><a href="rep-logs-system.php"><b>&raquo;</b>System log</a></li>
                                                 <li><a href="rep-logs-boot.php"><b>&raquo;</b>Boot log</a></li>
