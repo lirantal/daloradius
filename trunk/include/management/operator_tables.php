@@ -114,7 +114,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
 		echo "<tr><td width='350'>";
-		echo "$page";
+		echo "<font size='2'> $page </font>";
 		echo "</td><td>";
 
 		if ($operator_username) {
@@ -175,7 +175,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+		echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -237,7 +237,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -297,7 +297,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+		echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -358,7 +358,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -422,7 +422,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -483,7 +483,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -545,7 +545,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -605,7 +605,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -665,7 +665,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -725,7 +725,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -788,7 +788,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -850,7 +850,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -910,7 +910,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -970,7 +970,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -1029,7 +1029,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
@@ -1095,7 +1095,7 @@ echo "<br/><table border='2' class='table1'>";
 			continue;
 
                 echo "<tr><td width='350'>";
-                echo "$page";
+                echo "<font size='2'> $page </font>";
                 echo "</td><td>";
 
                 if ($operator_username) {
