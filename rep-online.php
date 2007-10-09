@@ -90,13 +90,13 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='10'>".$l[all][Records]."</th>
+							<th colspan='10'>".$l['all']['Records']."</th>
 							</tr>
 					</thead>
 			";
 
 	echo "<thread> <tr>
-					<th scope='col'> ".$l[all][Username]. " 
+					<th scope='col'> ".$l['all']['Username']. " 
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\"> < </a>
