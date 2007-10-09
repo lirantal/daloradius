@@ -32,7 +32,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][acctdate.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['acctdate.php']; ?></a></h2>
 				
 				<p>
 				</p>
@@ -78,68 +78,68 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='15'>".$l[all][Records]."</th>
+                                <th colspan='15'>".$l['all']['Records']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-		<th scope='col'> ".$l[all][ID]."
+		<th scope='col'> ".$l['all']['ID']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=radacctid&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=radacctid&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][HotSpot]."
+		<th scope='col'> ".$l['all']['HotSpot']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=hotspot&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=hotspot&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Username]."
+		<th scope='col'> ".$l['all']['Username']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][IPAddress]."
+		<th scope='col'> ".$l['all']['IPAddress']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=framedipaddress&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=framedipaddress&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][StartTime]."
+		<th scope='col'> ".$l['all']['StartTime']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][StopTime]."
+		<th scope='col'> ".$l['all']['StopTime']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstoptime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstoptime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][TotalTime]."
+		<th scope='col'> ".$l['all']['TotalTime']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Upload']." (".$l[all][Bytes].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Download']." (".$l[all][Bytes].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Termination]."
+		<th scope='col'> ".$l['all']['Termination']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctterminatecause&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctterminatecause&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][NASIPAddress]."
+		<th scope='col'> ".$l['all']['NASIPAddress']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=desc\"> < </a>
 		</th>
-        <th scope='col'> ".$l[all][Action]." </th>
+        <th scope='col'> ".$l['all']['Action']." </th>
                 </tr> </thread>";
 
 	while($row = $res->fetchRow()) {
@@ -155,7 +155,7 @@
 				<td> $row[8] - ".bytes2megabytes($row[8])."Mb </td>
 				<td> $row[9] </td>
 				<td> $row[10] </td>
-				<td> <a href='mng-edit.php?username=$row[2]'> ".$l[all][edit]." </a> </td>
+				<td> <a href='mng-edit.php?username=$row[2]'> ".$l['all']['edit']." </a> </td>
 		</tr>";
 
 	$counter++;

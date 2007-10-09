@@ -29,7 +29,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][accthotspot.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['accthotspot.php']; ?></a></h2>
 				
 				<p>
 				</p>
@@ -74,62 +74,62 @@
                 ";
 
 	echo "<thread> <tr>
-		<th scope='col'> ".$l[all][ID]."
+		<th scope='col'> ".$l['all']['ID']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=radacctid&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=radacctid&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][HotSpot]."
+		<th scope='col'> ".$l['all']['HotSpot']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=hotspot&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=hotspot&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Username]."
+		<th scope='col'> ".$l['all']['Username']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=username&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=username&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][IPAddress]."
+		<th scope='col'> ".$l['all']['IPAddress']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=framedipaddress&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=framedipaddress&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][StartTime]."
+		<th scope='col'> ".$l['all']['StartTime']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstarttime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstarttime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][StopTime]."
+		<th scope='col'> ".$l['all']['StopTime']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstoptime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstoptime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][TotalTime]."
+		<th scope='col'> ".$l['all']['TotalTime']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctsessiontime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctsessiontime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Upload]." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Upload']." (".$l[all][Bytes].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctinputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctinputoctets&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Download]." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Download']." (".$l[all][Bytes].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctoutputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctoutputoctets&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Termination]."
+		<th scope='col'> ".$l['all']['Termination']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctterminatecause&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctterminatecause&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][NASIPAddress]."
+		<th scope='col'> ".$l['all']['NASIPAddress']."
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=nasipaddress&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=nasipaddress&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l[all][Action]." </th>
+		<th scope='col'> ".$l['all']['Action']." </th>
 		</tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
@@ -144,7 +144,7 @@
                         <td> $row[8] - ".bytes2megabytes($row[8])."Mb </td>
                         <td> $row[9] </td>
                         <td> $row[10] </td>
-                        <td> <a href='mng-edit.php?username=$row[2]'> ".$l[all][edit]." </a> </td>
+                        <td> <a href='mng-edit.php?username=$row[2]'> ".$l['all']['edit']." </a> </td>
                 </tr>";
         }
         echo "</table>";
