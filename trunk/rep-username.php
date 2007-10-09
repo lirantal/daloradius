@@ -30,10 +30,10 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><?php echo $l[Intro][repusername.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><?php echo $l[''Intro''][''repusername.php'']; ?></a></h2>
 				
 				<p>
-				<?php echo $l[captions][recordsforuser]." ".$username ?> <br/>
+				<?php echo $l[''captions''][''recordsforuser'']." ".$username ?> <br/>
 				</p>
 
 
@@ -54,33 +54,33 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>".$l[captions][radcheckrecords]."</th>
+                                <th colspan='10'>".$l[''captions''][''radcheckrecords'']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][ID]."
+                        <th scope='col'> ".$l[''all''][''ID'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Username]."
+                        <th scope='col'> ".$l[''all''][''Username'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Attribute]."
+                        <th scope='col'> ".$l[''all''][''Attribute'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Value]."
+                        <th scope='col'> ".$l[''all''][''Value'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Action]." </th>
+                        <th scope='col'> ".$l[''all''][''Action'']." </th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
@@ -88,8 +88,8 @@
                         <td> $row[1] </td>
                         <td> $row[2] </td>
                         <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l[all][edit]." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".$l[all][del]." </a>
+                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l[''all''][''edit'']." </a> 
+	                     <a href='mng-del.php?username=$row[1]'> ".$l[''all''][''del'']." </a>
 			     </td>
                 </tr>";
         }
@@ -108,41 +108,41 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>".$l[captions][radreplyrecords]."</th>
+                                <th colspan='10'>".$l[''captions''][''radreplyrecords'']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>                        
-                        <th scope='col'> ".$l[all][ID]."
+                        <th scope='col'> ".$l[''all''][''ID'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Username]."
+                        <th scope='col'> ".$l[''all''][''Username'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Attribute]."
+                        <th scope='col'> ".$l[''all''][''Attribute'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Value]."
+                        <th scope='col'> ".$l[''all''][''Value'']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Action]." </th>                </tr> </thread>";
+                        <th scope='col'> ".$l[''all''][''Action'']." </th>                </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
                         <td> $row[0] </td>
                         <td> $row[1] </td>
                         <td> $row[2] </td>
                         <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l[all][edit]." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".$l[all][del]." </a>
+                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l[''all''][''edit'']." </a> 
+	                     <a href='mng-del.php?username=$row[1]'> ".$l[''all''][''del'']." </a>
 			     </td>
                 </tr>";
         }
