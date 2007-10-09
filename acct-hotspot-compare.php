@@ -29,7 +29,7 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][accthotspotcompare.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['accthotspotcompare.php']; ?></a></h2>
 				
 				<p>
 				</p>
@@ -56,33 +56,33 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='5'>".$l[all][Records]."</th>
+                                <th colspan='5'>".$l['all']['Records']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][HotSpot]."
+                        <th scope='col'> ".$l['all']['HotSpot']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][UniqueUsers]."
+                        <th scope='col'> ".$l['all']['UniqueUsers']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][TotalHits]."
+                        <th scope='col'> ".$l['all']['TotalHits']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][AverageTime]."
+                        <th scope='col'> ".$l['all']['AverageTime']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][TotalTime]."
+                        <th scope='col'> ".$l['all']['TotalTime']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=desc\"> < </a>

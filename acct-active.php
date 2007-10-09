@@ -27,7 +27,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][acctactive.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['acctactive.php']; ?></a></h2>
 				
 				<p>
 				</p>
@@ -66,34 +66,34 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='7'>".$l[all][Records]."</th>
+                                <th colspan='7'>".$l['all']['Records']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][Username]."
+                        <th scope='col'> ".$l['all']['Username']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Attribute]."
+                        <th scope='col'> ".$l['all']['Attribute']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][MaxTimeExpiration]."
+                        <th scope='col'> ".$l['all']['MaxTimeExpiration']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][UsedTime]."
+                        <th scope='col'> ".$l['all']['UsedTime']."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l[all][Status]." </th>
-                        <th scope='col'> ".$l[all][Usage]." </th>
+                        <th scope='col'> ".$l['all']['Status']." </th>
+                        <th scope='col'> ".$l['all']['Usage']." </th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
 		$status="Active";
