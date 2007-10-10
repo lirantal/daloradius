@@ -17,7 +17,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][billrateslist.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['billrateslist.php']; ?></a></h2>
 				
 				<p>
 
@@ -35,17 +35,17 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='15'>".$l[Intro][billrateslist.php]."</th>
+                                <th colspan='15'>".$l['Intro']['billrateslist.php']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][ID]." </th>
-                        <th scope='col'> ".$l[all][Type]." </th>
-                        <th scope='col'> ".$l[all][CardBank]." </th>
-                        <th scope='col'> ".$l[all][Rate]." </th>
-                        <th scope='col'> ".$l[all][Action]." </th>
+                        <th scope='col'> ".$l['all']['ID']." </th>
+                        <th scope='col'> ".$l['all']['Type']." </th>
+                        <th scope='col'> ".$l['all']['CardBank']." </th>
+                        <th scope='col'> ".$l['all']['Rate']." </th>
+                        <th scope='col'> ".$l['all']['Action']." </th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
@@ -53,7 +53,7 @@
                         <td> $row[1] </td>
                         <td> $row[2] </td>
                         <td> $row[3] </td>
-                        <td> <a href='bill-rates-edit.php?type=$row[1]'> ".$l[all][edit]." </a> </td>
+                        <td> <a href='bill-rates-edit.php?type=$row[1]'> ".$l['all']['edit']." </a> </td>
                 </tr>";
         }
         echo "</table>";

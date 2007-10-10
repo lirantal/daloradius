@@ -67,13 +67,13 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><?echo $l[Intro][billratesdel.php]; ?></h2>
+		<h2 id="Intro"><?echo $l['Intro']['billratesdel.php']; ?></h2>
 				
 				<p>
-				<?echo $l[captions][providebillratetodel]; ?>
+				<?echo $l['captions']['providebillratetodel']; ?>
 				<br/><br/>
 <?php
-		if (trim($type) == "") { echo $l[messages][missingratetype]." <br/>";  }
+		if (trim($type) == "") { echo $l['messages']['missingratetype']." <br/>";  }
 
 ?>
 				</p>

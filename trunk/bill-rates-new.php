@@ -72,38 +72,38 @@
 		
 		<div id="contentnorightbar">
 
-		<h2 id="Intro"><? echo $l[Intro][billratesnew.php]; ?></h2>
+		<h2 id="Intro"><? echo $l['Intro']['billratesnew.php']; ?></h2>
 				
 				<p>
-				<? echo $l[captions][filldetailsofnewrate]; ?>
+				<? echo $l['captions']['filldetailsofnewrate']; ?>
 				<br/><br/>
 <?php
-		if (trim($type) == "") { echo $l[messages][missingtype]."<br/>";  }
-		if (trim($cardbank) == "") { echo $l[messages][missingcardbank]."<br/>";  }
-		if (trim($rate) == "") { echo $l[messages][missingrate]."<br/>";  }
+		if (trim($type) == "") { echo $l['messages']['missingtype']."<br/>";  }
+		if (trim($cardbank) == "") { echo $l['messages']['missingcardbank']."<br/>";  }
+		if (trim($rate) == "") { echo $l['messages']['missingrate']."<br/>";  }
 ?>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
-						<b><?echo $l[all][Type]; ?></b>
+						<b><?echo $l['all']['Type']; ?></b>
 </td><td>
 						<input value="<?php echo $type ?>" name="type"/><br/>
 </td></tr>
 <tr><td>
-						<b><?echo $l[all][CardBank]; ?></b>
+						<b><?echo $l['all']['CardBank']; ?></b>
 </td><td>
 						<input value="<?php echo $cardbank ?>" name="cardbank" /><br/>
 </td></tr>
 <tr><td>
-						<b><?echo $l[all][Rate]; ?></b>
+						<b><?echo $l['all']['Rate']; ?></b>
 </td><td>
 						<input value="<?php echo $rate ?>" name="rate" /><br/>
 </td></tr>
 </table>
 						<br/>
 <center>
-						<input type="submit" name="submit" value="<?echo $l[buttons][apply]; ?>"/>
+						<input type="submit" name="submit" value="<?echo $l['buttons']['apply']; ?>"/>
 </center>
 				</form>
 
