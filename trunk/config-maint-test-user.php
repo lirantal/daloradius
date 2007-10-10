@@ -45,9 +45,9 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][configmainttestuser.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['configmainttestuser.php'] ?></a></h2>
 				<p>
-				<?php echo $l[captions][configmainttestuser] ?>
+				<?php echo $l['captions']['configmainttestuser'] ?>
 
 				<br/><br/>
 
@@ -57,7 +57,7 @@
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][all][Username] ?></b>
+						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
 						<input value="<?php echo $username ?>" name="username" />
 						</font>
@@ -66,7 +66,7 @@
 
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][all][Password] ?></b>
+						<b><?php echo $l['FormField']['all']['Password'] ?></b>
 </td><td>
 						<input value="<?php echo $password ?>" name="password" />
 						</font>
@@ -76,7 +76,7 @@
 <tr><td>
 						<?php if (trim($radius) == "") { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configmainttestuser.php][RadiusServer] ?></b>
+						<b><?php echo $l['FormField']['configmainttestuser.php']['RadiusServer'] ?></b>
 </td><td>
 						<input value="<?php echo $radius ?>" name="radius" />
 						</font>
@@ -84,7 +84,7 @@
 <tr><td>
 						<?php if (trim($radiusport) == "") { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configmainttestuser.php][RadiusPort] ?></b>
+						<b><?php echo $l['FormField']['configmainttestuser.php']['RadiusPort'] ?></b>
 </td><td>
 						<input value="<?php echo $radiusport ?>" name="radiusport" />
 						</font>
@@ -92,7 +92,7 @@
 <tr><td>
 						<?php if (trim($nasport) == "") { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configmainttestuser.php][NASPort] ?></b>
+						<b><?php echo $l['FormField']['configmainttestuser.php']['NASPort'] ?></b>
 </td><td>
 						<input value="<?php echo $nasport ?>" name="nasport" />
 						</font>
@@ -101,7 +101,7 @@
 
 						<?php if (trim($secret) == "") { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configmainttestuser.php][Secret] ?></b>
+						<b><?php echo $l['FormField']['configmainttestuser.php']['Secret'] ?></b>
 </td><td>
 						<input value="<?php echo $secret ?>" name="secret" />
 						</font>
