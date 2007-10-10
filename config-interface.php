@@ -36,9 +36,9 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][configinterface.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['configinterface.php'] ?></a></h2>
 				<p>
-				<?php echo $l[captions][configinterface] ?>
+				<?php echo $l['captions']['configinterface'] ?>
 
 				<br/><br/>
 
@@ -50,7 +50,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configinterface.php][PasswordHidden] ?></b>
+						<b><?php echo $l['FormField']['configinterface.php']['PasswordHidden'] ?></b>
 </td><td>
 						<select name="config_iface_pass_hidden">
 						<option value="<?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?>"> <?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?> </option>
@@ -64,7 +64,7 @@
 
 						<?php if (!($configValues['CONFIG_IFACE_TABLES_LISTING'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configinterface.php][TablesListing] ?></b>
+						<b><?php echo $l['FormField']['configinterface.php']['TablesListing'] ?></b>
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING'] ?>" name="config_iface_tableslisting" />
 						</font>
@@ -73,7 +73,7 @@
 
 						<?php if (!($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configinterface.php][TablesListingNum] ?></b>
+						<b><?php echo $l['FormField']['configinterface.php']['TablesListingNum'] ?></b>
 </td><td>
 						<select name="config_iface_tableslisting_num">
 						<option value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?>"> <?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?> </option>

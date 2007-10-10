@@ -44,9 +44,9 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][configlogging.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['configlogging.php'] ?></a></h2>
 				<p>
-				<?php echo $l[captions][configlogging] ?>
+				<?php echo $l['captions']['configlogging'] ?>
 
 				<br/><br/>
 
@@ -56,7 +56,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_LOG_PAGES'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configlogging.php][PagesLogging] ?></b>
+						<b><?php echo $l['FormField']['configlogging.php']['PagesLogging'] ?></b>
 </td><td>
 						<select name="config_pageslogging">
 						<option value="<?php echo $configValues['CONFIG_LOG_PAGES'] ?>"> <?php echo $configValues['CONFIG_LOG_PAGES'] ?> </option>
@@ -70,7 +70,7 @@
 
 						<?php if (!($configValues['CONFIG_LOG_QUERIES'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configlogging.php][QueriesLogging] ?></b>
+						<b><?php echo $l['FormField']['configlogging.php']['QueriesLogging'] ?></b>
 </td><td>
 						<select name="config_querieslogging">
 						<option value="<?php echo $configValues['CONFIG_LOG_QUERIES'] ?>"> <?php echo $configValues['CONFIG_LOG_QUERIES'] ?> </option>
@@ -87,7 +87,7 @@
 
 						<?php if (!($configValues['CONFIG_LOG_ACTIONS'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configlogging.php][ActionsLogging] ?></b>
+						<b><?php echo $l['FormField']['configlogging.php']['ActionsLogging'] ?></b>
 </td><td>
 						<select name="config_actionslogging">
 						<option value="<?php echo $configValues['CONFIG_LOG_ACTIONS'] ?>"> <?php echo $configValues['CONFIG_LOG_ACTIONS'] ?> </option>
@@ -131,7 +131,7 @@
 
 						<?php if (!($configValues['CONFIG_LOG_FILE'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l[FormField][configlogging.php][FilenameLogging] ?></b>
+						<b><?php echo $l['FormField']['configlogging.php']['FilenameLogging'] ?></b>
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_LOG_FILE'] ?>" name="config_filenamelogging" />
 						</font>
