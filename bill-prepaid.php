@@ -29,10 +29,10 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><?echo $l[Intro][billprepaid.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><?echo $l['Intro']['billprepaid.php']; ?></a></h2>
 				
 				<p>
-					<?php echo $l[captions][acctrecsforhotspot]." <i>".$hotspot."</i>" ?>
+					<?php echo $l['captions']['acctrecsforhotspot']." <i>".$hotspot."</i>" ?>
 				</p>
 
 					
@@ -44,17 +44,17 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='7'>".$l[all][Records]."</th>
+                                <th colspan='7'>".$l['all']['Records']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][Username]." </th>
-                        <th scope='col'> ".$l[all][HotSpot]." </th>
-                        <th scope='col'> ".$l[all][CardBank]." <br/> (Max-All-Session attribute) </th>
-                        <th scope='col'> ".$l[all][Rate]." </th>
-                        <th scope='col'> ".$l[all][Billed]." </th>
+                        <th scope='col'> ".$l['all']['Username']." </th>
+                        <th scope='col'> ".$l['all']['HotSpot']." </th>
+                        <th scope='col'> ".$l['all']['CardBank']." <br/> (Max-All-Session attribute) </th>
+                        <th scope='col'> ".$l['all']['Rate']." </th>
+                        <th scope='col'> ".$l['all']['Billed']." </th>
                 </tr> </thread>";
 
 	// First we search for all users that have been connected AT LEAST ONCE by checking if they appear in the radacct table,
@@ -99,15 +99,15 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='7'>".$l[all][Summary]."</th>
+                                <th colspan='7'>".$l['all']['Summary']."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l[all][HotSpot]." </th>
-                        <th scope='col'> ".$l[all][TotalUsers]." </th>
-                        <th scope='col'> ".$l[all][TotalBilled]." </th>
+                        <th scope='col'> ".$l['all']['HotSpot']." </th>
+                        <th scope='col'> ".$l['all']['TotalUsers']." </th>
+                        <th scope='col'> ".$l['all']['TotalBilled']." </th>
                 </tr> </thread>";
 
                 echo "<tr>
