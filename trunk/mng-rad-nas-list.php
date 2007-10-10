@@ -35,7 +35,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradnaslist.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradnaslist.php'] ?></a></h2>
 				
 				<p>
 
@@ -76,47 +76,47 @@
 			";
 
 	echo "<thread> <tr>
-					<th scope='col'> ".$l[all][NasID]."
+					<th scope='col'> ".$l['all']['NasID']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][NasIPHost]."
+					<th scope='col'> ".$l['all']['NasIPHost']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][NasShortname]."
+					<th scope='col'> ".$l['all']['NasShortname']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][NasType]."
+					<th scope='col'> ".$l['all']['NasType']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][NasPorts]."
+					<th scope='col'> ".$l['all']['NasPorts']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][NasSecret]."
+					<th scope='col'> ".$l['all']['NasSecret']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][NasCommunity]."
+					<th scope='col'> ".$l['all']['NasCommunity']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][NasDescription]."
+					<th scope='col'> ".$l['all']['NasDescription']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Action]." </th>
+					<th scope='col'> ".$l['all']['Action']." </th>
 			</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
@@ -128,8 +128,8 @@
 				<td> $row[5] </td>
 				<td> $row[6] </td>
 				<td> $row[7] </td>
-				<td> <a href='mng-rad-nas-edit.php?nashost=$row[1]'> ".$l[all][edit]." </a>
-					 <a href='mng-rad-nas-del.php?nashost=$row[1]'> ".$l[all][del]." </a>
+				<td> <a href='mng-rad-nas-edit.php?nashost=$row[1]'> ".$l['all']['edit']." </a>
+					 <a href='mng-rad-nas-del.php?nashost=$row[1]'> ".$l['all']['del']." </a>
 					 </td>
 
 		</tr>";

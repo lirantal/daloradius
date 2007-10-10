@@ -179,10 +179,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mngnew.php] ?></h2>
+				<h2 id="Intro"><?php echo $l['Intro']['mngnew.php'] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mngnew] ?>
+				<?php echo $l['captions']['mngnew'] ?>
 				</p>
 
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -194,7 +194,7 @@
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l[FormField][all][Username] ?></b>
+						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
 						<input value="<?php echo $username ?>" name="username"/>
 <a href="javascript:randomUsername()"> genuser</a><br/>
@@ -215,7 +215,7 @@
 </td></tr>
 <tr><td>
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l[FormField][all][Password] ?></b>
+						<b><?php echo $l['FormField']['all']['Password'] ?></b>
 </td><td>
 						<input <?php echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/>
@@ -223,7 +223,7 @@
 </td></tr>
 <tr><td>
 						<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l[FormField][all][Expiration] ?></b>
+						<b><?php echo $l['FormField']['all']['Expiration'] ?></b>
 </td><td>
 <input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
@@ -259,7 +259,7 @@
 
 	<br/>
 	<center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 	</center>
 
 				</form>

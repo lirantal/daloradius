@@ -254,10 +254,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mngedit.php] ?></h2>
+				<h2 id="Intro"><?php echo $l['Intro']['mngedit.php'] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mngedit] ?>
+				<?php echo $l['captions']['mngedit'] ?>
 				</p>
 
 <table border='2' class='table1'>
@@ -371,7 +371,7 @@
 
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 </center>
 
 				</form>

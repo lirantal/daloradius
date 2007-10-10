@@ -83,7 +83,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradusergroupnew.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradusergroupnew.php'] ?></a></h2>
 				
 				<p>
 
@@ -91,14 +91,14 @@
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>"; }?>
-                                                <b><?php echo $l[FormField][all][Username] ?></b>
+                                                <b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $username ?>" name="username"/>
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo  $l[FormField][all][Groupname] ?></b>
+	                                        <b><?php echo  $l['FormField']['all']['Groupname'] ?></b>
 </td><td>											
                                                 <input value="<?php echo $group ?>" name="group" /> 
                                                 </font><br/>
@@ -114,7 +114,7 @@
 
                                                 <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPriority')">
-                                                <b><?php echo $l[FormField][all][Priority] ?></b>
+                                                <b><?php echo $l['FormField']['all']['Priority'] ?></b>
 </td><td>												
 <div id="attributesPriority" style="display:none;visibility:visible" >
 						<br/>
@@ -125,7 +125,7 @@
 </table>
                                                 <br/><br/>
 <center>												
-                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>"/>
+                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>"/>
 </center>
                                 </form>
 

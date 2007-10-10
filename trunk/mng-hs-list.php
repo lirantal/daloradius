@@ -35,7 +35,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mnghslist.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mnghslist.php'] ?></a></h2>
 				
 				<p>
 
@@ -69,18 +69,18 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='15'>".$l[all][HotSpots]."</th>
+							<th colspan='15'>".$l['all']['HotSpots']."</th>
 							</tr>
 					</thead>
 			";
 
 	echo "<thread> <tr>
-					<th scope='col'> ".$l[all][ID]."
+					<th scope='col'> ".$l['all']['ID']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][HotSpot]."
+					<th scope='col'> ".$l['all']['HotSpot']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=desc\"> < </a>
@@ -100,7 +100,7 @@
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Action]." </th>
+					<th scope='col'> ".$l['all']['Action']." </th>
 			</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
@@ -109,8 +109,8 @@
 				<td> $row[2] </td>
 				<td> $row[3] </td>
 				<td> $row[4] </td>
-				<td> <a href='mng-hs-edit.php?name=$row[1]'> ".$l[all][edit]." </a> </td>
-				<td> <a href='mng-hs-del.php?name=$row[1]'> ".$l[all][del]." </a> </td>
+				<td> <a href='mng-hs-edit.php?name=$row[1]'> ".$l['all']['edit']." </a> </td>
+				<td> <a href='mng-hs-del.php?name=$row[1]'> ".$l['all']['del']." </a> </td>
 		</tr>";
 	}
 	echo "</table>";

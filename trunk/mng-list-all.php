@@ -37,10 +37,10 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mnglistall.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mnglistall.php'] ?></a></h2>
 				
 				<p>
-				<?php echo $l[captions][mnglistall] ?><br/>
+				<?php echo $l['captions']['mnglistall'] ?><br/>
 				</p>
 
 
@@ -78,28 +78,28 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='10'>".$l[all][Records]."</th>
+							<th colspan='10'>".$l['all']['Records']."</th>
 							</tr>
 					</thead>
 			";
 
 	echo "<thread> <tr>
-					<th scope='col'> ".$l[all][ID]. " 
+					<th scope='col'> ".$l['all']['ID']. " 
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Username]." 
+					<th scope='col'> ".$l['all']['Username']." 
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Password]." 
+					<th scope='col'> ".$l['all']['Password']." 
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Action]." </th>
+					<th scope='col'> ".$l['all']['Action']." </th>
 			</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
@@ -107,8 +107,8 @@
 				<td> $row[0] </td>
 				<td> $row[1] </td>
 				<td> $row[4] </td>
-				<td> <a href='mng-edit.php?username=$row[1]'> ".$l[all][edit]." </a>
-				 <a href='mng-del.php?username=$row[1]'> ".$l[all][del]." </a>
+				<td> <a href='mng-edit.php?username=$row[1]'> ".$l['all']['edit']." </a>
+				 <a href='mng-del.php?username=$row[1]'> ".$l['all']['del']." </a>
 		 </td>
 
 		</tr>";

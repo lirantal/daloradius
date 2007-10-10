@@ -109,10 +109,10 @@
 ?>		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mnghsedit.php] ?></h2>
+				<h2 id="Intro"><?php echo $l['Intro']['mnghsedit.php'] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mnghsedit] ?> 
+				<?php echo $l['captions']['mnghsedit'] ?> 
 				</p>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -124,18 +124,18 @@
 
 <table border='2' class='table1'>
 <tr><td>
-                                                <b><?php echo $l[FormField][mnghsdel.php][HotspotName] ?></b>
+                                                <b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
 </td><td>
                                                 <input disabled value="<?php echo $name ?>" name="name"/><br/>
                                                 </font>
 </td></tr>
 <tr><td>
-						<b><?php echo $l[FormField][mnghsedit.php][MACAddress] ?></b>
+						<b><?php echo $l['FormField']['mnghsedit.php']['MACAddress'] ?></b>
 </td><td>
 						<input value="<?php echo $macaddress ?>" name="macaddress" /><br/>
 </td></tr>
 <tr><td>
-						<b><?php echo $l[FormField][mnghsedit.php][Geocode] ?></b>
+						<b><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></b>
 </td><td>
 						<input value="<?php echo $geocode ?>" name="geocode" /><br/>
 
@@ -219,7 +219,7 @@
 
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][savesettings] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['savesettings'] ?>"/>
 </center>
 				</form>
 

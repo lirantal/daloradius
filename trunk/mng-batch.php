@@ -143,10 +143,10 @@ function createPassword($length) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mngbatch.php] ?></h2>
+				<h2 id="Intro"><?php echo $l['Intro']['mngbatch.php'] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mngbatch] ?>
+				<?php echo $l['captions']['mngbatch'] ?>
 				</p>
 
 				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -157,18 +157,18 @@ function createPassword($length) {
 	<br/>
 <table border='2' class='table1'>
 <tr><td>
-						<b><?php echo $l[FormField][mngbatch.php][UsernamePrefix] ?></b>
+						<b><?php echo $l['FormField']['mngbatch.php']['UsernamePrefix'] ?></b>
 </td><td>
 						<input value="<?php echo $username_prefix ?>" name="username_prefix"/><br/>
 </td></tr>
 <tr><td>
-						<b><?php echo $l[FormField][mngbatch.php][NumberInstances] ?></b>
+						<b><?php echo $l['FormField']['mngbatch.php']['NumberInstances'] ?></b>
 </td><td>
 						<input value="<?php echo $number ?>" name="number" /><br/>
 </td></tr>
 <tr><td>
 
-						<b><?php echo $l[FormField][mngbatch.php][UsernameLength] ?></b>
+						<b><?php echo $l['FormField']['mngbatch.php']['UsernameLength'] ?></b>
 </td><td>
 	<SELECT name="length_user">
           <OPTION id="4"> 4 </OPTION>
@@ -181,7 +181,7 @@ function createPassword($length) {
 </td></tr>
 <tr><td>
 
-						<b><?php echo $l[FormField][mngbatch.php][PasswordLength] ?></b>
+						<b><?php echo $l['FormField']['mngbatch.php']['PasswordLength'] ?></b>
 </td><td>
 	<SELECT name="length_pass">
           <OPTION id="4"> 4 </OPTION>
@@ -208,7 +208,7 @@ function createPassword($length) {
 
 			<br/><br/>
 <center>
-			<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?> "/>
+			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?> "/>
 </center>
 
 				</form>
