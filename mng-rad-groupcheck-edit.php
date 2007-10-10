@@ -109,7 +109,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradgroupcheckedit.php] ?> <?php echo $groupname ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradgroupcheckedit.php'] ?> <?php echo $groupname ?></a></h2>
 				
 				<p>
 
@@ -121,14 +121,14 @@
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l[FormField][all][Attribute] ?></b>
+	                                        <b><?php echo $l['FormField']['all']['Attribute'] ?></b>
 </td><td>											
                                                 <input value="<?php echo $attribute ?>" name="attribute" />
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l[FormField][all][Operator] ?></b>
+	                                        <b><?php echo $l['FormField']['all']['Operator'] ?></b>
 </td><td>											
 											<select name="op" />
 													<option value="<?php echo $op ?>"><?php echo $op ?></option>
@@ -140,7 +140,7 @@
 </td></tr>
 <tr><td>												
                                                 <?php if (trim($valueOld) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l[FormField][all][NewValue] ?></b>
+	                                        <b><?php echo $l['FormField']['all']['NewValue'] ?></b>
 </td><td>											
                                                 <input value="<?php echo $value ?>" name="value" />
                                                 </font><br/>
@@ -148,7 +148,7 @@
 </table>
 
 <center>
-                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 </center>
 
                                 </form>

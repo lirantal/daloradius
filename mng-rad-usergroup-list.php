@@ -34,7 +34,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradusergrouplist] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradusergrouplist'] ?></a></h2>
 				
 				<p>
 
@@ -68,36 +68,36 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='10'>".$l[all][Records]."</th>
+							<th colspan='10'>".$l['all']['Records']."</th>
 							</tr>
 					</thead>
 			";
 
 	echo "<thread> <tr>
-					<th scope='col'> ".$l[all][Username]."
+					<th scope='col'> ".$l['all']['Username']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Groupname]."
+					<th scope='col'> ".$l['all']['Groupname']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Priority]."
+					<th scope='col'> ".$l['all']['Priority']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l[all][Action]." </th>
+					<th scope='col'> ".$l['all']['Action']." </th>
 			</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> $row[0] </td>
 				<td> $row[1] </td>
 				<td> $row[2] </td>
-				<td> <a href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'> ".$l[all][edit]." </a>
-					 <a href='mng-rad-usergroup-del.php?username=$row[0]&group=$row[1]'> ".$l[all][del]." </a>
+				<td> <a href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'> ".$l['all']['edit']." </a>
+					 <a href='mng-rad-usergroup-del.php?username=$row[0]&group=$row[1]'> ".$l['all']['del']." </a>
 					 </td>
 
 		</tr>";

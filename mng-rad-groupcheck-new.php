@@ -146,7 +146,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradgroupchecknew.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradgroupchecknew.php'] ?></a></h2>
 				
 				<p>
 
@@ -154,21 +154,21 @@
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>"; }?>
-                                                <b><?php echo $l[FormField][all][Groupname] ?></b>
+                                                <b><?php echo $l['FormField']['all']['Groupname'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $groupname[0] ?>" name="groupname[]"/>
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
-												<b><?php echo $l[FormField][all][Attribute] ?></b>
+												<b><?php echo $l['FormField']['all']['Attribute'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $attribute[0] ?>" name="attribute[]" /> 
                                                 </font><br/>
 </td></tr>
 <tr><td>												
                                                 <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l[FormField][all][Operator] ?></b>
+                                                <b><?php echo $l['FormField']['all']['Operator'] ?></b>
 </td><td>												
 												<select name="op[]" />
 				<?php include ('include/management/op_select_options.php');
@@ -179,7 +179,7 @@
 </td></tr>
 <tr><td>
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l[FormField][all][Value] ?></b>
+                                                <b><?php echo $l['FormField']['all']['Value'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $value[0] ?>" name="value[]" />
                                                 </font><br/>
@@ -196,7 +196,7 @@
 </div>
                                                 <br/><br/>
 <center>												
-                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 </center>
                                 </form>
 

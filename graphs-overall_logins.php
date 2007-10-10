@@ -37,7 +37,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][graphsoveralllogins.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['graphsoveralllogins.php']; ?></a></h2>
 
 <div class="tabber">
 

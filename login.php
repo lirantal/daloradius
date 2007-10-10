@@ -24,13 +24,13 @@
 				
 				<h2>
 				
-				<?echo $l[all][copyright1]; ?>	
+				<?echo $l['all']['copyright1']; ?>	
 				</h2>
 				<br/>
 				
 				<ul id="subnav">
 				
-				<li><? echo $l[all][daloRADIUS]." ".$l[captions][loginpage]?></li>
+				<li><? echo $l['all']['daloRADIUS']." ".$l[captions][loginpage]?></li>
 				
 				</ul>
 		
@@ -38,9 +38,9 @@
 		
 		<div id="sidebar">
 		
-		<h2><? echo $l[captions][loginrequired]; ?></h2>
+		<h2><? echo $l['captions']['loginrequired']; ?></h2>
 				
-		<h3><? echo $l[captions][loginplease]; ?></h3>
+		<h3><? echo $l['captions']['loginplease']; ?></h3>
 
 				<form action="dologin.php" class="sidebar" method="post" >
 					<ul class="subnav">
@@ -65,7 +65,7 @@
 <?php
 	 if ($error) { 
 		echo $error;
-		echo $l[messages][loginerror];
+		echo $l['messages']['loginerror'];
 	}
 ?>
 				

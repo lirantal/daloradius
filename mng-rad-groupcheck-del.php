@@ -96,33 +96,33 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradgroupcheckdel.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradgroupcheckdel.php'] ?></a></h2>
 				
                                 <p>
-                                <?php echo $l[captions][mngradgroupcheckdel] ?>
+                                <?php echo $l['captions']['mngradgroupcheckdel'] ?>
                                 <br/><br/>
                                 </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l[FormField][all][Groupname] ?></b>
+                                                <b><?php echo $l['FormField']['all']['Groupname'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $groupname ?>" name="groupname"/><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l[FormField][all][Value] ?></b>
+                                                <b><?php echo $l['FormField']['all']['Value'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $value ?>" name="value"/><br/>
-												<?php echo $l[FormField][mngradgroupcheck.php][ToolTip][Value] ?>
+												<?php echo $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] ?>
                                                 </font>
 </td></tr>
 </table>
                                                 <br/><br/>
 <center>												
-                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 </center>
 
                                 </form>

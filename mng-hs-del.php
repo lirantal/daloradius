@@ -57,10 +57,10 @@
 ?>		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mnghsdel.php] ?></h2>
+				<h2 id="Intro"><?php echo $l['Intro']['mnghsdel.php'] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mnghsdel] ?>
+				<?php echo $l['captions']['mnghsdel'] ?>
 				<br/><br/>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -68,7 +68,7 @@
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l[FormField][mnghsdel.php][HotspotName] ?></b>
+						<b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
 </td><td>
 						<input value="<?php echo $name ?>" name="name"/><br/>
 						</font>
@@ -76,7 +76,7 @@
 </table>
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 </center>
 				</form>
 

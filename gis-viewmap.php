@@ -21,7 +21,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][gisviewmap.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['gisviewmap.php']; ?></a></h2>
 				
 				<p>
 				</p>
@@ -53,7 +53,7 @@ map.enableContinuousZoom();
 map.setCenter(new GLatLng(0, 0), 1, G_HYBRID_MAP);
 
 map.openInfoWindow(map.getCenter(),
-	document.createTextNode("<? echo $l[messages][gisviewwelcome]; ?>"));
+	document.createTextNode("<? echo $l['messages']['gisviewwelcome']; ?>"));
 
 
 // Create our "tiny" marker icon

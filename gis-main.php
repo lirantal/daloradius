@@ -39,11 +39,11 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l[Intro][gismain.php]; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['gismain.php']; ?></a></h2>
 				
 				<p>
 
-				<?echo $l[captions][gisinfo]; ?>	
+				<?echo $l['captions']['gisinfo']; ?>	
 
 				</p>
 				

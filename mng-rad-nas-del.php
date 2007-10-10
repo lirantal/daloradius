@@ -65,17 +65,17 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l[Intro][mngradnasdel.php] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradnasdel.php'] ?></a></h2>
 				
                                 <p>
-                                <?php echo $l[captions][mngradnasdel] ?>
+                                <?php echo $l['captions']['mngradnasdel'] ?>
                                 <br/><br/>
                                 </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l[FormField][mngradnasnew.php][NasIPHost] ?></b>
+                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $nashost ?>" name="nashost"/><br/>
                                                 </font>
@@ -83,7 +83,7 @@
 </table>
                                                 <br/><br/>
 <center>
-                                                <input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 </center>
                                 </form>
 

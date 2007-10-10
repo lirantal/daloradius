@@ -103,10 +103,10 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mngnewquick.php] ?></h2>
+				<h2 id="Intro"><?php echo $l['Intro']['mngnewquick.php'] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mngnewquick] ?>
+				<?php echo $l['captions']['mngnewquick'] ?>
 				</p>
 				<form name="newuser" action="mng-new-quick.php" method="post">
 
@@ -119,7 +119,7 @@
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l[FormField][all][Username] ?></b>
+						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
 						<input value="<?php echo $username ?>" name="username"/>
 <a href="javascript:randomUsername()"> genuser</a><br/>
@@ -127,7 +127,7 @@
 </td></tr>
 <tr><td>
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l[FormField][all][Password] ?></b>
+						<b><?php echo $l['FormField']['all']['Password'] ?></b>
 </td><td>
 						<input <?php echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/><br/>
@@ -141,7 +141,7 @@
 	<tr><td>
 		<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
                 <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')">
-		<b><?php echo $l[FormField][mngnewquick.php][MaxAllSession] ?></b><br/>
+		<b><?php echo $l['FormField']['mngnewquick.php']['MaxAllSession'] ?></b><br/>
 		<div id="attributesmaxallsession" style="display:none;visibility:visible" >
 
 		<input value="<?php echo $maxallsession ?>" id="maxallsession" name="maxallsession" />
@@ -178,7 +178,7 @@
 
 <br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply]?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
 
 </center>
 

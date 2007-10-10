@@ -61,17 +61,17 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l[Intro][mngdel.php] ?></h2>
+				<h2 id="Intro"><?php echo $l['Intro']['mngdel.php'] ?></h2>
 				
 				<p>
-				<?php echo $l[captions][mngdel] ?>
+				<?php echo $l['captions']['mngdel'] ?>
 				<br/><br/>
 				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l[FormField][all][Username] ?></b>
+						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
 						<input value="<?php echo $username ?>" name="username"/><br/>
 						</font>
@@ -79,7 +79,7 @@
 </table>
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l[buttons][apply] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
 </center>
 				</form>
 
