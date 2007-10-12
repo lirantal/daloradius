@@ -40,20 +40,20 @@
 
 				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
 					case "cleartext":
-						$password = "'$password'";
+						$dbPassword = "'$password'";
 						break;
 					case "crypt":
-						$password = "ENCRYPT('$password')";
+						$dbPassword = "ENCRYPT('$password')";
 						break;
 					case "md5":
-						$password = "MD5('$password')";
+						$dbPassword = "MD5('$password')";
 						break;
 					default:
-						$password = "'$password'";
+						$dbPassword = "'$password'";
 				}
 				
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', $password)";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', $dbPassword)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
