@@ -38,7 +38,7 @@
 
 <?php
 
-        if ($actionStatus == "success") {
+        if ((isset($actionStatus)) && ($actionStatus == "success")) {
                 echo <<<EOF
                         <div id="contentnorightbar">
                         <h9 id="Intro"> Success </h9>
@@ -52,7 +52,7 @@ EOF;
         }
 
 
-        if ($actionStatus == "failure") {
+        if ((isset($actionStatus)) && ($actionStatus == "failure")) {
                 echo <<<EOF
                         <div id="contentnorightbar">
                         <h8 id="Intro"> Failure </h8>
