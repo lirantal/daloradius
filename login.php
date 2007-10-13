@@ -30,7 +30,7 @@
 				
 				<ul id="subnav">
 				
-				<li><? echo $l['all']['daloRADIUS']." ".$l[captions][loginpage]?></li>
+				<li><? echo $l['all']['daloRADIUS']." ".$l['captions']['loginpage']?></li>
 				
 				</ul>
 		
