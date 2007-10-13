@@ -1,6 +1,6 @@
 <?php
 
-error_reporting(0);	// because we're not using a proper way for the translation variables right now we set this error_repoting to 0 level
+//error_reporting(0);	// because we're not using a proper way for the translation variables right now we set this error_repoting to 0 level
 					// in the future we will re-design it to work something like:
 					//
 					// define('l['Help']['Max-All-Session']', "blabablabla");
@@ -125,6 +125,7 @@ $l['Intro']['mngnewquick.php'] = "Quick User Add";
 $l['Intro']['mnghsdel.php'] = "Remove Hotspots";
 $l['Intro']['mnghsedit.php'] = "Edit Hotspots Details";
 $l['Intro']['mnghslist.php'] = "List Hotspots";
+$l['Intro']['mnghsnew.php'] = "New Hotspot";
 
 $l['Intro']['mngradusergroupdel.php'] = "Remove User-Group Mapping";
 $l['Intro']['mngradusergroup.php'] = "User-Group Configuration";
