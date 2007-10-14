@@ -10,6 +10,9 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
+	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
+	isset($_REQUEST['enddate']) ? $enddate = $_REQUEST['enddate'] : $enddate = "";
+	isset($_REQUEST['startdate']) ? $startdate = $_REQUEST['startdate'] : $startdate = "";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";

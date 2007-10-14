@@ -1,4 +1,5 @@
 <?php
+    $operator = $_SESSION['operator_user'];
 
     include ("menu-config.php");
         
@@ -12,23 +13,19 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"></a></h2>
-				<p>
+			<h2 id="Intro"><a href="#"></a></h2>
+
+
+		</div>
+
+		<div id="footer">
 
 <?php
-//	include 'library/exten-welcome_page.php';
-?>
-				</p>
-		</div>
-		
-		<div id="footer">
-		
-								<?php
         include 'page-footer.php';
 ?>
-		
+
 		</div>
-		
+
 </div>
 </div>
 

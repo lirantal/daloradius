@@ -47,6 +47,7 @@
 
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'  ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
 	$logDebugSQL .= "";
 	$logDebugSQL .= $sql . "\n";
 

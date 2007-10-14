@@ -12,7 +12,7 @@
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-    $logQuery = "performed query for hotspot [$ps-hotspot] with start date [$ps-startdate] and end date [$ps-enddate] on page: ";
+    $logQuery = "performed query for hotspot [$hotspot] with start date [$startdate] and end date [$enddate] on page: ";
 
 ?>
 
