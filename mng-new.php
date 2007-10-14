@@ -6,10 +6,10 @@
 	include('library/check_operator_perm.php');
 
     // declaring variables
-    $username = "";
-    $password = "";
-    $expiration = "";
-	$logDebugSQL = "";
+    isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
+    isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
+    isset($_REQUEST['expiration']) ? $expiration = $_REQUEST['expiration'] : $expiration = "";
+    $logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
@@ -217,7 +217,7 @@
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Password'] ?></b>
 </td><td>
-						<input <?php echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
+						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/>
 						</font>
 </td></tr>
