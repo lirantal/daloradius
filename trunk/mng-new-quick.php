@@ -129,7 +129,7 @@
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Password'] ?></b>
 </td><td>
-						<input <?php echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
+						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
 <a href="javascript:randomPassword()"> genpass</a><br/><br/>
 						</font>
 

@@ -120,7 +120,10 @@
     }
 
 
-
+	isset($groupname[0]) ? $groupname = $groupname[0] : $groupname = "";
+	isset($attribute[0]) ? $attribute = $attribute[0] : $attribute = "";
+	isset($value[0]) ? $value = $value[0] : $value = "";
+	isset($op[0]) ? $op = $op[0] : $op = "";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -156,14 +159,14 @@
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b><?php echo $l['FormField']['all']['Groupname'] ?></b>
 </td><td>												
-                                                <input value="<?php echo $groupname[0] ?>" name="groupname[]"/>
+                                                <input value="<?php echo $groupname ?>" name="groupname[]"/>
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 												<b><?php echo $l['FormField']['all']['Attribute'] ?></b>
 </td><td>												
-                                                <input value="<?php echo $attribute[0] ?>" name="attribute[]" /> 
+                                                <input value="<?php echo $attribute ?>" name="attribute[]" /> 
                                                 </font><br/>
 </td></tr>
 <tr><td>												
@@ -181,7 +184,7 @@
                                                 <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l['FormField']['all']['Value'] ?></b>
 </td><td>												
-                                                <input value="<?php echo $value[0] ?>" name="value[]" />
+                                                <input value="<?php echo $value ?>" name="value[]" />
                                                 </font><br/>
 </td></tr>
 </table>
