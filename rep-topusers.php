@@ -32,7 +32,7 @@
 		<h2 id="Intro"><a href="#"><?php echo $l['Intro']['reptopusers.php']; ?></a></h2>
 				
 				<p>
-				<?php echo $l['captions']['recordsfortopusers']." ".$order ?> <br/>
+				<?php echo $l['captions']['recordsfortopusers']." ".$orderBy ?> <br/>
 				</p>
 
 
@@ -46,7 +46,7 @@ $sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACC
 sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $orderBy $orderType limit $limit";
 
 	$res = $dbSocket->query($sql);
-	$logDebugSQL .= "";
+	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	echo "<table border='2' class='table1'>\n";
@@ -84,12 +84,12 @@ sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l['all']['Upload']." (".$l[all][Bytes].")
+					<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l['all']['Download']." (".$l[all][Bytes].")
+					<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=desc\"> < </a>

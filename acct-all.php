@@ -102,12 +102,12 @@
 	<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=asc\"> > </a>
 	<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=desc\"> < </a>
 	</th>
-	<th scope='col'> ".$l['all']['Upload']." (".$l[all][Bytes].")
+	<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
 	<br/>
 	<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctinputoctets&orderType=asc\"> > </a>
 	<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctinputoctets&orderType=desc\"> < </a>
 	</th>
-	<th scope='col'> ".$l['all']['Download']." (".$l[all][Bytes].")
+	<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
 	<br/>
 	<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctoutputoctets&orderType=asc\"> > </a>
 	<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctoutputoctets&orderType=desc\"> < </a>

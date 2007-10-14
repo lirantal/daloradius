@@ -108,12 +108,12 @@
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?nasipaddress=$nasipaddress&orderBy=acctsessiontime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?nasipaddress=$nasipaddress&orderBy=acctsessiontime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l['all']['Upload']." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?nasipaddress=$nasipaddress&orderBy=acctinputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?nasipaddress=$nasipaddress&orderBy=acctinputoctets&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l['all']['Download']." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?nasipaddress=$nasipaddress&orderBy=acctoutputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?nasipaddress=$nasipaddress&orderBy=acctoutputoctets&orderType=desc\"> < </a>

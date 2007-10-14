@@ -119,12 +119,12 @@
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l['all']['Upload']." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l['all']['Download']." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=desc\"> < </a>

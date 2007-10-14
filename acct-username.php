@@ -69,8 +69,8 @@
                 <td> ".$l['all']['LeftTime']." </td>
                 <td> ".$l['all']['LeftPercent']." </td>
                 <td> ".$l['all']['TotalSessions']." </td>
-                <td> ".$l['all']['Upload']." (".$l[all][Bytes].")</td>
-                <td> ".$l['all']['Download']." (".$l[all][Bytes].") </td>
+                <td> ".$l['all']['Upload']." (".$l['all']['Bytes'].")</td>
+                <td> ".$l['all']['Download']." (".$l['all']['Bytes'].") </td>
         	</tr></thead>
         ";
 	while($row = $res->fetchRow()) {
@@ -185,12 +185,12 @@
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=acctsessiontime&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=acctsessiontime&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l['all']['Upload']." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=acctinputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=acctinputoctets&orderType=desc\"> < </a>
 		</th>
-		<th scope='col'> ".$l['all']['Download']." (".$l[all][Bytes].")
+		<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=acctoutputoctets&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=acctoutputoctets&orderType=desc\"> < </a>

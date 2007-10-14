@@ -1,6 +1,23 @@
+
+
+	- added interface improvement for tables layout
+	- added new css theme
+	- added new multiple users deletion support:
+		- required for this is to do 
+			- change in mng-list-all.phpTODO and other pages where there are links for user
+			  deletions to replace the ?username=VALUE to ?usernames[]=VALUE in the href link
+			- commit the mng-del.phpTODO
+			- commit the mng-list-all.phpTODO 
+		(make sure to import new changes from previous files)
+		
+		
+		
+	
 release 0.9-4 - September 01 2007
 	- fixed bug in include/management/attributes.php and library/javascript/pages_common.js
 	  which caused the drop-down select boxes not to update the text input.
+	- fixed the whole issue with the language file and commited changes to all the project files.
+	- fixed bug on new user page where password showed entire encryption context
 	- added support for time and speed calculations done on select box updates for attributes
 	  like max-all-session, session-timeout, bandwidth related attributes, etc. 
 	  (credit for the idea goes to ut_crom, thanks!)
@@ -12,6 +29,8 @@ release 0.9-4 - September 01 2007
 	- added drop down combo boxes with pre-configured nas types to nas page.
 	- added support for configurable Test User Connectivity radius settings
 	- added new table userinfo for general user informatin (contact details)
+	- added new logging facility for debugging sql queries performed on the database server
+	- added new reports pages and moved the older status and logs pages to the reports section
 
 release 0.9-3 - September 01 2007
 	- fixed bug 1763605 - user edit hat a wrong mysql syntax

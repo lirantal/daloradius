@@ -177,7 +177,7 @@ map.addOverlay(new GMarker(point_cus, icon));
 ?>
 
 
-<form name="editmaps" action="<?php print("$PHP_SELF"); ?>">
+<form name="editmaps" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <input type="hidden" name="type" value="">
 <input type="hidden" name="hotspotname" value="">
 <input type="hidden" name="hotspotmac" value="">
