@@ -1,7 +1,8 @@
 <?php
+
+    include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include ("menu-config.php");
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -9,6 +10,11 @@
 	
 ?>
 		
+<?php
+
+    include ("menu-config.php");
+
+?>
 		
 		
 		<div id="contentnorightbar">

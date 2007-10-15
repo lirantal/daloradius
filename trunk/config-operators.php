@@ -1,13 +1,20 @@
 <?php
 
-    include ("menu-config-operators.php");
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+
+
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
 	
 ?>
 		
-		
+<?php
+
+    include ("menu-config-operators.php");
+
+?>		
 		
 		<div id="contentnorightbar">
 		
