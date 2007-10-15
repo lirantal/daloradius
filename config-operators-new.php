@@ -125,17 +125,17 @@
                 </tr>
 </thead>
 <tr><td>
-						<?php if (trim($operator_username) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_username)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Username</b>
 </td><td>
-						<input value="<?php echo $operator_username ?>" name="operator_username"/>
+						<input value="<?php if (isset($operator_username)) echo $operator_username ?>" name="operator_username"/>
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_password) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_password)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Password</b>
 </td><td>
-						<input <?php echo $hiddenPassword ?> value="<?php echo $operator_password ?>" name="operator_password" />
+						<input <?php if (isset($operator_hiddenPassword)) echo $hiddenPassword ?> value="<?php if (isset($operator_password)) echo $operator_password ?>" name="operator_password" />
 						</font>
 </td></tr>
 </table>
@@ -152,87 +152,87 @@
                 </tr>
 </thead>
 <tr><td>
-						<?php if (trim($operator_firstname) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_firstname)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Firstname</b>
 </td><td>
-						<input value="<?php echo $operator_firstname ?>" name="firstname"/>
+						<input value="<?php if (isset($operator_firstname)) echo $operator_firstname ?>" name="firstname"/>
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_lastname) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_lastname)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Lastname</b>
 </td><td>
-						<input value="<?php echo $operator_lastname ?>" name="lastname" />
+						<input value="<?php if (isset($operator_lastname)) echo $operator_lastname ?>" name="lastname" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_title) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_title)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Title</b>
 </td><td>
-						<input value="<?php echo $operator_title ?>" name="title" />
+						<input value="<?php if (isset($operator_title)) echo $operator_title ?>" name="title" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_department) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_department)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Department</b>
 </td><td>
-						<input value="<?php echo $operator_department ?>" name="department" />
+						<input value="<?php if (isset($operator_department)) echo $operator_department ?>" name="department" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_company) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_company)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Company</b>
 </td><td>
-						<input value="<?php echo $operator_company ?>" name="company" />
+						<input value="<?php if (isset($operator_company)) $operator_company ?>" name="company" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_phone1) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_phone1)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Phone1</b>
 </td><td>
-						<input value="<?php echo $operator_phone1 ?>" name="phone1" />
+						<input value="<?php if (isset($operator_phone1)) echo $operator_phone1 ?>" name="phone1" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_phone2) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_phone2)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Phone2</b>
 </td><td>
-						<input value="<?php echo $operator_phone2 ?>" name="phone2" />
+						<input value="<?php if (isset($operator_phone2)) echo $operator_phone2 ?>" name="phone2" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_email2) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_email1)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Email1</b>
 </td><td>
-						<input value="<?php echo $operator_email1 ?>" name="email1" />
+						<input value="<?php if (isset($operator_email1)) echo $operator_email1 ?>" name="email1" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_email2) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_email2)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Email2</b>
 </td><td>
-						<input value="<?php echo $operator_email2 ?>" name="email2" />
+						<input value="<?php if (isset($operator_email2)) echo $operator_email2 ?>" name="email2" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_messenger1) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_messenger1)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Messenger1</b>
 </td><td>
-						<input value="<?php echo $operator_messenger1 ?>" name="messenger1" />
+						<input value="<?php if (isset($operator_messenger1)) echo $operator_messenger1 ?>" name="messenger1" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_messenger2) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_messenger2)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Messenger2</b>
 </td><td>
-						<input value="<?php echo $operator_messenger2 ?>" name="messenger2" />
+						<input value="<?php if (isset($operator_messenger2)) echo $operator_messenger2 ?>" name="messenger2" />
 						</font>
 </td></tr>
 <tr><td>
-						<?php if (trim($operator_notes) == "") { echo "<font color='#FF0000'>";  }?>
+						<?php if (!isset($operator_notes)) { echo "<font color='#FF0000'>";  }?>
 						<b>Operator Notes</b>
 </td><td>
-						<input value="<?php echo $operator_notes ?>" name="notes" />
+						<input value="<?php if (isset($operator_notes)) echo $operator_notes ?>" name="notes" />
 						</font>
 </td></tr>
 
