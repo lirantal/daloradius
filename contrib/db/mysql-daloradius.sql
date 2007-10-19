@@ -106,7 +106,7 @@ CREATE TABLE `operators` (
   `acct_date` varchar(32) default NULL,
   `acct_ipaddress` varchar(32) default NULL,
   `acct_nasipaddress` varchar(32) default NULL,
-  `acct_hotspot` varchar(32) default NULL,
+  `acct_hotspot_accounting` varchar(32) default NULL,
   `acct_hotspot_compare` varchar(32) default NULL,
   `bill_persecond` varchar(32) default NULL,
   `bill_prepaid` varchar(32) default NULL,

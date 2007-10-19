@@ -123,7 +123,7 @@ function createMarker(point,html) {
 		var marker_$row[0] = createTabbedMarker(point_$row[0], ['<b> Hotspot Name: </b> $row[1] <br/> \
 					<b> Mac Addr: </b> $row[2] <br/> \
 					 <b> Geo Loc: </b> $row[3] <br/>', '<a href=acct-hotspot-compare.php> Hotspot Comparison </a> \
-					<br/> <a href=acct-hotspot.php?hotspot=$row[1]> Hotspot Statistics </a> <br/> '], ['Info','Statistics']);
+					<br/> <a href=acct-hotspot-accounting.php?hotspot=$row[1]> Hotspot Statistics </a> <br/> '], ['Info','Statistics']);
 
 
 		map.addOverlay(marker_$row[0]);
