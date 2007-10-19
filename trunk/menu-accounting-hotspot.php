@@ -36,7 +36,7 @@
 				<ul class="subnav">
 
 						<li><a href="javascript:document.accthotspot.submit();"><b>&raquo;</b>Hotspot Accounting<a>
-							<form name="accthotspot" action="acct-hotspot.php" method="post" class="sidebar">
+							<form name="accthotspot" action="acct-hotspot-accounting.php" method="post" class="sidebar">
 <select name="hotspot" size="3">
 <?php
 
