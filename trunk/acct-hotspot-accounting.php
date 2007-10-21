@@ -10,7 +10,7 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
-	$hotspot = $_REQUEST['hotspot'];
+	isset($_REQUEST['hotspot']) ? $hotspot = $_REQUEST['hotspot'] : $hotspot = "";
 
 
 	include_once('library/config_read.php');
