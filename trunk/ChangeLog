@@ -1,19 +1,4 @@
-
-
-	- added interface improvement for tables layout
-	- added new css theme
-	- added new multiple users deletion support:
-		- required for this is to do 
-			- change in mng-list-all.phpTODO and other pages where there are links for user
-			  deletions to replace the ?username=VALUE to ?usernames[]=VALUE in the href link
-			- commit the mng-del.phpTODO
-			- commit the mng-list-all.phpTODO 
-		(make sure to import new changes from previous files)
-		
-		
-		
-	
-release 0.9-4 - September 01 2007
+release 0.9-4 - October 22 2007
 	- fixed bug in include/management/attributes.php and library/javascript/pages_common.js
 	  which caused the drop-down select boxes not to update the text input.
 	- fixed the whole issue with the language file and commited changes to all the project files.
