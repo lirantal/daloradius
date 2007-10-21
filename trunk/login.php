@@ -11,7 +11,7 @@
 
 </head>
  
-<body>
+<body onLoad="document.login.operator_user.focus()">
 <?php
     include_once ("lang/main.php");
 ?>
@@ -42,7 +42,7 @@
 				
 		<h3><? echo $l['captions']['loginplease']; ?></h3>
 
-				<form action="dologin.php" class="sidebar" method="post" >
+				<form name="login" action="dologin.php" class="sidebar" method="post" >
 					<ul class="subnav">
 						<li><a href="#" >Username</a> </li>
 						<input name="operator_user" value="administrator" type="text" tabindex=1 />
