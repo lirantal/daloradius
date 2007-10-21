@@ -45,11 +45,11 @@
 				<form action="dologin.php" class="sidebar" method="post" >
 					<ul class="subnav">
 						<li><a href="#" >Username</a> </li>
-						<input name="operator_user" value="administrator" type="text" />
+						<input name="operator_user" value="administrator" type="text" tabindex=1 />
 						<li><a href="#" >Password</a> </li>
-						<input name="operator_pass" value="" type="password"/>
+						<input name="operator_pass" value="" type="password" tabindex=2 />
 						<br/><br/>
-						<input type="submit" value="Login"/>
+						<input type="submit" value="Login" tabindex=3/>
 				</form>
 						
 		</div>
