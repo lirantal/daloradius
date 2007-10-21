@@ -50,7 +50,7 @@
 		} else { 
 			$actionStatus = "failure";
 			$actionMsg = "You have tried to add a hotspot that already exist in the database: $name";	
-			$logAction = "Failed adding new hotspot already in database [$username] on page: ";		
+			$logAction = "Failed adding new hotspot already in database [$name] on page: ";		
 		}
 	
 		include 'library/closedb.php';
