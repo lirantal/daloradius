@@ -71,13 +71,13 @@ $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
-$l['Intro']['acctall.php'] = "Users Accounting";
-$l['Intro']['acctdate.php'] = "Users Accounting";
+$l['Intro']['acctall.php'] = "All Users Accounting";
+$l['Intro']['acctdate.php'] = "Date Sort Accounting";
 $l['Intro']['accthotspot.php'] = "Hotspot Accounting";
-$l['Intro']['acctipaddress.php'] = "Users Accounting";
+$l['Intro']['acctipaddress.php'] = "IP Accounting";
 $l['Intro']['accthotspotcompare.php'] = "Hotspot Comparison";
 $l['Intro']['acctmain.php'] = "Accounting Page";
-$l['Intro']['acctnasipaddress.php'] = "Users Accounting";
+$l['Intro']['acctnasipaddress.php'] = "NAS IP Accounting";
 $l['Intro']['acctusername.php'] = "Users Accounting";
 
 $l['Intro']['billmain.php'] = "Billing Page";
