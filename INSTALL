@@ -112,45 +112,40 @@ Installation
 
  DATABASE SETUP
  --------------
+
+    Overview:
+
     If you are working with FreeRADIUS and MySQL already then you
     probably have the radius database and corrosponding tables
     loaded up in MySQL. 
-    If this is the case, you may use the daloradius.sql file to 
-    load the other tables that daloRADIUS makes use of into the
-    radius database.
+    If this is the case, you may use the mysql-daloradius.sql file to load the other
+    tables that daloRADIUS makes use of into the radius database.
 
-    Incase that you do not have FreeRADIUS installed or haven't
+    Incase that you *DO NOT* have FreeRADIUS installed or haven't
     installed the radius database on your MySQL system then I
-    have provided you with a sample file of my own test system
-    that you can play with.
+    have provided you with a file that includes both daloRADIUS's own tables as well
+    as the tables that FreeRADIUS requires, the file is mysql-daloradius-and-freeradius.sql
 
+    I have also provided you with a sample file of my own test system
+    that you can play with (it includes both freeradius and daloradius tables)
+
+ 
+    Installing the Database Scheme:
 
     If you have FreeRADIUS and MySQL with the radius database:
 
 	cd /var/www/daloradius/contrib/db
 	mysql -u root -p radius < mysql-daloradius.sql
 
-    If you DONT HAVE the radius database in MySQL:
+    If you *DONT HAVE* the radius database in MySQL:
 
 	cd /var/www/daloradius/contrib/db
 	mysqladmin create radius
-	mysql -u root -p radius < mysql-daloradius-sample-data.sql
+	mysql -u root -p radius < mysql-daloradius-and-freeradius.sql
 
 
  DALORADIUS SETUP
  ----------------
-    Almost done.
-	
-	GUI SETUP
-	---------
-	daloRADIUS has a Configuration screen from the GUI and so it
-	is sometimes easier to set things up from the Web interface.
-	
-	- IMPORTANT: make sure that the file in library/daloradius.conf is writable
-	  (and ofcourse readable) by the webserver user and group.
-	- Browse to your daloRADIUS installation: http://server/daloradius/index.php
-	- Login with the default administrator/radius
-	- Go to Config menu item and set up the database
 
 	MANAUL SETUP
 	------------
@@ -163,6 +158,18 @@ Installation
    
     Fill in the database details and you're done.
     Save the file and exit.
+
+	
+	GUI SETUP
+	---------
+	daloRADIUS has a Configuration screen from the GUI and so it
+	is sometimes easier to set things up from the Web interface.
+	
+	- IMPORTANT: make sure that the file in library/daloradius.conf is writable
+	  (and ofcourse readable) by the webserver user and group.
+	- Browse to your daloRADIUS installation: http://server/daloradius/index.php
+	- Login with the default administrator/radius
+	- Go to Config menu item and set up the database
 
 
  INSTALLATION COMPLETE
