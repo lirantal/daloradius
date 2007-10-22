@@ -109,8 +109,8 @@
 				<td> $row[2] </td>
 				<td> $row[3] </td>
 				<td> $row[4] </td>
-				<td> <a href='mng-hs-edit.php?name=$row[1]'> ".$l['all']['edit']." </a> </td>
-				<td> <a href='mng-hs-del.php?name=$row[1]'> ".$l['all']['del']." </a> </td>
+				<td> <a href='mng-hs-edit.php?name=$row[1]'> ".$l['all']['edit']." </a>
+				<a href='mng-hs-del.php?name=$row[1]'> ".$l['all']['del']." </a> </td>
 		</tr>";
 	}
 	echo "</table>";
