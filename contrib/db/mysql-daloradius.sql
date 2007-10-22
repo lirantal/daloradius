@@ -1,19 +1,9 @@
--- MySQL dump 10.10
+-- daloRADIUS 0.9-4 database scheme for MySQL
+-- Liran Tal <liran.tal@gmail.com>
 --
--- Host: localhost    Database: radius
--- ------------------------------------------------------
--- Server version	5.0.22-Debian_0ubuntu6.06-log
+-- The file includes only the tables that daloRADIUS itself makes use of
+-- which are hotspots, operators, rates and userinfo.
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `hotspots`
@@ -35,23 +25,6 @@ CREATE TABLE `hotspots` (
   `type` varchar(32) default NULL,
   `website` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM;
-
---
--- Table structure for table `nas`
---
-
-CREATE TABLE `nas` (
-  `id` int(10) NOT NULL auto_increment,
-  `nasname` varchar(128) NOT NULL default '',
-  `shortname` varchar(32) default NULL,
-  `type` varchar(30) default 'other',
-  `ports` int(5) default NULL,
-  `secret` varchar(60) NOT NULL default 'secret',
-  `community` varchar(50) default NULL,
-  `description` varchar(200) default 'RADIUS Client',
-  PRIMARY KEY  (`id`),
-  KEY `nasname` (`nasname`)
 ) ENGINE=MyISAM;
 
 --
@@ -155,116 +128,6 @@ yes','yes','yes','yes','yes','Liran','Tal','Developer','daloRADIUS','Enginx','',
 UNLOCK TABLES;
 
 --
--- Table structure for table `radacct`
---
-
-CREATE TABLE `radacct` (
-  `RadAcctId` bigint(21) NOT NULL auto_increment,
-  `AcctSessionId` varchar(32) NOT NULL default '',
-  `AcctUniqueId` varchar(32) NOT NULL default '',
-  `UserName` varchar(64) NOT NULL default '',
-  `Realm` varchar(64) default '',
-  `NASIPAddress` varchar(15) NOT NULL default '',
-  `NASPortId` varchar(15) default NULL,
-  `NASPortType` varchar(32) default NULL,
-  `AcctStartTime` datetime NOT NULL default '0000-00-00 00:00:00',
-  `AcctStopTime` datetime NOT NULL default '0000-00-00 00:00:00',
-  `AcctSessionTime` int(12) default NULL,
-  `AcctAuthentic` varchar(32) default NULL,
-  `ConnectInfo_start` varchar(50) default NULL,
-  `ConnectInfo_stop` varchar(50) default NULL,
-  `AcctInputOctets` bigint(12) default NULL,
-  `AcctOutputOctets` bigint(12) default NULL,
-  `CalledStationId` varchar(50) NOT NULL default '',
-  `CallingStationId` varchar(50) NOT NULL default '',
-  `AcctTerminateCause` varchar(32) NOT NULL default '',
-  `ServiceType` varchar(32) default NULL,
-  `FramedProtocol` varchar(32) default NULL,
-  `FramedIPAddress` varchar(15) NOT NULL default '',
-  `AcctStartDelay` int(12) default NULL,
-  `AcctStopDelay` int(12) default NULL,
-  PRIMARY KEY  (`RadAcctId`),
-  KEY `UserName` (`UserName`),
-  KEY `FramedIPAddress` (`FramedIPAddress`),
-  KEY `AcctSessionId` (`AcctSessionId`),
-  KEY `AcctUniqueId` (`AcctUniqueId`),
-  KEY `AcctStartTime` (`AcctStartTime`),
-  KEY `AcctStopTime` (`AcctStopTime`),
-  KEY `NASIPAddress` (`NASIPAddress`)
-) ENGINE=MyISAM;
-
---
--- Table structure for table `radcheck`
---
-
-
-CREATE TABLE `radcheck` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `UserName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
-  `op` char(2) NOT NULL default '==',
-  `Value` varchar(253) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `UserName` (`UserName`(32))
-) ENGINE=MyISAM;
-
---
--- Table structure for table `radgroupcheck`
---
-
-CREATE TABLE `radgroupcheck` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `GroupName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
-  `op` char(2) NOT NULL default '==',
-  `Value` varchar(253) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `GroupName` (`GroupName`(32))
-) ENGINE=MyISAM;
-
---
--- Table structure for table `radgroupreply`
---
-
-CREATE TABLE `radgroupreply` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `GroupName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
-  `op` char(2) NOT NULL default '=',
-  `Value` varchar(253) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `GroupName` (`GroupName`(32))
-) ENGINE=MyISAM;
-
-
---
--- Table structure for table `radpostauth`
---
-
-CREATE TABLE `radpostauth` (
-  `id` int(11) NOT NULL auto_increment,
-  `user` varchar(64) NOT NULL default '',
-  `pass` varchar(64) NOT NULL default '',
-  `reply` varchar(32) NOT NULL default '',
-  `date` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM;
-
---
--- Table structure for table `radreply`
---
-
-CREATE TABLE `radreply` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `UserName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
-  `op` char(2) NOT NULL default '=',
-  `Value` varchar(253) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `UserName` (`UserName`(32))
-) ENGINE=MyISAM;
-
---
 -- Table structure for table `rates`
 --
 
@@ -274,17 +137,6 @@ CREATE TABLE `rates` (
   `cardbank` double default NULL,
   `rate` double default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM;
-
---
--- Table structure for table `usergroup`
---
-
-CREATE TABLE `usergroup` (
-  `UserName` varchar(64) NOT NULL default '',
-  `GroupName` varchar(64) NOT NULL default '',
-  `priority` int(11) NOT NULL default '1',
-  KEY `UserName` (`UserName`(32))
 ) ENGINE=MyISAM;
 
 --
