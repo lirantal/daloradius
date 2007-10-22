@@ -3,37 +3,77 @@
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
+/*
+//obsolete
+//	$username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '[username]';
 
-	$username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '[username]';
+	// $username is an array of usernames, it looks like this: 0=>user1, 1=>user2, etc...
+*/
+
+	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = array(1=>'[NO USER ENTERED]');
+
 	$logDebugSQL = "";
 
-	if (isset($_POST['submit'])) {
+	if (isset($_REQUEST['username'])) {
 
-		if (trim($username) != "") {
+		$allUsernames = "";
+		$isSuccessful = 0;
+
+		/* since the foreach loop will report an error/notice of undefined variable $value because
+		   it is possible that the $username is not an array, but rather a simple GET request
+		   with just some value, in this case we check if it's not an array and convert it to one with
+		   a NULL 2nd element
+		*/
+		if (!is_array($username))
+			$username = array($username, NULL);
+
+		foreach ($username as $variable=>$value) {
+
+			if (trim($variable) != "") {
 			
-			include 'library/opendb.php';
+				$username = $value;
+				$allUsernames .= $username . ", ";
+				//echo "user: $username <br/>";
 
-			// delete all attributes associated with a username
-			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+				include 'library/opendb.php';
 
-			$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='$username'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+
+				// delete all attributes associated with a username
+				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+	
+				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='$username'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+
 			
-			$actionStatus = "success";
-			$actionMsg = "Deleted user: <b> $username";
-			$logAction = "Successfully deleted user [$username] on page: ";
-
-			include 'library/closedb.php';
+				$actionStatus = "success";
+				$actionMsg = "Deleted user(s): <b> $allUsernames";
+				$logAction = "Successfully deleted user(s) [$allUsernames] on page: ";
+	
+				include 'library/closedb.php';
 			
-		}  else { 
-			$actionStatus = "failure";
-			$actionMsg = "no user was entered, please specify a username to remove from database";		
-			$logAction = "Failed deleting user [$username] on page: ";
+			}  else { 
+				$actionStatus = "failure";
+				$actionMsg = "no user was entered, please specify a username to remove from database";		
+				$logAction = "Failed deleting user(s) [$allUsernames] on page: ";
+			} 
+
+
+		} //foreach
+
+
+	} else { //if submit
+
+		if (isset($_REQUEST['usernames'])) {
+			$singleUsername = $_REQUEST['usernames'];
+			$username = $singleUsername[0];
+		} else {
+			$username = "";
 		}
 	}
+	
 
 
 
@@ -73,7 +113,7 @@
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
-						<input value="<?php echo $username ?>" name="username"/><br/>
+						<input value="<?php echo $username ?>" name="usernames[]"/><br/>
 						</font>
 </td></tr>
 </table>
