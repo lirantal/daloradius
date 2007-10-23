@@ -9,6 +9,8 @@
 	$number = "";
 	$length_pass = "";
 	$length_user = "";
+	$group = "";
+	$group_priority = "";
 
 	$logDebugSQL = "";
 
@@ -36,9 +38,11 @@ function createPassword($length) {
 		$number = $_REQUEST['number'];
 		$length_pass = $_REQUEST['length_pass'];
 		$length_user = $_REQUEST['length_user'];
+		$group = $_REQUEST['group'];
+		$group_priority = $_REQUEST['group_priority'];
 		
 		include 'library/opendb.php';
-	    include 'include/management/attributes.php';                            // required for checking if an attribute
+		include 'include/management/attributes.php';                            // required for checking if an attribute
 
 		$actionMsgBadUsernames = "";
 		$actionMsgGoodUsernames = "";
@@ -81,9 +85,21 @@ function createPassword($length) {
 
 				        $counter = 0;
 
-					$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-		                        $res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+					if (!( ($attribute == "group") || ($attribute == "group_priority") )) {
+
+						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
+			                        $res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
+		
+					} else {
+
+						// if a group was defined to add the user to in the form let's add it to the database
+						if (isset($group)) {
+							$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('$username', '$group', $group_priority) ";
+				                        $res = $dbSocket->query($sql);
+							$logDebugSQL .= $sql . "\n";
+						}
+					}
 
 					$counter++;
 
@@ -191,6 +207,16 @@ function createPassword($length) {
           <OPTION id="10"> 10 </OPTION>
           <OPTION id="12"> 12 </OPTION>
         </SELECT><br/>
+</td></tr>
+<tr><td>
+						<b>Group</b>
+</td><td>
+						<input value="<?php if (isset($group)) echo $group ?>" name="group" />
+</td></tr>
+<tr><td>
+						<b>Group Priority</b>
+</td><td>
+						<input value="<?php if (isset($group_priority)) echo $group ?>" name="group_priority" />
 </td></tr>
 </table>
 
