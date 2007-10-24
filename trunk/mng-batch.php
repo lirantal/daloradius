@@ -74,6 +74,7 @@ function createPassword($length) {
 
 				 foreach( $_POST as $attribute=>$value ) { 
 
+
 					if ( ($attribute == "username_prefix") || ($attribute == "length_pass") || ($attribute == "length_user") || ($attribute == "number") || ($attribute == "submit") )	
 						continue; // we skip these post variables as they are not important
 
@@ -211,7 +212,31 @@ function createPassword($length) {
 <tr><td>
 						<b>Group</b>
 </td><td>
-						<input value="<?php if (isset($group)) echo $group ?>" name="group" />
+						<input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" />
+
+<select onChange="javascript:setStringText(this.id,'group')" id='usergroup'>
+<?php
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+        
+	$sql = "SELECT GroupName FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']."";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "  
+                        <option value='$row[0]'> $row[0]
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+?>
+</select>
+
+
+	
 </td></tr>
 <tr><td>
 						<b>Group Priority</b>
