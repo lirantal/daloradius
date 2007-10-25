@@ -309,7 +309,7 @@ $l[buttons][savesettings] = "Save Settings";
 $l[buttons][apply] = "Apply";
 
 $l[menu][Home] = "<em>H</em>ome</a>";
-$l[menu][Managment] = "<em>M</em>anagment</a>";
+$l[menu][Managment] = "<em>M</em>anagement</a>";
 $l[menu][Reports] = "<em>R</em>eports</a>";
 $l[menu][Accounting] = "<em>A</em>ccounting</a>";
 $l[menu][Billing] = "<em>B</em>illing</a>";
