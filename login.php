@@ -49,7 +49,7 @@
 						<li><a href="#" >Password</a> </li>
 						<input name="operator_pass" value="" type="password" tabindex=2 />
 						<br/><br/>
-						<input type="submit" value="Login" tabindex=3/>
+						<input type="submit" value="Login" tabindex=3 />
 				</form>
 						
 		</div>
