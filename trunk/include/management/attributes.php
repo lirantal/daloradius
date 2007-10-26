@@ -40,8 +40,14 @@ function drawAttributes() {
 	 'ChilliSpot-MAC-Interval' => 'none'
 	 );	 
 	 
-echo "<br/><table border='2' class='table1' width='600'>";
+echo "<table border='2' class='table1'>";
 echo <<<EOF
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> Account Info </th>
+                                                        </tr>
+                                        </thead>
+
 	<tr><td>		
     <input type="checkbox" onclick="javascript:toggleShowDiv('categorySession')">
     <b> Session Attributes </b> <br/>
