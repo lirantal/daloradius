@@ -240,7 +240,16 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
+<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
+<![endif]-->
+
+
 </head>
+
+<script src="library/js_date/date-functions.js" type="text/javascript"></script>
+<script src="library/js_date/datechooser.js" type="text/javascript"></script>
 
 <?php
         include_once ("library/tabber/tab-layout.php");
@@ -316,9 +325,23 @@
 			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) )
 				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
 			else
-				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
+				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter]' id='$arrAttr[$counter]' />";
 
-			echo "</td></tr>";
+			switch ($arrAttr[$counter]) {
+				case "Expiration":
+							echo "&nbsp;
+							<img src=\"library/js_date/calendar.gif\" onclick=\"showChooser(this, '$arrAttr[$counter]', 
+							'chooserSpan', 1950, 2010, 'd M Y', false);\">
+							<div id=\"chooserSpan\" class=\"dateChooser select-free\" style=\"display: none; visibility: 
+							hidden; width: 160px;\"></div>
+							";
+						break;
+				case "Max-All-Session":
+						break;
+			
+			}
+
+			echo "<br/></td></tr>";
 			$counter++;
 
 		}
