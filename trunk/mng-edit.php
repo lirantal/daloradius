@@ -319,7 +319,7 @@
                 foreach ($arrAttr as $attribute) {
 
 			echo "<tr><td>";
-			echo "<b>$arrAttr[$counter]</b";
+			echo "<b>$arrAttr[$counter]</b>";
 			echo "</td><td>";
 
 			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) )
@@ -366,7 +366,7 @@
                 foreach ($arrAttrReply as $attribute) {
 
                         echo "<tr><td>";
-			echo "<b>$arrAttrReply[$counter]</b";
+			echo "<b>$arrAttrReply[$counter]</b>";
                         echo "</td><td>";
 			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter]' /><br/>";
                         echo "</td></tr>";
