@@ -14,17 +14,28 @@ function drawAttributes() {
 	$arraySessionAttr = array(
 	 'Max-All-Session' => 'seconds',
 	 'Session-Timeout' => 'seconds',
-	 'Idle-Timeout' => 'seconds'
+	 'Idle-Timeout' => 'seconds',
+	 'Framed-IP-Address' => 'none',
+	 'CHAP-Password' => 'none',
+	 'CHAP-Challenge' => 'none',
+	 'Service-Type' => 'none'
+	 'Reply-Message' => 'none'
 	 );
 
 	 
 	$arrayNasAttr = array(
 	 'Calling-Station-Id' => 'none',
-	 'Called-Station-Id' => 'none'
+	 'Called-Station-Id' => 'none',
+	 'NAS-ID' => 'none',
+	 'NAS-IP-Address' => 'none',
+	 'NAS-Port-Type' => 'none'
 	 );	 
 	 
 	 
 	$arrayWISPrAttr = array(
+	 'WISPr-Location-ID' => 'none',
+	 'WISPr-Location-Name' => 'none',
+	 'WISPr-Logoff-URL' => 'none',
 	 'WISPr-Redirection-URL' => 'none',
 	 'WISPr-Bandwidth-Max-Up' => 'speed',
 	 'WISPr-Bandwidth-Max-Down' => 'speed',
@@ -44,7 +55,7 @@ echo "<table border='2' class='table1'>";
 echo <<<EOF
                                         <thead>
                                                         <tr>
-                                                        <th colspan='2'> Account Info </th>
+                                                        <th colspan='2'> Attributes </th>
                                                         </tr>
                                         </thead>
 
@@ -232,9 +243,26 @@ function checkTables($attribute) {
 * @return $table		The table name, either radcheck or radreply
 */
     include ('library/config_read.php');
+
+	/* by default we set $table to return the radcheck table */
 	$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
 	
+	/* then we check to see if the given attribute should belong
+	   to the radreply table, if so, we set $table to radreply
+	   otherwise we end the switch case without doing anything,
+	   and $table remains in it's default state of being radcheck
+	*/
+
 	switch ($attribute) {
+		case "Reply-Message":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "Framed-IP-Address":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "Service-Type":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
 		case "Session-Timeout":
 			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 			break;
