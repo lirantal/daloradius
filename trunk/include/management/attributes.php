@@ -94,12 +94,11 @@ EOF;
 		";
 		$cnt++;
 	}	
-echo "</td></tr>
+	echo "</td></tr>
 		</div>";
 	
 
 echo <<<EOF
-	<table border='2' class='table1' width='600'>
 	<tr><td>
     <input type="checkbox" onclick="javascript:toggleShowDiv('categoryWISPr')">
     <b> WISPr Attributes </b> <br/>
@@ -148,7 +147,7 @@ EOF;
 		";
 		$cnt++;
 	}	
-echo "</td></tr>
+	echo "</td></tr>
 		</div>";
 
 
