@@ -189,9 +189,13 @@
 <div class="tabber">
 
      <div class="tabbertab" title="Account Info">
-        <br/>
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> Account Info </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Username'] ?></b>
@@ -237,7 +241,6 @@
 
 
      <div class="tabbertab" title="User Info">
-        <br/>
 
 <?php
 	include_once('include/management/userinfo.php');
