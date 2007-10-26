@@ -29,7 +29,7 @@ padding: 0;
 height: 22px;
 font: 11px Verdana, sans-serif;
 width: 100%;
-border-bottom: 1px solid #bbb;
+border-bottom: 5px solid #bbb;
 list-style-type: none;
 background: #fff;
 }
@@ -55,7 +55,6 @@ ul.tabbernav li a:visited { color: #667; }
 ul.tabbernav li a:hover
 {
 color: #039;
-border-bottom: 3px solid #bbb;
 cursor: pointer;
 background: #eee;
 }
@@ -65,7 +64,7 @@ ul.tabbernav li.tabberactive a
 color: #000;
 cursor: default;
 font-weight: bold;
-border-bottom: 3px solid #999;
+border-bottom: 3px solid #039;
 }
 
 ul.tabbernav li.tabberactive a:hover
@@ -79,9 +78,13 @@ background: #eee;
   Add style only after the tabber interface is set up (.tabberlive)
   --------------------------------------------------*/
 .tabberlive .tabbertab {
+
+/* uncomment below to enable the box border for the tabbed divs
+/*
  padding:5px;
  border:1px solid #aaa;
  border-top:1;
+*/
 
  /* If you don't want the tab size changing whenever a tab is changed
     you can set a fixed height */
