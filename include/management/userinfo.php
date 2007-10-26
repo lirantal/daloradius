@@ -12,6 +12,11 @@
 echo "
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> User Info </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <b>First name</b>
 </td><td>
