@@ -18,7 +18,7 @@ function drawAttributes() {
 	 'Framed-IP-Address' => 'none',
 	 'CHAP-Password' => 'none',
 	 'CHAP-Challenge' => 'none',
-	 'Service-Type' => 'none'
+	 'Service-Type' => 'none',
 	 'Reply-Message' => 'none'
 	 );
 
