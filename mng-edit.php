@@ -66,6 +66,12 @@
                                                 continue;
 					}
 
+
+echo "attribute: $attribute | value[0] = $value[0] | value[1]: $value[1] <br/>";
+
+					if (!($value[0]))
+						continue;
+
 					
 					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
 												// or radcheck table (using include/management/attributes.php function)
@@ -76,25 +82,25 @@
 					// and this has to be done because we're looping on all attributes that were submitted with the form
 					switch($attribute) {
 						case "User-Password":
-							$password = "'$value'";
+							$password = "'$value[0]'";
 							break;
 						case "CHAP-Password":
-							$password = "'$value'";
+							$password = "'$value[0]'";
 							break;
 						case "Cleartext-Password":
-							$password = "'$value'";
+							$password = "'$value[0]'";
 							break;							
 						case "Crypt-Password":
-							$password = "'$value'";
+							$password = "'$value[0]'";
 							break;	
 						case "MD5-Password":
-							$password = "'$value'";
+							$password = "'$value[0]'";
 							break;
 						case "SHA1-Password":
-							$password = "'$value'";
+							$password = "'$value[0]'";
 							break;
 						default:
-							$value = "'$value'";
+							$value[0] = "'$value[0]'";
 					}
 					
 					// first we check that the config option is actually set and available in the config file
@@ -103,26 +109,55 @@
 						switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
 							case "cleartext":
 								if ($password != "")
-										$value = "$password";
+										$value[0] = "$password";
 								break;
 							case "crypt":
 								if ($password != "")
-										$value = "ENCRYPT($password)";
+										$value[0] = "ENCRYPT($password)";
 								break;
 							case "md5":
 								if ($password != "")
-										$value = "MD5($password)";
+										$value[0] = "MD5($password)";
 								break;
 						}
 					} else {
 						// if the config option was not set and we encountered a password attribute we set it to default which is cleartext
 						if ($password != "")
-							$value = "$password";
+							$value[0] = "$password";
 					}
 
-					$sql = "UPDATE $useTable SET Value=$value WHERE UserName='$username' AND Attribute='$attribute'";
+
+					/* since we have added include/management/attributes.php to the form which 
+					   populates the page with all the existing attributes for us to choose from, even
+					   those that are not exist, we can't simply UPDATE because it might be that the attribute
+				 	   doesn't exist at all and we need to insert it. 
+					   for this reason we need to check if it exists or not, if exists we update, if not we insert */
+
+					$sql = "SELECT Attribute FROM $useTable WHERE UserName='$username' AND Attribute='$attribute'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
+					if ($res->numRows() == 0) {
+
+						/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
+
+						$sql = "INSERT INTO $useTable values(0,'$username', '$attribute', '$value[1]', $value[0])";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
+
+					} else {
+					
+						/* we update the $value[0] entry which is the attribute's value */
+						$sql = "UPDATE $useTable SET Value=$value[0] WHERE UserName='$username' AND Attribute='$attribute'";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
+	
+
+						/* then we update $value[1] which is the attribute's operator */
+						$sql = "UPDATE $useTable SET Op='$value[1]' WHERE UserName='$username' AND Attribute='$attribute'";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
+
+					}
 
 					$counter++;
 					$password = "";		// we MUST reset the $password variable to nothing  so that it's not kepy in the loop and will repeat itself as the value to set
@@ -250,6 +285,7 @@
 
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 
 <?php
         include_once ("library/tabber/tab-layout.php");
@@ -301,7 +337,6 @@
 <div class="tabber">
 
      <div class="tabbertab" title="radcheck table">
-        <br/>
 
 <?php
 
@@ -315,6 +350,8 @@
                         </thead>
                 ";
 
+		include ('include/management/op_select_options.php');
+
                 $counter = 0;
                 foreach ($arrAttr as $attribute) {
 
@@ -322,15 +359,22 @@
 			echo "<b>$arrAttr[$counter]</b>";
 			echo "</td><td>";
 
-			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) )
-				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter]' /><br/>";
-			else
-				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter]' id='$arrAttr[$counter]' />";
+			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) ) {
+				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter]' />";
+				drawOptions();
+			} else {
+				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter][]' id='$arrAttr[$counter][]' />";
+				echo " &nbsp; ";
+				echo "<select name='$arrAttr[$counter][]'";
+				echo "<option value='$arrOp[$counter]'>$arrOp[$counter]</option>";
+				drawOptions();
+				echo "</select>";
+			}
 
 			switch ($arrAttr[$counter]) {
 				case "Expiration":
 							echo "&nbsp;
-							<img src=\"library/js_date/calendar.gif\" onclick=\"showChooser(this, '$arrAttr[$counter]', 
+							<img src=\"library/js_date/calendar.gif\" onclick=\"showChooser(this, '$arrAttr[$counter][]', 
 							'chooserSpan', 1950, 2010, 'd M Y', false);\">
 							<div id=\"chooserSpan\" class=\"dateChooser select-free\" style=\"display: none; visibility: 
 							hidden; width: 160px;\"></div>
@@ -350,7 +394,6 @@
 		echo "</div>";
 
 		echo "<div class='tabbertab' title='radreply table'>";
-		echo "<br/>";
 
 
 		echo "<table border='2' class='table1'>";
@@ -368,7 +411,7 @@
                         echo "<tr><td>";
 			echo "<b>$arrAttrReply[$counter]</b>";
                         echo "</td><td>";
-			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter]' /><br/>";
+			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter][]' /><br/>";
                         echo "</td></tr>";
 			$counter++;
 
@@ -381,13 +424,26 @@
 ?>
 
      <div class="tabbertab" title="User Info">
-        <br/>
 
 <?php
         include_once('include/management/userinfo.php');
 ?>
 
 	</div>
+
+
+     <div class="tabbertab" title="Attributes">
+
+<?php
+        include_once('include/management/attributes.php');
+        drawAttributes();
+?>
+        <br/>
+     </div>
+
+
+
+
 </div>
 
 
