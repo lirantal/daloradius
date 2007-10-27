@@ -121,16 +121,16 @@
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
-						<input value="<?php echo $username ?>" name="username"/>
-<a href="javascript:randomUsername()"> genuser</a><br/>
+						<input value="<?php echo $username ?>" name="username" tabindex=5 />
+<a href="javascript:randomUsername()" tabindex=6> genuser</a><br/>
 						</font>
 </td></tr>
 <tr><td>
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Password'] ?></b>
 </td><td>
-						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" />
-<a href="javascript:randomPassword()"> genpass</a><br/><br/>
+						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" tabindex=7 />
+<a href="javascript:randomPassword()" tabindex=8> genpass</a><br/><br/>
 						</font>
 
 </td></tr>
