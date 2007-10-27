@@ -4,33 +4,51 @@
 
 	include('library/check_operator_perm.php');
 
-	$name = !empty($_REQUEST['name']) ? $_REQUEST['name'] : '[hotspot name]';
+//	$name = !empty($_REQUEST['name']) ? $_REQUEST['name'] : '[hotspot name]';
+        isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = array(1=>'[NO HOTSPOT ENTERED]');
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
-		$name = $_REQUEST['name'];
 
-		if (trim($name) != "") {
-			
-			include 'library/opendb.php';
+                if (!is_array($name))
+                        $name = array($name, NULL);
 
-			// delete all attributes associated with a username
-			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+                foreach ($name as $variable=>$value) {
+			if (trim($name) != "") {
 			
-			$actionStatus = "success";
-			$actionMsg = "Deleted hotspot: <b> $name </b>";
-			$logAction = "Successfully deleted hotpot [$name] on page: ";
+				include 'library/opendb.php';
 
-			include 'library/closedb.php';
+                                $name = $value;
+                                $allHotposts .= $name . ", ";
+
+				// delete all attributes associated with a username
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+				
+				$actionStatus = "success";
+				$actionMsg = "Deleted hotspot: <b> $name </b>";
+				$logAction = "Successfully deleted hotpot(s) [$allHotspots] on page: ";
+	
+				include 'library/closedb.php';
 			
-		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "no hotspot was entered, please specify a hotspot name to remove from database";
-			$logAction = "Failed deleting hotspot [$name] on page: ";
-		}
-	}
+			} else { 
+				$actionStatus = "failure";
+				$actionMsg = "no hotspot was entered, please specify a hotspot name to remove from database";
+				$logAction = "Failed deleting hotspot(s) [$allHotspots] on page: ";
+			}
+
+		} //foreach
+
+	} else {  //if submit
+                if (isset($_REQUEST['name'])) {
+                        $singleHotspot = $_REQUEST['name'];
+                        $name = $singleHotspot[0];
+                } else {
+                        $name = "";
+                }
+        }
+
 
 
 
@@ -70,7 +88,7 @@
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
 </td><td>
-						<input value="<?php echo $name ?>" name="name"/><br/>
+						<input value="<?php echo $name ?>" name="name[]"/><br/>
 						</font>
 </td></tr>
 </table>
