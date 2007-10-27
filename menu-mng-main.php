@@ -25,11 +25,11 @@
 						<li><a href="mng-batch.php"><b>&raquo;</b>Batch-Add Users <a></li>
 						<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit User<a>
 							<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
-							<input name="username" type="text">
+							<input name="username" type="text" tabindex=1>
 							</form></li>
 						<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>Search Users<a>
 							<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
-							<input name="username" type="text">
+							<input name="username" type="text" tabindex=2>
 							</form></li>
 
 
@@ -43,7 +43,7 @@
 						<li><a href="mng-hs-new.php"><b>&raquo;</b>New Hotspot</a></li>
 						<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b>Edit Hotspot<a>
 							<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
-							<input name="name" type="text">
+							<input name="name" type="text" tabindex=3>
 							</form></li>
 
 
@@ -53,7 +53,7 @@
 				<br/><br/>
 				<h2>Search</h2>
 				
-				<input name="" type="text" value="Search" />
+				<input name="" type="text" value="Search" tabindex=4 />
 		
 		</div>
 
