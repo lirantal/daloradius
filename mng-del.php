@@ -113,13 +113,13 @@
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
-						<input value="<?php echo $username ?>" name="usernames[]" tabindex=5 /><br/>
+						<input value="<?php echo $username ?>" name="usernames[]" tabindex=100 /><br/>
 						</font>
 </td></tr>
 </table>
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=6 />
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 />
 </center>
 				</form>
 
