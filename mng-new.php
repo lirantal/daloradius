@@ -200,18 +200,18 @@
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
-						<input value="<?php echo $username ?>" name="username" tabindex=5 />
-<a href="javascript:randomUsername()" tabindex=6> genuser</a><br/>
+						<input value="<?php echo $username ?>" name="username" tabindex=100 />
+<a href="javascript:randomUsername()" tabindex=101> genuser</a><br/>
 
-<a href="javascript:toggleShowDiv('showPasswordType')" tabindex=7>advanced</a><br/>
+<a href="javascript:toggleShowDiv('showPasswordType')" tabindex=102>advanced</a><br/>
 <div id="showPasswordType" style="display:none;visibility:visible" >
 <br/>
-<input type="radio" name="passwordType" value="User-Password" checked>User-Password<br>
-<input type="radio" name="passwordType" value="CHAP-Password">CHAP-Password<br>
-<input type="radio" name="passwordType" value="Cleartext-Password">Cleartext-Password<br>
-<input type="radio" name="passwordType" value="Crypt-Password">Crypt-Password<br>
-<input type="radio" name="passwordType" value="MD5-Password">MD5-Password<br>
-<input type="radio" name="passwordType" value="SHA1-Password">SHA1-Password<br>
+<input type="radio" name="passwordType" value="User-Password" checked tabindex=103>User-Password<br>
+<input type="radio" name="passwordType" value="CHAP-Password" tabindex=104>CHAP-Password<br>
+<input type="radio" name="passwordType" value="Cleartext-Password" tabindex=105>Cleartext-Password<br>
+<input type="radio" name="passwordType" value="Crypt-Password" tabindex=106>Crypt-Password<br>
+<input type="radio" name="passwordType" value="MD5-Password" tabindex=107>MD5-Password<br>
+<input type="radio" name="passwordType" value="SHA1-Password" tabindex=108>SHA1-Password<br>
 </div>
 
 
@@ -221,15 +221,15 @@
 						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Password'] ?></b>
 </td><td>
-						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" tabindex=8 />
-<a href="javascript:randomPassword()" tabindex=9> genpass</a><br/>
+						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" tabindex=109 />
+<a href="javascript:randomPassword()" tabindex=110> genpass</a><br/>
 						</font>
 </td></tr>
 <tr><td>
 						<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Expiration'] ?></b>
 </td><td>
-<input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>" tabindex=10>
+<input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>" tabindex=111>
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 						<br/>
