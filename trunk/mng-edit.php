@@ -450,7 +450,7 @@ echo "attribute: $attribute | value[0] = $value[0] | value[1]: $value[1] <br/>";
 
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=14 />
 </center>
 
 				</form>
