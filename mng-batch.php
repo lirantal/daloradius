@@ -176,18 +176,18 @@ function createPassword($length) {
 <tr><td>
 						<b><?php echo $l['FormField']['mngbatch.php']['UsernamePrefix'] ?></b>
 </td><td>
-						<input value="<?php echo $username_prefix ?>" name="username_prefix"/><br/>
+						<input value="<?php echo $username_prefix ?>" name="username_prefix" tabindex=5 /><br/>
 </td></tr>
 <tr><td>
 						<b><?php echo $l['FormField']['mngbatch.php']['NumberInstances'] ?></b>
 </td><td>
-						<input value="<?php echo $number ?>" name="number" /><br/>
+						<input value="<?php echo $number ?>" name="number" tabindex=6 /><br/>
 </td></tr>
 <tr><td>
 
 						<b><?php echo $l['FormField']['mngbatch.php']['UsernameLength'] ?></b>
 </td><td>
-	<SELECT name="length_user">
+	<SELECT name="length_user" tabindex=7>
           <OPTION id="4"> 4 </OPTION>
           <OPTION id="5"> 5 </OPTION>
           <OPTION id="6"> 6 </OPTION>
@@ -200,7 +200,7 @@ function createPassword($length) {
 
 						<b><?php echo $l['FormField']['mngbatch.php']['PasswordLength'] ?></b>
 </td><td>
-	<SELECT name="length_pass">
+	<SELECT name="length_pass" tabindex=8>
           <OPTION id="4"> 4 </OPTION>
           <OPTION id="5"> 5 </OPTION>
           <OPTION id="6"> 6 </OPTION>
@@ -212,9 +212,9 @@ function createPassword($length) {
 <tr><td>
 						<b>Group</b>
 </td><td>
-						<input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" />
+						<input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=9 />
 
-<select onChange="javascript:setStringText(this.id,'group')" id='usergroup'>
+<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=10>
 <?php
 
         include 'library/opendb.php';
@@ -241,7 +241,7 @@ function createPassword($length) {
 <tr><td>
 						<b>Group Priority</b>
 </td><td>
-						<input value="<?php if (isset($group_priority)) echo $group ?>" name="group_priority" />
+						<input value="<?php if (isset($group_priority)) echo $group ?>" name="group_priority" tabindex=11 />
 </td></tr>
 </table>
 
@@ -259,7 +259,7 @@ function createPassword($length) {
 
 			<br/><br/>
 <center>
-			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?> "/>
+			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?> " tabindex=12/>
 </center>
 
 				</form>
