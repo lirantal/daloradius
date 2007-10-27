@@ -140,7 +140,7 @@
 	<table border='2' class='table1' width='600'>
 	<tr><td>
 		<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')">
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')" tabindex=9>
 		<b><?php echo $l['FormField']['mngnewquick.php']['MaxAllSession'] ?></b><br/>
 		<div id="attributesmaxallsession" style="display:none;visibility:visible" >
 
@@ -178,7 +178,7 @@
 
 <br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" />
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10 />
 
 </center>
 
