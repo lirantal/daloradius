@@ -18,7 +18,7 @@ function drawAttributes() {
 	 'Framed-IP-Address' => 'none',
 	 'CHAP-Password' => 'none',
 	 'CHAP-Challenge' => 'none',
-	 'Service-Type' => 'none',
+	 'Service-Type' => 'servicetype',
 	 'Reply-Message' => 'none'
 	 );
 
@@ -73,6 +73,8 @@ EOF;
 			drawSelectSpeed($attrib, $cnt);
 		if ($help == "date") 
 			drawDateHtml($attrib);			
+		if ($help == "servicetype") 
+			drawSelectServiceType($attrib, $cnt);			
 		echo "
 		<br/><br/></font>
 		</div>
@@ -235,6 +237,30 @@ function drawSelectSeconds($attribute, $counter) {
 EOS;
 
 }
+
+
+function drawSelectServiceType($attribute, $counter) {
+
+	echo <<<EOS
+		<select onChange="javascript:setStringText(this.id,'$attribute')" id="option$attribute">
+		<option value="">Service-Type...</option>
+		<option value="Login-User">Login-User</option>
+		<option value="Framed-User">Framed-User</option>
+		<option value="Callback-Login-User">Callback-Login-User</option>
+		<option value="Callback-Framed-User">Callback-Framed-User</option>
+		<option value="Outbound-User">Outbound-User</option>
+		<option value="Administrative-User">Administrative-User</option>
+		<option value="NAS-Prompt-User">NAS-Prompt-User</option>
+		<option value="Authenticate-Only">Authenticate-Only</option>
+		<option value="Callback-NAS-Prompt">Callback-NAS-Prompt</option>
+		<option value="Call-Check">Call-Check</option>
+		<option value="Callback-Administrative">Callback-Administrative</option>
+		<option value="Authorize-Only">Authorize-Only</option>
+		</select>
+EOS;
+
+}
+
 
 
 function checkTables($attribute) {
