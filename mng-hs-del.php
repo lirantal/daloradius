@@ -88,13 +88,13 @@
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
 </td><td>
-						<input value="<?php echo $name ?>" name="name[]"/><br/>
+						<input value="<?php echo $name ?>" name="name[]" tabindex=100 /><br/>
 						</font>
 </td></tr>
 </table>
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 />
 </center>
 				</form>
 
