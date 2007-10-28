@@ -50,6 +50,7 @@
 						<input name="operator_pass" value="" type="password" tabindex=2 />
 						<br/><br/>
 						<input type="submit" value="Login" tabindex=3 />
+					</ul>
 				</form>
 						
 		</div>
