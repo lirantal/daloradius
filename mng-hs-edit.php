@@ -126,18 +126,18 @@
 <tr><td>
                                                 <b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
 </td><td>
-                                                <input disabled value="<?php echo $name ?>" name="name"/><br/>
+                                                <input disabled value="<?php echo $name ?>" name="name" tabindex=100 /><br/>
                                                 </font>
 </td></tr>
 <tr><td>
 						<b><?php echo $l['FormField']['mnghsedit.php']['MACAddress'] ?></b>
 </td><td>
-						<input value="<?php echo $macaddress ?>" name="macaddress" /><br/>
+						<input value="<?php echo $macaddress ?>" name="macaddress" tabindex=101 /><br/>
 </td></tr>
 <tr><td>
 						<b><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></b>
 </td><td>
-						<input value="<?php echo $geocode ?>" name="geocode" /><br/>
+						<input value="<?php echo $geocode ?>" name="geocode" tabindex=102 /><br/>
 
 </td></tr>
                                                 <input type=hidden value="<?php echo $name ?>" name="name"/><br/>
@@ -154,59 +154,59 @@
                                                 <?php if (trim($owner) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Owner Name</b>
 </td><td>
-                                                <input value="<?php echo $owner ?>" name="owner"/><br/>
+                                                <input value="<?php echo $owner ?>" name="owner" tabindex=300/><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($email_owner) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Owner Email</b>
 </td><td>
-                                                <input value="<?php echo $email_owner ?>" name="email_owner" /><br/>
+                                                <input value="<?php echo $email_owner ?>" name="email_owner" tabindex=301 /><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($manager) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Manager Name</b>
 </td><td>
-                                                <input value="<?php echo $manager ?>" name="manager"/><br/>
+                                                <input value="<?php echo $manager ?>" name="manager" tabindex=302 /><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($email_manager) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b>Manager Email</b>
 </td><td>
-                                                <input value="<?php echo $email_manager ?>" name="email_manager" /><br/>
+                                                <input value="<?php echo $email_manager ?>" name="email_manager" tabindex=303 /><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <b>Company</b>
 </td><td>
-                                                <input value="<?php echo $company ?>" name="company" /><br/>
+                                                <input value="<?php echo $company ?>" name="company" tabindex=304 /><br/>
 </td></tr>
 <tr><td>
                                                 <b>Address</b>
 </td><td>
-                                                <input value="<?php echo $address ?>" name="address" /><br/>
+                                                <input value="<?php echo $address ?>" name="address" tabindex=305 /><br/>
 </td></tr>
 <tr><td>
                                                 <b>Phone 1</b>
 </td><td>
-                                                <input value="<?php echo $phone1 ?>" name="phone1" /><br/>
+                                                <input value="<?php echo $phone1 ?>" name="phone1" tabindex=306 /><br/>
 </td></tr>
 <tr><td>
                                                 <b>Phone 2</b>
 </td><td>
-                                                <input value="<?php echo $phone2 ?>" name="phone2" /><br/>
+                                                <input value="<?php echo $phone2 ?>" name="phone2" tabindex=307 /><br/>
 </td></tr>
 <tr><td>
                                                 <b>HotSpot Type</b>
 </td><td>
-                                                <input value="<?php echo $hotspot_type ?>" name="hotspot_type" /><br/>
+                                                <input value="<?php echo $hotspot_type ?>" name="hotspot_type" tabindex=308 /><br/>
 </td></tr>
 <tr><td>
                                                 <b>Website</b>
 </td><td>
-                                                <input value="<?php echo $website ?>" name="website" /><br/>
+                                                <input value="<?php echo $website ?>" name="website" tabindex=309 /><br/>
 </td></tr>
 
 </table>
@@ -219,7 +219,7 @@
 
 						<br/><br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['savesettings'] ?>"/>
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['savesettings'] ?>" tabindex=1000 />
 </center>
 				</form>
 
