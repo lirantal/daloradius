@@ -39,7 +39,7 @@
 				
                                                 <li><a href="rep-logs-radius.php"><b>&raquo;</b>radius log</a></li>
                                                 <li><a href="rep-logs-system.php"><b>&raquo;</b>system log</a></li>
-				
+				</ul>	
 				<h3>Support</h3>
 				
 				<p class="news">
