@@ -64,6 +64,9 @@ $l['all']['del'] = "del";
 
 $l['all']['RADIUSReply'] = "RADIUS Reply"
 
+$l['Intro']['msgerrorpermissions.php'] = "Error";
+
+
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
 $l['Intro']['acctall.php'] = "All Users Accounting";
 $l['Intro']['acctdate.php'] = "Date Sort Accounting";
@@ -232,6 +235,11 @@ $l['captions']['reponline'] = "The following table lists users who are currently
 the system. It is very much possible that there are stale connections,
 meaning that users got disconnected but the NAS didn't send or wasn't
 able to send a STOP accounting packet to the RADIUS server.";
+
+$l['captions']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
+Please consult with your System Administrator. <br/>";
+
+$l['captions']['mngsearch'] = "Searching for user ";
 
 $l['captions']['configdb']['db'] = "Settings that daloRADIUS will make use of to connect to your
 				MySQL database server and manage it.";

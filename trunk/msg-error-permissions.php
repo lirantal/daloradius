@@ -21,13 +21,11 @@
 				
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Error</a></h2>
+				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['msgerrorpermissions.php']; ?></a></h2>
 				
 				<p>
 
-				You do not have permissions to access the page. <br/>
-				Please consult with your System Administrator. <br/>
-				
+				<?php echo $l['captions']['msgerrorpermissions']; ?>
 				
 				</p>
 				
