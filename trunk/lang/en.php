@@ -61,6 +61,8 @@ $l['all']['MACAddress'] = "MAC Address";
 $l['all']['Geocode'] = "Geocode";
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
+$l['all']['TestUser'] = "Test User";
+$l['all']['Accounting'] = "Accounting";
 
 $l['all']['RADIUSReply'] = "RADIUS Reply"
 
@@ -189,6 +191,9 @@ $l['FormField']['mngbatch.php']['UsernameLength'] = "Length of username string";
 $l['FormField']['mngbatch.php']['PasswordLength'] = "Length of password string";
 $l['FormField']['mngnewquick.php']['MaxAllSession'] = "Time Credit (Max-All-Session) ";
 
+$l['FormField']['mnghslist.php']['Owner'] = "Owner";
+$l['FormField']['mnghslist.php']['Company'] = "Company";
+$l['FormField']['mnghslist.php']['HotspotType'] = "Hotspot Type";
 $l['FormField']['mnghsdel.php']['HotspotName'] = "Hotspot name";
 $l['FormField']['mnghsedit.php']['MACAddress'] = "MAC Address";
 $l['FormField']['mnghsedit.php']['Geocode'] = "Geocode";
