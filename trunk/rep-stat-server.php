@@ -23,11 +23,10 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['indexserverstat.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['repstatserver.php']; ?></a></h2>
 				<p>
 
 <?php
-//	include 'library/phpsysinfo/index.php';
 	include 'library/exten-server_info.php';
 ?>
 				</p>

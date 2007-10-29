@@ -25,7 +25,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['indexradiusstat.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['repstatradius.php']; ?></a></h2>
 				<p>
 
 <?php
