@@ -43,13 +43,9 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Listing Online Users</a></h2>
+				<h2 id="Intro"><a href="#"><? echo $l['Intro']['reponline.php']; ?></a></h2>
 				
-				<p>
-				The following table lists users who are currently connected to
-				the system. It is very much possible that there are stale connections,
-				meaning that users got disconnected but the NAS didn't send or wasn't
-				able to send a STOP accounting packet to the RADIUS server.
+				<p> <?php echo $l['captions']['reponline']; ?>
 				</p>
 
 
@@ -101,22 +97,22 @@
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> IP Address
+					<th scope='col'> ".$l['all']['IPAddress']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> Start Time
+					<th scope='col'> ".$l['all']['StartTime']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstarttime&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstarttime&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> Session Time 
+					<th scope='col'> ".$l['all']['TotalTime']." 
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> NAS IP Address
+					<th scope='col'> ".$l['all']['NASIPAddress']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=desc\"> < </a>

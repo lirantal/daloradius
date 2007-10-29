@@ -17,7 +17,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['repmain.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['replogs.php']; ?></a></h2>
 				
 
 

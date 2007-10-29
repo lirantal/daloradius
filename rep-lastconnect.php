@@ -101,7 +101,7 @@
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=asc\"> > </a>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=desc\"> < </a>
 			</th>
-                        <th scope='col'> ".$l['all']['LoginTime']." 
+                        <th scope='col'> ".$l['all']['StartTime']." 
 			<br/>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=asc\"> > </a>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=desc\"> < </a>

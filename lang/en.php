@@ -62,8 +62,6 @@ $l['all']['Geocode'] = "Geocode";
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
 
-
-$l['all']['LoginTime'] = "Login Time"
 $l['all']['RADIUSReply'] = "RADIUS Reply"
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
@@ -98,14 +96,21 @@ $l['Intro']['graphsoveralllogins.php'] = "Overall Usage";
 $l['Intro']['graphsoverallupload.php'] = "Overall Usage";
 
 $l['Intro']['replastconnect.php'] = "Last 50 Connection Attempts";
-$l['Intro']['indexradiuslog.php'] = "RADIUS Server Logfile";
-$l['Intro']['indexradiusstat.php'] = "Daemons Information";
-$l['Intro']['indexserverstat.php'] = "Server Status and Information";
-$l['Intro']['indexsystemlog.php'] = "System Logfile";
+$l['Intro']['repstatradius.php'] = "Daemons Information";
+$l['Intro']['repstatserver.php'] = "Server Status and Information";
+$l['Intro']['reponline.php'] = "Listing Online Users";
+$l['Intro']['replogssystem.php'] = "System Logfile";
+$l['Intro']['replogsradius.php'] = "RADIUS Server Logfile";
+$l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
+$l['Intro']['replogsboot.php'] = "Boot Logfile";
+$l['Intro']['replogs.php'] = "Logs";
+$l['Intro']['repstatus.php'] = "Status";
 
 $l['Intro']['repall.php'] = "Users Listing";
 $l['Intro']['rephsall.php'] = "Hotspots Listing";
 $l['Intro']['repmain.php'] = "Reports Page";
+$l['Intro']['repstatus.php'] = "Status Page";
+$l['Intro']['replogs.php'] = "Logs Page";
 $l['Intro']['reptopusers.php'] = "Top Users";
 $l['Intro']['repusername.php'] = "Users Listing";
 
@@ -223,6 +228,11 @@ $l['FormField']['configmainttestuser.php']['Secret'] = "Secret";
 
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 
+$l['captions']['reponline'] = "The following table lists users who are currently connected to
+the system. It is very much possible that there are stale connections,
+meaning that users got disconnected but the NAS didn't send or wasn't
+able to send a STOP accounting packet to the RADIUS server.";
+
 $l['captions']['configdb']['db'] = "Settings that daloRADIUS will make use of to connect to your
 				MySQL database server and manage it.";
 $l['captions']['configdb']['tables'] = "The radius database tables settings";
@@ -274,6 +284,7 @@ can obtain from Google Maps API page by providing the complete web address to th
 daloRADIUS application on your server. Once you have obtained that code from Google, simply paste it in the
 Registration box and click the 'Register code' button to write it.<br/>
 Then you may be able to use Google Maps services. <br/><br/>";
+
 
 $l['captions']['loginpage'] = "Login Page:";
 $l['captions']['loginrequired'] = "Login Required";

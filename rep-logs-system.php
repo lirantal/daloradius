@@ -21,7 +21,7 @@
 ?>	
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['indexsystemlog.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['replogssystem.php']; ?></a></h2>
 				<p>
 
 <?php
