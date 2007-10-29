@@ -37,7 +37,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo "searching for user" ?></h2>
+				<h2 id="Intro"><?php echo $l['captions']['mngsearch']; ?></h2>
 				
 				<p>
 				<?php echo "searched for user $username" ?>
@@ -107,8 +107,8 @@
 					<td> $row[1] </td>
 					<td> <a href='mng-edit.php?username=$row[0]'> ".$l['all']['edit']." </a>
 					 <a href='mng-del.php?username=$row[0]'> ".$l['all']['del']." </a>
-					 <a href='config-maint-test-user.php?username=$row[0]&password=$row[1]'> Test User </a>
-					 <a href='acct-username.php?username=$row[0]'> Accounting </a>
+					 <a href='config-maint-test-user.php?username=$row[0]&password=$row[1]'> ".$l['all']['TestUser']." </a>
+					 <a href='acct-username.php?username=$row[0]'> ".$l['all']['Accounting']." </a>
 			 </td>
 
 			</tr>";
