@@ -85,17 +85,17 @@
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> Owner
+					<th scope='col'> ".$l['FormField']['mnghslist.php']['Owner']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> Company
+					<th scope='col'> ".$l['FormField']['mnghslist.php']['Company']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> HotSpot Type
+					<th scope='col'> ".$l['FormField']['mnghslist.php']['HotspotType']."
 					<br/>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
