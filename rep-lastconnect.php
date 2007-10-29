@@ -28,7 +28,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['indexlastconnect.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#"><? echo $l['Intro']['replastconnect.php']; ?></a></h2>
 
 <?php
 
@@ -86,27 +86,27 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>Last 50 connection attempts</th>
+                                <th colspan='10'>".$l['all']['Records']."</th>
                                 </tr>
                         </thead>
                 ";
         echo "<thread> <tr>
-                        <th scope='col'> Username 
+                        <th scope='col'> ".$l['all']['Username']." 
 			<br/>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=asc\"> > </a>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=desc\"> < </a>
 			</th>
-                        <th scope='col'> Password 
+                        <th scope='col'> ".$l['all']['Password']." 
 			<br/>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=asc\"> > </a>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=desc\"> < </a>
 			</th>
-                        <th scope='col'> Logged-In Time 
+                        <th scope='col'> ".$l['all']['LoginTime']." 
 			<br/>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=asc\"> > </a>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=desc\"> < </a>
 			</th>
-                        <th scope='col'> RADIUS Reply Packet 
+                        <th scope='col'> ".$l['all']['RADIUSReply']." 
 			<br/>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=asc\"> > </a>
                         <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=desc\"> < </a>
