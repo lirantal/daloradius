@@ -62,6 +62,10 @@ $l['all']['Geocode'] = "Geocode";
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
 
+
+$l['all']['LoginTime'] = "Login Time"
+$l['all']['RADIUSReply'] = "RADIUS Reply"
+
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
 $l['Intro']['acctall.php'] = "All Users Accounting";
 $l['Intro']['acctdate.php'] = "Date Sort Accounting";
@@ -93,7 +97,7 @@ $l['Intro']['graphsoveralldownload.php'] = "Overall Usage";
 $l['Intro']['graphsoveralllogins.php'] = "Overall Usage";
 $l['Intro']['graphsoverallupload.php'] = "Overall Usage";
 
-$l['Intro']['indexlastconnect.php'] = "Last 50 Connection Attempts";
+$l['Intro']['replastconnect.php'] = "Last 50 Connection Attempts";
 $l['Intro']['indexradiuslog.php'] = "RADIUS Server Logfile";
 $l['Intro']['indexradiusstat.php'] = "Daemons Information";
 $l['Intro']['indexserverstat.php'] = "Server Status and Information";
