@@ -221,7 +221,7 @@ function createPassword($length) {
 
         // Grabing the group lists from usergroup table
         
-	$sql = "SELECT GroupName FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']."";
+	$sql = "SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']."";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
