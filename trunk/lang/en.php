@@ -66,6 +66,12 @@ $l['all']['Accounting'] = "Accounting";
 
 $l['all']['RADIUSReply'] = "RADIUS Reply";
 
+$l['table']['AccountInfo'] = "Account Info";
+$l['table']['UserInfo'] = "User Info";
+$l['table']['Attributes'] = "Attributes";
+
+
+
 $l['Intro']['msgerrorpermissions.php'] = "Error";
 
 
@@ -164,6 +170,7 @@ $l['Intro']['configlogging.php'] = "Logging Configuration";
 $l['Intro']['configinterface.php'] = "Web Interface Configuration";
 $l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
 
+$l['FormField']['all']['Group'] = "Group";
 $l['FormField']['all']['Groupname'] = "Groupname";
 $l['FormField']['all']['Username'] = "Username";
 $l['FormField']['all']['Password'] = "Password";
