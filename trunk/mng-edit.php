@@ -17,6 +17,8 @@
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
 
+                $group = $_REQUEST['group'];
+
                 $firstname = $_REQUEST['firstname'];
                 $lastname = $_REQUEST['lastname'];
                 $email = $_REQUEST['email'];
@@ -35,6 +37,13 @@
 			$logDebugSQL .= $sql . "\n";
 			
 
+                      // insert usergroup mapping
+                      if (isset($group)) {
+	                      $sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='$username', GroupName='$group' WHERE UserName='$username'";
+                              $res = $dbSocket->query($sql);
+                              $logDebugSQL .= $sql . "\n";
+                      }
+
 			 foreach( $_POST as $attribute=>$value ) { 
 
 
@@ -44,6 +53,7 @@
 
                                                 case "username":
                                                 case "submit":
+                                                case "group":
                                                 case "firstname":
                                                 case "lastname":
                                                 case "email":
@@ -251,7 +261,17 @@
                 $ui_mobilephone = $row['mobilephone'];
                 $ui_notes = $row['notes'];
 
+	
 
+	/* get group information for user */
+	$sql = "SELECT GroupName FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='$username'";
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= $sql . "\n";
+
+        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+                $group = $row['GroupName'];
+ 	
 
 
 
@@ -436,6 +456,48 @@
         include_once('include/management/attributes.php');
         drawAttributes();
 ?>
+        <br/>
+     </div>
+
+
+     <div class="tabbertab" title="Groups">
+
+		<table border='2' class='table1'>
+	     
+                        <thead>
+                                <tr>
+                                <th colspan='10'>Groups</th>
+                                </tr>
+                        </thead>
+
+<tr><td>                                        <b><?php echo $l['FormField']['all']['Group']; ?></b>
+</td><td>
+                                                <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
+
+<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
+<?php
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+        $sql = "SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']."";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "
+                        <option value='$row[0]'> $row[0]
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+?>
+</select>
+</td></tr>
+
+
+		</table>
         <br/>
      </div>
 
