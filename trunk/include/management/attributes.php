@@ -12,9 +12,10 @@
 function drawAttributes() {
 
 	$arraySessionAttr = array(
-	 'Max-All-Session' => 'seconds',
+	 'Expiration' => 'date',
 	 'Session-Timeout' => 'seconds',
 	 'Idle-Timeout' => 'seconds',
+	 'Max-All-Session' => 'seconds',
 	 'Framed-IP-Address' => 'none',
 	 'CHAP-Password' => 'none',
 	 'CHAP-Challenge' => 'none',
@@ -75,6 +76,8 @@ EOF;
 			drawDateHtml($attrib);			
 		if ($help == "servicetype") 
 			drawSelectServiceType($attrib, $cnt);			
+		if ($help == "date")
+			drawDate($attrib, $cnt);
 		echo "
 		<br/><br/></font>
 		</div>
@@ -207,6 +210,15 @@ function drawSelectSpeed($attribute, $counter) {
 		<option value="1024">kilobits</option>
 		<option value="1048576">megabits</option>
 		</select>
+EOS;
+
+}
+
+
+function drawDate($attribute, $counter) {
+
+	echo <<<EOS
+<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 EOS;
 
 }
