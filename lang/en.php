@@ -64,7 +64,7 @@ $l['all']['del'] = "del";
 $l['all']['TestUser'] = "Test User";
 $l['all']['Accounting'] = "Accounting";
 
-$l['all']['RADIUSReply'] = "RADIUS Reply"
+$l['all']['RADIUSReply'] = "RADIUS Reply";
 
 $l['Intro']['msgerrorpermissions.php'] = "Error";
 
