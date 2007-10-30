@@ -76,8 +76,6 @@ EOF;
 			drawDateHtml($attrib);			
 		if ($help == "servicetype") 
 			drawSelectServiceType($attrib, $cnt);			
-		if ($help == "date")
-			drawDate($attrib, $cnt);
 		echo "
 		<br/><br/></font>
 		</div>
@@ -210,15 +208,6 @@ function drawSelectSpeed($attribute, $counter) {
 		<option value="1024">kilobits</option>
 		<option value="1048576">megabits</option>
 		</select>
-EOS;
-
-}
-
-
-function drawDate($attribute, $counter) {
-
-	echo <<<EOS
-<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 EOS;
 
 }
