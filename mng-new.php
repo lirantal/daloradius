@@ -9,6 +9,7 @@
     isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
     isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
     isset($_REQUEST['expiration']) ? $expiration = $_REQUEST['expiration'] : $expiration = "";
+    isset($_REQUEST['group']) ? $group = $_REQUEST['group'] : $group = "";
     $logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
@@ -16,6 +17,7 @@
 		$password = $_REQUEST['password'];
 	        $passwordtype = $_REQUEST['passwordType'];	
 		$expiration = $_REQUEST['expiration'];
+		$group = $_REQUEST['group'];
 
 		$firstname = $_REQUEST['firstname'];
 		$lastname = $_REQUEST['lastname'];
@@ -63,6 +65,13 @@
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
+
+				// insert usergroup mapping
+				if (isset($group)) {
+					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('$username', '$group',0) ";
+                                        $res = $dbSocket->query($sql);
+                                        $logDebugSQL .= $sql . "\n";
+				}
 	
 				// insert user information table
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
@@ -80,6 +89,7 @@
 						case "password":
 						case "passwordType":
 						case "expiration":
+						case "group":
 						case "submit":
 						case "firstname":
 						case "lastname":
@@ -225,11 +235,38 @@
 <a href="javascript:randomPassword()" tabindex=110> genpass</a><br/>
 						</font>
 </td></tr>
+
+
+<tr><td>                                        <b>Group</b>
+</td><td>
+                                                <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
+
+<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
+<?php
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+        $sql = "SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']."";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "
+                        <option value='$row[0]'> $row[0]
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+?>
+</select>
+</td></tr>
 <tr><td>
 						<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Expiration'] ?></b>
 </td><td>
-<input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>" tabindex=111>
+<input name="expiration" type="text" id="expiration" value="<?php echo $expiration ?>" tabindex=112>
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 						<br/>
