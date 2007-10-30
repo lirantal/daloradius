@@ -162,17 +162,19 @@ function createPassword($length) {
 		
 				<h2 id="Intro"><?php echo $l['Intro']['mngbatch.php'] ?></h2>
 				
-				<p>
 				<?php echo $l['captions']['mngbatch'] ?>
-				</p>
 
 				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
-     <div class="tabbertab" title="Users Information">
-	<br/>
+     <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['AccountInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 						<b><?php echo $l['FormField']['mngbatch.php']['UsernamePrefix'] ?></b>
 </td><td>
@@ -210,7 +212,7 @@ function createPassword($length) {
         </SELECT><br/>
 </td></tr>
 <tr><td>
-						<b>Group</b>
+						<b><?php echo $l['FormField']['all']['Group']; ?></b>
 </td><td>
 						<input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=104 />
 
@@ -239,14 +241,14 @@ function createPassword($length) {
 	
 </td></tr>
 <tr><td>
-						<b>Group Priority</b>
+						<b><?php echo $l['FormField']['all']['GroupPriority']; ?></b>
 </td><td>
 						<input value="<?php if (isset($group_priority)) echo $group ?>" name="group_priority" tabindex=106 />
 </td></tr>
 </table>
 
      </div>
-     <div class="tabbertab" title="Attributes">
+     <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 	<?php
 	        include_once('include/management/attributes.php');
 	        drawAttributes();

@@ -171,6 +171,7 @@ $l['Intro']['configinterface.php'] = "Web Interface Configuration";
 $l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
 
 $l['FormField']['all']['Group'] = "Group";
+$l['FormField']['all']['GroupPriority'] = "Group Priority";
 $l['FormField']['all']['Groupname'] = "Groupname";
 $l['FormField']['all']['Username'] = "Username";
 $l['FormField']['all']['Password'] = "Password";

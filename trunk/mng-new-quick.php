@@ -105,18 +105,20 @@
 		
 				<h2 id="Intro"><?php echo $l['Intro']['mngnewquick.php'] ?></h2>
 				
-				<p>
 				<?php echo $l['captions']['mngnewquick'] ?>
-				</p>
 				<form name="newuser" action="mng-new-quick.php" method="post">
 
 <div class="tabber">
 
-     <div class="tabbertab" title="Account Info">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
 
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['AccountInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Username'] ?></b>
@@ -164,8 +166,7 @@
 
         </div>
 
-     <div class="tabbertab" title="User Info">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
 
 <?php
         include_once('include/management/userinfo.php');
