@@ -188,12 +188,12 @@
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="Account Info">
+     <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
 
 <table border='2' class='table1'>
                                         <thead>
                                                         <tr>
-                                                        <th colspan='2'> Account Info </th>
+                                                        <th colspan='2'> <?php echo $l['table']['AccountInfo']; ?> </th>
                                                         </tr>
                                         </thead>
 <tr><td>
@@ -227,7 +227,7 @@
 </td></tr>
 
 
-<tr><td>                                        <b>Group</b>
+<tr><td>                                        <b><?php echo $l['FormField']['all']['Group']; ?></b>
 </td><td>
                                                 <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
 
@@ -257,7 +257,7 @@
      </div>
 
 
-     <div class="tabbertab" title="User Info">
+     <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
 
 <?php
 	include_once('include/management/userinfo.php');
@@ -266,7 +266,7 @@
 
 
 
-     <div class="tabbertab" title="Attributes">
+     <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
 <?php
         include_once('include/management/attributes.php');
