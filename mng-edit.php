@@ -67,8 +67,6 @@
 					}
 
 
-echo "attribute: $attribute | value[0] = $value[0] | value[1]: $value[1] <br/>";
-
 					if (!($value[0]))
 						continue;
 
