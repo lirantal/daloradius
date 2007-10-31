@@ -69,6 +69,8 @@ $l['all']['RADIUSReply'] = "RADIUS Reply";
 $l['table']['AccountInfo'] = "Account Info";
 $l['table']['UserInfo'] = "User Info";
 $l['table']['Attributes'] = "Attributes";
+$l['table']['HotspotInfo'] = "Hotspot Info";
+$l['table']['ContactInfo'] = "Contact Info";
 
 
 

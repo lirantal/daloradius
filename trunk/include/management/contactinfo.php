@@ -5,6 +5,11 @@
 *********************************************************************/
 ?>
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['ContactInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <?php if (trim($owner) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l['ContactInfo']['OwnerName'] ?></b>
