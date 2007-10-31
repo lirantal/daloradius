@@ -41,7 +41,7 @@
 				
 				$actionStatus = "success";
 				$actionMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";
-				$logAction = "Successfully added user-group mapping of user [$user] with group [$group] on page: ";
+				$logAction = "Successfully added user-group mapping of user [$username] with group [$group] on page: ";
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
