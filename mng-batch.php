@@ -72,6 +72,13 @@ function createPassword($length) {
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
+			// if a group was defined to add the user to in the form let's add it to the database
+			if (isset($group)) {
+				$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('$username', '$group', $group_priority) ";
+	                        $res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+			}
+
 				 foreach( $_POST as $attribute=>$value ) { 
 
 
@@ -91,15 +98,6 @@ function createPassword($length) {
 						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
 			                        $res = $dbSocket->query($sql);
 						$logDebugSQL .= $sql . "\n";
-		
-					} else {
-
-						// if a group was defined to add the user to in the form let's add it to the database
-						if (isset($group)) {
-							$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('$username', '$group', $group_priority) ";
-				                        $res = $dbSocket->query($sql);
-							$logDebugSQL .= $sql . "\n";
-						}
 					}
 
 					$counter++;
