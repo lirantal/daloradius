@@ -13,13 +13,15 @@
                 if (!is_array($name))
                         $name = array($name, NULL);
 
+		$allHotspots = "";
+	
                 foreach ($name as $variable=>$value) {
-			if (trim($name) != "") {
-			
+			if (trim($value) != "") {
+
 				include 'library/opendb.php';
 
                                 $name = $value;
-                                $allHotposts .= $name . ", ";
+                                $allHotspots .= $name . ", ";
 
 				// delete all attributes associated with a username
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
@@ -42,8 +44,12 @@
 
 	} else {  //if submit
                 if (isset($_REQUEST['name'])) {
-                        $singleHotspot = $_REQUEST['name'];
-                        $name = $singleHotspot[0];
+			if (is_array($_REQUEST['name'])) {
+	                        $singleHotspot = $_REQUEST['name'];
+	                        $name = $singleHotspot[0];
+			} else {
+	                        $name = $_REQUEST['name'];
+			}				
                 } else {
                         $name = "";
                 }
