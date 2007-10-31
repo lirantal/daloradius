@@ -88,17 +88,19 @@
 		
 				<h2 id="Intro"><?php echo $l['Intro']['mnghsnew.php'] ?></h2>
 				
-				<p>
 				<?php echo $l['captions']['mnghsnew'] ?>
-				</p>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
-     <div class="tabbertab" title="HotSpot Info">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['HotspotInfo']; ?>">
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['HotspotInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
@@ -125,8 +127,7 @@
 
 
 
-     <div class="tabbertab" title="Contact Info">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['ContactInfo']; ?>">
 
 <?php
         include_once('include/management/contactinfo.php');
