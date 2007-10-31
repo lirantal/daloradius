@@ -97,15 +97,17 @@
 		
 				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradnasnew.php'] ?></a></h2>
 				
-				<p>
-
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="NAS Info">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['NASInfo']; ?>">
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['NASInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
@@ -149,15 +151,19 @@
 </td><td>												
                                                 <input value="<?php echo $nasname ?>" name="nasname" tabindex=104 /> 
 												<?php echo $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] ?>
-                                                </font><br/>
+                                                </font>
 </td></tr>
 </table>
 
      </div>
-     <div class="tabbertab" title="Advanced">
-	<br/>
+     <div class="tabbertab" title="<?php echo $l['table']['NASAdvanced']; ?>">
 
 <table border='2' class='table1' width='600'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['NASAdvanced']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 
 
@@ -214,8 +220,6 @@
                                 </form>
 
 
-				</p>
-				
 <?php
 	include('include/config/logging.php');
 ?>

@@ -132,16 +132,19 @@
 		<div id="contentnorightbar">
 		
 				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradnasedit.php'] ?></a></h2>
-				<p>
 
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="NAS Info">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['NASInfo']; ?>">
                                                 <input type="hidden" value="<?php echo $nashost ?>" name="nashost" />
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['NASInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
@@ -190,10 +193,15 @@
 </table>
 
      </div>
-     <div class="tabbertab" title="Advanced">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['NASAdvanced']; ?>">
 
 <table border='2' class='table1' width='600'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['NASAdvanced']; ?> </th>
+                                                        </tr>
+                                        </thead>
+
 <tr><td>
 
 
@@ -252,8 +260,6 @@
                                 </form>
 
 
-
-				</p>
 
 <?php
 	include('include/config/logging.php');
