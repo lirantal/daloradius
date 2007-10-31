@@ -66,11 +66,22 @@ $l['all']['Accounting'] = "Accounting";
 
 $l['all']['RADIUSReply'] = "RADIUS Reply";
 
+
+/* **********************************************************************************
+ * Tables
+ * The text related to all the table headers and tabbed layout text
+ ************************************************************************************/
+
 $l['table']['AccountInfo'] = "Account Info";
+$l['table']['GroupInfo'] = "Group Info";
 $l['table']['UserInfo'] = "User Info";
 $l['table']['Attributes'] = "Attributes";
 $l['table']['HotspotInfo'] = "Hotspot Info";
 $l['table']['ContactInfo'] = "Contact Info";
+
+/* ********************************************************************************** */
+
+
 
 
 
