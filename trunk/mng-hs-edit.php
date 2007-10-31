@@ -111,18 +111,20 @@
 		
 				<h2 id="Intro"><?php echo $l['Intro']['mnghsedit.php'] ?></h2>
 				
-				<p>
 				<?php echo $l['captions']['mnghsedit'] ?> 
-				</p>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
-     <div class="tabbertab" title="HotSpot Info">
-        <br/>
+     <div class="tabbertab" title="<?php echo $l['table']['HotspotInfo']; ?>">
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['HotspotInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
 </td><td>
@@ -140,14 +142,13 @@
 						<input value="<?php echo $geocode ?>" name="geocode" tabindex=102 /><br/>
 
 </td></tr>
-					<input type=hidden value="<?php echo $name ?>" name="name"/><br/>
+					<input type=hidden value="<?php echo $name ?>" name="name"/>
 </table>
 
 
 </div>
 
-<div class="tabbertab" title="Contact Info">
-<br/>
+<div class="tabbertab" title="<?php echo $l['table']['ContactInfo']; ?>">
 
 <?php
         include_once('include/management/contactinfo.php');
