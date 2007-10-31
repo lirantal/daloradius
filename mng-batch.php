@@ -81,9 +81,30 @@ function createPassword($length) {
 
 				 foreach( $_POST as $attribute=>$value ) { 
 
+                                        // switch case to rise the flag for several $attribute which we do not
+                                        // wish to process (ie: do any sql related stuff in the db)
+                                        switch ($attribute) {
 
-					if ( ($attribute == "username_prefix") || ($attribute == "length_pass") || ($attribute == "length_user") || ($attribute == "number") || ($attribute == "submit") )	
-						continue; // we skip these post variables as they are not important
+                                                case "username_prefix":
+                                                case "length_pass":
+                                                case "length_user":
+                                                case "number":
+                                                case "submit":
+                                                case "group":
+                                                case "group_priority":
+                                                        $skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
+                                                                                // to skip the loop (continue) without entering it as
+                                                                                // we do not want to process this $attribute in the following
+                                                                                // code block
+                                                        break;
+
+                                        }
+
+                                        if ($skipLoopFlag == 1) {
+                                                $skipLoopFlag = 0;              // resetting the loop flag
+                                                continue;
+                                        }
+
 
 					if (!($value[0]))
 						continue;
@@ -93,12 +114,9 @@ function createPassword($length) {
 
 				        $counter = 0;
 
-					if (!( ($attribute == "group") || ($attribute == "group_priority") )) {
-
-						$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-			                        $res = $dbSocket->query($sql);
-						$logDebugSQL .= $sql . "\n";
-					}
+					$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
+		                        $res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
 					$counter++;
 
@@ -241,7 +259,7 @@ function createPassword($length) {
 <tr><td>
 						<b><?php echo $l['FormField']['all']['GroupPriority']; ?></b>
 </td><td>
-						<input value="<?php if (isset($group_priority)) echo $group ?>" name="group_priority" tabindex=106 />
+						<input value="<?php if (isset($group_priority)) echo $group_priority ?>" name="group_priority" tabindex=106 />
 </td></tr>
 </table>
 
