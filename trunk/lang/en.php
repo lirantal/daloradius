@@ -74,6 +74,8 @@ $l['all']['RADIUSReply'] = "RADIUS Reply";
 
 $l['table']['AccountInfo'] = "Account Info";
 $l['table']['GroupInfo'] = "Group Info";
+$l['table']['NASInfo'] = "NAS Info";
+$l['table']['NASAdvanced'] = "NAS Advanced";
 $l['table']['UserInfo'] = "User Info";
 $l['table']['Attributes'] = "Attributes";
 $l['table']['HotspotInfo'] = "Hotspot Info";
