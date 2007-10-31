@@ -89,12 +89,14 @@
 		
 				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradusergroupdel.php'] ?></a></h2>
 				
-                                <p>
                                 <?php echo $l['captions']['mngradusergroupdel'] ?>
-                                <br/><br/>
-                                </p>
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
 

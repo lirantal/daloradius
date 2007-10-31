@@ -36,8 +36,6 @@
 		
 				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradusergrouplist'] ?></a></h2>
 				
-				<p>
-
 <?php
 
 	include 'library/opendb.php';
@@ -107,8 +105,6 @@
 	include 'library/closedb.php';
 ?>
 
-
-				</p>
 
 <?php
 	include('include/config/logging.php');
