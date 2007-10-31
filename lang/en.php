@@ -72,6 +72,36 @@ $l['table']['Attributes'] = "Attributes";
 
 
 
+/* **********************************************************************************
+ * Contact Info 
+ * Related to all contact info text, user info, hotspot owner contact information etc
+ ************************************************************************************/
+
+$l['ContactInfo']['FirstName'] = "First Name";
+$l['ContactInfo']['LastName'] = "Last Name";
+$l['ContactInfo']['Email'] = "Email";
+$l['ContactInfo']['Department'] = "Department";
+$l['ContactInfo']['Company'] = "Company";
+$l['ContactInfo']['WorkPhone'] = "Work Phone";
+$l['ContactInfo']['HomePhone'] = "Home Phone";
+$l['ContactInfo']['MobilePhone'] = "Mobile Phone";
+$l['ContactInfo']['Notes'] = "Notes";
+
+$l['ContactInfo']['OwnerName'] = "Owner Name";
+$l['ContactInfo']['OwnerEmail'] = "Owner Email";
+$l['ContactInfo']['ManagerName'] = "Manager Name";
+$l['ContactInfo']['ManagerEmail'] = "Manager Email";
+$l['ContactInfo']['Company'] = "Company";
+$l['ContactInfo']['Address'] = "Address";
+$l['ContactInfo']['Phone1'] = "Phone 1";
+$l['ContactInfo']['Phone2'] = "Phone 2";
+$l['ContactInfo']['HotspotType'] = "Hotspot Type";
+$l['ContactInfo']['Website'] = "Website";
+
+/* ********************************************************************************** */
+
+
+
 $l['Intro']['msgerrorpermissions.php'] = "Error";
 
 
