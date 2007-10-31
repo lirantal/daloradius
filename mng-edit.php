@@ -18,6 +18,7 @@
 		$password = "";						// we initialize the $password variable to contain nothing
 
                 $group = $_REQUEST['group'];
+                $group_priority = $_REQUEST['group_priority'];
 
                 $firstname = $_REQUEST['firstname'];
                 $lastname = $_REQUEST['lastname'];
@@ -39,7 +40,10 @@
 
                       // insert usergroup mapping
                       if (isset($group)) {
-	                      $sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='$username', GroupName='$group' WHERE UserName='$username'";
+				if (!($group_priority))
+					$group_priority = 1;
+	                      $sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='$username', GroupName='$group', priority=$group_priority WHERE UserName='$username'";
+				echo "$sql <br/>";
                               $res = $dbSocket->query($sql);
                               $logDebugSQL .= $sql . "\n";
                       }
@@ -54,6 +58,7 @@
                                                 case "username":
                                                 case "submit":
                                                 case "group":
+                                                case "group_priority":
                                                 case "firstname":
                                                 case "lastname":
                                                 case "email":
@@ -264,13 +269,12 @@
 	
 
 	/* get group information for user */
-	$sql = "SELECT GroupName FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='$username'";
+	$sql = "SELECT GroupName,priority FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='$username'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
-
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
                 $group = $row['GroupName'];
+                $group_priority = $row['priority'];
  	
 
 
@@ -494,6 +498,10 @@
         include 'library/closedb.php';
 ?>
 </select>
+</td></tr>
+<tr><td>                                        <b><?php echo $l['FormField']['all']['GroupPriority']; ?></b>
+</td><td>
+                                                <input value="<?php if (isset($group_priority)) echo $group_priority ?>" name="group_priority" id="group_priority" tabindex=111 />
 </td></tr>
 
 
