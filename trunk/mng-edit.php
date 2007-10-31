@@ -43,7 +43,6 @@
 				if (!($group_priority))
 					$group_priority = 1;
 	                      $sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='$username', GroupName='$group', priority=$group_priority WHERE UserName='$username'";
-				echo "$sql <br/>";
                               $res = $dbSocket->query($sql);
                               $logDebugSQL .= $sql . "\n";
                       }
