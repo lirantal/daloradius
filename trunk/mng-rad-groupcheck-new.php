@@ -151,10 +151,13 @@
 		
 				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradgroupchecknew.php'] ?></a></h2>
 				
-				<p>
-
                                 <form name="newgroupcheck" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b><?php echo $l['FormField']['all']['Groupname'] ?></b>
@@ -203,8 +206,6 @@
 </center>
                                 </form>
 
-
-				</p>
 
 <?php
 	include('include/config/logging.php');

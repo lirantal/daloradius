@@ -111,14 +111,17 @@
 		
 				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradgroupcheckedit.php'] ?> <?php echo $groupname ?></a></h2>
 				
-				<p>
-
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
                                                 <input type="hidden" value="<?php echo $groupname ?>" name="groupname" /><br/>
                                                 <input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" /><br/>
 												
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
                                                 <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b><?php echo $l['FormField']['all']['Attribute'] ?></b>
@@ -154,8 +157,6 @@
                                 </form>
 
 
-
-				</p>
 
 <?php
 	include('include/config/logging.php');
