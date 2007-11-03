@@ -25,7 +25,7 @@
                                                 <li><a href="javascript:document.mngradgrpchkedit.submit();""><b>&raquo;</b>Edit Group Check Mapping<a>
                                                         <form name="mngradgrpchkedit" action="mng-rad-groupcheck-edit.php" method="get" class="sidebar">
                                                         <input name="groupname" type="text" value="[groupname]">
-                                                        <input name="value" type="text" value="[value]">
+                                                        <input name="value" type="text" value="[attribute]">
                                                         </form></li>
 
 
