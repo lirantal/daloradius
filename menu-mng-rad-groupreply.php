@@ -25,7 +25,7 @@
                                                 <li><a href="javascript:document.mngradgrprplyedit.submit();""><b>&raquo;</b>Edit Group Reply Mapping<a>
                                                         <form name="mngradgrprplyedit" action="mng-rad-groupreply-edit.php" method="get" class="sidebar">
                                                         <input name="groupname" type="text" value="[groupname]">
-                                                        <input name="value" type="text" value="[value]">
+                                                        <input name="value" type="text" value="[attribute]">
                                                         </form></li>
 
 
