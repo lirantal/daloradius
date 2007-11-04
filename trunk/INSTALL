@@ -162,8 +162,10 @@ Installation
 	
 	GUI SETUP
 	---------
-	daloRADIUS has a Configuration screen from the GUI and so it
-	is sometimes easier to set things up from the Web interface.
+	daloRADIUS has a Configuration screen from the GUI although ofcourse
+	you will not be able to login and reach the configuration screen for these
+	purposes until you enter the correct database information in library/daloradius.conf
+	
 	
 	- IMPORTANT: make sure that the file in library/daloradius.conf is writable
 	  (and ofcourse readable) by the webserver user and group.
