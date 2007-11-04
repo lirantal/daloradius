@@ -101,11 +101,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/dynamicadd_groups.js" type="text/javascript"></script>
+<script src="library/js_date/date-functions.js" type="text/javascript"></script>
+<script src="library/js_date/datechooser.js" type="text/javascript"></script>
 
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
+<![endif]-->
+</head>
+
+<script src="library/js_date/date-functions.js" type="text/javascript"></script>
+<script src="library/js_date/datechooser.js" type="text/javascript"></script>
 
 </head>
  
