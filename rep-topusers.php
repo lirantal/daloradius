@@ -32,7 +32,9 @@
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['reptopusers.php']; ?></a></h2>
 				
 
+                <div id="helpPage" style="display:none;visibility:visible" >
 				<?php echo $l['helpPage']['reptopusers']." ".$orderBy ?> <br/>
+		</div>
 
 
 
