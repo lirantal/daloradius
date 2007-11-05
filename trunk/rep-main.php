@@ -17,8 +17,11 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['repmain.php']; ?></a></h2>
-				
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['repmain.php']; ?></a></h2>
+
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['repmain'] ?>		
+		</div>				
 
 
 
@@ -30,7 +33,7 @@
 		
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 

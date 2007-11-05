@@ -43,10 +43,11 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><? echo $l['Intro']['reponline.php']; ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['reponline.php']; ?></a></h2>
 				
-				<p> <?php echo $l['captions']['reponline']; ?>
-				</p>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['reponline']; ?>
+		</div>
 
 
 <div class="tabber">
