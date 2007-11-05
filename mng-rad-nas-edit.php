@@ -149,23 +149,23 @@
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>"; }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
 </td><td>
-                                                <input value="<?php echo $nashost ?>" name="nashost"/>
+                                                <input value="<?php echo $nashost ?>" name="nashost" tabindex=100 />
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($nassecret) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasSecret'] ?></b>
 </td><td>
-                                                <input value="<?php echo $nassecret ?>" name="nassecret" />
+                                                <input value="<?php echo $nassecret ?>" name="nassecret" tabindex=101 />
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($nastype) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasType'] ?></b>
 </td><td>
-                                                <input value="<?php echo $nastype ?>" name="nastype" id="nastype" />
+                                                <input value="<?php echo $nastype ?>" name="nastype" id="nastype" tabindex=102 />
 
-                                                <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele">
+                                                <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 >
                                                 <option value="other">other</option>
                                                 <option value="cisco">cisco</option>
                                                 <option value="livingston">livingston</option>
@@ -186,7 +186,7 @@
                                                 <?php if (trim($nasname) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasShortname'] ?></b>
 </td><td>
-                                                <input value="<?php echo $nasname ?>" name="nasname" />
+                                                <input value="<?php echo $nasname ?>" name="nasname" tabindex=104 />
                                                                                                 <?php echo $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] ?>
                                                 </font><br/>
 </td></tr>
@@ -213,7 +213,7 @@
 </td><td>
 <div id="attributesPorts" style="display:none;visibility:visible" >
                                                 <br/>
-                                                <input value="<?php echo $nasports ?>" name="nasports" />
+                                                <input value="<?php echo $nasports ?>" name="nasports" tabindex=105 />
                                                 </font>
 </div><br/>
 </td></tr>
@@ -227,7 +227,7 @@
 </td><td>
 <div id="attributesCommunity" style="display:none;visibility:visible" >
                                                 <br/>
-                                                <input value="<?php echo $nascommunity ?>" name="nascommunity" />
+                                                <input value="<?php echo $nascommunity ?>" name="nascommunity" tabindex=106 />
                                                 </font>
 </div><br/>
 </td></tr>
@@ -242,7 +242,7 @@
 </td><td>
 <div id="attributesDescription" style="display:none;visibility:visible" >
                                                 <br/>
-                                                <input value="<?php echo $nasdescription ?>" name="nasdescription" />
+                                                <input value="<?php echo $nasdescription ?>" name="nasdescription" tabindex=107 />
                                                 </font>
 </div><br/>
 </td></tr>
@@ -255,7 +255,7 @@
 
 <br/><br/>
 <center>												
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
+                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=10000/>
 </center>
                                 </form>
 
