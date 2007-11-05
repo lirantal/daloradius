@@ -9,6 +9,7 @@
 ?>
 </head>
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <body onload="load()" onunload="GUnload()">
 <?php
     include_once ("lang/main.php");

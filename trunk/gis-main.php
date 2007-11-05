@@ -39,13 +39,11 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['gismain.php']; ?></a></h2>
-				
-				<p>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['gismain.php']; ?></a></h2>
 
-				<?echo $l['captions']['gisinfo']; ?>	
-
-				</p>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['gismain'] ?>		
+		</div>
 				
 <?php
 	include('include/config/logging.php');
