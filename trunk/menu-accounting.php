@@ -13,7 +13,7 @@
 </head>
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
- 
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <body>
 
 <?php
