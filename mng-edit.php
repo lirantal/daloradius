@@ -320,11 +320,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l['Intro']['mngedit.php'] ?></h2>
-				
-				<p>
-				<?php echo $l['captions']['mngedit'] ?>
-				</p>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?></a></h2>
+
+                                <div id="helpPage" style="display:none;visibility:visible" >				
+					<?php echo $l['helpPage']['mngedit'] ?>
+				</div>
 
 <table border='2' class='table1'>
 <thead>

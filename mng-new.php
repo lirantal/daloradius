@@ -179,12 +179,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l['Intro']['mngnew.php'] ?></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnew.php'] ?></a></h2>
 				
-				<p>
-				<?php echo $l['captions']['mngnew'] ?>
-				</p>
-
+				<div id="helpPage" style="display:none;visibility:visible" >
+					<?php echo $l['helpPage']['mngnew'] ?>
+				</div>
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 

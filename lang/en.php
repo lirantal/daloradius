@@ -178,6 +178,7 @@ $l['Intro']['mngmain.php'] = "Users and Hotspots Management";
 $l['Intro']['mngnew.php'] = "New User";
 $l['Intro']['mngnew.php'] = "New User";
 $l['Intro']['mngnewquick.php'] = "Quick User Add";
+$l['Intro']['mngsearch.php'] = "User Search";
 
 $l['Intro']['mnghsdel.php'] = "Remove Hotspots";
 $l['Intro']['mnghsedit.php'] = "Edit Hotspots Details";
