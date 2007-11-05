@@ -287,18 +287,15 @@ $l['FormField']['configmainttestuser.php']['RadiusServer'] = "Radius Server";
 $l['FormField']['configmainttestuser.php']['RadiusPort'] = "Radius Port";
 $l['FormField']['configmainttestuser.php']['NASPort'] = "NAS Port";
 $l['FormField']['configmainttestuser.php']['Secret'] = "Secret";
-
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 
-$l['helpPage']['reponline'] = "The following table lists users who are currently connected to
-the system. It is very much possible that there are stale connections,
-meaning that users got disconnected but the NAS didn't send or wasn't
-able to send a STOP accounting packet to the RADIUS server.";
+
+
+
+
 
 $l['captions']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
 Please consult with your System Administrator. <br/>";
-
-$l['helpPage']['mngsearch'] = "Searching for user: ";
 
 $l['captions']['configdb']['db'] = "Settings that daloRADIUS will make use of to connect to your
 				MySQL database server and manage it.";
@@ -309,13 +306,8 @@ has write permissions by the webserver";
 $l['captions']['configinterface'] = "Settings for Web Interface behaviour";
 $l['captions']['configmainttestuser'] = "Test information";
 
-
-$l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
-							Note that these settings will apply for all the users that you are creating.<br/>";
 $l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
-$l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
 $l['captions']['mnglistall'] = "Listing users in database.<br/>";
-$l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
 $l['captions']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
 $l['captions']['mnghsedit'] = "You may edit below details for hotspot<br/>";
 $l['captions']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
@@ -364,6 +356,11 @@ $l['captions']['radreplyrecords'] = "RADIUS radreply Records";
 $l['captions']['totallogins'] = "Total Logins/Hits";
 $l['captions']['dailyloginsdistrib'] = "alltime record of logins based on daily distribution";
 
+
+
+
+
+
 $l['helpPage']['replastconnect'] = "";
 $l['helpPage']['replogsboot'] = "";
 $l['helpPage']['replogsdaloradius'] = "";
@@ -376,6 +373,39 @@ $l['helpPage']['repstatserver'] = "";
 $l['helpPage']['repstatus'] = "";
 $l['helpPage']['reptopusers'] = "Records for Top User in category of:";
 $l['helpPage']['repusername'] = "Records found for user:";
+$l['helpPage']['reponline'] = "The following table lists users who are currently connected to
+the system. It is very much possible that there are stale connections,
+meaning that users got disconnected but the NAS didn't send or wasn't
+able to send a STOP accounting packet to the RADIUS server.";
+
+
+$l['helpPage']['mngsearch'] = "Searching for user: ";
+$l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
+$l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
+$l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
+Note that these settings will apply for all the users that you are creating.<br/>";
+
+
+$l['helpPage']['acctactive'] = "";
+$l['helpPage']['acctall'] = "";
+$l['helpPage']['acctdate'] = "";
+$l['helpPage']['accthotspotaccounting'] = "";
+$l['helpPage']['accthotspotcompare'] = "";
+$l['helpPage']['accthotspot'] = "";
+$l['helpPage']['acctipaddress'] = "";
+$l['helpPage']['acctmain'] = "";
+$l['helpPage']['acctnasipaddress'] = "";
+$l['helpPage']['acctusername'] = "";
+
+
+
+
+
+
+
+
+
+
 
 $l['messages']['missingratetype'] = "error: missing rate type to delete";
 $l['messages']['missingtype'] = "error: missing type";
