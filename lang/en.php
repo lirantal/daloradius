@@ -290,7 +290,7 @@ $l['FormField']['configmainttestuser.php']['Secret'] = "Secret";
 
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 
-$l['captions']['reponline'] = "The following table lists users who are currently connected to
+$l['helpPage']['reponline'] = "The following table lists users who are currently connected to
 the system. It is very much possible that there are stale connections,
 meaning that users got disconnected but the NAS didn't send or wasn't
 able to send a STOP accounting packet to the RADIUS server.";
@@ -298,7 +298,7 @@ able to send a STOP accounting packet to the RADIUS server.";
 $l['captions']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
 Please consult with your System Administrator. <br/>";
 
-$l['captions']['mngsearch'] = "Searching for user ";
+$l['helpPage']['mngsearch'] = "Searching for user: ";
 
 $l['captions']['configdb']['db'] = "Settings that daloRADIUS will make use of to connect to your
 				MySQL database server and manage it.";
@@ -310,12 +310,12 @@ $l['captions']['configinterface'] = "Settings for Web Interface behaviour";
 $l['captions']['configmainttestuser'] = "Test information";
 
 
-$l['captions']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
+$l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
 							Note that these settings will apply for all the users that you are creating.<br/>";
 $l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
-$l['captions']['mngedit'] = "Edit the user details below.<br/>";
+$l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
 $l['captions']['mnglistall'] = "Listing users in database.<br/>";
-$l['captions']['mngnew'] = "You may fill below details for new user addition to database<br/>";
+$l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
 $l['captions']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
 $l['captions']['mnghsedit'] = "You may edit below details for hotspot<br/>";
 $l['captions']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
@@ -356,16 +356,26 @@ Then you may be able to use Google Maps services. <br/><br/>";
 $l['captions']['loginpage'] = "Login Page:";
 $l['captions']['loginrequired'] = "Login Required";
 $l['captions']['loginplease'] = "Log-in please";
-
 $l['captions']['listingusersindb'] = "Listing users in database";
 $l['captions']['listhotspotsindb'] = "Listing hotspots in database";
-$l['captions']['recordsfortopusers'] = "Records for Top User in category of:";
-$l['captions']['recordsforuser'] = "Records found for user:";
 $l['captions']['radcheckrecords'] = "RADIUS radcheck Records";
 $l['captions']['radreplyrecords'] = "RADIUS radreply Records";
 
 $l['captions']['totallogins'] = "Total Logins/Hits";
 $l['captions']['dailyloginsdistrib'] = "alltime record of logins based on daily distribution";
+
+$l['helpPage']['replastconnect'] = "";
+$l['helpPage']['replogsboot'] = "";
+$l['helpPage']['replogsdaloradius'] = "";
+$l['helpPage']['replogsradius'] = "";
+$l['helpPage']['replogssystem'] = "";
+$l['helpPage']['replogs'] = "";
+$l['helpPage']['repmain'] = "";
+$l['helpPage']['repstatradius'] = "";
+$l['helpPage']['repstatserver'] = "";
+$l['helpPage']['repstatus'] = "";
+$l['helpPage']['reptopusers'] = "Records for Top User in category of:";
+$l['helpPage']['repusername'] = "Records found for user:";
 
 $l['messages']['missingratetype'] = "error: missing rate type to delete";
 $l['messages']['missingtype'] = "error: missing type";
