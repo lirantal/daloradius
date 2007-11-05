@@ -176,9 +176,11 @@ function createPassword($length) {
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l['Intro']['mngbatch.php'] ?></h2>
-				
-				<?php echo $l['captions']['mngbatch'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngbatch.php'] ?></a></h2>
+
+                                <div id="helpPage" style="display:none;visibility:visible" >	
+					<?php echo $l['helpPage']['mngbatch'] ?>
+				</div>
 
 				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
