@@ -29,11 +29,11 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><?php echo $l['Intro']['reptopusers.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['reptopusers.php']; ?></a></h2>
 				
-				<p>
-				<?php echo $l['captions']['recordsfortopusers']." ".$orderBy ?> <br/>
-				</p>
+
+				<?php echo $l['helpPage']['reptopusers']." ".$orderBy ?> <br/>
+
 
 
 

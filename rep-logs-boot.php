@@ -21,13 +21,16 @@
 ?>	
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['replogsboot.php']; ?></a></h2>
-				<p>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogsboot.php']; ?></a></h2>
+
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['replogsboot'] ?>		
+		</div>
 
 <?php
 	include 'library/exten-boot_log.php';
 ?>
-				</p>
+
 		</div>
 		
 		<div id="footer">
