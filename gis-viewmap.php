@@ -21,10 +21,12 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['gisviewmap.php']; ?></a></h2>
-				
-				<p>
-				</p>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['gisviewmap.php']; ?></a></h2>
+
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['gisviewmap'] ?>		
+		</div>				
+
 
 <br/>
 <br/>

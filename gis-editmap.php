@@ -61,10 +61,12 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"><? echo $l['Intro']['giseditmap.php']; ?></a></h2>
-				
-				</p>
-				</p>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['giseditmap.php']; ?></a></h2>
+
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['giseditmap'] ?>		
+		</div>
+
 <br/>
 <br/>
 
