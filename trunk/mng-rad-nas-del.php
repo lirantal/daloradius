@@ -80,13 +80,13 @@
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
 </td><td>												
-                                                <input value="<?php echo $nashost ?>" name="nashost"/><br/>
+                                                <input value="<?php echo $nashost ?>" name="nashost" tabindex=100 /><br/>
                                                 </font>
 </td></tr>
 </table>
                                                 <br/><br/>
 <center>
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
+                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=10000 />
 </center>
                                 </form>
 
