@@ -71,9 +71,8 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
 </head>
-
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <?php
         include_once ("library/tabber/tab-layout.php");
 ?>
@@ -86,9 +85,12 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l['Intro']['mnghsnew.php'] ?></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsnew.php'] ?></a></h2>
 				
-				<?php echo $l['captions']['mnghsnew'] ?>
+                                <div id="helpPage" style="display:none;visibility:visible" >				
+					<?php echo $l['helpPage']['mnghsnew'] ?>
+				</div>
+
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
