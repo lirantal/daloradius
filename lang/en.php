@@ -215,6 +215,15 @@ $l['Intro']['configlang.php'] = "Language Configuration";
 $l['Intro']['configlogging.php'] = "Logging Configuration";
 $l['Intro']['configinterface.php'] = "Web Interface Configuration";
 $l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
+$l['Intro']['configmain.php'] = "Database Configuration";
+$l['Intro']['configmaint.php'] = "Maintenance";
+
+$l['Intro']['configoperators.php'] = "Operators Configuration";
+$l['Intro']['configoperatorsdel.php'] = "Remove Operator";
+$l['Intro']['configoperatorsedit.php'] = "Edit Operator Settings";
+$l['Intro']['configoperatorsnew.php'] = "New Operator";
+$l['Intro']['configoperatorslist.php'] = "Operators Listing";
+
 
 $l['FormField']['all']['Group'] = "Group";
 $l['FormField']['all']['GroupPriority'] = "Group Priority";
@@ -297,15 +306,6 @@ $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify va
 $l['captions']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
 Please consult with your System Administrator. <br/>";
 
-$l['captions']['configdb']['db'] = "Settings that daloRADIUS will make use of to connect to your
-				MySQL database server and manage it.";
-$l['captions']['configdb']['tables'] = "The radius database tables settings";
-$l['captions']['configlang'] = "Below you can choose between different support languages for daloRADIUS translation.";
-$l['captions']['configlogging'] = "Settings for daloRADIUS logging<br/>Please make sure that the filename that you specify
-has write permissions by the webserver";
-$l['captions']['configinterface'] = "Settings for Web Interface behaviour";
-$l['captions']['configmainttestuser'] = "Test information";
-
 $l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
 $l['captions']['mnglistall'] = "Listing users in database.<br/>";
 $l['captions']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
@@ -340,6 +340,23 @@ $l['captions']['totallogins'] = "Total Logins/Hits";
 $l['captions']['dailyloginsdistrib'] = "alltime record of logins based on daily distribution";
 
 
+
+
+
+$l['helpPage']['configdb'] = "Settings that daloRADIUS will make use of to connect to your MySQL database server and manage it.";
+$l['helpPage']['configlang'] = "Below you can choose between different support languages for daloRADIUS translation.";
+$l['helpPage']['configlogging'] = "Settings for daloRADIUS logging<br/>Please make sure that the filename that you specify
+has write permissions by the webserver";
+$l['helpPage']['configinterface'] = "Settings for Web Interface behaviour";
+$l['helpPage']['configmainttestuser'] = "Test information";
+$l['helpPage']['configmain'] = "";
+$l['helpPage']['configmaint'] = "";
+$l['helpPage']['configmainttestuser'] = "";
+$l['helpPage']['configoperatorsdel'] = "To remove an operator from the database you must provide the username.";
+$l['helpPage']['configoperatorsedit'] = "Edit the operator user details below";
+$l['helpPage']['configoperatorsnew'] = "You may fill below details for a new operator user addition to database";
+$l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
+$l['helpPage']['configoperators'] = "Operators Configuration";
 
 
 

@@ -59,12 +59,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Remove Operator</h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorsdel.php'] ?></a></h2>
 				
-				<p>
-				To remove an operator from the database you must provide the username.
-				<br/><br/>
-				</p>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['configoperatorsdel'] ?>		
+		</div>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>

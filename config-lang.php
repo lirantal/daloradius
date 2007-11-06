@@ -33,10 +33,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['configlang.php'] ?></a></h2>
-				<p>
-				<?php echo $l['captions']['configlang'] ?>
-
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configlang.php'] ?></a></h2>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['configlang'] ?>		
+		</div>
 				<br/><br/>
 
 				<form name="langsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -70,7 +70,7 @@
 	
 				<br/><br/>
 				
-				</p>
+
 		</div>
 		
 		<div id="footer">
