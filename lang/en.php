@@ -323,7 +323,6 @@ $l['captions']['mngradgroupreplydel'] = "To remove a group entry from the databa
 $l['captions']['mngradgroupcheckdel'] = "To remove a group entry from the database you must provide the groupname of the account";
 
 
-$l['captions']['acctrecsforhotspot'] = "Accounting records for hotspot";
 $l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
 $l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
 $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
@@ -336,8 +335,8 @@ $l['captions']['listhotspotsindb'] = "Listing hotspots in database";
 $l['captions']['radcheckrecords'] = "RADIUS radcheck Records";
 $l['captions']['radreplyrecords'] = "RADIUS radreply Records";
 
-$l['captions']['totallogins'] = "Total Logins/Hits";
-$l['captions']['dailyloginsdistrib'] = "alltime record of logins based on daily distribution";
+
+
 
 
 
@@ -358,6 +357,12 @@ $l['helpPage']['configoperatorsnew'] = "You may fill below details for a new ope
 $l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
 $l['helpPage']['configoperators'] = "Operators Configuration";
 
+$l['helpPage']['graphmain'] = "";
+$l['helpPage']['graphsalltimelogins'] = "alltime record of logins based on daily distribution";
+$l['helpPage']['graphsalltimetrafficcompare'] = "";
+$l['helpPage']['graphsoveralldownload'] = "";
+$l['helpPage']['graphsoverallupload'] = "";
+$l['helpPage']['graphsoveralllogins'] = "Total Logins/Hits";
 
 
 
