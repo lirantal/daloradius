@@ -38,12 +38,11 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#">Operators Listing</a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorslist.php'] ?></a></h2>
 				
-				<p>
-				Listing all Operators in database
-				</p>
-
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['configoperatorslist'] ?>		
+		</div>
 
 
 <?php

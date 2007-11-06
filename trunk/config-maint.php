@@ -17,10 +17,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"></a></h2>
-				<p>
-				</p>
-				
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmaint.php'] ?></a></h2>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['configmaint'] ?>		
+		</div>				
 <?php
 	include('include/config/logging.php');
 ?>				

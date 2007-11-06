@@ -117,11 +117,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">Edit Operator Settings</h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorsedit.php'] ?></a></h2>
 				
-				<p>
-				Edit the operator user details below
-				</p>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['configoperatorsedit'] ?>		
+		</div>
 
 <br/>
 <br/>

@@ -106,11 +106,12 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro">New Operator</h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorsnew.php'] ?></a></h2>
 				
-				<p>
-				You may fill below details for a new operator user addition to database
-				</p>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['configoperatorsnew'] ?>		
+		</div>
+
 				<form name="newoperator" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">

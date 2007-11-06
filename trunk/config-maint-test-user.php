@@ -45,10 +45,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['configmainttestuser.php'] ?></a></h2>
-				<p>
-				<?php echo $l['captions']['configmainttestuser'] ?>
-
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmainttestuser.php'] ?></a></h2>
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['configmainttestuser'] ?>		
+		</div>
 				<br/><br/>
 
 				<form name="mainttestuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -121,7 +121,7 @@
 	
 				<br/><br/>
 				
-				</p>
+
 				
 <?php
 	include('include/config/logging.php');
