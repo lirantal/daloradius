@@ -71,9 +71,8 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
 </head>
- 
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <?php
 
 	include ("menu-mng-main.php");
@@ -81,13 +80,13 @@
 ?>		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l['Intro']['mnghsdel.php'] ?></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsdel.php'] ?></a></h2>
 				
-				<p>
-				<?php echo $l['captions']['mnghsdel'] ?>
-				<br/><br/>
-				</p>
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                                <div id="helpPage" style="display:none;visibility:visible" >				
+					<?php echo $l['helpPage']['mnghsdel'] ?>
+				</div>				
+
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <table border='2' class='table1'>
 <tr><td>

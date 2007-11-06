@@ -308,9 +308,7 @@ Please consult with your System Administrator. <br/>";
 
 $l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
 $l['captions']['mnglistall'] = "Listing users in database.<br/>";
-$l['captions']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
-$l['captions']['mnghsedit'] = "You may edit below details for hotspot<br/>";
-$l['captions']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
+
 $l['captions']['mngnewquick'] = "The following user/card is of type prepaid.<br/>
 The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
 radius attributes";
@@ -341,6 +339,10 @@ $l['captions']['radreplyrecords'] = "RADIUS radreply Records";
 
 
 
+$l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
+$l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
+$l['helpPage']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
+$l['helpPage']['mnghslist'] = "";
 
 $l['helpPage']['configdb'] = "Settings that daloRADIUS will make use of to connect to your MySQL database server and manage it.";
 $l['helpPage']['configlang'] = "Below you can choose between different support languages for daloRADIUS translation.";
