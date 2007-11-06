@@ -315,8 +315,6 @@ radius attributes";
 
 $l['captions']['mngradusergroupdel'] = "To remove a user entry from the database you must provide the username of the account";
 
-$l['captions']['mngradnasdel'] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
-
 $l['captions']['mngradgroupreplydel'] = "To remove a group entry from the database you must provide the groupname of the account";
 $l['captions']['mngradgroupcheckdel'] = "To remove a group entry from the database you must provide the groupname of the account";
 
@@ -335,7 +333,11 @@ $l['captions']['radreplyrecords'] = "RADIUS radreply Records";
 
 
 
-
+$l['helpPage']['mngradnas'] = "";
+$l['helpPage']['mngradnasdel'] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
+$l['helpPage']['mngradnasnew'] = "";
+$l['helpPage']['mngradnaslist'] = "";
+$l['helpPage']['mngradnasedit'] = "";
 
 
 
