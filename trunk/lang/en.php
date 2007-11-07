@@ -309,15 +309,6 @@ Please consult with your System Administrator. <br/>";
 $l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
 $l['captions']['mnglistall'] = "Listing users in database.<br/>";
 
-$l['captions']['mngnewquick'] = "The following user/card is of type prepaid.<br/>
-The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
-radius attributes";
-
-$l['captions']['mngradusergroupdel'] = "To remove a user entry from the database you must provide the username of the account";
-
-$l['captions']['mngradgroupreplydel'] = "To remove a group entry from the database you must provide the groupname of the account";
-$l['captions']['mngradgroupcheckdel'] = "To remove a group entry from the database you must provide the groupname of the account";
-
 
 $l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
 $l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
@@ -331,6 +322,34 @@ $l['captions']['listhotspotsindb'] = "Listing hotspots in database";
 $l['captions']['radcheckrecords'] = "RADIUS radcheck Records";
 $l['captions']['radreplyrecords'] = "RADIUS radreply Records";
 
+
+
+/* **********************************************************************************
+ * Help Pages Info 
+ * Each page has a header which is the Intro class, when clicking on the header
+ * it will reveal/hide a helpPage div content which is a description of a specific
+ * page, basically your expanded tool-tip.
+ ************************************************************************************/
+
+$l['helpPage']['mngradusergroup'] = "";
+$l['helpPage']['mngradusergroupdel'] = "To remove a user entry from the database you must provide the username of the account";
+$l['helpPage']['mngradusergroupnew'] = "";
+$l['helpPage']['mngradusergrouplist'] = "";
+$l['helpPage']['mngradusergrouplistuser'] = "";
+$l['helpPage']['mngradusergroupedit'] = "";
+
+$l['helpPage']['mngradgroupcheck'] = "";
+$l['helpPage']['mngradgroupchecknew'] = "";
+$l['helpPage']['mngradgroupcheckdel'] = "To remove a group entry from the database you must provide the groupname of the account";
+$l['helpPage']['mngradgroupchecklist'] = "";
+$l['helpPage']['mngradgroupcheckedit'] = "";
+
+
+$l['helpPage']['mngradgroupreply'] = "";
+$l['helpPage']['mngradgroupreplynew'] = "";
+$l['helpPage']['mngradgroupreplydel'] = "To remove a group entry from the database you must provide the groupname of the account";
+$l['helpPage']['mngradgroupreplylist'] = "";
+$l['helpPage']['mngradgroupreplyedit'] = "";
 
 
 $l['helpPage']['mngradnas'] = "";
@@ -393,6 +412,9 @@ $l['helpPage']['mngnew'] = "You may fill below details for new user addition to 
 $l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
 $l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
 Note that these settings will apply for all the users that you are creating.<br/>";
+$l['helpPage']['mngnewquick'] = "The following user/card is of type prepaid.<br/>
+The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
+radius attributes";
 
 
 $l['helpPage']['acctactive'] = "";
@@ -425,8 +447,7 @@ daloRADIUS application on your server. Once you have obtained that code from Goo
 Registration box and click the 'Register code' button to write it.<br/>
 Then you may be able to use Google Maps services. <br/><br/>";
 
-
-
+/* ********************************************************************************** */
 
 
 

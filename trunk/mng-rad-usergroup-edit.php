@@ -117,7 +117,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mngradusergroupedit'] ?> <?php echo $username ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupedit'] ?> <?php echo $username ?></a></h2>
+
+                                <div id="helpPage" style="display:none;visibility:visible" >				
+					<?php echo $l['helpPage']['mngradusergroupedit'] ?>
+				</div>
 				
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
