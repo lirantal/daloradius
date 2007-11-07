@@ -1,3 +1,26 @@
+.box { 
+  background: #FF9900; 
+}
+.boxtop { 
+  background: url(ne.gif) no-repeat top right; 
+}
+.boxtop div { 
+  height: 10px; 
+  background: url(nw.gif) no-repeat top left; 
+}
+.boxbottom { 
+  background: url(se.gif) no-repeat bottom right; 
+}
+.boxbottom div { 
+  height: 10px; 
+  background: url(sw.gif) no-repeat bottom left; 
+}
+.boxcontent {
+  padding: 0px 10px 0px 10px;
+}
+
+
+
 body {
 	font: 78.5%/1.6em "Lucida Grande", "Lucida Sans Unicode", verdana, geneva, sans-serif;
 	word-spacing:2px;
@@ -340,6 +363,10 @@ a {
 	color:#222;
 }
 
+a.table {
+	color:#FFF;
+}
+
 a:hover {
 	text-decoration:none;
 }
@@ -423,6 +450,16 @@ input {
 	color:#000000;
 }
 
+input.table {
+	height:22px;
+	width:70px;
+	padding:4px;
+	border:1;
+	border-bottom:1px dotted #ccc;
+	font:90% Verdana;
+	color:#000000;
+}
+
 input[type="radio"] {
         width:20px;
 }
@@ -464,9 +501,12 @@ blockquote p {
 }
 
 table {
+	width: 890px;
 	color: #000000;
-	font: 0.8em/1.6em "Trebuchet MS",Verdana,sans-serif;
+	font: 0.9em/1.6em "Trebuchet MS",Verdana,sans-serif;
 	border-collapse: collapse
+	margin-left: auto;
+	margin-right: auto;
 }
 
 table,caption {
@@ -481,16 +521,18 @@ caption,th,td {
 }
 
 caption,thead th,tfoot th,tfoot td {
-	background-color: #E63C1E;
+//	background-color: #E63C1E;
+	background-color: #003366;
 	color: #FFF;
 	font-weight: bold;
 	text-transform: uppercase
 }
 
 thead th {
-	background-color: #C30;
+//	background-color: #C30;
+	background-color: #003366;
 	color: #FFFFFF;
-	text-align: center
+//	text-align: center
 }
 
 thead th.info {
@@ -510,18 +552,18 @@ tbody tr.odd {
 
 tbody a {
 	padding: 1px 2px;
-	color: #333;
+	color: #000;
 	text-decoration: none;
 	border-bottom: 1px dotted #E63C1E
 }
 
 tbody a:active,tbody a:hover,tbody a:focus,tbody a:visited {
-	color: #666
+	color: #000
 }
 
 tbody tr:hover {
 	background-color: #EEE;
-	color: #333
+	color: #000
 }
 
 tbody tr:hover a {
@@ -529,13 +571,15 @@ tbody tr:hover a {
 }
 
 tbody td+td+td+td a {
-	color: #C30;
+//	color: #C30;
+	color: #003366;
 	font-weight: bold;
 	border-bottom: 0
 }
 
 tbody td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tbody td+td+td+td a:visited {
-	color: #E63C1E
+//	color: #E63C1E
+	color: #FFF
 }
 
 tbody td a[href="http://www.rodcast.com.br/"] {
