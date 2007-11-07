@@ -84,6 +84,16 @@ $l['table']['ContactInfo'] = "Contact Info";
 /* ********************************************************************************** */
 
 
+/* **********************************************************************************
+ * Text
+ * General text information that is used through-out the pages
+ ************************************************************************************/
+
+$l['text']['LoginRequired'] = "Login Required";
+$l['text']['LoginPlease'] = "Login Please";
+$l['text'][''] = "";
+
+/* ********************************************************************************** */
 
 
 
@@ -224,6 +234,7 @@ $l['Intro']['configoperatorsedit.php'] = "Edit Operator Settings";
 $l['Intro']['configoperatorsnew.php'] = "New Operator";
 $l['Intro']['configoperatorslist.php'] = "Operators Listing";
 
+$l['Intro']['login.php'] = "Login";
 
 $l['FormField']['all']['Group'] = "Group";
 $l['FormField']['all']['GroupPriority'] = "Group Priority";
@@ -303,9 +314,6 @@ $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify va
 
 
 
-$l['captions']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
-Please consult with your System Administrator. <br/>";
-
 $l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
 $l['captions']['mnglistall'] = "Listing users in database.<br/>";
 
@@ -314,22 +322,18 @@ $l['captions']['providebillratetodel'] = "Provide the rate entry type which you 
 $l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
 $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
 
-$l['captions']['loginpage'] = "Login Page:";
-$l['captions']['loginrequired'] = "Login Required";
-$l['captions']['loginplease'] = "Log-in please";
-$l['captions']['listingusersindb'] = "Listing users in database";
-$l['captions']['listhotspotsindb'] = "Listing hotspots in database";
-$l['captions']['radcheckrecords'] = "RADIUS radcheck Records";
-$l['captions']['radreplyrecords'] = "RADIUS radreply Records";
-
-
-
 /* **********************************************************************************
  * Help Pages Info 
  * Each page has a header which is the Intro class, when clicking on the header
  * it will reveal/hide a helpPage div content which is a description of a specific
  * page, basically your expanded tool-tip.
  ************************************************************************************/
+
+
+$l['helpPage']['login'] = "";
+
+$l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
+Please consult with your System Administrator. <br/>";
 
 $l['helpPage']['mngradusergroup'] = "";
 $l['helpPage']['mngradusergroupdel'] = "To remove a user entry from the database you must provide the username of the account";
