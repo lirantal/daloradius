@@ -132,14 +132,14 @@
 		if ($row[1] == "Expiration") {		
 			$difference = datediff('d', $row[2], "$currdate", false);
 			if ($difference > 0)
-				echo " $difference days since expired";
+				echo "<h100> " . " $difference days since expired" . "</h100> ";
 			else 
 				echo substr($difference, 1) . " days until expiration";
 		} 
 
 		if ($row[1] == "Max-All-Session") {		
 			if ($status == "End") {
-				echo abs($row[2] - $row[3]) . " seconds overdue credit";
+				echo "<h100> " . abs($row[2] - $row[3]) . " seconds overdue credit" . "</h100>";
 			} else {
 				echo $row[2] - $row[3];
 				echo " left on credit";
