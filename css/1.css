@@ -605,3 +605,10 @@ tbody a.novisit:visited:after {
         font-family: Verdana,sans-serif;
         content: "\000"
 }
+
+
+
+/* the color red used on acct-active.php to highlight overdue accounts */
+h100 {
+	color: red;
+}
