@@ -10,8 +10,7 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 	
-	
-	
+		
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -20,6 +19,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
@@ -37,13 +37,12 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['mnglistall.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnglistall.php'] ?></a></h2>
 				
-				<p>
-				<?php echo $l['captions']['mnglistall'] ?><br/>
-				</p>
-
-
+                <div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mnglistall'] ?>		
+		</div>
+		<br/>
 
 <?php
 
@@ -67,20 +66,29 @@
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-	
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 	/* END */
-	
-	
+
+
 	echo "<table border='2' class='table1'>\n";
 	echo "
 					<thead>
 							<tr>
 							<th colspan='10'>".$l['all']['Records']."</th>
 							</tr>
-					</thead>
+							<tr>
+							<th colspan='10' align='left'> 
+				<br/>
+	";
+
+
+	/* drawing the number links */
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+
+	echo "
+			</th>
+			</tr>
+			</thead>
 			";
 
 	echo "<thread> <tr>
@@ -114,7 +122,20 @@
 		</tr>";
 	}
 	
+	echo "
+					<tfoot>
+							<tr>
+							<th colspan='10' align='left'> 
+	";
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	echo "
+							</th>
+							</tr>
+					</tfoot>
+		";
+
 	echo "</table>";
+
 	include 'library/closedb.php';
 	
 ?>

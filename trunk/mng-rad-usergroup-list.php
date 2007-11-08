@@ -42,6 +42,7 @@
                                 <div id="helpPage" style="display:none;visibility:visible" >				
 					<?php echo $l['helpPage']['mngradusergrouplist'] ?>
 				</div>	
+				<br/>
 				
 <?php
 
@@ -61,13 +62,7 @@
 	
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-	
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 	/* END */
-	echo "<br/>";
-	
 	
 	echo "<table border='2' class='table1'>\n";
 	echo "
@@ -75,8 +70,19 @@
 							<tr>
 							<th colspan='10'>".$l['all']['Records']."</th>
 							</tr>
-					</thead>
-			";
+                                                        <tr>
+                                                        <th colspan='10' align='left'>
+                <br/>
+        ";
+
+        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+
+        echo " </th></tr>
+                                        </thead>
+
+                        ";
+
 
 	echo "<thread> <tr>
 					<th scope='col'> ".$l['all']['Username']."
@@ -107,6 +113,20 @@
 
 		</tr>";
 	}
+
+        echo "
+                                        <tfoot>
+                                                        <tr>
+                                                        <th colspan='10' align='left'>
+        ";
+        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+        echo "
+                                                        </th>
+                                                        </tr>
+                                        </tfoot>
+                ";
+
+
 	echo "</table>";
 
 	include 'library/closedb.php';
