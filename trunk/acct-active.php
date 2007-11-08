@@ -35,6 +35,7 @@
                 <div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['acctactive'] ?>		
 		</div>
+		<br/>
 
 
 <?php
@@ -58,12 +59,7 @@
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
-	
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
 	/* END */
-	echo "<br/>";
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -71,8 +67,19 @@
                                 <tr>
                                 <th colspan='7'>".$l['all']['Records']."</th>
                                 </tr>
-                        </thead>
-                ";
+
+                                                        <tr>
+                                                        <th colspan='12' align='left'>
+                <br/>
+        ";
+
+        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+	
+        echo " </th></tr>
+                                        </thead>
+
+                        ";
 
         echo "<thread> <tr>
                         <th scope='col'> ".$l['all']['Username']."
@@ -102,7 +109,7 @@
 		$status="Active";
 
 		if ($row[1] == "Expiration") {		
-			if (datediff('d', $row[2], '$currdate', false) > 0) {
+			if (datediff('d', $row[2], "$currdate", false) > 0) {
 				$status = "Expired";
 			}
 		} 
@@ -123,20 +130,39 @@
 			<td> ";
 
 		if ($row[1] == "Expiration") {		
-			echo datediff('d', $row[2], '27 Nov 2006', false);
-			echo " days since expired";
-//			echo date("j M Y");
+			$difference = datediff('d', $row[2], "$currdate", false);
+			if ($difference > 0)
+				echo " $difference days since expired";
+			else 
+				echo substr($difference, 1) . " days until expiration";
 		} 
 
 		if ($row[1] == "Max-All-Session") {		
-			echo $row[2] - $row[3];
-			echo " left on credit";
+			if ($status == "End") {
+				echo abs($row[2] - $row[3]) . " seconds overdue credit";
+			} else {
+				echo $row[2] - $row[3];
+				echo " left on credit";
+			}
 		} 
 
 
 		echo "	</td>
                 </tr>";
         }
+
+        echo "
+                                        <tfoot>
+                                                        <tr>
+                                                        <th colspan='12' align='left'>
+        ";
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+        echo "
+                                                        </th>
+                                                        </tr>
+                                        </tfoot>
+                ";
+
         echo "</table>";
 
         include 'library/closedb.php';
