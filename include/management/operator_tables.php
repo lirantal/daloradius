@@ -39,7 +39,6 @@ $arrayPagesAvailable = array(
 	 'mng_rad_groupreply_new' => 'Management GroupReply',
 	 'mng_rad_groupreply_edit' => 'Management GroupReply',
 	 'rep_topusers' => 'Reporting Core',
-	 'rep_username' => 'Reporting Core',
 	 'rep_online' => 'Reporting Core',
 	 'rep_lastconnect' => 'Reporting Core',
 	 'rep_logs_radius' => 'Reporting Logs',
