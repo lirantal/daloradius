@@ -31,6 +31,7 @@
                 <div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['acctusername'] ?>		
 		</div>
+		<br/>
 
 
 
@@ -124,22 +125,14 @@
     $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE UserName='$username';";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
-
-
-
 	
     $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE UserName='$username' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
 	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username");
-	
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username");
+	$maxPage = ceil($numrows/$rowsPerPage);	
 	/* END */
-	echo "<br/>";
 
         echo "<table border='2' class='table1'>\n";
         echo "
@@ -147,8 +140,19 @@
                                 <tr>
                                 <th colspan='15'>".$l['all']['Records']."</th>
                                 </tr>
-                        </thead>
-                ";
+                                                        <tr>
+                                                        <th colspan='12' align='left'>
+                <br/>
+        ";
+
+        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username");
+
+        echo " </th></tr>
+                                        </thead>
+
+                        ";
+
 
         echo "<thread> <tr>
 		<th scope='col'> ".$l['all']['ID']."
@@ -225,6 +229,19 @@
                         <td> <a href='mng-edit.php?username=$row[2]'> ".$l['all']['edit']." </a> </td>
                 </tr>";
         }
+
+        echo "
+                                        <tfoot>
+                                                        <tr>
+                                                        <th colspan='12' align='left'>
+        ";
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username");
+        echo "
+                                                        </th>
+                                                        </tr>
+                                        </tfoot>
+                ";
+
         echo "</table>";
 
 		} else {

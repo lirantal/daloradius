@@ -37,6 +37,7 @@
                 <div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['acctdate'] ?>		
 		</div>
+		<br/>
 
 
 
@@ -59,13 +60,7 @@
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
-	
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
 	/* END */
-	echo "<br/>";
-
 
 	$counter=0;
 	$bytesin=0;
@@ -81,8 +76,19 @@
                                 <tr>
                                 <th colspan='15'>".$l['all']['Records']."</th>
                                 </tr>
-                        </thead>
-                ";
+
+                                                        <tr>
+                                                        <th colspan='12' align='left'>
+                <br/>
+        ";
+
+        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+
+        echo " </th></tr>
+                                        </thead>
+
+                        ";
 
         echo "<thread> <tr>
 		<th scope='col'> ".$l['all']['ID']."
@@ -168,6 +174,19 @@
 //	        $megabytesout = int($bytesout / 1000000);
 
 	}
+
+        echo "
+                                        <tfoot>
+                                                        <tr>
+                                                        <th colspan='12' align='left'>
+        ";
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+        echo "
+                                                        </th>
+                                                        </tr>
+                                        </tfoot>
+                ";
+
 	echo "</table>";
 
 	include 'library/closedb.php';
