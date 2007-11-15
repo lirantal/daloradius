@@ -315,7 +315,6 @@ $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify va
 
 
 $l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
-$l['captions']['mnglistall'] = "Listing users in database.<br/>";
 
 
 $l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
@@ -411,6 +410,7 @@ meaning that users got disconnected but the NAS didn't send or wasn't
 able to send a STOP accounting packet to the RADIUS server.";
 
 
+$l['helpPage']['mnglistall'] = "Listing users in database";
 $l['helpPage']['mngsearch'] = "Searching for user: ";
 $l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
 $l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
