@@ -8,12 +8,30 @@
 	$username = "";
 	$password = "";
 	$maxallsession = "";
+	$expiration = "";
+	$sessiontimeout = "";
+	$idletimeout = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
 		$password = $_REQUEST['password'];
 		$maxallsession = $_REQUEST['maxallsession'];
+		$expiration = $_REQUEST['expiration'];
+		$sessiontimeout = $_REQUEST['sessiontimeout'];
+		$idletimeout = $_REQUEST['idletimeout'];
+
+                isset($_REQUEST['firstname']) ? $firstname = $_REQUEST['firstname'] : $firstname = "";
+                isset($_REQUEST['lastname']) ? $lastname = $_REQUEST['lastname'] : $lastname = " ";
+                isset($_REQUEST['email']) ? $email = $_REQUEST['email'] : $email = "";
+                isset($_REQUEST['department']) ? $department = $_REQUEST['department'] : $department = "";
+                isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
+                isset($_REQUEST['workphone']) ? $workphone = $_REQUEST['workphone'] : $workphone =  "";
+                isset($_REQUEST['homephone']) ? $homephone = $_REQUEST['homephone'] : $homephone = "";
+                isset($_REQUEST['mobilephone']) ? $mobilephone = $_REQUEST['mobilephone'] : $mobilephone = "";
+                isset($_REQUEST['notes']) ? $notes = $_REQUEST['notes'] : $notes = "";
+
+
 
 		include 'library/opendb.php';
 		
@@ -26,25 +44,36 @@
 			if (trim($username) != "" and trim($password) != "") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '$username', 'User-Password', '==', '$password')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
 				if ($maxallsession) {
-					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '$username', 'Max-All-Session', ':=', '$maxallsession')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
-				if ($maxallsession) {
-					$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADREPLY']." values (0, '$username', 'Session-Timeout', ':=', '$maxallsession')";
+				if ($expiration) {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '$username', 'Expiration', ':=', '$expiration')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
+				if ($sessiontimeout) {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." VALUES (0, '$username', 'Session-Timeout', ':=', '$sessiontimeout')";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+
+				if ($idletimeout) {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." VALUES (0, '$username', 'Idle-Timeout', ':=', '$idletimeout')";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
 
                                 // insert user information table
-                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
+                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." VALUES (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
                                 $res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -87,7 +116,13 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
+<![endif]-->
 </head>
+<script src="library/js_date/date-functions.js" type="text/javascript"></script>
+<script src="library/js_date/datechooser.js" type="text/javascript"></script>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
 
@@ -139,18 +174,42 @@
 
 </td></tr>
 </table>
+<tr><td>
+
+<br/>
 <br/>
 
-	<table border='2' class='table1' width='600'>
-	<tr><td>
-		<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')" tabindex=104>
-		<b><?php echo $l['FormField']['mngnewquick.php']['MaxAllSession'] ?></b><br/>
-		<div id="attributesmaxallsession" style="display:none;visibility:visible" >
+<table border='2' class='table1' width='600'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['Attributes']; ?> </th>
+                                                        </tr>
+                                        </thead>
+<tr><td>
+		<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesexpiration')" tabindex=104>
+		<b><?php echo $l['FormField']['all']['Expiration'] ?></b></font><br/>
+		<div id="attributesexpiration" style="display:none;visibility:visible" >
 
-		<input value="<?php echo $maxallsession ?>" id="maxallsession" name="maxallsession" />
+		<input value="<?php echo $maxallsession ?>" id="expiration" name="expiration" />
 
-		<select onChange="javascript:setText(this.id,'maxallsession')" id="option0">
+                <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
+		<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+
+		<br/>
+</div>
+</td></tr>
+
+
+<tr><td>
+		<?php if (trim($sessiontimeout) == "") { echo "<font color='#FF0000'>";  }?>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributessessiontimeout')" tabindex=105>
+		<b><?php echo $l['FormField']['all']['SessionTimeout'] ?></b></font><br/>
+		<div id="attributessessiontimeout" style="display:none;visibility:visible" >
+
+		<input value="<?php echo $sessiontimeout ?>" id="sessiontimeout" name="sessiontimeout" />
+
+		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0">
                 <option value="1">calculate time</option>
                 <option value="1">seconds</option>
                 <option value="60">minutes</option>
@@ -159,10 +218,50 @@
                 <option value="604800">weeks</option>
                 <option value="2592000">months (30 days)</option>
 		</select>
-						<br/>
+		<br/>
 </div>
-<br/>
-						</font>
+</td></tr>
+
+<tr><td>
+		<?php if (trim($idletimeout) == "") { echo "<font color='#FF0000'>";  }?>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesidletimeout')" tabindex=106>
+		<b><?php echo $l['FormField']['all']['IdleTimeout'] ?></b></font><br/>
+		<div id="attributesidletimeout" style="display:none;visibility:visible" >
+
+		<input value="<?php echo $idletimeout ?>" id="idletimeout" name="idletimeout" />
+
+		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1">
+                <option value="1">calculate time</option>
+                <option value="1">seconds</option>
+                <option value="60">minutes</option>
+                <option value="3600">hours</option>
+                <option value="86400">days</option>
+                <option value="604800">weeks</option>
+                <option value="2592000">months (30 days)</option>
+		</select>
+		<br/>
+</div>
+</td></tr>
+
+<tr><td>
+		<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')" tabindex=107>
+		<b><?php echo $l['FormField']['mngnewquick.php']['MaxAllSession'] ?></b></font><br/>
+		<div id="attributesmaxallsession" style="display:none;visibility:visible" >
+
+		<input value="<?php echo $maxallsession ?>" id="maxallsession" name="maxallsession" />
+
+		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2">
+                <option value="1">calculate time</option>
+                <option value="1">seconds</option>
+                <option value="60">minutes</option>
+                <option value="3600">hours</option>
+                <option value="86400">days</option>
+                <option value="604800">weeks</option>
+                <option value="2592000">months (30 days)</option>
+		</select>
+		<br/>
+</div>
 </td></tr>
 </table>
 
