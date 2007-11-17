@@ -129,8 +129,9 @@ function createPassword($length) {
 				$exportCSV .= "$username,$password||";
 				
 				$actionStatus = "success";
-				$actionMsg = "Added to database new user: <b> $actionMsgGoodUsernames </b><br/>
-						Exported Usernames -  <a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a>";
+				$actionMsg = "Exported Usernames -  <a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>
+				Added to database new user: <b> $actionMsgGoodUsernames </b><br/>";
+
 				$logAction = "Successfully added to database new users [$actionMsgGoodUsernames] on page: ";
 		} 
 		
