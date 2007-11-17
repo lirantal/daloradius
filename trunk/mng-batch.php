@@ -46,6 +46,9 @@ function createPassword($length) {
 
 		$actionMsgBadUsernames = "";
 		$actionMsgGoodUsernames = "";
+
+		$exportCSV = "Username,Password||";
+		
 		
 		for ($i=0; $i<$number; $i++) {
 			$username = createPassword($length_user);
@@ -123,8 +126,11 @@ function createPassword($length) {
 				} // foreach
 
 				$actionMsgGoodUsernames = $actionMsgGoodUsernames . $username . ", " ;
+				$exportCSV .= "$username,$password||";
+				
 				$actionStatus = "success";
-				$actionMsg = "Added to database new user: <b> $actionMsgGoodUsernames </b>";
+				$actionMsg = "Added to database new user: <b> $actionMsgGoodUsernames </b><br/>
+						Exported Usernames -  <a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a>";
 				$logAction = "Successfully added to database new users [$actionMsgGoodUsernames] on page: ";
 		} 
 		
@@ -261,7 +267,7 @@ function createPassword($length) {
 <tr><td>
 						<b><?php echo $l['FormField']['all']['GroupPriority']; ?></b>
 </td><td>
-						<input value="<?php if (isset($group_priority)) echo $group_priority ?>" name="group_priority" tabindex=106 />
+						<input value="<?php if (isset($group_priority)) echo $group_priority ?>" name="group_priority" id="group_priority" tabindex=106 />
 </td></tr>
 </table>
 
