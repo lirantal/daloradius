@@ -16,6 +16,7 @@
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
 		$password = $_REQUEST['password'];
+		$group = $_REQUEST['group'];
 		$maxallsession = $_REQUEST['maxallsession'];
 		$expiration = $_REQUEST['expiration'];
 		$sessiontimeout = $_REQUEST['sessiontimeout'];
@@ -71,6 +72,14 @@
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
+
+
+				if (isset($group)) {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." VALUES ('$username', '$group', '0')";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+
 
                                 // insert user information table
                                 $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." VALUES (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
@@ -173,6 +182,34 @@
 						</font>
 
 </td></tr>
+
+<tr><td>                                        <b><?php echo $l['FormField']['all']['Group']; ?></b>
+</td><td>
+                                                <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=104 />
+
+<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
+<?php
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "
+                        <option value='$row[0]'> $row[0]
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+?>
+</select>
+</td></tr>
+
+
 </table>
 <tr><td>
 
@@ -187,7 +224,7 @@
                                         </thead>
 <tr><td>
 		<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesexpiration')" tabindex=104>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesexpiration')" tabindex=106>
 		<b><?php echo $l['FormField']['all']['Expiration'] ?></b></font><br/>
 		<div id="attributesexpiration" style="display:none;visibility:visible" >
 
@@ -203,7 +240,7 @@
 
 <tr><td>
 		<?php if (trim($sessiontimeout) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributessessiontimeout')" tabindex=105>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributessessiontimeout')" tabindex=107>
 		<b><?php echo $l['FormField']['all']['SessionTimeout'] ?></b></font><br/>
 		<div id="attributessessiontimeout" style="display:none;visibility:visible" >
 
@@ -224,7 +261,7 @@
 
 <tr><td>
 		<?php if (trim($idletimeout) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesidletimeout')" tabindex=106>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesidletimeout')" tabindex=108>
 		<b><?php echo $l['FormField']['all']['IdleTimeout'] ?></b></font><br/>
 		<div id="attributesidletimeout" style="display:none;visibility:visible" >
 
@@ -245,7 +282,7 @@
 
 <tr><td>
 		<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')" tabindex=107>
+                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')" tabindex=109>
 		<b><?php echo $l['FormField']['mngnewquick.php']['MaxAllSession'] ?></b></font><br/>
 		<div id="attributesmaxallsession" style="display:none;visibility:visible" >
 
@@ -280,7 +317,7 @@
 
 <br/>
 <center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10 />
+						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 />
 
 </center>
 
