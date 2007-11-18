@@ -9,13 +9,8 @@
 	$value = "";
 	$logDebugSQL = "";
 
-	if (isset($_REQUEST['groupname'])) {
-		$groupname = $_REQUEST['groupname'];
-	}
-
-	if (isset($_REQUEST['value'])) {
-		$value = $_REQUEST['value'];
- 	}
+	isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "";
+	isset($_REQUEST['value']) ? $value = $_REQUEST['value'] : $value = "";
 
 	if (isset($_POST['submit'])) {
 	
