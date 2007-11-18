@@ -5,8 +5,6 @@
         
 	include('library/check_operator_perm.php');
 
-
-
     include 'library/opendb.php';
 
 	$nashost = "";
@@ -21,32 +19,34 @@
 
 	$logDebugSQL = "";
 
-	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+	if ($nashost) {
+		// fill-in nashost details in html textboxes
+		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL = "";
+		$logDebugSQL .= $sql . "\n";
 
-	$row = $res->fetchRow();		// array fetched with values from $sql query
+		$row = $res->fetchRow();		// array fetched with values from $sql query
 
-					// assignment of values from query to local variables
-					// to be later used in html to display on textboxes (input)
-	$nassecret = $row[5];
-	$nasname = $row[2];
-	$nasports = $row[4];
-	$nastype = $row[3];
-	$nascommunity = $row[6];
-	$nasdescription = $row[7];
+						// assignment of values from query to local variables
+						// to be later used in html to display on textboxes (input)
+		$nassecret = $row[5];
+		$nasname = $row[2];
+		$nasports = $row[4];
+		$nastype = $row[3];
+		$nascommunity = $row[6];
+		$nasdescription = $row[7];
+	}
 
 	if (isset($_POST['submit'])) {
 	
-		$nashost = $_REQUEST['nashost'];
-		$nassecret = $_REQUEST['nassecret'];;
-		$nasname = $_REQUEST['nasname'];;
-		$nasports = $_REQUEST['nasports'];;
-		$nastype = $_REQUEST['nastype'];;
-		$nasdescription = $_REQUEST['nasdescription'];;
-		$nascommunity = $_REQUEST['nascommunity'];;
+		$nashost = $_POST['nashost'];
+		$nassecret = $_POST['nassecret'];;
+		$nasname = $_POST['nasname'];;
+		$nasports = $_POST['nasports'];;
+		$nastype = $_POST['nastype'];;
+		$nasdescription = $_POST['nasdescription'];;
+		$nascommunity = $_POST['nascommunity'];;
 
 			
 		include 'library/opendb.php';
@@ -91,11 +91,6 @@
 
 		include 'library/closedb.php';
 	}
-
-	if (isset($_REQUEST['nashost']))
-		$nashost = $_REQUEST['nashost'];
-	else
-		$nashost = "";
 
 	if (trim($nashost) == "") {
 		$actionStatus = "failure";

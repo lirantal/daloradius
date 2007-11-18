@@ -20,13 +20,13 @@
 
 	if (isset($_POST['submit'])) {
 	
-		$nashost = $_REQUEST['nashost'];
-		$nassecret = $_REQUEST['nassecret'];;
-		$nasname = $_REQUEST['nasname'];;
-		$nasports = $_REQUEST['nasports'];;
-		$nastype = $_REQUEST['nastype'];;
-		$nasdescription = $_REQUEST['nasdescription'];;
-		$nascommunity = $_REQUEST['nascommunity'];;
+		$nashost = $_POST['nashost'];
+		$nassecret = $_POST['nassecret'];
+		$nasname = $_POST['nasname'];
+		$nasports = $_POST['nasports'];
+		$nastype = $_POST['nastype'];
+		$nasdescription = $_POST['nasdescription'];
+		$nascommunity = $_POST['nascommunity'];
 
 		
 		include 'library/opendb.php';
