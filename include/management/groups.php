@@ -14,7 +14,7 @@
 
                         <thead>
                                 <tr>
-                                <th colspan='10'>Groups</th>
+                                <th colspan='10'><?php echo $l['table']['Groups']; ?></th>
                                 </tr>
                         </thead>
 
@@ -29,7 +29,6 @@
 
         // Grabing the group lists from usergroup table
 
-        //$sql = "SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']."";
 	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
         $res = $dbSocket->query($sql);
 
