@@ -444,7 +444,7 @@
 
 ?>
 
-     <div class="tabbertab" title="User Info">
+     <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
 
 <?php
         include_once('include/management/userinfo.php');
@@ -453,7 +453,7 @@
 	</div>
 
 
-     <div class="tabbertab" title="Attributes">
+     <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
 <?php
         include_once('include/management/attributes.php');
@@ -463,7 +463,7 @@
      </div>
 
 
-     <div class="tabbertab" title="Groups">
+     <div class="tabbertab" title="<?php echo $l['table']['Groups']; ?>">
 <?php
         include_once('include/management/groups.php');
 ?>
