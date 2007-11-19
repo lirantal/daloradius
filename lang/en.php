@@ -81,6 +81,9 @@ $l['table']['Attributes'] = "Attributes";
 $l['table']['HotspotInfo'] = "Hotspot Info";
 $l['table']['ContactInfo'] = "Contact Info";
 
+$l['table']['RADIUSCheck'] = "RADIUS Check";
+$l['table']['RADIUSReply'] = "RADIUS Reply";
+
 /* ********************************************************************************** */
 
 
