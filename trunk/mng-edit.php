@@ -357,7 +357,7 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="radcheck table">
+     <div class="tabbertab" title="<?php echo $l['table']['RADIUSCheck']; ?>">
 
 <?php
 
@@ -366,7 +366,7 @@
 	        echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>radcheck</th>
+                                <th colspan='10'>".$l['table']['RADIUSCheck']."</th>
                                 </tr>
                         </thead>
                 ";
@@ -414,14 +414,14 @@
 		echo "</table>";
 		echo "</div>";
 
-		echo "<div class='tabbertab' title='radreply table'>";
+		echo "<div class='tabbertab' title='".$l['table']['RADIUSReply']."'>";
 
 
 		echo "<table border='2' class='table1'>";
 	        echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>radreply </th>
+                                <th colspan='10'>".$l['table']['RADIUSReply']."</th>
                                 </tr>
                         </thead>
                 ";
@@ -464,48 +464,11 @@
 
 
      <div class="tabbertab" title="Groups">
-
-		<table border='2' class='table1'>
-	     
-                        <thead>
-                                <tr>
-                                <th colspan='10'>Groups</th>
-                                </tr>
-                        </thead>
-
-<tr><td>                                        <b><?php echo $l['FormField']['all']['Group']; ?></b>
-</td><td>
-                                                <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
-
-<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
 <?php
-
-        include 'library/opendb.php';
-
-        // Grabing the group lists from usergroup table
-
-        $sql = "SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']."";
-        $res = $dbSocket->query($sql);
-
-        while($row = $res->fetchRow()) {
-                echo "
-                        <option value='$row[0]'> $row[0]
-                        ";
-
-        }
-
-        include 'library/closedb.php';
+        include_once('include/management/groups.php');
 ?>
-</select>
-</td></tr>
-<tr><td>                                        <b><?php echo $l['FormField']['all']['GroupPriority']; ?></b>
-</td><td>
-                                                <input value="<?php if (isset($group_priority)) echo $group_priority ?>" name="group_priority" id="group_priority" tabindex=111 />
-</td></tr>
-
-
-		</table>
         <br/>
+
      </div>
 
 
