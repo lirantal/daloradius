@@ -8,6 +8,17 @@
 * Essentially, this extention populates groups into tables
 *
 *********************************************************************/
+
+        // Grabing the group lists from usergroup table
+	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+        $res = $dbSocket->query($sql);
+
+	$groupOptions = "";
+
+        while($row = $res->fetchRow()) {			
+		$groupOptions .= "<option value='$row[0]'> $row[0] </option>";
+        }
+
 ?>
 
                 <table border='2' class='table1'>
@@ -18,40 +29,42 @@
                                 </tr>
                         </thead>
 
-<tr><td>                                        <b><?php echo $l['FormField']['all']['Group']; ?></b>
-</td><td>
-                                                <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
-
-<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
 <?php
 
-        include 'library/opendb.php';
-
-        // Grabing the group lists from usergroup table
-
-	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+	$sql = "SELECT GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username';";
         $res = $dbSocket->query($sql);
-
+	
+	$counter = 0;
         while($row = $res->fetchRow()) {
-                echo "
-                        <option value='$row[0]'> $row[0]
-                        ";
+
+	echo "
+
+				<input type='hidden' value='$row[0]' name='oldgroups[]' >
+
+		<tr><td>        <b>".$l['FormField']['all']['Group']." #".($counter+1)."</b>
+		</td><td>       <input value='$row[0]' name='groups[]' id='group$counter' >
+
+				<select onChange=\"javascript:setStringText(this.id,'group$counter')\" id='usergroup$counter' tabindex=105>
+
+				".$groupOptions."
+
+				</select>
+
+		</td></tr>
+		<tr><td>        <b>". $l['FormField']['all']['GroupPriority']."</b>
+		</td><td>       <input value='$row[1]' name='groups_priority[]' >
+		</td></tr>
+
+		";
+
+
+		$counter++;
 
         }
 
-        include 'library/closedb.php';
 ?>
-</select>
-</td></tr>
-<tr><td>                                        <b><?php echo $l['FormField']['all']['GroupPriority']; ?></b>
-</td><td>
-                                                <input value="<?php if (isset($group_priority)) echo $group_priority ?>" name="group_priority" id="group_priority" tabindex=111 />
-</td></tr>
-
 
                 </table>
         <br/>
-
-
 
 

@@ -17,8 +17,9 @@
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
 
-                $group = $_REQUEST['group'];
-                $group_priority = $_REQUEST['group_priority'];
+                $oldgroups = $_REQUEST['oldgroups'];
+                $groups = $_REQUEST['groups'];
+                $groups_priority = $_REQUEST['groups_priority'];
 
                 $firstname = $_REQUEST['firstname'];
                 $lastname = $_REQUEST['lastname'];
@@ -37,18 +38,30 @@
                        $res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 			
+                 // insert usergroup mapping
+                 if (isset($groups)) {
 
-                      // insert usergroup mapping
-                      if (isset($group)) {
-				if (!($group_priority))
+			$grpcnt = 0;			// group counter
+			foreach ($groups as $group) {
+
+				$oldgroup = $oldgroups[$grpcnt];			
+
+				if (!($groups_priority[$grpcnt]))
 					$group_priority = 1;
-	                      $sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='$username', GroupName='$group', priority=$group_priority WHERE UserName='$username'";
-                              $res = $dbSocket->query($sql);
-                              $logDebugSQL .= $sql . "\n";
-                      }
+				else
+					$group_priority = $groups_priority[$grpcnt];
+
+		                $sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='$username', GroupName='$group', priority=$group_priority WHERE UserName='$username' AND GroupName='$oldgroup';";
+	                        $res = $dbSocket->query($sql);
+	                        $logDebugSQL .= $sql . "\n";
+
+				$grpcnt++;		// we increment group index count so we can access the group priority array
+
+			}
+                 }
+
 
 			 foreach( $_POST as $attribute=>$value ) { 
-
 
                                         // switch case to rise the flag for several $attribute which we do not
                                         // wish to process (ie: do any sql related stuff in the db)
@@ -56,8 +69,9 @@
 
                                                 case "username":
                                                 case "submit":
-                                                case "group":
-                                                case "group_priority":
+                                                case "oldgroups":
+                                                case "groups":
+                                                case "groups_priority":
                                                 case "firstname":
                                                 case "lastname":
                                                 case "email":
@@ -79,7 +93,6 @@
 						$skipLoopFlag = 0; 		// resetting the loop flag
                                                 continue;
 					}
-
 
 					if (!($value[0]))
 						continue;
@@ -267,17 +280,6 @@
 
 	
 
-	/* get group information for user */
-	$sql = "SELECT GroupName,priority FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='$username'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-                $group = $row['GroupName'];
-                $group_priority = $row['priority'];
- 	
-
-
-
 
 
 	include 'library/closedb.php';
@@ -464,8 +466,11 @@
 
 
      <div class="tabbertab" title="<?php echo $l['table']['Groups']; ?>">
+	
 <?php
+        include 'library/opendb.php';
         include_once('include/management/groups.php');
+        include 'library/closedb.php';	
 ?>
         <br/>
 
