@@ -125,7 +125,7 @@
 				
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-                                                <input type="hidden" value="<?php echo $username ?>" name="username" /><br/>
+                                                <input type="hidden" value="<?php echo $username ?>" name="username" />
 <table border='2' class='table1'>
                                         <thead>
                                                         <tr>

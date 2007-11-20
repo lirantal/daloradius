@@ -5,12 +5,10 @@
 
 	include('library/check_operator_perm.php');
 
-
-
 	// declaring variables
-	$username = "";
-	$group = "";
-	$priority = "";
+	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
+	isset($_GET['group']) ? $group = $_GET['group'] : $group = "";
+	isset($_GET['priority']) ? $priority = $_GET['priority'] : $priority = "";
 
 	$logDebugSQL = "";
 

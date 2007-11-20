@@ -119,8 +119,8 @@
 				
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-                                                <input type="hidden" value="<?php echo $groupname ?>" name="groupname" /><br/>
-                                                <input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" /><br/>
+                                                <input type="hidden" value="<?php echo $groupname ?>" name="groupname" />
+                                                <input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" />
 												
 <table border='2' class='table1'>
                                         <thead>

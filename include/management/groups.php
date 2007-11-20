@@ -33,6 +33,13 @@
 
 	$sql = "SELECT GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username';";
         $res = $dbSocket->query($sql);
+
+	if ($res->numRows() == 0) {
+		echo "</table> 
+			<br/><center> ".$l['messages']['nogroupdefinedforuser']." </center><br/>";
+		exit;
+	}
+
 	
 	$counter = 0;
         while($row = $res->fetchRow()) {
