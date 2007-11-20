@@ -61,6 +61,7 @@ $l['all']['MACAddress'] = "MAC Address";
 $l['all']['Geocode'] = "Geocode";
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
+$l['all']['groupslist'] = "groups-list";
 $l['all']['TestUser'] = "Test User";
 $l['all']['Accounting'] = "Accounting";
 
@@ -370,7 +371,7 @@ $l['helpPage']['mngradnasedit'] = "";
 $l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
 $l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
 $l['helpPage']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
-$l['helpPage']['mnghslist'] = "";
+$l['helpPage']['mnghslist'] = "List of all hotspots in the database. You may use the quick links to edit or delete a hotspot from the database.";
 
 $l['helpPage']['configdb'] = "Settings that daloRADIUS will make use of to connect to your MySQL database server and manage it.";
 $l['helpPage']['configlang'] = "Below you can choose between different support languages for daloRADIUS translation.";
@@ -459,6 +460,9 @@ Then you may be able to use Google Maps services. <br/><br/>";
 
 
 
+
+$l['messages']['nogroupdefinedforuser'] = "This user has no Groups associated with it. <br> Would you like to
+                        <a href='mng-rad-usergroup-new.php?username=$username'> create </a> one?";
 
 
 $l['messages']['missingratetype'] = "error: missing rate type to delete";

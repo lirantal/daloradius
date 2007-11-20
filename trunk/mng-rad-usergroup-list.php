@@ -109,6 +109,7 @@
 				<td> $row[2] </td>
 				<td> <a href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'> ".$l['all']['edit']." </a>
 					 <a href='mng-rad-usergroup-del.php?username=$row[0]&group=$row[1]'> ".$l['all']['del']." </a>
+					 <a href='mng-rad-usergroup-list-user.php?username=$row[0]&group=$row[1]'> ".$l['all']['groupslist']." </a>
 					 </td>
 
 		</tr>";
