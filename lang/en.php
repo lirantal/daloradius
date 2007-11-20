@@ -461,8 +461,8 @@ Then you may be able to use Google Maps services. <br/><br/>";
 
 
 
-$l['messages']['nogroupdefinedforuser'] = "This user has no Groups associated with it. <br> Would you like to
-                        <a href='mng-rad-usergroup-new.php?username=$username'> create </a> one?";
+$l['messages']['nogroupdefinedforuser'] = "This user has no Groups associated with it";
+$l['messages']['wouldyouliketocreategroup'] = "Would you like to create one?";
 
 
 $l['messages']['missingratetype'] = "error: missing rate type to delete";
