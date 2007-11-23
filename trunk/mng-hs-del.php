@@ -4,7 +4,6 @@
 
 	include('library/check_operator_perm.php');
 
-//	$name = !empty($_REQUEST['name']) ? $_REQUEST['name'] : '[hotspot name]';
         isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = array(1=>'[NO HOTSPOT ENTERED]');
 	$logDebugSQL = "";
 
@@ -24,7 +23,7 @@
                                 $allHotspots .= $name . ", ";
 
 				// delete all attributes associated with a username
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='".$dbSocket->escapeSimple($name)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				

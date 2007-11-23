@@ -27,7 +27,7 @@
 		
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$name'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='".$dbSocket->escapeSimple($name)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -35,7 +35,11 @@
 			if (trim($name) != "" and trim($macaddress) != "") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$name', '$macaddress', '$geocode','$owner','$email_owner','$manager','$email_manager','$address','$company','$phone1','$phone2','$hotspot_type','$website')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '".$dbSocket->escapeSimple($name)."', 
+'".$dbSocket->escapeSimple($macaddress)."', '".$dbSocket->escapeSimple($geocode)."','".$dbSocket->escapeSimple($owner)."',
+'".$dbSocket->escapeSimple($email_owner)."','".$dbSocket->escapeSimple($manager)."','".$dbSocket->escapeSimple($email_manager)."',
+'".$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($company)."','".$dbSocket->escapeSimple($phone1)."',
+'".$dbSocket->escapeSimple($phone2)."','".$dbSocket->escapeSimple($hotspot_type)."','".$dbSocket->escapeSimple($website)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 

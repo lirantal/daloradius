@@ -31,11 +31,12 @@
 
 		if (trim($name) != "") {
 
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='$macaddress', geocode='$geocode', 
-					owner='$owner', email_owner='$email_owner', manager='$manager', email_manager='$email_manager', 
-					address='$address', company='$company', phone1='$phone1', phone2='$phone2', type='$hotspot_type', website='$website'
-					WHERE name='$name'";
-
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='".$dbSocket->escapeSimple($macaddress)."', 
+geocode='".$dbSocket->escapeSimple($geocode)."', owner='".$dbSocket->escapeSimple($owner)."', email_owner='".$dbSocket->escapeSimple($email_owner)."',
+manager='".$dbSocket->escapeSimple($manager)."', email_manager='".$dbSocket->escapeSimple($email_manager)."', 
+address='".$dbSocket->escapeSimple($address)."', company='".$dbSocket->escapeSimple($company)."', phone1='".$dbSocket->escapeSimple($phone1)."', 
+phone2='".$dbSocket->escapeSimple($phone2)."', type='".$dbSocket->escapeSimple($hotspot_type)."', website='".$dbSocket->escapeSimple($website)."' 
+WHERE name='$name'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL = "";
 				$logDebugSQL .= $sql . "\n";

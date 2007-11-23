@@ -37,7 +37,32 @@
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghslist.php'] ?></a></h2>
 				
                                 <div id="helpPage" style="display:none;visibility:visible" >				
+
+<br/>
+<div>
+  <b class="spiffy">
+  <b class="spiffy1"><b></b></b>
+  <b class="spiffy2"><b></b></b>
+  <b class="spiffy3"></b>
+  <b class="spiffy4"></b>
+  <b class="spiffy5"></b></b>
+
+  <div class="spiffyfg">
+  <b>
 					<?php echo $l['helpPage']['mnghslist'] ?>
+
+  </b>
+  </div>
+
+  <b class="spiffy">
+  <b class="spiffy5"></b>
+  <b class="spiffy4"></b>
+  <b class="spiffy3"></b>
+  <b class="spiffy2"><b></b></b>
+  <b class="spiffy1"><b></b></b></b>
+</div>
+
+
 				</div>	
 
 
