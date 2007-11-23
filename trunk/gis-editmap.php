@@ -26,7 +26,7 @@
 		$hotspot_geo = substr($hotspot_geo, 1);
 		$hotspot_geo = substr($hotspot_geo, 0, strlen($hotspot_geo)-1);
 
-		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
+		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." (id, name, mac, geocode) values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
