@@ -31,7 +31,7 @@
 		$logDebugSQL .= $sql . "\n";
 
 		$actionStatus = "success";
-		$actionMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
+		$actionMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspot_name </b>";
 
 	}
 
@@ -43,7 +43,7 @@
 		$logDebugSQL .= $sql . "\n";
 
 		$actionStatus = "success";
-		$actionMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b> $hotspotname </b>";
+		$actionMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b> $hotspot_name </b>";
 
 	}		
 
