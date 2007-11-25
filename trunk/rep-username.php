@@ -45,7 +45,7 @@
 
 	// table to display the radcheck information per the $username
 
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'  ORDER BY $orderBy $orderType;";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'  ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= "";
@@ -101,7 +101,7 @@
 	
 	
 	// table to display the radreply information per the $username
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='$username'  ORDER BY $orderBy $orderType;";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='".$dbSocket->escapeSimple($username)."'  ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
