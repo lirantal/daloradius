@@ -47,7 +47,7 @@
                         if ($value[0] == "")                            // we don't process attribtues with no values
                                         continue;
 
-                        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='$groupname' AND Attribute='$attribute'";
+                        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
                         $res = $dbSocket->query($sql);
                         $logDebugSQL .= $sql . "\n";
 
@@ -55,7 +55,7 @@
                         if ($res->numRows() == 0) {
                                         // insert usergroup details
                                         // assuming there's no groupname with that attribute in the table
-                                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." values (0,'$groupname', '$attribute', '$value[1]', '$value[0]')";
+                                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." values (0,'".$dbSocket->escapeSimple($groupname)."', '".$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($value[1])."', '".$dbSocket->escapeSimple($value[0])."')";
                                         $res = $dbSocket->query($sql);
                                         $logDebugSQL .= $sql . "\n";
                                         $counter++;
