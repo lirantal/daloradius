@@ -19,7 +19,8 @@
 	$valueOld = $_REQUEST['value'];	
 
 	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$value'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'
+AND Value='".$dbSocket->escapeSimple($value)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -39,7 +40,8 @@
 			
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='$groupname' AND Value='$valueOld'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'
+AND Value='".$dbSocket->escapeSimple($valueOld)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -47,7 +49,9 @@
 
 			if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='$value', op='$op', Attribute='$attribute' WHERE GroupName='$groupname' AND Value='$valueOld'";
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='".$dbSocket->escapeSimple($value)."',
+op='".$dbSocket->escapeSimple($op)."', Attribute='".$dbSocket->escapeSimple($attribute)."'
+WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($valueOld)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
