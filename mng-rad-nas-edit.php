@@ -5,6 +5,8 @@
         
 	include('library/check_operator_perm.php');
 
+
+
     include 'library/opendb.php';
 
 	$nashost = "";
@@ -19,39 +21,38 @@
 
 	$logDebugSQL = "";
 
-	if ($nashost) {
-		// fill-in nashost details in html textboxes
-		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL = "";
-		$logDebugSQL .= $sql . "\n";
+	// fill-in nashost details in html textboxes
+	$sql = "SELECT * FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
+	$res = $dbSocket->query($sql);
+	$logDebugSQL = "";
+	$logDebugSQL .= $sql . "\n";
 
-		$row = $res->fetchRow();		// array fetched with values from $sql query
+	$row = $res->fetchRow();		// array fetched with values from $sql query
 
-						// assignment of values from query to local variables
-						// to be later used in html to display on textboxes (input)
-		$nassecret = $row[5];
-		$nasname = $row[2];
-		$nasports = $row[4];
-		$nastype = $row[3];
-		$nascommunity = $row[6];
-		$nasdescription = $row[7];
-	}
+					// assignment of values from query to local variables
+					// to be later used in html to display on textboxes (input)
+	$nassecret = $row[5];
+	$nasname = $row[2];
+	$nasports = $row[4];
+	$nastype = $row[3];
+	$nascommunity = $row[6];
+	$nasdescription = $row[7];
 
 	if (isset($_POST['submit'])) {
 	
-		$nashost = $_POST['nashost'];
-		$nassecret = $_POST['nassecret'];;
-		$nasname = $_POST['nasname'];;
-		$nasports = $_POST['nasports'];;
-		$nastype = $_POST['nastype'];;
-		$nasdescription = $_POST['nasdescription'];;
-		$nascommunity = $_POST['nascommunity'];;
+		$nashostold = $_REQUEST['nashostold'];
+		$nashost = $_REQUEST['nashost'];
+		$nassecret = $_REQUEST['nassecret'];;
+		$nasname = $_REQUEST['nasname'];;
+		$nasports = $_REQUEST['nasports'];;
+		$nastype = $_REQUEST['nastype'];;
+		$nasdescription = $_REQUEST['nasdescription'];;
+		$nascommunity = $_REQUEST['nascommunity'];;
 
 			
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM nas WHERE nasname='$nashost'";
+		$sql = "SELECT * FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashostold)."' ";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -64,7 +65,10 @@
 				}
 
 				// insert nas details
-				$sql = "UPDATE nas SET shortname='$nasname', type='$nastype', ports=$nasports, secret='$nassecret', community='$nascommunity', description='$nasdescription' WHERE nasname='$nashost'";
+				$sql = "UPDATE nas SET nasname='".$dbSocket->escapeSimple($nashost)."', shortname='".$dbSocket->escapeSimple($nasname)."',
+type='".$dbSocket->escapeSimple($nastype)."', ports=".$dbSocket->escapeSimple($nasports).", secret='".$dbSocket->escapeSimple($nassecret)."',
+community='".$dbSocket->escapeSimple($nascommunity)."', description='".$dbSocket->escapeSimple($nasdescription)."'
+WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -91,6 +95,11 @@
 
 		include 'library/closedb.php';
 	}
+
+	if (isset($_REQUEST['nashost']))
+		$nashost = $_REQUEST['nashost'];
+	else
+		$nashost = "";
 
 	if (trim($nashost) == "") {
 		$actionStatus = "failure";
@@ -137,7 +146,7 @@
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['table']['NASInfo']; ?>">
-                                                <input type="hidden" value="<?php echo $nashost ?>" name="nashost" />
+                                                <input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
 
 <table border='2' class='table1'>
                                         <thead>
