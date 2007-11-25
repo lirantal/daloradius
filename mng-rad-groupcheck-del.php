@@ -21,7 +21,8 @@
 			if (trim($value) != "") {
 
 				// delete only a specific groupname and it's attribute
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($value)."'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='
+".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($value)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
