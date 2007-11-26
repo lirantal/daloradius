@@ -21,7 +21,7 @@
 			include 'library/opendb.php';
 
 			// delete all attributes associated with a username
-			$sql = "DELETE FROM nas WHERE nasname='$nashost'";
+			$sql = "DELETE FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
