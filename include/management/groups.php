@@ -9,15 +9,16 @@
 *
 *********************************************************************/
 
-        // Grabing the group lists from usergroup table
-	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
-        $res = $dbSocket->query($sql);
+	// Grabing the group lists from usergroup table
+	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM 
+".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+	$res = $dbSocket->query($sql);
 
 	$groupOptions = "";
 
-        while($row = $res->fetchRow()) {			
+	while($row = $res->fetchRow()) {			
 		$groupOptions .= "<option value='$row[0]'> $row[0] </option>";
-        }
+	}
 
 ?>
 
@@ -31,8 +32,9 @@
 
 <?php
 
-	$sql = "SELECT GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='$username';";
-        $res = $dbSocket->query($sql);
+	$sql = "SELECT GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." 
+WHERE UserName='".$dbSocket->escapeSimple($username)."';";
+	$res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0) {
 		echo "</table> 
@@ -41,19 +43,18 @@
 						$l['messages']['wouldyouliketocreategroup'])."
 
 			</center><br/>";
-		exit;
-	}
+	} else {
 
-	
-	$counter = 0;
-        while($row = $res->fetchRow()) {
+		$counter = 0;
 
-	echo "
+		while($row = $res->fetchRow()) {
+
+			echo "
 
 				<input type='hidden' value='$row[0]' name='oldgroups[]' >
 
-		<tr><td>        <b>".$l['FormField']['all']['Group']." #".($counter+1)."</b>
-		</td><td>       <input value='$row[0]' name='groups[]' id='group$counter' >
+				<tr><td>        <b>".$l['FormField']['all']['Group']." #".($counter+1)."</b>
+				</td><td>       <input value='$row[0]' name='groups[]' id='group$counter' >
 
 				<select onChange=\"javascript:setStringText(this.id,'group$counter')\" id='usergroup$counter' tabindex=105>
 
@@ -61,21 +62,21 @@
 
 				</select>
 
-		</td></tr>
-		<tr><td>        <b>". $l['FormField']['all']['GroupPriority']."</b>
-		</td><td>       <input value='$row[1]' name='groups_priority[]' >
-		</td></tr>
+				</td></tr>
+				<tr><td>        <b>". $l['FormField']['all']['GroupPriority']."</b>
+				</td><td>       <input value='$row[1]' name='groups_priority[]' >
+				</td></tr>
 
-		";
+			";
 
+			$counter++;
 
-		$counter++;
+		} //while
 
-        }
-
+	} // if-else
 ?>
 
-                </table>
-        <br/>
+	</table>
+	<br/>
 
 
