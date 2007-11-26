@@ -3,12 +3,12 @@
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
-/*
-//obsolete
-//	$username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '[username]';
-
-	// $username is an array of usernames, it looks like this: 0=>user1, 1=>user2, etc...
-*/
+	
+	/*
+		//obsolete
+		// $username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '[username]';
+		// $username is an array of usernames, it looks like this: 0=>user1, 1=>user2, etc...
+	*/
 
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = array(1=>'[NO USER ENTERED]');
 
@@ -39,11 +39,11 @@
 
 
 				// delete all attributes associated with a username
-				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='$username'";
+				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
-				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='$username'";
+				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
