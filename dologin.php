@@ -9,7 +9,7 @@ $errorMessage = '';
    $operator_pass = $_REQUEST['operator_pass'];
 
    // check if the user id and password combination exist in database
-   $sql = "SELECT username FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username = '".$dbSocket->escapeSimple($operator_user)."' AND
+   $sql = "SELECT username FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username = '".$dbSocket->escapeSimple($operator_user)."' 
 AND password = '".$dbSocket->escapeSimple($operator_pass)."'";
 
    $res = $dbSocket->query($sql);
