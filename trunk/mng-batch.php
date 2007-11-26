@@ -57,68 +57,66 @@ function createPassword($length) {
 			// append the prefix to the username
 			$username  = $username_prefix . $username;
 
-//			echo "username: $username <br/>";
-//			echo "password: $password <br/>";
-
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-
-		if ($res->numRows() > 0) {
-			$actionStatus = "failure";
-			$actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
-			$actionMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
-		} else {
-		
-			// insert username/password
-			$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', 'User-Password', '==', '$password')";
+			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			// if a group was defined to add the user to in the form let's add it to the database
-			if (isset($group)) {
-				$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('$username', '$group', $group_priority) ";
-	                        $res = $dbSocket->query($sql);
+			if ($res->numRows() > 0) {
+				$actionStatus = "failure";
+				$actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
+				$actionMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
+			} else {
+				// insert username/password
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."',  'User-Password', '==', '".$dbSocket->escapeSimple($password)."')";
+				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-			}
 
-				 foreach( $_POST as $attribute=>$value ) { 
+				// if a group was defined to add the user to in the form let's add it to the database
+				if (isset($group)) {
+					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".$dbSocket->escapeSimple($username)."', 
+'".$dbSocket->escapeSimple($group)."', ".$dbSocket->escapeSimple($group_priority).") ";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
 
-                                        // switch case to rise the flag for several $attribute which we do not
-                                        // wish to process (ie: do any sql related stuff in the db)
-                                        switch ($attribute) {
+				foreach( $_POST as $attribute=>$value ) { 
 
-                                                case "username_prefix":
-                                                case "length_pass":
-                                                case "length_user":
-                                                case "number":
-                                                case "submit":
-                                                case "group":
-                                                case "group_priority":
-                                                        $skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
-                                                                                // to skip the loop (continue) without entering it as
-                                                                                // we do not want to process this $attribute in the following
-                                                                                // code block
-                                                        break;
+					// switch case to rise the flag for several $attribute which we do not
+					// wish to process (ie: do any sql related stuff in the db)
+					switch ($attribute) {
 
-                                        }
+						case "username_prefix":
+						case "length_pass":
+						case "length_user":
+						case "number":
+						case "submit":
+						case "group":
+						case "group_priority":
+							$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
+													// to skip the loop (continue) without entering it as
+													// we do not want to process this $attribute in the following
+													// code block
+							break;
 
-                                        if ($skipLoopFlag == 1) {
-                                                $skipLoopFlag = 0;              // resetting the loop flag
-                                                continue;
-                                        }
+					}
+
+					if ($skipLoopFlag == 1) {
+							$skipLoopFlag = 0;              // resetting the loop flag
+							continue;
+					}
 
 
 					if (!($value[0]))
 						continue;
 						
-						$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
-																		// or radcheck table (using include/management/attributes.php function)
+					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
+																	// or radcheck table (using include/management/attributes.php function)
 
-				        $counter = 0;
+					$counter = 0;
 
-					$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-		                        $res = $dbSocket->query($sql);
+					$sql = "INSERT INTO $useTable values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
+'".$dbSocket->escapeSimple($value[1])."', '".$dbSocket->escapeSimple($value[0])."')  ";
+					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 					$counter++;
@@ -133,7 +131,7 @@ function createPassword($length) {
 				Added to database new user: <b> $actionMsgGoodUsernames </b><br/>";
 
 				$logAction = "Successfully added to database new users [$actionMsgGoodUsernames] on page: ";
-		} 
+			}
 		
 		}
 
@@ -242,24 +240,26 @@ function createPassword($length) {
 						<input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=104 />
 
 <select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
+
 <?php
 
-        include 'library/opendb.php';
 
-        // Grabing the group lists from usergroup table
-        
+	include 'library/opendb.php';
+
+	// Grabing the group lists from usergroup table
+
 	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
-        $res = $dbSocket->query($sql);
+	$res = $dbSocket->query($sql);
 
-        while($row = $res->fetchRow()) {
-                echo "  
-                        <option value='$row[0]'> $row[0]
-                        ";
+	while($row = $res->fetchRow()) {
+		echo "  
+				<option value='$row[0]'> $row[0]
+				";
+	}
 
-        }
-
-        include 'library/closedb.php';
+	include 'library/closedb.php';
 ?>
+
 </select>
 
 

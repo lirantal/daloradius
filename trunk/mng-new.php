@@ -31,7 +31,7 @@
 		include 'library/opendb.php';
         	include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
 
-		$sql = "SELECT * FROM radcheck WHERE UserName='$username'";
+		$sql = "SELECT * FROM radcheck WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -53,19 +53,24 @@
 				}
 				
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '$username', '$passwordtype', '==', $dbPassword)";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."', 
+'".$dbSocket->escapeSimple($passwordtype)."', '==', ".$dbSocket->escapeSimple($dbPassword).")";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
 				// insert usergroup mapping
 				if (isset($group)) {
-					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('$username', '$group',0) ";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
+					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".$dbSocket->escapeSimple($username)."', 
+'".$dbSocket->escapeSimple($group)."',0) ";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 				}
 	
 				// insert user information table
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '$username', '$firstname', '$lastname', '$email', '$department', '$company', '$workphone', '$homephone', '$mobilephone', '$notes')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '".$dbSocket->escapeSimple($username)."', 
+'".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', 
+'".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."', 
+'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 		
@@ -106,13 +111,14 @@
 					if (!($value[0]))
 						continue;
 						
-						$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
+					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
 													// or radcheck table (using include/management/attributes.php function)
 
-				        $counter = 0;
+					$counter = 0;
 
-					$sql = "INSERT INTO $useTable values (0, '$username', '$attribute', '" . $value[1] ."', '$value[0]')  ";
-                		        $res = $dbSocket->query($sql);
+					$sql = "INSERT INTO $useTable values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
+'".$dbSocket->escapeSimple($value[1])."', '".$dbSocket->escapeSimple($value[0])."')  ";
+					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 					$counter++;
