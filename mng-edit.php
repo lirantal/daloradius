@@ -17,9 +17,9 @@
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
 
-                $oldgroups = $_REQUEST['oldgroups'];
-                $groups = $_REQUEST['groups'];
-                $groups_priority = $_REQUEST['groups_priority'];
+                isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
+                isset ($_REQUEST['groups']) ? $groups = $_REQUEST['groups'] : $groups = "";
+                isset ($_REQUEST['groups_priority']) ? $groups_priority = $_REQUEST['groups_priority'] : $groups_priority = "";
 
                 $firstname = $_REQUEST['firstname'];
                 $lastname = $_REQUEST['lastname'];
@@ -33,18 +33,34 @@
 
 		if (trim($username) != "") {
 
-			// update user information table
-		   $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".$dbSocket->escapeSimple($firstname)."', 
+			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
+			$res = $dbSocket->query($sql);
+                        $logDebugSQL .= $sql . "\n";
+
+			// if there were no records for this user present in the userinfo table
+			if ($res->numRows() == 0) {
+				// we add these records to the userinfo table
+                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '".$dbSocket->escapeSimple($username)."',
+'".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."',
+'".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."',
+'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
+                                $res = $dbSocket->query($sql);
+                                $logDebugSQL .= $sql . "\n";
+			} else {
+
+				// update user information table
+			   $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".$dbSocket->escapeSimple($firstname)."', 
 lastname='".$dbSocket->escapeSimple($lastname)."', email='".$dbSocket->escapeSimple($email)."', 
 department='".$dbSocket->escapeSimple($department)."', company='".$dbSocket->escapeSimple($company)."', 
 workphone='".$dbSocket->escapeSimple($workphone)."', homephone='".$dbSocket->escapeSimple($homephone)."', 
 mobilephone='".$dbSocket->escapeSimple($mobilephone)."', notes='".$dbSocket->escapeSimple($notes)."' 
 WHERE username='".$dbSocket->escapeSimple($username)."'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+			}
 			
 			 // insert usergroup mapping
-			 if (isset($groups)) {
+			 if ($groups) {
 
 				$grpcnt = 0;			// group counter
 				foreach ($groups as $group) {
@@ -56,7 +72,8 @@ WHERE username='".$dbSocket->escapeSimple($username)."'";
 					else
 						$group_priority = $groups_priority[$grpcnt];
 
-					$sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='".$dbSocket->escapeSimple($username)."', 
+					$sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET
+UserName='".$dbSocket->escapeSimple($username)."', 
 GroupName='".$dbSocket->escapeSimple($group)."', priority=".$dbSocket->escapeSimple($group_priority)." 
 WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldgroup)."';";
 					$res = $dbSocket->query($sql);
@@ -180,7 +197,8 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 				} else {
 				
 					/* we update the $value[0] entry which is the attribute's value */
-					$sql = "UPDATE $useTable SET Value=".$dbSocket->escapeSimple($value[0])." 
+					$sql = "UPDATE $useTable SET 
+Value=".$dbSocket->escapeSimple($value[0])."
 WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
