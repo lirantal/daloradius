@@ -190,7 +190,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
 
 					$sql = "INSERT INTO $useTable values(0,'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($value[1])."', ".$dbSocket->escapeSimple($value[0]).")";
+'".$dbSocket->escapeSimple($value[1])."', $value[0] ";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
@@ -198,8 +198,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 				
 					/* we update the $value[0] entry which is the attribute's value */
 					$sql = "UPDATE $useTable SET 
-Value=".$dbSocket->escapeSimple($value[0])."
-WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+Value=$value[0] WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
