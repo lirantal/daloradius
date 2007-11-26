@@ -26,7 +26,9 @@
 		$hotspot_geo = substr($hotspot_geo, 1);
 		$hotspot_geo = substr($hotspot_geo, 0, strlen($hotspot_geo)-1);
 
-		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." (id, name, mac, geocode) values (0, '$hotspot_name', '$hotspot_mac', '$hotspot_geo');";
+		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." (id, name, mac, geocode) values (0,
+ '".$dbSocket->escapeSimple($hotspot_name)."', '".$dbSocket->escapeSimple($hotspot_mac)."',
+'".$dbSocket->escapeSimple($hotspot_geo)."');";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -38,7 +40,8 @@
 	if ($type == "del") {
 		(isset($_REQUEST['hotspotname'])) ? $hotspot_name = $_REQUEST['hotspotname'] : $hotspot_name = " ";
 			
-		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='$hotspot_name'";
+		$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']."
+WHERE name='".$dbSocket->escapeSimple($hotspot_name)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
