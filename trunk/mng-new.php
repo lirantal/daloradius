@@ -38,6 +38,10 @@
 		if ($res->numRows() == 0) {
 			if (trim($username) != "" and trim($password) != "") {
 
+				// we need to perform the secure method escapeSimple on $dbPassword early because as seen below
+				// we manipulate the string and manually add to it the '' which screw up the query if added in $sql
+				$password = $dbSocket->escapeSimple($password);
+
 				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
 					case "cleartext":
 						$dbPassword = "'$password'";
@@ -54,7 +58,7 @@
 				
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($passwordtype)."', '==', ".$dbSocket->escapeSimple($dbPassword).")";
+'".$dbSocket->escapeSimple($passwordtype)."', '==', $dbPassword)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
@@ -65,14 +69,24 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				}
-	
-				// insert user information table
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '".$dbSocket->escapeSimple($username)."', 
+
+	                        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
+	                        $res = $dbSocket->query($sql);
+	                        $logDebugSQL .= $sql . "\n";
+
+	                        // if there were no records for this user present in the userinfo table
+	                        if ($res->numRows() == 0) {
+					// insert user information table
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, 
+'".$dbSocket->escapeSimple($username)."', 
 '".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', 
 '".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."', 
 '".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				} //FIXME:
+				  //if the user already exist in userinfo then we should somehow alert the user
+				  //that this has happened and the administrator/operator will take care of it
 		
 				 foreach( $_POST as $attribute=>$value ) { 
 
