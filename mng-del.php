@@ -113,7 +113,7 @@
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 						<b><?php echo $l['FormField']['all']['Username'] ?></b>
 </td><td>
-						<input value="<?php echo $username ?>" name="usernames[]" tabindex=100 /><br/>
+						<input value="<?php echo $username ?>" name="username[]" tabindex=100 /><br/>
 						</font>
 </td></tr>
 </table>
