@@ -126,6 +126,12 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 
 				$counter = 0;
 
+				// because the $value[0] which is the attribute value is later manually appended the '' so that
+				// password policies are enforced by the php server we need to perform the secure method escapeSimple()
+				// at an early point in the script.
+				$value[0] = $dbSocket->escapeSimple($value[0]);
+
+
 				// we set the $password variable to the attribute value only if that attribute is actually a password attribute indeed 
 				// and this has to be done because we're looping on all attributes that were submitted with the form
 				switch($attribute) {
@@ -190,7 +196,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
 
 					$sql = "INSERT INTO $useTable values(0,'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($value[1])."', $value[0] ";
+'".$dbSocket->escapeSimple($value[1])."', $value[0])";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
