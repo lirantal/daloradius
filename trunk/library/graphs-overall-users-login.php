@@ -11,8 +11,8 @@
 *******************************************************************/
 
 
-$type = $_REQUEST['type'];
-$username = $_REQUEST['user'];
+$type = $dbSocket->escapeSimple($_REQUEST['type']);
+$username = $dbSocket->escapeSimple($_REQUEST['user']);
 
 
 if ($type == "daily") {
