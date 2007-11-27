@@ -11,8 +11,8 @@
 *******************************************************************/
 
 
-$type = $dbSocket->escapeSimple($_REQUEST['type']);
-$username = $dbSocket->escapeSimple($_REQUEST['user']);
+$type = $_REQUEST['type'];
+$username = $_REQUEST['user'];
 
 
 if ($type == "daily") {
@@ -29,24 +29,27 @@ function daily($username) {
 
 	
 	include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
+	$username = $dbSocket->escapeSimple($username);
 
-        $chart = new VerticalChart(920,500);
+	header("Content-type: image/png");
 
-        $sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by day;";
+	$chart = new VerticalChart(920,500);
+
+	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where 
+	username='$username' group by day;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $downloads = floor($row[1]/1024/1024);
-                $chart->addPoint(new Point("$row[2]", "$downloads"));
-        }
+		$downloads = floor($row[1]/1024/1024);
+		$chart->addPoint(new Point("$row[2]", "$downloads"));
+	}
 
-        $chart->setTitle("Total Downloads based on Daily distribution");
-        $chart->render();
+	$chart->setTitle("Total Downloads based on Daily distribution");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 
 
 }
@@ -60,24 +63,26 @@ function monthly($username) {
 
 	
 	include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
-
-        $chart = new VerticalChart(920,500);
+	$username = $dbSocket->escapeSimple($username);
 	
-        $sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by month;";
-        $res = $dbSocket->query($sql);
+	header("Content-type: image/png");
+
+	$chart = new VerticalChart(920,500);
+
+	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by month;";
+	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $downloads = floor($row[1]/1024/1024);
-                $chart->addPoint(new Point("$row[2]", "$downloads"));
-        }
+		$downloads = floor($row[1]/1024/1024);
+		$chart->addPoint(new Point("$row[2]", "$downloads"));
+	}
 
-        $chart->setTitle("Total Downloads based on Monthly distribution");
-        $chart->render();
+	$chart->setTitle("Total Downloads based on Monthly distribution");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 }
 
 
@@ -90,26 +95,28 @@ function monthly($username) {
 function yearly($username) {
 
 
-        
-        include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'opendb.php';
+	include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
+	$username = $dbSocket->escapeSimple($username);
+	
+	header("Content-type: image/png");
 
-        $chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(920,500);
 
-        $sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by year;";
-        $res = $dbSocket->query($sql);
+	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." 
+	where username='$username' group by year;";
+	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $downloads = floor($row[1]/1024/1024);
-                $chart->addPoint(new Point("$row[2]", "$downloads"));
-        }
+		$downloads = floor($row[1]/1024/1024);
+		$chart->addPoint(new Point("$row[2]", "$downloads"));
+	}
 
-        $chart->setTitle("Total Downloads based on Yearly distribution");
-        $chart->render();
+	$chart->setTitle("Total Downloads based on Yearly distribution");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 
 }
 
