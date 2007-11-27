@@ -9,7 +9,7 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 
-	$username = $dbSocket->escapeSimple($_REQUEST['username']);
+	$username = $_REQUEST['username'];
 	$logDebugSQL = "";
 
 	include_once('library/config_read.php');
@@ -41,7 +41,9 @@
 	include 'include/common/calcs.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-
+	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
+	$username = $dbSocket->escapeSimple($username);	
+	
 	//checking if the username exist in the db
 	$sql = "select * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName like '$username'";
 	$res = $dbSocket->query($sql);
