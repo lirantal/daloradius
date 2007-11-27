@@ -47,6 +47,9 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
+				$sql = "delete from ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." where Username='".$dbSocket->escapeSimple($username)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			
 				$actionStatus = "success";
 				$actionMsg = "Deleted user(s): <b> $allUsernames";
