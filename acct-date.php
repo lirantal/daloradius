@@ -10,9 +10,9 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 
 	
-	$username = $dbSocket->escapeSimple($_REQUEST['username']);
-	$startdate = $dbSocket->escapeSimple($_REQUEST['startdate']);
-	$enddate = $dbSocket->escapeSimple($_REQUEST['enddate']);
+	$username = $_REQUEST['username'];
+	$startdate = $_REQUEST['startdate'];
+	$enddate = $_REQUEST['enddate'];
 
 
 
@@ -47,6 +47,11 @@
 	include 'include/common/calcs.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
+	$username = $dbSocket->escapeSimple($username);
+	$startdate = $dbSocket->escapeSimple($startdate);
+	$enddate = $dbSocket->escapeSimple($enddate);
+	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
     $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE AcctStartTime>'$startdate' and AcctStartTime<'$enddate' and UserName like '$username';";
 	$res = $dbSocket->query($sql);

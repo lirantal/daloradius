@@ -10,9 +10,9 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
-	isset($_REQUEST['username']) ? $username = $dbSocket->escapeSimple($_REQUEST['username']) : $username = "";
-	isset($_REQUEST['enddate']) ? $enddate = $dbSocket->escapeSimple($_REQUEST['enddate']) : $enddate = "";
-	isset($_REQUEST['startdate']) ? $startdate = $dbSocket->escapeSimple($_REQUEST['startdate']) : $startdate = "";
+	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
+	isset($_REQUEST['enddate']) ? $enddate = $_REQUEST['enddate'] : $enddate = "";
+	isset($_REQUEST['startdate']) ? $startdate = $_REQUEST['startdate'] : $startdate = "";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -45,6 +45,11 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	$currdate = date("j M Y");
 
+	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
+	$username = $dbSocket->escapeSimple($username);
+	$enddate = $dbSocket->escapeSimple($enddate);
+	$startdate = $dbSocket->escapeSimple($startdate);
+	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 
 	$sql = "select distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName) as username, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute as attribute, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value maxtimeexpiration, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as usedtime from ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Max-All-Session' or ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Expiration') group by ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName;";
