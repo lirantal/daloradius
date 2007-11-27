@@ -11,9 +11,9 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
-	
-        $username = $dbSocket->escapeSimple($_REQUEST['username']);
-        $type = $dbSocket->escapeSimple($_REQUEST['type']);
+
+	$username = $_REQUEST['username'];
+	$type = $_REQUEST['type'];
 
 
 
