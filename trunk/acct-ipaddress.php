@@ -10,7 +10,7 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 
 
-	$ipaddress = $_REQUEST['ipaddress'];
+	$ipaddress = $dbSocket->escapeSimple($_REQUEST['ipaddress']);
 
 
 

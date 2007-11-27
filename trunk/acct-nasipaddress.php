@@ -9,7 +9,7 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 	
-	$nasipaddress = $_REQUEST['nasipaddress'];
+	$nasipaddress = $dbSocket->escapeSimple($_REQUEST['nasipaddress']);
 
 
 
