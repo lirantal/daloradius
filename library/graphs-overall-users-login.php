@@ -11,8 +11,8 @@
 *******************************************************************/
 
 
-$type = $dbSocket->escapeSimple($_REQUEST['type']);
-$username = $dbSocket->escapeSimple($_REQUEST['user']);
+$type = $_REQUEST['type'];
+$username = $_REQUEST['user'];
 
 
 if ($type == "daily") {
@@ -29,23 +29,25 @@ function daily($username) {
 
 	
 	include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
+	$username = $dbSocket->escapeSimple($username);
+	
+	header("Content-type: image/png");
 
-        $chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(920,500);
 
-        $sql = "SELECT UserName, count(AcctStartTime), DAY(AcctStartTime) AS Day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Day;";
+	$sql = "SELECT UserName, count(AcctStartTime), DAY(AcctStartTime) AS Day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Day;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $chart->addPoint(new Point("$row[2]", "$row[1]"));
-        }
+		$chart->addPoint(new Point("$row[2]", "$row[1]"));
+	}
 
-        $chart->setTitle("Total Users");
-        $chart->render();
+	$chart->setTitle("Total Users");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 
 
 }
@@ -59,24 +61,26 @@ function monthly($username) {
 
 	
 	include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
-
-        $chart = new VerticalChart(920,500);
+	$username = $dbSocket->escapeSimple($username);
 	
-        $sql = "SELECT UserName, count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Month;";
+	header("Content-type: image/png");
+
+	$chart = new VerticalChart(920,500);
+
+	$sql = "SELECT UserName, count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Month;";
 	$res = $dbSocket->query($sql);
 
 
 	while($row = $res->fetchRow()) {
-                $chart->addPoint(new Point("$row[2]", "$row[1]"));
-        }
+		$chart->addPoint(new Point("$row[2]", "$row[1]"));
+	}
 
-        $chart->setTitle("Total Users");
-        $chart->render();
+	$chart->setTitle("Total Users");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 }
 
 
@@ -89,25 +93,26 @@ function monthly($username) {
 function yearly($username) {
 
 
-        
-        include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'opendb.php';
+	include 'libchart/libchart.php';
+	
+	$username = $dbSocket->escapeSimple($username);
 
-        header("Content-type: image/png");
+	header("Content-type: image/png");
 
-        $chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(920,500);
 
-        $sql = "SELECT UserName, count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Year;";
+	$sql = "SELECT UserName, count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Year;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $chart->addPoint(new Point("$row[2]", "$row[1]"));
-        }
+		$chart->addPoint(new Point("$row[2]", "$row[1]"));
+	}
 
-        $chart->setTitle("Total Users");
-        $chart->render();
+	$chart->setTitle("Total Users");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 
 }
 

@@ -11,7 +11,7 @@
 *******************************************************************/
 
 
-$type = $dbSocket->escapeSimple($_REQUEST['type']);
+$type = $_REQUEST['type'];
 
 if ($type == "daily") {
 	daily();
@@ -29,22 +29,22 @@ function daily() {
 	include 'opendb.php';
     include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
+	header("Content-type: image/png");
 
-        $chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(920,500);
 
-        $sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by day;";
+	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by day;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $downloads = floor($row[0]/1024/1024);
-                $chart->addPoint(new Point("$row[1]", "$downloads"));
-        }
+		$downloads = floor($row[0]/1024/1024);
+		$chart->addPoint(new Point("$row[1]", "$downloads"));
+	}
 
-        $chart->setTitle("Alltime Login records based on Daily distribution");
-        $chart->render();
+	$chart->setTitle("Alltime Login records based on Daily distribution");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 
 
 }
@@ -58,24 +58,24 @@ function monthly() {
 
 	
 	include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
+	header("Content-type: image/png");
 
-        $chart = new VerticalChart(920,500);
-	
-        $sql = "SELECT count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Month;";
+	$chart = new VerticalChart(920,500);
+
+	$sql = "SELECT count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Month;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $chart->addPoint(new Point("$row[1]", "$row[0]"));
-        }
+		$chart->addPoint(new Point("$row[1]", "$row[0]"));
+	}
 
 
-        $chart->setTitle("Alltime Login records based on Monthly distribution");
-        $chart->render();
+	$chart->setTitle("Alltime Login records based on Monthly distribution");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 }
 
 
@@ -88,26 +88,25 @@ function monthly() {
 function yearly() {
 
 
-        
-        include 'opendb.php';
-        include 'libchart/libchart.php';
+	include 'opendb.php';
+	include 'libchart/libchart.php';
 
-        header("Content-type: image/png");
+	header("Content-type: image/png");
 
-        $chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(920,500);
 
-        $sql = "SELECT count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Year;";
+	$sql = "SELECT count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Year;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-                $chart->addPoint(new Point("$row[1]", "$row[0]"));
-        }
+		$chart->addPoint(new Point("$row[1]", "$row[0]"));
+	}
 
 
-        $chart->setTitle("Alltime Login records based on Yearily distribution");
-        $chart->render();
+	$chart->setTitle("Alltime Login records based on Yearily distribution");
+	$chart->render();
 
-        include 'closedb.php';
+	include 'closedb.php';
 
 }
 
