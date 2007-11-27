@@ -1,3 +1,22 @@
+release 0.9-5 - 27 November 2007
+	- added improved support for sql db queries
+	- added new contact info for hotspot owners
+	- added more attributes and ordered existing
+	- added support to relate users to groups on new user, batch add user and new quick-add users pages
+	  as well as editing these groups entries in edit user page.
+	- added new blue css layout
+	- added partial tabindexs support to forms (Antonis Faragitakis)
+	- added description dialogs for pages upon clicking on page titles
+	- fixed double-insert records of userinfo data if user exists
+	- fixed deleting of userinfo data for a record that is being deleted.
+	- fixed saving an existing nas entry in different name (not having to delete it)
+	- fixed several typos and variable declerations through-out the pages
+	- fixed duplicate groups entries in usergroup table (paparent)
+	- language file and variables are better sorted out (finally)
+	- alot of php/html code clean up and code identation 
+
+
+
 release 0.9-4 - October 22 2007
 	- fixed bug in include/management/attributes.php and library/javascript/pages_common.js
 	  which caused the drop-down select boxes not to update the text input.
