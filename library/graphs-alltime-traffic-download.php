@@ -11,7 +11,7 @@
 *******************************************************************/
 
 
-$type = $_REQUEST['type'];
+$type = $dbSocket->escapeSimple($_REQUEST['type']);
 
 if ($type == "daily") {
 	daily();

@@ -12,8 +12,8 @@
 
 
 	
-        $username = $_REQUEST['username'];
-        $type = $_REQUEST['type'];
+        $username = $dbSocket->escapeSimple($_REQUEST['username']);
+        $type = $dbSocket->escapeSimple($_REQUEST['type']);
 
 
 

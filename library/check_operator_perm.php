@@ -1,7 +1,8 @@
 <?php
 
     include 'library/opendb.php';
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE UserName='$operator'";
+    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE 
+UserName='".$dbSocket->escapeSimple($operator)."'";
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 

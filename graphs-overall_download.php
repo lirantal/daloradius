@@ -11,8 +11,8 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 	
-        $username = $_REQUEST['username'];
-        $type = $_REQUEST['type'];
+        $username = $dbSocket->escapeSimple($_REQUEST['username']);
+        $type = $dbSocket->escapeSimple($_REQUEST['type']);
 
 
 	include_once('library/config_read.php');
