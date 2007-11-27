@@ -9,7 +9,7 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 
-	$username = $_REQUEST['username'];
+	$username = $dbSocket->escapeSimple($_REQUEST['username']);
 	$logDebugSQL = "";
 
 	include_once('library/config_read.php');

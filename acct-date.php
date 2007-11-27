@@ -10,9 +10,9 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
 
 	
-	$username = $_REQUEST['username'];
-	$startdate = $_REQUEST['startdate'];
-	$enddate = $_REQUEST['enddate'];
+	$username = $dbSocket->escapeSimple($_REQUEST['username']);
+	$startdate = $dbSocket->escapeSimple($_REQUEST['startdate']);
+	$enddate = $dbSocket->escapeSimple($_REQUEST['enddate']);
 
 
 
