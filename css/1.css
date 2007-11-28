@@ -441,6 +441,8 @@ label {
 	margin:5px 0;
 
 }
+
+
 input {
 	width:300px;
 	padding:4px;
@@ -450,11 +452,11 @@ input {
 	color:#000000;
 }
 
-input.table {
-	height:22px;
-	width:70px;
-	padding:4px;
-	border:1;
+input.button {
+	height:19px;
+	width:auto;
+	background-color: #ffffff;
+	padding:0px;
 	border-bottom:1px dotted #ccc;
 	font:90% Verdana;
 	color:#000000;
