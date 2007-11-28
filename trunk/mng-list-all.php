@@ -29,47 +29,6 @@
 <![endif]-->
 </head>
 
-<SCRIPT LANGUAGE="JavaScript">
-<!-- 	
-// script
--->
-
-var form='listallusers' //Give the form name here
-
-function SetChecked(val,chkName) {
-	dml=document.forms[form];
-	len = dml.elements.length;
-	var i=0;
-	for( i=0 ; i<len ; i++) {
-		if (dml.elements[i].name==chkName) {
-		dml.elements[i].checked=val;
-		}
-	}
-}
-
-function countChkBoxes() {
-	var count = 0;
-	var form = document.getElementsByTagName('input');
-	for (var i=0; i < form.length; ++i) {
-		var e = form[i];
-		if (e.type == 'checkbox'
-		&& e.checked)
-		++count;
-	}
-
-	if (confirm("You are about to remove " + count + " users\nDo you want to continue?"))  {
-		document.listallusers.submit();
-		return true;
-	}
-
-	return false;
-}
-
-
-//  End -->
-</script>
-
-
 <?php
 
     include ("menu-mng-main.php");
@@ -121,11 +80,11 @@ function countChkBoxes() {
 							<th colspan='10' align='left'> 
 
 				Select:
-				<a class=\"table\" href=\"javascript:SetChecked(1,'username[]')\">All</a> 
+				<a class=\"table\" href=\"javascript:SetChecked(1,'username[]','listallusers')\">All</a> 
 				
-				<a class=\"table\" href=\"javascript:SetChecked(0,'username[]')\">None</a>
+				<a class=\"table\" href=\"javascript:SetChecked(0,'username[]','listallusers')\">None</a>
 			<br/>
-				<input class='button' type='button' value='Delete' onClick='javascript:countChkBoxes()' />
+				<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusers\")' />
 				<br/><br/>
 
 
