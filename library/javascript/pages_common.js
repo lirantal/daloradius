@@ -86,3 +86,34 @@ function small_window(user,pass,time) {
   newWindow.document.write("<br/>");
 }
 
+
+function SetChecked(val,chkName,formname) {
+        dml=document.forms[formname];
+        len = dml.elements.length;
+        var i=0;
+        for( i=0 ; i<len ; i++) {
+                if (dml.elements[i].name==chkName) {
+                dml.elements[i].checked=val;
+                }
+        }
+}
+
+function removeCheckbox(formname) {
+        var count = 0;
+        var form = document.getElementsByTagName('input');
+        for (var i=0; i < form.length; ++i) {
+                var e = form[i];
+                if (e.type == 'checkbox'
+                && e.checked)
+                ++count;
+        }
+
+        if (confirm("You are about to remove " + count + " users\nDo you want to continue?"))  {
+		document.forms[formname].submit();
+                return true;
+        }
+
+        return false;
+}
+
+
