@@ -4,6 +4,7 @@
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
+	include('include/management/pages_common.php');
 
 	$username_prefix = "";
 	$number = "";
@@ -13,25 +14,6 @@
 	$group_priority = "";
 
 	$logDebugSQL = "";
-
-function createPassword($length) {
-
-    $chars = "abcdefghijkmnopqrstuvwxyz023456789";
-    srand((double)microtime()*1000000);
-    $i = 0;
-    $pass = '' ;
-
-    while ($i <= ($length - 1)) {
-        $num = rand() % 33;
-        $tmp = substr($chars, $num, 1);
-        $pass = $pass . $tmp;
-        $i++;
-    }
-
-    return $pass;
-
-}
-
 
 	if (isset($_POST['submit'])) {
 		$username_prefix = $_REQUEST['username_prefix'];
