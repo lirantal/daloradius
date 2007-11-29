@@ -52,7 +52,7 @@
 				$logDebugSQL .= $sql . "\n";
 			
 				$actionStatus = "success";
-				$actionMsg = "Deleted user(s): <b> $allUsernames";
+				$actionMsg = "Deleted user(s): <b> $allUsernames </b>";
 				$logAction = "Successfully deleted user(s) [$allUsernames] on page: ";
 	
 				include 'library/closedb.php';
