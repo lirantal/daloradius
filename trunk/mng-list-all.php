@@ -146,8 +146,6 @@
 		";
 
 	echo "</table>";
-	echo "<br/><br/> <center>";
-	echo "</center>";
 	echo "</form>";
 
 	include 'library/closedb.php';
