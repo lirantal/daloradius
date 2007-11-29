@@ -7,7 +7,8 @@
         isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = array(1=>'[NO HOTSPOT ENTERED]');
 	$logDebugSQL = "";
 
-	if (isset($_POST['submit'])) {
+//	if (isset($_POST['submit'])) {
+        if (isset($_REQUEST['name'])) {
 
                 if (!is_array($name))
                         $name = array($name, NULL);
@@ -28,7 +29,7 @@
 				$logDebugSQL .= $sql . "\n";
 				
 				$actionStatus = "success";
-				$actionMsg = "Deleted hotspot: <b> $name </b>";
+				$actionMsg = "Deleted hotspot(s): <b> $allHotspots </b>";
 				$logAction = "Successfully deleted hotpot(s) [$allHotspots] on page: ";
 	
 				include 'library/closedb.php';
