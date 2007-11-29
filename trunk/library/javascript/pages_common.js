@@ -108,7 +108,7 @@ function removeCheckbox(formname) {
                 ++count;
         }
 
-        if (confirm("You are about to remove " + count + " users\nDo you want to continue?"))  {
+        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
 		document.forms[formname].submit();
                 return true;
         }
