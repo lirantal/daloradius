@@ -577,7 +577,7 @@ tbody td+td+td+td a {
 }
 
 tbody td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tbody td+td+td+td a:visited {
-	color: #FFF
+	color: #000
 }
 
 tbody td a[href="http://www.rodcast.com.br/"] {
