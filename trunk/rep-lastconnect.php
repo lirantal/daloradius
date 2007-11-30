@@ -28,10 +28,12 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replastconnect.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replastconnect.php']; ?>
+		<h144>+</h144></a></h2>
 
-                <div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replastconnect'] ?>		
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['replastconnect'] ?>
+			<br/>
 		</div>
 		<br/>
 
@@ -81,7 +83,6 @@
 
         }
         // creating the table:
-        echo "<br/>";
         echo "<table border='2' class='table1'>\n";
         echo "
                         <thead>

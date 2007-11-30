@@ -33,12 +33,11 @@
 		<h144>+</h144></a></h2></a></h2>
 				
 
-                <div id="helpPage" style="display:none;visibility:visible" >
-				<?php echo $l['helpPage']['reptopusers']." ".$orderBy ?> <br/>
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['reptopusers']." ".$orderBy ?>
+			<br/>
 		</div>
-
-
-
+		<br/>
 
 <?php
 
