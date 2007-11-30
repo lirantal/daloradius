@@ -518,12 +518,12 @@ table,caption {
 }
 
 caption,th,td {
+	border-top: 0;
 	border-left: 0;
-	padding: 7px
+	padding: 5px
 }
 
 caption,thead th,tfoot th,tfoot td {
-//	background-color: #E63C1E;
 	background-color: #003366;
 	color: #FFF;
 	font-weight: bold;
@@ -531,10 +531,8 @@ caption,thead th,tfoot th,tfoot td {
 }
 
 thead th {
-//	background-color: #C30;
 	background-color: #003366;
 	color: #FFFFFF;
-//	text-align: center
 }
 
 thead th.info {
@@ -573,14 +571,12 @@ tbody tr:hover a {
 }
 
 tbody td+td+td+td a {
-//	color: #C30;
 	color: #003366;
 	font-weight: bold;
 	border-bottom: 0
 }
 
 tbody td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tbody td+td+td+td a:visited {
-//	color: #E63C1E
 	color: #FFF
 }
 
@@ -614,3 +610,5 @@ tbody a.novisit:visited:after {
 h100 {
 	color: red;
 }
+
+
