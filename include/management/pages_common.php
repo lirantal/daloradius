@@ -29,4 +29,48 @@ function createPassword($length) {
 }
 
 
+
+
+
+/* convert byte to to size */
+/* function contributed by ugenk (Evgeniy Kozhuhovskiy <ugenk@xdsl.by>) */
+
+function toxbyte($size)
+{
+        // Gigabytes
+        if ( $size > 1073741824 )
+        {
+                $ret = $size / 1073741824;
+                $ret = round($ret,2)." Gb";
+                return $ret;
+        }
+
+        // Megabytes
+        if ( $size > 1048576 )
+        {
+                $ret = $size / 1048576;
+                $ret = round($ret,2)." Mb";
+                return $ret;
+        }
+
+        // Kilobytes
+        if ($size > 1024 )
+        {
+                $ret = $size / 1024;
+                $ret = round($ret,2)." Kb";
+                return $ret;
+        }
+
+        // Bytes
+        if ($size <= 1024 )
+        {
+                $ret = $size." B";
+                return $ret;
+        }
+
+}
+
+
+
+
 ?>
