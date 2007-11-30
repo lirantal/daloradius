@@ -17,10 +17,12 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['repmain.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['repmain.php']; ?>
+		<h144>+</h144></a></h2>
 
-                <div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['repmain'] ?>		
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['repmain'] ?>	
+			<br/>
 		</div>				
 
 
