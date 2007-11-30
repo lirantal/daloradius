@@ -63,7 +63,7 @@
 				$logDebugSQL .= $sql . "\n";
 	
 				// insert usergroup mapping
-				if (isset($group)) {
+				if (isset($group) && (trim($group) != "")) {
 					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".$dbSocket->escapeSimple($username)."', 
 '".$dbSocket->escapeSimple($group)."',0) ";
 				$res = $dbSocket->query($sql);
