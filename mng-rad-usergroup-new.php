@@ -83,12 +83,15 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupnew.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupnew.php'] ?>
+				<h144>+</h144></a></h2>
 
 
-                                <div id="helpPage" style="display:none;visibility:visible" >				
+				<div id="helpPage" style="display:none;visibility:visible" >				
 					<?php echo $l['helpPage']['mngradusergroupnew'] ?>
-				</div>	
+					<br/>
+				</div>
+				<br/>
 				
                                 <form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
