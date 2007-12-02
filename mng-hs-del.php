@@ -4,10 +4,9 @@
 
 	include('library/check_operator_perm.php');
 
-        isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = array(1=>'[NO HOTSPOT ENTERED]');
+        isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
 	$logDebugSQL = "";
 
-//	if (isset($_POST['submit'])) {
         if (isset($_REQUEST['name'])) {
 
                 if (!is_array($name))
@@ -42,20 +41,7 @@
 
 		} //foreach
 
-	} else {  //if submit
-                if (isset($_REQUEST['name'])) {
-			if (is_array($_REQUEST['name'])) {
-	                        $singleHotspot = $_REQUEST['name'];
-	                        $name = $singleHotspot[0];
-			} else {
-	                        $name = $_REQUEST['name'];
-			}				
-                } else {
-                        $name = "";
-                }
-        }
-
-
+	} 
 
 
 	include_once('library/config_read.php');

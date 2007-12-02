@@ -4,13 +4,7 @@
 
 	include('library/check_operator_perm.php');
 	
-	/*
-		//obsolete
-		// $username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : '[username]';
-		// $username is an array of usernames, it looks like this: 0=>user1, 1=>user2, etc...
-	*/
-
-	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = array(1=>'[NO USER ENTERED]');
+	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
 
 	$logDebugSQL = "";
 
@@ -67,16 +61,7 @@
 		} //foreach
 
 
-	} else { //if submit
-
-		if (isset($_REQUEST['usernames'])) {
-			$singleUsername = $_REQUEST['usernames'];
-			$username = $singleUsername[0];
-		} else {
-			$username = "";
-		}
-	}
-	
+	} 
 
 
 
