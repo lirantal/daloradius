@@ -150,8 +150,31 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b><?php echo $l['FormField']['mngradusergroupedit.php']['NewGroupname'] ?></b>
 </td><td>											
-                                                <input value="<?php echo $group ?>" name="group" /> 
-                                                </font><br/>
+                                                <input value="<?php echo $group ?>" name="group" id="group" /> 
+                                                </font>
+
+
+<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
+<?php   
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+        $sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName)
+                 FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "  
+                        <option value='$row[0]'> $row[0]
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+?>
+
 </td></tr>
 </table>
 
@@ -167,12 +190,12 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
                                                 <b><?php echo $l['FormField']['all']['Priority'] ?></b>
 </td><td>
 <div id="attributesPriority" style="display:none;visibility:visible" >
-						<br/>
                                                 <input value="<?php echo $priority ?>" name="priority" />
                                                 </font>
-</div><br/>
+</div>
 </td></tr>
 </table>
+<br/>
 
 <center>
                                                 <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>

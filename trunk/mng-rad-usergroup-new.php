@@ -111,8 +111,31 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
 	                                        <b><?php echo  $l['FormField']['all']['Groupname'] ?></b>
 </td><td>											
-                                                <input value="<?php echo $group ?>" name="group" /> 
-                                                </font><br/>
+                                                <input value="<?php echo $group ?>" name="group" id="group" /> 
+                                                </font>
+
+<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
+<?php   
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+        $sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName)
+		 FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "  
+                        <option value='$row[0]'> $row[0]
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+?>
+</select>
+
 </td></tr>
 </table>
 
