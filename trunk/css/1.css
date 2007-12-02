@@ -612,3 +612,11 @@ h100 {
 }
 
 
+/* the <h144> header tag is used to display the ? char for page's helpPage information */
+h144 {
+	font-weight: bold;
+	font:35% Verdana;
+        color:#FF0000;
+}
+
+
