@@ -66,6 +66,9 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
+
+        echo "<form name='listallnas' method='post' action='mng-rad-nas-del.php'>";
+
 	echo "<table border='2' class='table1'>\n";
 	echo "
 					<thead>
@@ -75,8 +78,17 @@
 
                                                         <tr>
                                                         <th colspan='10' align='left'>
-                <br/>
-        ";
+
+                                Select:
+                                <a class=\"table\" href=\"javascript:SetChecked(1,'nashost[]','listallnas')\">All</a>
+
+                                <a class=\"table\" href=\"javascript:SetChecked(0,'nashost[]','listallnas')\">None</a>
+                        <br/>
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallnas\")' />
+                                <br/><br/>
+
+
+                ";
 
         if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
                 setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
@@ -132,7 +144,7 @@
 			</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $row[0] </td>
+                                <td> <input type='checkbox' name='nashost[]' value='$row[1]'> $row[0] </td>
 				<td> $row[1] </td>
 				<td> $row[2] </td>
 				<td> $row[3] </td>
@@ -161,6 +173,7 @@
 
 
 	echo "</table>";
+	echo "</form>";
 
 	include 'library/closedb.php';
 ?>
