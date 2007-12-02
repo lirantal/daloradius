@@ -156,11 +156,15 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnewquick.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnewquick.php'] ?>
+				<h144>+</h144></a></h2>
 
-                                <div id="helpPage" style="display:none;visibility:visible" >
+				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mngnewquick'] ?>
+					<br/>
 				</div>
+				<br/>
+				
 				<form name="newuser" action="mng-new-quick.php" method="post">
 
 <div class="tabber">
