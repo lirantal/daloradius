@@ -5,40 +5,55 @@
 
 	include('library/check_operator_perm.php');
 
-	if (isset($_REQUEST['nashost']))
-		$nashost = $_REQUEST['nashost'];
-	else {
-		$nashost = "";
-		$actionStatus = "failure";
-		$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
-	}	
+
+        isset($_REQUEST['nashost']) ? $nashost = $_REQUEST['nashost'] : $nashost = "";
 
 	$logDebugSQL = "";
 
-	if (isset($_POST['submit'])) {
-		if (trim($nashost) != "") {
-				
-			include 'library/opendb.php';
+        if (isset($_REQUEST['nashost'])) {
 
-			// delete all attributes associated with a username
-			$sql = "DELETE FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+		$allNASs = "";
 
-			$actionStatus = "success";
-			$actionMsg = "Deleted all NAS from database: <b> $nashost </b>";
-			$logAction = "Successfully deleted nas [$nashost] on page: ";
-				
-			include 'library/closedb.php';
+                /* since the foreach loop will report an error/notice of undefined variable $value because
+                   it is possible that the $nashost is not an array, but rather a simple GET request
+                   with just some value, in this case we check if it's not an array and convert it to one with
+                   a NULL 2nd element
+                */
 
-		}  else {
-			$actionStatus = "failure";
-			$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
-			$logAction = "Failed deleting empty nas on page: ";
-		}
-	}
+                if (!is_array($nashost))
+                        $nashost = array($nashost, NULL);
+
+                foreach ($nashost as $variable=>$value) {
+
+                        if (trim($variable) != "") {
+
+				include 'library/opendb.php';
+
+                                $nashost = $value;
+                                $allNASs .= $nashost . ", ";
+                                echo "nas: $nashost <br/>";
+
+
+				// delete all attributes associated with a username
+				$sql = "DELETE FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+
+				$actionStatus = "success";
+				$actionMsg = "Deleted all NASs from database: <b> $allNASs </b>";
+				$logAction = "Successfully deleted nas(s) [$allNASs] on page: ";
+					
+				include 'library/closedb.php';
 	
-	
+			}  else {
+				$actionStatus = "failure";
+				$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
+				$logAction = "Failed deleting empty nas on page: ";
+			} //if trim
+
+		} //foreach
+
+	} 
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -87,7 +102,7 @@
                                                 <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>";  }?>
                                                 <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
 </td><td>												
-                                                <input value="<?php echo $nashost ?>" name="nashost" tabindex=100 /><br/>
+                                                <input value="<?php echo $nashost ?>" name="nashost[]" tabindex=100 /><br/>
                                                 </font>
 </td></tr>
 </table>
