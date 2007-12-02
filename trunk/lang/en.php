@@ -403,7 +403,20 @@ $l['helpPage']['replogsdaloradius'] = "";
 $l['helpPage']['replogsradius'] = "";
 $l['helpPage']['replogssystem'] = "";
 $l['helpPage']['replogs'] = "";
-$l['helpPage']['repmain'] = "";
+$l['helpPage']['repmain'] = "<b>General Reports</b><br/>
+Online Users - Provides a listing of all users which are 
+found to be online through the accounting table in the database. The check which is being performed is for users
+with no ending time (AcctStopTime) set. It is important to notice that these users may also be of stale sessions
+which happens when NASs for some reason fail to send the accounting-stop packets.<br/>
+Last Connection Attempts - Provides a listing of all Access-Accept and Access-Reject (accepted and failed) logins
+for users. <br/> These are pulled from the database's postauth table which is required to be defined
+in FreeRADIUS's config file to actually log these.<br/>
+Top User - Provides a listing of the top N users for bandwidth consumption and session time used<br/><br/>
+
+<b>Sub-Category Reports</b><br/>
+
+Logs - Provides access to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
+Status - Provides information on server status and RADIUS Components status";
 $l['helpPage']['repstatradius'] = "";
 $l['helpPage']['repstatserver'] = "";
 $l['helpPage']['repstatus'] = "";
