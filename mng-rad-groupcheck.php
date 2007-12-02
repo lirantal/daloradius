@@ -23,11 +23,14 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupcheck.php'] ?></a></h2>
-				
-                                <div id="helpPage" style="display:none;visibility:visible" >				
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupcheck.php'] ?>
+				<h144>+</h144></a></h2>
+			
+				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mngradgroupcheck'] ?>
+					<br/>
 				</div>
+				<br/>
 
 <?php
 	include('include/config/logging.php');
