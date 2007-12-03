@@ -34,13 +34,14 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghslist.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghslist.php'] ?>
+				<h144>+</h144></a></h2>
 				
-                                <div id="helpPage" style="display:none;visibility:visible" >				
-
+				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mnghslist'] ?>
 					<br/>
-				</div>	
+				</div>
+				<br/>
 
 
 <?php
@@ -63,10 +64,8 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-	echo "<br/>";
-
-
-        echo "<form name='listallhotspots' method='post' action='mng-hs-del.php'>";
+    
+	echo "<form name='listallhotspots' method='post' action='mng-hs-del.php'>";
 
 	echo "<table border='2' class='table1'>\n";
 	echo "

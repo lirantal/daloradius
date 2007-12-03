@@ -356,11 +356,14 @@ AND Attribute like '%Password'";
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?>
+				<h144>+</h144></a></h2>
 
-                                <div id="helpPage" style="display:none;visibility:visible" >				
+				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mngedit'] ?>
+					<br/>
 				</div>
+				<br/>
 
 <table border='2' class='table1'>
 <thead>

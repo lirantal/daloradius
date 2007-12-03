@@ -110,11 +110,14 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
 ?>		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsedit.php'] ?></a></h2>
+				<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsedit.php'] ?>
+				<h144>+</h144></a></h2>
 				
-                                <div id="helpPage" style="display:none;visibility:visible" >				
+				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mnghsedit'] ?>
-				</div>	
+					<br/>
+				</div>
+				<br/>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
