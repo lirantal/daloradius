@@ -43,6 +43,7 @@
 
 	include 'library/opendb.php';
 	include 'include/common/calcs.php';
+	include 'include/management/pages_common.php';		
 
 $sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime,
 sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $orderBy $orderType limit $limit";
@@ -113,9 +114,9 @@ sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$
 				<td> $row[1] </td>
 				<td> $row[2] </td>
 				<td> $row[3] </td>
-				<td> ".seconds2time($row[4])." </td>
-				<td> $row[5] - ".bytes2megabytes($row[5])."Mb </td>
-				<td> $row[6] - ".bytes2megabytes($row[6])."Mb </td>
+				<td> ".seconds2time($row[4])."</td>
+				<td> ".toxbyte($row[5])."</td>
+				<td> ".toxbyte($row[6])."</td>
 				<td> $row[7] </td>
 				<td> $row[8] </td>
 		</tr>";
