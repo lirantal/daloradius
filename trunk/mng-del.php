@@ -89,12 +89,15 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><?php echo $l['Intro']['mngdel.php'] ?></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngdel.php'] ?>
+				<h144>+</h144></a></h2>
 				
-				<p>
-				<?php echo $l['captions']['mngdel'] ?>
-				<br/><br/>
-				</p>
+				<div id="helpPage" style="display:none;visibility:visible" >
+					<?php echo $l['helpPage']['mngdel'] ?>
+					<br/>
+				</div>
+				<br/>
+				
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <table border='2' class='table1'>
 <tr><td>
