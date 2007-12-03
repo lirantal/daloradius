@@ -1,4 +1,4 @@
-<?
+<?php
 
 	include_once('library/config_read.php');
 	
