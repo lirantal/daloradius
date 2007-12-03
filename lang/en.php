@@ -319,9 +319,6 @@ $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify va
 
 
 
-$l['captions']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
-
-
 $l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
 $l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
 $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
@@ -448,6 +445,7 @@ $l['helpPage']['mnglistall'] = "Listing users in database";
 $l['helpPage']['mngsearch'] = "Searching for user: ";
 $l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
 $l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
+$l['helpPage']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
 $l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
 Note that these settings will apply for all the users that you are creating.<br/>";
 $l['helpPage']['mngnewquick'] = "The following user/card is of type prepaid.<br/>
