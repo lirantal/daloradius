@@ -388,39 +388,55 @@ $l['helpPage']['configoperatorsnew'] = "You may fill below details for a new ope
 $l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
 $l['helpPage']['configoperators'] = "Operators Configuration";
 
-$l['helpPage']['graphmain'] = "";
-$l['helpPage']['graphsalltimelogins'] = "alltime record of logins based on daily distribution";
-$l['helpPage']['graphsalltimetrafficcompare'] = "";
-$l['helpPage']['graphsoveralldownload'] = "";
-$l['helpPage']['graphsoverallupload'] = "";
-$l['helpPage']['graphsoveralllogins'] = "Total Logins/Hits";
+$l['helpPage']['graphmain'] = "<b>Graphs</b><br/>
+<h200><b>Overall Logins/Hits</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
+The amount of Logins (or 'hits' to the NAS) are displayed in a graph as well as accompanied by a table listing.<br/>
+<h200><b>Overall Download Statistics</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
+The amount of data Downloaded by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
+<h200><b>Overall Upload Statistics</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
+The amount of data Upload by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
+<br/>
+<h200><b>Alltime Logins/Hits</b></h200> - Plots a graphical chart of the Logins to the server for a given period of time.<br/>
+<h200><b>Alltime Traffic Comparison</b></h200> - Plots a graphical chart of the Downloaded and Uploaded statisticse.";
+$l['helpPage']['graphsalltimelogins'] = "An All-Time statistics of Logins to the server based on a distribution over a period of time";
+$l['helpPage']['graphsalltimetrafficcompare'] = "An All-Time statistics of Traffic through the server based on a distribution over a period of time.";
+$l['helpPage']['graphsoveralldownload'] = "Plots a graphical chart of the Downloaded bytes to the server";
+$l['helpPage']['graphsoverallupload'] = "Plots a graphical chart of the Uploaded bytes to the server";
+$l['helpPage']['graphsoveralllogins'] = "Plots a graphical chart of the Login attempts to the server";
 
 
 
-$l['helpPage']['replastconnect'] = "";
-$l['helpPage']['replogsboot'] = "";
-$l['helpPage']['replogsdaloradius'] = "";
-$l['helpPage']['replogsradius'] = "";
-$l['helpPage']['replogssystem'] = "";
-$l['helpPage']['replogs'] = "";
+$l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
+$l['helpPage']['replogsboot'] = "Monitor Operating System Boot log - equivalent to running the dmesg command.";
+$l['helpPage']['replogsdaloradius'] = "Monitor daloRADIUS's Logfile.";
+$l['helpPage']['replogsradius'] = "Monitor FreeRADIUS's Logfile.";
+$l['helpPage']['replogssystem'] = "Monitor Operating System Logfile.";
+$l['helpPage']['replogs'] = "<b>Logs</b><br/>
+<h200><b>daloRADIUS Log</b></h200> - Monitor daloRADIUS's Logfile.<br/>
+<h200><b>RADIUS Log</b></h200> - Monitor FreeRADIUS's Logfile - equivalent to /var/log/freeradius/radius.log or /usr/local/var/log/radius/radius.log.
+Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
+<h200><b>System Log</b></h200> - Monitor Operating System Logfile - equivalent to /var/log/syslog or /var/log/message on most platform.
+Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
+<h200><b>Boot Log</b></h200> - Monitor Operating System Boot log - equivalent to running the dmesg command.";
 $l['helpPage']['repmain'] = "<b>General Reports</b><br/>
-Online Users - Provides a listing of all users which are 
+<h200><b>Online Users</b></h200> - Provides a listing of all users which are 
 found to be online through the accounting table in the database. The check which is being performed is for users
 with no ending time (AcctStopTime) set. It is important to notice that these users may also be of stale sessions
 which happens when NASs for some reason fail to send the accounting-stop packets.<br/>
-Last Connection Attempts - Provides a listing of all Access-Accept and Access-Reject (accepted and failed) logins
+<h200><b>Last Connection Attempts</b></h200> - Provides a listing of all Access-Accept and Access-Reject (accepted and failed) logins
 for users. <br/> These are pulled from the database's postauth table which is required to be defined
 in FreeRADIUS's config file to actually log these.<br/>
-Top User - Provides a listing of the top N users for bandwidth consumption and session time used<br/><br/>
-
+<h200><b>Top User</b></h200> - Provides a listing of the top N users for bandwidth consumption and session time used<br/><br/>
 <b>Sub-Category Reports</b><br/>
-
-Logs - Provides access to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
-Status - Provides information on server status and RADIUS Components status";
-$l['helpPage']['repstatradius'] = "";
-$l['helpPage']['repstatserver'] = "";
-$l['helpPage']['repstatus'] = "";
-$l['helpPage']['reptopusers'] = "Records for Top User in category of:";
+<h200><b>Logs</b></h200> - Provides access to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
+<h200><b>Status</b></h200> - Provides information on server status and RADIUS Components status";
+$l['helpPage']['repstatradius'] = "Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.";
+$l['helpPage']['repstatserver'] = "Provides general information about the FreeRADIUS daemon and MySQL Database server";
+$l['helpPage']['repstatus'] = "<b>Status</b><br/>
+<h200><b>Server Status</b></h200> - Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
+<h200><b>RADIUS Status</b></h200> - Provides general information about the FreeRADIUS daemon and MySQL Database server";
+$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session 
+time or bandwidth usage. Listing users of category: ";
 $l['helpPage']['repusername'] = "Records found for user:";
 $l['helpPage']['reponline'] = "The following table lists users who are currently connected to
 the system. It is very much possible that there are stale connections,
