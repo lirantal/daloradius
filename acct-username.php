@@ -39,6 +39,7 @@
 
     include 'library/opendb.php';
 	include 'include/common/calcs.php';
+	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
@@ -224,8 +225,8 @@
                         <td> $row[4] </td>
                         <td> $row[5] </td>
                         <td> ".seconds2time($row[6])." </td>
-                        <td> $row[7] - ".bytes2megabytes($row[7])."Mb </td>
-                        <td> $row[8] - ".bytes2megabytes($row[8])."Mb </td>
+                        <td> ".toxbyte($row[7])."</td>
+                        <td> ".toxbyte($row[8])."</td>
                         <td> $row[9] </td>
                         <td> $row[10] </td>
                         <td> <a href='mng-edit.php?username=$row[2]'> ".$l['all']['edit']." </a> </td>
