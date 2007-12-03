@@ -619,4 +619,7 @@ h144 {
         color:#FF0000;
 }
 
-
+/* used in language files to highlight sections */
+h200 {
+	color: #FF8040;
+}
