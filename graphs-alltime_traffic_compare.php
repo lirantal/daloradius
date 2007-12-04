@@ -30,11 +30,14 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['graphsalltimetrafficcompare.php']; ?></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['graphsalltimetrafficcompare.php']; ?>
+		<h144>+</h144></a></h2>
 
-                <div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['graphsalltimetrafficcompare'] ?>		
-		</div>	
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['graphsalltimetrafficcompare'] ?>
+			<br/>
+		</div>
+		<br/>
 
 <div class="tabber">
 
