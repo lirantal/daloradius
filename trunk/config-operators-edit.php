@@ -117,14 +117,15 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorsedit.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorsedit.php'] ?>
+				<h144>+</h144></a></h2>
 				
                 <div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['configoperatorsedit'] ?>		
-		</div>
+					<?php echo $l['helpPage']['configoperatorsedit'] ?>
+					<br/>
+				</div>
+				<br/>
 
-<br/>
-<br/>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 				<input type="hidden" value="<?php echo $operator_username ?>" name="operator_username" />
