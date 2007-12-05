@@ -18,10 +18,13 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperators.php'] ?></a></h2>
-                <div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['configoperators'] ?>		
-		</div>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperators.php'] ?>
+				<h144>+</h144></a></h2>
+					<div id="helpPage" style="display:none;visibility:visible" >
+						<?php echo $l['helpPage']['configoperators'] ?>
+						<br/>
+					</div>
+					<br/>
 				
 <?php
 	include('include/config/logging.php');
