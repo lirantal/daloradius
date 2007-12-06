@@ -30,9 +30,10 @@
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['acctnasipaddress.php']; ?></a></h2>
-				
-                <div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['acctnasipaddress'] ?>		
+
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['acctnasipaddress'] ?>
+			<br/>
 		</div>
 		<br/>
 
