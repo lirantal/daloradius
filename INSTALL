@@ -54,11 +54,10 @@ Prerequisites
  
  Assuming we decide on working with MySQL:
  
- apt-get install php5-mysql
  apt-get install mysql-server-5.0 
 
- Note: PHP installations are different on different systems, so please consult the OPTIONAL PHP CONFIGURATION section below
-       if you have any problems.
+ Note: PHP installations are different on different systems, so please consult the OPTIONAL PHP CONFIGURATION 
+       section below if you have any problems.
 
 
 
