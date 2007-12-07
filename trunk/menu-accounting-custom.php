@@ -1,0 +1,169 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>daloRADIUS</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
+<![endif]-->
+
+</head>
+<script src="library/js_date/date-functions.js" type="text/javascript"></script>
+<script src="library/js_date/datechooser.js" type="text/javascript"></script>
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+
+<body>
+
+<?php
+    include_once ("lang/main.php");
+?>
+
+<div id="wrapper">
+<div id="innerwrapper">
+
+<?php
+	$m_active = "Accounting";
+	include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/accounting-subnav.php");
+?>	
+		<div id="sidebar">
+		
+				<h2>Accounting</h2>
+				
+				<h3>Custom Query</h3>
+				<ul class="subnav">
+
+							<form name="acctcustomquery" action="acct-custom-query.php" method="get" class="sidebar">
+
+	<h109> Between Dates: </h109> <br/>
+	
+
+                                                        <input name="startdate" type="text" id="startdate" value="2006-01-01">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+
+                                                        <input name="enddate" type="text" id="enddate" value="2006-12-01">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+
+
+		<br/><br/>
+		<h109> Where </h109> <br/>
+			<center>
+			<select name="fields" size="1">
+				<option value="RadAcctId"> RadAcctId </option>
+				<option value="AcctSessionId"> AcctSessionId </option>
+				<option value="AcctUniqueId"> AcctUniqueId </option>
+				<option value="UserName"> UserName </option>
+				<option value="Realm"> Realm </option>
+				<option value="NASIPAddress"> NASIPAddress </option>
+				<option value="NASPortId"> NASPortId </option>
+				<option value="NASPortType"> NASPortType</option>
+				<option value="AcctStartTime"> AcctStartTime </option>
+				<option value="AcctStopTime"> AcctStopTime </option>
+				<option value="AcctSessionTime"> AcctSessionTime </option>
+				<option value="AcctAuthentic"> AcctAuthentic </option>
+				<option value="ConnectInfo_start"> ConnectInfo_start </option>
+				<option value="ConnectInfo_stop"> ConnectInfo_stop </option>
+				<option value="AcctInputOctets"> AcctInputOctets </option>
+				<option value="AcctOutputOctets"> AcctOutputOctets </option>
+				<option value="CalledStationId"> CalledStationId </option>
+				<option value="CallingStationId"> CallingStationId </option>
+				<option value="AcctTerminateCause"> AcctTerminateCause </option>
+				<option value="ServiceType"> ServiceType </option>
+				<option value="FramedProtocol"> FramedProtocol </option>
+				<option value="FramedIPAddress"> FramedIPAddress </option>
+				<option value="AcctStartDelay"> AcctStartDelay </option>
+				<option value="AcctStopDelay"> AcctStopDelay </option>
+			</select>
+
+			<select name="operator" size="1">
+				<option value="="> Equals </option>
+				<option value="LIKE"> Contains </option>
+			</select>
+			</center>
+		<input type="text" name="where_field" value="" />
+
+		<br/><br/>
+		<h109> Accounting Fields in Query: </h109><br/>
+		<input type="checkbox" name="sqlfields[]" value="RadAcctId" checked /> <h109> RadAcctId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctSessionId" checked /> <h109> AcctSessionId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctUniqueId" checked /> <h109> AcctUniqueId</h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="UserName" checked /> <h109> UserName </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="Realm" checked /> <h109> Realm</h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="NASIPAddress" checked /> <h109> NASIPAddress </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="NASPortId" checked /> <h109> NASPortId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="NASPortType" checked /> <h109> NASPortType </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctStartTime" checked /> <h109> AcctStartTime </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctStopTime" checked /> <h109> AcctStopTime </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctSessionTime" checked /> <h109> AcctSessionTime </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctAuthentic" checked /> <h109> AcctAuthentic </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_start" checked /> <h109> ConnectInfo_start </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_stop" checked /> <h109> ConnectInfo_stop </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctInputOctets" checked /> <h109> AcctInputOctets </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctOutputOctets" checked /> <h109> AcctOutputOctets </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="CalledStationId" checked /> <h109> CalledStationId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="CallingStationId" checked /> <h109> CallingStationId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctTerminateCause" checked /> <h109> AcctTerminateCause </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="ServiceType" checked /> <h109> ServiceType </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="FramedProtocol" checked /> <h109> FramedProtocol </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="FramedIPAddress" checked /> <h109> FramedIPAddress </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctStartDelay" checked /> <h109> AcctStartDelay </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctStopDelay" checked /> <h109> AcctStopDelay </h109> <br/>
+
+		<br/>
+		<h109> Order By </h109> <br/>
+			<center>
+			<select name="orderBy" size="1">
+				<option value="RadAcctId"> RadAcctId </option>
+				<option value="AcctSessionId"> AcctSessionId </option>
+				<option value="AcctUniqueId"> AcctUniqueId </option>
+				<option value="UserName"> UserName </option>
+				<option value="Realm"> Realm </option>
+				<option value="NASIPAddress"> NASIPAddress </option>
+				<option value="NASPortId"> NASPortId </option>
+				<option value="NASPortType"> NASPortType</option>
+				<option value="AcctStartTime"> AcctStartTime </option>
+				<option value="AcctStopTime"> AcctStopTime </option>
+				<option value="AcctSessionTime"> AcctSessionTime </option>
+				<option value="AcctAuthentic"> AcctAuthentic </option>
+				<option value="ConnectInfo_start"> ConnectInfo_start </option>
+				<option value="ConnectInfo_stop"> ConnectInfo_stop </option>
+				<option value="AcctInputOctets"> AcctInputOctets </option>
+				<option value="AcctOutputOctets"> AcctOutputOctets </option>
+				<option value="CalledStationId"> CalledStationId </option>
+				<option value="CallingStationId"> CallingStationId </option>
+				<option value="AcctTerminateCause"> AcctTerminateCause </option>
+				<option value="ServiceType"> ServiceType </option>
+				<option value="FramedProtocol"> FramedProtocol </option>
+				<option value="FramedIPAddress"> FramedIPAddress </option>
+				<option value="AcctStartDelay"> AcctStartDelay </option>
+				<option value="AcctStopDelay"> AcctStopDelay </option>
+			</select>
+
+			<select name="orderType" size="1">
+				<option value="ASC"> Ascending </option>
+				<option value="DESC"> Descending </option>
+			</select>
+			</center>
+
+
+	<br/>
+	<input type="submit" name="submit" value="Process Query" tabindex=3 />
+	</form></li>
+				
+
+
+				</ul>
+				
+				<br/><br/>
+				<h2>Search</h2>
+				<input name="" type="text" value="Search" />
+				
+		
+		</div>
+
+		
