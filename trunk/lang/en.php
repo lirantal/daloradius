@@ -144,6 +144,8 @@ $l['Intro']['accthotspotcompare.php'] = "Hotspot Comparison";
 $l['Intro']['acctmain.php'] = "Accounting Page";
 $l['Intro']['acctnasipaddress.php'] = "NAS IP Accounting";
 $l['Intro']['acctusername.php'] = "Users Accounting";
+$l['Intro']['acctcustom.php'] = "Custom Accountings";
+$l['Intro']['acctcustomquery.php'] = "Custom Query Accounting";
 
 $l['Intro']['billmain.php'] = "Billing Page";
 $l['Intro']['billpersecond.php'] = "Prepaid Accounting";
@@ -452,17 +454,21 @@ $l['helpPage']['mngnewquick'] = "The following user/card is of type prepaid.<br/
 The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
 radius attributes";
 
-
+// accounting section
 $l['helpPage']['acctactive'] = "";
 $l['helpPage']['acctall'] = "";
 $l['helpPage']['acctdate'] = "";
-$l['helpPage']['accthotspotaccounting'] = "";
-$l['helpPage']['accthotspotcompare'] = "";
-$l['helpPage']['accthotspot'] = "";
 $l['helpPage']['acctipaddress'] = "";
 $l['helpPage']['acctmain'] = "";
 $l['helpPage']['acctnasipaddress'] = "";
 $l['helpPage']['acctusername'] = "";
+// accounting hotspot section
+$l['helpPage']['accthotspotaccounting'] = "";
+$l['helpPage']['accthotspotcompare'] = "";
+$l['helpPage']['accthotspot'] = "";
+// accounting custom queries section
+$l['helpPage']['acctcustom'] = "";
+$l['helpPage']['acctcustomquery'] = "";
 
 
 $l['helpPage']['giseditmap'] = "";
