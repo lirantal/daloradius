@@ -86,6 +86,8 @@ $l['table']['Groups'] = "Groups";
 $l['table']['RADIUSCheck'] = "RADIUS Check";
 $l['table']['RADIUSReply'] = "RADIUS Reply";
 
+$l['table']['Settings'] = "Settings";
+
 /* ********************************************************************************** */
 
 
