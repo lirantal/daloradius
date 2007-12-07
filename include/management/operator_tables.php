@@ -55,6 +55,7 @@ $arrayPagesAvailable = array(
 	 'acct_nasipaddress' => 'Accounting',
 	 'acct_hotspot_accounting' => 'Accounting',
 	 'acct_hotspot_compare' => 'Accounting',
+	 'acct_custom_query' => 'Accounting',
 	 'bill_persecond' => 'Billing',
 	 'bill_prepaid' => 'Billing',
 	 'bill_rates_del' => 'Billing',
