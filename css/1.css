@@ -278,6 +278,24 @@ body {
 	width:190px;
 }
 
+#sidebar select {
+	padding:4px;
+	background:#2c2c2c;
+	border:1px solid #222222;
+	color:#FFFFFF;
+        font:90% Verdana;
+        width:200px;
+}	
+
+#sidebar input[type='checkbox'] {
+        width:15px;
+        padding:4px;
+        border:1;
+        border-bottom:1px dotted #ccc;
+        font:90% Verdana;
+        color:#777;
+}
+
 #sidebarright {
 	width:170px;
 	float:right;
@@ -611,6 +629,9 @@ h100 {
 	color: red;
 }
 
+h109 {
+	color: white;
+}
 
 /* the <h144> header tag is used to display the ? char for page's helpPage information */
 h144 {
