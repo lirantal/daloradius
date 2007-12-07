@@ -45,16 +45,25 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmainttestuser.php'] ?>	
-				</a></h2>
-                <div id="helpPage" style="display:none;visibility:visible" >
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmainttestuser.php'] ?>
+				<h144>+</h144> </a></h2>
+
+		                <div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['configmainttestuser'] ?>
 					<br/>
 				</div>
+				<br/>
 
 				<form name="mainttestuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
+                                                        </tr>
+                                        </thead>
+
+
 <tr><td>
 						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
 
