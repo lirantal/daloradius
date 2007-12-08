@@ -174,6 +174,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
         include 'library/closedb.php';
 ?>
+</select>
 
 </td></tr>
 </table>
