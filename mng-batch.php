@@ -238,7 +238,7 @@
 
 	while($row = $res->fetchRow()) {
 		echo "  
-				<option value='$row[0]'> $row[0]
+				<option value='$row[0]'> $row[0] </option>
 				";
 	}
 
