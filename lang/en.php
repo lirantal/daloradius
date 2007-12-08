@@ -87,6 +87,8 @@ $l['table']['RADIUSCheck'] = "RADIUS Check";
 $l['table']['RADIUSReply'] = "RADIUS Reply";
 
 $l['table']['Settings'] = "Settings";
+$l['table']['Advanced'] = "Advanced";
+$l['table']['Optional'] = "Optional";
 
 /* ********************************************************************************** */
 
@@ -236,6 +238,8 @@ $l['Intro']['configinterface.php'] = "Web Interface Configuration";
 $l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
 $l['Intro']['configmain.php'] = "Database Configuration";
 $l['Intro']['configmaint.php'] = "Maintenance";
+$l['Intro']['configbackup.php'] = "Backup";
+$l['Intro']['configbackupbackup.php'] = "Backup";
 
 $l['Intro']['configoperators.php'] = "Operators Configuration";
 $l['Intro']['configoperatorsdel.php'] = "Remove Operator";
@@ -267,6 +271,12 @@ $l['FormField']['all']['WISPrBandwidthMaxUp'] = "WISPr-Bandwidth-Max-Up";
 $l['FormField']['all']['WISPrBandwidthMaxDown'] = "WISPr-Bandwidth-Max-Down";
 $l['FormField']['all']['WISPrSessionTerminateTime'] = "WISPr-Session-Terminate-Time";
 
+$l['FormField']['all']['TablesAvailable'] = "Tables Available: ";
+$l['FormField']['all']['Debug'] = "Debug";
+$l['FormField']['all']['Timeout'] = "Timeout";
+$l['FormField']['all']['Retries'] = "Retries";
+$l['FormField']['all']['Count'] = "Count";
+$l['FormField']['all']['Requests'] = "Requests";
 
 $l['FormField']['mngbatch.php']['UsernamePrefix'] = "Username Prefix";
 $l['FormField']['mngbatch.php']['NumberInstances'] = "Number of instances to create";
@@ -317,6 +327,7 @@ $l['FormField']['configmainttestuser.php']['RadiusPort'] = "Radius Port";
 $l['FormField']['configmainttestuser.php']['NASPort'] = "NAS Port";
 $l['FormField']['configmainttestuser.php']['Secret'] = "Secret";
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+
 
 
 
@@ -388,6 +399,9 @@ $l['helpPage']['configoperatorsedit'] = "Edit the operator user details below";
 $l['helpPage']['configoperatorsnew'] = "You may fill below details for a new operator user addition to database";
 $l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
 $l['helpPage']['configoperators'] = "Operators Configuration";
+$l['helpPage']['configbackup'] = "Perform Backup";
+$l['helpPage']['configbackupbackup'] = "Perform Backup";
+
 
 $l['helpPage']['graphmain'] = "<b>Graphs</b><br/>
 <h200><b>Overall Logins/Hits</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
