@@ -51,6 +51,10 @@
 		include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 
+		if ($op == "LIKE") {						// if the op is LIKE then the SQL syntax uses % for pattern matching
+			$value = "%$value%";					// and we sorround the $value with % as a wildcard
+		}
+
 		// let's sanitize the values passed to us:
 		$where = $dbSocket->escapeSimple($where);
 		$operator = $dbSocket->escapeSimple($operator);
@@ -74,7 +78,7 @@
 
 
 		$getQuery = "";
-		$getQuery .= "&fields=$where&op=$op&where_field=$value";
+		$getQuery .= "&fields=$where&operator=$op&where_field=$value";
 		$getQuery .= "&startdate=$startdate&enddate=$enddate";
 
 
@@ -82,6 +86,7 @@
 		$select = implode(",", $sqlfields);
 		// sanitizing the array passed to us in the get request
 		$select = $dbSocket->escapeSimple($select);
+
 
 		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE ($where $op '$value') AND (AcctStartTime>'$startdate'
 			 AND AcctStartTime<'$enddate');";
