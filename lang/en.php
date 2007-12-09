@@ -240,6 +240,7 @@ $l['Intro']['configmain.php'] = "Database Configuration";
 $l['Intro']['configmaint.php'] = "Maintenance";
 $l['Intro']['configbackup.php'] = "Backup";
 $l['Intro']['configbackupbackup.php'] = "Backup";
+$l['Intro']['configmaintdisconnectuser.php'] = "Disconnect User";
 
 $l['Intro']['configoperators.php'] = "Operators Configuration";
 $l['Intro']['configoperatorsdel.php'] = "Remove Operator";
@@ -327,6 +328,11 @@ $l['FormField']['configmainttestuser.php']['RadiusPort'] = "Radius Port";
 $l['FormField']['configmainttestuser.php']['NASPort'] = "NAS Port";
 $l['FormField']['configmainttestuser.php']['Secret'] = "Secret";
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+
+$l['FormField']['configmaintdisconnectuser.php']['NASServer'] = "NAS Server";
+$l['FormField']['configmaintdisconnectuser.php']['NASPort'] = "NAS Port";
+$l['FormField']['configmaintdisconnectuser.php']['NASSecret'] = "NAS Secret";
+$l['FormField']['configmaintdisconnectuser.php']['PacketType'] = "Packet Type";
 
 
 

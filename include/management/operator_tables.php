@@ -74,6 +74,7 @@ $arrayPagesAvailable = array(
 	 'config_lang' => 'Configuration Core',
 	 'config_logging' => 'Configuration Core',
 	 'config_maint_test_user' => 'Configuration Maintenance',
+	 'config_maint_disconnect_user' => 'Configuration Maintenance',
 	 'config_operators_del' => 'Configuration Operators',
 	 'config_operators_list' => 'Configuration Operators',
 	 'config_operators_edit' => 'Configuration Operators',
