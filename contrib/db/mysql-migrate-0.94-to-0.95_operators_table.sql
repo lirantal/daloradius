@@ -14,3 +14,4 @@
 ALTER TABLE operators DROP COLUMN rep_username;
 ALTER TABLE operators ADD acct_custom_query VARCHAR(32);
 UPDATE operators SET acct_custom_query='yes' WHERE username='administrator';
+ALTER TABLE operators ADD config_maint_disconnect_user VARCHAR(32);
