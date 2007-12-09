@@ -29,7 +29,8 @@
 
                                 <ul class="subnav">
                                 
-						<li><a href="config-maint-test-user.php"><b>&raquo;</b>Test User Connectivity</a></li>		
+						<li><a href="config-maint-test-user.php"><b>&raquo;</b>Test User Connectivity</a></li>
+						<li><a href="config-maint-disconnect-user.php"><b>&raquo;</b>Disconnect User</a></li>
 		</div>
 		
 		
