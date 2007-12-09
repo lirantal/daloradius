@@ -11,7 +11,7 @@
 	$dbSocket = DB::connect($dbConnectString);
 
 	if (DB::isError ($dbSocket))
-		die ("<b>Datanase connection error</b><br/>
+		die ("<b>Database connection error</b><br/>
 			<b>Error Message</b>: " . $dbSocket->getMessage () . "<br/>" . 
 			"<b>Debug</b>: " . $dbSocket->getDebugInfo() . "<br/>");
 
