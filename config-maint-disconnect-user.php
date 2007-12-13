@@ -180,10 +180,10 @@
 <tr><td>
 						<b><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASPort'] ?></b>
 </td><td>
-						<input value="3779" name="nasport" id="nasport" />
+						<input value="3799" name="nasport" id="nasport" />
 <select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=105>
-	<option value="3779"> Choose Port... </option>
-	<option value="3779"> 3779 </option>
+	<option value="3799"> Choose Port... </option>
+	<option value="3799"> 3799 </option>
 	<option value="1700"> 1700 </option>
 </select>
 </td></tr>
