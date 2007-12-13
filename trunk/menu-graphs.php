@@ -31,7 +31,9 @@
 
 						<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>Overall Logins/Hits</a>
 							<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
-							<input name="username" type="text" value="username">
+							<input name="username" type="text" value="
+					<?php if (isset($overall_logins_username)) echo $overall_logins_username;
+						else echo 'username'; ?>">
 							<select name="type" type="text">
 								<option value="daily"> Daily
 								<option value="monthly"> Monthly
@@ -46,7 +48,9 @@
 
                                                 <li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>Overall Download Stat</a>
                                                         <form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
-                                                        <input name="username" type="text" value="username">
+                                                        <input name="username" type="text" value="
+					<?php if (isset($overall_download_username)) echo $overall_download_username;
+						else echo 'username'; ?>">
                                                         <select name="type" type="text">
                                                                 <option value="daily"> Daily
                                                                 <option value="monthly"> Monthly
@@ -58,7 +62,9 @@
 
                                                 <li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>Overall Upload Stat</a>
                                                         <form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
-                                                        <input name="username" type="text" value="username">
+                                                        <input name="username" type="text" value="
+					<?php if (isset($overall_upload_username)) echo $overall_upload_username;
+						else echo 'username'; ?>">
                                                         <select name="type" type="text">
                                                                 <option value="daily"> Daily
                                                                 <option value="monthly"> Monthly

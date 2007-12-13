@@ -17,6 +17,9 @@
 
 
 
+	//feed the sidebar variables
+	$overall_logins_username = $username;
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] of type [$type] on page: ";

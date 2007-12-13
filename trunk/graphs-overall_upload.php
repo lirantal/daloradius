@@ -16,6 +16,8 @@
 	$type = $_REQUEST['type'];
 
 
+	//feed the sidebar variables
+	$overall_upload_username = $username;
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
