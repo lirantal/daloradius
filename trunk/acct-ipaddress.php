@@ -13,6 +13,8 @@
 	$ipaddress = $_REQUEST['ipaddress'];
 
 
+	//feed the sidebar variables
+	$accounting_ipaddress = $ipaddress;
 
 	include_once('library/config_read.php');
     $log = "visited page: ";

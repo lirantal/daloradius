@@ -60,7 +60,7 @@
 ?>							</select>
 							</form></li>
 				
-						<li><a href="acct-hotspot-compare.php"><b>&raquo;</b>Compare Hotspots</a></li>
+						<li><a href="acct-hotspot-compare.php"><b>&raquo;</b>Hotspots Comparison</a></li>
 				</ul>
 				
 				<br/><br/>

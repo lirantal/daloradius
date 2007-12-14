@@ -12,6 +12,11 @@
 	$username = $_REQUEST['username'];
 	$logDebugSQL = "";
 
+
+	//feed the sidebar variables
+	$accounting_username = $username;
+
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] on page: ";

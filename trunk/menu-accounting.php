@@ -37,27 +37,38 @@
 				
 						<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b>User Accounting<a>
 							<form name="acctusername" action="acct-username.php" method="post" class="sidebar">
-							<input name="username" type="text" value="username">
+							<input name="username" type="text" value="
+					<?php if (isset($accounting_username)) echo $accounting_username;
+						else echo 'username'; ?>">
 							</form></li>
 
 						<li><a href="javascript:document.acctipaddress.submit();"><b>&raquo;</b>IP Accounting<a>
 							<form name="acctipaddress" action="acct-ipaddress.php" method="post" class="sidebar">
-							<input name="ipaddress" type="text" value="0.0.0.0">
+							<input name="ipaddress" type="text" value="
+					<?php if (isset($accounting_ipaddress)) echo $accounting_ipaddress;
+						else echo '0.0.0.0'; ?>">
 							</form></li>
 
 						<li><a href="javascript:document.acctnasipaddress.submit();"><b>&raquo;</b>NAS IP Accounting<a>
 							<form name="acctnasipaddress" action="acct-nasipaddress.php" method="post" class="sidebar">
-							<input name="nasipaddress" type="text" value="0.0.0.0">
+							<input name="nasipaddress" type="text" value="
+					<?php if (isset($accounting_nasipaddress)) echo $accounting_nasipaddress;
+						else echo '0.0.0.0'; ?>">
 							</form></li>
 
 						<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b>Date Accounting<a>
 							<form name="acctdate" action="acct-date.php" method="post" class="sidebar">
-							<input name="username" type="text" value="username">
-							<input name="startdate" type="text" id="startdate" value="2006-01-01">
+							<input name="username" type="text" value="
+					<?php if (isset($accounting_date_username)) echo $accounting_date_username;
+						else echo 'username'; ?>">
+							<input name="startdate" type="text" id="startdate" value="					<?php if (isset($accounting_date_startdate)) echo $accounting_date_startdate;
+						else echo date("Y-m-d"); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
-							<input name="enddate" type="text" id="enddate" value="2006-12-01">
+							<input name="enddate" type="text" id="enddate" value="					<?php if (isset($accounting_date_enddate)) echo $accounting_date_enddate;
+						else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, 
+							date("Y"))); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
@@ -68,8 +79,8 @@
 
 
 
-						<li><a href="acct-all.php"><b>&raquo;</b>Display All Accounting Records</a></li>
-						<li><a href="acct-active.php"><b>&raquo;</b>Display Active Records</a></li>
+						<li><a href="acct-all.php"><b>&raquo;</b>All Records</a></li>
+						<li><a href="acct-active.php"><b>&raquo;</b>Active Records</a></li>
 
 
 				</ul>

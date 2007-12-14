@@ -11,6 +11,8 @@
 	
 	$nasipaddress = $_REQUEST['nasipaddress'];
 
+	//feed the sidebar variables
+	$accounting_nasipaddress = $nasipaddress;
 
 
 	include_once('library/config_read.php');

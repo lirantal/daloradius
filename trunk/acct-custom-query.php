@@ -10,6 +10,20 @@
 	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
 
 
+	isset($_GET['fields']) ? $where = $_GET['fields'] : $where = "";
+	isset($_GET['sqlfields']) ? $sqlfields = $_GET['sqlfields'] : $sqlfields = "";
+	isset($_GET['operator']) ? $op = $_GET['operator'] : $op = "=";
+	isset($_GET['where_field']) ? $value = $_GET['where_field'] : $value = "";
+	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
+	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
+
+
+	//feed the sidebar variables
+	$accounting_custom_startdate = $startdate;
+	$accounting_custom_enddate = $enddate;
+	$accounting_custom_value = $value;
+
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for all accounting records on page: ";
@@ -36,14 +50,6 @@
 
 
 <?php
-
-		isset($_GET['fields']) ? $where = $_GET['fields'] : $where = "";
-		isset($_GET['sqlfields']) ? $sqlfields = $_GET['sqlfields'] : $sqlfields = "";
-		isset($_GET['operator']) ? $op = $_GET['operator'] : $op = "=";
-		isset($_GET['where_field']) ? $value = $_GET['where_field'] : $value = "";
-		isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
-		isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
-
 
 		include 'library/opendb.php';
 		include 'include/common/calcs.php';	
