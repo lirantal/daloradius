@@ -158,14 +158,13 @@
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=asc\"> > </a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=desc\"> < </a>
 		</th>
-        <th scope='col'> ".$l['all']['Action']." </th>
                 </tr> </thread>";
 
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> $row[0] </td>
 				<td> $row[1] </td>
-				<td> $row[2] </td>
+	                        <td> <a class='tablenovisit' href='mng-edit.php?username=$row[2]'> $row[2] </a> </td>
 				<td> $row[3] </td>
 				<td> $row[4] </td>
 				<td> $row[5] </td>
@@ -174,7 +173,6 @@
 				<td> ".toxbyte($row[8])."</td>
 				<td> $row[9] </td>
 				<td> $row[10] </td>
-				<td> <a href='mng-edit.php?username=$row[2]'> ".$l['all']['edit']." </a> </td>
 		</tr>";
 
 	$counter++;
