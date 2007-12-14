@@ -129,7 +129,7 @@
 		}
 
                 echo "<tr>
-                        <td> $row[0] </td>
+                        <td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]'> $row[0] </a> </td>
                         <td> $row[1] </td>
                         <td> $row[2] </td>
                         <td> $row[3] </td>

@@ -225,7 +225,7 @@
                 echo "<tr>
                         <td> $row[0] </td>
                         <td> $row[1] </td>
-                        <td> <a href='mng-edit.php?username=$row[2]'> $row[2] </a> </td>
+                        <td> <a class='tablenovisit' href='mng-edit.php?username=$row[2]'> $row[2] </a> </td>
                         <td> $row[3] </td>
                         <td> $row[4] </td>
                         <td> $row[5] </td>
