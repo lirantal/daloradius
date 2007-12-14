@@ -15,6 +15,10 @@
 	$enddate = $_REQUEST['enddate'];
 
 
+	//feed the sidebar variables
+	$accounting_date_username = $username;
+	$accounting_date_startdate = $startdate;
+	$accounting_date_enddate = $enddate;
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
