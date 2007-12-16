@@ -55,7 +55,7 @@
     include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
+	//orig: used as method to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName like 
 '".$dbSocket->escapeSimple($username)."%' GROUP BY UserName";
 	$res = $dbSocket->query($sql);
@@ -72,6 +72,8 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
+        echo "<form name='searchusers' method='post' action='mng-del.php'>";
+
 	echo "<table border='2' class='table1'>\n";
 	echo "
 					<thead>
@@ -81,6 +83,15 @@
 
                                                         <tr>
                                                         <th colspan='10' align='left'>
+
+                                Select:
+                                <a class=\"table\" href=\"javascript:SetChecked(1,'username[]','searchusers')\">All</a>
+
+                                <a class=\"table\" href=\"javascript:SetChecked(0,'username[]','searchusers')\">None</a>
+                        <br/>
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"searchusers\")' />
+                                <br/><br/>
+
 		<br/>
 	";
 
@@ -113,11 +124,10 @@
 			</tr> </thread>";
 	while($row = $res->fetchRow()) {
 			echo "<tr>
-					<td> $row[2] </td>
-					<td> $row[0] </td>
+					<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
+					<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]'> $row[0] </a> </td>
 					<td> $row[1] </td>
-					<td> <a href='mng-edit.php?username=$row[0]'> ".$l['all']['edit']." </a>
-					 <a href='mng-del.php?username=$row[0]'> ".$l['all']['del']." </a>
+					<td>
 					 <a href='config-maint-test-user.php?username=$row[0]&password=$row[1]'> ".$l['all']['TestUser']." </a>
 					 <a href='acct-username.php?username=$row[0]'> ".$l['all']['Accounting']." </a>
 			 </td>

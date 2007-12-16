@@ -120,17 +120,14 @@
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\"> < </a>
 					</th>
-					<th scope='col'> ".$l['all']['Action']." </th>
 			</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
                                 <td> <input type='checkbox' name='name[]' value='$row[1]'> $row[0] </td>
-				<td> $row[1] </td>
+				<td> <a class='tablenovisit' href='mng-hs-edit.php?name=$row[1]'> $row[1] </a> </td>
 				<td> $row[2] </td>
 				<td> $row[3] </td>
 				<td> $row[4] </td>
-				<td> <a href='mng-hs-edit.php?name=$row[1]'> ".$l['all']['edit']." </a>
-				<a href='mng-hs-del.php?name=$row[1]'> ".$l['all']['del']." </a> </td>
 		</tr>";
 	}
 
