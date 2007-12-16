@@ -81,7 +81,7 @@
                                 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'name[]','listallhotspots')\">None</a>
 	                 <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallhotspots\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeHotspotCheckbox(\"listallhotspots\")' />
                                 <br/><br/>
 
         ";
