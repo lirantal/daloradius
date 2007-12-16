@@ -72,7 +72,7 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-        echo "<form name='searchusers' method='post' action='mng-del.php'>";
+        echo "<form name='searchusers' method='post' action='' >";
 
 	echo "<table border='2' class='table1'>\n";
 	echo "
@@ -89,7 +89,7 @@
 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'username[]','searchusers')\">None</a>
                         <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"searchusers\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeUserCheckbox(\"searchusers\")' />
                                 <br/><br/>
 
 		<br/>
