@@ -31,7 +31,7 @@
 
                                 $nashost = $value;
                                 $allNASs .= $nashost . ", ";
-                                echo "nas: $nashost <br/>";
+                                //echo "nas: $nashost <br/>";
 
 
 				// delete all attributes associated with a username
