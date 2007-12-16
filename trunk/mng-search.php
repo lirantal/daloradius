@@ -91,8 +91,6 @@
                         <br/>
                                 <input class='button' type='button' value='Delete' onClick='javascript:removeUserCheckbox(\"searchusers\")' />
                                 <br/><br/>
-
-		<br/>
 	";
 
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
