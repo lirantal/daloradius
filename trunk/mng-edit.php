@@ -416,6 +416,8 @@ AND Attribute like '%Password'";
                 foreach ($arrAttr as $attribute) {
 
 			echo "<tr><td>";
+			echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$arrAttr[$counter]&tablename=radcheck'> 
+				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 			echo "<b>$arrAttr[$counter]</b>";
 			echo "</td><td>";
 
@@ -469,6 +471,8 @@ AND Attribute like '%Password'";
                 foreach ($arrAttrReply as $attribute) {
 
                         echo "<tr><td>";
+			echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$arrAttrReply[$counter]&tablename=radreply'> 
+				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 			echo "<b>$arrAttrReply[$counter]</b>";
                         echo "</td><td>";
 			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter][]' /><br/>";

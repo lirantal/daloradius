@@ -3,12 +3,14 @@
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
-	
+
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
+	isset($_REQUEST['attribute']) ? $attribute = $_REQUEST['attribute'] : $attribute = "";
+	isset($_REQUEST['tablename']) ? $tablename = $_REQUEST['tablename'] : $tablename = "";
 
 	$logDebugSQL = "";
 
-	if (isset($_REQUEST['username'])) {
+	if ( (isset($_REQUEST['username'])) && (!(isset($_REQUEST['attribute']))) && (!(isset($_REQUEST['tablename']))) ) {
 
 		$allUsernames = "";
 		$isSuccessful = 0;
@@ -36,7 +38,7 @@
 				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-	
+
 				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -44,24 +46,40 @@
 				$sql = "delete from ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." where Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-			
+
 				$actionStatus = "success";
 				$actionMsg = "Deleted user(s): <b> $allUsernames </b>";
 				$logAction = "Successfully deleted user(s) [$allUsernames] on page: ";
-	
+
 				include 'library/closedb.php';
-			
+
 			}  else { 
 				$actionStatus = "failure";
 				$actionMsg = "no user was entered, please specify a username to remove from database";		
 				$logAction = "Failed deleting user(s) [$allUsernames] on page: ";
-			} 
+			}
 
 
 		} //foreach
 
 
-	} 
+	} else 	if ( (isset($_REQUEST['username'])) && (isset($_REQUEST['attribute'])) && (isset($_REQUEST['tablename'])) ) {
+
+		/* this section of the deletion process only deletes the username record with the specified attribute
+		 * variable from $tablename, this is in order to support just removing a single attribute for the user
+		 */
+
+		include 'library/opendb.php';
+
+		$sql = "delete from ".$dbSocket->escapeSimple($tablename)." where Username='".$dbSocket->escapeSimple($username)."'
+			AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+
+		include 'library/closedb.php';
+
+	}
+
 
 
 
