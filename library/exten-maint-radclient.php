@@ -34,6 +34,14 @@ function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command
 	$print_cmd = "<b>Executed:</b> $cmd <br/><b>Results:</b><br/><br/>";
 	$res = shell_exec($cmd);
 
+	if ($res == "") {
+		echo "<b>Error:</b> command did not return any results<br/>";
+		echo "please check that you have the radclient binary program installed and that
+			it is found in your \$PATH variable<br/>
+			You may also consult the library/exten-maint-radclient.php for other problems<br/>
+		";
+	}
+
 	## todo better layout
 	$output_html = nl2br($res);
 	return $print_cmd . $output_html;
@@ -60,6 +68,14 @@ function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$com
 	$cmd = "echo \"$query\" | $radclient $options $args 2>&1";
 	$print_cmd = "<b>Executed:</b> $cmd <br/><b>Results:</b><br/><br/>";
 	$res = shell_exec($cmd);
+
+	if ($res == "") {
+		echo "<b>Error:</b> command did not return any results<br/>";
+		echo "please check that you have the radclient binary program installed and that
+			it is found in your \$PATH variable<br/>
+			You may also consult the library/exten-maint-radclient.php for other problems<br/>
+		";
+	}
 
 	## todo better layout
 	$output_html = nl2br($res);
