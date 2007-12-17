@@ -223,14 +223,7 @@ Credits
 
  datepicker PHP class	- Stefan Gabos <ix at nivelzero dot ro>
  libchart PHP class	- Jean-Marc Trémeaux <jm dot tremeaux at gmail dot com>
- 
- Obsolete libraries:
- These graphical libraries for drawing charts were used in previous
- version, prior to 0.9 and so their credit remains:
-
- libgraph		- http://www.gerd-tentler.de/tools/phpgraphs/
- jpgraph		- http://www.aditus.nu/jpgraph/
-
+ icons collection - Mark James of famfamfam.com icons <mjames at gmail dot com>
 
 
 
