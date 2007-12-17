@@ -26,7 +26,7 @@
 		
 				<h2>Graphs</h2>
 				
-				<h3>Users plotting</h3>
+				<h3>User Graph</h3>
 				<ul class="subnav">
 
 						<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>Overall Logins/Hits</a>
@@ -72,7 +72,7 @@
                                                         </select>
                                                         </form></li>
 
-				<h3>All-time Statistics</h3>
+				<h3>Statistics</h3>
 				<ul class="subnav">
 
 
