@@ -26,11 +26,12 @@
 						<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit User<a>
 							<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
 							<input name="username" type="text" value="
-								<?php if (isset($edit_username)) echo $edit_username; else echo 'username'; ?>" tabindex=1>
+								<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
 							</form></li>
 						<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>Search Users<a>
 							<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
-							<input name="username" type="text" tabindex=2>
+							<input name="username" type="text" value="
+								<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 							</form></li>
 
 
@@ -44,7 +45,8 @@
 						<li><a href="mng-hs-new.php"><b>&raquo;</b>New Hotspot</a></li>
 						<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b>Edit Hotspot<a>
 							<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
-							<input name="name" type="text" tabindex=3>
+							<input name="name" type="text" value="
+								<?php if (isset($edit_hotspotname)) echo $edit_hotspotname; ?>" tabindex=3>
 							</form></li>
 
 

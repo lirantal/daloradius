@@ -10,7 +10,9 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
-	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "%";	
+	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "%";
+
+	$search_username = $username; //feed the sidebar variables
 	$username = str_replace('*', '%', $username);
 
 	include_once('library/config_read.php');
