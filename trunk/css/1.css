@@ -521,7 +521,7 @@ blockquote p {
 }
 
 table {
-	width: 890px;
+	width: 100%;
 	color: #000000;
 	font: 0.9em/1.6em "Trebuchet MS",Verdana,sans-serif;
 	border-collapse: collapse
