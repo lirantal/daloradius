@@ -21,6 +21,8 @@
         isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
         isset($_REQUEST['website']) ? $website = $_REQUEST['website'] : $website = "";
 
+	$edit_hotspotname = $name; //feed the sidebar variables	
+
 	$logDebugSQL = "";
 
 	if (isset($_REQUEST['submit'])) {

@@ -246,7 +246,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSock
 		$actionMsg = "no user was entered, please specify a username to edit";
 	}
 
-	$edit_username = $username;
+	$edit_username = $username; //feed the sidebar variables
 
 	
 	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
