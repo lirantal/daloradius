@@ -25,7 +25,8 @@
 						<li><a href="mng-batch.php"><b>&raquo;</b>Batch-Add Users <a></li>
 						<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit User<a>
 							<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
-							<input name="username" type="text" tabindex=1>
+							<input name="username" type="text" value="
+								<?php if (isset($edit_username)) echo $edit_username; else echo 'username'; ?>" tabindex=1>
 							</form></li>
 						<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>Search Users<a>
 							<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
