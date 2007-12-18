@@ -17,6 +17,8 @@ function drawAttributes() {
 	 'Idle-Timeout' => 'seconds',
 	 'Max-All-Session' => 'seconds',
 	 'Framed-IP-Address' => 'none',
+	 'Framed-IP-Netmask' => 'none',
+	 'Framed-Pool' => 'none',
 	 'CHAP-Password' => 'none',
 	 'CHAP-Challenge' => 'none',
 	 'Service-Type' => 'servicetype',
@@ -285,6 +287,12 @@ function checkTables($attribute) {
 			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 			break;
 		case "Framed-IP-Address":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "Framed-IP-Netmask":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "Framed-Pool":
 			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 			break;
 		case "Service-Type":
