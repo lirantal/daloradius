@@ -423,10 +423,14 @@ AND Attribute like '%Password'";
 
 			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) ) {
 				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter]' />";
+				echo "&nbsp;";
+				echo "<select name='$arrAttr[$counter][]'";
+				echo "<option value='$arrOp[$counter]'>$arrOp[$counter]</option>";
 				drawOptions();
+				echo "</select>";
 			} else {
 				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter][]' id='$arrAttr[$counter][]' />";
-				echo " &nbsp; ";
+				echo "&nbsp;";
 				echo "<select name='$arrAttr[$counter][]'";
 				echo "<option value='$arrOp[$counter]'>$arrOp[$counter]</option>";
 				drawOptions();
@@ -441,8 +445,6 @@ AND Attribute like '%Password'";
 							<div id=\"chooserSpan\" class=\"dateChooser select-free\" style=\"display: none; visibility: 
 							hidden; width: 160px;\"></div>
 							";
-						break;
-				case "Max-All-Session":
 						break;
 			
 			}
@@ -475,7 +477,15 @@ AND Attribute like '%Password'";
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 			echo "<b>$arrAttrReply[$counter]</b>";
                         echo "</td><td>";
-			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter][]' /><br/>";
+			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter][]' />";
+
+				echo "&nbsp;";
+				echo "<select name='$arrAttrReply[$counter][]'";
+				echo "<option value='$arrOpReply[$counter]'>$arrOpReply[$counter]</option>";
+				drawOptions();
+				echo "</select>";
+				echo "<br/>";
+
                         echo "</td></tr>";
 			$counter++;
 
