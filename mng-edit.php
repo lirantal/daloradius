@@ -15,6 +15,8 @@
 	if (isset($_REQUEST['submit'])) {
 
 		$username = $_REQUEST['username'];
+		$edit_username = $_REQUEST['username'];
+		
 		$password = "";						// we initialize the $password variable to contain nothing
 
                 isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
