@@ -15,8 +15,6 @@
 	if (isset($_REQUEST['submit'])) {
 
 		$username = $_REQUEST['username'];
-		$edit_username = $_REQUEST['username'];
-		
 		$password = "";						// we initialize the $password variable to contain nothing
 
                 isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
@@ -248,6 +246,8 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSock
 		$actionMsg = "no user was entered, please specify a username to edit";
 	}
 
+	$edit_username = $username;
+
 	
 	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
 	*/
@@ -424,7 +424,7 @@ AND Attribute like '%Password'";
 			echo "</td><td>";
 
 			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) ) {
-				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter]' />";
+				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter][]' id='$arrAttr[$counter][]' />";
 				echo "&nbsp;";
 				echo "<select name='$arrAttr[$counter][]'";
 				echo "<option value='$arrOp[$counter]'>$arrOp[$counter]</option>";
