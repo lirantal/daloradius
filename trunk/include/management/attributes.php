@@ -53,6 +53,18 @@ function drawAttributes() {
 	 'ChilliSpot-MAC-Allowed' => 'none',
 	 'ChilliSpot-MAC-Interval' => 'none'
 	 );	 
+
+
+
+	$arrayMikrotikAttr = array(
+	 'MikroTik-Rate-Limit' => 'none',
+	 );	 
+
+	$arrayAscendAttr = array(
+	 'Ascend-Data-Rate' => 'none',
+	 'Ascend-Xmit-Rate' => 'none',
+	 );	 
+
 	 
 echo "<table border='2' class='table1'>";
 echo <<<EOF
@@ -167,8 +179,58 @@ EOF;
 		</div>";
 
 
+echo <<<EOF
+	<tr><td>
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryAscend')">
+    <b> Ascend Attributes </b> <br/>
+    <div id="categoryAscend" style="display:none;visibility:visible" >
+EOF;
+	
+	$cnt = 0;
+	foreach ( $arrayAscendAttr as $attrib => $help ) {
+		drawAttributesHtml($attrib);
+		if ($help == "seconds") 
+			drawSelectSeconds($attrib, $cnt);
+		if ($help == "speed") 
+			drawSelectSpeed($attrib, $cnt);
+		if ($help == "date") 
+			drawDateHtml($attrib);			
+		echo "
+		<br/><br/></font>
+		</div>
+		";
+		$cnt++;
+	}		
+	echo "</td></tr>
+		</div>";	
 
 
+
+
+echo <<<EOF
+	<tr><td>
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryMikrotik')">
+    <b> Mikrotik Attributes </b> <br/>
+    <div id="categoryMikrotik" style="display:none;visibility:visible" >
+EOF;
+	
+	$cnt = 0;
+	foreach ( $arrayMikrotikAttr as $attrib => $help ) {
+		drawAttributesHtml($attrib);
+		if ($help == "seconds") 
+			drawSelectSeconds($attrib, $cnt);
+		if ($help == "speed") 
+			drawSelectSpeed($attrib, $cnt);
+		if ($help == "date") 
+			drawDateHtml($attrib);			
+		echo "
+		<br/><br/></font>
+		</div>
+		";
+		$cnt++;
+	}		
+	echo "</td></tr>
+		</div>";	
 
 
 
@@ -334,6 +396,16 @@ function checkTables($attribute) {
 		case "ChilliSpot-MAC-Interval":
 			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 			break;
+		case "MikroTik-Rate-Limit":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "Ascend-Xmit-Rate":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+		case "Ascend-Data-Rate":
+			$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			break;
+
 	}
 
 
