@@ -52,7 +52,11 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password')";
+	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname FROM 
+		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
+		WHERE Attribute LIKE '%-Password' GROUP BY UserName";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -61,7 +65,11 @@
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE (Attribute LIKE '%Password') ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname FROM 
+		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
+		WHERE Attribute LIKE '%-Password' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -120,13 +128,19 @@
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\"> > </a>
 					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\"> < </a>
 					</th>
+					<th scope='col'> ".$l['table']['Groups']." 
+					<br/>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=asc\"> > </a>
+					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=desc\"> < </a>
+					</th>
 			</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> <input type='checkbox' name='username[]' value='$row[1]'> $row[0] </td>
-				<td> <a class='tablenovisit' href='mng-edit.php?username=$row[1]'> $row[1] </a> </td>
-				<td> $row[4] </td>
+				<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
+				<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]'> $row[0] </a> </td>
+				<td> $row[1] </td>
+				<td> $row[3] </td>
 		</tr>";
 	}
 	
