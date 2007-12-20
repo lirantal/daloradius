@@ -396,10 +396,49 @@ $l['helpPage']['configlang'] = "Below you can choose between different support l
 $l['helpPage']['configlogging'] = "Settings for daloRADIUS logging<br/>Please make sure that the filename that you specify
 has write permissions by the webserver";
 $l['helpPage']['configinterface'] = "Settings for Web Interface behaviour";
-$l['helpPage']['configmainttestuser'] = "Test information";
 $l['helpPage']['configmain'] = "";
-$l['helpPage']['configmaint'] = "";
-$l['helpPage']['configmainttestuser'] = "";
+$l['helpPage']['configmaint'] = "
+<b>Maintenance</b><br/>
+<h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid<br/>
+<h200><b>Disconnect User</b></h200> - Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server
+to disconnect a user and terminate his/her session in a given NAS.<br/>
+";
+$l['helpPage']['configmainttestuser'] = "
+<h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid.<br/>
+daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes. <br/>
+daloRADIUS counts on the radclient binary being available in your $PATH environment variable, if it is not, please make
+corrections to the library/exten-maint-radclient.php file.<br/><br/>
+
+Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and
+radclient will retransmit the packets.
+
+In the Advanced tab it is possible to fine-tune the options for the test:<br/>
+Timeout - Wait 'timeout' seconds before retrying (may be a floating point number) <br/>
+Retries - If timeout, retry sending the packet 'retries' times. <br/>
+Count - Send each packet 'count' times <br/>
+Requests -  Send 'num' packets from a file in parallel <br/>
+";
+$l['helpPage']['configmaintdisconnectuser'] = "
+<h200><b>Disconnect User</b></h200> - Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server to disconnect a user and terminate his/her session in a given NAS.<br/>
+For terminating a user's session it is required that the NAS support the PoD or CoA packet types, please consult your NAS vendor or
+documentation for this. Moreover, it is required to know the NAS ports for PoD or CoA packets, whereas newer NASs use port 3799
+while other ones are configured to receive the packet on port 1700.
+
+daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes. <br/>
+daloRADIUS counts on the radclient binary being available in your $PATH environment variable, if it is not, please make
+corrections to the library/exten-maint-radclient.php file.<br/><br/>
+
+Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and
+radclient will retransmit the packets.
+
+In the Advanced tab it is possible to fine-tune the options for the test:<br/>
+Timeout - Wait 'timeout' seconds before retrying (may be a floating point number) <br/>
+Retries - If timeout, retry sending the packet 'retries' times. <br/>
+Count - Send each packet 'count' times <br/>
+Requests -  Send 'num' packets from a file in parallel <br/>
+
+
+";
 $l['helpPage']['configoperatorsdel'] = "To remove an operator from the database you must provide the username.";
 $l['helpPage']['configoperatorsedit'] = "Edit the operator user details below";
 $l['helpPage']['configoperatorsnew'] = "You may fill below details for a new operator user addition to database";
@@ -409,7 +448,8 @@ $l['helpPage']['configbackup'] = "Perform Backup";
 $l['helpPage']['configbackupbackup'] = "Perform Backup";
 
 
-$l['helpPage']['graphmain'] = "<b>Graphs</b><br/>
+$l['helpPage']['graphmain'] = "
+<b>Graphs</b><br/>
 <h200><b>Overall Logins/Hits</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
 The amount of Logins (or 'hits' to the NAS) are displayed in a graph as well as accompanied by a table listing.<br/>
 <h200><b>Overall Download Statistics</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
@@ -418,7 +458,8 @@ The amount of data Downloaded by the client is the value which is being calculat
 The amount of data Upload by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
 <br/>
 <h200><b>Alltime Logins/Hits</b></h200> - Plots a graphical chart of the Logins to the server for a given period of time.<br/>
-<h200><b>Alltime Traffic Comparison</b></h200> - Plots a graphical chart of the Downloaded and Uploaded statisticse.";
+<h200><b>Alltime Traffic Comparison</b></h200> - Plots a graphical chart of the Downloaded and Uploaded statisticse.
+";
 $l['helpPage']['graphsalltimelogins'] = "An All-Time statistics of Logins to the server based on a distribution over a period of time";
 $l['helpPage']['graphsalltimetrafficcompare'] = "An All-Time statistics of Traffic through the server based on a distribution over a period of time.";
 $l['helpPage']['graphsoveralldownload'] = "Plots a graphical chart of the Downloaded bytes to the server";
@@ -432,14 +473,17 @@ $l['helpPage']['replogsboot'] = "Monitor Operating System Boot log - equivalent 
 $l['helpPage']['replogsdaloradius'] = "Monitor daloRADIUS's Logfile.";
 $l['helpPage']['replogsradius'] = "Monitor FreeRADIUS's Logfile.";
 $l['helpPage']['replogssystem'] = "Monitor Operating System Logfile.";
-$l['helpPage']['replogs'] = "<b>Logs</b><br/>
+$l['helpPage']['replogs'] = "
+<b>Logs</b><br/>
 <h200><b>daloRADIUS Log</b></h200> - Monitor daloRADIUS's Logfile.<br/>
 <h200><b>RADIUS Log</b></h200> - Monitor FreeRADIUS's Logfile - equivalent to /var/log/freeradius/radius.log or /usr/local/var/log/radius/radius.log.
 Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
 <h200><b>System Log</b></h200> - Monitor Operating System Logfile - equivalent to /var/log/syslog or /var/log/message on most platform.
 Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
-<h200><b>Boot Log</b></h200> - Monitor Operating System Boot log - equivalent to running the dmesg command.";
-$l['helpPage']['repmain'] = "<b>General Reports</b><br/>
+<h200><b>Boot Log</b></h200> - Monitor Operating System Boot log - equivalent to running the dmesg command.
+";
+$l['helpPage']['repmain'] = "
+<b>General Reports</b><br/>
 <h200><b>Online Users</b></h200> - Provides a listing of all users which are 
 found to be online through the accounting table in the database. The check which is being performed is for users
 with no ending time (AcctStopTime) set. It is important to notice that these users may also be of stale sessions
@@ -451,7 +495,8 @@ in FreeRADIUS's config file to actually log these.<br/>
 <b>Sub-Category Reports</b><br/>
 <h200><b>Logs</b></h200> - Provides access to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
 <h200><b>Status</b></h200> - Provides information on server status and RADIUS Components status";
-$l['helpPage']['repstatradius'] = "Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.";
+$l['helpPage']['repstatradius'] = "Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.
+";
 $l['helpPage']['repstatserver'] = "Provides general information about the FreeRADIUS daemon and MySQL Database server";
 $l['helpPage']['repstatus'] = "<b>Status</b><br/>
 <h200><b>Server Status</b></h200> - Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
@@ -459,10 +504,12 @@ $l['helpPage']['repstatus'] = "<b>Status</b><br/>
 $l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session 
 time or bandwidth usage. Listing users of category: ";
 $l['helpPage']['repusername'] = "Records found for user:";
-$l['helpPage']['reponline'] = "The following table lists users who are currently connected to
+$l['helpPage']['reponline'] = "
+The following table lists users who are currently connected to
 the system. It is very much possible that there are stale connections,
 meaning that users got disconnected but the NAS didn't send or wasn't
-able to send a STOP accounting packet to the RADIUS server.";
+able to send a STOP accounting packet to the RADIUS server.
+";
 
 
 $l['helpPage']['mnglistall'] = "Listing users in database";
