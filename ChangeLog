@@ -1,14 +1,25 @@
-release 0.9-5 - 27 November 2007
+release 0.9-5 - 21 November 2007
 	- added improved support for sql db queries
 	- added new contact info for hotspot owners
 	- added more attributes and ordered existing
 	- added support to relate users to groups on new user, batch add user and new quick-add users pages
-	  as well as editing these groups entries in edit user page.
-	- added new blue css layout
+	  as well as editing these groups entries in edit user page
+	- added suport for database debugging and error handling
+	- added custom accounting query page
+	- added disconnect user on maintenance sub-category
 	- added partial tabindexs support to forms (Antonis Faragitakis)
 	- added description dialogs for pages upon clicking on page titles
+	- added and improved new blue css layout
+	- added icons and support for deleting single attributes for users
+	  in the Edit User management page
+	- improved interface with addition of checkboxs for multi-action tasks
+	- improved online help support for each page
+	- improved support on Test User Connectivity to use radclient with more features
+	- improved support on all sidebar input values so that variables are saved when
+	  the pages are reloaded/submitted to a new page
 	- fixed double-insert records of userinfo data if user exists
-	- fixed deleting of userinfo data for a record that is being deleted.
+	- fixed deleting of userinfo data for a record that is being deleted
+	- fixed drawing the options selectbox in the radreply tab in User Edit page
 	- fixed saving an existing nas entry in different name (not having to delete it)
 	- fixed several typos and variable declerations through-out the pages
 	- fixed duplicate groups entries in usergroup table (paparent)
