@@ -391,12 +391,36 @@ $l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
 $l['helpPage']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
 $l['helpPage']['mnghslist'] = "List of all hotspots in the database. You may use the quick links to edit or delete a hotspot from the database.";
 
-$l['helpPage']['configdb'] = "Settings that daloRADIUS will make use of to connect to your MySQL database server and manage it.";
-$l['helpPage']['configlang'] = "Below you can choose between different support languages for daloRADIUS translation.";
-$l['helpPage']['configlogging'] = "Settings for daloRADIUS logging<br/>Please make sure that the filename that you specify
-has write permissions by the webserver";
-$l['helpPage']['configinterface'] = "Settings for Web Interface behaviour";
-$l['helpPage']['configmain'] = "";
+$l['helpPage']['configdb'] = "
+<b>Database Settings</b> - Configure database engine, connection settings, tables names if the
+default are not used, and the password encryption type in the database.<br/>
+<h200><b>Global Settings</b></h200> - Database Storage Engine<br/>
+<h200><b>Tables Settings</b></h200> - If not using the default FreeRADIUS schema you may change the names
+of the table names<br/>
+<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in 
+plain text but rather have it encrypted somehow you may choose one of MD5 or Crypt<br/>
+";
+$l['helpPage']['configlang'] = "
+<h200><b>Language Settings</b></h200> - Configure interface language.<br/>
+";
+$l['helpPage']['configlogging'] = "
+<h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
+Please make sure that the filename that you specify has write permissions by the webserver<br/>";
+$l['helpPage']['configinterface'] = "
+<h200><b>Interface Settings</b></h200> - Configure interface layout settings and behvaiour <br/>
+";
+$l['helpPage']['configmain'] = "
+<b>Global Settings</b><br/>
+<h200><b>Database Settings</b></h200> - Configure database engine, connection settings, tables names if the
+default are not used, and the password encryption type in the database.<br/>
+<h200><b>Language Settings</b></h200> - Configure interface language.<br/>
+<h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
+<h200><b>Interface Settings</b></h200> - Configure interface layout settings and behvaiour <br/>
+
+<b>Sub-Category Configuration</b>
+<h200><b>Maintenance </b></h200> - Maintenance options for Testing users connections or terminating their sessions <br/>
+<h200><b>Operators</b></h200> - Configure Operators Access Control List (ACL) <br/>
+";
 $l['helpPage']['configmaint'] = "
 <b>Maintenance</b><br/>
 <h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid<br/>
