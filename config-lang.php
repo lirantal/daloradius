@@ -46,6 +46,11 @@
 
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 						<?php if (!($configValues['CONFIG_LANG'])) { echo "<font color='#FF0000'>";  }?>
 

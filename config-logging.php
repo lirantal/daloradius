@@ -55,6 +55,11 @@
 				<form name="loggingsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 						<?php if (!($configValues['CONFIG_LOG_PAGES'])) { echo "<font color='#FF0000'>";  }?>
 
