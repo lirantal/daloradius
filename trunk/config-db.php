@@ -99,6 +99,11 @@
         <br/>
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 
 						<?php if (!($configValues['CONFIG_DB_ENGINE'])) { echo "<font color='#FF0000'>";  }?>
@@ -172,6 +177,11 @@
         <br/>
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 
 						<?php if (!($configValues['CONFIG_DB_TBL_RADCHECK'])) { echo "<font color='#FF0000'>";  }?>
@@ -287,6 +297,11 @@
         <br/>
 
 <table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
+                                                        </tr>
+                                        </thead>
 <tr><td>
 
 						<?php if (!($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) { echo "<font color='#FF0000'>";  }?>
