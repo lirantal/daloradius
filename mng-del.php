@@ -76,6 +76,10 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
+		$actionStatus = "success";
+		$actionMsg = "Deleted attribute: <b> $attribute <b/> for user(s): <b> $username </b> from database";
+		$logAction = "Successfully deleted attribute [$attribute] for user [$username] on page: ";
+
 		include 'library/closedb.php';
 
 	}
