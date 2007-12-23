@@ -83,6 +83,7 @@ Users Accounting By
     * Display of Active Accounting records
       performed by an algorithm implemented by daloRADIUS itself to calculate if
       an account has expired or not based on it's Max-All-Session attribute or Expiration attribute
+	* Custom Accounting Query 
 
 
 HotSpots Accounting
@@ -195,7 +196,9 @@ Maintenance
     * Test User Connectivity
       Provides the ability to check if a user's credentials (username and password) are valid by
       executing a radius query to a radius server (configurable for radius port, shared secret, etc)
-
+	* Disconnect User
+	  Supply a username and send a PoD (Packet of Disconnect) or CoA (Change of Authority) packet
+	  to the NAS to disconnect the user.
 
 Operators
 
