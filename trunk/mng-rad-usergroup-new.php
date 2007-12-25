@@ -115,6 +115,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
                                                 </font>
 
 <select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
+        <option value=''>Select Group</option>
 <?php   
 
         include 'library/opendb.php';
