@@ -225,7 +225,7 @@
 						<input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=104 />
 
 <select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
-
+        <option value=''>Select Group</option>
 <?php
 
 
