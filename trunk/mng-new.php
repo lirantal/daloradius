@@ -26,6 +26,9 @@
 		$homephone = $_REQUEST['homephone'];
 		$mobilephone = $_REQUEST['mobilephone'];
 		$notes = $_REQUEST['notes'];
+
+		isset($_REQUEST['dictAttributes']) ? $dictAttributes = $_REQUEST['dictAttributes'] 
+			: $dictAttributes = "";
 		
 
 		include 'library/opendb.php';
@@ -84,16 +87,16 @@
 '".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
+
 				} //FIXME:
 				  //if the user already exist in userinfo then we should somehow alert the user
 				  //that this has happened and the administrator/operator will take care of it
 		
-				 foreach( $_POST as $attribute=>$value ) { 
-
+				foreach($_POST as $element=>$field) { 
 
 					// switch case to rise the flag for several $attribute which we do not
 					// wish to process (ie: do any sql related stuff in the db)
-					switch ($attribute) {
+					switch ($element) {
 
 						case "username":
 						case "password":
@@ -122,25 +125,26 @@
 						continue;
 					}
 
-					if (!($value[0]))
+					$attribute = $field[0];
+					$value = $field[1];
+					$op = $field[2];
+					$table = $field[3];
+
+					if (!($value))
 						continue;
-						
-					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
-													// or radcheck table (using include/management/attributes.php function)
 
-					$counter = 0;
+					$sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
+'".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')  ";
 
-					$sql = "INSERT INTO $useTable values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($value[1])."', '".$dbSocket->escapeSimple($value[0])."')  ";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
-					$counter++;
 				} // foreach
 				
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $username </b>";
 				$logAction = "Successfully added new user [$username] on page: ";
+
 			} else {
 				$actionStatus = "failure";
 				$actionMsg = "username or password are empty";
@@ -186,6 +190,9 @@
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 
 <?php
         include_once ("library/tabber/tab-layout.php");
@@ -255,7 +262,6 @@
                                                 <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
 
 <select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
-	<option value=''>Select Group</option>
 <?php
 
         include 'library/opendb.php';
@@ -278,6 +284,31 @@
 </td></tr>
 </table>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      </div>
 
 
@@ -292,11 +323,81 @@
 
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
-<?php
-        include_once('include/management/attributes.php');
-        drawAttributes();
-?>
-	<br/>
+<table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>
+                                                        </tr>
+                                        </thead>
+        <tr>
+                <td>Vendor:
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
+			style='width: 215px' onclick="getVendorsList('dictVendors0')" >
+                        <option value=''>Select Vendor...</option>
+                        <option value='other'>other</option>
+                </select>
+
+		&nbsp;&nbsp;
+                Attribute:
+                <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
+                        <option value=''>Select Attribute...</option>
+
+                </select>
+                </td>
+        </tr>
+        <tr>
+                <td>
+		&nbsp;
+		Value:
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px'>
+
+		&nbsp;
+                Op:
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px'>
+
+                </select>
+
+		&nbsp;
+                Table:
+                <select id='dictTable0' name='dictValues0[]' style='width: 90px'>
+
+                </select>
+
+		&nbsp;
+                Function:
+                <select id='dictFunc' name='dictFunc'>
+
+                </select>
+                </td>
+
+	</tr>
+
+	<tr>
+		<td>
+		<div id='dictInfo0' style='display:none;visibility:visible'>
+			<span id='dictTooltip0'>
+				<b>Attribute Tooltip:</b>
+			</span>
+
+			<br/>	
+
+			<span id='dictType0'>
+				<b>Type:<b/>
+			</span>
+		</div>
+		</td>
+	</tr>
+
+
+	<td>
+        <a href="javascript:;" onclick="addElement();">Add</a>
+        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
+	</td>
+
+</table>
+<br/>
+        <input type="hidden" value="0" id="divCounter" />
+        <div id="divContainer"> </div> <br/>
      </div>		
 
 </div>
