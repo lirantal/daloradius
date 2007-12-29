@@ -1,4 +1,4 @@
--- daloRADIUS 0.9-4 database scheme for MySQL
+-- daloRADIUS 0.9-5 database scheme for MySQL
 -- Liran Tal <liran.tal@gmail.com>
 --
 -- The file includes only the tables that daloRADIUS itself makes use of
@@ -156,3 +156,23 @@ CREATE TABLE `userinfo` (
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
 ) ENGINE=MyISAM;
+
+
+--
+-- Table structure for table `dictionary`
+--
+ 
+CREATE TABLE dictionary (
+  id int(10) NOT NULL auto_increment,
+  Type varchar(30),
+  Attribute varchar(64),
+  Value varchar(64),
+  Format varchar(20),
+  Vendor varchar(32),
+  RecommendedOP varchar(32),
+  RecommendedTable varchar(32),
+  RecommendedHelper varchar(32),
+  RecommendedTooltip varchar(32),
+  PRIMARY KEY (id)
+);
+ 
