@@ -84,11 +84,11 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 				}
 			}
 
-			foreach( $_POST as $attribute=>$value ) { 
+			foreach( $_POST as $element=>$field ) { 
 
 				// switch case to rise the flag for several $attribute which we do not
 				// wish to process (ie: do any sql related stuff in the db)
-				switch ($attribute) {
+				switch ($element) {
 
 						case "username":
 						case "submit":
@@ -117,69 +117,73 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 					continue;
 				}
 
-				if (!($value[0]))
-					continue;
 
-				
-				$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
-											// or radcheck table (using include/management/attributes.php function)
+                                if (isset($field[0]))
+					$attribute = $field[0];
+                                if (isset($field[1]))
+					$value = $field[1];
+                                if (isset($field[2]))
+					$op = $field[2];
+                                if (isset($field[3]))
+					$table = $field[3];
+
+                                if (!($value))
+   	                             continue;
 
 				$counter = 0;
 
 				// because the $value[0] which is the attribute value is later manually appended the '' so that
 				// password policies are enforced by the php server we need to perform the secure method escapeSimple()
 				// at an early point in the script.
-				$value[0] = $dbSocket->escapeSimple($value[0]);
-
+				$value = $dbSocket->escapeSimple($value);
 
 				// we set the $password variable to the attribute value only if that attribute is actually a password attribute indeed 
 				// and this has to be done because we're looping on all attributes that were submitted with the form
 				switch($attribute) {
 					case "User-Password":
-						$password = "'$value[0]'";
+						$password = "'$value'";
 						break;
 					case "CHAP-Password":
-						$password = "'$value[0]'";
+						$password = "'$value'";
 						break;
 					case "Cleartext-Password":
-						$password = "'$value[0]'";
+						$password = "'$value'";
 						break;							
 					case "Crypt-Password":
-						$password = "'$value[0]'";
+						$password = "'$value'";
 						break;	
 					case "MD5-Password":
-						$password = "'$value[0]'";
+						$password = "'$value'";
 						break;
 					case "SHA1-Password":
-						$password = "'$value[0]'";
+						$password = "'$value'";
 						break;
 					default:
-						$value[0] = "'$value[0]'";
+						$value = "'$value'";
 				}
-					
+
 				// first we check that the config option is actually set and available in the config file
 				if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) {
 					// if so we need to use different function for each encryption type and so we force it here
 					switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
 						case "cleartext":
 							if ($password != "")
-								$value[0] = "$password";
+								$value = "$password";
 							break;
 						case "crypt":
 							if ($password != "")
-								$value[0] = "ENCRYPT($password)";
+								$value = "ENCRYPT($password)";
 							break;
 						case "md5":
 							if ($password != "")
-								$value[0] = "MD5($password)";
+								$value = "MD5($password)";
 							break;
 					}
 				} else {
 					// if the config option was not set and we encountered a password attribute we set it to default which is cleartext
 					if ($password != "")
-						$value[0] = "$password";
+						$value = "$password";
 				}
-
 
 				/* since we have added include/management/attributes.php to the form which 
 				   populates the page with all the existing attributes for us to choose from, even
@@ -187,7 +191,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 				   doesn't exist at all and we need to insert it. 
 				   for this reason we need to check if it exists or not, if exists we update, if not we insert */
 
-				$sql = "SELECT Attribute FROM $useTable WHERE UserName='".$dbSocket->escapeSimple($username)."' 
+				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username)."' 
 AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -195,22 +199,22 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
 
-					$sql = "INSERT INTO $useTable values(0,'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($value[1])."', $value[0])";
+					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
+'".$dbSocket->escapeSimple($op)."', $value)";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 				} else {
 				
 					/* we update the $value[0] entry which is the attribute's value */
-					$sql = "UPDATE $useTable SET 
-Value=$value[0] WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+					$sql = "UPDATE $table SET 
+Value=$value WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 
 					/* then we update $value[1] which is the attribute's operator */
-					$sql = "UPDATE $useTable SET Op='".$dbSocket->escapeSimple($value[1])."' 
+					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op)."' 
 WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
@@ -259,40 +263,6 @@ AND Attribute like '%Password'";
 	$row = $res->numRows();
 	$user_password = $row[0];
 
-	/* fill-in all the user radcheck attributes */
-
-	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-	$arrAttr = array();
-	$arrOp = array();
-	$arrValue = array();
-
-    while($row = $res->fetchRow()) {
-		array_push($arrAttr, $row[0]);
-		array_push($arrOp, $row[1]);
-		array_push($arrValue, $row[2]);
-	}	
-
-
-	/* fill-in all the user radreply attributes */
-
-	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-	$arrAttrReply = array();
-	$arrOpReply = array();
-	$arrValueReply = array();
-
-	while($row = $res->fetchRow()) {
-		array_push($arrAttrReply, $row[0]);
-		array_push($arrOpReply, $row[1]);
-		array_push($arrValueReply, $row[2]);
-	}
-
-
 
 	/* fill-in all the user info details */
 
@@ -313,9 +283,6 @@ AND Attribute like '%Password'";
 	$ui_homephone = $row['homephone'];
 	$ui_mobilephone = $row['mobilephone'];
 	$ui_notes = $row['notes'];
-
-	
-
 
 
 	include 'library/closedb.php';
@@ -345,6 +312,9 @@ AND Attribute like '%Password'";
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 
 <?php
         include_once ("library/tabber/tab-layout.php");
@@ -412,55 +382,60 @@ AND Attribute like '%Password'";
                         </thead>
                 ";
 
-		include ('include/management/op_select_options.php');
+	include 'library/opendb.php';
+	include ('include/management/op_select_options.php');
 
-                $counter = 0;
-                foreach ($arrAttr as $attribute) {
+	$editCounter = 0;
 
-			echo "<tr><td>";
-			echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$arrAttr[$counter]&tablename=radcheck'> 
+	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
+	while($row = $res->fetchRow()) {
+		
+		echo "<tr>";
+		echo "<td>";
+		echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$row[0]&tablename=radcheck'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-			echo "<b>$arrAttr[$counter]</b>";
-			echo "</td><td>";
+		echo "<b>$row[0]</b>";
+		echo "</td>";
 
-			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $arrAttr[$counter])) ) {
-				echo "<input type='password' value='$arrValue[$counter]' name='$arrAttr[$counter][]' id='$arrAttr[$counter][]' />";
-				echo "&nbsp;";
-				echo "<select name='$arrAttr[$counter][]'";
-				echo "<option value='$arrOp[$counter]'>$arrOp[$counter]</option>";
-				drawOptions();
-				echo "</select>";
-			} else {
-				echo "<input value='$arrValue[$counter]' name='$arrAttr[$counter][]' id='$arrAttr[$counter][]' />";
-				echo "&nbsp;";
-				echo "<select name='$arrAttr[$counter][]'";
-				echo "<option value='$arrOp[$counter]'>$arrOp[$counter]</option>";
-				drawOptions();
-				echo "</select>";
-			}
+		echo "<td>";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
-			switch ($arrAttr[$counter]) {
-				case "Expiration":
-							echo "&nbsp;
-							<img src=\"library/js_date/calendar.gif\" onclick=\"showChooser(this, '$arrAttr[$counter][]', 
-							'chooserSpan', 1950, 2010, 'd M Y', false);\">
-							<div id=\"chooserSpan\" class=\"dateChooser select-free\" style=\"display: none; visibility: 
-							hidden; width: 160px;\"></div>
-							";
-						break;
-			
-			}
-
-			echo "<br/></td></tr>";
-			$counter++;
-
+		if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
+			echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
+			echo "&nbsp;";
+			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+			echo "<option value='$row[1]'>$row[1]</option>";
+			drawOptions();
+			echo "</select>";
+		} else {
+			echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
+			echo "&nbsp;";
+			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+			echo "<option value='$row[1]'>$row[1]</option>";
+			drawOptions();
+			echo "</select>";
 		}
+
+		echo "       
+		        <input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'>
+		";
+
+		echo "</td>";
+		echo "</tr>";
+
+		$editCounter++;			// we increment the counter for the html elements of the edit attributes
+
+
+	}
+
 
 		echo "</table>";
 		echo "</div>";
 
 		echo "<div class='tabbertab' title='".$l['table']['RADIUSReply']."'>";
-
 
 		echo "<table border='2' class='table1'>";
 	        echo "
@@ -471,31 +446,57 @@ AND Attribute like '%Password'";
                         </thead>
                 ";
 
-                $counter = 0;
-                foreach ($arrAttrReply as $attribute) {
 
-                        echo "<tr><td>";
-			echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$arrAttrReply[$counter]&tablename=radreply'> 
+
+	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
+	while($row = $res->fetchRow()) {
+		
+		echo "<tr>";
+		echo "<td>";
+		echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$row[0]&tablename=radreply'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-			echo "<b>$arrAttrReply[$counter]</b>";
-                        echo "</td><td>";
-			echo "<input value='$arrValueReply[$counter]' name='$arrAttrReply[$counter][]' />";
+		echo "<b>$row[0]</b>";
+		echo "</td>";
 
-				echo "&nbsp;";
-				echo "<select name='$arrAttrReply[$counter][]'";
-				echo "<option value='$arrOpReply[$counter]'>$arrOpReply[$counter]</option>";
-				drawOptions();
-				echo "</select>";
-				echo "<br/>";
+		echo "<td>";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
-                        echo "</td></tr>";
-			$counter++;
-
+		if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
+			echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
+			echo "&nbsp;";
+			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+			echo "<option value='$row[1]'>$row[1]</option>";
+			drawOptions();
+			echo "</select>";
+		} else {
+			echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
+			echo "&nbsp;";
+			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+			echo "<option value='$row[1]'>$row[1]</option>";
+			drawOptions();
+			echo "</select>";
 		}
+
+		echo "       
+		        <input type='hidden' name='editValues".$editCounter."[]' value='radreply' style='width: 90px'>
+		";
+
+		echo "</td>";
+		echo "</tr>";
+
+		$editCounter++;			// we increment the counter for the html elements of the edit attributes
+
+
+	}
+
 
 		echo "</table>";
 		echo "</div>";
 
+	include 'library/closedb.php';
 
 ?>
 
@@ -510,10 +511,84 @@ AND Attribute like '%Password'";
 
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
-<?php
-        include_once('include/management/attributes.php');
-        drawAttributes();
-?>
+<table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>
+                                                        </tr>
+                                        </thead>
+        <tr>
+                <td>Vendor:
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
+                        style='width: 215px' onclick="getVendorsList('dictVendors0')" >
+                        <option value=''>Select Vendor...</option>
+                        <option value='other'>other</option>
+                </select>
+
+                &nbsp;&nbsp;
+                Attribute:
+                <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
+                        <option value=''>Select Attribute...</option>
+
+                </select>
+                </td>
+        </tr>
+        <tr>
+                <td>
+                &nbsp;
+                Value:
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px'>
+
+                &nbsp;
+                Op:
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px'>
+
+                </select>
+
+                &nbsp;
+                Table:
+                <select id='dictTable0' name='dictValues0[]' style='width: 90px'>
+
+                </select>
+
+
+
+                &nbsp;
+                Function:
+                <select id='dictFunc' name='dictFunc'>
+
+                </select>
+                </td>
+
+        </tr>
+
+        <tr>
+                <td>
+                <div id='dictInfo0' style='display:none;visibility:visible'>
+                        <span id='dictTooltip0'>
+                                <b>Attribute Tooltip:</b>
+                        </span>
+
+                        <br/>
+
+                        <span id='dictType0'>
+                                <b>Type:<b/>
+                        </span>
+                </div>
+                </td>
+        </tr>
+
+
+        <td>
+        <a href="javascript:;" onclick="addElement();">Add</a>
+        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
+        </td>
+
+</table>
+<br/>
+        <input type="hidden" value="0" id="divCounter" />
+        <div id="divContainer"> </div> <br/>
+
         <br/>
      </div>
 
