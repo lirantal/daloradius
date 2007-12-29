@@ -10,7 +10,7 @@ if(isset($_GET['getVendorsList'])) {
 
 	include '../../library/opendb.php';
 
-	$sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>''";
+	$sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>'' ORDER BY Vendor ASC";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
