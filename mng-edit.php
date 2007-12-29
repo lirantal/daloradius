@@ -31,6 +31,8 @@
                 $mobilephone = $_REQUEST['mobilephone'];
                 $notes = $_REQUEST['notes'];
 
+		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
+
 		if (trim($username) != "") {
 
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
@@ -104,6 +106,8 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 						case "homephone":
 						case "mobilephone":
 						case "notes":
+						case "passwordOrig":
+
 								$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
 														// to skip the loop (continue) without entering it as
 														// we do not want to process this $attribute in the following
@@ -141,49 +145,41 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 				// and this has to be done because we're looping on all attributes that were submitted with the form
 				switch($attribute) {
 					case "User-Password":
-						$password = "'$value'";
-						break;
 					case "CHAP-Password":
-						$password = "'$value'";
-						break;
 					case "Cleartext-Password":
-						$password = "'$value'";
-						break;							
 					case "Crypt-Password":
-						$password = "'$value'";
-						break;	
 					case "MD5-Password":
-						$password = "'$value'";
-						break;
 					case "SHA1-Password":
-						$password = "'$value'";
-						break;
+						$value = "'$value'";
+						$passwordAttribute = 1;	// if this is a password 
+						break;			// attribute then we tag it
+									// as true
 					default:
 						$value = "'$value'";
+						$passwordAttribute = 0;
 				}
 
+
 				// first we check that the config option is actually set and available in the config file
-				if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) {
+				if ( (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) and ($passwordAttribute == 1) ) {
 					// if so we need to use different function for each encryption type and so we force it here
+					$passwordOrig = "'$passwordOrig'";
 					switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
 						case "cleartext":
-							if ($password != "")
-								$value = "$password";
+							if ( ($value != $passwordOrig) )
+								$value = "$value";
 							break;
 						case "crypt":
-							if ($password != "")
-								$value = "ENCRYPT($password)";
+							if ( ($value != $passwordOrig) )
+								$value = "ENCRYPT($value)";
 							break;
 						case "md5":
-							if ($password != "")
-								$value = "MD5($password)";
+							if ( ($value != $passwordOrig) )
+								$value = "MD5($value)";
 							break;
 					}
-				} else {
-					// if the config option was not set and we encountered a password attribute we set it to default which is cleartext
-					if ($password != "")
-						$value = "$password";
 				}
+
 
 				/* since we have added include/management/attributes.php to the form which 
 				   populates the page with all the existing attributes for us to choose from, even
@@ -403,21 +399,24 @@ AND Attribute like '%Password'";
 		echo "<td>";
 		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
-		if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
-			echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
-			echo "&nbsp;";
-			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
-			echo "<option value='$row[1]'>$row[1]</option>";
-			drawOptions();
-			echo "</select>";
-		} else {
-			echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
-			echo "&nbsp;";
-			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
-			echo "<option value='$row[1]'>$row[1]</option>";
-			drawOptions();
-			echo "</select>";
-		}
+//		if (preg_match("/.*-Password/", $row[0])) {
+			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
+				echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
+				echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
+				echo "&nbsp;";
+				echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+				echo "<option value='$row[1]'>$row[1]</option>";
+				drawOptions();
+				echo "</select>";
+			} else {
+				echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
+				echo "&nbsp;";
+				echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+				echo "<option value='$row[1]'>$row[1]</option>";
+				drawOptions();
+				echo "</select>";
+			}
+//		}
 
 		echo "       
 		        <input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'>
