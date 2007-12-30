@@ -46,7 +46,7 @@
 
 				// insert username/password
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
-'User-Password', '==', '".$dbSocket->escapeSimple($password)."')";
+'User-Password', ':=', '".$dbSocket->escapeSimple($password)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
