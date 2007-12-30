@@ -6,22 +6,12 @@ function getVendorsList(sel) {
 
         document.getElementById(sel).options.length = 1;     // empty attributes list
 
-//      var objSel = document.getElementById(sel);
-//	objSel.options[objSel.options.length] = new Option('22','22');
+        var index = ajax.length;
+	ajax[index] = new sack();
 
-/*
-        var vendorName = sel.options[sel.selectedIndex].value;
-        document.getElementById(sel).options.length = 0;     // empty attributes list
-*/
-
-//	if (vendorList.length<=0) {
-	        var index = ajax.length;
-		ajax[index] = new sack();
-
-	        ajax[index].requestFile = 'include/management/dynamic_attributes.php?getVendorsList=yes';  // Specifying which file to get
-	        ajax[index].onCompletion = function(){ createVendors(index,sel) };        // Specify function that will be executed after file has been processed
-	        ajax[index].runAJAX();          // Execute AJAX function
-//	}
+        ajax[index].requestFile = 'include/management/dynamic_attributes.php?getVendorsList=yes';  // Specifying which file to get
+        ajax[index].onCompletion = function(){ createVendors(index,sel) };        // Specify function that will be executed after file has been processed
+        ajax[index].runAJAX();          // Execute AJAX function
 
 }
 
@@ -34,6 +24,7 @@ function createVendors(index,sel) {
 function getAttributesList(sel,attributesSel) {
 
         var vendorName = sel.options[sel.selectedIndex].value;
+
         document.getElementById(attributesSel).options.length = 0;     // empty attributes list
         if(vendorName.length>0) {
 
