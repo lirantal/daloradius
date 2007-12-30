@@ -68,6 +68,19 @@ $l['all']['Accounting'] = "Accounting";
 $l['all']['RADIUSReply'] = "RADIUS Reply";
 
 
+
+/* **********************************************************************************
+ * Tooltips
+ * Helper information such as tooltip text for mouseover events and popup tooltips
+ ************************************************************************************/
+
+$l['Tooltip']['UserEdit'] = "Edit User";
+$l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
+
+/* ********************************************************************************** */
+
+
+
 /* **********************************************************************************
  * Tables
  * The text related to all the table headers and tabbed layout text
