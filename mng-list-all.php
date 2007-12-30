@@ -138,7 +138,7 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
-				<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]'> $row[0] </a> </td>
+				<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]' title='".$l['Tooltip']['UserEdit']."'> $row[0] </a> </td>
 				<td> $row[1] </td>
 				<td> $row[3] </td>
 		</tr>";
