@@ -110,8 +110,8 @@ if(isset($_GET['getValuesForAttribute'])) {
 }
 
 function populateTables() {
-	echo "objTable.options[objTable.options.length] = new Option('radcheck','radcheck');\n";
-	echo "objTable.options[objTable.options.length] = new Option('radreply','radreply');\n";
+	echo "objTable.options[objTable.options.length] = new Option('check','check');\n";
+	echo "objTable.options[objTable.options.length] = new Option('reply','reply');\n";
 }
 
 

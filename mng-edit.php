@@ -131,6 +131,12 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
                                 if (isset($field[3]))
 					$table = $field[3];
 
+                                if ($table == 'check')
+                                        $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+                                if ($table == 'reply')
+                                        $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+
+
                                 if (!($value))
    	                             continue;
 
