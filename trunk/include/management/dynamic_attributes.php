@@ -37,6 +37,9 @@ if(isset($_GET['vendorAttributes'])) {
 		$dbSocket->escapeSimple($vendor)."' AND Value IS NULL";
         $res = $dbSocket->query($sql);
 
+		echo "objAttributes.options[objAttributes.options.length] = 
+			new Option('Select Attribute...','');\n";
+
         while($row = $res->fetchRow()) {
 		echo "objAttributes.options[objAttributes.options.length] = 
 			new Option('$row[0]','$row[0]');\n";

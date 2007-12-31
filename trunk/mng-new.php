@@ -350,7 +350,6 @@
 		&nbsp;&nbsp;
                 Attribute:
                 <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
-                        <option value=''>Select Attribute...</option>
 
                 </select>
                 </td>
