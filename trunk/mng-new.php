@@ -125,10 +125,19 @@
 						continue;
 					}
 
-					$attribute = $field[0];
-					$value = $field[1];
-					$op = $field[2];
-					$table = $field[3];
+	                                if (isset($field[0]))
+	                                        $attribute = $field[0];
+	                                if (isset($field[1]))
+	                                        $value = $field[1];
+	                                if (isset($field[2]))
+	                                        $op = $field[2];
+	                                if (isset($field[3]))
+	                                        $table = $field[3];
+
+					if ($table == 'check')
+						$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+					if ($table == 'reply')
+						$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
 					if (!($value))
 						continue;
