@@ -9,6 +9,8 @@
 	$groupname = "";
 
 	$logDebugSQL = "";
+	$allValues = "";
+	$allAttributes = "";
 
     if (isset($_POST['submit'])) {
 	
@@ -21,11 +23,11 @@
 	if ($groupname) {
 		
 		$counter = 0;
-		foreach ($_POST as $attribute=>$value) {
+		foreach ($_POST as $element=>$field) {
 
                                         // switch case to rise the flag for several $attribute which we do not
                                         // wish to process (ie: do any sql related stuff in the db)
-                                        switch ($attribute) {
+                                        switch ($element) {
 
                                                 case "groupname":
                                                 case "submit":
@@ -44,31 +46,45 @@
 
 
 
-			if ($value[0] == "")				// we don't process attribtues with no values
-					continue;
+                                        if (isset($field[0]))
+                                                $attribute = $field[0];
+                                        if (isset($field[1]))
+                                                $value = $field[1];
+                                        if (isset($field[2]))
+                                                $op = $field[2];
+
+					// we explicitly set the table target to be radgroupreply
+                                        $table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
+
+                                        if (!($value))
+                                                continue;	// we don't process empty values attributes
+
+
+			$allValues .= $value . "\n";
+			$allAttributes .= $attribute . "\n";
+
 					
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'
 AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 				
-
 			if ($res->numRows() == 0) {
-					// insert usergroup details
+					// insert radgroupreply details
 					// assuming there's no groupname with that attribute in the table
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." values (0,'".$dbSocket->escapeSimple($groupname)."',
-'".$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($value[1])."', '".$dbSocket->escapeSimple($value[0])."')";
+					$sql = "INSERT INTO $table VALUES (0,'".$dbSocket->escapeSimple($groupname)."',
+'".$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 					$counter++;
 					
 					$actionStatus = "success";
-					$actionMsg = "Added to database new group: <b> $groupname </b> with attribute: <b> $attribute </b> and value: <b> $value[0] </b>";
-					$logAction = "Successfully added group [$groupname] with attribute: <b> $attribute </b> and value: <b> $value[0] </b> on page: ";
+					$actionMsg = "Added to database new group: <b> $groupname </b> with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b>";
+					$logAction = "Successfully added group [$groupname] with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b> on page: ";
 			} else { 
 				$actionStatus = "failure";
-				$actionMsg = "The group <b> $groupname </b> already exists in the database with attribute <b> $attribute </b>";
-				$logAction = "Failed adding already existing group [$groupname] with attribute [$attribute] on page: ";
+				$actionMsg = "The group <b> $groupname </b> already exist in the database with attribute(s) <b> $allAttributes </b>";
+				$logAction = "Failed adding already existing group [$groupname] with attribute(s) [$allAttributes] on page: ";
 
 		        } // end else if mysql
 
@@ -114,6 +130,9 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
 
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
+
 </head>
  
 <?php
@@ -155,10 +174,73 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
 
 <br/><br/>
-<?php
-        include_once('include/management/attributes.php');
-        drawAttributes();
-?>
+
+
+<table border='2' class='table1'>
+                                        <thead>
+                                                        <tr>
+                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>
+                                                        </tr>
+                                        </thead>
+        <tr>
+                <td>Vendor:
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
+                        style='width: 215px' onclick="getVendorsList('dictVendors0')" >
+                        <option value=''>Select Vendor...</option>
+                </select>
+
+                &nbsp;&nbsp;
+                Attribute:
+                <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
+
+                </select>
+                </td>
+        </tr>
+        <tr>
+                <td>
+                &nbsp;
+                Value:
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px'>
+
+                &nbsp;
+                Op:
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px'> </select>
+
+                <input type='hidden' id='dictTable0' name='dictValues0[]' style='width: 45px'>
+
+                &nbsp;
+                Function:
+                <select id='dictFunc' name='dictFunc'> </select>
+                </td>
+
+        </tr>
+
+        <tr>
+                <td>
+                <div id='dictInfo0' style='display:none;visibility:visible'>
+                        <span id='dictTooltip0'>
+                                <b>Attribute Tooltip:</b>
+                        </span>
+
+                        <br/>
+
+                        <span id='dictType0'>
+                                <b>Type:<b/>
+                        </span>
+                </div>
+                </td>
+        </tr>
+
+
+        <td>
+        <a href="javascript:;" onclick="addElement(0);">Add</a>
+        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
+        </td>
+
+</table>
+<br/>   
+        <input type="hidden" value="0" id="divCounter" />
+        <div id="divContainer"> </div> <br/>
 
 
 
