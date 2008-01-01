@@ -527,7 +527,6 @@ AND Attribute like '%Password'";
                 <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
                         style='width: 215px' onclick="getVendorsList('dictVendors0')" >
                         <option value=''>Select Vendor...</option>
-                        <option value='other'>other</option>
                 </select>
 
                 &nbsp;&nbsp;
