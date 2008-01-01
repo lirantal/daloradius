@@ -71,7 +71,7 @@ function createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType) {
 
 
 
-function addElement() {
+function addElement(enableTable) {
   dictCounter++;			// incrementing elements counter
 
   var divContainer = document.getElementById('divContainer');
@@ -82,7 +82,16 @@ function addElement() {
   var attributeDiv = document.createElement('div');
   var divIdName = 'attrib'+num+'Div';
   attributeDiv.setAttribute('id',divIdName);
-  attributeDiv.innerHTML = ""+
+
+  if (enableTable == 1) {
+	tableElement = "&nbsp;&nbsp;Table: "+
+	 	"<select id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' style='width: 90px'>"+
+		"</select>";
+  } else {
+	tableElement = "";
+  };
+
+  var content = "" +
 	"	<table border='2' class='table1'>"+
 	"		<thead>"+
 	"                                               <tr>"+
@@ -110,9 +119,7 @@ function addElement() {
 	"                <select id='dictOP"+num+"' name='dictValues"+dictCounter+"[]' style='width: 45px'>"+
 	"                </select>"+
 	"                "+
-	"                &nbsp;&nbsp;Table:"+
-	"                <select id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' style='width: 90px'>"+
-	"                </select>"+
+	tableElement+
 	"                &nbsp;&nbsp;Function:"+
 	"                <select id='dictFunc' name='dictFunc'>"+
 	"                </select>"+
@@ -131,13 +138,14 @@ function addElement() {
 	"	</div>"+
         "       </td>"+
 	"        </tr>"+
-	"<a href=\"javascript:;\" onclick=\"addElement();\">Add</a>"+
+	"<a href=\"javascript:;\" onclick=\"addElement("+enableTable+");\">Add</a>"+
 	"&nbsp;"+
 	"<a href=\"javascript:;\" onclick=\"removeElement(\'"+divIdName+"\')\">Remove</a>"+
 	"&nbsp;"+
 	"<a href=\"javascript:;\" onclick=\"toggleShowDiv(\'dictInfo"+num+"\')\">Help</a>"+
 	"</table><br/>";
 
+  attributeDiv.innerHTML = content;
   divContainer.appendChild(attributeDiv);
 }
 

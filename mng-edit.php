@@ -584,7 +584,7 @@ AND Attribute like '%Password'";
 
 
         <td>
-        <a href="javascript:;" onclick="addElement();">Add</a>
+        <a href="javascript:;" onclick="addElement(1);">Add</a>
         <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
         </td>
 
