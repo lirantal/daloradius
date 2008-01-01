@@ -46,7 +46,8 @@ function getValuesList(sel,valuesSel,opSel,tableSel,attrTooltip,attrType) {
         var attributeName = sel.options[sel.selectedIndex].value;
         document.getElementById(valuesSel).value = '';		 // clear input
         document.getElementById(opSel).options.length = 0;       // clear select box
-        document.getElementById(tableSel).options.length = 0;    // clear select box
+	if (document.getElementById(tableSel).type == "select")
+	        document.getElementById(tableSel).options.length = 0;    // clear select box
 
         document.getElementById(attrType).value = '';       	 // clear input
         document.getElementById(attrTooltip).value = '';         // clear input
@@ -88,7 +89,7 @@ function addElement(enableTable) {
 	 	"<select id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' style='width: 90px'>"+
 		"</select>";
   } else {
-	tableElement = "";
+	tableElement = "<input type='hidden' id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' >";
   };
 
   var content = "" +
