@@ -116,7 +116,7 @@
 				<td> $row[2] </td>						
 				<td> $row[3] </td>						
 				<td> <a href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]'> ".$l['all']['edit']." </a>
-					 <a href='mng-rad-groupreply-del.php?groupname=$row[0]&value=$row[3]'> ".$l['all']['del']." </a>
+					 <a href='mng-rad-groupreply-del.php?groupname=$row[0]&attribute=$row[1]&value=$row[3]'> ".$l['all']['del']." </a>
 					 </td>
 
 		</tr>";
