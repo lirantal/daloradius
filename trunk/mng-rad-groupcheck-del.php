@@ -10,6 +10,7 @@
 	$logDebugSQL = "";
 
 	isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "";
+        isset($_REQUEST['attribute']) ? $attribute = $_REQUEST['attribute'] : $attribute = "";
 	isset($_REQUEST['value']) ? $value = $_REQUEST['value'] : $value = "";
 
 	if (isset($_POST['submit'])) {
@@ -18,16 +19,17 @@
 
 			include 'library/opendb.php';
 
-			if (trim($value) != "") {
+                        if ( (trim($value) != "") && (trim($attribute) != "") ) {
 
 				// delete only a specific groupname and it's attribute
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($value)."'";
+                                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." 
+WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND Attribute='$attribute'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
-				$actionMsg = "Deleted Group: <b> $groupname </b> and it's Value: <b> $value </b>";
-				$logAction = "Successfully deleted group [$groupname] and it's value [$value] on page: ";
+                                $actionMsg = "Deleted Group: <b> $groupname </b> with Attribute: <b> $attribute </b> and it's Value: <b> $value </b>";
+                                $logAction = "Successfully deleted group [$groupname] with attribute [$attribute] and it's value [$value] on page: ";
 
 				include 'library/closedb.php';
 
@@ -120,6 +122,11 @@
 </td><td>												
                                                 <input value="<?php echo $value ?>" name="value"/><br/>
 												<?php echo $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] ?>
+                                                </font>
+<tr><td>
+                                                <b>Attribute</b>
+</td><td>
+                                                <input value="<?php echo $attribute ?>" name="attribute"/><br/>
                                                 </font>
 </td></tr>
 </table>
