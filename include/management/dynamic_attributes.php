@@ -92,8 +92,7 @@ if(isset($_GET['getValuesForAttribute'])) {
 	//next up we set as the first option of the select box the default target table
 	//for this attribute
 	if (isset($RecommendedTable)) {
-		echo "objTable.options[objTable.options.length] = new Option('$RecommendedTable',
-		'$RecommendedTable');\n";
+		echo "if (objTable.type == \"select\") objTable.options[objTable.options.length] = new Option('$RecommendedTable','$RecommendedTable');\n";
 	}
 	//and ofcourse populate it also with the possible tables
 	populateTables();
@@ -113,8 +112,8 @@ if(isset($_GET['getValuesForAttribute'])) {
 }
 
 function populateTables() {
-	echo "objTable.options[objTable.options.length] = new Option('check','check');\n";
-	echo "objTable.options[objTable.options.length] = new Option('reply','reply');\n";
+	echo "if (objTable.type == \"select\") objTable.options[objTable.options.length] = new Option('check','check');\n";
+	echo "if (objTable.type == \"select\") objTable.options[objTable.options.length] = new Option('reply','reply');\n";
 }
 
 
