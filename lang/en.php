@@ -232,13 +232,13 @@ $l['Intro']['mngradnaslist.php'] = "NAS Listing in Database";
 $l['Intro']['mngradnasedit.php'] = "Edit NAS Record";
 $l['Intro']['mngradnasdel.php'] = "Remove NAS Record";
 
-$l['Intro']['mngradgroupreply.php'] = "Group Reply Configuration";
+$l['Intro']['mngradgroups.php'] = "Groups Configuration";
+
 $l['Intro']['mngradgroupreplynew.php'] = "New Group Reply Mapping";
 $l['Intro']['mngradgroupreplylist.php'] = "Group Reply Mapping in Database";
 $l['Intro']['mngradgroupreplyedit.php'] = "Edit Group Reply Mapping for Group:";
 $l['Intro']['mngradgroupreplydel.php'] = "Remove Group Reply Mapping";
 
-$l['Intro']['mngradgroupcheck.php'] = "Group Check Configuration";
 $l['Intro']['mngradgroupchecknew.php'] = "New Group Check Mapping";
 $l['Intro']['mngradgroupchecklist.php'] = "Group Check Mapping in Database";
 $l['Intro']['mngradgroupcheckedit.php'] = "Edit Group Check Mapping for Group:";
@@ -377,14 +377,13 @@ $l['helpPage']['mngradusergrouplist'] = "";
 $l['helpPage']['mngradusergrouplistuser'] = "";
 $l['helpPage']['mngradusergroupedit'] = "";
 
-$l['helpPage']['mngradgroupcheck'] = "";
+$l['helpPage']['mngradgroups'] = "Groups Management";
+
 $l['helpPage']['mngradgroupchecknew'] = "";
 $l['helpPage']['mngradgroupcheckdel'] = "To remove a group entry from the database you must provide the groupname of the account";
 $l['helpPage']['mngradgroupchecklist'] = "";
 $l['helpPage']['mngradgroupcheckedit'] = "";
 
-
-$l['helpPage']['mngradgroupreply'] = "";
 $l['helpPage']['mngradgroupreplynew'] = "";
 $l['helpPage']['mngradgroupreplydel'] = "To remove a group entry from the database you must provide the groupname of the account";
 $l['helpPage']['mngradgroupreplylist'] = "";
