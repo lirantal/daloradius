@@ -19,16 +19,16 @@
  
  
 <?php
-	include ("menu-mng-rad-groupreply.php");
+	include ("menu-mng-rad-groups.php");
 ?>
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreply.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroups.php'] ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradgroupreply'] ?>
+					<?php echo $l['helpPage']['mngradgroups'] ?>
 					<br/>
 				</div>
 				<br/>
