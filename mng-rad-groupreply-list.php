@@ -31,7 +31,7 @@
  
  
 <?php
-	include ("menu-mng-rad-groupreply.php");
+	include ("menu-mng-rad-groups.php");
 ?>
 		
 		<div id="contentnorightbar">

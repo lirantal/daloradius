@@ -108,7 +108,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket
  
  
 <?php
-	include ("menu-mng-rad-groupcheck.php");
+	include ("menu-mng-rad-groups.php");
 ?>
 		
 		<div id="contentnorightbar">
