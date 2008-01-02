@@ -88,7 +88,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
  
  
 <?php
-	include ("menu-mng-rad-groupcheck.php");
+	include ("menu-mng-rad-groups.php");
 ?>
 		
 		<div id="contentnorightbar">
