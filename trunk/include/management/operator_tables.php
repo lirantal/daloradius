@@ -30,14 +30,18 @@ $arrayPagesAvailable = array(
 	 'mng_rad_usergroup_new' => 'Management UserGroup',
 	 'mng_rad_usergroup_list_user' => 'Management UserGroup',
 	 'mng_rad_usergroup_list' => 'Management UserGroup',
-	 'mng_rad_groupcheck_del' => 'Management GroupCheck',
-	 'mng_rad_groupcheck_list' => 'Management GroupCheck',
-	 'mng_rad_groupcheck_new' => 'Management GroupCheck',
-	 'mng_rad_groupcheck_edit' => 'Management GroupCheck',
-	 'mng_rad_groupreply_del' => 'Management GroupReply',
-	 'mng_rad_groupreply_list' => 'Management GroupReply',
-	 'mng_rad_groupreply_new' => 'Management GroupReply',
-	 'mng_rad_groupreply_edit' => 'Management GroupReply',
+	 'mng_rad_groupcheck_del' => 'Management Groups',
+	 'mng_rad_groupcheck_list' => 'Management Groups',
+	 'mng_rad_groupcheck_new' => 'Management Groups',
+	 'mng_rad_groupcheck_edit' => 'Management Groups',
+	 'mng_rad_groupreply_del' => 'Management Groups',
+	 'mng_rad_groupreply_list' => 'Management Groups',
+	 'mng_rad_groupreply_new' => 'Management Groups',
+	 'mng_rad_groupreply_edit' => 'Management Groups',
+	 'mng_rad_profiles_new' => 'Management Profiles',
+	 'mng_rad_profiles_edit' => 'Management Profiles',
+	 'mng_rad_profiles_del' => 'Management Profiles',
+	 'mng_rad_profiles_list' => 'Management Profiles',
 	 'rep_topusers' => 'Reporting Core',
 	 'rep_online' => 'Reporting Core',
 	 'rep_lastconnect' => 'Reporting Core',
@@ -407,19 +411,19 @@ echo "</table>";
 
 
 /* 
- * Management GroupCheck category related pages *************************************************
+ * Management Groups category related pages *************************************************
  *
 */
 
 echo <<<EOF
 	<tr><td>		
-    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryManagementGroupCheck')">
-    <b> Management - GroupCheck </b> <br/>
-    <div id="categoryManagementGroupCheck" style="display:none;visibility:visible" >
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryManagementGroups')">
+    <b> Management - Groups </b> <br/>
+    <div id="categoryManagementGroups" style="display:none;visibility:visible" >
 EOF;
 echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
-		if ($descr != 'Management GroupCheck')
+		if ($descr != 'Management Groups')
 			continue;
 
                 echo "<tr><td width='350'>";
@@ -468,19 +472,19 @@ echo "</table>";
 
 
 /* 
- * Management GroupReply category related pages *************************************************
+ * Management Profiles category related pages *************************************************
  *
 */
 
 echo <<<EOF
 	<tr><td>		
-    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryManagementGroupReply')">
-    <b> Management - GroupReply </b> <br/>
-    <div id="categoryManagementGroupReply" style="display:none;visibility:visible" >
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryManagementProfiles')">
+    <b> Management - Profiles </b> <br/>
+    <div id="categoryManagementProfiles" style="display:none;visibility:visible" >
 EOF;
 echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
-		if ($descr != 'Management GroupReply')
+		if ($descr != 'Management Profiles')
 			continue;
 
                 echo "<tr><td width='350'>";
