@@ -100,6 +100,10 @@ CREATE TABLE `operators` (
   `mng_rad_groupreply_list` varchar(32) default NULL,
   `mng_rad_groupreply_new` varchar(32) default NULL,
   `mng_rad_groupreply_edit` varchar(32) default NULL,
+  `mng_rad_profiles_edit` varchar(32) default NULL,
+  `mng_rad_profiles_del` varchar(32) default NULL,
+  `mng_rad_profiles_list` varchar(32) default NULL,
+  `mng_rad_profiles_new` varchar(32) default NULL,
   `rep_online` varchar(32) default NULL,
   `rep_topusers` varchar(32) default NULL,
   `rep_username` varchar(32) default NULL,
@@ -164,7 +168,7 @@ CREATE TABLE `operators` (
 
 
 LOCK TABLES `operators` WRITE;
-INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Sys','Administrator','','','','','','','','','','','0000-00-00 00:00:00'),(2,'liran','1234','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Liran','Tal','Developer','daloRADIUS','Enginx','','','liran.tal@gmail.com','liran@enginx.com','','','','0000-00-00 00:00:00');
+INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Sys','Administrator','','','','','','','','','','','0000-00-00 00:00:00'),(2,'liran','1234','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Liran','Tal','Developer','daloRADIUS','Enginx','','','liran.tal@gmail.com','liran@enginx.com','','','','0000-00-00 00:00:00');
 UNLOCK TABLES;
 
 --

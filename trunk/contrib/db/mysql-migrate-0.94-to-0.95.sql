@@ -16,6 +16,13 @@ ALTER TABLE operators ADD acct_custom_query VARCHAR(32);
 UPDATE operators SET acct_custom_query='yes' WHERE username='administrator';
 ALTER TABLE operators ADD config_maint_disconnect_user VARCHAR(32);
 UPDATE operators SET config_maint_disconnect_user='yes' WHERE username='administrator';
+ALTER TABLE operators ADD mng_rad_profiles_new VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_profiles_edit VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_profiles_list VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_profiles_del VARCHAR(32);
+UPDATE operators SET mng_rad_profiles_new='yes',mng_rad_profiles_edit='yes',mng_rad_profiles_list='yes',mng_rad_profiles_del='yes' WHERE username='administrator';
+
+
 
 --
 -- Table structure for table `dictionary`
