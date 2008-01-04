@@ -232,6 +232,13 @@ $l['Intro']['mngradnaslist.php'] = "NAS Listing in Database";
 $l['Intro']['mngradnasedit.php'] = "Edit NAS Record";
 $l['Intro']['mngradnasdel.php'] = "Remove NAS Record";
 
+
+$l['Intro']['mngradprofiles.php'] = "Profiles Configuration";
+$l['Intro']['mngradprofilesedit.php'] = "Profiles Configuration";
+$l['Intro']['mngradprofilesdel.php'] = "Profiles Configuration";
+$l['Intro']['mngradprofileslist.php'] = "Profiles Configuration";
+$l['Intro']['mngradprofilesnew.php'] = "Profiles Configuration";
+
 $l['Intro']['mngradgroups.php'] = "Groups Configuration";
 
 $l['Intro']['mngradgroupreplynew.php'] = "New Group Reply Mapping";
@@ -376,6 +383,13 @@ $l['helpPage']['mngradusergroupnew'] = "";
 $l['helpPage']['mngradusergrouplist'] = "";
 $l['helpPage']['mngradusergrouplistuser'] = "";
 $l['helpPage']['mngradusergroupedit'] = "";
+
+
+$l['helpPage']['mngradprofiles'] = "Profiles Management";
+$l['helpPage']['mngradprofilesedit'] = "Profiles Management";
+$l['helpPage']['mngradprofilesdel'] = "Profiles Management";
+$l['helpPage']['mngradprofileslist'] = "Profiles Management";
+$l['helpPage']['mngradprofilesnew'] = "Profiles Management";
 
 $l['helpPage']['mngradgroups'] = "Groups Management";
 
