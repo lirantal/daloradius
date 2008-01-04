@@ -333,7 +333,7 @@ AND Attribute like '%Password'";
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?>
 				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
+				<div id="helpPage" style="display:inline;visibility:visible" >
 					<?php echo $l['helpPage']['mngedit'] ?>
 					<br/>
 				</div>

@@ -382,7 +382,7 @@
 
 	<tr>
 		<td>
-		<div id='dictInfo0' style='display:none;visibility:visible'>
+		<div id='dictInfo0' style='display:inline;visibility:visible'>
 			<span id='dictTooltip0'>
 				<b>Attribute Tooltip:</b>
 			</span>
