@@ -2,8 +2,12 @@ release 0.9-6 - 17 Februray 2008
 	- added major improvement to attributes management which is now supporting all possible vendors
 	  and attributes which comes with latest freeradius 1.1.7, dynamically from the database using
 	  ajax support in the interface to easy management.
+	- added new profiles page which integrates the radgroupcheck and radgroupreply tables
+	- grouped together the group-reply and group-check pages into a single groups management page
+	- attributes automatically appear with the tooltip/help text (requested by Carlos Cessario)
 	- fixed bug on edit user page, when database password encryption is turned on, users' passwords
 	  were reset to a random value on every save.
+
 
 release 0.9-5 - 23 December 2007
 	- added improved support for sql db queries
