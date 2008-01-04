@@ -118,9 +118,11 @@ value="			<?php if (isset($accounting_custom_startdate)) echo $accounting_custom
 		<input type="checkbox" name="sqlfields[]" value="FramedIPAddress" checked /> <h109> FramedIPAddress </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctStartDelay" /> <h109> AcctStartDelay </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctStopDelay" /> <h109> AcctStopDelay </h109> <br/>
-
-		<br/>
-		<h109> Order By </h109> <br/>
+		Select:
+		<a class="table" href="javascript:SetChecked(1,'sqlfields[]','acctcustomquery')">All</a>
+		<a class="table" href="javascript:SetChecked(0,'sqlfields[]','acctcustomquery')">None</a>
+		<br/><br/>
+		<h109> Order By <h109> <br/>
 			<center>
 			<select name="orderBy" size="1">
 				<option value="RadAcctId"> RadAcctId </option>
