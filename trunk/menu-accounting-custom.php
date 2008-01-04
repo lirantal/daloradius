@@ -94,30 +94,30 @@ value="			<?php if (isset($accounting_custom_startdate)) echo $accounting_custom
 
 		<br/><br/>
 		<h109> Accounting Fields in Query: </h109><br/>
-		<input type="checkbox" name="sqlfields[]" value="RadAcctId" checked /> <h109> RadAcctId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctSessionId" checked /> <h109> AcctSessionId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctUniqueId" checked /> <h109> AcctUniqueId</h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="RadAcctId" /> <h109> RadAcctId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctSessionId" /> <h109> AcctSessionId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctUniqueId" /> <h109> AcctUniqueId</h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="UserName" checked /> <h109> UserName </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="Realm" checked /> <h109> Realm</h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="NASIPAddress" checked /> <h109> NASIPAddress </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="NASPortId" checked /> <h109> NASPortId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="NASPortType" checked /> <h109> NASPortType </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="NASPortId" /> <h109> NASPortId </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="NASPortType" /> <h109> NASPortType </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctStartTime" checked /> <h109> AcctStartTime </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctStopTime" checked /> <h109> AcctStopTime </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctSessionTime" checked /> <h109> AcctSessionTime </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctAuthentic" checked /> <h109> AcctAuthentic </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_start" checked /> <h109> ConnectInfo_start </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_stop" checked /> <h109> ConnectInfo_stop </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctAuthentic" /> <h109> AcctAuthentic </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_start" /> <h109> ConnectInfo_start </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_stop" /> <h109> ConnectInfo_stop </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctInputOctets" checked /> <h109> AcctInputOctets </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctOutputOctets" checked /> <h109> AcctOutputOctets </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="CalledStationId" checked /> <h109> CalledStationId </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="CallingStationId" checked /> <h109> CallingStationId </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctTerminateCause" checked /> <h109> AcctTerminateCause </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="ServiceType" checked /> <h109> ServiceType </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="FramedProtocol" checked /> <h109> FramedProtocol </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="ServiceType" /> <h109> ServiceType </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="FramedProtocol" /> <h109> FramedProtocol </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="FramedIPAddress" checked /> <h109> FramedIPAddress </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctStartDelay" checked /> <h109> AcctStartDelay </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctStopDelay" checked /> <h109> AcctStopDelay </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctStartDelay" /> <h109> AcctStartDelay </h109> <br/>
+		<input type="checkbox" name="sqlfields[]" value="AcctStopDelay" /> <h109> AcctStopDelay </h109> <br/>
 
 		<br/>
 		<h109> Order By </h109> <br/>
