@@ -128,7 +128,7 @@ function addElement(enableTable) {
 	"	</tr>"+
 	"	<tr>"+
 	"           <td>"+
-	"                <div id='dictInfo"+num+"' style='display:none;visibility:visible'>"+
+	"                <div id='dictInfo"+num+"' style='display:inline;visibility:visible'>"+
         "        <span id='dictTooltip"+num+"'>"+
 	"        <b>Attribute Tooltip:</b>"+
         "        </span>"+
