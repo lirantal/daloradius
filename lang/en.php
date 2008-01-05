@@ -245,11 +245,13 @@ $l['Intro']['mngradgroupreplynew.php'] = "New Group Reply Mapping";
 $l['Intro']['mngradgroupreplylist.php'] = "Group Reply Mapping in Database";
 $l['Intro']['mngradgroupreplyedit.php'] = "Edit Group Reply Mapping for Group:";
 $l['Intro']['mngradgroupreplydel.php'] = "Remove Group Reply Mapping";
+$l['Intro']['mngradgroupreplysearch.php'] = "Search Group Reply Mapping";
 
 $l['Intro']['mngradgroupchecknew.php'] = "New Group Check Mapping";
 $l['Intro']['mngradgroupchecklist.php'] = "Group Check Mapping in Database";
 $l['Intro']['mngradgroupcheckedit.php'] = "Edit Group Check Mapping for Group:";
 $l['Intro']['mngradgroupcheckdel.php'] = "Remove Group Check Mapping";
+$l['Intro']['mngradgroupchecksearch.php'] = "Search Group Check Mapping";
 
 $l['Intro']['configdb.php'] = "Database Configuration";
 $l['Intro']['configlang.php'] = "Language Configuration";
@@ -397,11 +399,13 @@ $l['helpPage']['mngradgroupchecknew'] = "";
 $l['helpPage']['mngradgroupcheckdel'] = "To remove a group entry from the database you must provide the groupname of the account";
 $l['helpPage']['mngradgroupchecklist'] = "";
 $l['helpPage']['mngradgroupcheckedit'] = "";
+$l['helpPage']['mngradgroupchecksearch'] = "";
 
 $l['helpPage']['mngradgroupreplynew'] = "";
 $l['helpPage']['mngradgroupreplydel'] = "To remove a group entry from the database you must provide the groupname of the account";
 $l['helpPage']['mngradgroupreplylist'] = "";
 $l['helpPage']['mngradgroupreplyedit'] = "";
+$l['helpPage']['mngradgroupreplysearch'] = "";
 
 
 $l['helpPage']['mngradnas'] = "";
