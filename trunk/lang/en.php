@@ -387,11 +387,26 @@ $l['helpPage']['mngradusergrouplistuser'] = "";
 $l['helpPage']['mngradusergroupedit'] = "";
 
 
-$l['helpPage']['mngradprofiles'] = "Profiles Management";
-$l['helpPage']['mngradprofilesedit'] = "Profiles Management";
-$l['helpPage']['mngradprofilesdel'] = "Profiles Management";
-$l['helpPage']['mngradprofileslist'] = "Profiles Management";
-$l['helpPage']['mngradprofilesnew'] = "Profiles Management";
+$l['helpPage']['mngradprofiles'] = "
+<b>Profiles Management</b> - Manage Profiles for Users by composing a set of Reply Attributes and Check Attributes <br/>
+Profiles can be thought of as the composition of Group Reply and Group Check. <br/>
+<h200><b>List Profiles </b></h200> - List Profiles <br/>
+<h200><b>New Profile </b></h200> - Add a Profile <br/>
+<h200><b>Edit Profile </b></h200> - Edit a Profile <br/>
+<h200><b>Delete Profile </b></h200> - Delete a Profile <br/>
+";
+$l['helpPage']['mngradprofilesedit'] = "
+<h200><b>Edit Profile </b></h200> - Edit a Profile <br/>
+";
+$l['helpPage']['mngradprofilesdel'] = "
+<h200><b>Delete Profile </b></h200> - Delete a Profile <br/>
+";
+$l['helpPage']['mngradprofileslist'] = "
+<h200><b>List Profiles </b></h200> - List Profiles <br/>
+";
+$l['helpPage']['mngradprofilesnew'] = "
+<h200><b>New Profile </b></h200> - Add a Profile <br/>
+";
 
 $l['helpPage']['mngradgroups'] = "
 <b>Groups Management</b> - Manage Group Reply and Group Check mappings (radgroupreply/radgroupcheck tables).<br/>
