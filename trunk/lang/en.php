@@ -393,19 +393,52 @@ $l['helpPage']['mngradprofilesdel'] = "Profiles Management";
 $l['helpPage']['mngradprofileslist'] = "Profiles Management";
 $l['helpPage']['mngradprofilesnew'] = "Profiles Management";
 
-$l['helpPage']['mngradgroups'] = "Groups Management";
+$l['helpPage']['mngradgroups'] = "
+<b>Groups Management</b> - Manage Group Reply and Group Check mappings (radgroupreply/radgroupcheck tables).<br/>
+<h200><b>List Group Reply/Check </b></h200> - List Group Reply/Check Mappings<br/>
+<h200><b>Search Group Reply/Check </b></h200> - Search a Group Reply/Check Mapping (you may use wildcards) <br/>
+<h200><b>New Group Reply/Check </b></h200> - Add a Group Reply/Check Mapping <br/>
+<h200><b>Edit Group Reply/Check </b></h200> - Edit a Group Reply/Check Mapping <br/>
+<h200><b>Delete Group Reply/Check </b></h200> - Delete a Group Reply/Check Mapping <br/>
+";
 
-$l['helpPage']['mngradgroupchecknew'] = "";
-$l['helpPage']['mngradgroupcheckdel'] = "To remove a group entry from the database you must provide the groupname of the account";
-$l['helpPage']['mngradgroupchecklist'] = "";
-$l['helpPage']['mngradgroupcheckedit'] = "";
-$l['helpPage']['mngradgroupchecksearch'] = "";
 
-$l['helpPage']['mngradgroupreplynew'] = "";
-$l['helpPage']['mngradgroupreplydel'] = "To remove a group entry from the database you must provide the groupname of the account";
-$l['helpPage']['mngradgroupreplylist'] = "";
-$l['helpPage']['mngradgroupreplyedit'] = "";
-$l['helpPage']['mngradgroupreplysearch'] = "";
+$l['helpPage']['mngradgroupchecknew'] = "
+<h200><b>New Group Check </b></h200> - Add a Group Check Mapping <br/>
+";
+$l['helpPage']['mngradgroupcheckdel'] = "
+<h200><b>Delete Group Check </b></h200> - Delete a Group Check Mapping <br/>
+";
+
+$l['helpPage']['mngradgroupchecklist'] = "
+<h200><b>List Group Check </b></h200> - List Group Check Mappings<br/>
+";
+$l['helpPage']['mngradgroupcheckedit'] = "
+<h200><b>Edit Group Check </b></h200> - Edit a Group Check Mapping <br/>
+";
+$l['helpPage']['mngradgroupchecksearch'] = "
+<h200><b>Search Group Check </b></h200> - Search a Group Check Mapping <br/>
+to use a wildcard you may either type the % character which is familiar in SQL or you may use the more common *
+for convenience reasons and daloRADIUS will translate it to %
+";
+
+$l['helpPage']['mngradgroupreplynew'] = "
+<h200><b>New Group Reply </b></h200> - Add a Group Reply Mapping <br/>
+";
+$l['helpPage']['mngradgroupreplydel'] = "
+<h200><b>Delete Group Reply </b></h200> - Delete a Group Reply Mapping <br/>
+";
+$l['helpPage']['mngradgroupreplylist'] = "
+<h200><b>List Group Reply </b></h200> - List Group Reply Mappings<br/>
+";
+$l['helpPage']['mngradgroupreplyedit'] = "
+<h200><b>Edit Group Reply </b></h200> - Edit a Group Reply Mapping <br/>
+";
+$l['helpPage']['mngradgroupreplysearch'] = "
+<h200><b>Search Group Reply </b></h200> - Search a Group Reply </ Mapping <br/>
+to use a wildcard you may either type the % character which is familiar in SQL or you may use the more common *
+for convenience reasons and daloRADIUS will translate it to %
+";
 
 
 $l['helpPage']['mngradnas'] = "";
