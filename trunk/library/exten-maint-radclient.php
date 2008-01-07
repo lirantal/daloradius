@@ -24,13 +24,22 @@
 */ 
 function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command="auth",$additional="") {
 
-	$args = "$radiusaddr:$radiusport $command $secret";
+	$user = escapeshellarg($user);
+	$pass = escapeshellarg($pass);
+
+	$args = escapeshellarg("$radiusaddr:$radiusport")." ".escapeshellarg($command).
+		" ".escapeshellarg($secret);
 	$query = "User-Name=$user,User-Password=$pass";
 	
 	$radclient = "radclient"; 		// or you can change this with the full path if the binary radcilent program can not be
 						// found within your $PATH variable
 
-	$cmd = "echo \"$query\" | $radclient $options $args 2>&1";
+	$radclient_options = "-c ".escapeshellarg($options['count'])." -n ".
+				escapeshellarg($options['requests']).
+				" -r ".escapeshellarg($options['retries'])." -t ".
+				escapeshellarg($options['timeout'])." ".$options['debug'];
+
+	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
 	$print_cmd = "<b>Executed:</b> $cmd <br/><b>Results:</b><br/><br/>";
 	$res = shell_exec($cmd);
 
@@ -59,13 +68,22 @@ function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command
 */
 function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$command="disconnect",$additional="") {
 
-	$args = "$nasaddr:$nasport $command $nassecret";
+
+	$user = escapeshellarg($user);
+
+	$args = escapeshellarg("$nasaddr:$nasport")." ".escapeshellarg($command)." ".
+			escapeshellarg($nassecret);
 	$query = "User-Name=$user";
 	
 	$radclient = "radclient"; 		// or you can change this with the full path if the binary radcilent program can not be
 						// found within your $PATH variable
 
-	$cmd = "echo \"$query\" | $radclient $options $args 2>&1";
+	$radclient_options = "-c ".escapeshellarg($options['count'])." -n ".
+				escapeshellarg($options['requests']).
+				" -r ".escapeshellarg($options['retries'])." -t ".
+				escapeshellarg($options['timeout'])." ".$options['debug'];
+
+	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
 	$print_cmd = "<b>Executed:</b> $cmd <br/><b>Results:</b><br/><br/>";
 	$res = shell_exec($cmd);
 
