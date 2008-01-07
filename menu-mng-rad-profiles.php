@@ -24,7 +24,10 @@
                                                 <li><a href="mng-rad-profiles-new.php"><b>&raquo;</b>New Profile</a></li>
                                                 <li><a href="javascript:document.mngradprofileedit.submit();""><b>&raquo;</b>Edit Profile<a>
                                                         <form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="get" class="sidebar">
-                                                        <input name="profile" type="text" value="[profile]">
+<?php   
+        include 'include/management/populate_groups.php';
+	populate_groups("Select Profile","profile");
+?>
                                                         </form></li>
 
                                                 <li><a href="mng-rad-profiles-del.php"><b>&raquo;</b>Remove Profile</a></li>
