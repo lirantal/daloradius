@@ -1,6 +1,19 @@
-<select onChange="javascript:setStringText(this.id,'group')" id='usergroup' tabindex=105>
-        <option value=''>Select Group</option>
-<?php   
+<?php
+
+/*
+ * populate_groups 
+ * creates a select box and populates it with all groups from radgroupreply and
+ * radgroupcheck
+ * 
+ * $defaultOption - title for the first/default option in select box
+ * $elementName   - the string used for the select element's name='' value
+ *
+ */
+function populate_groups($defaultOption = "Select Group",$elementName = "groupname") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' 
+			name='$elementName' tabindex=105>
+			<option value=''>$defaultOption</option>";
 
         include 'library/opendb.php';
 
@@ -18,6 +31,9 @@ UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCH
         }
 
         include 'library/closedb.php';
+
+	echo "</select>";
+}
+
 ?>
-</select>
 

@@ -226,6 +226,7 @@
 
 <?php   
         include 'include/management/populate_groups.php';
+        populate_groups("Select Groups");
 ?>
 
 
