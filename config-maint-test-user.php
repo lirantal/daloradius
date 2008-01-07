@@ -27,19 +27,18 @@
 		isset($_REQUEST['count']) ? $count = $_REQUEST['count'] : $count = 1;
 		isset($_REQUEST['retries']) ? $requests = $_REQUEST['requests'] : $requests = 3;
 
-		if ( (isset($_REQUEST['debug'])) && ( ($debug != "yes") || ($debug != "no") ) )
-			$debug = "yes";
-
 		// create the optional arguments variable
 
-		// conver the debug = yes to the actual debug option which is "-x" to pass to radclient
+		// convert the debug = yes to the actual debug option which is "-x" to pass to radclient
 		if ($debug == "yes")
 			$debug = "-x";
 		else
 			$debug = "";
 
-		$options = " $debug -c $count -n $requests -r $retries -t $timeout ";
-		
+		$options = array("count" => $count, "requests" => $requests,
+					"retries" => $retries, "timeout" => $timeout,
+					"debug" => $debug,
+					);
 
 		$actionStatus = "informational";
 		$actionMsg = user_auth($options,$username, $password, $radius, $radiusport, $secret);
