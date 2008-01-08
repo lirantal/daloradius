@@ -25,7 +25,7 @@
                                                 <li><a href="javascript:document.mngradprofileedit.submit();""><b>&raquo;</b>Edit Profile<a>
                                                         <form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="get" class="sidebar">
 <?php   
-        include 'include/management/populate_groups.php';
+        include 'include/management/populate_selectbox.php';
 	populate_groups("Select Profile","profile");
 ?>
                                                         </form></li>

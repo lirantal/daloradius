@@ -271,7 +271,7 @@
                                                 <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
 
 <?php
-        include 'include/management/populate_groups.php';
+        include 'include/management/populate_selectbox.php';
         populate_groups("Select Groups");
 ?>
 </td></tr>
