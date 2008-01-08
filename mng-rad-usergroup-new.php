@@ -115,7 +115,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
                                                 </font>
 
 <?php   
-        include 'include/management/populate_groups.php';
+        include 'include/management/populate_selectbox.php';
         populate_groups("Select Groups");
 ?>
 
