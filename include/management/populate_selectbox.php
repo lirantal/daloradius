@@ -7,12 +7,13 @@
  * 
  * $defaultOption - title for the first/default option in select box
  * $elementName   - the string used for the select element's name='' value
+ * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
  *
  */
-function populate_groups($defaultOption = "Select Group",$elementName = "groupname") {
+function populate_groups($defaultOption = "Select Group",$elementName = "", $cssClass = "form") {
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' 
-			name='$elementName' tabindex=105>
+			name='$elementName' class='$cssClass' tabindex=105>
 			<option value=''>$defaultOption</option>";
 
         include 'library/opendb.php';
