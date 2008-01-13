@@ -230,41 +230,46 @@
 
      <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
 
-  <fieldset>
+	<fieldset>
 
-  <input type="radio" checked /> <b> Username Authentication </b> <br/>
+		<input type='radio' checked /> <b> Username Authentication </b> <br/>
 
-  <label for="username"><?php echo $l['all']['Username']?></label>
-  <input name="username" type="text" id="username" value="" tabindex=100 />
-  <a href="javascript:randomUsername()" class="helper">Random User</a>
-  <br />
-  <label for="password"><?php echo $l['all']['Password']?></label>
-  <input name="password" type="text" id="password" value="" <?php if (isset($hiddenPassword)) echo $hiddenPassword ?>
-	tabindex=101 />
-  <a href="javascript:randomPassword()" class="helper">Random Password</a>
-  <br />
-  <label for="passwordType"><?php echo $l['all']['PasswordType']?> </label>
-	<select class="form" tabindex=102 name="passwordType" >
-	<option value="User-Password">User-Password</option>
-	<option value="Cleartext-Password">Cleartext-Password</option>
-	<option value="Crypt-Password">Crypt-Password</option>
-	<option value="MD5-Password">MD5-Password</option>
-	<option value="SHA1-Password">SHA1-Password</option>
-	<option value="CHAP-Password">CHAP-Password</option>
-	</select>
-  <br />
-  <label for="group"><?php echo $l['all']['Group']?></label>
-  <input name="group" type="text" id="group" value="" tabindex=103 />
-  <?php   
-        include_once 'include/management/populate_selectbox.php';
-        populate_groups("Select Groups");
-  ?>
- <br/><br/>
- <hr><br/>
+		<label for='username'><?php echo $l['all']['Username']?></label>
+		<input name='username' type='text' id='username' value='' tabindex=100 />
+		<a href="javascript:randomUsername()" class='helper'>Random User</a>
+		<br />
 
-    <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" class="button" />
+		<label for='password'><?php echo $l['all']['Password']?></label>
+		<input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword)) echo $hiddenPassword ?>
+			tabindex=101 />
+		<a href="javascript:randomPassword()" class='helper'>Random Password</a>
+		 <br />
 
-  </fieldset>
+		<label for='passwordType'><?php echo $l['all']['PasswordType']?> </label>
+		<select class='form' tabindex=102 name='passwordType' >
+			<option value='User-Password'>User-Password</option>
+			<option value='Cleartext-Password'>Cleartext-Password</option>
+			<option value='Crypt-Password'>Crypt-Password</option>
+			<option value='MD5-Password'>MD5-Password</option>
+			<option value='SHA1-Password'>SHA1-Password</option>
+			<option value='CHAP-Password'>CHAP-Password</option>
+		</select>
+		<br />
+
+		<label for='group'><?php echo $l['all']['Group']?></label>
+		<input name='group' type='text' id='group' value='' tabindex=103 />
+
+		<?php   
+		        include_once 'include/management/populate_selectbox.php';
+		        populate_groups("Select Groups");
+		?>
+
+		<br/><br/>
+		<hr><br/>
+
+		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" class="button" />
+
+	</fieldset>
 
      </div>
 
