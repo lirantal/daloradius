@@ -14,7 +14,7 @@
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
 		$password = $_REQUEST['password'];
-	        $passwordtype = $_REQUEST['passwordType'];	
+	        $passwordtype = $_REQUEST['passwordType'];
 		$group = $_REQUEST['group'];
 
 		$firstname = $_REQUEST['firstname'];
@@ -125,6 +125,7 @@
 						continue;
 					}
 
+
 	                                if (isset($field[0]))
 	                                        $attribute = $field[0];
 	                                if (isset($field[1]))
@@ -134,14 +135,14 @@
 	                                if (isset($field[3]))
 	                                        $table = $field[3];
 
-					if ($table == 'check')
+					if ( isset($table) && ($table == 'check') )
 						$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-					if ($table == 'reply')
+					if ( isset($table) && ($table == 'reply') )
 						$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
-					if (!($value))
+					if ( (isset($field)) && (!isset($field[1])) )
 						continue;
-
+				
 					$sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
 '".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')  ";
 
@@ -222,85 +223,48 @@
 					<?php echo $l['helpPage']['mngnew'] ?>
 					<br/>
 				</div>
-				<br/>
 				
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['AccountInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['all']['Username'] ?></b>
-</td><td>
-						<input value="<?php echo $username ?>" name="username" tabindex=100 />
-<a href="javascript:randomUsername()" tabindex=101> genuser</a><br/>
+  <fieldset>
 
-<a href="javascript:toggleShowDiv('showPasswordType')" tabindex=102>advanced</a><br/>
-<div id="showPasswordType" style="display:none;visibility:visible" >
-<br/>
-<input type="radio" name="passwordType" value="User-Password" checked tabindex=103>User-Password<br>
-<input type="radio" name="passwordType" value="CHAP-Password" tabindex=104>CHAP-Password<br>
-<input type="radio" name="passwordType" value="Cleartext-Password" tabindex=105>Cleartext-Password<br>
-<input type="radio" name="passwordType" value="Crypt-Password" tabindex=106>Crypt-Password<br>
-<input type="radio" name="passwordType" value="MD5-Password" tabindex=107>MD5-Password<br>
-<input type="radio" name="passwordType" value="SHA1-Password" tabindex=108>SHA1-Password<br>
-</div>
+  <input type="radio" checked /> <b> Username Authentication </b> <br/>
 
-
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['all']['Password'] ?></b>
-</td><td>
-						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" tabindex=109 />
-<a href="javascript:randomPassword()" tabindex=110> genpass</a><br/>
-						</font>
-</td></tr>
-
-
-<tr><td>                                        <b><?php echo $l['FormField']['all']['Group']; ?></b>
-</td><td>
-                                                <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=111 />
-
-<?php
-        include 'include/management/populate_selectbox.php';
+  <label for="username"><?php echo $l['all']['Username']?></label>
+  <input name="username" type="text" id="username" value="" tabindex=100 />
+  <a href="javascript:randomUsername()" class="helper">Random User</a>
+  <br />
+  <label for="password"><?php echo $l['all']['Password']?></label>
+  <input name="password" type="text" id="password" value="" <?php if (isset($hiddenPassword)) echo $hiddenPassword ?>
+	tabindex=101 />
+  <a href="javascript:randomPassword()" class="helper">Random Password</a>
+  <br />
+  <label for="passwordType"><?php echo $l['all']['PasswordType']?> </label>
+	<select class="form" tabindex=102 name="passwordType" >
+	<option value="User-Password">User-Password</option>
+	<option value="Cleartext-Password">Cleartext-Password</option>
+	<option value="Crypt-Password">Crypt-Password</option>
+	<option value="MD5-Password">MD5-Password</option>
+	<option value="SHA1-Password">SHA1-Password</option>
+	<option value="CHAP-Password">CHAP-Password</option>
+	</select>
+  <br />
+  <label for="group"><?php echo $l['all']['Group']?></label>
+  <input name="group" type="text" id="group" value="" tabindex=103 />
+  <?php   
+        include_once 'include/management/populate_selectbox.php';
         populate_groups("Select Groups");
-?>
-</td></tr>
-</table>
+  ?>
+ <br/><br/>
+ <hr><br/>
 
+    <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" class="button" />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  </fieldset>
 
      </div>
 
@@ -395,7 +359,7 @@
 
 	<br/>
 	<center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 />
+		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 />
 	</center>
 
 				</form>
