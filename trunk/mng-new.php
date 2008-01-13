@@ -267,7 +267,7 @@
 		<br/><br/>
 		<hr><br/>
 
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" class="button" />
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
 
 	</fieldset>
 
@@ -285,56 +285,45 @@
 
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>
-                                                        </tr>
-                                        </thead>
-        <tr>
-                <td>Vendor:
+<?php
+	//<th colspan='10'> echo $l['table']['Attributes']; </th>
+?>
+
+	<fieldset>
+
+		<label for='vendor'>Vendor:</label>
                 <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
-			style='width: 215px' onclick="getVendorsList('dictVendors0')" >
+			style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
                         <option value=''>Select Vendor...</option>
                 </select>
-
-		&nbsp;&nbsp;
-                Attribute:
-                <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
-
-                </select>
-                </td>
-        </tr>
-        <tr>
-                <td>
-		&nbsp;
-		Value:
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px'>
-
-		&nbsp;
-                Op:
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px'>
+		<br/>
+	
+		<label for='attribute'>Attribute:</label>
+                <select id='dictAttributes0' name='dictValues0[]' 
+			onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
+			style='width: 270px' class='form' >
 
                 </select>
+		<br/>
 
 		&nbsp;
-                Table:
-                <select id='dictTable0' name='dictValues0[]' style='width: 90px'>
+		<b>Value:</b>
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
 
+		<b>Op:</b>
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
                 </select>
 
-		&nbsp;
-                Function:
-                <select id='dictFunc' name='dictFunc'>
-
+		<b>Target:</b>
+                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
                 </select>
-                </td>
 
-	</tr>
+		<b>Util:</b>
+                <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >
+                </select>
+		<br/><br/>
 
-	<tr>
-		<td>
-		<div id='dictInfo0' style='display:inline;visibility:visible'>
+		<div id='dictInfo0' style='display:none;visibility:visible'>
 			<span id='dictTooltip0'>
 				<b>Attribute Tooltip:</b>
 			</span>
@@ -345,16 +334,14 @@
 				<b>Type:<b/>
 			</span>
 		</div>
-		</td>
-	</tr>
 
+	<hr><br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <a href="javascript:;" onclick="addElement(1);">Add Attributes</a>
+        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Attribute Info</a>
 
-	<td>
-        <a href="javascript:;" onclick="addElement(1);">Add</a>
-        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
-	</td>
+	</fieldset>
 
-</table>
 <br/>
         <input type="hidden" value="0" id="divCounter" />
         <div id="divContainer"> </div> <br/>
@@ -362,10 +349,6 @@
 
 </div>
 
-	<br/>
-	<center>
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 />
-	</center>
 
 				</form>
 
