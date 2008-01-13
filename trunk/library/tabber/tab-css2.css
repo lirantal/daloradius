@@ -26,12 +26,12 @@ ul.tabbernav
 {
 margin: 0;
 padding: 0;
-height: 22px;
+height: 1px;
 font: 11px Verdana, sans-serif;
-width: 100%;
+width: 95%;
 border-bottom: 5px solid #bbb;
 list-style-type: none;
-background: #fff;
+//background: #e9f9ac;
 }
 
 ul.tabbernav li
@@ -45,18 +45,17 @@ ul.tabbernav li a
 background: #fff;
 color: #555;
 text-decoration: none;
-padding: 3px 5px 3px 5px;
+padding: 0px 5px 3px 5px;
 display: block;
 }
 
-ul.tabbernav li a:link { color: #448; }
+ul.tabbernav li a:link { color: #000; }
 ul.tabbernav li a:visited { color: #667; }
 
 ul.tabbernav li a:hover
 {
-color: #039;
+color: green;
 cursor: pointer;
-background: #eee;
 }
 
 ul.tabbernav li.tabberactive a
@@ -64,13 +63,12 @@ ul.tabbernav li.tabberactive a
 color: #000;
 cursor: default;
 font-weight: bold;
-border-bottom: 3px solid #039;
+border-bottom: 3px solid green;
 }
-
+border-bottom: 3px solid #039;
 ul.tabbernav li.tabberactive a:hover
 {
 border-bottom: 3px solid #f90;
-background: #eee;
 }
 
 /*--------------------------------------------------
@@ -80,7 +78,7 @@ background: #eee;
 .tabberlive .tabbertab {
 
 /* uncomment below to enable the box border for the tabbed divs
-/*
+
  padding:5px;
  border:1px solid #aaa;
  border-top:1;
