@@ -18,9 +18,6 @@
 			
 			include 'library/opendb.php';
 
-	echo "<br/>$groupname : $attribute : $value <br/>";
-	echo "<br/>".trim($attribute)."<br/>";
-
 			if ( (trim($value) != "") && (trim($attribute) != "") ) {
 
                 // delete only a specific groupname and it's attribute
