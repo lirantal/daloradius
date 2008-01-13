@@ -58,17 +58,15 @@ color: green;
 cursor: pointer;
 }
 
-ul.tabbernav li.tabberactive a
-{
-color: #000;
-cursor: default;
-font-weight: bold;
-border-bottom: 3px solid green;
+ul.tabbernav li.tabberactive a {
+	color: #000;
+	cursor: default;
+	font-weight: bold;
+//	border-bottom: 3px solid green;
 }
-border-bottom: 3px solid #039;
-ul.tabbernav li.tabberactive a:hover
-{
-border-bottom: 3px solid #f90;
+
+ul.tabbernav li.tabberactive a:hover {
+//	border-bottom: 3px solid #f90;
 }
 
 /*--------------------------------------------------
