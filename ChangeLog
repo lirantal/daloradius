@@ -7,6 +7,8 @@ release 0.9-6 - 17 Februray 2008
 	- attributes automatically appear with the tooltip/help text (requested by Carlos Cessario)
 	- fixed bug on edit user page, when database password encryption is turned on, users' passwords
 	  were reset to a random value on every save.
+	- fixed bug on new user page of undefined indexes
+	- changed forms interface design (bye bye not-so-pretty tables layout!)
 	- secured maintenance pages using system calls
 
 release 0.9-5 - 23 December 2007
