@@ -232,6 +232,8 @@
 
 	<fieldset>
 
+	        <h302> Account Info </h302>
+
 		<input type='radio' checked /> <b> Username Authentication </b> <br/>
 
 		<label for='username'><?php echo $l['all']['Username']?></label>
@@ -290,6 +292,8 @@
 ?>
 
 	<fieldset>
+
+                <h302> Attributes Assignment </h302>
 
 		<label for='vendor'>Vendor:</label>
                 <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 

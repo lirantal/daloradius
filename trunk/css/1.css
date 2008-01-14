@@ -711,13 +711,17 @@ h200 {
 	color: #FF8040;
 }
 
+/* header used in fieldset */
+h301 {
+        font:110% Arial;
+        font-weight:bold;
+        color:#333;
+}
 
-
-
-
-
-
-
-
-
-
+/* header used in fieldset */
+h302 {
+	float:right;
+        font:85% Arial;
+	text-decoration:underline;
+        color:#333;
+}
