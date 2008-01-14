@@ -337,8 +337,10 @@
 
 	<hr><br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-        <a href="javascript:;" onclick="addElement(1);">Add Attributes</a>
-        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Attribute Info</a>
+	<input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement(1);" 
+		class='button'>
+	<input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');" 
+		class='button'>
 
 	</fieldset>
 
