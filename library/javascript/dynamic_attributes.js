@@ -85,67 +85,70 @@ function addElement(enableTable) {
   attributeDiv.setAttribute('id',divIdName);
 
   if (enableTable == 1) {
-	tableElement = "&nbsp;&nbsp;Table: "+
-	 	"<select id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' style='width: 90px'>"+
+	tableElement = ""+
+		"<b>Target:</b>"+	
+	 	"<select id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' style='width: 90px' class='form'>"+
 		"</select>";
   } else {
 	tableElement = "<input type='hidden' id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' >";
   };
 
-  var content = "" +
-	"	<table border='2' class='table1'>"+
-	"		<thead>"+
-	"                                               <tr>"+
-	"                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>"+
-	"                                               </tr>"+
-	"               </thead>"+
-	"        <tr>"+
-	"                <td>"+
-	"		 Vendor:"+
-	"                <select id='dictVendors"+num+"' onchange=\"getAttributesList(this,'dictAttributes"+num+"')\""+
-	"                        style='width: 215px' onclick=\"getVendorsList('dictVendors"+num+"')\" >"+
-	"                        <option value=''>Select Vendor...</option>"+
-	"                </select>"+
-	"                &nbsp;&nbsp;Attribute:"+
-	"		 <select id='dictAttributes"+num+"' name='dictValues"+dictCounter+"[]' onchange=\"getValuesList(this,'dictValues"+num+"','dictOP"+num+"','dictTable"+num+"','dictTooltip"+num+"','dictType"+num+"')\" style='width: 270px'>"+
-	"                </select>"+
-	"                </td>"+
-	"        </tr>"+
-	"        <tr>"+
-	"           <td>"+
-	"		 &nbsp;&nbsp;Value:"+
-	"                <input type='text' id='dictValues"+num+"' name='dictValues"+dictCounter+"[]' style='width: 115px'>"+
-	"                "+
-	"                &nbsp;&nbsp;OP:"+
-	"                <select id='dictOP"+num+"' name='dictValues"+dictCounter+"[]' style='width: 45px'>"+
-	"                </select>"+
-	"                "+
-	tableElement+
-	"                &nbsp;&nbsp;Function:"+
-	"                <select id='dictFunc' name='dictFunc'>"+
-	"                </select>"+
-        "           </td>"+
-	"	</tr>"+
-	"	<tr>"+
-	"           <td>"+
-	"                <div id='dictInfo"+num+"' style='display:inline;visibility:visible'>"+
-        "        <span id='dictTooltip"+num+"'>"+
-	"        <b>Attribute Tooltip:</b>"+
-        "        </span>"+
-        "        <br/>"+
-        "       <span id='dictType"+num+"'>"+
-	"        <b>Type:</b>"+
-        "       </span>"+
-	"	</div>"+
-        "       </td>"+
-	"        </tr>"+
-	"<a href=\"javascript:;\" onclick=\"addElement("+enableTable+");\">Add</a>"+
-	"&nbsp;"+
-	"<a href=\"javascript:;\" onclick=\"removeElement(\'"+divIdName+"\')\">Remove</a>"+
-	"&nbsp;"+
-	"<a href=\"javascript:;\" onclick=\"toggleShowDiv(\'dictInfo"+num+"\')\">Help</a>"+
-	"</table><br/>";
 
+  var content = "" +
+	""+
+        "<fieldset>"+
+	""+
+        "       <label for='vendor'>Vendor:</label>"+
+        "       <select id='dictVendors"+num+"' onchange=\"getAttributesList(this,'dictAttributes"+num+"')\""+
+        "               style='width: 215px' onclick=\"getVendorsList('dictVendors"+num+"')\" class='form' >"+
+        "               <option value=''>Select Vendor...</option>"+
+        "       </select>"+
+        "       <br/>"+
+	""+
+        "       <label for='attribute'>Attribute:</label>"+
+        "       <select id='dictAttributes"+num+"' name='dictValues"+dictCounter+"[]'"+
+        "                onchange=\"getValuesList(this,'dictValues"+num+"','dictOP"+num+"','dictTable"+num+"','dictTooltip"+num+"','dictType"+num+"')\""+
+        "               style='width: 270px' class='form' >"+
+	""+
+        "       </select>"+
+        "       <br/>"+
+	""+
+        "        &nbsp;"+
+        "       <b>Value:</b>"+
+        "       <input type='text' id='dictValues"+num+"' name='dictValues"+dictCounter+"[]' style='width: 115px' class='form' >"+
+	""+
+        "       <b>Op:</b>"+
+        "       <select id='dictOP"+num+"' name='dictValues"+dictCounter+"[]' style='width: 45px' class='form' >"+
+        "       </select>"+
+	""+
+	tableElement+
+	""+
+        "       <b>Util:</b>"+
+        "       <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >"+
+        "       </select>"+
+        "       <br/><br/>"+
+	""+
+        "     <div id='dictInfo"+num+"' style='display:none;visibility:visible'>"+
+        "                <span id='dictTooltip"+num+"'>"+
+        "                        <b>Attribute Tooltip:</b>"+
+        "                </span>"+
+	""+
+        "                <br/>"+
+	""+
+        "                <span id='dictType"+num+"'>"+
+        "                        <b>Type:<b/>"+
+        "                </span>"+
+        "        </div>"+
+	""+
+        "<hr><br/>"+
+        "<input type='submit' name='submit' value='Apply' class='button' />&nbsp;"+
+        "<a href=\"javascript:;\" onclick=\"addElement("+enableTable+");\">Add</a>&nbsp;"+
+        "<a href=\"javascript:;\" onclick=\"removeElement(\'"+divIdName+"\');\">Remove</a>&nbsp;"+
+        "<a href=\"javascript:;\" onclick=\"toggleShowDiv(\'dictInfo"+num+"\');\">Attribute Info</a>"+
+	""+
+        "</fieldset>"+
+	"<br/>";
+	
   attributeDiv.innerHTML = content;
   divContainer.appendChild(attributeDiv);
 }
