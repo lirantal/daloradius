@@ -141,10 +141,10 @@ function addElement(enableTable) {
         "        </div>"+
 	""+
         "<hr><br/>"+
-        "<input type='submit' name='submit' value='Apply' class='button' />&nbsp;"+
-        "<a href=\"javascript:;\" onclick=\"addElement("+enableTable+");\">Add</a>&nbsp;"+
-        "<a href=\"javascript:;\" onclick=\"removeElement(\'"+divIdName+"\');\">Remove</a>&nbsp;"+
-        "<a href=\"javascript:;\" onclick=\"toggleShowDiv(\'dictInfo"+num+"\');\">Attribute Info</a>"+
+	""+
+	"<input type='button' name='addAttributes' value='Add Attributes' onclick=\"javascript:addElement("+enableTable+");\" class='button'>"+
+	"<input type='button' name='removeAttributes' value='Remove Attributes' onclick=\"javascript:removeElement(\'"+divIdName+"\');\" class='button'>"+
+	"<input type='button' name='infoAttribute' value='Attribute Info' onclick=\"javascript:toggleShowDiv(\'dictInfo"+num+"\');\" class='button'>"+
 	""+
         "</fieldset>"+
 	"<br/>";
