@@ -14,6 +14,12 @@
 echo "
 
 <fieldset>
+	
+	<h302> Contact Info </h302>
+
+	<h301> Personal </h301>
+	<br/>
+
 	<label for='username'>".$l['ContactInfo']['FirstName']."</label>
         <input value='"; if (isset($ui_firstname)) echo $ui_firstname; echo "' name='firstname' tabindex=300 />
 	<br/>
@@ -25,6 +31,10 @@ echo "
 	<label for='email'>".$l['ContactInfo']['Email']."</label>
         <input value='"; if (isset($ui_email)) echo $ui_email; echo "' name='email' tabindex=302 />
         <br/>
+
+	<br/>
+	<h301> Business </h301>
+	<br/>
 
 	<label for='department'>".$l['ContactInfo']['Department']."</label>
         <input value='"; if (isset($ui_department)) echo $ui_department; echo "' name='department' tabindex=303 />
@@ -45,6 +55,10 @@ echo "
 	<label for='mobilephone'>".$l['ContactInfo']['MobilePhone']."</label>
 	<input value='"; if (isset($ui_mobilephone)) echo $ui_mobilephone; echo "' name='mobilephone' tabindex=307 />
         <br/>
+
+	<br/>
+	<h301> Other </h301>
+	<br/>
 
 	<label for='notes'>".$l['ContactInfo']['Notes']."</label>
 	<input value='"; if (isset($ui_notes)) echo $ui_notes; echo "' name='notes' tabindex=308 />
