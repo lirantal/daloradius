@@ -112,8 +112,8 @@ if(isset($_GET['getValuesForAttribute'])) {
 }
 
 function populateTables() {
-	echo "if (objTable.type == \"select\") objTable.options[objTable.options.length] = new Option('check','check');\n";
-	echo "if (objTable.type == \"select\") objTable.options[objTable.options.length] = new Option('reply','reply');\n";
+	echo "if (objTable.type == \"select-one\") objTable.options[objTable.options.length] = new Option('check','check');\n";
+	echo "if (objTable.type == \"select-one\") objTable.options[objTable.options.length] = new Option('reply','reply');\n";
 }
 
 
