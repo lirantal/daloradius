@@ -216,8 +216,7 @@
 
         </fieldset>
 
-<br/>
-<br/>
+	<br/>
 
 	<fieldset>
 
@@ -225,6 +224,9 @@
 
 		<label for='expiration'><?php echo $l['FormField']['all']['Expiration']?></label>		
 		<input value='' id='expiration' name='expiration'  tabindex=106 />
+
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
+
 		<br/>
 
 		<label for='sessiontimeout'><?php echo $l['FormField']['all']['SessionTimeout']?></label>		
@@ -268,6 +270,8 @@
 
 		<br/>	
 	</fieldset>
+
+	<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
         </div>
 
