@@ -55,6 +55,10 @@
 
 				// if a group was defined to add the user to in the form let's add it to the database
 				if (isset($group)) {
+
+					if (!($group_priority))
+						$group_priority=0;		// if group priority wasn't set we
+										// initialize it to 0 by default
 					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".$dbSocket->escapeSimple($username)."', 
 '".$dbSocket->escapeSimple($group)."', ".$dbSocket->escapeSimple($group_priority).") ";
 					$res = $dbSocket->query($sql);
@@ -177,67 +181,62 @@
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['AccountInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-						<b><?php echo $l['FormField']['mngbatch.php']['UsernamePrefix'] ?></b>
-</td><td>
-						<input value="<?php echo $username_prefix ?>" name="username_prefix" tabindex=100 /><br/>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['mngbatch.php']['NumberInstances'] ?></b>
-</td><td>
-						<input value="<?php echo $number ?>" name="number" tabindex=101 /><br/>
-</td></tr>
-<tr><td>
 
-						<b><?php echo $l['FormField']['mngbatch.php']['UsernameLength'] ?></b>
-</td><td>
-	<SELECT name="length_user" tabindex=102>
-          <OPTION id="4"> 4 </OPTION>
-          <OPTION id="5"> 5 </OPTION>
-          <OPTION id="6"> 6 </OPTION>
-          <OPTION id="8"> 8 </OPTION>
-          <OPTION id="10"> 10 </OPTION>
-          <OPTION id="12"> 12 </OPTION>
-        </SELECT><br/>
-</td></tr>
-<tr><td>
+	<fieldset>
 
-						<b><?php echo $l['FormField']['mngbatch.php']['PasswordLength'] ?></b>
-</td><td>
-	<SELECT name="length_pass" tabindex=103>
-          <OPTION id="4"> 4 </OPTION>
-          <OPTION id="5"> 5 </OPTION>
-          <OPTION id="6"> 6 </OPTION>
-          <OPTION id="8"> 8 </OPTION>
-          <OPTION id="10"> 10 </OPTION>
-          <OPTION id="12"> 12 </OPTION>
-        </SELECT><br/>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Group']; ?></b>
-</td><td>
-						<input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=104 />
+                <h302> Account Info </h302>
 
-<?php   
-        include 'include/management/populate_selectbox.php';
-        populate_groups("Select Groups");
-?>
+                <label for='usernamePrefix'><?php echo $l['FormField']['mngbatch.php']['UsernamePrefix']?></label>
+                <input name='username_prefix' type='text' id='username_prefix' value='' tabindex=100 />
+		<br/>
+
+                <label for='numberInstances'><?php echo $l['FormField']['mngbatch.php']['NumberInstances']?></label>
+                <input name='number' type='text' id='number' value='' tabindex=101 />
+		<br/><br/><br/>
+
+                <label for='usernameLength'><?php echo $l['FormField']['mngbatch.php']['UsernameLength']?></label>
+		<select name="length_user" tabindex=102 class='form' >
+			<option id="4"> 4 </option>
+			<option id="5"> 5 </option>
+			<option id="6"> 6 </option>
+		        <option id="8"> 8 </option>
+			<option id="10"> 10 </option>
+	        	<option id="12"> 12 </option>
+	        </select>
+		<br/>
+		<br/>
+
+                <label for='passwordLength'><?php echo $l['FormField']['mngbatch.php']['PasswordLength']?></label>
+		<select name="length_pass" tabindex=103 class='form' >
+		        <OPTION id="4"> 4 </OPTION>
+		        <OPTION id="5"> 5 </OPTION>
+		        <OPTION id="6"> 6 </OPTION>
+		        <OPTION id="8"> 8 </OPTION>
+		        <OPTION id="10"> 10 </OPTION>
+			<OPTION id="12"> 12 </OPTION>
+		</select>
+		<br/>
+		<br/>
 
 
-	
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['GroupPriority']; ?></b>
-</td><td>
-						<input value="<?php if (isset($group_priority)) echo $group_priority ?>" name="group_priority" id="group_priority" tabindex=106 />
-</td></tr>
-</table>
+                <label for='group'><?php echo $l['FormField']['all']['Group']?></label>
+                <input name='group' type='text' id='group' value='' tabindex=104 />
+		<?php
+		        include 'include/management/populate_selectbox.php';
+		        populate_groups("Select Groups");
+		?>
+		<br/>
+
+                <label for='groupPriority'><?php echo $l['FormField']['all']['GroupPriority']?></label>
+                <input name='group_priority' type='text' id='group_priority' value='0' tabindex=105 />
+
+		<br/><br/>
+		<hr><br/>
+		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?> " tabindex=1000 
+			class='button' />
+
+	</fieldset>
+
 
      </div>
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
@@ -250,11 +249,6 @@
      </div>
 
 </div>
-
-			<br/><br/>
-<center>
-			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?> " tabindex=1000 />
-</center>
 
 				</form>
 
