@@ -16,6 +16,7 @@
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
 		$password = $_REQUEST['password'];
+		$passwordType = $_REQUEST['passwordType'];
 		$group = $_REQUEST['group'];
 		$maxallsession = $_REQUEST['maxallsession'];
 		$expiration = $_REQUEST['expiration'];
@@ -46,7 +47,7 @@
 
 				// insert username/password
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
-'User-Password', ':=', '".$dbSocket->escapeSimple($password)."')";
+'$passwordType', ':=', '".$dbSocket->escapeSimple($password)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
@@ -163,144 +164,113 @@
 					<?php echo $l['helpPage']['mngnewquick'] ?>
 					<br/>
 				</div>
-				<br/>
-				
+
 				<form name="newuser" action="mng-new-quick.php" method="post">
 
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
 
+        <fieldset>
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['AccountInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['all']['Username'] ?></b>
-</td><td>
-						<input value="<?php echo $username ?>" name="username" tabindex=100 />
-<a href="javascript:randomUsername()" tabindex=101> genuser</a><br/>
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['all']['Password'] ?></b>
-</td><td>
-						<input <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> value="<?php echo $password ?>" name="password" tabindex=102 />
-<a href="javascript:randomPassword()" tabindex=103> genpass</a><br/><br/>
-						</font>
+                <h302> Account Info </h302>
 
-</td></tr>
+                <label for='username'><?php echo $l['all']['Username']?></label>
+                <input name='username' type='text' id='username' value='' tabindex=100 />
+                <a href="javascript:randomUsername()" class='helper'>Random User</a>
+                <br />
 
-<tr><td>                                        <b><?php echo $l['FormField']['all']['Group']; ?></b>
-</td><td>
-                                                <input value="<?php if (isset($group)) echo $group ?>" name="group" id="group" tabindex=104 />
+                <label for='password'><?php echo $l['all']['Password']?></label>
+                <input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword))
+			 echo $hiddenPassword ?> tabindex=101 />
+                <a href="javascript:randomPassword()" class='helper'>Random Password</a>
+                 <br />
 
-<?php   
-        include 'include/management/populate_selectbox.php';
-        populate_groups("Select Groups");
-?>
+                <label for='passwordType'><?php echo $l['all']['PasswordType']?> </label>
+                <select class='form' tabindex=102 name='passwordType' >
+                        <option value='User-Password'>User-Password</option>
+                        <option value='Cleartext-Password'>Cleartext-Password</option>
+                        <option value='Crypt-Password'>Crypt-Password</option>
+                        <option value='MD5-Password'>MD5-Password</option>
+                        <option value='SHA1-Password'>SHA1-Password</option>
+                        <option value='CHAP-Password'>CHAP-Password</option>
+                </select>
+                <br />
 
-</td></tr>
+                <label for='group'><?php echo $l['all']['Group']?></label>
+                <input name='group' type='text' id='group' value='' tabindex=103 />
 
+                <?php   
+                        include_once 'include/management/populate_selectbox.php';
+                        populate_groups("Select Groups");
+                ?>
 
-</table>
-<tr><td>
+                <br/><br/>
+
+                <hr><br/>
+
+		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" 
+			onclick = "javascript:small_window(document.newuser.username.value, 
+			document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 
+			class='button' />
+
+        </fieldset>
 
 <br/>
 <br/>
 
-<table border='2' class='table1' width='600'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Attributes']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-		<?php if (trim($expiration) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesexpiration')" tabindex=106>
-		<b><?php echo $l['FormField']['all']['Expiration'] ?></b></font><br/>
-		<div id="attributesexpiration" style="display:none;visibility:visible" >
+	<fieldset>
 
-		<input value="<?php echo $maxallsession ?>" id="expiration" name="expiration" />
+                <h302> Attributes </h302>
 
-                <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
-		<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
-
+		<label for='expiration'><?php echo $l['FormField']['all']['Expiration']?></label>		
+		<input value='' id='expiration' name='expiration'  tabindex=106 />
 		<br/>
-</div>
-</td></tr>
 
-
-<tr><td>
-		<?php if (trim($sessiontimeout) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributessessiontimeout')" tabindex=107>
-		<b><?php echo $l['FormField']['all']['SessionTimeout'] ?></b></font><br/>
-		<div id="attributessessiontimeout" style="display:none;visibility:visible" >
-
-		<input value="<?php echo $sessiontimeout ?>" id="sessiontimeout" name="sessiontimeout" />
-
-		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0">
-                <option value="1">calculate time</option>
-                <option value="1">seconds</option>
-                <option value="60">minutes</option>
-                <option value="3600">hours</option>
-                <option value="86400">days</option>
-                <option value="604800">weeks</option>
-                <option value="2592000">months (30 days)</option>
+		<label for='sessiontimeout'><?php echo $l['FormField']['all']['SessionTimeout']?></label>		
+		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=107 />
+		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0" class='form' >
+	                <option value="1">calculate time</option>
+	                <option value="1">seconds</option>
+	                <option value="60">minutes</option>
+	                <option value="3600">hours</option>
+        	        <option value="86400">days</option>
+	                <option value="604800">weeks</option>
+	                <option value="2592000">months (30 days)</option>
 		</select>
 		<br/>
-</div>
-</td></tr>
 
-<tr><td>
-		<?php if (trim($idletimeout) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesidletimeout')" tabindex=108>
-		<b><?php echo $l['FormField']['all']['IdleTimeout'] ?></b></font><br/>
-		<div id="attributesidletimeout" style="display:none;visibility:visible" >
-
-		<input value="<?php echo $idletimeout ?>" id="idletimeout" name="idletimeout" />
-
-		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1">
-                <option value="1">calculate time</option>
-                <option value="1">seconds</option>
-                <option value="60">minutes</option>
-                <option value="3600">hours</option>
-                <option value="86400">days</option>
-                <option value="604800">weeks</option>
-                <option value="2592000">months (30 days)</option>
+		<label for='idletimeout'><?php echo $l['FormField']['all']['IdleTimeout']?></label>		
+		<input value='' id='idletimeout' name='idletimeout'  tabindex=107 />
+		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1" class='form' >
+	                <option value="1">calculate time</option>
+	                <option value="1">seconds</option>
+	                <option value="60">minutes</option>
+	                <option value="3600">hours</option>
+	                <option value="86400">days</option>
+	                <option value="604800">weeks</option>
+	                <option value="2592000">months (30 days)</option>
 		</select>
 		<br/>
-</div>
-</td></tr>
 
-<tr><td>
-		<?php if (trim($maxallsession) == "") { echo "<font color='#FF0000'>";  }?>
-                <input type="checkbox" onclick="javascript:toggleShowDiv('attributesmaxallsession')" tabindex=109>
-		<b><?php echo $l['FormField']['mngnewquick.php']['MaxAllSession'] ?></b></font><br/>
-		<div id="attributesmaxallsession" style="display:none;visibility:visible" >
-
-		<input value="<?php echo $maxallsession ?>" id="maxallsession" name="maxallsession" />
-
-		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2">
-                <option value="1">calculate time</option>
-                <option value="1">seconds</option>
-                <option value="60">minutes</option>
-                <option value="3600">hours</option>
-                <option value="86400">days</option>
-                <option value="604800">weeks</option>
-                <option value="2592000">months (30 days)</option>
+		<label for='maxallsession'><?php echo $l['FormField']['mngnewquick.php']['MaxAllSession']?></label>
+		<input value='' id='maxallsession' name='maxallsession'  tabindex=108 />
+		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2" class='form' >
+	                <option value="1">calculate time</option>
+	                <option value="1">seconds</option>
+	                <option value="60">minutes</option>
+	                <option value="3600">hours</option>
+	                <option value="86400">days</option>
+	                <option value="604800">weeks</option>
+	                <option value="2592000">months (30 days)</option>
 		</select>
 		<br/>
-</div>
-</td></tr>
-</table>
+
+		<br/>	
+	</fieldset>
 
         </div>
+
 
      <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
 
@@ -311,13 +281,6 @@
 
 
 </div>
-
-
-<br/>
-<center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" onclick = "javascript:small_window(document.newuser.username.value, document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 />
-
-</center>
 
 				</form>
 
