@@ -144,6 +144,12 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
                 <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
                 <br/>
 
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+                        class='button' />
+
         </fieldset>
 
 					<input type=hidden value="<?php echo $name ?>" name="name"/>
