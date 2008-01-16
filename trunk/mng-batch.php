@@ -65,49 +65,58 @@
 					$logDebugSQL .= $sql . "\n";
 				}
 
-				foreach( $_POST as $attribute=>$value ) { 
 
-					// switch case to rise the flag for several $attribute which we do not
-					// wish to process (ie: do any sql related stuff in the db)
-					switch ($attribute) {
+                                foreach($_POST as $element=>$field) {
+
+                                        // switch case to rise the flag for several $attribute which we do not
+                                        // wish to process (ie: do any sql related stuff in the db)
+                                        switch ($element) {
 
 						case "username_prefix":
+						case "passwordType":
 						case "length_pass":
 						case "length_user":
 						case "number":
 						case "submit":
 						case "group":
 						case "group_priority":
-							$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
-													// to skip the loop (continue) without entering it as
-													// we do not want to process this $attribute in the following
-													// code block
-							break;
+                                                        $skipLoopFlag = 1;      // if any of the cases above has been met weset a flag
+                                                                                // to skip the loop (continue) without entering it as
+                                                                                // we do not want to process this $attributein the following
+                                                                                // code block
+                                                        break;
 
-					}
+                                        }
 
-					if ($skipLoopFlag == 1) {
-							$skipLoopFlag = 0;              // resetting the loop flag
-							continue;
-					}
+                                        if ($skipLoopFlag == 1) {
+                                                $skipLoopFlag = 0;              // resetting the loop flag
+                                                continue;
+                                        }
 
 
-					if (!($value[0]))
-						continue;
-						
-					$useTable = checkTables($attribute);			// checking if the attribute's name belong to the radreply
-																	// or radcheck table (using include/management/attributes.php function)
+                                        if (isset($field[0]))
+                                                $attribute = $field[0];
+                                        if (isset($field[1]))
+                                                $value = $field[1];
+                                        if (isset($field[2]))
+                                                $op = $field[2];
+                                        if (isset($field[3]))
+                                                $table = $field[3];
 
-					$counter = 0;
+                                        if ( isset($table) && ($table == 'check') )
+                                                $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+                                        if ( isset($table) && ($table == 'reply') )
+                                                $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
-					$sql = "INSERT INTO $useTable values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($value[1])."', '".$dbSocket->escapeSimple($value[0])."')  ";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+                                        if ( (isset($field)) && (!isset($field[1])) )
+                                                continue;
+                                
+                                        $sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
+'".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')  ";
+                                        $res = $dbSocket->query($sql);
+                                        $logDebugSQL .= $sql . "\n";
 
-					$counter++;
-
-				} // foreach
+                                } // foreach
 
 				$actionMsgGoodUsernames = $actionMsgGoodUsernames . $username . ", " ;
 				$exportCSV .= "$username,$password||";
@@ -152,6 +161,9 @@
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 
 
 <?php
@@ -240,10 +252,73 @@
 
      </div>
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
-	<?php
-	        include_once('include/management/attributes.php');
-	        drawAttributes();
-	?>
+
+        <fieldset>
+
+                <h302> Attributes Assignment </h302>
+
+                <label for='vendor'>Vendor:</label>
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
+                        style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
+                        <option value=''>Select Vendor...</option>
+                </select>
+                <br/>
+
+                <label for='attribute'>Attribute:</label>
+                <select id='dictAttributes0' name='dictValues0[]'
+                        onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
+                        style='width: 270px' class='form' >
+
+                </select>
+                <br/>
+
+                &nbsp;
+                <b>Value:</b>
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
+
+                <b>Op:</b>
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
+                </select>
+
+                <b>Target:</b>
+                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
+                </select>
+
+                <b>Util:</b>
+                <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >
+                </select>
+                <br/><br/>
+
+                <div id='dictInfo0' style='display:none;visibility:visible'>
+                        <span id='dictTooltip0'>
+                                <b>Attribute Tooltip:</b>
+                        </span>
+
+                        <br/>   
+
+                        <span id='dictType0'>
+                                <b>Type:<b/>
+                        </span>
+                </div>
+
+        <hr><br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement(1);" 
+                class='button'>
+        <input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');" 
+                class='button'>
+
+        </fieldset>
+
+<br/>
+        <input type="hidden" value="0" id="divCounter" />
+        <div id="divContainer"> </div> <br/>
+     </div>             
+
+</div>
+
+
+
 	<br/>
 
      </div>
