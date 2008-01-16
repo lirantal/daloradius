@@ -104,36 +104,25 @@
 
      <div class="tabbertab" title="<?php echo $l['table']['HotspotInfo']; ?>">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['HotspotInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-						<?php if (trim($name) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
-</td><td>
-						<input value="<?php echo $name ?>" name="name" tabindex=100  /><br/>
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (trim($macaddress) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['mnghsedit.php']['MACAddress'] ?></b>
-</td><td>
-						<input value="<?php echo $macaddress ?>" name="macaddress" tabindex=101 /><br/>
-						</font>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></b>
-</td><td>
-						<input value="<?php echo $geocode ?>" name="geocode" tabindex=102 /><br/>
-</td></tr>
-</table>
+	<fieldset>
 
+		<h302> Hotspot Info </h302>
+
+		<label for='username'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
+		<input name='name' type='text' id='name' value='' tabindex=100 />
+		<br/>
+
+		<label for='macaddress'><?php echo $l['FormField']['mnghsedit.php']['MACAddress'] ?></label>
+		<input name='macaddress' type='text' id='macaddress' value='' tabindex=101 />
+		<br/>
+
+		<label for='geocode'><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></label>
+		<input name='geocode' type='text' id='geocode' value='' tabindex=102 />
+		<br/>
+
+	</fieldset>
 
 	</div>
-
 
 
      <div class="tabbertab" title="<?php echo $l['table']['ContactInfo']; ?>">
