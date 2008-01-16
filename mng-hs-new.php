@@ -108,7 +108,7 @@
 
 		<h302> Hotspot Info </h302>
 
-		<label for='username'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
+		<label for='name'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
 		<input name='name' type='text' id='name' value='' tabindex=100 />
 		<br/>
 
@@ -119,6 +119,12 @@
 		<label for='geocode'><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></label>
 		<input name='geocode' type='text' id='geocode' value='' tabindex=102 />
 		<br/>
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+			class='button' />
 
 	</fieldset>
 
@@ -135,13 +141,6 @@
 
 </div>
 
-
-
-
-						<br/><br/>
-<center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 />
-</center>
 				</form>
 
 <?php

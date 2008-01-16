@@ -49,4 +49,10 @@
 	<input name='website' type='text' id='website' value='' tabindex=309 />
 	<br/>
 
+        <br/><br/>
+        <hr><br/>
+
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+		class='button' />
+
 </fieldset>
