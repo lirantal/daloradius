@@ -127,32 +127,26 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
 
      <div class="tabbertab" title="<?php echo $l['table']['HotspotInfo']; ?>">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['HotspotInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <b><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></b>
-</td><td>
-                                                <input disabled value="<?php echo $name ?>" name="name" tabindex=100 /><br/>
-                                                </font>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['mnghsedit.php']['MACAddress'] ?></b>
-</td><td>
-						<input value="<?php echo $macaddress ?>" name="macaddress" tabindex=101 /><br/>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></b>
-</td><td>
-						<input value="<?php echo $geocode ?>" name="geocode" tabindex=102 /><br/>
 
-</td></tr>
+        <fieldset>
+
+                <h302> Hotspot Info </h302>
+
+                <label for='name'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
+                <input disabled name='name' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
+                <br/>
+
+                <label for='macaddress'><?php echo $l['FormField']['mnghsedit.php']['MACAddress'] ?></label>
+                <input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
+                <br/>
+
+                <label for='geocode'><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></label>
+                <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
+                <br/>
+
+        </fieldset>
+
 					<input type=hidden value="<?php echo $name ?>" name="name"/>
-</table>
-
 
 </div>
 
