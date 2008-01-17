@@ -323,9 +323,7 @@ AND Attribute like '%Password'";
 ?>
 
 <?php
-
-	include ("menu-mng-main.php");
-	
+	include ("menu-mng-main.php");	
 ?>
 		
 		<div id="contentnorightbar">
@@ -333,36 +331,11 @@ AND Attribute like '%Password'";
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?>
 				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:inline;visibility:visible" >
+				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mngedit'] ?>
 					<br/>
 				</div>
 				<br/>
-
-<table border='2' class='table1'>
-<thead>
-                <tr>
-                <th class='info' colspan='10'>Tool-Box</th>
-                </tr>
-</thead>
-<tr><td>
-</td><td>
-</td><td>
-</td><td>
-        <a class='novisit' href="config-maint-test-user.php?username=<?php echo $username ?>&password=<?php echo $user_password ?>"> Test Connectivity </a>
-</td><td>
-        <a class='novisit' href="acct-username.php?username=<?php echo $username ?>"> Accounting </a>
-</td><td>
-        <a class='novisit' href="graphs-overall_logins.php?type=monthly&username=<?php echo $username ?>"> Graphs - Logins </a>
-</td><td>
-        <a class='novisit' href="graphs-overall_download.php?type=monthly&username=<?php echo $username ?>"> Graphs - Downloads </a>
-</td><td>
-        <a class='novisit' href="graphs-overall_upload.php?type=monthly&username=<?php echo $username ?>"> Graphs - Uploads </a>
-</td></tr>
-</table>
-<br/>
-
-
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
@@ -372,17 +345,12 @@ AND Attribute like '%Password'";
 
      <div class="tabbertab" title="<?php echo $l['table']['RADIUSCheck']; ?>">
 
+	<fieldset>
+
+                <h302> Check Attributes </h302>
+                <br/>
+
 <?php
-
-
-		echo "<table border='2' class='table1'>";
-	        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".$l['table']['RADIUSCheck']."</th>
-                                </tr>
-                        </thead>
-                ";
 
 	include 'library/opendb.php';
 	include ('include/management/op_select_options.php');
@@ -394,92 +362,88 @@ AND Attribute like '%Password'";
 	$logDebugSQL .= $sql . "\n";
 
 	while($row = $res->fetchRow()) {
-		
-		echo "<tr>";
-		echo "<td>";
+
+		echo "<label class='attributes'>";		
 		echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$row[0]&tablename=radcheck'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-		echo "<b>$row[0]</b>";
-		echo "</td>";
+		echo "</label>";
+		echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-		echo "<td>";
 		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
-//		if (preg_match("/.*-Password/", $row[0])) {
 			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
 				echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
 				echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
 				echo "&nbsp;";
-				echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+				echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
 				echo "<option value='$row[1]'>$row[1]</option>";
 				drawOptions();
 				echo "</select>";
 			} else {
 				echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
 				echo "&nbsp;";
-				echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+				echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
 				echo "<option value='$row[1]'>$row[1]</option>";
 				drawOptions();
 				echo "</select>";
 			}
-//		}
 
 		echo "       
 		        <input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'>
 		";
-
-		echo "</td>";
-		echo "</tr>";
+		echo "<br/>";
 
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
 
-
 	}
 
+?>
+	<br/><br/>
+        <hr><br/>
+	<?php
+		include 'include/management/buttons.php';
+	?>
+	<br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+	<br/>
 
-		echo "</table>";
-		echo "</div>";
+	</fieldset>
+	</div>
 
-		echo "<div class='tabbertab' title='".$l['table']['RADIUSReply']."'>";
+	<div class='tabbertab' title='<?php echo $l['table']['RADIUSReply']?>' >
 
-		echo "<table border='2' class='table1'>";
-	        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".$l['table']['RADIUSReply']."</th>
-                                </tr>
-                        </thead>
-                ";
+	<fieldset>
+
+                <h302> Reply Attributes </h302>
+                <br/>
 
 
-
+<?php
 	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
-
+	
 	while($row = $res->fetchRow()) {
 		
-		echo "<tr>";
-		echo "<td>";
+		echo "<label class='attributes'>";
 		echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$row[0]&tablename=radreply'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-		echo "<b>$row[0]</b>";
-		echo "</td>";
+		echo "</label>";
+                echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-		echo "<td>";
 		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
 		if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
 			echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
 			echo "&nbsp;";
-			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+			echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
 			echo "<option value='$row[1]'>$row[1]</option>";
 			drawOptions();
 			echo "</select>";
 		} else {
 			echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
 			echo "&nbsp;";
-			echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+			echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
 			echo "<option value='$row[1]'>$row[1]</option>";
 			drawOptions();
 			echo "</select>";
@@ -488,23 +452,27 @@ AND Attribute like '%Password'";
 		echo "       
 		        <input type='hidden' name='editValues".$editCounter."[]' value='radreply' style='width: 90px'>
 		";
-
-		echo "</td>";
-		echo "</tr>";
-
+		echo "<br/>";
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
-
 
 	}
 
-
-		echo "</table>";
-		echo "</div>";
-
-	include 'library/closedb.php';
-
 ?>
+        <br/><br/>
+        <hr><br/>
+        <?php
+                include 'include/management/buttons.php';
+        ?>
+        <br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+        <br/>
 
+        </fieldset>  
+        </div>  
+
+<?php
+        include 'library/closedb.php';
+?>
      <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
 
 <?php
@@ -516,78 +484,65 @@ AND Attribute like '%Password'";
 
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>
-                                                        </tr>
-                                        </thead>
-        <tr>
-                <td>Vendor:
-                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
-                        style='width: 215px' onclick="getVendorsList('dictVendors0')" >
+        <fieldset>
+
+                <h302> Attributes Assignment </h302>
+		<br/>
+
+                <label for='vendor' class='form'>Vendor:</label>
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
+                        style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
                         <option value=''>Select Vendor...</option>
                 </select>
-
-                &nbsp;&nbsp;
-                Attribute:
-                <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
-
-                </select>
-                </td>
-        </tr>
-        <tr>
-                <td>
-                &nbsp;
-                Value:
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px'>
-
-                &nbsp;
-                Op:
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px'>
+                <br/>
+        
+                <label for='attribute' class='form'>Attribute:</label>
+                <select id='dictAttributes0' name='dictValues0[]' 
+                        onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
+                        style='width: 270px' class='form' >
 
                 </select>
+                <br/>
 
                 &nbsp;
-                Table:
-                <select id='dictTable0' name='dictValues0[]' style='width: 90px'>
+                <b>Value:</b>
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
 
+                <b>Op:</b>
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
                 </select>
 
-
-
-                &nbsp;
-                Function:
-                <select id='dictFunc' name='dictFunc'>
-
+                <b>Target:</b>
+                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
                 </select>
-                </td>
 
-        </tr>
+                <b>Util:</b>
+                <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >
+                </select>
+                <br/><br/>
 
-        <tr>
-                <td>
-                <div id='dictInfo0' style='display:inline;visibility:visible'>
+
+                <div id='dictInfo0' style='display:none;visibility:visible'>
                         <span id='dictTooltip0'>
                                 <b>Attribute Tooltip:</b>
                         </span>
 
-                        <br/>
+                        <br/>   
 
                         <span id='dictType0'>
                                 <b>Type:<b/>
                         </span>
                 </div>
-                </td>
-        </tr>
 
+        <hr><br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement(1);" 
+                class='button'>
+        <input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');" 
+                class='button'>
 
-        <td>
-        <a href="javascript:;" onclick="addElement(1);">Add</a>
-        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
-        </td>
+        </fieldset>
 
-</table>
 <br/>
         <input type="hidden" value="0" id="divCounter" />
         <div id="divContainer"> </div> <br/>
@@ -607,17 +562,7 @@ AND Attribute like '%Password'";
 
      </div>
 
-
-
-
 </div>
-
-
-
-						<br/><br/>
-<center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=14 />
-</center>
 
 				</form>
 

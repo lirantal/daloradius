@@ -118,22 +118,24 @@
 					<?php echo $l['helpPage']['mngdel'] ?>
 					<br/>
 				</div>
-				<br/>
 				
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-<tr><td>
-						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['all']['Username'] ?></b>
-</td><td>
-						<input value="<?php echo $username ?>" name="username[]" tabindex=100 /><br/>
-						</font>
-</td></tr>
-</table>
-						<br/><br/>
-<center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 />
-</center>
+        <fieldset>
+
+                <h302> Account Removal  </h302>
+		<br/>
+
+                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <br />
+
+		<br/><br/>
+		<hr><br/>
+		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 
+			class='button' />
+
+	</fieldset>
+
 				</form>
 
 <?php
