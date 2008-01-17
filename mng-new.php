@@ -233,21 +233,22 @@
 	<fieldset>
 
 	        <h302> Account Info </h302>
+		<br/>
 
-		<input type='radio' checked /> <b> Username Authentication </b> <br/>
+		<input type='radio' checked /> <b> Username Authentication </b> <br/><br/>
 
-		<label for='username'><?php echo $l['all']['Username']?></label>
+		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
 		<input name='username' type='text' id='username' value='' tabindex=100 />
 		<a href="javascript:randomUsername()" class='helper'>Random User</a>
 		<br />
 
-		<label for='password'><?php echo $l['all']['Password']?></label>
+		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
 		<input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword)) echo $hiddenPassword ?>
 			tabindex=101 />
 		<a href="javascript:randomPassword()" class='helper'>Random Password</a>
 		 <br />
 
-		<label for='passwordType'><?php echo $l['all']['PasswordType']?> </label>
+		<label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
 		<select class='form' tabindex=102 name='passwordType' >
 			<option value='User-Password'>User-Password</option>
 			<option value='Cleartext-Password'>Cleartext-Password</option>
@@ -258,7 +259,7 @@
 		</select>
 		<br />
 
-		<label for='group'><?php echo $l['all']['Group']?></label>
+		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<input name='group' type='text' id='group' value='' tabindex=103 />
 
 		<?php   
@@ -287,22 +288,19 @@
 
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
-<?php
-	//<th colspan='10'> echo $l['table']['Attributes']; </th>
-?>
-
 	<fieldset>
 
                 <h302> Attributes Assignment </h302>
+		<br/>
 
-		<label for='vendor'>Vendor:</label>
+		<label for='vendor' class='form'>Vendor:</label>
                 <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
 			style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
                         <option value=''>Select Vendor...</option>
                 </select>
 		<br/>
 	
-		<label for='attribute'>Attribute:</label>
+		<label for='attribute' class='form'>Attribute:</label>
                 <select id='dictAttributes0' name='dictValues0[]' 
 			onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
 			style='width: 270px' class='form' >

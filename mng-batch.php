@@ -197,16 +197,20 @@
 	<fieldset>
 
                 <h302> Account Info </h302>
+		<br/>
 
-                <label for='usernamePrefix'><?php echo $l['FormField']['mngbatch.php']['UsernamePrefix']?></label>
+                <label for='usernamePrefix' class='form'><?php 
+			echo $l['FormField']['mngbatch.php']['UsernamePrefix']?></label>
                 <input name='username_prefix' type='text' id='username_prefix' value='' tabindex=100 />
 		<br/>
 
-                <label for='numberInstances'><?php echo $l['FormField']['mngbatch.php']['NumberInstances']?></label>
+                <label for='numberInstances' class='form'><?php 
+			echo $l['FormField']['mngbatch.php']['NumberInstances']?></label>
                 <input name='number' type='text' id='number' value='' tabindex=101 />
 		<br/><br/><br/>
 
-                <label for='usernameLength'><?php echo $l['FormField']['mngbatch.php']['UsernameLength']?></label>
+                <label for='usernameLength' class='form'><?php 
+			echo $l['FormField']['mngbatch.php']['UsernameLength']?></label>
 		<select name="length_user" tabindex=102 class='form' >
 			<option id="4"> 4 </option>
 			<option id="5"> 5 </option>
@@ -218,7 +222,8 @@
 		<br/>
 		<br/>
 
-                <label for='passwordLength'><?php echo $l['FormField']['mngbatch.php']['PasswordLength']?></label>
+                <label for='passwordLength' class='form'><?php 
+			echo $l['FormField']['mngbatch.php']['PasswordLength']?></label>
 		<select name="length_pass" tabindex=103 class='form' >
 		        <OPTION id="4"> 4 </OPTION>
 		        <OPTION id="5"> 5 </OPTION>
@@ -231,7 +236,7 @@
 		<br/>
 
 
-                <label for='group'><?php echo $l['FormField']['all']['Group']?></label>
+                <label for='group' class='form'><?php echo $l['FormField']['all']['Group']?></label>
                 <input name='group' type='text' id='group' value='' tabindex=104 />
 		<?php
 		        include 'include/management/populate_selectbox.php';
@@ -239,7 +244,7 @@
 		?>
 		<br/>
 
-                <label for='groupPriority'><?php echo $l['FormField']['all']['GroupPriority']?></label>
+                <label for='groupPriority' class='form'><?php echo $l['FormField']['all']['GroupPriority']?></label>
                 <input name='group_priority' type='text' id='group_priority' value='0' tabindex=105 />
 
 		<br/><br/>
@@ -256,15 +261,16 @@
         <fieldset>
 
                 <h302> Attributes Assignment </h302>
+		<br/>
 
-                <label for='vendor'>Vendor:</label>
+                <label for='vendor' class='form'>Vendor:</label>
                 <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
                         style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
                         <option value=''>Select Vendor...</option>
                 </select>
                 <br/>
 
-                <label for='attribute'>Attribute:</label>
+                <label for='attribute' class='form'>Attribute:</label>
                 <select id='dictAttributes0' name='dictValues0[]'
                         onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
                         style='width: 270px' class='form' >
