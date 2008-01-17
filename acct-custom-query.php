@@ -112,7 +112,7 @@
 	/* END */
 
 
-	echo "<table border='2' class='table1'>\n";
+	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
 							<tr>
