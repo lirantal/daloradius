@@ -98,14 +98,14 @@ function addElement(enableTable) {
 	""+
         "<fieldset>"+
 	""+
-        "       <label for='vendor'>Vendor:</label>"+
+        "       <label for='vendor' class='form'>Vendor:</label>"+
         "       <select id='dictVendors"+num+"' onchange=\"getAttributesList(this,'dictAttributes"+num+"')\""+
         "               style='width: 215px' onclick=\"getVendorsList('dictVendors"+num+"')\" class='form' >"+
         "               <option value=''>Select Vendor...</option>"+
         "       </select>"+
         "       <br/>"+
 	""+
-        "       <label for='attribute'>Attribute:</label>"+
+        "       <label for='attribute' class='form'>Attribute:</label>"+
         "       <select id='dictAttributes"+num+"' name='dictValues"+dictCounter+"[]'"+
         "                onchange=\"getValuesList(this,'dictValues"+num+"','dictOP"+num+"','dictTable"+num+"','dictTooltip"+num+"','dictType"+num+"')\""+
         "               style='width: 270px' class='form' >"+
