@@ -80,8 +80,9 @@
         <fieldset>
 
                 <h302> Hotspot Removal </h302>
+		<br/>
 
-                <label for='name'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
+                <label for='name' class='form'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
                 <input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
                 <br/>
 

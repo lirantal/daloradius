@@ -67,7 +67,7 @@
     
 	echo "<form name='listallhotspots' method='post' action='mng-hs-del.php'>";
 
-	echo "<table border='2' class='table1'>\n";
+	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
 							<tr>
