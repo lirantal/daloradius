@@ -383,6 +383,7 @@ a {
 
 a.table {
 	color:#FFF;
+//	color: #348017;
 }
 
 a:hover {
@@ -475,7 +476,7 @@ form fieldset{
 }
 
 
-label {
+label.form {
 	background-position:left;
 
 	color:#646729;
@@ -486,7 +487,26 @@ label {
 	
 	display:block;
 	float:left;
-	width:110px;
+	width:160px;
+	height:1px;
+	text-align:left;
+	margin:4px 0px 0px 0px;
+	padding:0px 0px 0px 8px;
+	clear:left;
+}
+
+label.attributes {
+	background-position:left;
+
+	color:#646729;
+	font-size:90%;
+	font-weight:bold;
+	
+	border-width: 0px;
+	
+	display:block;
+	float:left;
+	min-width:280px;
 	height:1px;
 	text-align:left;
 	margin:4px 0px 0px 0px;
@@ -583,29 +603,33 @@ table {
 	border-collapse: collapse
 	margin-left: auto;
 	margin-right: auto;
+//	border: 1px solid #CCC;
 }
 
 table,caption {
 	margin: 0 auto;
-	border-right: 1px solid #CCC;
-	border-left: 1px solid #CCC
+//	border-right: 1px solid #CCC;
+//	border-left: 1px solid #CCC
 }
 
 caption,th,td {
 	border-top: 0;
 	border-left: 0;
-	padding: 5px
+	padding: 3px;
 }
 
 caption,thead th,tfoot th,tfoot td {
-	background-color: #003366;
+//	background-color: #e9f9ac;
+//	background-color: #C9BE62;
+	background-color: #cee574;
 	color: #FFF;
 	font-weight: bold;
 	text-transform: uppercase
 }
 
 thead th {
-	background-color: #003366;
+//	background-color: #e9f9ac;
+	background-color: #cee574;
 	color: #FFFFFF;
 }
 
@@ -616,11 +640,15 @@ thead th.info {
 }
 
 tbody th {
-	padding: 20px 10px
+	background-color: #e9f9ac;
+//	padding: 20px 10px
 }
 
+tbody td {
+	background-color: #e9f9ac;
+}
 tbody tr.odd {
-	background-color: #F7F7F7;
+	background-color: #FAF8CC;
 	color: #666
 }
 
@@ -628,7 +656,7 @@ tbody a {
 	padding: 1px 2px;
 	color: #000;
 	text-decoration: none;
-	border-bottom: 1px dotted #E63C1E
+//	border-bottom: 1px dotted #000
 }
 
 tbody a:active,tbody a:hover,tbody a:focus,tbody a:visited {
@@ -636,22 +664,25 @@ tbody a:active,tbody a:hover,tbody a:focus,tbody a:visited {
 }
 
 tbody tr:hover {
-	background-color: #EEE;
+	background-color: #FAF8CC;
 	color: #000
 }
 
 tbody tr:hover a {
-	background-color: #FFF
+	background-color: #e9f9ac;
 }
 
 tbody td+td+td+td a {
-	color: #003366;
+//	color: #003366;
+	color: #FAF8CC;
 	font-weight: bold;
 	border-bottom: 0
 }
 
-tbody td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tbody td+td+td+td a:visited {
-	color: #000
+body td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tbody td+td+td+td a:visited {
+//	color: #000
+//	color: #FAF8CC;
+//	color: #e9f9ac;
 }
 
 tbody td a[href="http://www.rodcast.com.br/"] {
@@ -661,7 +692,7 @@ tbody td a[href="http://www.rodcast.com.br/"] {
 	height: 15px;
 	background: transparent url(http://www.rodcast.com.br/csstablegallery/i/logo.gif) no-repeat;
 	text-indent: -999em;
-	border-bottom: 0
+//	border-bottom: 0
 }
 
 tbody a:visited:after {
@@ -670,12 +701,14 @@ tbody a:visited:after {
 }
 
 tbody a.novisit {
-        border-bottom: 1px dotted #fff
+//        border-bottom: 1px dotted #fff
 }
 
 tbody a.tablenovisit {
-	color: blue;
-        border-bottom: 1px dotted #fff;
+//	color: blue;
+	color: #348017;
+//	color: #7E2217;
+//        border-bottom: 1px dotted #fff;
 }
 
 tbody a.tablenovisit:visited:after {
