@@ -81,7 +81,7 @@
 
 	echo "<form name='listallusers' method='post' action='' >";
 
-	echo "<table border='2' class='table1'>\n";
+	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
 							<tr>
@@ -89,7 +89,6 @@
 							</tr>
 							<tr>
 							<th colspan='10' align='left'> 
-
 				Select:
 				<a class=\"table\" href=\"javascript:SetChecked(1,'username[]','listallusers')\">All</a> 
 				
@@ -97,8 +96,6 @@
 			<br/>
 				<input class='button' type='button' value='Delete' onClick='javascript:removeUserCheckbox(\"listallusers\")' />
 				<br/><br/>
-
-
 		";
 
 
