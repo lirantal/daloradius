@@ -45,8 +45,10 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $req
 		$last = ' [Last Page] '; // nor 'last page' link
 	}
 
+	$greyColorBeg = "<font color='#5F5A59'>";
+	$greyColorEnd = "</font>";
 
-echo "$first $prev $pageNum of $maxPage $next $last";
+echo "$first $prev $greyColorBeg $pageNum $greyColorEnd of $greyColorBeg $maxPage $greyColorEnd $next $last";
 echo "<br/>";
 
 }
@@ -59,7 +61,7 @@ function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, 
 	$numofpages = $numrows / $rowsPerPage;
 	for ($i = 1; $i <= $numofpages + 1; $i++) {
 		if($i == $pageNum) {
-			echo("&nbsp;<strong><font color='#0099FF'>".$i."</font></strong>&nbsp;");
+			echo("&nbsp;<strong><font color='#5F5A59'>".$i."</font></strong>&nbsp;");
 		} else {
 			echo("&nbsp; <a class=\"table\" href=\"?page=$i&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">$i</a>&nbsp;");
 		}

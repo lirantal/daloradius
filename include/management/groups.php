@@ -22,13 +22,10 @@
 
 ?>
 
-                <table border='2' class='table1'>
+	<fieldset>
 
-                        <thead>
-                                <tr>
-                                <th colspan='10'><?php echo $l['table']['Groups']; ?></th>
-                                </tr>
-                        </thead>
+                <h302> Groups Assignment </h302>
+		<br/>
 
 <?php
 
@@ -37,7 +34,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 	$res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0) {
-		echo "</table> 
+		echo "
 			<br/><center> ".$l['messages']['nogroupdefinedforuser']." <br/>".
 					str_replace("create", "<a href='mng-rad-usergroup-new.php?username=$username'>create</a>", 
 						$l['messages']['wouldyouliketocreategroup'])."
@@ -53,20 +50,20 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 
 				<input type='hidden' value='$row[0]' name='oldgroups[]' >
 
-				<tr><td>        <b>".$l['FormField']['all']['Group']." #".($counter+1)."</b>
-				</td><td>       <input value='$row[0]' name='groups[]' id='group$counter' >
+				<label for='group' class='form'>".$l['FormField']['all']['Group']." #".($counter+1)."
+				</label>
+				<input value='$row[0]' name='groups[]' id='group$counter' >
 
-				<select onChange=\"javascript:setStringText(this.id,'group$counter')\" id='usergroup$counter' tabindex=105>
+				<select onChange=\"javascript:setStringText(this.id,'group$counter')\" 
+					id='usergroup$counter' tabindex=105 class='form' >
 
 				".$groupOptions."
 
 				</select>
 
-				</td></tr>
-				<tr><td>        <b>". $l['FormField']['all']['GroupPriority']."</b>
-				</td><td>       <input value='$row[1]' name='groups_priority[]' >
-				</td></tr>
-
+				<label for='groupPriority' class='form'>". $l['FormField']['all']['GroupPriority']."
+				</label>
+				<input value='$row[1]' name='groups_priority[]' >
 			";
 
 			$counter++;
@@ -76,7 +73,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 	} // if-else
 ?>
 
-	</table>
+	</fieldset>
 	<br/>
 
 
