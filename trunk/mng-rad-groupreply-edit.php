@@ -129,7 +129,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket
                                                 <input type="hidden" value="<?php echo $groupname ?>" name="groupname" />
                                                 <input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" />
 												
-<table border='2' class='table1'>
+<table border='0' class='table1'>
                                         <thead>
                                                         <tr>
                                                         <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>

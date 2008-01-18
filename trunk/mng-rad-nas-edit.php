@@ -151,7 +151,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
      <div class="tabbertab" title="<?php echo $l['table']['NASInfo']; ?>">
                                                 <input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
 
-<table border='2' class='table1'>
+<table border='0' class='table1'>
                                         <thead>
                                                         <tr>
                                                         <th colspan='2'> <?php echo $l['table']['NASInfo']; ?> </th>
@@ -207,7 +207,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
      </div>
      <div class="tabbertab" title="<?php echo $l['table']['NASAdvanced']; ?>">
 
-<table border='2' class='table1' width='600'>
+<table border='0' class='table1' width='600'>
                                         <thead>
                                                         <tr>
                                                         <th colspan='2'> <?php echo $l['table']['NASAdvanced']; ?> </th>
