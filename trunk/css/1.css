@@ -382,8 +382,8 @@ a {
 }
 
 a.table {
-	color:#FFF;
-//	color: #348017;
+//	color:#FFF;
+	color: #348017;
 }
 
 a:hover {
@@ -599,6 +599,7 @@ blockquote p {
 table {
 	width: 100%;
 	color: #000000;
+//	color: #617C58;
 	font: 0.9em/1.6em "Trebuchet MS",Verdana,sans-serif;
 	border-collapse: collapse
 	margin-left: auto;
@@ -619,18 +620,24 @@ caption,th,td {
 }
 
 caption,thead th,tfoot th,tfoot td {
-//	background-color: #e9f9ac;
+	background-color: #e9f9ac;
 //	background-color: #C9BE62;
-	background-color: #cee574;
+//	background-color: #cee574;
 	color: #FFF;
 	font-weight: bold;
 	text-transform: uppercase
 }
 
+tfoot th {
+	color: #617C58;
+        color: #646729;
+}
 thead th {
 //	background-color: #e9f9ac;
 	background-color: #cee574;
-	color: #FFFFFF;
+//	color: #FFFFFF;
+//	color: #617C58;
+        color: #646729;
 }
 
 thead th.info {
@@ -646,6 +653,8 @@ tbody th {
 
 tbody td {
 	background-color: #e9f9ac;
+        color: #646729;
+
 }
 tbody tr.odd {
 	background-color: #FAF8CC;
