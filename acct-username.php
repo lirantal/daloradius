@@ -64,7 +64,7 @@
 	$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName LIKE '$username' AND (Attribute like '%Password')";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
-
+	
 	echo "
 	        <table border='0' class='table1'>
                         <thead>
@@ -72,18 +72,18 @@
                                 <th colspan='15'>".$l['all']['Statistics']."</th>
                                 </tr>
                         </thead>
-	        <thead><tr >
-	        <td> ".$l['all']['ID']." </td>
-	        <td> ".$l['all']['Username']." </td>
-                <td> ".$l['all']['Password']." </td>
-                <td> ".$l['all']['Credit']." </td>
-                <td> ".$l['all']['Used']." </td>
-                <td> ".$l['all']['LeftTime']." </td>
-                <td> ".$l['all']['LeftPercent']." </td>
-                <td> ".$l['all']['TotalSessions']." </td>
-                <td> ".$l['all']['Upload']." (".$l['all']['Bytes'].")</td>
-                <td> ".$l['all']['Download']." (".$l['all']['Bytes'].") </td>
-        	</tr></thead>
+	        <thead>
+	        <th> ".$l['all']['ID']." </th>
+	        <th> ".$l['all']['Username']." </th>
+                <th> ".$l['all']['Password']." </th>
+                <th> ".$l['all']['Credit']." </th>
+                <th> ".$l['all']['Used']." </th>
+                <th> ".$l['all']['LeftTime']." </th>
+                <th> ".$l['all']['LeftPercent']." </th>
+                <th> ".$l['all']['TotalSessions']." </th>
+                <th> ".$l['all']['Upload']." (".$l['all']['Bytes'].")</th>
+                <th> ".$l['all']['Download']." (".$l['all']['Bytes'].") </th>
+        	</th></thead>
         ";
 	while($row = $res->fetchRow()) {
         echo "<tr>
@@ -128,7 +128,6 @@
 	echo "<td> $total_bytesout </td>";
         echo "</tr>";
 	echo "</table> <br/>";
-
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	
