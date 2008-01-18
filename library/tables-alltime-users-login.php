@@ -56,7 +56,7 @@ function daily($orderBy, $orderType) {
         echo "<br/><br/>";
 
 
-        echo "<table border='2' class='table1'>\n";
+        echo "<table border='0' class='table1'>\n";
         echo "
                         <thead>
                                 <tr>
@@ -130,7 +130,7 @@ function monthly($orderBy, $orderType) {
         echo "<br/><br/>";
 
 
-        echo "<table border='2' class='table1'>\n";
+        echo "<table border='0' class='table1'>\n";
         echo "
                         <thead>
                                 <tr>
@@ -208,7 +208,7 @@ function yearly($orderBy, $orderType) {
 
 
 
-	echo "<table border='2' class='table1'>\n";
+	echo "<table border='0' class='table1'>\n";
         echo "
                         <thead>
                                 <tr>
