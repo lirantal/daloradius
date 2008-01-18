@@ -52,7 +52,7 @@ sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
-	echo "<table border='2' class='table1'>\n";
+	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
 							<tr>
