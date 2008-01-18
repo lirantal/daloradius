@@ -238,7 +238,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
 <?php
 
-                echo "<table border='2' class='table1'>";
+                echo "<table border='0' class='table1'>";
                 echo "  
                         <thead> 
                                 <tr>
@@ -304,7 +304,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
                 echo "<div class='tabbertab' title='".$l['table']['RADIUSReply']."'>";
 
-                echo "<table border='2' class='table1'>";
+                echo "<table border='0' class='table1'>";
                 echo "  
                         <thead>
                                 <tr>
@@ -371,7 +371,7 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
 
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
-<table border='2' class='table1'>
+<table border='0' class='table1'>
                                         <thead>
                                                         <tr>
                                                         <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>

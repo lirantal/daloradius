@@ -69,7 +69,7 @@
 
         echo "<form name='listallnas' method='post' action='mng-rad-nas-del.php'>";
 
-	echo "<table border='2' class='table1'>\n";
+	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
 							<tr>
