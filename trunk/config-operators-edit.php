@@ -135,134 +135,43 @@
      <div class="tabbertab" title="Operator Info">
         <br/>
 
-<table border='2' class='table1'>
-<thead>
-                <tr>
-                <th colspan='10'>Operator Settings</th>
-                </tr>
-</thead>
-<tr><td>
-                                                <?php if (trim($operator_password) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Password</b>
-</td><td>
 
+	<fieldset>
+	
+		<h302> Operator Settings </h302>
+		<br/>
 
+                <label for='operator_password' class='form'>Operator Password</label>
+                <input name='password' id='password'
 		<?php
 			if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
-				echo "<input type='password' value='$operator_password' name='password' />";
+				echo "type='password'";
 			else 
-				echo "<input value='$operator_password' name='password' />";
+				echo "type='text'";
 		?>
+			value='<?php if (isset($operator_password)) echo $operator_password ?>' tabindex=101 />
+                <br/>
 
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_lastlogin) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Last Login Time</b>
-</td><td>
-                                                <input disabled value="<?php echo $operator_lastlogin ?>" name="lastlogin"/>
-                                                </font>
-</td></tr>
-</table>
+                <label for='operator_lastlogin' class='form'>Operator Last Login</label>
+                <input disabled name='operator_lastlogin' id='operator_lastlogin' type='text' 
+			value='<?php echo $operator_lastlogin?>' tabindex=102 />
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+	</fieldset>
+
 
 	</div>
      <div class="tabbertab" title="Contact Info">
         <br/>
 
-<table border='2' class='table1'>
-<thead>
-                <tr>
-                <th colspan='10'>Operator Details</th>
-                </tr>
-</thead>
-<tr><td>
-                                                <?php if (trim($operator_firstname) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Firstname</b>
-</td><td>
-                                                <input value="<?php echo $operator_firstname ?>" name="firstname"/>
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_lastname) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Lastname</b>
-</td><td>
-                                                <input value="<?php echo $operator_lastname ?>" name="lastname" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_title) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Title</b>
-</td><td>
-                                                <input value="<?php echo $operator_title ?>" name="title" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_department) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Department</b>
-</td><td>
-                                                <input value="<?php echo $operator_department ?>" name="department" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_company) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Company</b>
-</td><td>
-                                                <input value="<?php echo $operator_company ?>" name="company" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_phone1) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Phone1</b>
-</td><td>
-                                                <input value="<?php echo $operator_phone1 ?>" name="phone1" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_phone2) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Phone2</b>
-</td><td>
-                                                <input value="<?php echo $operator_phone2 ?>" name="phone2" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_email2) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Email1</b>
-</td><td>
-                                                <input value="<?php echo $operator_email1 ?>" name="email1" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_email2) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Email2</b>
-</td><td>
-                                                <input value="<?php echo $operator_email2 ?>" name="email2" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_messenger1) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Messenger1</b>
-</td><td>
-                                                <input value="<?php echo $operator_messenger1 ?>" name="messenger1" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_messenger2) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Messenger2</b>
-</td><td>
-                                                <input value="<?php echo $operator_messenger2 ?>" name="messenger2" />
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($operator_notes) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b>Operator Notes</b>
-</td><td>
-                                                <input value="<?php echo $operator_notes ?>" name="notes" />
-                                                </font>
-</td></tr>
+<?php
+	include_once('include/management/operatorinfo.php');
+?>
 
-
-<br/><br/>
-</table>
 
 	</div>
      <div class="tabbertab" title="ACL Settings">
