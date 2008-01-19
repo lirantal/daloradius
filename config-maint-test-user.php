@@ -80,122 +80,89 @@
 
      <div class="tabbertab" title="<?php echo $l['table']['Settings']; ?>">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
+        <fieldset>
+
+                <h302> Test User Connectivity </h302>
+                <br/>
+
+                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <br />
 
 
-<tr><td>
-						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
+                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
+                <input name='password' type='text' id='password' value='<?php echo $password ?>' tabindex=101 />
+                <br />
 
-						<b><?php echo $l['FormField']['all']['Username'] ?></b>
-</td><td>
-						<input value="<?php echo $username ?>" name="username" />
-						</font>
-</td></tr>
-<tr><td>
+                <label for='radius' class='form'><?php echo $l['FormField']['configmainttestuser.php']['RadiusServer'] ?>
+			</label>
+                <input name='radius' type='text' id='radius' value='<?php echo $radius ?>' tabindex=102 />
+                <br />
 
-						<?php if (trim($password) == "") { echo "<font color='#FF0000'>";  }?>
+                <label for='radiusport' class='form'><?php echo $l['FormField']['configmainttestuser.php']['RadiusPort'] ?>
+			</label>
+                <input name='radiusport' type='text' id='radiusport' value='<?php echo $radiusport ?>' tabindex=103 />
+                <br />
 
-						<b><?php echo $l['FormField']['all']['Password'] ?></b>
-</td><td>
-						<input value="<?php echo $password ?>" name="password" />
-						</font>
+                <label for='nasport' class='form'><?php echo $l['FormField']['configmainttestuser.php']['NASPort'] ?>
+			</label>
+                <input name='nasport' type='text' id='nasport' value='<?php echo $nasport ?>' tabindex=104 />
+                <br />
 
+                <label for='secret' class='form'><?php echo $l['FormField']['configmainttestuser.php']['Secret'] ?>
+			</label>
+                <input name='secret' type='text' id='secret' value='<?php echo $secret ?>' tabindex=105 />
+                <br />
 
-</td></tr>
-<tr><td>
-						<?php if (trim($radius) == "") { echo "<font color='#FF0000'>";  }?>
+                <br/><br/>
+                <hr><br/>
 
-						<b><?php echo $l['FormField']['configmainttestuser.php']['RadiusServer'] ?></b>
-</td><td>
-						<input value="<?php echo $radius ?>" name="radius" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (trim($radiusport) == "") { echo "<font color='#FF0000'>";  }?>
+                <input type='submit' name='submit' value='Perform Test' class='button' />
 
-						<b><?php echo $l['FormField']['configmainttestuser.php']['RadiusPort'] ?></b>
-</td><td>
-						<input value="<?php echo $radiusport ?>" name="radiusport" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (trim($nasport) == "") { echo "<font color='#FF0000'>";  }?>
-
-						<b><?php echo $l['FormField']['configmainttestuser.php']['NASPort'] ?></b>
-</td><td>
-						<input value="<?php echo $nasport ?>" name="nasport" />
-						</font>
-</td></tr>
-<tr><td>
-
-						<?php if (trim($secret) == "") { echo "<font color='#FF0000'>";  }?>
-
-						<b><?php echo $l['FormField']['configmainttestuser.php']['Secret'] ?></b>
-</td><td>
-						<input value="<?php echo $secret ?>" name="secret" />
-						</font>
-</td></tr>
-
-
-</table>
+        </fieldset>
 
 	</div>
 
 
      <div class="tabbertab" title="<?php echo $l['table']['Advanced']; ?>">
 
+	<fieldset>
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Advanced']; ?> </th>
-                                                        </tr>
-                                        </thead>
+		<h302> Advanced </h302>
+		<br/>
+
+                <label for='debug' class='form'><?php echo $l['FormField']['all']['Debug'] ?></label>
+		<select name='debug' id='debug' class='form' tabindex=106 >
+			<option value="yes"> Yes </option>
+			<option value="no"> No </option>
+		</select>
+                <br/>
+
+                <label for='timeout' class='form'><?php echo $l['FormField']['all']['Timeout'] ?></label>
+                <input name='timeout' type='text' id='timeout' value='3' tabindex=107 />
+		<br/>
+
+                <label for='retries' class='form'><?php echo $l['FormField']['all']['Retries'] ?></label>
+                <input name='retries' type='text' id='retries' value='3' tabindex=108 />
+		<br/>
+
+                <label for='count' class='form'><?php echo $l['FormField']['all']['Count'] ?></label>
+                <input name='count' type='text' id='count' value='' tabindex=109 />
+		<br/>
+
+                <label for='requests' class='form'><?php echo $l['FormField']['all']['Requests'] ?></label>
+                <input name='requests' type='text' id='requests' value='3' tabindex=110 />
+		<br/>
 
 
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Debug'] ?></b>
-</td><td>
-						<select name="debug">
-						<option value="yes"> Yes </option>
-						<option value="no"> No </option>
-						</select>
+                <br/><br/>
+                <hr><br/>
 
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Timeout'] ?></b>
-</td><td>
-						<input value="3" name="timeout" />
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Retries'] ?></b>
-</td><td>
-						<input value="3" name="retries" />
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Count'] ?></b>
-</td><td>
-						<input value="1" name="count" />
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Requests'] ?></b>
-</td><td>
-						<input value="3" name="requests" />
-</td></tr>
-</table>
+                <input type='submit' name='submit' value='Perform Test' class='button' />
+
+	</fieldset>
 
 	</div>
-
-
-						<center>						
-						<br/>
-						<input type="submit" name="submit" value="Perform Test" />
-						</center>
 
 </div>
 

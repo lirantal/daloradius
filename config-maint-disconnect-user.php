@@ -95,39 +95,28 @@
 
      <div class="tabbertab" title="<?php echo $l['table']['Settings']; ?>">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
 
+	<fieldset>
 
-<tr><td>
-						<?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
+		<h302> Settings </h302>
+		<br/>
 
-						<b><?php echo $l['FormField']['all']['Username'] ?></b>
-</td><td>
-						<input value="<?php echo $username ?>" name="username" />
-						</font>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['configmaintdisconnectuser.php']['PacketType'] ?></b>
-</td><td>
+                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <br />
+ 
+		<label for='packettype' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['PacketType'] ?></label>
+                <select name='packettype' id='packettype' class='form' tabindex=101 >
+			<option value="disconnect"> PoD - Packet of Disconnect</option>
+			<option value="coa"> CoA - Change of Authorization </option>
+                </select>
+                <br/>
 
-<select name="packettype" id="packettype">
-	<option value="disconnect"> PoD - Packet of Disconnect</option>
-	<option value="coa"> CoA - Change of Authorization </option>
-</select>
-						</font>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASServer'] ?></b>
-</td><td>
-						<input value="" name="nasaddr" id="nasaddr" />
+                <label for='nasaddr' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASServer'] ?></label>
+                <input name='nasaddr' type='text' id='nasaddr' value='' tabindex=102 />
 
-<select onChange="javascript:setStringText(this.id,'nasaddr')" id='naslist' tabindex=105>
-	<option value=""> Choose NAS... </option>
+		<select onChange="javascript:setStringText(this.id,'nasaddr')" id='naslist' tabindex=103 class='form' >
+			<option value=""> Choose NAS... </option>
 <?php
 
         include 'library/opendb.php';
@@ -146,15 +135,14 @@
 
         include 'library/closedb.php';
 ?>
-</select>
-</td></tr>
+		</select>
+                <br/>
 
-<tr><td>
-						<b><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASSecret'] ?></b>
-</td><td>
-						<input value="" name="nassecret" id="nassecret" />
-<select onChange="javascript:setStringText(this.id,'nassecret')" id='nassecretlist'>
-	<option value=""> Choose NAS Secret... </option>
+                <label for='nassecret' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASSecret'] ?></label>
+                <input name='nassecret' type='text' id='nassecret' value='' tabindex=104 />
+		<select onChange="javascript:setStringText(this.id,'nassecret')" id='nassecretlist' class='form' 
+			tabindex=105 >
+			<option value=""> Choose NAS Secret... </option>
 <?php
 
         include 'library/opendb.php';
@@ -173,65 +161,65 @@
 
         include 'library/closedb.php';
 ?>
-</select>
-						</font>
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASPort'] ?></b>
-</td><td>
-						<input value="3799" name="nasport" id="nasport" />
-<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=105>
-	<option value="3799"> Choose Port... </option>
-	<option value="3799"> 3799 </option>
-	<option value="1700"> 1700 </option>
-</select>
-</td></tr>
-</table>
+		</select>
+
+                <br/>
+
+                <label for='nasport' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASPort'] ?></label>
+                <input name='nasport' type='text' id='nasport' value='3799' tabindex=106 />
+		<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=107 >
+			<option value="3799"> Choose Port... </option>
+			<option value="3799"> 3799 </option>
+			<option value="1700"> 1700 </option>
+		</select>
+                <br/>
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='Perform Test' class='button' />
+
+        </fieldset>
 
 	</div>
 
 
      <div class="tabbertab" title="<?php echo $l['table']['Advanced']; ?>">
 
+        <fieldset>
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Advanced']; ?> </th>
-                                                        </tr>
-                                        </thead>
+                <h302> Advanced </h302>
+                <br/>
 
+                <label for='debug' class='form'><?php echo $l['FormField']['all']['Debug'] ?></label>
+                <select name='debug' id='debug' class='form' tabindex=106 >
+                        <option value="yes"> Yes </option>
+                        <option value="no"> No </option>
+                </select>
+                <br/>
 
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Debug'] ?></b>
-</td><td>
-						<select name="debug">
-						<option value="yes"> Yes </option>
-						<option value="no"> No </option>
-						</select>
+                <label for='timeout' class='form'><?php echo $l['FormField']['all']['Timeout'] ?></label>
+                <input name='timeout' type='text' id='timeout' value='3' tabindex=107 />
+                <br/>
 
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Timeout'] ?></b>
-</td><td>
-						<input value="3" name="timeout" />
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Retries'] ?></b>
-</td><td>
-						<input value="3" name="retries" />
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Count'] ?></b>
-</td><td>
-						<input value="1" name="count" />
-</td></tr>
-<tr><td>
-						<b><?php echo $l['FormField']['all']['Requests'] ?></b>
-</td><td>
-						<input value="3" name="requests" />
-</td></tr>
-</table>
+                <label for='retries' class='form'><?php echo $l['FormField']['all']['Retries'] ?></label>
+                <input name='retries' type='text' id='retries' value='3' tabindex=108 />
+                <br/>
+
+                <label for='count' class='form'><?php echo $l['FormField']['all']['Count'] ?></label>
+                <input name='count' type='text' id='count' value='' tabindex=109 />
+                <br/>
+
+                <label for='requests' class='form'><?php echo $l['FormField']['all']['Requests'] ?></label>
+                <input name='requests' type='text' id='requests' value='3' tabindex=110 />
+                <br/>
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='Perform Test' class='button' />
+
+        </fieldset>
 
 	</div>
 
