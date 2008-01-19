@@ -683,7 +683,8 @@ tbody tr:hover a {
 
 tbody td+td+td+td a {
 //	color: #003366;
-	color: #FAF8CC;
+//	color: #FAF8CC;
+	color: #348017;	
 	font-weight: bold;
 	border-bottom: 0
 }
@@ -692,6 +693,7 @@ body td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tb
 //	color: #000
 //	color: #FAF8CC;
 //	color: #e9f9ac;
+	color: #348017;
 }
 
 tbody td a[href="http://www.rodcast.com.br/"] {
