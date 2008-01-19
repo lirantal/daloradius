@@ -11,13 +11,9 @@
 		(isset($_REQUEST['operator_username'])) ? $operator_username = $_REQUEST['operator_username'] : $operator_username = "";
 		(isset($_REQUEST['operator_password'])) ? $operator_password = $_REQUEST['operator_password'] : $operator_password = "";
 
-//		echo "form was submitted.... $operator_username  $operator_password ";
-
 	include 'library/opendb.php';
 
 		if ( (trim($operator_username) != "") && (trim($operator_password) != "") ) {
-
-//			echo "ok so user/pass were given...";
 
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
 			$res = $dbSocket->query($sql);
@@ -122,132 +118,38 @@
      <div class="tabbertab" title="Operator Info">
         <br/>
 
-<table border='2' class='table1'>
-<thead>
-                <tr>
-                <th colspan='10'>Account Settings</th>
-                </tr>
-</thead>
-<tr><td>
-						<?php if (!isset($operator_username)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Username</b>
-</td><td>
-						<input value="<?php if (isset($operator_username)) echo $operator_username ?>" name="operator_username"/>
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_password)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Password</b>
-</td><td>
-						<input <?php if (isset($operator_hiddenPassword)) echo $hiddenPassword ?> value="<?php if (isset($operator_password)) echo $operator_password ?>" name="operator_password" />
-						</font>
-</td></tr>
-</table>
+	<fieldset>
+
+                <h302>Account Settings</h302>
+		<br/>
+
+                <label for='operator_username' class='form'>Operator Username</label>
+                <input name='operator_username' type='text' id='operator_username' 
+			value='<?php if (isset($operator_username)) echo $operator_username ?>' tabindex=100 />
+                <br/>
+
+                <label for='operator_password' class='form'>Operator Password</label>
+                <input name='operator_password' id='operator_password' 
+			value='<?php if (isset($operator_password)) echo $operator_password ?>' 
+			type='<?php if (isset($operator_hiddenPassword)) echo $hiddenPassword; else echo "text"; ?>'
+			tabindex=101 />
+                <br/>
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+	</fieldset>
 
 	</div>
 
      <div class="tabbertab" title="Contact Info">
         <br/>
 
-<table border='2' class='table1'>
-<thead>
-                <tr>
-                <th colspan='10'>Operator Details</th>
-                </tr>
-</thead>
-<tr><td>
-						<?php if (!isset($operator_firstname)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Firstname</b>
-</td><td>
-						<input value="<?php if (isset($operator_firstname)) echo $operator_firstname ?>" name="firstname"/>
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_lastname)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Lastname</b>
-</td><td>
-						<input value="<?php if (isset($operator_lastname)) echo $operator_lastname ?>" name="lastname" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_title)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Title</b>
-</td><td>
-						<input value="<?php if (isset($operator_title)) echo $operator_title ?>" name="title" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_department)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Department</b>
-</td><td>
-						<input value="<?php if (isset($operator_department)) echo $operator_department ?>" name="department" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_company)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Company</b>
-</td><td>
-						<input value="<?php if (isset($operator_company)) $operator_company ?>" name="company" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_phone1)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Phone1</b>
-</td><td>
-						<input value="<?php if (isset($operator_phone1)) echo $operator_phone1 ?>" name="phone1" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_phone2)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Phone2</b>
-</td><td>
-						<input value="<?php if (isset($operator_phone2)) echo $operator_phone2 ?>" name="phone2" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_email1)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Email1</b>
-</td><td>
-						<input value="<?php if (isset($operator_email1)) echo $operator_email1 ?>" name="email1" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_email2)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Email2</b>
-</td><td>
-						<input value="<?php if (isset($operator_email2)) echo $operator_email2 ?>" name="email2" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_messenger1)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Messenger1</b>
-</td><td>
-						<input value="<?php if (isset($operator_messenger1)) echo $operator_messenger1 ?>" name="messenger1" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_messenger2)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Messenger2</b>
-</td><td>
-						<input value="<?php if (isset($operator_messenger2)) echo $operator_messenger2 ?>" name="messenger2" />
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!isset($operator_notes)) { echo "<font color='#FF0000'>";  }?>
-						<b>Operator Notes</b>
-</td><td>
-						<input value="<?php if (isset($operator_notes)) echo $operator_notes ?>" name="notes" />
-						</font>
-</td></tr>
-
-
-<br/><br/>
-
-
-
-</table>
-
-
+<?php
+	include_once('include/management/operatorinfo.php');
+?>
 
 	</div>
 
@@ -262,13 +164,7 @@
 
 	</div>
 
-</div>
-		
-				<br/>
-				<center>
-					<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
-				</center>
-	
+</div>	
 				</form>
 				
 <?php
