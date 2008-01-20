@@ -151,124 +151,81 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
      <div class="tabbertab" title="<?php echo $l['table']['NASInfo']; ?>">
                                                 <input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
 
-<table border='0' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['NASInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>"; }?>
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
-</td><td>
-                                                <input value="<?php echo $nashost ?>" name="nashost" tabindex=100 />
-                                                </font><br/>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($nassecret) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasSecret'] ?></b>
-</td><td>
-                                                <input value="<?php echo $nassecret ?>" name="nassecret" tabindex=101 />
-                                                </font><br/>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($nastype) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasType'] ?></b>
-</td><td>
-                                                <input value="<?php echo $nastype ?>" name="nastype" id="nastype" tabindex=102 />
 
-                                                <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 >
-                                                <option value="other">other</option>
-                                                <option value="cisco">cisco</option>
-                                                <option value="livingston">livingston</option>
-                                                <option value="computon">computon</option>
-                                                <option value="max40xx">max40xx</option>
-                                                <option value="multitech">multitech</option>
-                                                <option value="natserver">natserver</option>
-                                                <option value="pathras">pathras</option>
-                                                <option value="patton">patton</option>
-                                                <option value="portslave">portslave</option>
-                                                <option value="tc">tc</option>
-                                                <option value="usrhiper">usrhiper</option>
-                                                </select>
+        <fieldset>
 
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($nasname) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasShortname'] ?></b>
-</td><td>
-                                                <input value="<?php echo $nasname ?>" name="nasname" tabindex=104 />
-                                                                                                <?php echo $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] ?>
-                                                </font><br/>
-</td></tr>
-</table>
+                <h302>NAS Info</h302>
+                <br/>
 
-     </div>
-     <div class="tabbertab" title="<?php echo $l['table']['NASAdvanced']; ?>">
+                <label for='nashost' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></label>
+                <input name='nashost' type='text' id='nashost' value='<?php echo $nashost ?>' tabindex=100 />
+                <br />
 
-<table border='0' class='table1' width='600'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['NASAdvanced']; ?> </th>
-                                                        </tr>
-                                        </thead>
+                <label for='nassecret' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasSecret'] ?></label>
+                <input name='nassecret' type='text' id='nassecret' value='<?php echo $nashost ?>' tabindex=101 />
+                <br />
 
-<tr><td>
+                <label for='nastype' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasType'] ?></label>
+                <input name='nastype' type='text' id='nastype' value='<?php echo $nastype ?>' tabindex=102 />
+                <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
+                        <option value="other">other</option>
+                        <option value="cisco">cisco</option>
+                        <option value="livingston">livingston</option>
+                        <option value="computon">computon</option>
+                        <option value="max40xx">max40xx</option>
+                        <option value="multitech">multitech</option>
+                        <option value="natserver">natserver</option>
+                        <option value="pathras">pathras</option>
+                        <option value="patton">patton</option>
+                        <option value="portslave">portslave</option>
+                        <option value="tc">tc</option>
+                        <option value="usrhiper">usrhiper</option>
+                </select>
+                <br />
+
+
+                <label for='nasname' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasShortname'] ?></label>
+                <input name='nasname' type='text' id='nasname' value='<?php echo $nasname ?>' tabindex=104 />
+                <br />
 
 
 
+                <br/><br/>
+                <hr><br/>
 
-                                                <?php if (trim($nasports) == "") { echo "<font color='#FF0000'>";  }?>
-                        <input type="checkbox" onclick="javascript:toggleShowDiv('attributesPorts')">
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasPorts'] ?></b>
-</td><td>
-<div id="attributesPorts" style="display:none;visibility:visible" >
-                                                <br/>
-                                                <input value="<?php echo $nasports ?>" name="nasports" tabindex=105 />
-                                                </font>
-</div><br/>
-</td></tr>
-<tr><td>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
 
+        </fieldset>
 
+	<br/>
 
-                                                <?php if (trim($nascommunity) == "") { echo "<font color='#FF0000'>";  }?>
-                        <input type="checkbox" onclick="javascript:toggleShowDiv('attributesCommunity')">
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasCommunity'] ?></b>
-</td><td>
-<div id="attributesCommunity" style="display:none;visibility:visible" >
-                                                <br/>
-                                                <input value="<?php echo $nascommunity ?>" name="nascommunity" tabindex=106 />
-                                                </font>
-</div><br/>
-</td></tr>
-<tr><td>
+        <fieldset>
 
+                <h302>NAS Advanced</h302>
+                <br/>
 
+                <label for='nasports' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasPorts'] ?></label>
+                <input name='nasports' type='text' id='nasports' value='<?php echo $nasports ?>' tabindex=105 />
+                <br />
 
+                <label for='nascommunity' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasCommunity'] ?></label>
+                <input name='nascommunity' type='text' id='nascommunity' value='<?php echo $nascommunity ?>' tabindex=106 />
+                <br />
 
-                                                <?php if (trim($nasdescription) == "") { echo "<font color='#FF0000'>";  }?>
-                        <input type="checkbox" onclick="javascript:toggleShowDiv('attributesDescription')">
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasDescription'] ?></b>
-</td><td>
-<div id="attributesDescription" style="display:none;visibility:visible" >
-                                                <br/>
-                                                <input value="<?php echo $nasdescription ?>" name="nasdescription" tabindex=107 />
-                                                </font>
-</div><br/>
-</td></tr>
-</table>
+                <label for='nasdescription' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasDescription'] ?></label>
+                <input name='nasdescription' type='text' id='nasdescription' value='<?php echo $nasdescription ?>' tabindex=107 />
+                <br />
 
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+        </fieldset>
+
+	</div>
 </div>
 
-
-</div>
-
-<br/><br/>
-<center>												
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=10000/>
-</center>
                                 </form>
 
 
