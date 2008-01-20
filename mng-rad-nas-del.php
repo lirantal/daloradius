@@ -91,25 +91,24 @@
 
 
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['NASInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
 
-<tr><td>
-                                                <?php if (trim($nashost) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></b>
-</td><td>												
-                                                <input value="<?php echo $nashost ?>" name="nashost[]" tabindex=100 /><br/>
-                                                </font>
-</td></tr>
-</table>
-                                                <br/><br/>
-<center>
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=10000 />
-</center>
+        <fieldset>
+
+                <h302>NAS Info</h302>
+                <br/>
+
+                <label for='nashost' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></label>
+                <input name='nashost' type='text' id='nashost' value='' tabindex=100 />
+                <br />
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+        </fieldset>
+
+
                                 </form>
 
 <?php
