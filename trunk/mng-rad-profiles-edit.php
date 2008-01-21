@@ -377,7 +377,7 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
 
                 <label for='vendor' class='form'>Vendor:</label>
                 <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
-                        style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
+                        style='width: 215px' onfocus="getVendorsList('dictVendors0')" class='form' >
                         <option value=''>Select Vendor...</option>
                 </select>
                 <br/>
