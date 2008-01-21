@@ -84,28 +84,40 @@
                         ";
 
 	echo "<thread> <tr>
-					<th scope='col'> ".$l['all']['Groupname']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Attribute']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Operator']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Value']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Action']." </th>						
-			</tr> </thread>";
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Groupname']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Attribute']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Operator']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Value']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+
+		<th scope='col'> ".$l['all']['Action']." </th>						
+	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> $row[0] </td>
