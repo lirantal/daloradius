@@ -100,7 +100,7 @@ function addElement(enableTable) {
 	""+
         "       <label for='vendor' class='form'>Vendor:</label>"+
         "       <select id='dictVendors"+num+"' onchange=\"getAttributesList(this,'dictAttributes"+num+"')\""+
-        "               style='width: 215px' onclick=\"getVendorsList('dictVendors"+num+"')\" class='form' >"+
+        "               style='width: 215px' onfocus=\"getVendorsList('dictVendors"+num+"')\" class='form' >"+
         "               <option value=''>Select Vendor...</option>"+
         "       </select>"+
         "       <br/>"+
