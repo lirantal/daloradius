@@ -215,7 +215,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
                         <br/>   
 
                         <span id='dictType0'>
-                                <b>Type:<b/>
+                                <b>Type:</b>
                         </span>
                 </div>
 
@@ -231,10 +231,6 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 <br/>
         <input type="hidden" value="0" id="divCounter" />
         <div id="divContainer"> </div> <br/>
-
-	</div>
-
-
 
 
                                 </form>
