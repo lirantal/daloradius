@@ -303,7 +303,7 @@
                         <br/>   
 
                         <span id='dictType0'>
-                                <b>Type:<b/>
+                                <b>Type:</b>
                         </span>
                 </div>
 
