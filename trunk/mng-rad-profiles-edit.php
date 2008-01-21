@@ -236,16 +236,13 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
      <div class="tabbertab" title="<?php echo $l['table']['RADIUSCheck']; ?>">
 
+        <fieldset>
+
+                <h302> Check Attributes </h302>
+                <br/>
+
 <?php
 
-                echo "<table border='0' class='table1'>";
-                echo "  
-                        <thead> 
-                                <tr>
-                                <th colspan='10'>".$l['table']['RADIUSCheck']."</th>
-                                </tr>
-                        </thead>
-                ";
 
         include 'library/opendb.php';
         include ('include/management/op_select_options.php');
@@ -257,63 +254,60 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
         $logDebugSQL .= $sql . "\n";
         while($row = $res->fetchRow()) {
 
-                echo "<tr>";
-                echo "<td>";
+                echo "<label class='attributes'>";
                 echo "<a class='tablenovisit' href='mng-rad-profiles-del?profile=$profile&attribute=$row[0]&tablename=radgroupcheck'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-                echo "<b>$row[0]</b>";
-                echo "</td>";
+		echo "</label>";
+                echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-                echo "<td>";
                 echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
-//              if (preg_match("/.*-Password/", $row[0])) {
                         if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
                                 echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
                                 echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
                                 echo "&nbsp;";
-                                echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+                                echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
                                 echo "<option value='$row[1]'>$row[1]</option>";
                                 drawOptions();
                                 echo "</select>";
                         } else {
                                 echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
                                 echo "&nbsp;";
-                                echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+                                echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
                                 echo "<option value='$row[1]'>$row[1]</option>";
                                 drawOptions();
                                 echo "</select>";
                         }
-//              }
 
                 echo "  
                         <input type='hidden' name='editValues".$editCounter."[]' value='radgroupcheck' style='width: 90px'>
                 ";
-
-                echo "</td>";
-                echo "</tr>";
+                echo "<br/>";
 
                 $editCounter++;                 // we increment the counter for the html elements of the edit attributes
 
 
         }
 
+?>
 
-                echo "</table>";
-                echo "</div>";
+        <br/><br/>
+        <hr><br/>
+        <br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+        <br/>
 
-                echo "<div class='tabbertab' title='".$l['table']['RADIUSReply']."'>";
+        </fieldset>
+        </div>
 
-                echo "<table border='0' class='table1'>";
-                echo "  
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".$l['table']['RADIUSReply']."</th>
-                                </tr>
-                        </thead>
-                ";
+        <div class='tabbertab' title='<?php echo $l['table']['RADIUSReply']?>' >
 
+        <fieldset>
 
+                <h302> Reply Attributes </h302>
+                <br/>
+
+<?php
 
         $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE 
 GroupName='".$dbSocket->escapeSimple($profile)."'";
@@ -322,27 +316,26 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
 
         while($row = $res->fetchRow()) {
 
-                echo "<tr>";
-                echo "<td>";
+
+                echo "<label class='attributes'>";
                 echo "<a class='tablenovisit' href='mng-rad-profiles-del?profile=$profile&attribute=$row[0]&tablename=radgroupreply'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-                echo "<b>$row[0]</b>";
-                echo "</td>";
+		echo "</label>";
+                echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-                echo "<td>";
                 echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
                 if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
                         echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
                         echo "&nbsp;";
-                        echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+                        echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
                         echo "<option value='$row[1]'>$row[1]</option>";
                         drawOptions();
                         echo "</select>";
                 } else {
                         echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
                         echo "&nbsp;";
-                        echo "<select name='editValues".$editCounter."[]' style='width: 45px'>";
+                        echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
                         echo "<option value='$row[1]'>$row[1]</option>";
                         drawOptions();
                         echo "</select>";
@@ -351,114 +344,100 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
                 echo "       
                         <input type='hidden' name='editValues".$editCounter."[]' value='radgroupreply' style='width: 90px'>
                 ";
-
-                echo "</td>";
-                echo "</tr>";
+		echo "<br/>";
 
                 $editCounter++;                 // we increment the counter for the html elements of the edit attributes
 
 
         }
 
-
-                echo "</table>";
-                echo "</div>";
-		echo "<br/>";
-        include 'library/closedb.php';
-
 ?>
 
 
+        <br/><br/>
+        <hr><br/>
+        <br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+        <br/>
+
+        </fieldset>
+	</div>
+
+<?php   
+        include 'library/closedb.php';
+?>  
+
      <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
 
-<table border='0' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>
-                                                        </tr>
-                                        </thead>
-        <tr>
-                <td>Vendor:
+
+        <fieldset>
+
+                <h302> Attributes Assignment </h302>
+                <br/>
+
+                <label for='vendor' class='form'>Vendor:</label>
                 <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
-                        style='width: 215px' onclick="getVendorsList('dictVendors0')" >
+                        style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
                         <option value=''>Select Vendor...</option>
-                        <option value='other'>other</option>
                 </select>
+                <br/>
 
-                &nbsp;&nbsp;
-                Attribute:
-                <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
+                <label for='attribute' class='form'>Attribute:</label>
+                <select id='dictAttributes0' name='dictValues0[]'
+                        onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
+                        style='width: 270px' class='form' >
 
                 </select>
-                </td>
-        </tr>
-        <tr>
-                <td>
-                &nbsp;
-                Value:
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px'>
+                <br/>
 
                 &nbsp;
-                Op:
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px'>
+                <b>Value:</b>
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
 
+                <b>Op:</b>
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
                 </select>
 
-                &nbsp;
-                Table:
-                <select id='dictTable0' name='dictValues0[]' style='width: 90px'>
-
+                <b>Target:</b>
+                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
                 </select>
 
-
-
-                &nbsp;
-                Function:
-                <select id='dictFunc' name='dictFunc'>
-
+                <b>Util:</b>
+                <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >
                 </select>
-                </td>
+                <br/><br/>
 
-        </tr>
 
-        <tr>
-                <td>
-                <div id='dictInfo0' style='display:inline;visibility:visible'>
+                <div id='dictInfo0' style='display:none;visibility:visible'>
                         <span id='dictTooltip0'>
                                 <b>Attribute Tooltip:</b>
                         </span>
+
                         <br/>
 
                         <span id='dictType0'>
-                                <b>Type:<b/>
+                                <b>Type:</b>
                         </span>
                 </div>
-                </td>
-        </tr>
 
+        <hr><br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement(1);"
+                class='button'>
+        <input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');"
+                class='button'>
 
-        <td>
-        <a href="javascript:;" onclick="addElement();">Add</a>
-        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
-        </td>
+        </fieldset>
 
-</table>
-<br/>
+<br/>   
         <input type="hidden" value="0" id="divCounter" />
-        <div id="divContainer"> </div> 
+        <div id="divContainer"> </div> <br/>
 
         <br/>
      </div>
 
 </div>
 
-
-
-
-
-<center>
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
-</center>
                                 </form>
 
 

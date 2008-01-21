@@ -70,7 +70,7 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
                 $logDebugSQL .= $sql . "\n";
 
                 $actionStatus = "success";
-                $actionMsg = "Deleted attribute: <b> $attribute <b/> for profile(s): <b> $profile </b> from database";
+                $actionMsg = "Deleted attribute: <b> $attribute </b> for profile(s): <b> $profile </b> from database";
                 $logAction = "Successfully deleted attribute [$attribute] for profile [$profile] on page: ";
 
                 include 'library/closedb.php';
@@ -78,67 +78,6 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
         }
 
 
-
-
-
-
-
-
-/*
-	$group = "";
-	$username = "";
-
-	if (isset($_REQUEST['username'])) {
-		$username = $_REQUEST['username'];
-	}
-
-	if (isset($_REQUEST['group'])) {
-		$group = $_REQUEST['group'];
- 	}
-
-	$logDebugSQL = "";
-
-	if (isset($_POST['submit'])) {
-
-		if (trim($username) != "") {
-				
-			include 'library/opendb.php';
-
-			if (trim($group) != "") {
-
-				// // delete only a specific groupname and it's attribute
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($group)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				$actionStatus = "success";
-				$actionMsg = "Deleted Username: <b> $username </b> and it's Groupname: <b> $group </b>";
-				$logAction = "Successfully deleted user [$username] and it's group [$group] on page: ";
-
-				include 'library/closedb.php';
-							
-			} else {
-
-				// delete all attributes associated with a username
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				$actionStatus = "success";
-				$actionMsg = "Deleted all instances for Username: <b> $username </b>";
-				$logAction = "Successfully deleted all group instances for user [$username] on page: ";
-
-				include 'library/closedb.php';
-			}
-
-		}  else {
-			$actionStatus = "failure";
-			$actionMsg = "No user was entered, please specify a username to remove from database";
-			$logAction = "Failed deleting empty user on page: ";
-		}
-	}
-*/	
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -175,26 +114,23 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 				<br/>
 				
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
 
-                                                <b>Profile Name</b>
-</td><td>													
-                                                <input value="<?php echo $profile ?>" name="profile[]"/><br/>
-                                                </font>
-</td></tr>
-</table>
+        <fieldset>
 
-                                                <br/><br/>
-<center>												
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
-</center>
+                <h302>Profile Info</h302>
+                <br/>
+
+                <label for='profile' class='form'>Profile Name</label>
+                <input name='profile[]' type='text' id='profile' value='<?php echo $profile ?>' tabindex=100 />
+                <br/>
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+        </fieldset>
+
                                 </form>
 
 

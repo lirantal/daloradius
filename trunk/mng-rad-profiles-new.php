@@ -153,106 +153,88 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 				<br/>
 				
                                 <form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> Profile Details </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <?php echo "<font color='#FF0000'>"; ?>
-                                                <b>Profile Name</b>
-</td><td>												
-                                                <input value="" name="profile" />
-                                                </font><br/>
-</td></tr>
-</table>
 
-                                                <br/>
-<center>												
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>"/>
-</center><br/><br/>
+        <fieldset>
+
+                <h302>Profile Info</h302>
+                <br/>
+
+                <label for='profile' class='form'>Profile Name</label>
+                <input name='profile' type='text' id='profile' value='' tabindex=100 />
+                <br />
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+        </fieldset>
 
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='10'> <?php echo $l['table']['Attributes']; ?> </th>
-                                                        </tr>
-                                        </thead>
-        <tr>
-                <td>Vendor:
-                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
-                        style='width: 215px' onclick="getVendorsList('dictVendors0')" >
+        <br/>
+
+        <fieldset>
+
+                <h302>Profile Attributes</h302>
+                <br/>
+
+
+                <label for='vendor' class='form'>Vendor:</label>
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
+                        style='width: 215px' onclick="getVendorsList('dictVendors0')" class='form' >
                         <option value=''>Select Vendor...</option>
-                        <option value='other'>other</option>
                 </select>
+                <br/>
 
-                &nbsp;&nbsp;
-                Attribute:
-                <select id='dictAttributes0' name='dictValues0[]' onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')" style='width: 270px'>
-                        <option value=''>Select Attribute...</option>
+                <label for='attribute' class='form'>Attribute:</label>
+                <select id='dictAttributes0' name='dictValues0[]'
+                        onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
+                        style='width: 270px' class='form' >
 
                 </select>
-                </td>
-        </tr>
-        <tr>
-
-                <td>
-                &nbsp;
-                Value:
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px'>
+                <br/>
 
                 &nbsp;
-                Op:
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px'>
+                <b>Value:</b>
+                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
 
+                <b>Op:</b>
+                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
                 </select>
 
-                &nbsp;
-                Table:
-                <select id='dictTable0' name='dictValues0[]' style='width: 90px'>
-
+                <b>Table:</b>
+                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
                 </select>
 
-                &nbsp;
-                Function:
-                <select id='dictFunc' name='dictFunc'>
-
+                <b>Util:</b>
+                <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >
                 </select>
-                </td>
+                <br/><br/>
 
-        </tr>
-        <tr>
-                <td>
-                <div id='dictInfo0' style='display:inline;visibility:visible'>
+                <div id='dictInfo0' style='display:none;visibility:visible'>
                         <span id='dictTooltip0'>
                                 <b>Attribute Tooltip:</b>
                         </span>
 
-                        <br/>   
+                        <br/>
 
                         <span id='dictType0'>
-                                <b>Type:<b/>
+                                <b>Type:</b>
                         </span>
                 </div>
-                </td>
-        </tr>
 
+        <hr><br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement();"
+                class='button'>
+        <input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');"
+                class='button'>
 
-        <td>
-        <a href="javascript:;" onclick="addElement();">Add</a>
-        <a href="javascript:;" onclick="toggleShowDiv('dictInfo0');">Help</a>
-        </td>
+        </fieldset>
 
-</table>
-<br/>
+<br/>   
         <input type="hidden" value="0" id="divCounter" />
         <div id="divContainer"> </div> <br/>
-
-
-
-
 
                                 </form>
 
