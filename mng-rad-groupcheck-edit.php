@@ -127,43 +127,35 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket
                                                 <input type="hidden" value="<?php echo $groupname ?>" name="groupname" /><br/>
                                                 <input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" /><br/>
 												
-<table border='0' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <?php if (trim($attribute) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l['FormField']['all']['Attribute'] ?></b>
-</td><td>											
-                                                <input value="<?php echo $attribute ?>" name="attribute" />
-                                                </font><br/>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($op) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l['FormField']['all']['Operator'] ?></b>
-</td><td>											
-											<select name="op" />
-													<option value="<?php echo $op ?>"><?php echo $op ?></option>
-				<?php include ('include/management/op_select_options.php');
-					  drawOptions();
-					  ?>
-												</select>                                                
-												</font><br/>
-</td></tr>
-<tr><td>												
-                                                <?php if (trim($valueOld) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l['FormField']['all']['NewValue'] ?></b>
-</td><td>											
-                                                <input value="<?php echo $value ?>" name="value" />
-                                                </font><br/>
-</td></tr>
-</table>
+        <fieldset>
 
-<center>
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
-</center>
+                <h302>Group Info</h302>
+                <br/>
+
+                <label for='attribute' class='form'><?php echo $l['FormField']['all']['Attribute'] ?></label>
+                <input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=100 />
+                <br/>
+
+                <label for='op' class='form'><?php echo $l['FormField']['all']['Operator'] ?></label>
+                <select name='op' id='op' class='form' tabindex=101 />
+                        <option value='<?php echo $op ?>'><?php echo $op ?></option>
+                        <?php include ('include/management/op_select_options.php');
+                                drawOptions();
+                        ?>
+                </select>
+                <br/>
+
+
+                <label for='newvalue' class='form'><?php echo $l['FormField']['all']['NewValue'] ?></label>
+                <input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=102 />
+                <br/>
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+        </fieldset>
 
                                 </form>
 

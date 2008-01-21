@@ -80,6 +80,8 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 
 
+
+<tab
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
@@ -103,37 +105,30 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 				<br/>
 
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <?php if (trim($groupname) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['all']['Groupname'] ?></b>
-</td><td>												
-                                                <input value="<?php echo $groupname ?>" name="groupname"/><br/>
-                                                </font>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($value) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['all']['Value'] ?></b>
-</td><td>												
-                                                <input value="<?php echo $value ?>" name="value"/><br/>
-												<?php echo $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] ?>
-                                                </font>
-<tr><td>
-                                                <b>Attribute</b>
-</td><td>
-                                                <input value="<?php echo $attribute ?>" name="attribute"/><br/>
-                                                </font>
-</td></tr>
-</table>
-                                                <br/><br/>
-<center>												
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
-</center>
+
+        <fieldset>
+
+                <h302>Group Info</h302>
+                <br/>
+
+                <label for='groupname' class='form'><?php echo $l['FormField']['all']['Groupname'] ?></label>
+                <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
+                <br/>
+
+                <label for='value' class='form'><?php echo $l['FormField']['all']['Value'] ?></label>
+                <input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=101 />
+                <br/>
+
+                <label for='attribute' class='form'><?php echo $l['FormField']['all']['Attribute'] ?></label>
+                <input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=102 />
+                <br/>
+
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+        </fieldset>
 
                                 </form>
 

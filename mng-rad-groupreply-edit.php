@@ -140,7 +140,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket
 
                 <label for='op' class='form'><?php echo $l['FormField']['all']['Operator'] ?></label>
                 <select name='op' id='op' class='form' tabindex=101 />
-	                <option value='<?php echo $op ?>'</option>
+	                <option value='<?php echo $op ?>'><?php echo $op ?></option>
                         <?php include ('include/management/op_select_options.php');
         	                drawOptions();
 			?>
