@@ -102,11 +102,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['HotspotInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['HotspotInfo']; ?>">
 
 	<fieldset>
 
-		<h302> Hotspot Info </h302>
+		<h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
 		<br/>
 
 		<label for='name' class='form'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
@@ -132,7 +132,7 @@
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['ContactInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['ContactInfo']; ?>">
 
 <?php
         include_once('include/management/contactinfo.php');

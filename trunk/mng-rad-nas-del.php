@@ -94,7 +94,7 @@
 
         <fieldset>
 
-                <h302>NAS Info</h302>
+                <h302> <?php echo $l['title']['NASInfo'] ?> </h302>
                 <br/>
 
                 <label for='nashost' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></label>

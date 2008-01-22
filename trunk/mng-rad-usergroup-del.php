@@ -101,7 +101,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 <table border='2' class='table1'>
                                         <thead>
                                                         <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
+                                                        <th colspan='2'> <?php echo $l['title']['GroupInfo']; ?> </th>
                                                         </tr>
                                         </thead>
 <tr><td>

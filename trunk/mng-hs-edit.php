@@ -125,12 +125,12 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['HotspotInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['HotspotInfo']; ?>">
 
 
         <fieldset>
 
-                <h302> Hotspot Info </h302>
+                <h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
 		<br/>
 
                 <label for='name' class='form'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
@@ -157,7 +157,7 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
 
 </div>
 
-<div class="tabbertab" title="<?php echo $l['table']['ContactInfo']; ?>">
+<div class="tabbertab" title="<?php echo $l['title']['ContactInfo']; ?>">
 
 <?php
         include_once('include/management/contactinfo.php');
@@ -167,11 +167,6 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
 
 </div>
 
-
-						<br/><br/>
-<center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['savesettings'] ?>" tabindex=1000 />
-</center>
 				</form>
 
 <?php

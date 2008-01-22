@@ -156,7 +156,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 
         <fieldset>
 
-                <h302>Profile Info</h302>
+                <h302> <?php echo $l['title']['ProfileInfo'] ?> </h302>
                 <br/>
 
                 <label for='profile' class='form'>Profile Name</label>
@@ -175,7 +175,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 
         <fieldset>
 
-                <h302>Profile Attributes</h302>
+                <h302> <?php echo $l['title']['ProfileAttributes'] ?> </h302>
                 <br/>
 
 

@@ -343,11 +343,11 @@ AND Attribute like '%Password'";
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['RADIUSCheck']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['RADIUSCheck']; ?>">
 
 	<fieldset>
 
-                <h302> Check Attributes </h302>
+                <h302> <?php echo $l['title']['RADIUSCheck']; ?> </h302>
                 <br/>
 
 <?php
@@ -410,11 +410,11 @@ AND Attribute like '%Password'";
 	</fieldset>
 	</div>
 
-	<div class='tabbertab' title='<?php echo $l['table']['RADIUSReply']?>' >
+	<div class='tabbertab' title='<?php echo $l['title']['RADIUSReply']?>' >
 
 	<fieldset>
 
-                <h302> Reply Attributes </h302>
+                <h302> <?php echo $l['title']['RADIUSReply']; ?> </h302>
                 <br/>
 
 
@@ -473,7 +473,7 @@ AND Attribute like '%Password'";
 <?php
         include 'library/closedb.php';
 ?>
-     <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
 
 <?php
         include_once('include/management/userinfo.php');
@@ -482,11 +482,11 @@ AND Attribute like '%Password'";
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 
         <fieldset>
 
-                <h302> Attributes Assignment </h302>
+                <h302> <?php echo $l['title']['Attributes']; ?> </h302>
 		<br/>
 
                 <label for='vendor' class='form'>Vendor:</label>
@@ -551,7 +551,7 @@ AND Attribute like '%Password'";
      </div>
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['Groups']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Groups']; ?>">
 	
 <?php
         include 'library/opendb.php';
