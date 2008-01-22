@@ -84,26 +84,38 @@ $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
 
 
 /* **********************************************************************************
- * Tables
- * The text related to all the table headers and tabbed layout text
+ * Titles
+ * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
-$l['table']['AccountInfo'] = "Account Info";
-$l['table']['GroupInfo'] = "Group Info";
-$l['table']['NASInfo'] = "NAS Info";
-$l['table']['NASAdvanced'] = "NAS Advanced";
-$l['table']['UserInfo'] = "User Info";
-$l['table']['Attributes'] = "Attributes";
-$l['table']['HotspotInfo'] = "Hotspot Info";
-$l['table']['ContactInfo'] = "Contact Info";
+$l['title']['AccountRemoval'] = "Account Removal";
+$l['title']['AccountInfo'] = "Account Info";
 
-$l['table']['Groups'] = "Groups";
-$l['table']['RADIUSCheck'] = "RADIUS Check";
-$l['table']['RADIUSReply'] = "RADIUS Reply";
+$l['title']['ProfileInfo'] = "Profile Info";
 
-$l['table']['Settings'] = "Settings";
-$l['table']['Advanced'] = "Advanced";
-$l['table']['Optional'] = "Optional";
+$l['title']['GroupInfo'] = "Group Info";
+$l['title']['GroupAttributes'] = "Group Attributes";
+
+$l['title']['NASInfo'] = "NAS Info";
+$l['title']['NASAdvanced'] = "NAS Advanced";
+
+$l['title']['UserInfo'] = "User Info";
+
+$l['title']['Attributes'] = "Attributes";
+$l['title']['ProfileAttributes'] = "Profile Attributes";
+
+$l['title']['HotspotInfo'] = "Hotspot Info";
+$l['title']['HotspotRemoval'] = "Hotspot Removal";
+
+$l['title']['ContactInfo'] = "Contact Info";
+
+$l['title']['Groups'] = "Groups";
+$l['title']['RADIUSCheck'] = "Check Attributes";
+$l['title']['RADIUSReply'] = "Reply Attributes";
+
+$l['title']['Settings'] = "Settings";
+$l['title']['Advanced'] = "Advanced";
+$l['title']['Optional'] = "Optional";
 
 /* ********************************************************************************** */
 
@@ -115,7 +127,6 @@ $l['table']['Optional'] = "Optional";
 
 $l['text']['LoginRequired'] = "Login Required";
 $l['text']['LoginPlease'] = "Login Please";
-$l['text'][''] = "";
 
 /* ********************************************************************************** */
 
