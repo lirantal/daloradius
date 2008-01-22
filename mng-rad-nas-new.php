@@ -109,11 +109,11 @@
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['NASInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['NASInfo']; ?>">
 
 	<fieldset>
 
-		<h302>NAS Info</h302>
+		<h302> <?php echo $l['title']['NASInfo'] ?> </h302>
 		<br/>
 
                 <label for='nashost' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></label>
@@ -158,11 +158,11 @@
 
 
      </div>
-     <div class="tabbertab" title="<?php echo $l['table']['NASAdvanced']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['NASAdvanced']; ?>">
 
 	<fieldset>
 
-		<h302>NAS Advanced</h302>
+		<h302> <?php echo $l['title']['NASAdvanced'] ?> </h302>
 		<br/>
 
                 <label for='nasports' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasPorts'] ?></label>

@@ -96,96 +96,7 @@
 		}
 
 
-	} //if isset($submit)
-
-/*
-
-	// declaring variables
-	$username = "";
-	$group = "";
-	$groupOld = "";
-	$priority = "";
-
-	$username = $_REQUEST['username'];
-	$groupOld = $_REQUEST['group'];
-
-	$logDebugSQL = "";
-
-	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-	$row = $res->fetchRow();		// array fetched with values from $sql query
-
-					// assignment of values from query to local variables
-					// to be later used in html to display on textboxes (input)
-					
-	$priority = $row[2];
-
-	if (isset($_POST['submit'])) {
-		$username = $_REQUEST['username'];
-		$groupOld = $_REQUEST['groupOld'];;
-		$group = $_REQUEST['group'];;
-		$priority = $_REQUEST['priority'];;
-
-		
-		include 'library/opendb.php';
-
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-		if ($res->numRows() == 1) {
-
-			if (trim($username) != "" and trim($group) != "") {
-
-				if (!$priority) {
-					$priority = 1;
-				}
-
-				// insert nas details
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='".$dbSocket->escapeSimple($group)."',
-priority='".$dbSocket->escapeSimple($priority)."' WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-						
-				$actionStatus = "success";
-				$actionMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
-				$logAction = "Successfully updated attributes for user-group mapping of user [$username] with group [$group] on page: ";
-			} else {
-				$actionStatus = "failure";
-				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
-				$logAction = "Failed updating (missing attributes) attributes on page: ";
-			}
-		} else {
-			$actionStatus = "failure";
-			$actionMsg = "The user $username already exists in the user-group mapping database
-			<br/> It seems that you have duplicate entries for User-Group mapping. Check your database";
-			$logAction = "Failed updating already existing user [$username] with group [$group] on page: ";
-		} 
-
-		include 'library/closedb.php';
-	}
-	
-	if (isset($_REQUEST['username']))
-		$username = $_REQUEST['username'];
-	else
-		$username = "";
-
-	if (isset($_REQUEST['group']))
-		$group = $_REQUEST['group'];
-	else
-		$group = "";
-		
-	if (trim($username) == "" OR trim($group) == "") {
-		$actionStatus = "failure";
-		$actionMsg = "no username or groupname was entered, please specify a username and groupname to edit ";
-	}	
-*/
+	} 
 
 
 	include_once('library/config_read.php');
@@ -234,11 +145,11 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['RADIUSCheck']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['RADIUSCheck']; ?>">
 
         <fieldset>
 
-                <h302> Check Attributes </h302>
+                <h302> <?php echo $l['title']['RADIUSCheck']?> </h302>
                 <br/>
 
 <?php
@@ -300,11 +211,11 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
         </fieldset>
         </div>
 
-        <div class='tabbertab' title='<?php echo $l['table']['RADIUSReply']?>' >
+        <div class='tabbertab' title='<?php echo $l['title']['RADIUSReply']?>' >
 
         <fieldset>
 
-                <h302> Reply Attributes </h302>
+                <h302> <?php echo $l['title']['RADIUSReply']?> </h302>
                 <br/>
 
 <?php
@@ -367,12 +278,12 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
         include 'library/closedb.php';
 ?>  
 
-     <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 
 
         <fieldset>
 
-                <h302> Attributes Assignment </h302>
+                <h302> <?php echo $l['title']['Attributes'] ?> </h302>
                 <br/>
 
                 <label for='vendor' class='form'>Vendor:</label>

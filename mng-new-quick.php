@@ -15,7 +15,7 @@
 
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
-		$password = $_REQUEST['password'];
+		$password = $_REQUEST['password'];[
 		$passwordType = $_REQUEST['passwordType'];
 		$group = $_REQUEST['group'];
 		$maxallsession = $_REQUEST['maxallsession'];
@@ -169,11 +169,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
 
         <fieldset>
 
-                <h302> Account Info </h302>
+                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 		<br/>
 
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
@@ -221,7 +221,7 @@
 
 	<fieldset>
 
-                <h302> Attributes </h302>
+                <h302> <?php echo $l['title']['Attributes']; ?> </h302>
 
 		<label for='expiration' class='form'><?php echo $l['FormField']['all']['Expiration']?></label>		
 		<input value='' id='expiration' name='expiration'  tabindex=106 />
@@ -278,7 +278,7 @@
         </div>
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
 
 <?php
         include_once('include/management/userinfo.php');

@@ -228,11 +228,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['AccountInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
 
 	<fieldset>
 
-	        <h302> Account Info </h302>
+	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 		<br/>
 
 		<input type='radio' checked /> <b> Username Authentication </b> <br/><br/>
@@ -286,11 +286,11 @@
 
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['Attributes']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 
 	<fieldset>
 
-                <h302> Attributes Assignment </h302>
+                <h302> <?php echo $l['title']['Attributes']; ?> </h302>
 		<br/>
 
 		<label for='vendor' class='form'>Vendor:</label>

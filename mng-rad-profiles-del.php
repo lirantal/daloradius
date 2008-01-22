@@ -117,7 +117,7 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
 
         <fieldset>
 
-                <h302>Profile Info</h302>
+                <h302> <?php echo $l['title']['ProfileInfo'] ?> </h302>
                 <br/>
 
                 <label for='profile' class='form'>Profile Name</label>

@@ -155,7 +155,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
         <fieldset>
 
-                <h302>Group Info</h302>
+                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
                 <br/>
 
                 <label for='groupname' class='form'><?php echo $l['FormField']['all']['Groupname'] ?></label>
@@ -173,7 +173,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
         <fieldset>
 
-                <h302>Group Attributes</h302>
+                <h302> <?php echo $l['title']['GroupAttributes'] ?> </h302>
                 <br/>
 
 

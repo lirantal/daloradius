@@ -105,7 +105,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 
         <fieldset>
 
-                <h302>Group Info</h302>
+                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
                 <br/>
 
                 <label for='groupname' class='form'><?php echo $l['FormField']['all']['Groupname'] ?></label>

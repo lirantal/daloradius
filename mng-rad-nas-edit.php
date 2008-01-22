@@ -148,13 +148,13 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['NASInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['NASInfo']; ?>">
                                                 <input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
 
 
         <fieldset>
 
-                <h302>NAS Info</h302>
+                <h302> <?php echo $l['title']['NASInfo'] ?> </h302>
                 <br/>
 
                 <label for='nashost' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></label>
@@ -201,7 +201,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 
         <fieldset>
 
-                <h302>NAS Advanced</h302>
+                <h302> <?php echo $l['title']['NASAdvanced'] ?> </h302>
                 <br/>
 
                 <label for='nasports' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasPorts'] ?></label>

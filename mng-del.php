@@ -122,7 +122,7 @@
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
         <fieldset>
 
-                <h302> Account Removal  </h302>
+                <h302> <?php echo $l['title']['AccountRemoval'] ?> </h302>
 		<br/>
 
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>

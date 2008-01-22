@@ -136,7 +136,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 <table border='0' class='table1'>
                                         <thead>
                                                         <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['GroupInfo']; ?> </th>
+                                                        <th colspan='2'> <?php echo $l['title']['GroupInfo']; ?> </th>
                                                         </tr>
                                         </thead>
 <tr><td>

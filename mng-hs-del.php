@@ -79,7 +79,7 @@
 
         <fieldset>
 
-                <h302> Hotspot Removal </h302>
+                <h302> <?php echo $l['title']['HotspotRemoval'] ?> </h302>
 		<br/>
 
                 <label for='name' class='form'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
