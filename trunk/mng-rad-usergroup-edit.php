@@ -141,14 +141,14 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
                                         </thead>
 <tr><td>
                                                 <?php if (trim($groupOld) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l['FormField']['mngradusergroupedit.php']['CurrentGroupname'] ?></b>
+	                                        <b><?php echo $l['all']['CurrentGroupname'] ?></b>
 </td><td>											
                                                 <input value="<?php echo $groupOld ?>" name="groupOld" /> (Old Group Name)
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l['FormField']['mngradusergroupedit.php']['NewGroupname'] ?></b>
+	                                        <b><?php echo $l['all']['NewGroupname'] ?></b>
 </td><td>											
                                                 <input value="<?php echo $group ?>" name="group" id="group" /> 
                                                 </font>
@@ -170,7 +170,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 <tr><td>
                                                 <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPriority')">
-                                                <b><?php echo $l['FormField']['all']['Priority'] ?></b>
+                                                <b><?php echo $l['all']['Priority'] ?></b>
 </td><td>
 <div id="attributesPriority" style="display:none;visibility:visible" >
                                                 <input value="<?php echo $priority ?>" name="priority" />

@@ -223,14 +223,14 @@
 
                 <h302> <?php echo $l['title']['Attributes']; ?> </h302>
 
-		<label for='expiration' class='form'><?php echo $l['FormField']['all']['Expiration']?></label>		
+		<label for='expiration' class='form'><?php echo $l['all']['Expiration']?></label>		
 		<input value='' id='expiration' name='expiration'  tabindex=106 />
 
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
 
 		<br/>
 
-		<label for='sessiontimeout' class='form'><?php echo $l['FormField']['all']['SessionTimeout']?></label>
+		<label for='sessiontimeout' class='form'><?php echo $l['all']['SessionTimeout']?></label>
 		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=107 />
 		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0" class='form' >
 	                <option value="1">calculate time</option>
@@ -243,7 +243,7 @@
 		</select>
 		<br/>
 
-		<label for='idletimeout' class='form'><?php echo $l['FormField']['all']['IdleTimeout']?></label>
+		<label for='idletimeout' class='form'><?php echo $l['all']['IdleTimeout']?></label>
 		<input value='' id='idletimeout' name='idletimeout'  tabindex=107 />
 		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1" class='form' >
 	                <option value="1">calculate time</option>
@@ -257,7 +257,7 @@
 		<br/>
 
 		<label for='maxallsession' class='form'><?php 
-			echo $l['FormField']['mngnewquick.php']['MaxAllSession']?></label>
+			echo $l['all']['MaxAllSession'] ?></label>
 		<input value='' id='maxallsession' name='maxallsession'  tabindex=108 />
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2" class='form' >
 	                <option value="1">calculate time</option>

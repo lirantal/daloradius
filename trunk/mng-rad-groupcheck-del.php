@@ -111,15 +111,15 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
                 <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
                 <br/>
 
-                <label for='groupname' class='form'><?php echo $l['FormField']['all']['Groupname'] ?></label>
+                <label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
                 <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
                 <br/>
 
-                <label for='value' class='form'><?php echo $l['FormField']['all']['Value'] ?></label>
+                <label for='value' class='form'><?php echo $l['all']['Value'] ?></label>
                 <input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=101 />
                 <br/>
 
-                <label for='attribute' class='form'><?php echo $l['FormField']['all']['Attribute'] ?></label>
+                <label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
                 <input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=102 />
                 <br/>
 

@@ -105,14 +105,14 @@
                 <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
                 <br />
  
-		<label for='packettype' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['PacketType'] ?></label>
+		<label for='packettype' class='form'><?php echo $l['all']['PacketType'] ?></label>
                 <select name='packettype' id='packettype' class='form' tabindex=101 >
 			<option value="disconnect"> PoD - Packet of Disconnect</option>
 			<option value="coa"> CoA - Change of Authorization </option>
                 </select>
                 <br/>
 
-                <label for='nasaddr' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASServer'] ?></label>
+                <label for='nasaddr' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
                 <input name='nasaddr' type='text' id='nasaddr' value='' tabindex=102 />
 
 		<select onChange="javascript:setStringText(this.id,'nasaddr')" id='naslist' tabindex=103 class='form' >
@@ -138,7 +138,7 @@
 		</select>
                 <br/>
 
-                <label for='nassecret' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASSecret'] ?></label>
+                <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
                 <input name='nassecret' type='text' id='nassecret' value='' tabindex=104 />
 		<select onChange="javascript:setStringText(this.id,'nassecret')" id='nassecretlist' class='form' 
 			tabindex=105 >
@@ -165,7 +165,7 @@
 
                 <br/>
 
-                <label for='nasport' class='form'><?php echo $l['FormField']['configmaintdisconnectuser.php']['NASPort'] ?></label>
+                <label for='nasport' class='form'><?php echo $l['all']['NasPort'] ?></label>
                 <input name='nasport' type='text' id='nasport' value='3799' tabindex=106 />
 		<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=107 >
 			<option value="3799"> Choose Port... </option>
@@ -191,26 +191,26 @@
                 <h302> Advanced </h302>
                 <br/>
 
-                <label for='debug' class='form'><?php echo $l['FormField']['all']['Debug'] ?></label>
+                <label for='debug' class='form'><?php echo $l['all']['Debug'] ?></label>
                 <select name='debug' id='debug' class='form' tabindex=106 >
                         <option value="yes"> Yes </option>
                         <option value="no"> No </option>
                 </select>
                 <br/>
 
-                <label for='timeout' class='form'><?php echo $l['FormField']['all']['Timeout'] ?></label>
+                <label for='timeout' class='form'><?php echo $l['all']['Timeout'] ?></label>
                 <input name='timeout' type='text' id='timeout' value='3' tabindex=107 />
                 <br/>
 
-                <label for='retries' class='form'><?php echo $l['FormField']['all']['Retries'] ?></label>
+                <label for='retries' class='form'><?php echo $l['all']['Retries'] ?></label>
                 <input name='retries' type='text' id='retries' value='3' tabindex=108 />
                 <br/>
 
-                <label for='count' class='form'><?php echo $l['FormField']['all']['Count'] ?></label>
+                <label for='count' class='form'><?php echo $l['all']['Count'] ?></label>
                 <input name='count' type='text' id='count' value='' tabindex=109 />
                 <br/>
 
-                <label for='requests' class='form'><?php echo $l['FormField']['all']['Requests'] ?></label>
+                <label for='requests' class='form'><?php echo $l['all']['Requests'] ?></label>
                 <input name='requests' type='text' id='requests' value='3' tabindex=110 />
                 <br/>
 

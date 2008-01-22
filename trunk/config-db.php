@@ -131,7 +131,7 @@
 <tr><td>
 
 						<?php if (!($configValues['CONFIG_DB_HOST'])) { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['FormField']['configdb.php']['DatabaseHostname'] ?></b>
+						<b><?php echo $l['all']['DatabaseHostname'] ?></b>
 
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost"/>
@@ -140,7 +140,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_DB_USER'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['FormField']['configdb.php']['DatabaseUser'] ?></b>
+						<b><?php echo $l['all']['DatabaseUser'] ?></b>
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_DB_USER'] ?>" name="config_dbuser" />
 						</font>
@@ -151,7 +151,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_DB_PASS'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['FormField']['configdb.php']['DatabasePass'] ?></b>
+						<b><?php echo $l['all']['DatabasePass'] ?></b>
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="config_dbpass" />
 						</font>
@@ -163,7 +163,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_DB_NAME'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo  $l['FormField']['configdb.php']['DatabaseName'] ?></b>
+						<b><?php echo  $l['all']['DatabaseName'] ?></b>
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="config_dbname" />
 						</font>

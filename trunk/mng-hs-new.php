@@ -109,15 +109,15 @@
 		<h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
 		<br/>
 
-		<label for='name' class='form'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
+		<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
 		<input name='name' type='text' id='name' value='' tabindex=100 />
 		<br/>
 
-		<label for='macaddress' class='form'><?php echo $l['FormField']['mnghsedit.php']['MACAddress'] ?></label>
+		<label for='macaddress' class='form'><?php echo $l['all']['MACAddress'] ?></label>
 		<input name='macaddress' type='text' id='macaddress' value='' tabindex=101 />
 		<br/>
 
-		<label for='geocode' class='form'><?php echo $l['FormField']['mnghsedit.php']['Geocode'] ?></label>
+		<label for='geocode' class='form'><?php echo $l['all']['Geocode'] ?></label>
 		<input name='geocode' type='text' id='geocode' value='' tabindex=102 />
 		<br/>
 

@@ -63,7 +63,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_LOG_PAGES'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['FormField']['configlogging.php']['PagesLogging'] ?></b>
+						<b><?php echo $l['all']['PagesLogging'] ?></b>
 </td><td>
 						<select name="config_pageslogging">
 						<option value="<?php echo $configValues['CONFIG_LOG_PAGES'] ?>"> <?php echo $configValues['CONFIG_LOG_PAGES'] ?> </option>
@@ -77,7 +77,7 @@
 
 						<?php if (!($configValues['CONFIG_LOG_QUERIES'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['FormField']['configlogging.php']['QueriesLogging'] ?></b>
+						<b><?php echo $l['all']['QueriesLogging'] ?></b>
 </td><td>
 						<select name="config_querieslogging">
 						<option value="<?php echo $configValues['CONFIG_LOG_QUERIES'] ?>"> <?php echo $configValues['CONFIG_LOG_QUERIES'] ?> </option>
@@ -94,7 +94,7 @@
 
 						<?php if (!($configValues['CONFIG_LOG_ACTIONS'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['FormField']['configlogging.php']['ActionsLogging'] ?></b>
+						<b><?php echo $l['all']['ActionsLogging'] ?></b>
 </td><td>
 						<select name="config_actionslogging">
 						<option value="<?php echo $configValues['CONFIG_LOG_ACTIONS'] ?>"> <?php echo $configValues['CONFIG_LOG_ACTIONS'] ?> </option>
@@ -138,7 +138,7 @@
 
 						<?php if (!($configValues['CONFIG_LOG_FILE'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['FormField']['configlogging.php']['FilenameLogging'] ?></b>
+						<b><?php echo $l['all']['FilenameLogging'] ?></b>
 </td><td>
 						<input value="<?php echo $configValues['CONFIG_LOG_FILE'] ?>" name="config_filenamelogging" />
 						</font>

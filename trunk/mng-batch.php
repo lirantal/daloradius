@@ -200,17 +200,17 @@
 		<br/>
 
                 <label for='usernamePrefix' class='form'><?php 
-			echo $l['FormField']['mngbatch.php']['UsernamePrefix']?></label>
+			echo $l['all']['UsernamePrefix'] ?></label>
                 <input name='username_prefix' type='text' id='username_prefix' value='' tabindex=100 />
 		<br/>
 
                 <label for='numberInstances' class='form'><?php 
-			echo $l['FormField']['mngbatch.php']['NumberInstances']?></label>
+			echo $l['all']['NumberInstances'] ?></label>
                 <input name='number' type='text' id='number' value='' tabindex=101 />
 		<br/><br/><br/>
 
                 <label for='usernameLength' class='form'><?php 
-			echo $l['FormField']['mngbatch.php']['UsernameLength']?></label>
+			echo $l['all']['UsernameLength'] ?></label>
 		<select name="length_user" tabindex=102 class='form' >
 			<option id="4"> 4 </option>
 			<option id="5"> 5 </option>
@@ -223,7 +223,7 @@
 		<br/>
 
                 <label for='passwordLength' class='form'><?php 
-			echo $l['FormField']['mngbatch.php']['PasswordLength']?></label>
+			echo $l['all']['PasswordLength'] ?></label>
 		<select name="length_pass" tabindex=103 class='form' >
 		        <OPTION id="4"> 4 </OPTION>
 		        <OPTION id="5"> 5 </OPTION>
@@ -236,7 +236,7 @@
 		<br/>
 
 
-                <label for='group' class='form'><?php echo $l['FormField']['all']['Group']?></label>
+                <label for='group' class='form'><?php echo $l['all']['Group']?></label>
                 <input name='group' type='text' id='group' value='' tabindex=104 />
 		<?php
 		        include 'include/management/populate_selectbox.php';
@@ -244,7 +244,7 @@
 		?>
 		<br/>
 
-                <label for='groupPriority' class='form'><?php echo $l['FormField']['all']['GroupPriority']?></label>
+                <label for='groupPriority' class='form'><?php echo $l['all']['GroupPriority'] ?></label>
                 <input name='group_priority' type='text' id='group_priority' value='0' tabindex=105 />
 
 		<br/><br/>
