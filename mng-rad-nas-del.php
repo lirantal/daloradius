@@ -97,7 +97,7 @@
                 <h302> <?php echo $l['title']['NASInfo'] ?> </h302>
                 <br/>
 
-                <label for='nashost' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></label>
+                <label for='nashost' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
                 <input name='nashost' type='text' id='nashost' value='' tabindex=100 />
                 <br />
 

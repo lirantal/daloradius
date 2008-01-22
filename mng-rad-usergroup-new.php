@@ -102,14 +102,14 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
                                         </thead>
 <tr><td>
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>"; }?>
-                                                <b><?php echo $l['FormField']['all']['Username'] ?></b>
+                                                <b><?php echo $l['all']['Username'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $username ?>" name="username"/>
                                                 </font><br/>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo  $l['FormField']['all']['Groupname'] ?></b>
+	                                        <b><?php echo  $l['all']['Groupname'] ?></b>
 </td><td>											
                                                 <input value="<?php echo $group ?>" name="group" id="group" /> 
                                                 </font>
@@ -131,7 +131,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 
                                                 <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
 			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPriority')">
-                                                <b><?php echo $l['FormField']['all']['Priority'] ?></b>
+                                                <b><?php echo $l['all']['Priority'] ?></b>
 </td><td>												
 <div id="attributesPriority" style="display:none;visibility:visible" >
 						<br/>

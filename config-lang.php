@@ -54,7 +54,7 @@
 <tr><td>
 						<?php if (!($configValues['CONFIG_LANG'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['FormField']['configlang.php']['PrimaryLanguage'] ?></b>
+						<b><?php echo $l['all']['PrimaryLanguage'] ?></b>
 </td><td>
 						<select name="config_lang">
 						<option value="en"> en </option>

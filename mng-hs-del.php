@@ -82,7 +82,7 @@
                 <h302> <?php echo $l['title']['HotspotRemoval'] ?> </h302>
 		<br/>
 
-                <label for='name' class='form'><?php echo $l['FormField']['mnghsdel.php']['HotspotName'] ?></label>
+                <label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
                 <input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
                 <br/>
 

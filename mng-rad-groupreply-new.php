@@ -158,7 +158,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
                 <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
                 <br/>
 
-                <label for='groupname' class='form'><?php echo $l['FormField']['all']['Groupname'] ?></label>
+                <label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
                 <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
                 <br />
 

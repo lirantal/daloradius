@@ -108,14 +108,14 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
                                                 <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
 
                                                 <?php if (trim($username) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['all']['Username'] ?></b>
+                                                <b><?php echo $l['all']['Username'] ?></b>
 </td><td>													
                                                 <input value="<?php echo $username ?>" name="username"/><br/>
                                                 </font>
 </td></tr>
 <tr><td>
                                                 <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-                                                <b><?php echo $l['FormField']['all']['Groupname']?></b>
+                                                <b><?php echo $l['all']['Groupname'] ?></b>
 </td><td>												
                                                 <input value="<?php echo $group ?>" name="group"/><br/>
 												<?php echo $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] ?>

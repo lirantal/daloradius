@@ -157,15 +157,15 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
                 <h302> <?php echo $l['title']['NASInfo'] ?> </h302>
                 <br/>
 
-                <label for='nashost' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasIPHost'] ?></label>
+                <label for='nashost' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
                 <input name='nashost' type='text' id='nashost' value='<?php echo $nashost ?>' tabindex=100 />
                 <br />
 
-                <label for='nassecret' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasSecret'] ?></label>
+                <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
                 <input name='nassecret' type='text' id='nassecret' value='<?php echo $nashost ?>' tabindex=101 />
                 <br />
 
-                <label for='nastype' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasType'] ?></label>
+                <label for='nastype' class='form'><?php echo $l['all']['NasType'] ?></label>
                 <input name='nastype' type='text' id='nastype' value='<?php echo $nastype ?>' tabindex=102 />
                 <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
                         <option value="other">other</option>
@@ -184,7 +184,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
                 <br />
 
 
-                <label for='nasname' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasShortname'] ?></label>
+                <label for='nasname' class='form'><?php echo $l['all']['NasShortname'] ?></label>
                 <input name='nasname' type='text' id='nasname' value='<?php echo $nasname ?>' tabindex=104 />
                 <br />
 
@@ -204,15 +204,15 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
                 <h302> <?php echo $l['title']['NASAdvanced'] ?> </h302>
                 <br/>
 
-                <label for='nasports' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasPorts'] ?></label>
+                <label for='nasports' class='form'><?php echo $l['all']['NasPorts'] ?></label>
                 <input name='nasports' type='text' id='nasports' value='<?php echo $nasports ?>' tabindex=105 />
                 <br />
 
-                <label for='nascommunity' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasCommunity'] ?></label>
+                <label for='nascommunity' class='form'><?php echo $l['all']['NasCommunity'] ?></label>
                 <input name='nascommunity' type='text' id='nascommunity' value='<?php echo $nascommunity ?>' tabindex=106 />
                 <br />
 
-                <label for='nasdescription' class='form'><?php echo $l['FormField']['mngradnasnew.php']['NasDescription'] ?></label>
+                <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
                 <input name='nasdescription' type='text' id='nasdescription' value='<?php echo $nasdescription ?>' tabindex=107 />
                 <br />
 

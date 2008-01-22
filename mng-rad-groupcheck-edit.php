@@ -132,11 +132,11 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket
                 <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
                 <br/>
 
-                <label for='attribute' class='form'><?php echo $l['FormField']['all']['Attribute'] ?></label>
+                <label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
                 <input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=100 />
                 <br/>
 
-                <label for='op' class='form'><?php echo $l['FormField']['all']['Operator'] ?></label>
+                <label for='op' class='form'><?php echo $l['all']['Operator'] ?></label>
                 <select name='op' id='op' class='form' tabindex=101 />
                         <option value='<?php echo $op ?>'><?php echo $op ?></option>
                         <?php include ('include/management/op_select_options.php');
@@ -146,7 +146,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket
                 <br/>
 
 
-                <label for='newvalue' class='form'><?php echo $l['FormField']['all']['NewValue'] ?></label>
+                <label for='newvalue' class='form'><?php echo $l['all']['NewValue'] ?></label>
                 <input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=102 />
                 <br/>
 

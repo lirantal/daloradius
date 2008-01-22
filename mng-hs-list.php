@@ -114,7 +114,7 @@
 		<th scope='col'> 
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['FormField']['mnghslist.php']['Owner']."
+		".$l['ContactInfo']['OwnerName']."
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
@@ -122,7 +122,7 @@
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['FormField']['mnghslist.php']['Company']."
+		".$l['ContactInfo']['Company']."
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
@@ -130,7 +130,7 @@
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		 ".$l['FormField']['mnghslist.php']['HotspotType']."
+		 ".$l['ContactInfo']['HotspotType']."
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>

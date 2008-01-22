@@ -94,22 +94,22 @@
                 <input name='password' type='text' id='password' value='<?php echo $password ?>' tabindex=101 />
                 <br />
 
-                <label for='radius' class='form'><?php echo $l['FormField']['configmainttestuser.php']['RadiusServer'] ?>
+                <label for='radius' class='form'><?php echo $l['all']['RadiusServer'] ?>
 			</label>
                 <input name='radius' type='text' id='radius' value='<?php echo $radius ?>' tabindex=102 />
                 <br />
 
-                <label for='radiusport' class='form'><?php echo $l['FormField']['configmainttestuser.php']['RadiusPort'] ?>
+                <label for='radiusport' class='form'><?php echo $l['all']['RadiusPort'] ?>
 			</label>
                 <input name='radiusport' type='text' id='radiusport' value='<?php echo $radiusport ?>' tabindex=103 />
                 <br />
 
-                <label for='nasport' class='form'><?php echo $l['FormField']['configmainttestuser.php']['NASPort'] ?>
+                <label for='nasport' class='form'><?php echo $l['all']['NasPort'] ?>
 			</label>
                 <input name='nasport' type='text' id='nasport' value='<?php echo $nasport ?>' tabindex=104 />
                 <br />
 
-                <label for='secret' class='form'><?php echo $l['FormField']['configmainttestuser.php']['Secret'] ?>
+                <label for='secret' class='form'><?php echo $l['all']['NasSecret'] ?>
 			</label>
                 <input name='secret' type='text' id='secret' value='<?php echo $secret ?>' tabindex=105 />
                 <br />
@@ -131,26 +131,26 @@
 		<h302> Advanced </h302>
 		<br/>
 
-                <label for='debug' class='form'><?php echo $l['FormField']['all']['Debug'] ?></label>
+                <label for='debug' class='form'><?php echo $l['all']['Debug'] ?></label>
 		<select name='debug' id='debug' class='form' tabindex=106 >
 			<option value="yes"> Yes </option>
 			<option value="no"> No </option>
 		</select>
                 <br/>
 
-                <label for='timeout' class='form'><?php echo $l['FormField']['all']['Timeout'] ?></label>
+                <label for='timeout' class='form'><?php echo $l['all']['Timeout'] ?></label>
                 <input name='timeout' type='text' id='timeout' value='3' tabindex=107 />
 		<br/>
 
-                <label for='retries' class='form'><?php echo $l['FormField']['all']['Retries'] ?></label>
+                <label for='retries' class='form'><?php echo $l['all']['Retries'] ?></label>
                 <input name='retries' type='text' id='retries' value='3' tabindex=108 />
 		<br/>
 
-                <label for='count' class='form'><?php echo $l['FormField']['all']['Count'] ?></label>
+                <label for='count' class='form'><?php echo $l['all']['Count'] ?></label>
                 <input name='count' type='text' id='count' value='' tabindex=109 />
 		<br/>
 
-                <label for='requests' class='form'><?php echo $l['FormField']['all']['Requests'] ?></label>
+                <label for='requests' class='form'><?php echo $l['all']['Requests'] ?></label>
                 <input name='requests' type='text' id='requests' value='3' tabindex=110 />
 		<br/>
 
