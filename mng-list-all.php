@@ -138,7 +138,7 @@
 		<th scope='col'> 
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['table']['Groups']." 
+		".$l['title']['Groups']." 
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
