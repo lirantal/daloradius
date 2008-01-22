@@ -50,7 +50,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 
 				<input type='hidden' value='$row[0]' name='oldgroups[]' >
 
-				<label for='group' class='form'>".$l['FormField']['all']['Group']." #".($counter+1)."
+				<label for='group' class='form'>".$l['all']['Group']." #".($counter+1)."
 				</label>
 				<input value='$row[0]' name='groups[]' id='group$counter' >
 
@@ -61,7 +61,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 
 				</select>
 
-				<label for='groupPriority' class='form'>". $l['FormField']['all']['GroupPriority']."
+				<label for='groupPriority' class='form'>".$l['all']['GroupPriority']."
 				</label>
 				<input value='$row[1]' name='groups_priority[]' >
 			";
