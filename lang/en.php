@@ -14,18 +14,24 @@ $l['all']['NasPorts'] = "NAS Ports";
 $l['all']['NasSecret'] = "NAS Secret";
 $l['all']['NasCommunity'] = "NAS Community";
 $l['all']['NasDescription'] = "NAS Description";
+$l['all']['PacketType'] = "Packet Type";
 $l['all']['HotSpot'] = "HotSpot";
 $l['all']['HotSpots'] = "HotSpots";
+$l['all']['HotSpotName'] = "Hotspot Name";
 $l['all']['Username'] = "Username";
 $l['all']['Password'] = "Password";
 $l['all']['PasswordType'] = "Password Type";
 $l['all']['IPAddress'] = "IP Address";
 $l['all']['Group'] = "Group";
 $l['all']['Groupname'] = "Groupname";
+$l['all']['GroupPriority'] = "Group Priority";
+$l['all']['CurrentGroupname'] = "Current Groupname";
+$l['all']['NewGroupname'] = "New Groupname";
 $l['all']['Priority'] = "Priority";
 $l['all']['Attribute'] = "Attribute";
 $l['all']['Operator'] = "Operator";
 $l['all']['Value'] = "Value";
+$l['all']['NewValue'] = "New Value";
 $l['all']['MaxTimeExpiration'] = "Max Time / Expiration";
 $l['all']['UsedTime'] = "Used Time";
 $l['all']['Status'] = "Status";
@@ -66,8 +72,42 @@ $l['all']['del'] = "del";
 $l['all']['groupslist'] = "groups-list";
 $l['all']['TestUser'] = "Test User";
 $l['all']['Accounting'] = "Accounting";
-
 $l['all']['RADIUSReply'] = "RADIUS Reply";
+
+$l['all']['Debug'] = "Debug";
+$l['all']['Timeout'] = "Timeout";
+$l['all']['Retries'] = "Retries";
+$l['all']['Count'] = "Count";
+$l['all']['Requests'] = "Requests";
+
+$l['all']['DatabaseHostname'] = "Database Hostname";
+$l['all']['DatabaseUser'] = "Database User";
+$l['all']['DatabasePass'] = "Database Pass";
+$l['all']['DatabaseName'] = "Database Name";
+
+$l['all']['PrimaryLanguage'] = "Primary Language";
+
+$l['all']['PagesLogging'] = "Logging of Pages (page visits)";
+$l['all']['QueriesLogging'] = "Logging of Queries (reports and graphs)";
+$l['all']['ActionsLogging'] = "Logging of Actions (form submits)";
+$l['all']['FilenameLogging'] = "Logging filename (full path)";
+
+$l['all']['PasswordHidden'] = "Enable Password Hiding (asterisk will be shown)";
+$l['all']['TablesListing'] = "Rows/Records per Tables Listing page";
+$l['all']['TablesListingNum'] = "Enable Tables Listing Numbering";
+
+$l['all']['RadiusServer'] = "Radius Server";
+$l['all']['RadiusPort'] = "Radius Port";
+
+$l['all']['UsernamePrefix'] = "Username Prefix";
+$l['all']['NumberInstances'] = "Number of instances to create";
+$l['all']['UsernameLength'] = "Length of username string";
+$l['all']['PasswordLength'] = "Length of password string";
+
+$l['all']['Expiration'] = "Expiration";
+$l['all']['MaxAllSession'] = "Max-All-Session";
+$l['all']['SessionTimeout'] = "Session Timeout";
+$l['all']['IdleTimeout'] = "Idle Timeout";
 
 
 
@@ -78,6 +118,14 @@ $l['all']['RADIUSReply'] = "RADIUS Reply";
 
 $l['Tooltip']['UserEdit'] = "Edit User";
 $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
+
+$l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+
+$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+
+$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive name)";
+
+$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
 /* ********************************************************************************** */
 
@@ -141,7 +189,6 @@ $l['ContactInfo']['FirstName'] = "First Name";
 $l['ContactInfo']['LastName'] = "Last Name";
 $l['ContactInfo']['Email'] = "Email";
 $l['ContactInfo']['Department'] = "Department";
-$l['ContactInfo']['Company'] = "Company";
 $l['ContactInfo']['WorkPhone'] = "Work Phone";
 $l['ContactInfo']['HomePhone'] = "Home Phone";
 $l['ContactInfo']['MobilePhone'] = "Mobile Phone";
@@ -189,14 +236,12 @@ $l['Intro']['giseditmap.php'] = "Edit MAP Mode";
 $l['Intro']['gismain.php'] = "GIS Mapping";
 $l['Intro']['gisviewmap.php'] = "View MAP Mode";
 
-$l['Intro']['graphmain.php'] = "Introduction";
-$l['Intro']['graphsalltimedownload.php'] = "Overall Usage";
-$l['Intro']['graphsalltimetrafficcompare.php'] = "Overall Usage";
-$l['Intro']['graphsalltimelogins.php'] = "Overall Usage";
-$l['Intro']['graphsalltimeupload.php'] = "Overall Usage";
-$l['Intro']['graphsoveralldownload.php'] = "Overall Usage";
-$l['Intro']['graphsoveralllogins.php'] = "Overall Usage";
-$l['Intro']['graphsoverallupload.php'] = "Overall Usage";
+$l['Intro']['graphmain.php'] = "Usage Graphs";
+$l['Intro']['graphsalltimetrafficcompare.php'] = "Total Traffic Comparison Usage";
+$l['Intro']['graphsalltimelogins.php'] = "Total Logins";
+$l['Intro']['graphsoveralldownload.php'] = "User Downlads";
+$l['Intro']['graphsoveralllogins.php'] = "User Logins";
+$l['Intro']['graphsoverallupload.php'] = "User Uploads";
 
 $l['Intro']['replastconnect.php'] = "Last 50 Connection Attempts";
 $l['Intro']['repstatradius.php'] = "Daemons Information";
@@ -207,9 +252,7 @@ $l['Intro']['replogsradius.php'] = "RADIUS Server Logfile";
 $l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
 $l['Intro']['replogsboot.php'] = "Boot Logfile";
 $l['Intro']['replogs.php'] = "Logs";
-$l['Intro']['repstatus.php'] = "Status";
 
-$l['Intro']['repall.php'] = "Users Listing";
 $l['Intro']['rephsall.php'] = "Hotspots Listing";
 $l['Intro']['repmain.php'] = "Reports Page";
 $l['Intro']['repstatus.php'] = "Status Page";
@@ -222,7 +265,6 @@ $l['Intro']['mngdel.php'] = "Remove User";
 $l['Intro']['mngedit.php'] = "Edit User Details";
 $l['Intro']['mnglistall.php'] = "Users Listing";
 $l['Intro']['mngmain.php'] = "Users and Hotspots Management";
-$l['Intro']['mngnew.php'] = "New User";
 $l['Intro']['mngnew.php'] = "New User";
 $l['Intro']['mngnewquick.php'] = "Quick User Add";
 $l['Intro']['mngsearch.php'] = "User Search";
@@ -247,10 +289,10 @@ $l['Intro']['mngradnasdel.php'] = "Remove NAS Record";
 
 
 $l['Intro']['mngradprofiles.php'] = "Profiles Configuration";
-$l['Intro']['mngradprofilesedit.php'] = "Profiles Configuration";
-$l['Intro']['mngradprofilesdel.php'] = "Profiles Configuration";
-$l['Intro']['mngradprofileslist.php'] = "Profiles Configuration";
-$l['Intro']['mngradprofilesnew.php'] = "Profiles Configuration";
+$l['Intro']['mngradprofilesedit.php'] = "Edit Profiles";
+$l['Intro']['mngradprofilesdel.php'] = "Delete Profiles";
+$l['Intro']['mngradprofileslist.php'] = "List Profiles";
+$l['Intro']['mngradprofilesnew.php'] = "New Profile";
 
 $l['Intro']['mngradgroups.php'] = "Groups Configuration";
 
@@ -284,96 +326,6 @@ $l['Intro']['configoperatorsnew.php'] = "New Operator";
 $l['Intro']['configoperatorslist.php'] = "Operators Listing";
 
 $l['Intro']['login.php'] = "Login";
-
-$l['FormField']['all']['Group'] = "Group";
-$l['FormField']['all']['GroupPriority'] = "Group Priority";
-$l['FormField']['all']['Groupname'] = "Groupname";
-$l['FormField']['all']['Username'] = "Username";
-$l['FormField']['all']['Password'] = "Password";
-$l['FormField']['all']['Attribute'] = "Attribute";
-$l['FormField']['all']['Operator'] = "Operator";
-$l['FormField']['all']['Value'] = "Value";
-$l['FormField']['all']['NewValue'] = "New Value";
-
-$l['FormField']['all']['Priority'] = "Priority";
-$l['FormField']['all']['Expiration'] = "Expiration";
-$l['FormField']['all']['MaxAllSession'] = "Max-All-Session";
-$l['FormField']['all']['SessionTimeout'] = "Session Timeout";
-$l['FormField']['all']['IdleTimeout'] = "Idle Timeout";
-$l['FormField']['all']['CallingStationId'] = "Calling-Station-Id";
-$l['FormField']['all']['CalledStationId'] = "Called-Station-Id";
-$l['FormField']['all']['WISPrRedirectionURL'] = "WISPr-Redirection-URL";
-$l['FormField']['all']['WISPrBandwidthMaxUp'] = "WISPr-Bandwidth-Max-Up";
-$l['FormField']['all']['WISPrBandwidthMaxDown'] = "WISPr-Bandwidth-Max-Down";
-$l['FormField']['all']['WISPrSessionTerminateTime'] = "WISPr-Session-Terminate-Time";
-
-$l['FormField']['all']['TablesAvailable'] = "Tables Available: ";
-$l['FormField']['all']['Debug'] = "Debug";
-$l['FormField']['all']['Timeout'] = "Timeout";
-$l['FormField']['all']['Retries'] = "Retries";
-$l['FormField']['all']['Count'] = "Count";
-$l['FormField']['all']['Requests'] = "Requests";
-
-$l['FormField']['mngbatch.php']['UsernamePrefix'] = "Username Prefix";
-$l['FormField']['mngbatch.php']['NumberInstances'] = "Number of instances to create";
-$l['FormField']['mngbatch.php']['UsernameLength'] = "Length of username string";
-$l['FormField']['mngbatch.php']['PasswordLength'] = "Length of password string";
-$l['FormField']['mngnewquick.php']['MaxAllSession'] = "Time Credit (Max-All-Session) ";
-
-$l['FormField']['mnghslist.php']['Owner'] = "Owner";
-$l['FormField']['mnghslist.php']['Company'] = "Company";
-$l['FormField']['mnghslist.php']['HotspotType'] = "Hotspot Type";
-$l['FormField']['mnghsdel.php']['HotspotName'] = "Hotspot name";
-$l['FormField']['mnghsedit.php']['MACAddress'] = "MAC Address";
-$l['FormField']['mnghsedit.php']['Geocode'] = "Geocode";
-
-$l['FormField']['mngradusergroupedit.php']['CurrentGroupname'] = "Current Groupname";
-$l['FormField']['mngradusergroupedit.php']['NewGroupname'] = "New Groupname";
-
-$l['FormField']['mngradnasnew.php']['NasIPHost'] = "NAS IP/Hostname";
-$l['FormField']['mngradnasnew.php']['NasSecret'] = "NAS Secret";
-$l['FormField']['mngradnasnew.php']['NasShortname'] = "NAS Shortname";
-$l['FormField']['mngradnasnew.php']['NasType'] = "NAS Type";
-$l['FormField']['mngradnasnew.php']['NasPorts'] = "NAS Ports";
-$l['FormField']['mngradnasnew.php']['NasCommunity'] = "NAS Community";
-$l['FormField']['mngradnasnew.php']['NasDescription'] = "NAS Description";
-
-$l['FormField']['configdb.php']['DatabaseHostname'] = "Database Hostname";
-$l['FormField']['configdb.php']['DatabaseUser'] = "Database User";
-$l['FormField']['configdb.php']['DatabasePass'] = "Database Pass";
-$l['FormField']['configdb.php']['DatabaseName'] = "Database Name";
-
-$l['FormField']['configlang.php']['PrimaryLanguage'] = "Primary Language";
-
-$l['FormField']['configlogging.php']['PagesLogging'] = "Logging of Pages (page visits)";
-$l['FormField']['configlogging.php']['QueriesLogging'] = "Logging of Queries (reports and graphs)";
-$l['FormField']['configlogging.php']['ActionsLogging'] = "Logging of Actions (form submits)";
-$l['FormField']['configlogging.php']['FilenameLogging'] = "Logging filename (full path)";
-
-$l['FormField']['configinterface.php']['PasswordHidden'] = "Enable Password Hiding (asterisk will be shown)";
-$l['FormField']['configinterface.php']['TablesListing'] = "Rows/Records per Tables Listing page";
-$l['FormField']['configinterface.php']['TablesListingNum'] = "Enable Tables Listing Numbering";
-
-$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
-$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive name)";
-$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
-
-$l['FormField']['configmainttestuser.php']['RadiusServer'] = "Radius Server";
-$l['FormField']['configmainttestuser.php']['RadiusPort'] = "Radius Port";
-$l['FormField']['configmainttestuser.php']['NASPort'] = "NAS Port";
-$l['FormField']['configmainttestuser.php']['Secret'] = "Secret";
-$l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
-
-$l['FormField']['configmaintdisconnectuser.php']['NASServer'] = "NAS Server";
-$l['FormField']['configmaintdisconnectuser.php']['NASPort'] = "NAS Port";
-$l['FormField']['configmaintdisconnectuser.php']['NASSecret'] = "NAS Secret";
-$l['FormField']['configmaintdisconnectuser.php']['PacketType'] = "Packet Type";
-
-
-
-
-
-
 
 $l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
 $l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
@@ -631,7 +583,7 @@ $l['helpPage']['mnglistall'] = "Listing users in database";
 $l['helpPage']['mngsearch'] = "Searching for user: ";
 $l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
 $l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
-$l['helpPage']['mngdel'] = "To remove a user from the database you must provide the username or the account id.<br/>";
+$l['helpPage']['mngdel'] = "To remove a user entry from the database you must provide the username of the account<br/>";
 $l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
 Note that these settings will apply for all the users that you are creating.<br/>";
 $l['helpPage']['mngnewquick'] = "The following user/card is of type prepaid.<br/>
