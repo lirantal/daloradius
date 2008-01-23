@@ -67,7 +67,7 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-	echo "<table border='2' class='table1'>\n";
+	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
 							<tr>
@@ -88,23 +88,29 @@
 
 
 	echo "<thread> <tr>
-					<th scope='col'> ".$l['all']['Username']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Groupname']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Priority']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Action']." </th>
-			</tr> </thread>";
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Username']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Groupname']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Priority']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+		<th scope='col'> ".$l['all']['Action']." </th>
+	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> $row[0] </td>

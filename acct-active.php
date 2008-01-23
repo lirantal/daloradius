@@ -89,28 +89,36 @@
                         ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l['all']['Username']."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l['all']['Attribute']."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l['all']['MaxTimeExpiration']."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l['all']['UsedTime']."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".$l['all']['Status']." </th>
-                        <th scope='col'> ".$l['all']['Usage']." </th>
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Username']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+        	<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Attribute']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['MaxTimeExpiration']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=desc\">
+		<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['UsedTime']."
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+                <th scope='col'> ".$l['all']['Status']." </th>
+                <th scope='col'> ".$l['all']['Usage']." </th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
 		$status="Active";

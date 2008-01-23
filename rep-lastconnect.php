@@ -104,27 +104,38 @@
                         ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l['all']['Username']." 
-			<br/>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=asc\"> > </a>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=desc\"> < </a>
-			</th>
-                        <th scope='col'> ".$l['all']['Password']." 
-			<br/>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=asc\"> > </a>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=desc\"> < </a>
-			</th>
-                        <th scope='col'> ".$l['all']['StartTime']." 
-			<br/>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=asc\"> > </a>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=desc\"> < </a>
-			</th>
-                        <th scope='col'> ".$l['all']['RADIUSReply']." 
-			<br/>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=asc\"> > </a>
-                        <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=desc\"> < </a>
-			</th>
-                </tr> </thread>";
+                <th scope='col'>
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Username']." 
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+
+                <th scope='col'>
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['Password']." 
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+
+                <th scope='col'>
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['StartTime']." 
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+
+                <th scope='col'>
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=asc\">
+			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		".$l['all']['RADIUSReply']." 
+                <a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=desc\">
+			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		</th>
+        </tr> </thread>";
 
         $i = 0;
         while ($i != $count) {
