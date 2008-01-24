@@ -15,7 +15,7 @@
 
 	if (isset($_POST['submit'])) {
 		$username = $_REQUEST['username'];
-		$password = $_REQUEST['password'];[
+		$password = $_REQUEST['password'];
 		$passwordType = $_REQUEST['passwordType'];
 		$group = $_REQUEST['group'];
 		$maxallsession = $_REQUEST['maxallsession'];
