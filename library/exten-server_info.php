@@ -246,18 +246,18 @@ $meminfo = get_memory();
 <table class='summarySection'>
   <tr>
     <td class='summaryKey'> Mem. Total </td>
-    <td class='summaryValue'><span class='sleft'><?php echo convert_ToMB ($meminfo[MemTotal]); ?></span> </td>
+    <td class='summaryValue'><span class='sleft'><?php echo convert_ToMB ($meminfo['MemTotal']); ?></span> </td>
   </tr>
   <tr>
     <td class='summaryKey'> Mem. Free </td>
-    <td class='summaryValue'><span class='sleft'><?php echo convert_ToMB ($meminfo[MemFree]); ?></span> </td>
+    <td class='summaryValue'><span class='sleft'><?php echo convert_ToMB ($meminfo['MemFree']); ?></span> </td>
   </tr>
   <tr>
     <td class='summaryKey'> Mem. Used </td>
     <td class='summaryValue'>
                 <span class='sleft'>
                         <?php 
-                                $memused = ($meminfo[MemTotal] - $meminfo[MemFree]); 
+                                $memused = ($meminfo['MemTotal'] - $meminfo['MemFree']); 
                                 echo convert_ToMB ($memused);  
                         ?>
                 </span> </td>
