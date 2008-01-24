@@ -277,7 +277,7 @@
      </div>
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['UserInfo']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
 
 <?php
 	include_once('include/management/userinfo.php');
