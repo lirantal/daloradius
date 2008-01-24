@@ -111,6 +111,7 @@
 
 		<th scope='col'>
 		".$l['all']['NasIPHost']."
+		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=desc\">
@@ -127,9 +128,10 @@
 		</th>
 
 		<th scope='col'>
+		".$l['all']['NasType']."
+		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['NasType']."
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
