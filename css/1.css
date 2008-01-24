@@ -769,3 +769,36 @@ h302 {
 	text-decoration:underline;
         color:#333;
 }
+
+
+
+/********************* BEGIN Carlos Changes ************************/
+
+.summarySection {
+    width: 70%;
+    margin-bottom: 15px;
+    margin-left:0px; 
+}
+
+.summarySection tr {
+    vertical-align: center;
+}
+
+.summaryValue {
+    padding-left: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    background-color: #F4F4F4;
+}
+
+.summaryKey {
+    width: 35%;
+    background-color:#FFFFFF;
+    text-align: right;
+    font-weight:    vertical-align: top;
+}
+
+.sleft { float: left; }
+
+/********************* END Carlos Changes ************************/
+
