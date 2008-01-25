@@ -20,23 +20,24 @@
     include_once ("include/menu/config-subnav.php");
 ?>      
 
-		<div id="sidebar">
-		
-				<h2>Configuration</h2>
-				
-				<h3>Global Settings</h3>
-				
+<div id="sidebar">
 
-                                <ul class="subnav">
-                                
-                                                <li><a href="config-db.php"><b>&raquo;</b>Database Settings</a></li>
-						<li><a href="config-lang.php"><b>&raquo;</b>Language Settings</a></li>
-						<li><a href="config-logging.php"><b>&raquo;</b>Logging Settings</a></li>
-						<li><a href="config-interface.php"><b>&raquo;</b>Interface Settings</a></li>
-		
-		</div>
-		
-		
+	<h2>Configuration</h2>
+	
+	<h3>Global Settings</h3>
+	
+	<ul class="subnav">
+
+		<li><a href="config-db.php"><b>&raquo;</b>Database Settings</a></li>
+		<li><a href="config-lang.php"><b>&raquo;</b>Language Settings</a></li>
+		<li><a href="config-logging.php"><b>&raquo;</b>Logging Settings</a></li>
+		<li><a href="config-interface.php"><b>&raquo;</b>Interface Settings</a></li>
+
+	</ul>
+	
+</div>
+
+
 
 <?php
 
