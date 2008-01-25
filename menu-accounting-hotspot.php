@@ -28,46 +28,46 @@
 	$m_active = "Accounting";
 	include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/accounting-subnav.php");
-?>	
-		<div id="sidebar">
-		
-				<h2>Accounting</h2>
-				
-				<h3>Hotspots Accounting</h3>
-				<ul class="subnav">
+?>
 
-						<li><a href="javascript:document.accthotspot.submit();"><b>&raquo;</b>Hotspot Accounting<a>
-							<form name="accthotspot" action="acct-hotspot-accounting.php" method="post" class="sidebar">
-<select name="hotspot" size="3">
+<div id="sidebar">
+
+	<h2>Accounting</h2>
+	
+	<h3>Hotspots Accounting</h3>
+	<ul class="subnav">
+
+		<li><a href="javascript:document.accthotspot.submit();"><b>&raquo;</b>Hotspot Accounting<a>
+			<form name="accthotspot" action="acct-hotspot-accounting.php" method="post" class="sidebar">
+				<select name="hotspot" size="3">
 <?php
 
-        
-        include 'library/opendb.php';
+	include 'library/opendb.php';
 
 	// Grabing the last 
 
 	$sql = "select name from ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']."";
 	$res = $dbSocket->query($sql);
 
-        while($row = $res->fetchRow()) {
-                echo "
-                        <option value='$row[0]'> $row[0]
-			";
+	while($row = $res->fetchRow()) {
+			echo "
+					<option value='$row[0]'> $row[0]
+		";
 
 	}
 
-        include 'library/closedb.php';
-?>							</select>
-							</form></li>
-				
-						<li><a href="acct-hotspot-compare.php"><b>&raquo;</b>Hotspots Comparison</a></li>
-				</ul>
-				
-				<br/><br/>
-				<h2>Search</h2>
-				<input name="" type="text" value="Search" />
-				
-		
-		</div>
+	include 'library/closedb.php';
+	
+?>	
+				</select>
+				</form></li>
+			
+				<li><a href="acct-hotspot-compare.php"><b>&raquo;</b>Hotspots Comparison</a></li>
+			</ul>
+			
+			<br/><br/>
+			<h2>Search</h2>
+			<input name="" type="text" value="Search" />
+			
+</div>
 
-		
