@@ -20,28 +20,27 @@
     include_once ("include/menu/config-subnav.php");
 ?>      
 
-		<div id="sidebar">
-		
-				<h2>Configuration</h2>
-				
-				<h3>Management</h3>
-				
+<div id="sidebar">
 
-                                <ul class="subnav">
-                                
-					<li><a href="config-operators-list.php"><b>&raquo;</b>List Operators</a></li>
-					<li><a href="config-operators-new.php"><b>&raquo;</b>New Operator</a></li>
-					<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit Operator<a>
-						<form name="mngedit" action="config-operators-edit.php" method="get" class="sidebar">
-							<input name="operator_username" type="text">
-						</form></li>
+	<h2>Configuration</h2>
+	
+	<h3>Management</h3>
+	
+	<ul class="subnav">
+	
+		<li><a href="config-operators-list.php"><b>&raquo;</b>List Operators</a></li>
+		<li><a href="config-operators-new.php"><b>&raquo;</b>New Operator</a></li>
+		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit Operator<a>
+			<form name="mngedit" action="config-operators-edit.php" method="get" class="sidebar">
+			<input name="operator_username" type="text">
+			</form>
+		</li>
 
-					<li><a href="config-operators-del.php"><b>&raquo;</b>Remove Operator</a></li>
+		<li><a href="config-operators-del.php"><b>&raquo;</b>Remove Operator</a></li>
+	
+	</ul>
 
-
-		</div>
-		
-		
+</div>
 
 <?php
 

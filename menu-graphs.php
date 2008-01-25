@@ -21,93 +21,88 @@
 	include_once ("include/menu/graphs-subnav.php");
 ?>      
 
-		
-		<div id="sidebar">
-		
-				<h2>Graphs</h2>
-				
-				<h3>User Graph</h3>
-				<ul class="subnav">
 
-						<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>User Logins</a>
-							<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
-							<input name="username" type="text" value="
-					<?php if (isset($overall_logins_username)) echo $overall_logins_username;
-						else echo 'username'; ?>">
-							<select name="type" type="text">
-								<option value="daily"> Daily
-								<option value="monthly"> Monthly
-								<option value="yearly"> Yearly
-							</select>
-							</form></li>
+<div id="sidebar">
 
+	<h2>Graphs</h2>
+	
+	<h3>User Graph</h3>
+	<ul class="subnav">
 
-
+		<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>User Logins</a>
+			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
+			<input name="username" type="text" 
+				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username;
+				else echo 'username'; ?>">
+			<select name="type" type="text">
+				<option value="daily"> Daily
+				<option value="monthly"> Monthly
+				<option value="yearly"> Yearly
+			</select>
+			</form>
+		</li>
 
 
-
-                                                <li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>User Downloads</a>
-                                                        <form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
-                                                        <input name="username" type="text" value="
-					<?php if (isset($overall_download_username)) echo $overall_download_username;
-						else echo 'username'; ?>">
-                                                        <select name="type" type="text">
-                                                                <option value="daily"> Daily
-                                                                <option value="monthly"> Monthly
-                                                                <option value="yearly"> Yearly
-                                                        </select>
-                                                        </form></li>
-
-
-
-                                                <li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>User Uploads</a>
-                                                        <form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
-                                                        <input name="username" type="text" value="
-					<?php if (isset($overall_upload_username)) echo $overall_upload_username;
-						else echo 'username'; ?>">
-                                                        <select name="type" type="text">
-                                                                <option value="daily"> Daily
-                                                                <option value="monthly"> Monthly
-                                                                <option value="yearly"> Yearly
-                                                        </select>
-                                                        </form></li>
-
-				<h3>Statistics</h3>
-				<ul class="subnav">
+		<li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>User Downloads</a>
+			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
+			<input name="username" type="text" 
+				value="<?php if (isset($overall_download_username)) echo $overall_download_username;
+				else echo 'username'; ?>">
+			<select name="type" type="text">
+				<option value="daily"> Daily
+				<option value="monthly"> Monthly
+				<option value="yearly"> Yearly
+			</select>
+			</form>
+		</li>
 
 
-                                                <li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>Total Logins</a>
-                                                        <form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
-                                                        <select name="type" type="text">
-                                                                <option value="daily"> Daily
-                                                                <option value="monthly"> Monthly
-                                                                <option value="yearly"> Yearly
-                                                        </select>
-                                                        </form></li>
+		<li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>User Uploads</a>
+			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
+			<input name="username" type="text" 
+				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username;
+				else echo 'username'; ?>">
+			<select name="type" type="text">
+				<option value="daily"> Daily
+				<option value="monthly"> Monthly
+				<option value="yearly"> Yearly
+			</select>
+			</form>
+		</li>
+
+	</ul>
+	
+	<h3>Statistics</h3>
+	<ul class="subnav">
 
 
-
-                                                <li><a href="javascript:document.alltime_traffic_compare.submit();"><b>&raquo;</b>Total Traffic Use</a>
-                                                        <form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" class="sidebar">
-                                                        <select name="type" type="text">
-                                                                <option value="daily"> Daily
-                                                                <option value="monthly"> Monthly
-                                                                <option value="yearly"> Yearly
-                                                        </select>
-                                                        </form></li>
+		<li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>Total Logins</a>
+			<form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
+			<select name="type" type="text">
+				<option value="daily"> Daily
+				<option value="monthly"> Monthly
+				<option value="yearly"> Yearly
+			</select>
+			</form></li>
 
 
 
+		<li><a href="javascript:document.alltime_traffic_compare.submit();"><b>&raquo;</b>Total Traffic Use</a>
+			<form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" 
+				class="sidebar">
+			<select name="type" type="text">
+				<option value="daily"> Daily
+				<option value="monthly"> Monthly
+				<option value="yearly"> Yearly
+			</select>
+			</form></li>
+
+	</ul>
+
+	<br/><br/>
+	<h2>Search</h2>
+	<input name="" type="text" value="Search" />
+
+</div>
 
 
-				</ul>
-
-
-				<br/><br/>
-				<h2>Search</h2>
-				<input name="" type="text" value="Search" />
-				
-		
-		</div>
-		
-		
