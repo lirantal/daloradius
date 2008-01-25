@@ -64,6 +64,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 				<label for='groupPriority' class='form'>".$l['all']['GroupPriority']."
 				</label>
 				<input value='$row[1]' name='groups_priority[]' >
+				<br/>
 			";
 
 			$counter++;
