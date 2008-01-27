@@ -127,6 +127,15 @@ $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive n
 
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
+
+$l['Tooltip']['usernameTooltip'] = "The exact username as the user<br/>&nbsp;&nbsp;&nbsp;
+					will use to connect to the system";
+$l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in<br/>&nbsp;&nbsp;&nbsp;
+					certain systems so take extra care";
+$l['Tooltip']['groupTooltip'] = "The user will be added to this group.<br/>&nbsp;&nbsp;&nbsp;
+					By assigning a user to a particular group<br/>&nbsp;&nbsp;&nbsp;
+					the user is subject to the group's attributes";
+
 /* ********************************************************************************** */
 
 

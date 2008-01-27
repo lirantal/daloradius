@@ -230,24 +230,47 @@
 
      <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
 
+
+
+
 	<fieldset>
 
 	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 		<br/>
 
+		<ul>
+
 		<input type='radio' checked /> <b> Username Authentication </b> <br/><br/>
 
+		<li>
 		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
-		<input name='username' type='text' id='username' value='' tabindex=100 />
+		<input name='username' type='text' id='username' value='' tabindex=100 
+			onfocus="javascript:toggleShowDiv('usernameTooltip')"
+			onblur="javascript:toggleShowDiv('usernameTooltip')" />
 		<a href="javascript:randomUsername()" class='helper'>Random User</a>
-		<br />
 
+		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/error.png' alt='Tip' border='0' /> 
+			<?php echo $l['Tooltip']['usernameTooltip'] ?>
+		</div>
+		</li>
+
+		<li>
 		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
-		<input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword)) echo $hiddenPassword ?>
-			tabindex=101 />
+		<input name='password' type='text' id='password' value='' 
+			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101
+			onfocus="javascript:toggleShowDiv('passwordTooltip')"
+			onblur="javascript:toggleShowDiv('passwordTooltip')" />
 		<a href="javascript:randomPassword()" class='helper'>Random Password</a>
-		 <br />
 
+		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/error.png' alt='Tip' border='0' /> 
+			<?php echo $l['Tooltip']['passwordTooltip'] ?>
+		</div>
+		</li>
+
+
+		<li>
 		<label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
 		<select class='form' tabindex=102 name='passwordType' >
 			<option value='User-Password'>User-Password</option>
@@ -257,20 +280,32 @@
 			<option value='SHA1-Password'>SHA1-Password</option>
 			<option value='CHAP-Password'>CHAP-Password</option>
 		</select>
-		<br />
+		</li>
 
+		<li>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
-		<input name='group' type='text' id='group' value='' tabindex=103 />
-
+		<input name='group' type='text' id='group' value='' tabindex=103
+			onfocus="javascript:toggleShowDiv('groupTooltip')"
+			onblur="javascript:toggleShowDiv('groupTooltip')" />
 		<?php   
 		        include_once 'include/management/populate_selectbox.php';
 		        populate_groups("Select Groups");
 		?>
 
-		<br/><br/>
+		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/error.png' alt='Tip' border='0' /> 
+			<?php echo $l['Tooltip']['groupTooltip'] ?>
+		</div>
+		</li>
+
+		<li>
+		<br/>
 		<hr><br/>
 
 		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
+		</li>
+		</ul>
 
 	</fieldset>
 
