@@ -242,7 +242,7 @@
 
 		<input type='radio' checked /> <b> Username Authentication </b> <br/><br/>
 
-		<li>
+		<li class='fieldset'>
 		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
 		<input name='username' type='text' id='username' value='' tabindex=100 
 			onfocus="javascript:toggleShowDiv('usernameTooltip')"
@@ -255,7 +255,7 @@
 		</div>
 		</li>
 
-		<li>
+		<li class='fieldset'>
 		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
 		<input name='password' type='text' id='password' value='' 
 			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101
@@ -270,7 +270,7 @@
 		</li>
 
 
-		<li>
+		<li class='fieldset'>
 		<label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
 		<select class='form' tabindex=102 name='passwordType' >
 			<option value='User-Password'>User-Password</option>
@@ -282,7 +282,7 @@
 		</select>
 		</li>
 
-		<li>
+		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<input name='group' type='text' id='group' value='' tabindex=103
 			onfocus="javascript:toggleShowDiv('groupTooltip')"
@@ -298,7 +298,7 @@
 		</div>
 		</li>
 
-		<li>
+		<li class='fieldset'>
 		<br/>
 		<hr><br/>
 
