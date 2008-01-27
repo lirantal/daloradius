@@ -25,7 +25,7 @@ body {
 	font: 78.5%/1.6em "Lucida Grande", "Lucida Sans Unicode", verdana, geneva, sans-serif;
 	word-spacing:2px;
 	color:#444;
-	margin:20px;
+	margin:10px;
 	background:url(../images/body.jpg) #f6f6f6;
 }
 
@@ -395,27 +395,22 @@ h3 {
 	margin:10px 0;
 }
 
-#content ul {
-	margin:15px 0 15px 0;
-	line-height:25px;
-	padding:15px 0 15px 15px;
-	border-top:1px solid #eee;
-	border-bottom:1px solid #eee;
-	color:#79B933;
-}
-#content ul span {
-	color:#444;
-}
 #contentnorightbar ul {
-	margin:15px 0 15px 20px;
-	line-height:25px;
-	padding:15px 0;
-	border-top:1px solid #eee;
-	border-bottom:1px solid #eee;
+	margin-top:1px;
+	text-align:left;
+	list-style-type: none;
+	border:	0px;
+	padding-bottom:	2px;
 	color:#79B933;
 }
+
+#contentnorightbar li {
+	clear:left;
+	padding-top:1px;
+}
+
 #contentnorightbar ul span {
-	color:#444;
+	color:#444; 
 }
 
 #contentnorightbar h9 {
@@ -474,8 +469,20 @@ form fieldset{
 	display:block;
 }
 
-
 label.form {
+	display:		block;
+	font-size:90%;
+	font-weight:bold;
+	color:			#646729;
+	float:			left;
+	width:			180px;
+	margin:4px 0px 0px 0px;
+	padding:0px 0px 0px 8px;
+	clear:left;
+
+}
+
+label.old {
 	background-position:left;
 
 	color:#646729;
@@ -559,6 +566,18 @@ input[type='checkbox'] {
 	font:90% Verdana;
 	color:#777;
 }
+
+div.ToolTip {
+	font:80% Verdana;
+	font-weight: bold;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	float:left;
+	color:#E8A317;
+//	background-color: #F4F4F4;
+	margin-left:190px;
+}
+
 
 option {
         padding:2px;
