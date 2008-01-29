@@ -67,6 +67,8 @@ $l['all']['Type'] = "Type";
 $l['all']['CardBank'] = "CardBank";
 $l['all']['MACAddress'] = "MAC Address";
 $l['all']['Geocode'] = "Geocode";
+$l['all']['PINCode'] = "PIN Code";
+
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
 $l['all']['groupslist'] = "groups-list";
