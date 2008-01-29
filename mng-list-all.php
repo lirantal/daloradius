@@ -56,7 +56,7 @@
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname FROM 
 		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
-		WHERE Attribute LIKE '%-Password' GROUP BY UserName";
+		WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') GROUP BY UserName";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -69,7 +69,8 @@
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname FROM 
 		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
-		WHERE Attribute LIKE '%-Password' GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+		WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') 
+		GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
