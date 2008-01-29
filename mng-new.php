@@ -5,66 +5,39 @@
 
 	include('library/check_operator_perm.php');
 
-    // declaring variables
-    isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
-    isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
-    isset($_REQUEST['group']) ? $group = $_REQUEST['group'] : $group = "";
-    $logDebugSQL = "";
+	// declaring variables
+	$logDebugSQL = "";
 
-	if (isset($_POST['submit'])) {
-		$username = $_REQUEST['username'];
-		$password = $_REQUEST['password'];
-	        $passwordtype = $_REQUEST['passwordType'];
-		$group = $_REQUEST['group'];
+	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
+	isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
+	isset($_POST['group']) ? $group = $_POST['group'] : $group = "";
+	isset($_POST['authType']) ? $authType = $_POST['authType'] : $authType = "";
 
-		$firstname = $_REQUEST['firstname'];
-		$lastname = $_REQUEST['lastname'];
-		$email = $_REQUEST['email'];
-		$department = $_REQUEST['department'];
-		$company = $_REQUEST['company'];
-		$workphone = $_REQUEST['workphone'];
-		$homephone = $_REQUEST['homephone'];
-		$mobilephone = $_REQUEST['mobilephone'];
-		$notes = $_REQUEST['notes'];
+	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
+	isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
+ 	isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
 
-		isset($_REQUEST['dictAttributes']) ? $dictAttributes = $_REQUEST['dictAttributes'] 
-			: $dictAttributes = "";
-		
+	isset($_POST['group']) ? $group = $_POST['group'] : $group = "";
+	isset($_POST['macaddress']) ? $macaddress = $_POST['macaddress'] : $macaddress = "";
+	isset($_POST['pincode']) ? $pincode = $_POST['pincode'] : $pincode = "";
 
-		include 'library/opendb.php';
-        	include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
+	isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
+	isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
+	isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
+	isset($_POST['department']) ? $department = $_POST['department'] : $department = "";
+	isset($_POST['company']) ? $company = $_POST['company'] : $company = "";
+	isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone = "";
+	isset($_POST['homephone']) ? $homephone = $_POST['homephone'] :  $homephone = "";
+	isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
+	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 
-		$sql = "SELECT * FROM radcheck WHERE UserName='".$dbSocket->escapeSimple($username)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
+	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
 
-		if ($res->numRows() == 0) {
-			if (trim($username) != "" and trim($password) != "") {
 
-				// we need to perform the secure method escapeSimple on $dbPassword early because as seen below
-				// we manipulate the string and manually add to it the '' which screw up the query if added in $sql
-				$password = $dbSocket->escapeSimple($password);
+function addGroups($dbSocket, $username, $group) {
 
-				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
-					case "cleartext":
-						$dbPassword = "'$password'";
-						break;
-					case "crypt":
-						$dbPassword = "ENCRYPT('$password')";
-						break;
-					case "md5":
-						$dbPassword = "MD5('$password')";
-						break;
-					default:
-						$dbPassword = "'$password'";
-				}
-				
-				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($passwordtype)."', ':=', $dbPassword)";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-	
+	global $logDebugSQL;
+	global $configValues;
 				// insert usergroup mapping
 				if (isset($group) && (trim($group) != "")) {
 					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".$dbSocket->escapeSimple($username)."', 
@@ -72,8 +45,23 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				}
+}
 
-	                        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
+function addUserInfo($dbSocket, $username) {
+
+	global $firstname;
+	global $lastname;
+	global $email;
+	global $department;
+	global $company;
+	global $workphone;
+	global $homephone;
+	global $mobilephone;
+	global $notes;
+	global $logDebugSQL;
+	global $configValues;
+
+		                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
 	                        $res = $dbSocket->query($sql);
 	                        $logDebugSQL .= $sql . "\n";
 
@@ -91,17 +79,29 @@
 				} //FIXME:
 				  //if the user already exist in userinfo then we should somehow alert the user
 				  //that this has happened and the administrator/operator will take care of it
+
+}
+
+
+function addAttributes($dbSocket, $username) {
 		
+	global $logDebugSQL;
+	global $configValues;
+
 				foreach($_POST as $element=>$field) { 
 
 					// switch case to rise the flag for several $attribute which we do not
 					// wish to process (ie: do any sql related stuff in the db)
 					switch ($element) {
 
+						case "authType":
+
 						case "username":
 						case "password":
 						case "passwordType":
 						case "group":
+						case "macaddress":
+						case "pincode":
 						case "submit":
 						case "firstname":
 						case "lastname":
@@ -124,7 +124,6 @@
                                                 $skipLoopFlag = 0;              // resetting the loop flag
 						continue;
 					}
-
 
 	                                if (isset($field[0]))
 	                                        $attribute = $field[0];
@@ -150,16 +149,132 @@
 					$logDebugSQL .= $sql . "\n";
 
 				} // foreach
+
+}
+
+
+	if (isset($_POST['submit'])) {
+
+		include 'library/opendb.php';
+        	include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
+
+		global $username;
+		global $authType;
+		global $password;
+		global $passwordtype;
+
+		switch($authType) {
+			case "userAuth":
+				break;
+			case "macAuth":
+				$username = $macaddress;
+				break;
+			case "pincodeAuth":
+				$username = $pincode;
+				break;
+		}
+
+		$sql = "SELECT * FROM radcheck WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+
+		if ($res->numRows() == 0) {
+
+		    if ($authType == "userAuth") {
+
+			if (trim($username) != "" and trim($password) != "") {
+
+				// we need to perform the secure method escapeSimple on $dbPassword early because as seen below
+				// we manipulate the string and manually add to it the '' which screw up the query if added in $sql
+				$password = $dbSocket->escapeSimple($password);
+
+				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
+					case "cleartext":
+						$dbPassword = "'$password'";
+						break;
+					case "crypt":
+						$dbPassword = "ENCRYPT('$password')";
+						break;
+					case "md5":
+						$dbPassword = "MD5('$password')";
+						break;
+					default:
+						$dbPassword = "'$password'";
+				}
 				
+				// insert username/password
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."', 
+'".$dbSocket->escapeSimple($passwordtype)."', ':=', $dbPassword)";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+				
+
+				addGroups($dbSocket, $username, $group);
+				addUserInfo($dbSocket, $username);
+				addAttributes($dbSocket, $username);
+
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $username </b>";
 				$logAction = "Successfully added new user [$username] on page: ";
 
 			} else {
+
 				$actionStatus = "failure";
 				$actionMsg = "username or password are empty";
 				$logAction = "Failed adding (possible empty user/pass) new user [$username] on page: ";
 			}
+
+		   } elseif ($authType == "macAuth") {
+
+				// insert username/password
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($macaddress)."', 
+'Auth-Type', ':=', 'Accept')";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+				
+
+				addGroups($dbSocket, $macaddress, $group);
+				addUserInfo($dbSocket, $macaddress);
+				addAttributes($dbSocket, $macaddress);
+
+				$actionStatus = "success";
+				$actionMsg = "Added to database new mac auth user: <b> $macaddress </b>";
+				$logAction = "Successfully added new mac auth user [$macaddress] on page: ";
+
+		   } elseif ($authType == "pincodeAuth") {
+
+				// insert username/password
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($pincode)."', 
+'Auth-Type', ':=', 'Accept')";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+
+				addGroups($dbSocket, $pincode, $group);
+				addUserInfo($dbSocket, $pincode);
+				addAttributes($dbSocket, $pincode);
+
+				$actionStatus = "success";
+				$actionMsg = "Added to database new pincode: <b> $pincode </b>";
+				$logAction = "Successfully added new pincode [$pincode] on page: ";
+
+		   } else {
+			echo "unknown authentication method <br/>";
+		   }
+
+
+
+/*
+				$actionStatus = "success";
+				$actionMsg = "Added to database new user: <b> $username </b>";
+				$logAction = "Successfully added new user [$username] on page: ";
+
+			   } else {
+
+				$actionStatus = "failure";
+				$actionMsg = "username or password are empty";
+				$logAction = "Failed adding (possible empty user/pass) new user [$username] on page: ";
+*/
+
 		} else { 
 			$actionStatus = "failure";
 			$actionMsg = "user already exist in database: <b> $username </b>";
@@ -230,24 +345,24 @@
 
      <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
 
-
-
-
 	<fieldset>
 
 	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+
+		<input checked type='radio' value="userAuth" name="authType" onclick="javascript:toggleUserAuth()"/>
+		<b> Username Authentication </b>
 		<br/>
 
 		<ul>
 
-		<input type='radio' checked /> <b> Username Authentication </b> <br/><br/>
-
+<div id='UserContainer'>
 		<li class='fieldset'>
 		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
 		<input name='username' type='text' id='username' value='' tabindex=100 
 			onfocus="javascript:toggleShowDiv('usernameTooltip')"
 			onblur="javascript:toggleShowDiv('usernameTooltip')" />
 		<a href="javascript:randomUsername()" class='helper'>Random User</a>
+		<br/>
 
 		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/error.png' alt='Tip' border='0' /> 
@@ -268,6 +383,7 @@
 			<?php echo $l['Tooltip']['passwordTooltip'] ?>
 		</div>
 		</li>
+</div>
 
 
 		<li class='fieldset'>
@@ -291,7 +407,7 @@
 		        include_once 'include/management/populate_selectbox.php';
 		        populate_groups("Select Groups");
 		?>
-
+		<br/>
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/error.png' alt='Tip' border='0' /> 
 			<?php echo $l['Tooltip']['groupTooltip'] ?>
@@ -301,10 +417,69 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-
 		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-
 		</li>
+
+		</ul>
+
+	</fieldset>
+
+	<br/>
+
+	<fieldset>
+
+	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+
+
+		<input type='radio' name="authType" value="macAuth"  onclick="javascript:toggleMacAuth()"/>
+		<b> MAC Address Authentication </b>
+		<br/>
+
+		<ul>
+
+		<li class='fieldset'>
+		<label for='macaddress' class='form'><?php echo $l['all']['MACAddress']?></label>
+		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 
+			onfocus="javascript:toggleShowDiv('macaddressTooltip')"
+			onblur="javascript:toggleShowDiv('macaddressTooltip')" />
+		<br/>
+
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		</li>
+
+		</ul>
+
+	</fieldset>
+
+
+	<br/>
+
+	<fieldset>
+
+	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+
+		<input type='radio' name="authType" value="pincodeAuth" onclick="javascript:togglePinCode()"/>
+		<b> PIN Code Authentication </b>
+		<br/>
+
+		<ul>
+
+		<li class='fieldset'>
+		<label for='pincode' class='form'><?php echo $l['all']['PINCode']?></label>
+		<input name='pincode' type='text' id='pincode' value='' tabindex=106
+			onfocus="javascript:toggleShowDiv('pincodeTooltip')"
+			onblur="javascript:toggleShowDiv('pincodeTooltip')" />
+		<br/>
+
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		</li>
+
 		</ul>
 
 	</fieldset>
@@ -380,8 +555,8 @@
 		class='button'>
 
 	</fieldset>
+	<br/>
 
-<br/>
         <input type="hidden" value="0" id="divCounter" />
         <div id="divContainer"> </div> <br/>
      </div>		

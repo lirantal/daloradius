@@ -1,4 +1,72 @@
 
+function toggleUserAuth() {
+
+	//disable the mac auth
+	document.newuser.macaddress.disabled=true;
+
+	// disable pincode auth
+	document.newuser.pincode.disabled=true;
+
+	//enable the user auth
+	document.newuser.username.disabled=false;
+	document.newuser.password.disabled=false;
+	document.newuser.passwordType.disabled=false;
+	document.newuser.group.disabled=false;
+	document.newuser.usergroup.disabled=false;
+
+}
+
+function togglePinCode() {
+
+	// disable pincode auth
+	document.newuser.pincode.disabled=false;
+
+	//disable the mac auth
+	document.newuser.macaddress.disabled=true;
+
+	// disable the user auth
+	document.newuser.username.disabled=true;
+	document.newuser.password.disabled=true;
+	document.newuser.passwordType.disabled=true;
+	document.newuser.group.disabled=true;
+	document.newuser.usergroup.disabled=true;
+
+}
+
+function toggleMacAuth(state) {
+
+	// enable the mac auth
+	document.newuser.macaddress.disabled=false;
+
+	// disable the user auth
+	document.newuser.username.disabled=true;
+	document.newuser.password.disabled=true;
+	document.newuser.passwordType.disabled=true;
+	document.newuser.group.disabled=true;
+	document.newuser.usergroup.disabled=true;
+
+	// disable pincode auth
+	document.newuser.pincode.disabled=true;
+
+
+/*
+if (div.childNodes && div.childNodes.length > 0) {
+      for (var x = 0; x < div.childNodes.length; x++) {
+//	document.newuser.username.disabled=true;	//works
+//        toggleDisabled(el.childNodes[x]);
+//	var user = document.getElementById();
+//	user.disabled=true;
+//	div.childNodes[x].disabled=true;
+	divNodes[x].disabled=true;
+
+       }
+}
+
+*/
+
+}
+
+
 function setText(srcObj,dstObj) {
 
 var srcElem = document.getElementById(srcObj);
