@@ -543,7 +543,9 @@ input {
 }
 
 input:focus {
-	background-color:#FFF8C6;
+//	background-color:#FFF8C6;
+	background-color:#BCE954;
+//	background-color:#CCFB5D;
 	background-repeat:no-repeat;
 	background-position:right;
 }
@@ -552,6 +554,7 @@ input.button {
 	height:19px;
 	width:auto;
 	background-color: #ffffff;
+	border:1px solid #777;
 	padding:0px;
 	font:90% Verdana;
 	color:#000000;
@@ -581,12 +584,12 @@ input[type='checkbox'] {
 }
 
 div.ToolTip {
-	font:80% Verdana;
-	font-weight: bold;
+	font:88% Verdana;
 	padding-top: 1px;
 	padding-bottom: 1px;
 	float:left;
-	color:#E8A317;
+//	color:#E8A417;
+	color:#646729;
 //	background-color: #F4F4F4;
 	margin-left:190px;
 }
