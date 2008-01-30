@@ -42,12 +42,12 @@
 	
 
                                                         <input name="startdate" type="text" id="startdate" 
-value="			<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
+value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
 						else echo date("Y-m-d"); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
-                                                        <input name="enddate" type="text" id="enddate" value="			<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
+                                                        <input name="enddate" type="text" id="enddate" value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
 						else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, 
 							date("Y"))); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
@@ -89,8 +89,8 @@ value="			<?php if (isset($accounting_custom_startdate)) echo $accounting_custom
 				<option value="LIKE"> Contains </option>
 			</select>
 			</center>
-		<input type="text" name="where_field" value="
-			<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
+		<input type="text" name="where_field" 
+			value="<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
 
 		<br/><br/>
 		<h109> Accounting Fields in Query: </h109><br/>

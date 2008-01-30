@@ -31,7 +31,7 @@
 		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>Search Users<a>
 			<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
 			<input name="username" type="text" 
-				value=" <?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
+				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 			</form></li>
 			
 		<li><a href="mng-del.php"><b>&raquo;</b>Remove User</a></li>
