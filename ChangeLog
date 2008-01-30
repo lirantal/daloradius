@@ -3,14 +3,18 @@ release 0.9-6 - 17 Februray 2008
 	  and attributes which comes with latest freeradius 1.1.7, dynamically from the database using
 	  ajax support in the interface to easy management.
 	- added new profiles page which integrates the radgroupcheck and radgroupreply tables
+	- added new authentication methods - mac auth and pincode auth
+	- added new dynamic tooltips on the managment forms
+	- added - attributes automatically appear with the tooltip/help text (requested by Carlos Cessario)
+	- improved status pages layout (thanks to Carlos Cesario)
+	- improved code security on maintenance pages using system calls
+	- improved forms interface design (bye bye not-so-pretty tables layout!) and overall interface
+	  color scheme changes in css
 	- grouped together the group-reply and group-check pages into a single groups management page
-	- attributes automatically appear with the tooltip/help text (requested by Carlos Cessario)
 	- fixed bug on edit user page, when database password encryption is turned on, users' passwords
 	  were reset to a random value on every save.
 	- fixed bug on new user page of undefined indexes
-	- changed forms interface design (bye bye not-so-pretty tables layout!) and overall interface
-	  color scheme changes in css
-	- secured maintenance pages using system calls
+
 
 release 0.9-5 - 23 December 2007
 	- added improved support for sql db queries
