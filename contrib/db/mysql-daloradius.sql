@@ -9,6 +9,7 @@
 -- Table structure for table `hotspots`
 --
 
+DROP TABLE IF EXISTS `hotspots`;
 CREATE TABLE `hotspots` (
   `id` bigint(20) NOT NULL auto_increment,
   `name` varchar(32) default NULL,
@@ -31,6 +32,7 @@ CREATE TABLE `hotspots` (
 -- Table structure for table `operators`
 --
 
+DROP TABLE IF EXISTS `operators`;
 CREATE TABLE `operators` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(32) default NULL,
@@ -135,6 +137,7 @@ UNLOCK TABLES;
 -- Table structure for table `rates`
 --
 
+DROP TABLE IF EXISTS `rates`;
 CREATE TABLE `rates` (
   `id` bigint(20) NOT NULL auto_increment,
   `type` varchar(32) default NULL,
@@ -147,6 +150,7 @@ CREATE TABLE `rates` (
 -- Table structure for table `userinfo`
 --
 
+DROP TABLE IF EXISTS `userinfo`;
 CREATE TABLE `userinfo` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `username` varchar(30) default NULL,
