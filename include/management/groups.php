@@ -50,20 +50,19 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 
 				<input type='hidden' value='$row[0]' name='oldgroups[]' >
 
-				<label for='group' class='form'>".$l['all']['Group']." #".($counter+1)."
-				</label>
-				<input value='$row[0]' name='groups[]' id='group$counter' >
+				<label for='group' class='form'>".$l['all']['Group']." #".($counter+1)."</label>
 
-				<select onChange=\"javascript:setStringText(this.id,'group$counter')\" 
-					id='usergroup$counter' tabindex=105 class='form' >
-
-				".$groupOptions."
-
+				<select name='groups[]' id='usergroup$counter' tabindex=105 class='form' >
+					<option value='$row[0]'>$row[0]</option>
+					".$groupOptions."
 				</select>
 
-				<label for='groupPriority' class='form'>".$l['all']['GroupPriority']."
-				</label>
-				<input value='$row[1]' name='groups_priority[]' >
+				<br/>
+				<label for='groupPriority' class='form'>".$l['all']['GroupPriority']."</label>
+				<input class='integer' value='$row[1]' name='groups_priority[]' id='group_priority$counter' >
+				<img src=\"images/icons/bullet_arrow_up.png\" alt=\"+\" onclick=\"javascript:changeInteger('group_priority$counter','increment')\" />
+				<img src=\"images/icons/bullet_arrow_down.png\" alt=\"-\" onclick=\"javascript:changeInteger('group_priority$counter','decrement')\"/>
+
 				<br/>
 			";
 

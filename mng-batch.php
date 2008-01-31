@@ -256,7 +256,6 @@
                 <input class="integer" name='group_priority' type='text' id='group_priority' value='0' tabindex=105 />
 		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('group_priority','increment')" />
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('group_priority','decrement')"/>
-
 		</li>
 
 		<li class='fieldset'>
