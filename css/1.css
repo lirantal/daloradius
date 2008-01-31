@@ -560,6 +560,10 @@ input.button {
 	color:#000000;
 }
 
+input.integer {
+        width:15px;
+}
+
 input[type="radio"] {
         width:13px;
 }
