@@ -199,16 +199,21 @@
                 <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 		<br/>
 
+		<ul>
+		<li class='fieldset'>
                 <label for='usernamePrefix' class='form'><?php 
 			echo $l['all']['UsernamePrefix'] ?></label>
                 <input name='username_prefix' type='text' id='username_prefix' value='' tabindex=100 />
-		<br/>
+		</li>
 
+		<li class='fieldset'>
                 <label for='numberInstances' class='form'><?php 
 			echo $l['all']['NumberInstances'] ?></label>
                 <input name='number' type='text' id='number' value='' tabindex=101 />
-		<br/><br/><br/>
+		<li>
 
+
+		<li class='fieldset'>
                 <label for='usernameLength' class='form'><?php 
 			echo $l['all']['UsernameLength'] ?></label>
 		<select name="length_user" tabindex=102 class='form' >
@@ -219,9 +224,9 @@
 			<option id="10"> 10 </option>
 	        	<option id="12"> 12 </option>
 	        </select>
-		<br/>
-		<br/>
+		</li>
 
+		<li class='fieldset'>
                 <label for='passwordLength' class='form'><?php 
 			echo $l['all']['PasswordLength'] ?></label>
 		<select name="length_pass" tabindex=103 class='form' >
@@ -232,26 +237,32 @@
 		        <OPTION id="10"> 10 </OPTION>
 			<OPTION id="12"> 12 </OPTION>
 		</select>
-		<br/>
-		<br/>
+		</li>
 
-
+		<li class='fieldset'>
                 <label for='group' class='form'><?php echo $l['all']['Group']?></label>
-                <input name='group' type='text' id='group' value='' tabindex=104 />
 		<?php
 		        include 'include/management/populate_selectbox.php';
-		        populate_groups("Select Groups");
+		        populate_groups("Select Groups","group");
 		?>
-		<br/>
+                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                </div>
+		</li>
 
+		<li class='fieldset'>
                 <label for='groupPriority' class='form'><?php echo $l['all']['GroupPriority'] ?></label>
                 <input name='group_priority' type='text' id='group_priority' value='0' tabindex=105 />
+		</li>
 
+		<li class='fieldset'>
 		<br/><br/>
 		<hr><br/>
 		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?> " tabindex=1000 
 			class='button' />
-
+		</li>
+		</ul>
 	</fieldset>
 
 

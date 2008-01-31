@@ -175,18 +175,25 @@
 
                 <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 		<br/>
+		
+		<ul>
 
+		<li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
                 <input name='username' type='text' id='username' value='' tabindex=100 />
                 <a href="javascript:randomUsername()" class='helper'>Random User</a>
                 <br />
+		</li>
 
+		<li class='fieldset'>
                 <label for='password' class='form'><?php echo $l['all']['Password']?></label>
                 <input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword))
 			 echo $hiddenPassword ?> tabindex=101 />
                 <a href="javascript:randomPassword()" class='helper'>Random Password</a>
-                 <br />
+                <br />
+		</li>
 
+		<li class='fieldset'>
                 <label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
                 <select class='form' tabindex=102 name='passwordType' >
                         <option value='User-Password'>User-Password</option>
@@ -197,24 +204,29 @@
                         <option value='CHAP-Password'>CHAP-Password</option>
                 </select>
                 <br />
+		</li>
 
+		<li class='fieldset'>
                 <label for='group' class='form'><?php echo $l['all']['Group']?></label>
-                <input name='group' type='text' id='group' value='' tabindex=103 />
-
                 <?php   
                         include_once 'include/management/populate_selectbox.php';
-                        populate_groups("Select Groups");
+                        populate_groups("Select Groups","group");
                 ?>
+                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                </div>
+		</li>
 
-                <br/><br/>
-
+		<li class='fieldset'>
+		<br/>
                 <hr><br/>
-
 		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" 
 			onclick = "javascript:small_window(document.newuser.username.value, 
 			document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 
 			class='button' />
-
+		</li>
+		</ul>
         </fieldset>
 
 	<br/>
