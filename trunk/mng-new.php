@@ -400,12 +400,9 @@ function addAttributes($dbSocket, $username) {
 
 		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
-		<input name='group' type='text' id='group' value='' tabindex=103
-			onfocus="javascript:toggleShowDiv('groupTooltip')"
-			onblur="javascript:toggleShowDiv('groupTooltip')" />
 		<?php   
 		        include_once 'include/management/populate_selectbox.php';
-		        populate_groups("Select Groups");
+		        populate_groups("Select Groups","group");
 		?>
 		<br/>
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
