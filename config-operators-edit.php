@@ -133,8 +133,6 @@
 <div class="tabber">
 
      <div class="tabbertab" title="Operator Info">
-        <br/>
-
 
 	<fieldset>
 	
@@ -166,7 +164,6 @@
 
 	</div>
      <div class="tabbertab" title="Contact Info">
-        <br/>
 
 <?php
 	include_once('include/management/operatorinfo.php');
@@ -175,7 +172,6 @@
 
 	</div>
      <div class="tabbertab" title="ACL Settings">
-        <br/>
 
 <?php
         include_once('include/management/operator_tables.php');
