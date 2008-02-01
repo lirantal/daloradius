@@ -94,7 +94,7 @@ if ($operator_username)			// only if this page was called from the config-operat
 					// then we include the required file for database operations
 
 
-echo "<br/><br/>
+echo "
 <table border='2' class='table1' width='600'>
 <thead>
                 <tr>
