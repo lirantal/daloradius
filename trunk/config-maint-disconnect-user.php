@@ -107,8 +107,8 @@
  
 		<label for='packettype' class='form'><?php echo $l['all']['PacketType'] ?></label>
                 <select name='packettype' id='packettype' class='form' tabindex=101 >
-			<option value="disconnect"> PoD - Packet of Disconnect</option>
-			<option value="coa"> CoA - Change of Authorization </option>
+			<option value="disconnect"> PoD - Packet of Disconnect </option>
+			<option value="coa"> CoA - Change of Authorization &nbsp;</option>
                 </select>
                 <br/>
 
@@ -167,7 +167,8 @@
 
                 <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?></label>
                 <input name='nasport' type='text' id='nasport' value='3799' tabindex=106 />
-		<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=107 >
+		<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=107 
+			class='form'>
 			<option value="3799"> Choose Port... </option>
 			<option value="3799"> 3799 </option>
 			<option value="1700"> 1700 </option>
@@ -199,19 +200,27 @@
                 <br/>
 
                 <label for='timeout' class='form'><?php echo $l['all']['Timeout'] ?></label>
-                <input name='timeout' type='text' id='timeout' value='3' tabindex=107 />
+                <input class="integer" name='timeout' type='text' id='timeout' value='3' tabindex=107 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('timeout','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('timeout','decrement')"/>   
                 <br/>
 
                 <label for='retries' class='form'><?php echo $l['all']['Retries'] ?></label>
-                <input name='retries' type='text' id='retries' value='3' tabindex=108 />
+                <input class="integer" name='retries' type='text' id='retries' value='3' tabindex=108 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('retries','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('retries','decrement')"/>   
                 <br/>
 
                 <label for='count' class='form'><?php echo $l['all']['Count'] ?></label>
-                <input name='count' type='text' id='count' value='' tabindex=109 />
+                <input class="integer" name='count' type='text' id='count' value='1' tabindex=109 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('count','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('count','decrement')"/>   
                 <br/>
 
                 <label for='requests' class='form'><?php echo $l['all']['Requests'] ?></label>
-                <input name='requests' type='text' id='requests' value='3' tabindex=110 />
+                <input class="integer" name='requests' type='text' id='requests' value='3' tabindex=110 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('requests','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('requests','decrement')"/>   
                 <br/>
 
                 <br/><br/>
