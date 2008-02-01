@@ -20,6 +20,11 @@ AND password = '".$dbSocket->escapeSimple($operator_pass)."'";
       $_SESSION['logged_in'] = true;
       $_SESSION['operator_user'] = $operator_user;
 
+	// lets update the lastlogint time for this operator
+        $date = date("Y-m-d H:i:s");
+	$sql = "UPDATE operators SET lastlogin='$date' WHERE username='$operator_user'";
+	$res = $dbSocket->query($sql);
+
       // after login we move to the main page
       header('Location: index.php');
       exit;
