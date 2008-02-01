@@ -61,7 +61,7 @@
 
 	$credit = 0;
 
-	$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName LIKE '$username' AND (Attribute like '%Password')";
+	$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' AND ( (Attribute like '%Password') OR (Attribute='Auth-Type') )";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 	
@@ -86,6 +86,9 @@
         	</th></thead>
         ";
 	while($row = $res->fetchRow()) {
+	//row[0] = id
+	//row[1] = username
+	//row[2] = password
         echo "<tr>
         	<td> $row[0] </td>
                 <td> $row[1] </td>
@@ -97,6 +100,7 @@
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 	while($row = $res->fetchRow()) {
+		//row[0] = credit (meaning the total time that this user is allowed to surf)
 	        echo "<td> $row[0] </td>";
                 $credit = $row[0];
 	}
@@ -105,6 +109,10 @@
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 	while($row = $res->fetchRow()) {
+		//row[0] = used - meaning the total seconds that this user has used so far
+		//row[1] = total sessions - the number of time this user has logged on
+		//row[2] = total bytes in
+		//row[3] = total bytes out
 	        $used = $row[0];
 	        $total_sessions = $row[1];
 	        $total_bytesin = $row[2];
@@ -114,18 +122,18 @@
 	if ($credit == 0) { 
         	echo "<td> - </td>";
 		$remains_per = '-';
-	        $remains_t = '-';
+	        $remains_time = '-';
 	} else {
-	        $remains_per = 100 - (($used / $credit) * 100);
-	        $remains_t = $credit - $used;
+	        $remains_per = 100 - round(($used / $credit) * 100);
+	        $remains_time = $credit - $used;
 	}
 
-        echo "<td> $used </td>";
-        echo "<td> $remains_t </td>";
-        echo "<td> $remains_per </td>";
+        echo "<td>".seconds2time($used)."</td>";
+        echo "<td>".seconds2time($remains_time)."</td>";
+        echo "<td> $remains_per%</td>";
 	echo "<td> $total_sessions </td>";
-	echo "<td> $total_bytesin </td>";
-	echo "<td> $total_bytesout </td>";
+	echo "<td>".toxbyte($total_bytesin)."</td>";
+	echo "<td>".toxbyte($total_bytesout)."</td>";
         echo "</tr>";
 	echo "</table> <br/>";
 
