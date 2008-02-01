@@ -78,7 +78,7 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
 
         <fieldset>
 
@@ -104,7 +104,7 @@
                 <input name='radiusport' type='text' id='radiusport' value='<?php echo $radiusport ?>' tabindex=103 />
                 <br />
 
-                <label for='nasport' class='form'><?php echo $l['all']['NasPort'] ?>
+                <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?>
 			</label>
                 <input name='nasport' type='text' id='nasport' value='<?php echo $nasport ?>' tabindex=104 />
                 <br />
@@ -124,7 +124,7 @@
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['Advanced']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Advanced']; ?>">
 
 	<fieldset>
 
