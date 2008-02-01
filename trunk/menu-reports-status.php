@@ -29,7 +29,7 @@ include_once ("lang/main.php");
 		<h3>Status</h3>
 
 			<li><a href="rep-stat-server.php"><b>&raquo;</b>Server Status</a></li>
-			<li><a href="rep-stat-radius.php"><b>&raquo;</b>RADIUS Status </a></li>
+			<li><a href="rep-stat-services.php"><b>&raquo;</b>Services Status </a></li>
 
 		</ul>
 
