@@ -128,32 +128,39 @@
 
 	<fieldset>
 
-		<h302> Advanced </h302>
-		<br/>
+                <h302> Advanced </h302>
+                <br/>
 
                 <label for='debug' class='form'><?php echo $l['all']['Debug'] ?></label>
-		<select name='debug' id='debug' class='form' tabindex=106 >
-			<option value="yes"> Yes </option>
-			<option value="no"> No </option>
-		</select>
+                <select name='debug' id='debug' class='form' tabindex=106 >
+                        <option value="yes"> Yes </option>
+                        <option value="no"> No </option>
+                </select>
                 <br/>
 
                 <label for='timeout' class='form'><?php echo $l['all']['Timeout'] ?></label>
-                <input name='timeout' type='text' id='timeout' value='3' tabindex=107 />
-		<br/>
+                <input class="integer" name='timeout' type='text' id='timeout' value='3' tabindex=107 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('timeout','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('timeout','decrement')"/>
+                <br/>
 
                 <label for='retries' class='form'><?php echo $l['all']['Retries'] ?></label>
-                <input name='retries' type='text' id='retries' value='3' tabindex=108 />
-		<br/>
+                <input class="integer" name='retries' type='text' id='retries' value='3' tabindex=108 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('retries','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('retries','decrement')"/>
+                <br/>
 
                 <label for='count' class='form'><?php echo $l['all']['Count'] ?></label>
-                <input name='count' type='text' id='count' value='' tabindex=109 />
-		<br/>
+                <input class="integer" name='count' type='text' id='count' value='1' tabindex=109 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('count','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('count','decrement')"/>
+                <br/>
 
                 <label for='requests' class='form'><?php echo $l['all']['Requests'] ?></label>
-                <input name='requests' type='text' id='requests' value='3' tabindex=110 />
-		<br/>
-
+                <input class="integer" name='requests' type='text' id='requests' value='3' tabindex=110 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('requests','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('requests','decrement')"/>
+                <br/>
 
                 <br/><br/>
                 <hr><br/>
