@@ -181,12 +181,6 @@
 	</div>
 </div>
 
-
-						<br/><br/>
-<center>
-						<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
-</center>
-
 				</form>
 
 <?php
