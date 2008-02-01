@@ -76,7 +76,7 @@ CREATE TABLE `operators` (
   `rep_username` varchar(32) default NULL,
   `rep_lastconnect` varchar(32) default NULL,
   `rep_logs_radius` varchar(32) default NULL,
-  `rep_stat_radius` varchar(32) default NULL,
+  `rep_stat_services` varchar(32) default NULL,
   `rep_stat_server` varchar(32) default NULL,
   `rep_logs_system` varchar(32) default NULL,
   `rep_logs_boot` varchar(32) default NULL,
