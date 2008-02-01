@@ -43,7 +43,8 @@
 <?php
 
 	include 'library/opendb.php';
-    include 'library/datediff.php';
+	include 'library/datediff.php';
+        include 'include/common/calcs.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	$currdate = date("j M Y");
 
@@ -140,7 +141,7 @@
                         <td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]'> $row[0] </a> </td>
                         <td> $row[1] </td>
                         <td> $row[2] </td>
-                        <td> $row[3] </td>
+                        <td>".seconds2time($row[3])."</td>
                         <td> $status </td>
 			<td> ";
 
