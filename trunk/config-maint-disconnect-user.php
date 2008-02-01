@@ -93,7 +93,7 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['table']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
 
 
 	<fieldset>
@@ -165,7 +165,7 @@
 
                 <br/>
 
-                <label for='nasport' class='form'><?php echo $l['all']['NasPort'] ?></label>
+                <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?></label>
                 <input name='nasport' type='text' id='nasport' value='3799' tabindex=106 />
 		<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=107 >
 			<option value="3799"> Choose Port... </option>
@@ -184,7 +184,7 @@
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['table']['Advanced']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Advanced']; ?>">
 
         <fieldset>
 
