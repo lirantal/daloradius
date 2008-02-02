@@ -84,7 +84,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 
 			if (trim($username) != "" and trim($group) != "") {
 
-				if (!$priority) {
+				if (!isset($priority)) {
 					$priority = 1;		// default in mysql table for usergroup
 				}
 				

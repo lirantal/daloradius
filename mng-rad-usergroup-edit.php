@@ -50,7 +50,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
 			if (trim($username) != "" and trim($group) != "") {
 
-				if (!$priority) {
+				if (!isset($priority)) {
 					$priority = 1;
 				}
 
