@@ -94,57 +94,50 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 				<br/>
 				
                                 <form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['title']['GroupInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <?php if (trim($username) == "") { echo "<font color='#FF0000'>"; }?>
-                                                <b><?php echo $l['all']['Username'] ?></b>
-</td><td>												
-                                                <input value="<?php echo $username ?>" name="username"/>
-                                                </font><br/>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo  $l['all']['Groupname'] ?></b>
-</td><td>											
-                                                <input value="<?php echo $group ?>" name="group" id="group" /> 
-                                                </font>
 
-<?php   
-        include 'include/management/populate_selectbox.php';
-        populate_groups("Select Groups");
-?>
+        <fieldset>
 
-</td></tr>
-</table>
+                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+                <br/>
 
-        <br/>
-		<center>
-        <h4> Advnaced User-Group Attributes </h4>
-		</center>
-<table border='2' class='table1' width='600'>
-<tr><td>
+		<ul>
 
-                                                <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
-			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPriority')">
-                                                <b><?php echo $l['all']['Priority'] ?></b>
-</td><td>												
-<div id="attributesPriority" style="display:none;visibility:visible" >
-						<br/>
-                                                <input value="<?php echo $priority ?>" name="priority" /> (default: 1)
-                                                </font>										
-</div><br/>
-</td></tr>
-</table>
-                                                <br/><br/>
-<center>												
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>"/>
-</center>
-                                </form>
+		<li class='fieldset'>
+                <label for='username' class='form'><?php echo $l['all']['Username'] ?></label>
+                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+		</li>
+
+		<li class='fieldset'>
+                <label for='group' class='form'><?php echo $l['all']['Groupname'] ?></label>
+		<?php   
+		        include 'include/management/populate_selectbox.php';
+		        populate_groups("Select Groups","group","long");
+		?>
+                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                </div>
+		</li>
+
+
+		<li class='fieldset'>
+                <label for='priority' class='form'><?php echo $l['all']['Priority'] ?></label>
+                <input class='integer' name='priority' type='text' id='priority' value='0' tabindex=102 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('priority','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('priority','decrement')"/>
+		</li>	
+
+		<li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		</li>
+
+
+		</ul>
+	</fieldset>
+
+
 
 
 <?php

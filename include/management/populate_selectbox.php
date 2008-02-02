@@ -14,8 +14,8 @@ function populate_groups($defaultOption = "Select Group",$elementName = "", $css
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' 
 			name='$elementName' class='$cssClass' tabindex=105
-                        onfocus=\"javascript:toggleShowDiv('groupTooltip')\"
-                        onblur=\"javascript:toggleShowDiv('groupTooltip')\" />
+                        onfocus=\"javascript:toggleShowDiv('".$elementName."Tooltip')\"
+                        onblur=\"javascript:toggleShowDiv('".$elementName."Tooltip')\" />
 			<option value=''>$defaultOption</option>";
 
         include 'library/opendb.php';

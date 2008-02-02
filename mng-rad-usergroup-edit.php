@@ -38,7 +38,6 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 		$groupOld = $_REQUEST['groupOld'];;
 		$group = $_REQUEST['group'];;
 		$priority = $_REQUEST['priority'];;
-
 		
 		include 'library/opendb.php';
 
@@ -133,57 +132,59 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
                                                 <input type="hidden" value="<?php echo $username ?>" name="username" />
-<table border='0' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['title']['GroupInfo']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-                                                <?php if (trim($groupOld) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l['all']['CurrentGroupname'] ?></b>
-</td><td>											
-                                                <input value="<?php echo $groupOld ?>" name="groupOld" /> (Old Group Name)
-                                                </font><br/>
-</td></tr>
-<tr><td>
-                                                <?php if (trim($group) == "") { echo "<font color='#FF0000'>";  }?>
-	                                        <b><?php echo $l['all']['NewGroupname'] ?></b>
-</td><td>											
-                                                <input value="<?php echo $group ?>" name="group" id="group" /> 
-                                                </font>
 
-<?php   
-        include 'include/management/populate_selectbox.php';
-        populate_groups("Select Groups");
-?>
+        <fieldset>
 
-</td></tr>
-</table>
+                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+                <br/>
 
-        <br/>
-		<center>
-        <h4> Advnaced User-Group Attributes </h4>
-		</center>
+                <ul>
 
-<table border='0' class='table1' width='600'>
-<tr><td>
-                                                <?php if (trim($priority) == "") { echo "<font color='#FF0000'>";  }?>
-			<input type="checkbox" onclick="javascript:toggleShowDiv('attributesPriority')">
-                                                <b><?php echo $l['all']['Priority'] ?></b>
-</td><td>
-<div id="attributesPriority" style="display:none;visibility:visible" >
-                                                <input value="<?php echo $priority ?>" name="priority" />
-                                                </font>
-</div>
-</td></tr>
-</table>
-<br/>
+                <li class='fieldset'>
+                <label for='username' class='form'><?php echo $l['all']['Username'] ?></label>
+                <input type='hidden' name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <input disabled type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                </li>
 
-<center>
-                                                <input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>"/>
-</center>
-                                </form>
+
+                <li class='fieldset'>
+                <label for='groupOld' class='form'><?php echo $l['all']['CurrentGroupname'] ?></label>
+                <input type='hidden' name='groupOld' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
+                <input disabled type='text' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
+		Old Group Name
+                </li>
+
+                <li class='fieldset'>
+                <label for='group' class='form'><?php echo $l['all']['NewGroupname'] ?></label>
+                <?php   
+                        include 'include/management/populate_selectbox.php';
+                        populate_groups("Select Groups","group","long");
+                ?>
+                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                </div>
+                </li>
+
+
+                <li class='fieldset'>
+                <label for='priority' class='form'><?php echo $l['all']['Priority'] ?></label>
+                <input class='integer' name='priority' type='text' id='priority' value='<?php echo $priority ?>' tabindex=103 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('priority','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('priority','decrement')"/>
+                </li>
+
+                <li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                </li>
+
+
+                </ul>
+        </fieldset>
+
+        </form>
 
 
 
