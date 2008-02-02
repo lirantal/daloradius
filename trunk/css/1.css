@@ -578,6 +578,16 @@ select.form {
 	margin: 2px;
 }
 
+select.long {
+        width:185px;
+	height:20px;
+	padding:1px;
+	border:1;
+	font:100% Verdana;
+	color:#000000;
+	margin: 2px;
+}
+
 input[type='checkbox'] {
 	width:15px;
 	padding:4px;
