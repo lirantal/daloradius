@@ -5,26 +5,28 @@
         
 	include('library/check_operator_perm.php');
 
-
-
-
-	$group = "";
 	$username = "";
+	$group = "";
 
-	if (isset($_REQUEST['username'])) {
-		$username = $_REQUEST['username'];
+	if (isset($_POST['usergroup'])) {
+		$usergroup_array = $_REQUEST['usergroup'];
+	} else {
+		if (isset($_POST['username']))
+			$usergroup_array = array($_REQUEST['username']."||".$_REQUEST['group']);
 	}
-
-	if (isset($_REQUEST['group'])) {
-		$group = $_REQUEST['group'];
- 	}
-
+	
 	$logDebugSQL = "";
 
-	if (isset($_POST['submit'])) {
+	if (isset($usergroup_array)) {
+
+		foreach ($usergroup_array as $usergroup) {
+
+		list($username, $group) = split('\|\|', $usergroup);
 
 		if (trim($username) != "") {
-				
+	
+			$allGroups =  "";
+			$allUsernames = "";			
 			include 'library/opendb.php';
 
 			if (trim($group) != "") {
@@ -35,22 +37,23 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
+				$allUsernames .= $username . ", ";
+				$allGroups .= $group . ", ";
 				$actionStatus = "success";
-				$actionMsg = "Deleted Username: <b> $username </b> and it's Groupname: <b> $group </b>";
-				$logAction = "Successfully deleted user [$username] and it's group [$group] on page: ";
+				$actionMsg = "Deleted all Usernames: <b> $allUsernames </b> and all their Groupnames: <b> $allGroups </b>";
+				$logAction = "Successfully deleted all users [$allUsernames] and their groups [$allGroups] on page: ";
 
 				include 'library/closedb.php';
 							
 			} else {
-
 				// delete all attributes associated with a username
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
-				$actionMsg = "Deleted all instances for Username: <b> $username </b>";
-				$logAction = "Successfully deleted all group instances for user [$username] on page: ";
+				$actionMsg = "Deleted all instances for Username: <b> $allUsernames </b>";
+				$logAction = "Successfully deleted all group instances for users [$allUsernames] on page: ";
 
 				include 'library/closedb.php';
 			}
@@ -59,6 +62,8 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 			$actionStatus = "failure";
 			$actionMsg = "No user was entered, please specify a username to remove from database";
 			$logAction = "Failed deleting empty user on page: ";
+		}
+
 		}
 	}
 	

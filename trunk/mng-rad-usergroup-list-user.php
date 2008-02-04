@@ -67,6 +67,8 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
+	echo "<form name='listallusergroup' method='post' action='mng-rad-usergroup-del.php'>";
+
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
@@ -75,8 +77,15 @@
 							</tr>
                                                         <tr>
                                                         <th colspan='10' align='left'>
-                <br/>
-        ";
+                                Select:
+                                <a class=\"table\" href=\"javascript:SetChecked(1,'usergroup[]','listallusergroup')\">All</a>
+
+                                <a class=\"table\" href=\"javascript:SetChecked(0,'usergroup[]','listallusergroup')\">None</a>
+                                <br/>
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeUserGroupCheckbox(\"listallusergroup\")' />
+                                <br/><br/>
+                ";
+
 
         if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, "&username=$username");
@@ -113,7 +122,7 @@
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $row[0] </td>
+				<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
 				<td> $row[1] </td>
 				<td> $row[2] </td>
 				<td> <a href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'> ".$l['all']['edit']." </a>
@@ -137,7 +146,7 @@
 
 
 	echo "</table>";
-
+	echo "</form>";
 	include 'library/closedb.php';
 ?>
 
