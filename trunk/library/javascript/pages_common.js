@@ -268,3 +268,25 @@ function removeUserGroupCheckbox(formname) {
 
         return false;
 }
+
+
+function removeProfilesCheckbox(formname) {
+
+        var count = 0;
+        var form = document.getElementsByTagName('input');
+        for (var i=0; i < form.length; ++i) {
+                var e = form[i];
+                if (e.type == 'checkbox'
+                && e.checked)
+                ++count;
+        }
+
+
+        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
+		document.forms[formname].action="mng-rad-profiles-del.php";
+		document.forms[formname].submit();
+                return true;
+        }
+
+        return false;
+}

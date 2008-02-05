@@ -71,6 +71,8 @@
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
+
+        echo "<form name='listprofiles' method='post' action='mng-rad-profiles-del.php'>";
 	
 	echo "<table border='0' class='table1'>\n";
 	echo "
@@ -80,8 +82,17 @@
 							</tr>
                                                         <tr>
                                                         <th colspan='10' align='left'>
-                <br/>
-        ";
+
+                                Select:
+                                <a class=\"table\" href=\"javascript:SetChecked(1,'profile[]','listprofiles')\">All</a>
+
+                                <a class=\"table\" href=\"javascript:SetChecked(0,'profile[]','listprofiles')\">None</a>
+                                <br/>
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeProfilesCheckbox(\"listprofiles\")' />
+                                <br/><br/>
+
+
+                ";
 
         if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
                 setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
@@ -100,15 +111,11 @@
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
-		<th scope='col'> ".$l['all']['Action']." </th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $row[0] </td>
-				<td> <a href='mng-rad-profiles-edit.php?profile=$row[0]'> ".$l['all']['edit']." </a>
-					 <a href='mng-rad-profiles-del.php?profile=$row[0]'> ".$l['all']['del']." </a>
-					 </td>
-
+				<td> <input type='checkbox' name='profile[]' value='$row[0]'>
+					<a class='tablenovisit' href='mng-rad-profiles-edit.php?profile=$row[0]'> $row[0] </a> </td>
 		</tr>";
 	}
 
@@ -126,6 +133,7 @@
 
 
 	echo "</table>";
+	echo "</form>";
 
 	include 'library/closedb.php';
 ?>
