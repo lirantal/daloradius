@@ -5,66 +5,76 @@
 
 	include('library/check_operator_perm.php');
 
-	$groupname = "";
-	$value = "";
-	$logDebugSQL = "";
+        $groupname = "";
+        $attribute = "";
+        $value = "";
+        $logDebugSQL = "";
 
-	isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "";
-        isset($_REQUEST['attribute']) ? $attribute = $_REQUEST['attribute'] : $attribute = "";
-	isset($_REQUEST['value']) ? $value = $_REQUEST['value'] : $value = "";
+        if (isset($_POST['group'])) {
+                $group_array = $_POST['group'];
+        } else {
+                if (isset($_POST['groupname']))
+                $group_array = array($_POST['groupname']."||".$_POST['attribute']."||".$_POST['value']);
+        }
 
-	if (isset($_POST['submit'])) {
-	
-		if (trim($groupname) != "") {
 
-			include 'library/opendb.php';
+        if (isset($group_array)) {
 
-                        if ( (trim($value) != "") && (trim($attribute) != "") ) {
+                $allGroups =  "";
+                $allAttributes =  "";
+                $allValues =  "";
 
-				// delete only a specific groupname and it's attribute
-                                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." 
+                foreach ($group_array as $group) {
+
+                        list($groupname, $attribute, $value) = split('\|\|', $group);
+
+                        if (trim($groupname) != "") {
+
+                                $allGroups .= $groupname . ", ";
+                                $allAttributes .= $attribute . ", ";
+                                $allValues .= $value . ", ";
+
+                                if ( (trim($attribute) != "") && (trim($value) != "") ) {
+
+                                        include 'library/opendb.php';
+                                        // delete only a specific groupname and it's attribute
+                                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']."
 WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND Attribute='$attribute'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+                                        $res = $dbSocket->query($sql);
+                                        $logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-                                $actionMsg = "Deleted Group: <b> $groupname </b> with Attribute: <b> $attribute </b> and it's Value: <b> $value </b>";
-                                $logAction = "Successfully deleted group [$groupname] with attribute [$attribute] and it's value [$value] on page: ";
+                                        $actionStatus = "success";
+                                        $actionMsg = "Deleted Group(s): <b> $allGroups </b> with Attribute(s): <b> $allAttributes </b> and it's Value: <b> $allValues </b>";
+                                        $logAction = "Successfully deleted group(s) [$allGroups] with attribute [$allAttributes] and it's value [$allValues] on page: ";
 
-				include 'library/closedb.php';
+                                        include 'library/closedb.php';
 
-			} else {
+                                } else {
 
-				// delete all attributes associated with a groupname
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+                                        include 'library/opendb.php';
 
-				$actionStatus = "success";
-				$actionMsg = "Deleted all instances for Group: <b> $groupname </b>";
-				$logAction = "Successfully deleted all instances for group [$groupname] on page: ";
+                                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'";
+                                        $res = $dbSocket->query($sql);
+                                        $logDebugSQL .= $sql . "\n";
 
-				include 'library/closedb.php';
-			}
+                                        $actionStatus = "success";
+                                        $actionMsg = "Deleted all instances for Group(s): <b> $allGroups </b>";
+                                        $logAction = "Successfully deleted all instances for group(s) [$allGroups] on page: ";
 
-		}  else {
-			$actionStatus = "failure";
-			$actionMsg = "No groupname was entered, please specify a groupname to remove from database";
-			$logAction = "Failed deleting empty group on page: ";
-		}
-	}
-	
-	if (isset($_REQUEST['groupname']))
-		$groupname = $_REQUEST['groupname'];
-	else
-		$groupname = "";
+                                        include 'library/closedb.php';
 
-	if (trim($groupname) != "") {
-		$groupname = $_REQUEST['groupname'];
-	} else {
-		$actionStatus = "failure";
-		$actionMsg = "no Groupname was entered, please specify a Groupname to delete </b>";
-	}	
+                                }
+
+                        } else {
+
+                                        $actionStatus = "failure";
+                                        $actionMsg = "No groupname was entered, please specify a groupname to remove from database";
+                                        $logAction = "Failed deleting empty group on page: ";
+                        }
+
+                } // foreach
+
+        } // if 
 
 
 
