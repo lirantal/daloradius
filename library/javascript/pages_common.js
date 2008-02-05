@@ -290,3 +290,47 @@ function removeProfilesCheckbox(formname) {
 
         return false;
 }
+
+
+function removeGroupReplyCheckbox(formname) {
+
+        var count = 0;
+        var form = document.getElementsByTagName('input');
+        for (var i=0; i < form.length; ++i) {
+                var e = form[i];
+                if (e.type == 'checkbox'
+                && e.checked)
+                ++count;
+        }
+
+
+        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
+		document.forms[formname].action="mng-rad-groupreply-del.php";
+		document.forms[formname].submit();
+                return true;
+        }
+
+        return false;
+}
+
+
+function removeGroupCheckCheckbox(formname) {
+
+        var count = 0;
+        var form = document.getElementsByTagName('input');
+        for (var i=0; i < form.length; ++i) {
+                var e = form[i];
+                if (e.type == 'checkbox'
+                && e.checked)
+                ++count;
+        }
+
+
+        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
+		document.forms[formname].action="mng-rad-groupcheck-del.php";
+		document.forms[formname].submit();
+                return true;
+        }
+
+        return false;
+}
