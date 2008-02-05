@@ -75,6 +75,8 @@ $rowsPerPage;";
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
+        echo "<form name='listgroupcheck' method='post' action='mng-rad-groupcheck-del.php'>";
+
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
@@ -84,8 +86,16 @@ $rowsPerPage;";
 
                                                         <tr>
                                                         <th colspan='10' align='left'>
-                <br/>
-        ";
+
+                                Select:
+                                <a class=\"table\" href=\"javascript:SetChecked(1,'group[]','listgroupcheck')\">All</a>
+
+                                <a class=\"table\" href=\"javascript:SetChecked(0,'group[]','listgroupcheck')\">None</a>
+                                <br/>
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeGroupCheckCheckbox(\"listgroupcheck\")' />
+                                <br/><br/>
+
+                ";
 
         if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
                 setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
@@ -129,18 +139,14 @@ $rowsPerPage;";
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
-		<th scope='col'> ".$l['all']['Action']." </th>						
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $row[0] </td>
-				<td> $row[1] </td>
-				<td> $row[2] </td>						
-				<td> $row[3] </td>						
-				<td> <a href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]'> ".$l['all']['edit']." </a>
-					 <a href='mng-rad-groupcheck-del.php?groupname=$row[0]&attribute=$row[1]&value=$row[3]'> ".$l['all']['del']." </a>
-					 </td>
-
+                                <td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
+                                        <a class='tablenovisit' href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]'> $row[0] </td>
+                                <td> $row[1] </td>
+                                <td> $row[2] </td>                                              
+                                <td> $row[3] </td>      
 		</tr>";
 	}
 
@@ -157,6 +163,7 @@ $rowsPerPage;";
                 ";
 
 	echo "</table>";
+	echo "</form>";
 
 	include 'library/closedb.php';
 ?>
