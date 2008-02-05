@@ -128,10 +128,8 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
-				<td> $row[1] </td>
-				<td> $row[2] </td>
-				<td> <a href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'> ".$l['all']['edit']." </a>
-					 <a href='mng-rad-usergroup-del.php?username=$row[0]&group=$row[1]'> ".$l['all']['del']." </a>
+				<td> <a href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>  $row[1] </a> </td>
+				<td> $row[2] </td><td>
 					 <a href='mng-rad-usergroup-list-user.php?username=$row[0]&group=$row[1]'> ".$l['all']['groupslist']." </a>
 					 </td>
 
