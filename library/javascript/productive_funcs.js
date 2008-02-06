@@ -1,26 +1,22 @@
+/***********************************************************************
+ * randomAlphanmeric
+ * creates random characters of alpha numeric chars
+ *
+ * dstObj               - the destination object to copy the data to
+ * charsLength          - length of random characters
+ ***********************************************************************/
+function randomAlphanumeric(dstObj,charsLength) {
 
-function randomPassword()
-{
-  var length = 8;
-  var chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
-  var pass = "";
-  for(x=0;x<length;x++)
-  {
-    var i = Math.floor(Math.random() * 62);
-    pass += chars.charAt(i);
-  }
-  document.newuser.password.value = pass;
-}
+	var dstElem = document.getElementById(dstObj);
 
-function randomUsername()
-{
-  var length = 8;
-  var chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
-  var user = "";
-  for(x=0;x<length;x++)
-  {
-    var i = Math.floor(Math.random() * 62);
-    user += chars.charAt(i);
-  }
-  document.newuser.username.value = user;
+	var length = charsLength;
+	var chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
+	var randomChars = "";
+
+	for(x=0; x<length; x++) {
+		var i = Math.floor(Math.random() * 62);
+		randomChars += chars.charAt(i);
+	}
+
+	dstElem.value = randomChars;
 }
