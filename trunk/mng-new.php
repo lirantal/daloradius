@@ -347,7 +347,7 @@ function addAttributes($dbSocket, $username) {
 		<input name='username' type='text' id='username' value='' tabindex=100 
 			onfocus="javascript:toggleShowDiv('usernameTooltip')"
 			onblur="javascript:toggleShowDiv('usernameTooltip')" />
-		<a href="javascript:randomUsername()" class='helper'>Random User</a>
+		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
 		<br/>
 
 		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -362,7 +362,7 @@ function addAttributes($dbSocket, $username) {
 			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101
 			onfocus="javascript:toggleShowDiv('passwordTooltip')"
 			onblur="javascript:toggleShowDiv('passwordTooltip')" />
-		<a href="javascript:randomPassword()" class='helper'>Random Password</a>
+		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8)" />
 
 		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/error.png' alt='Tip' border='0' /> 
@@ -459,6 +459,7 @@ function addAttributes($dbSocket, $username) {
 		<input name='pincode' type='text' id='pincode' value='' tabindex=106
 			onfocus="javascript:toggleShowDiv('pincodeTooltip')"
 			onblur="javascript:toggleShowDiv('pincodeTooltip')" />
+		<input type='button' value='Generate' class='button' onclick="javascript:randomAlphanumeric('pincode',10)" />
                 <div id='pincodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['pincodeTooltip'] ?>

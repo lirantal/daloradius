@@ -181,7 +181,7 @@
 		<li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
                 <input name='username' type='text' id='username' value='' tabindex=100 />
-                <a href="javascript:randomUsername()" class='helper'>Random User</a>
+                <a href="javascript:randomAlphanumeric('username',8)" class='helper'>Random User</a>
                 <br />
 		</li>
 
@@ -189,7 +189,7 @@
                 <label for='password' class='form'><?php echo $l['all']['Password']?></label>
                 <input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword))
 			 echo $hiddenPassword ?> tabindex=101 />
-                <a href="javascript:randomPassword()" class='helper'>Random Password</a>
+                <a href="javascript:randomAlphanumeric('password',8)" class='helper'>Random Password</a>
                 <br />
 		</li>
 
