@@ -11,28 +11,13 @@
 *                                                                  *
 *******************************************************************/
 
-//system("pgrep mysql >/dev/null 2>&1", $ret_mysql);
-//system("pgrep radius >/dev/null 2>&1", $ret_rad);
-
-//if ($ret_rad == 0) {
-//        echo "RADIUS is up <br/>";
-//} else {
-//        echo "RADIUS is down <br/>";
-//}
-
-//if ($ret_mysql == 0) {
-//        echo "MySQL is up <br/>";
-//} else {
-//      echo "MySQL is down <br/>";
-//}
-
 function check_service($sname) {
 	if ($sname != '') {
-		system("pgrep $sname >/dev/null 2>&1", $ret_service);
+		system("pgrep ".escapeshellarg($sname)." >/dev/null 2>&1", $ret_service);
 		if ($ret_service == 0) {
-			return "is up and running...";
+			return "Enabled";
 		} else {
-			return "down";
+			return "Disabled";
 		}
 	} else {
 		return "no service name";
