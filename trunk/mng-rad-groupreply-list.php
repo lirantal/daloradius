@@ -82,7 +82,7 @@
 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'group[]','listgroupreply')\">None</a>
                                 <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeGroupReplyCheckbox(\"listgroupreply\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listgroupreply\",\"mng-rad-groupreply-del.php\")' />
                                 <br/><br/>
 
                 ";

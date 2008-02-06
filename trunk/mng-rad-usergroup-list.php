@@ -82,7 +82,7 @@
 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'usergroup[]','listallusergroup')\">None</a>
 	                        <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeUserGroupCheckbox(\"listallusergroup\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusergroup\",\"mng-rad-usergroup-del.php\")' />
                                 <br/><br/>
 
 

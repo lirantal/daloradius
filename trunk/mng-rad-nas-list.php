@@ -84,7 +84,7 @@
 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'nashost[]','listallnas')\">None</a>
                         <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeNASCheckbox(\"listallnas\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallnas\",\"mng-rad-nas-del.php\")' />
                                 <br/><br/>
 
 
