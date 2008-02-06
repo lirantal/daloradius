@@ -1,5 +1,11 @@
-
-
+/***********************************************************************
+ * changeInteger
+ * this function implements a spinbox, it increments or decrement
+ * the value in a text input (which needs to be an integer)
+ *
+ * dstObj		- the destination object text input
+ * action		- increment or decrement
+ ***********************************************************************/
 function changeInteger(dstObj,action) {
 
 	var dstElem = document.getElementById(dstObj);
@@ -82,53 +88,60 @@ if (div.childNodes && div.childNodes.length > 0) {
 }
 
 
+/***********************************************************************
+ * setText
+ * srcObj	- an integer to be multiplied
+ * dstObj	- the dstination object is multiplied by it's value 
+ * 		  and the value of the source object.
+ ***********************************************************************/
 function setText(srcObj,dstObj) {
 
-var srcElem = document.getElementById(srcObj);
-var elemVal = srcElem.options[srcElem.selectedIndex].value;
+	var srcElem = document.getElementById(srcObj);
+	var elemVal = srcElem.options[srcElem.selectedIndex].value;
 
-var dstElem = document.getElementById(dstObj);
-var dstElemVal = dstElem.value;
-var res = (dstElemVal * elemVal);
-dstElem.value = res;
-
-/*
-	// some debugging information which could be useful:
-dstElem.value = "srcObj: " + srcObj + " - srcElem: " + srcElem;
-dstElem.value = "srcElemVal: " + elemVal + " - dstElemVal: " + dstElemVal;
-*/
-
+	var dstElem = document.getElementById(dstObj);
+	var dstElemVal = dstElem.value;
+	var res = (dstElemVal * elemVal);
+	dstElem.value = res;
 
 }
 
 
 
+/***********************************************************************
+ * setStringText
+ * srcObj	- the source object text
+ * dstObj	- the dstination object is set to the source object text
+ ***********************************************************************/
 function setStringText(srcObj,dstObj) {
 
-var srcElem = document.getElementById(srcObj);
-var elemVal = srcElem.options[srcElem.selectedIndex].value;
+	var srcElem = document.getElementById(srcObj);
+	var elemVal = srcElem.options[srcElem.selectedIndex].value;
 
-var dstElem = document.getElementById(dstObj);
-var dstElemVal = dstElem.value;
-dstElem.value = elemVal;
+	var dstElem = document.getElementById(dstObj);
+	var dstElemVal = dstElem.value;
+	dstElem.value = elemVal;
 
 }
 
 
 
-
-function toggleShowDiv(pass) {
+/***********************************************************************
+ * toggleShowDiv
+ * toggles a div on/off (visible/hidden)
+ * 
+ * idName		- the id name of the target div to toggle on/off
+ * 			  (visible/hidden)
+ ***********************************************************************/
+function toggleShowDiv(idName) {
 
 	var divs = document.getElementsByTagName('div');
 	for(i=0;i<divs.length;i++) {
-		if (divs[i].id.match(pass)) {
+		if (divs[i].id.match(idName)) {
 			if (document.getElementById) {							// compatible with IE5 and NS6
-//				if (divs[i].style.visibility=="visible")
 				if (divs[i].style.display=="inline")
-//					divs[i].style.visibility="hidden";
 					divs[i].style.display="none";
 				else
-//					divs[i].style.visibility="visible";
 	 				divs[i].style.display="inline";
 			} else if (document.layers) {							// compatible with Netscape 4
 				if (document.layers[divs[i]].display=='visible')
@@ -145,34 +158,49 @@ function toggleShowDiv(pass) {
 	}
 }
 
-
+/***********************************************************************
+ * small_window
+ * opens up a small window with quick accounts information
+ *
+ * user		- the username
+ * pass		- the password
+ * time		- the credit time that is left for the user
+ ***********************************************************************/
 function small_window(user,pass,time) {
-  var newWindow;
-  var currentTime = new Date();
-  var props = "scrollBars=yes,resizable=yes,toolbar=no,menubar=no,location=no,directories=no,width=500,height=200";
-  newWindow = window.open("about:blank","blank",props);
-  newWindow.document.write("Thank you. <br/>");
-  newWindow.document.write("Your username is: ");
-  newWindow.document.write(user);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Your password is: ");
-  newWindow.document.write(pass);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Your timecredit is: ");
-  newWindow.document.write(time);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Receipt produced on: ");
-  newWindow.document.write(currentTime);
-  newWindow.document.write("<br/>");
-  newWindow.document.write("Enginx HotSpot System ");
-  newWindow.document.write("<br/>");
+
+	var newWindow;
+	var currentTime = new Date();
+	var props = "scrollBars=yes,resizable=yes,toolbar=no,menubar=no,location=no,directories=no,width=500,height=200";
+	newWindow = window.open("about:blank","blank",props);
+
+	newWindow.document.write("Thank you. <br/>");
+	newWindow.document.write("Your username is: ");
+	newWindow.document.write(user);
+	newWindow.document.write("<br/>");
+	newWindow.document.write("Your password is: ");
+	newWindow.document.write(pass);
+	newWindow.document.write("<br/>");
+	newWindow.document.write("Your timecredit is: ");
+	newWindow.document.write(time);
+	newWindow.document.write("<br/>");
+	newWindow.document.write("<br/>");
+	newWindow.document.write("Receipt produced on: ");
+	newWindow.document.write(currentTime);
+	newWindow.document.write("<br/>");
+	newWindow.document.write("Enginx HotSpot System ");
+	newWindow.document.write("<br/>");
 }
 
 
+/***********************************************************************
+ * toggleShowDiv
+ * user		- the username
+ * pass		- the password
+ * time		- the credit time that is left for the user
+ ***********************************************************************/
 function SetChecked(val,chkName,formname) {
         dml=document.forms[formname];
-        len = dml.elements.length;
+	len = dml.elements.length;
         var i=0;
         for( i=0 ; i<len ; i++) {
                 if (dml.elements[i].name==chkName) {
@@ -182,7 +210,15 @@ function SetChecked(val,chkName,formname) {
 }
 
 
-function removeUserCheckbox(formname) {
+/***********************************************************************
+ * removeCheckbox
+ * submits a form with checkbox values to a remote page
+ * 
+ * formName	- the form name
+ * pageDst	- the page destination to be submitted 
+ *
+ ***********************************************************************/
+function removeCheckbox(formName,pageDst) {
 
         var count = 0;
         var form = document.getElementsByTagName('input');
@@ -195,140 +231,8 @@ function removeUserCheckbox(formname) {
 
 
         if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
-		document.forms[formname].action="mng-del.php";
-		document.forms[formname].submit();
-                return true;
-        }
-
-        return false;
-}
-
-
-function removeHotspotCheckbox(formname) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox'
-                && e.checked)
-                ++count;
-        }
-
-
-        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
-		document.forms[formname].action="mng-hs-del.php";
-		document.forms[formname].submit();
-                return true;
-        }
-
-        return false;
-}
-
-
-function removeNASCheckbox(formname) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox'
-                && e.checked)
-                ++count;
-        }
-
-
-        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
-		document.forms[formname].action="mng-rad-nas-del.php";
-		document.forms[formname].submit();
-                return true;
-        }
-
-        return false;
-}
-
-
-function removeUserGroupCheckbox(formname) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox'
-                && e.checked)
-                ++count;
-        }
-
-
-        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
-		document.forms[formname].action="mng-rad-usergroup-del.php";
-		document.forms[formname].submit();
-                return true;
-        }
-
-        return false;
-}
-
-
-function removeProfilesCheckbox(formname) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox'
-                && e.checked)
-                ++count;
-        }
-
-
-        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
-		document.forms[formname].action="mng-rad-profiles-del.php";
-		document.forms[formname].submit();
-                return true;
-        }
-
-        return false;
-}
-
-
-function removeGroupReplyCheckbox(formname) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox'
-                && e.checked)
-                ++count;
-        }
-
-
-        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
-		document.forms[formname].action="mng-rad-groupreply-del.php";
-		document.forms[formname].submit();
-                return true;
-        }
-
-        return false;
-}
-
-
-function removeGroupCheckCheckbox(formname) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox'
-                && e.checked)
-                ++count;
-        }
-
-
-        if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
-		document.forms[formname].action="mng-rad-groupcheck-del.php";
-		document.forms[formname].submit();
+		document.forms[formName].action=pageDst;
+		document.forms[formName].submit();
                 return true;
         }
 

@@ -92,7 +92,7 @@ $rowsPerPage;";
 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'group[]','listgroupcheck')\">None</a>
                                 <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeGroupCheckCheckbox(\"listgroupcheck\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listgroupcheck\",\"mng-rad-groupcheck-del.php\")' />
                                 <br/><br/>
 
                 ";

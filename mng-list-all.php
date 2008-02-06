@@ -79,8 +79,7 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-
-	echo "<form name='listallusers' method='post' action='' >";
+	echo "<form name='listallusers' method='post' action='mng-del.php' >";
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
@@ -95,7 +94,7 @@
 				
 				<a class=\"table\" href=\"javascript:SetChecked(0,'username[]','listallusers')\">None</a>
 			<br/>
-				<input class='button' type='button' value='Delete' onClick='javascript:removeUserCheckbox(\"listallusers\")' />
+				<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
 				<br/><br/>
 		";
 
