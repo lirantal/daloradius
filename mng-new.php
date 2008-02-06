@@ -261,20 +261,6 @@ function addAttributes($dbSocket, $username) {
 			echo "unknown authentication method <br/>";
 		   }
 
-
-
-/*
-				$actionStatus = "success";
-				$actionMsg = "Added to database new user: <b> $username </b>";
-				$logAction = "Successfully added new user [$username] on page: ";
-
-			   } else {
-
-				$actionStatus = "failure";
-				$actionMsg = "username or password are empty";
-				$logAction = "Failed adding (possible empty user/pass) new user [$username] on page: ";
-*/
-
 		} else { 
 			$actionStatus = "failure";
 			$actionMsg = "user already exist in database: <b> $username </b>";
@@ -439,6 +425,10 @@ function addAttributes($dbSocket, $username) {
 		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 
 			onfocus="javascript:toggleShowDiv('macaddressTooltip')"
 			onblur="javascript:toggleShowDiv('macaddressTooltip')" />
+                <div id='macaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['macaddressTooltip'] ?>
+                </div>
 		<br/>
 
 		<li class='fieldset'>
@@ -469,6 +459,10 @@ function addAttributes($dbSocket, $username) {
 		<input name='pincode' type='text' id='pincode' value='' tabindex=106
 			onfocus="javascript:toggleShowDiv('pincodeTooltip')"
 			onblur="javascript:toggleShowDiv('pincodeTooltip')" />
+                <div id='pincodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['pincodeTooltip'] ?>
+                </div>
 		<br/>
 
 		<li class='fieldset'>
