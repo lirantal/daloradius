@@ -78,6 +78,7 @@
 	$operator_messenger2 = $row['messenger2'];
 	$operator_notes = $row['notes'];
 	$operator_lastlogin = $row['lastlogin'];
+	$operator_creationdate = $row['creationdate'];
 
 
 
@@ -149,10 +150,6 @@
 		?>
 			value='<?php if (isset($operator_password)) echo $operator_password ?>' tabindex=101 />
                 <br/>
-
-                <label for='operator_lastlogin' class='form'>Operator Last Login</label>
-                <input disabled name='operator_lastlogin' id='operator_lastlogin' type='text' 
-			value='<?php echo $operator_lastlogin?>' tabindex=102 />
 
                 <br/><br/>
                 <hr><br/>
