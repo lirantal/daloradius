@@ -71,6 +71,8 @@
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
+
+	echo "<form name='listoperators' method='post' action='config-operators-del.php' >";
 	
 	echo "<table border='0' class='table1'>\n";
 	echo "
@@ -81,8 +83,15 @@
 
                                                         <tr>
                                                         <th colspan='12' align='left'>
-                <br/>
-        ";
+                                Select:
+                                <a class=\"table\" href=\"javascript:SetChecked(1,'operator_username[]','listoperators')\">All</a>
+
+                                <a class=\"table\" href=\"javascript:SetChecked(0,'operator_username[]','listoperators')\">None</a>
+                        <br/>
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listoperators\",\"config-operators-del.php\")' />
+                                <br/><br/>
+                ";
+
 
         if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
                 setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
@@ -129,20 +138,16 @@
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
-
-		<th scope='col'> ".$l['all']['Action']." </th>
 	</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $row[0] </td>
-				<td> $row[1] </td>
+				<td> <input type='checkbox' name='operator_username[]' value='$row[1]'> $row[0] </td>
+				<td> <a class='tablenovisit' href='config-operators-edit.php?operator_username=$row[1]' title='".
+					$l['Tooltip']['UserEdit']."'>$row[1] </a> </td>
 				<td> $row[2] </td>
 				<td> $row[4], $row[3] </td>
 				<td> $row[5] </td>
-				<td> <a href='config-operators-edit.php?operator_username=$row[1]'> ".$l['all']['edit']." </a>
-				 <a href='config-operators-del.php?operator_username=$row[1]'> ".$l['all']['del']." </a>
-		 </td>
 
 		</tr>";
 	}
