@@ -64,6 +64,11 @@ echo "
         <br/>
 
 	<br/>
+	<label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
+	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=309 />
+        <br/>
+
+	<br/>
 	<hr><br/>
 
 	<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />

@@ -61,6 +61,8 @@ function addUserInfo($dbSocket, $username) {
 	global $logDebugSQL;
 	global $configValues;
 
+	$currDate = date('Y-m-d H:i:s');
+
 		                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
 	                        $res = $dbSocket->query($sql);
 	                        $logDebugSQL .= $sql . "\n";
@@ -72,7 +74,8 @@ function addUserInfo($dbSocket, $username) {
 '".$dbSocket->escapeSimple($username)."', 
 '".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', 
 '".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."', 
-'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
+'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', 
+'".$dbSocket->escapeSimple($notes)."', '$currDate')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
@@ -522,9 +525,10 @@ function addAttributes($dbSocket, $username) {
                 <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
                 </select>
 
+		<br/>
 		<b>Util:</b>
-                <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >
-                </select>
+		<div id='util'>
+		</div>
 		<br/><br/>
 
 		<div id='dictInfo0' style='display:none;visibility:visible'>

@@ -42,7 +42,9 @@
 			// if there were no records for this user present in the userinfo table
 			if ($res->numRows() == 0) {
 				// we add these records to the userinfo table
-                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, '".$dbSocket->escapeSimple($username)."',
+                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." 
+(id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, creationdate) 
+values (0, '".$dbSocket->escapeSimple($username)."',
 '".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."',
 '".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."',
 '".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
@@ -269,8 +271,8 @@ AND Attribute like '%Password'";
 	/* fill-in all the user info details */
 
 
-	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes FROM 
-".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, 
+creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -285,6 +287,7 @@ AND Attribute like '%Password'";
 	$ui_homephone = $row['homephone'];
 	$ui_mobilephone = $row['mobilephone'];
 	$ui_notes = $row['notes'];
+	$ui_creationdate = $row['creationdate'];
 
 
 	include 'library/closedb.php';

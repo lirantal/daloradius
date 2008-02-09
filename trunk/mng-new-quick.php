@@ -45,6 +45,8 @@
 		
 			if (trim($username) != "" and trim($password) != "") {
 
+				$currDate = date('Y-m-d H:i:s');
+
 				// insert username/password
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
 '$passwordType', ':=', '".$dbSocket->escapeSimple($password)."')";
@@ -92,7 +94,8 @@
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
 '".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', 
 '".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."', 
-'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
+'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', 
+'".$dbSocket->escapeSimple($notes)."', '$currDate')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
