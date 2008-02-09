@@ -154,6 +154,7 @@ CREATE TABLE `operators` (
   `messenger2` varchar(32) default NULL,
   `notes` varchar(128) default NULL,
   `lastlogin` datetime default '0000-00-00 00:00:00',
+  `creationdate` datetime default '0000-00-00 00:00:00',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM;
 

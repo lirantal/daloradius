@@ -22,6 +22,8 @@ UPDATE operators SET mng_rad_groupreply_search='yes' WHERE username='administrat
 UPDATE operators SET mng_rad_groupcheck_search='yes' WHERE username='administrator';
 ALTER TABLE operators CHANGE rep_stat_radius rep_stat_services VARCHAR(32);
 ALTER TABLE userinfo ADD creationdate DATETIME;
+ALTER TABLE operators CHANGE lastlogin lastlogin DATETIME;
+ALTER TABLE operators ADD creationdate DATETIME;
 
 --
 -- Table structure for table `dictionary`
