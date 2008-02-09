@@ -6,6 +6,7 @@
 	include('library/check_operator_perm.php');
 
 	$logDebugSQL = "";
+	$currDate = date('Y-m-d H:i:s');
 
 	if (isset($_POST['submit'])) {
 		(isset($_REQUEST['operator_username'])) ? $operator_username = $_REQUEST['operator_username'] : $operator_username = "";
@@ -18,7 +19,7 @@
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
-
+			
 			// there is no operator in the database with this username
 			if ($res->numRows() == 0) {
 
@@ -27,6 +28,11 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
+				// set creation date for this operator
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET creationdate='$currDate' WHERE username='$operator_username' ";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+
 				// insert operator contact info to the database
 				foreach ($_POST as $field => $value ) { 
 					if ( ($field == "operator_username") || ($field == "operator_password") )

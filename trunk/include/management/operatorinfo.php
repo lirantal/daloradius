@@ -88,6 +88,15 @@ echo "
 			value='".$operator_notes."' >
                 <br/>
 
+
+		<br/>
+                <label for='operator_lastlogin' class='form'>Operator Last Login</label>
+                <input disabled type='text' value='$operator_lastlogin' />
+	        <br/>
+	        <label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
+	        <input disabled value='"; if (isset($operator_creationdate)) echo $operator_creationdate; echo "' />
+	        <br/>
+
                 <br/><br/>
                 <hr><br/>
 
