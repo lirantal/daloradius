@@ -13,6 +13,7 @@ release 0.9-6 - 17 Februray 2008
 	- grouped together the group-reply and group-check pages into a single groups management page
 	- fixed bug on edit user page, when database password encryption is turned on, users' passwords
 	  were reset to a random value on every save.
+	- fixed bug on adding new operator
 	- fixed bug on new user page of undefined indexes
 
 
