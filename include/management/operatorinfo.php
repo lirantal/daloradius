@@ -28,63 +28,63 @@ echo "
                 <h302>Operator Details</h302>
                 <br/>
 
-                <label for='operator_firstname' class='form'>Operator Firstname</label>
-                <input name='operator_firstname' type='text' id='operator_firstname' 
+                <label for='firstname' class='form'>Operator Firstname</label>
+                <input name='firstname' type='text' id='firstname' 
 			value='".$operator_firstname."' >
                 <br/>
 
-                <label for='operator_lastname' class='form'>Operator Lastname</label>
-                <input name='operator_lastname' type='text' id='operator_lastname' 
+                <label for='lastname' class='form'>Operator Lastname</label>
+                <input name='lastname' type='text' id='lastname' 
 			value='".$operator_lastname."' >
                 <br/>
 
-                <label for='operator_title' class='form'>Operator Title</label>
-                <input name='operator_title' type='text' id='operator_title'
+                <label for='title' class='form'>Operator Title</label>
+                <input name='title' type='text' id='title'
 			value='".$operator_title."' >
                 <br/>
 
-                <label for='operator_department' class='form'>Operator Department</label>
-                <input name='operator_department' type='text' id='operator_department'
+                <label for='department' class='form'>Operator Department</label>
+                <input name='department' type='text' id='department'
 			value='".$operator_department."' >
                 <br/>
 
-                <label for='operator_company' class='form'>Operator company</label>
-                <input name='operator_company' type='text' id='operator_company'
+                <label for='company' class='form'>Operator company</label>
+                <input name='company' type='text' id='company'
 			value='".$operator_company."' >
                 <br/>
 
-                <label for='operator_phone1' class='form'>Operator Phone1</label>
-                <input name='operator_phone1' type='text' id='operator_phone1'
+                <label for='phone1' class='form'>Operator Phone1</label>
+                <input name='phone1' type='text' id='phone1'
 			value='".$operator_phone1."' >
                 <br/>
 
-                <label for='operator_phone2' class='form'>Operator Phone2</label>
-                <input name='operator_phone2' type='text' id='operator_phone2'
+                <label for='phone2' class='form'>Operator Phone2</label>
+                <input name='phone2' type='text' id='phone2'
 			value='".$operator_phone2."' >
                 <br/>
 
-                <label for='operator_email1' class='form'>Operator Email1</label>
-                <input name='operator_email1' type='text' id='operator_email1'
+                <label for='email1' class='form'>Operator Email1</label>
+                <input name='email1' type='text' id='email1'
 			value='".$operator_email1."' >
                 <br/>
 
-                <label for='operator_email2' class='form'>Operator Email2</label>
-                <input name='operator_email2' type='text' id='operator_email2'
+                <label for='email2' class='form'>Operator Email2</label>
+                <input name='email2' type='text' id='email2'
 			value='".$operator_email2."' >
                 <br/>
 
-                <label for='operator_messenger1' class='form'>Operator Messenger1</label>
-                <input name='operator_messenger1' type='text' id='operator_messenger1'
+                <label for='messenger1' class='form'>Operator Messenger1</label>
+                <input name='messenger1' type='text' id='messenger1'
 			value='".$operator_messenger1."' >
                 <br/>
 
-                <label for='operator_messenger2' class='form'>Operator Messenger2</label>
-                <input name='operator_messenger2' type='text' id='operator_messenger2'
+                <label for='messenger2' class='form'>Operator Messenger2</label>
+                <input name='messenger2' type='text' id='messenger2'
 			value='".$operator_messenger2."' >
                 <br/>
 
-                <label for='operator_notes' class='form'>Operator Notes</label>
-                <input name='operator_notes' type='text' id='operator_notes'
+                <label for='notes' class='form'>Operator Notes</label>
+                <input name='notes' type='text' id='notes'
 			value='".$operator_notes."' >
                 <br/>
 
