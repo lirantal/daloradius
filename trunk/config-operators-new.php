@@ -19,12 +19,15 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
+			// there is no operator in the database with this username
 			if ($res->numRows() == 0) {
 
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." (id, username, password) values (0, '$operator_username', '$operator_password')";
+				// insert username and password of operator into the database
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." (id, username, password) values (0, '$operator_username', '$operator_password')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
+				// insert operator contact info to the database
 				foreach ($_POST as $field => $value ) { 
 					if ( ($field == "operator_username") || ($field == "operator_password") )
 						continue; // we skip these variables as we have already added the user to the database
