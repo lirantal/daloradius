@@ -319,6 +319,7 @@ CREATE TABLE `userinfo` (
   `homephone` varchar(200) default NULL,
   `mobilephone` varchar(200) default NULL,
   `notes` varchar(200) default NULL,
+  `creationdate` datetime default '0000-00-00 00:00:00',
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
 ) ENGINE=MyISAM;
