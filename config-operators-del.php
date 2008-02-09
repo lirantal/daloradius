@@ -4,34 +4,41 @@
 
 	include('library/check_operator_perm.php');
 
-	$username = !empty($_REQUEST['operator_username']) ? $_REQUEST['operator_username'] : '[operator_username]';
+	isset($_POST['operator_username']) ? $operator_username = $_POST['operator_username'] : $operator_username = "";
 	$logDebugSQL = "";
 
-	if (isset($_POST['submit'])) {
+	if ($operator_username != "") {
 
-		if (trim($username) != "") {
-			
-			include 'library/opendb.php';
+                if (!is_array($operator_username))
+                        $operator_username = array($operator_username, NULL);
+                $allOperators = "";
 
-			// delete all attributes associated with a username
-			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." where Username='$username'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+		include 'library/opendb.php';
 
+                foreach ($operator_username as $variable=>$value) {
+                        if (trim($value) != "") {
 
-			$actionStatus = "success";
-			$actionMsg = "Deleted operator: <b> $username";
-			$logAction = "Successfully deleted operator [$username] on page: ";
+                                $username = $value;
+                                $allOperators .= $username . ", ";
 
-			include 'library/closedb.php';
-			
-		}  else { 
-			$actionStatus = "failure";
-			$actionMsg = "no operator username was entered, please specify an operator username to remove from database";		
-			$logAction = "Failed deleting operator username [$username] on page: ";
+				// delete operator from database
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." where Username='$username'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+	
+				$actionStatus = "success";
+				$actionMsg = "Deleted operator(s): <b> $allOperators";
+				$logAction = "Successfully deleted operator(s) [$allOperators] on page: ";
+	
+			}  else { 
+				$actionStatus = "failure";
+				$actionMsg = "no operator username was entered, please specify an operator username to remove from database";		
+				$logAction = "Failed deleting operator username [$allOperators] on page: ";
+			}
 		}
-	}
 
+		include 'library/closedb.php';		
+	}
 
 
 	include_once('library/config_read.php');
