@@ -68,6 +68,7 @@ $l['all']['CardBank'] = "CardBank";
 $l['all']['MACAddress'] = "MAC Address";
 $l['all']['Geocode'] = "Geocode";
 $l['all']['PINCode'] = "PIN Code";
+$l['all']['CreationDate'] = "Creation Date";
 
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
