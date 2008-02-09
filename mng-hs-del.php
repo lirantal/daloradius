@@ -13,11 +13,11 @@
                         $name = array($name, NULL);
 
 		$allHotspots = "";
+
+		include 'library/opendb.php';
 	
                 foreach ($name as $variable=>$value) {
 			if (trim($value) != "") {
-
-				include 'library/opendb.php';
 
                                 $name = $value;
                                 $allHotspots .= $name . ", ";
@@ -30,9 +30,7 @@
 				$actionStatus = "success";
 				$actionMsg = "Deleted hotspot(s): <b> $allHotspots </b>";
 				$logAction = "Successfully deleted hotpot(s) [$allHotspots] on page: ";
-	
-				include 'library/closedb.php';
-			
+				
 			} else { 
 				$actionStatus = "failure";
 				$actionMsg = "no hotspot was entered, please specify a hotspot name to remove from database";
@@ -40,6 +38,8 @@
 			}
 
 		} //foreach
+
+		include 'library/closedb.php';
 
 	} 
 
