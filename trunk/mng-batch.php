@@ -203,20 +203,37 @@
 		<li class='fieldset'>
                 <label for='usernamePrefix' class='form'><?php 
 			echo $l['all']['UsernamePrefix'] ?></label>
-                <input name='username_prefix' type='text' id='username_prefix' value='' tabindex=100 />
+                <input name='username_prefix' type='text' id='username_prefix' value='' tabindex100 
+                        onfocus="javascript:toggleShowDiv('usernamePrefixTooltip')"
+                        onblur="javascript:toggleShowDiv('usernamePrefixTooltip')" />
+		<br/>
+                <div id='usernamePrefixTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['usernamePrefixTooltip'] ?>
+                </div>
 		</li>
 
 		<li class='fieldset'>
                 <label for='numberInstances' class='form'><?php 
 			echo $l['all']['NumberInstances'] ?></label>
-                <input name='number' type='text' id='number' value='' tabindex=101 />
+                <input name='number' type='text' id='number' value='' tabindex=101
+                        onfocus="javascript:toggleShowDiv('instancesToCreateTooltip')"
+                        onblur="javascript:toggleShowDiv('instancesToCreateTooltip')" />
+		<br/>
+                <div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['instancesToCreateTooltip'] ?>
+                </div>
 		<li>
 
 
 		<li class='fieldset'>
                 <label for='usernameLength' class='form'><?php 
 			echo $l['all']['UsernameLength'] ?></label>
-		<select name="length_user" tabindex=102 class='form' >
+		<select name="length_user" tabindex=102 class='form'
+                        onfocus="javascript:toggleShowDiv('lengthOfUsernameTooltip')"
+                        onblur="javascript:toggleShowDiv('lengthOfUsernameTooltip')" />
+
 			<option id="4"> 4 </option>
 			<option id="5"> 5 </option>
 			<option id="6"> 6 </option>
@@ -224,12 +241,20 @@
 			<option id="10"> 10 </option>
 	        	<option id="12"> 12 </option>
 	        </select>
+		<br/>
+                <div id='lengthOfUsernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['lengthOfUsernameTooltip'] ?>
+                </div>
 		</li>
 
 		<li class='fieldset'>
                 <label for='passwordLength' class='form'><?php 
 			echo $l['all']['PasswordLength'] ?></label>
-		<select name="length_pass" tabindex=103 class='form' >
+		<select name="length_pass" tabindex=103 class='form' 
+                        onfocus="javascript:toggleShowDiv('lengthOfPasswordTooltip')"
+                        onblur="javascript:toggleShowDiv('lengthOfPasswordTooltip')" />
+
 		        <OPTION id="4"> 4 </OPTION>
 		        <OPTION id="5"> 5 </OPTION>
 		        <OPTION id="6"> 6 </OPTION>
@@ -237,6 +262,12 @@
 		        <OPTION id="10"> 10 </OPTION>
 			<OPTION id="12"> 12 </OPTION>
 		</select>
+		<br/>
+                <div id='lengthOfPasswordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['lengthOfPasswordTooltip'] ?>
+                </div>
+
 		</li>
 
 		<li class='fieldset'>
