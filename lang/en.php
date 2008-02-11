@@ -145,6 +145,19 @@ $l['Tooltip']['macaddressTooltip'] = "Example: 00aabbccddee<br/>&nbsp;&nbsp;&nbs
 $l['Tooltip']['pincodeTooltip'] = "Example: khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
 					This is the exact pincode as the user will enter it.<br/>&nbsp;&nbsp;&nbsp;
 					You may use alpha numeric characters, case is sensituve";
+$l['Tooltip']['usernamePrefixTooltip'] = "Example: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
+					This username prefix will be added to<br/>&nbsp;&nbsp;&nbsp;
+					the generated username finally.";
+$l['Tooltip']['instancesToCreateTooltip'] = "Example: 100<br/>&nbsp;&nbsp;&nbsp;
+					The amount of random users to create<br/>&nbsp;&nbsp;&nbsp;
+					with the specified profile.";
+$l['Tooltip']['lengthOfUsernameTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
+					The characters length of the username<br/>&nbsp;&nbsp;&nbsp;
+					to be created. Recommended 8-12 chars.";
+$l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
+					The characters length of the password<br/>&nbsp;&nbsp;&nbsp;
+					to be created. Recommended 8-12 chars.";
+
 
 /* ********************************************************************************** */
 
