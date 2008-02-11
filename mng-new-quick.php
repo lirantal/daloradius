@@ -183,17 +183,31 @@
 
 		<li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-                <input name='username' type='text' id='username' value='' tabindex=100 />
-                <a href="javascript:randomAlphanumeric('username',8)" class='helper'>Random User</a>
+                <input name='username' type='text' id='username' value='' tabindex=100 
+                        onfocus="javascript:toggleShowDiv('usernameTooltip')"
+                        onblur="javascript:toggleShowDiv('usernameTooltip')" />
+		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
                 <br />
+
+                <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['usernameTooltip'] ?>
+                </div>
 		</li>
 
 		<li class='fieldset'>
                 <label for='password' class='form'><?php echo $l['all']['Password']?></label>
                 <input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword))
-			 echo $hiddenPassword ?> tabindex=101 />
-                <a href="javascript:randomAlphanumeric('password',8)" class='helper'>Random Password</a>
+			 echo $hiddenPassword ?> tabindex=101
+                        onfocus="javascript:toggleShowDiv('passwordTooltip')"
+                        onblur="javascript:toggleShowDiv('passwordTooltip')" />
+		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8)" />
                 <br />
+
+                <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['passwordTooltip'] ?>
+                </div>
 		</li>
 
 		<li class='fieldset'>
