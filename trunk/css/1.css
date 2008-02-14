@@ -561,7 +561,7 @@ input.button {
 }
 
 input.integer {
-        width:15px;
+        width:19px;
 }
 
 input[type="radio"] {
