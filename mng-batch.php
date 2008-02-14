@@ -230,17 +230,11 @@
 		<li class='fieldset'>
                 <label for='usernameLength' class='form'><?php 
 			echo $l['all']['UsernameLength'] ?></label>
-		<select name="length_user" tabindex=102 class='form'
+                <input class="integer" name='length_user' type='text' id='length_user' value='8' tabindex=102
                         onfocus="javascript:toggleShowDiv('lengthOfUsernameTooltip')"
                         onblur="javascript:toggleShowDiv('lengthOfUsernameTooltip')" />
-
-			<option id="4"> 4 </option>
-			<option id="5"> 5 </option>
-			<option id="6"> 6 </option>
-		        <option id="8"> 8 </option>
-			<option id="10"> 10 </option>
-	        	<option id="12"> 12 </option>
-	        </select>
+		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('length_user','increment')" />
+		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_user','decrement')"/>
 		<br/>
                 <div id='lengthOfUsernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
@@ -251,23 +245,17 @@
 		<li class='fieldset'>
                 <label for='passwordLength' class='form'><?php 
 			echo $l['all']['PasswordLength'] ?></label>
-		<select name="length_pass" tabindex=103 class='form' 
-                        onfocus="javascript:toggleShowDiv('lengthOfPasswordTooltip')"
-                        onblur="javascript:toggleShowDiv('lengthOfPasswordTooltip')" />
 
-		        <OPTION id="4"> 4 </OPTION>
-		        <OPTION id="5"> 5 </OPTION>
-		        <OPTION id="6"> 6 </OPTION>
-		        <OPTION id="8"> 8 </OPTION>
-		        <OPTION id="10"> 10 </OPTION>
-			<OPTION id="12"> 12 </OPTION>
-		</select>
+                <input class="integer" name='length_pass' type='text' id='length_pass' value='8' tabindex=103
+                        onfocus="javascript:toggleShowDiv('lengthOfUsernameTooltip')"
+                        onblur="javascript:toggleShowDiv('lengthOfUsernameTooltip')" />
+		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('length_pass','increment')" />
+		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_pass','decrement')"/>
 		<br/>
                 <div id='lengthOfPasswordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['lengthOfPasswordTooltip'] ?>
                 </div>
-
 		</li>
 
 		<li class='fieldset'>
