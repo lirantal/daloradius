@@ -5,11 +5,13 @@ release 0.9-6 - 17 Februray 2008
 	- added new profiles page which integrates the radgroupcheck and radgroupreply tables
 	- added new authentication methods - mac auth and pincode auth
 	- added new dynamic tooltips on the managment forms
+	- added createdate field to userinfo table
 	- added - attributes automatically appear with the tooltip/help text (requested by Carlos Cessario)
 	- improved status pages layout (thanks to Carlos Cesario)
 	- improved code security on maintenance pages using system calls
 	- improved forms interface design (bye bye not-so-pretty tables layout!) and overall interface
 	  color scheme changes in css
+	- improved language translation
 	- grouped together the group-reply and group-check pages into a single groups management page
 	- fixed bug on edit user page, when database password encryption is turned on, users' passwords
 	  were reset to a random value on every save.
