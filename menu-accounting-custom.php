@@ -38,7 +38,7 @@
 
 							<form name="acctcustomquery" action="acct-custom-query.php" method="get" class="sidebar">
 
-	<h109> Between Dates: </h109> <br/>
+	<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
 	
 
                                                         <input name="startdate" type="text" id="startdate" 
@@ -55,7 +55,7 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 
 
 		<br/><br/>
-		<h109> Where </h109> <br/>
+		<h109><?php echo $l['button']['Where']; ?></h109> <br/>
 			<center>
 			<select name="fields" size="1">
 				<option value="RadAcctId"> RadAcctId </option>
@@ -93,7 +93,7 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 			value="<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
 
 		<br/><br/>
-		<h109> Accounting Fields in Query: </h109><br/>
+		<h109><?php echo $l['button']['AccountingFieldsinQuery']; ?></h109><br/>
 		<input type="checkbox" name="sqlfields[]" value="RadAcctId" /> <h109> RadAcctId </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctSessionId" /> <h109> AcctSessionId </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctUniqueId" /> <h109> AcctUniqueId</h109> <br/>
@@ -122,7 +122,7 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 		<a class="table" href="javascript:SetChecked(1,'sqlfields[]','acctcustomquery')">All</a>
 		<a class="table" href="javascript:SetChecked(0,'sqlfields[]','acctcustomquery')">None</a>
 		<br/><br/>
-		<h109> Order By <h109> <br/>
+		<h109><?php echo $l['button']['OrderBy'] ?><h109> <br/>
 			<center>
 			<select name="orderBy" size="1">
 				<option value="RadAcctId"> RadAcctId </option>
@@ -159,7 +159,7 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 
 
 	<br/>
-	<input type="submit" name="submit" value="Process Query" tabindex=3 />
+	<input type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
 	</form></li>
 				
 
