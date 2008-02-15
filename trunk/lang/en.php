@@ -163,6 +163,24 @@ $l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
 
 
 
+
+/* **********************************************************************************
+ * Links and Buttons
+ ************************************************************************************/
+$l['button']['BetweenDates'] = "Between Dates:";
+$l['button']['Where'] = "Where";
+$l['button']['AccountingFieldsinQuery'] = "Accounting Fields in Query:";
+$l['button']['OrderBy'] = "Order By";
+$l['button']['HotspotAccounting'] = "Hotspot Accounting";
+$l['button']['HotspotsComparison'] = "Hotspots Comparison";
+
+$l['button']['ProcessQuery'] = "Process Query";
+
+ 
+ 
+/* ********************************************************************************** */
+
+
 /* **********************************************************************************
  * Titles
  * The text related to all the title headers in captions,tables and tabbed layout text
