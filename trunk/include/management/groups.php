@@ -9,9 +9,10 @@
 *
 *********************************************************************/
 
+
 	// Grabing the group lists from usergroup table
-	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName) FROM 
-".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+		") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
 	$res = $dbSocket->query($sql);
 
 	$groupOptions = "";
@@ -27,10 +28,12 @@
                 <h302> Groups Assignment </h302>
 		<br/>
 
+		<ul>
+
 <?php
 
-	$sql = "SELECT GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." 
-WHERE UserName='".$dbSocket->escapeSimple($username)."';";
+	$sql = "SELECT GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']
+		." WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 	$res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0) {
@@ -50,8 +53,8 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 
 				<input type='hidden' value='$row[0]' name='oldgroups[]' >
 
+				<li class='fieldset'>
 				<label for='group' class='form'>".$l['all']['Group']." #".($counter+1)."</label>
-
 				<select name='groups[]' id='usergroup$counter' tabindex=105 class='form' >
 					<option value='$row[0]'>$row[0]</option>
 					".$groupOptions."
@@ -60,10 +63,13 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 				<br/>
 				<label for='groupPriority' class='form'>".$l['all']['GroupPriority']."</label>
 				<input class='integer' value='$row[1]' name='groups_priority[]' id='group_priority$counter' >
-				<img src=\"images/icons/bullet_arrow_up.png\" alt=\"+\" onclick=\"javascript:changeInteger('group_priority$counter','increment')\" />
-				<img src=\"images/icons/bullet_arrow_down.png\" alt=\"-\" onclick=\"javascript:changeInteger('group_priority$counter','decrement')\"/>
+				<img src=\"images/icons/bullet_arrow_up.png\" alt=\"+\" 
+					onclick=\"javascript:changeInteger('group_priority$counter','increment')\" />
+				<img src=\"images/icons/bullet_arrow_down.png\" alt=\"-\" 
+					onclick=\"javascript:changeInteger('group_priority$counter','decrement')\"/>
 
 				<br/>
+				</li>
 			";
 
 			$counter++;
@@ -72,6 +78,15 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."';";
 
 	} // if-else
 ?>
+
+
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		</li>
+
+		</ul>
 
 	</fieldset>
 	<br/>
