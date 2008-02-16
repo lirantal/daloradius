@@ -95,239 +95,170 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="Global Settings">
+     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
         <br/>
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
 
-						<?php if (!($configValues['CONFIG_DB_ENGINE'])) { echo "<font color='#FF0000'>";  }?>
-						<b>DB Engine</b>
+        <fieldset>
 
-</td><td>
-						<select name="config_dbengine">
-						<option value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>"> <?php echo $configValues['CONFIG_DB_ENGINE'] ?> </option>
-						<option value=""></option>
-						<option value="mysql"> MySQL </option>
-						<option value="pgsql"> PostgreSQL </option>
-						<option value="odbc"> ODBC </option>
-						<option value="mssql"> MsSQL </option>
-						<option value="mysqli"> MySQLi </option>
-						<option value="msql"> MsQL </option>
-						<option value="sybase"> Sybase </option>
-						<option value="sqlite"> Sqlite </option>
-						<option value="oci8"> Oci8  </option>
-						<option value="ibase"> ibase </option>
-						<option value="fbsql"> fbsql </option>
-						<option value="informix"> informix </option>
-						</select>
-						</font>						
-</td></tr>
-<tr><td>
+                <h302><?php echo $l['title']['Settings']; ?></h302>
+		<br/>
 
-						<?php if (!($configValues['CONFIG_DB_HOST'])) { echo "<font color='#FF0000'>";  }?>
-						<b><?php echo $l['all']['DatabaseHostname'] ?></b>
+		<ul>
 
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost"/>
-						</font>
-</td></tr>
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_USER'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b><?php echo $l['all']['DatabaseUser'] ?></b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_USER'] ?>" name="config_dbuser" />
-						</font>
-</td></tr>
+                <li class='fieldset'>
+                <label for='config_dbengine' class='form'><?php echo $l['all']['DBEngine']?></label>
+		<select class='form' name="config_dbengine">
+			<option value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>"> <?php echo $configValues['CONFIG_DB_ENGINE'] ?> </option>
+			<option value=""></option>
+			<option value="mysql"> MySQL </option>
+			<option value="pgsql"> PostgreSQL </option>
+			<option value="odbc"> ODBC </option>
+			<option value="mssql"> MsSQL </option>
+			<option value="mysqli"> MySQLi </option>
+			<option value="msql"> MsQL </option>
+			<option value="sybase"> Sybase </option>
+			<option value="sqlite"> Sqlite </option>
+			<option value="oci8"> Oci8  </option>
+			<option value="ibase"> ibase </option>
+			<option value="fbsql"> fbsql </option>
+			<option value="informix"> informix </option>
+		</select>
+		</li>
 
 
+		<li class='fieldset'>
+		<label for='config_dbhost' class='form'><?php echo $l['all']['DatabaseHostname'] ?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost"/>
+		</li>
 
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_PASS'])) { echo "<font color='#FF0000'>";  }?>
+		<li class='fieldset'>
+		<label for='config_dbuser' class='form'><?php echo $l['all']['DatabaseUser'] ?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_USER'] ?>" name="config_dbuser" />
+		</li>
 
-						<b><?php echo $l['all']['DatabasePass'] ?></b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="config_dbpass" />
-						</font>
-</td></tr>
+		<li class='fieldset'>
+		<label for='config_dbpass' class='form'><?php echo $l['all']['DatabasePass'] ?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="config_dbpass" />
+		</li>
 
+		<li class='fieldset'>
+		<label for='db_name' class='form'><?php echo  $l['all']['DatabaseName'] ?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="config_dbname" />
+		</li>
 
+                <li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                </li>
 
-
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_NAME'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b><?php echo  $l['all']['DatabaseName'] ?></b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="config_dbname" />
-						</font>
-</td></tr>
-
-</table>
+                </ul>
+	
+	</fieldset>
 
 	</div>
 
-     <div class="tabbertab" title="Tables Settings">
+     <div class="tabbertab" title="<?php echo $l['title']['DatabaseTables']; ?>">
         <br/>
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
+		<fieldset>
 
-						<?php if (!($configValues['CONFIG_DB_TBL_RADCHECK'])) { echo "<font color='#FF0000'>";  }?>
-						<b>radcheck</b>
+                <h302><?php echo $l['title']['DatabaseTables']; ?></h302>
+		<br/>
 
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_RADCHECK'] ?>" name="config_dbtbl_radcheck"/>
-						</font>
-</td></tr>
+		<ul>
 
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_RADREPLY'])) { echo "<font color='#FF0000'>";  }?>
+		<li class='fieldset'>
+                <label for='config_dbtbl_radcheck' class='form'><?php echo $l['all']['radcheck']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADCHECK'] ?>" name="config_dbtbl_radcheck"/>
+		</li>
 
-						<b>radreply</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_RADREPLY'] ?>" name="config_dbtbl_radreply" />
-						</font>
-</td></tr>
+                <li class='fieldset'>
+                <label for='config_dbtbl_radreply' class='form'><?php echo $l['all']['radreply']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADREPLY'] ?>" name="config_dbtbl_radreply" />
+		</li>
 
+                <li class='fieldset'>
+                <label for='config_dbtbl_radgroupreply' class='form'><?php echo $l['all']['radgroupreply']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] ?>" name="config_dbtbl_radgroupreply" />
+		</li>
 
+                <li class='fieldset'>
+                <label for='config_dbtbl_radgroupcheck' class='form'><?php echo $l['all']['radgroupcheck']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADGROUPCHECK'] ?>" name="config_dbtbl_radgroupcheck" />
+		</li>
 
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_RADGROUPREPLY'])) { echo "<font color='#FF0000'>";  }?>
+                <li class='fieldset'>
+                <label for='config_dbtbl_usergroup' class='form'><?php echo $l['all']['usergroup']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ?>" name="config_dbtbl_usergroup" />
+		</li>
 
-						<b>radgroupreply</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] ?>" name="config_dbtbl_radgroupreply" />
-						</font>
-</td></tr>
+                <li class='fieldset'>
+                <label for='config_dbtbl_radacct' class='form'><?php echo $l['all']['radacct']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADACCT'] ?>" name="config_dbtbl_radacct" />
+		</li>
 
+                <li class='fieldset'>
+                <label for='config_dbtbl_operators' class='form'><?php echo $l['all']['operators']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATOR'] ?>" name="config_dbtbl_operators" />
+		</li>
 
+                <li class='fieldset'>
+                <label for='config_dbtbl_rates' class='form'><?php echo $l['all']['rates']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALORATES'] ?>" name="config_dbtbl_rates" />
+		</li>
 
+                <li class='fieldset'>
+                <label for='config_dbtbl_hotspots' class='form'><?php echo $l['all']['hotspots']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] ?>" name="config_dbtbl_hotspots" />
+		</li>
 
+                <li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                </li>
 
-
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_RADGROUPCHECK'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>radgroupcheck</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_RADGROUPCHECK'] ?>" name="config_dbtbl_radgroupcheck" />
-						</font>
-</td></tr>
-
-
-
-
-
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_RADUSERGROUP'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>usergroup</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ?>" name="config_dbtbl_usergroup" />
-						</font>
-</td></tr>
-
-
-
-
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_RADACCT'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>radacct</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_RADACCT'] ?>" name="config_dbtbl_radacct" />
-						</font>
-</td></tr>
-
-
-
-
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_DALOOPERATOR'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>operators</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATOR'] ?>" name="config_dbtbl_operators" />
-						</font>
-</td></tr>
-
-
-
-
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_DALORATES'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>rates</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_DALORATES'] ?>" name="config_dbtbl_rates" />
-						</font>
-</td></tr>
-
-
-
-
-<tr><td>
-						<?php if (!($configValues['CONFIG_DB_TBL_DALOHOTSPOTS'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>hotspots</b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] ?>" name="config_dbtbl_hotspots" />
-						</font>
-</td></tr>
-
-
+                </ul>
 
 </table>
 
 </div>
 
-     <div class="tabbertab" title="Advanced Settings">
+     <div class="tabbertab" title="<?php echo $l['title']['AdvancedSettings']; ?>">
         <br/>
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
+	<fieldset>
 
-						<?php if (!($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) { echo "<font color='#FF0000'>";  }?>
-						<b>DB Password Encryption Type</b>
+                <h302> <?php echo $l['title']['AdvancedSettings']; ?> </h302>
+		<br/>
 
-</td><td>
-						<select name="config_db_pass_encrypt">
-						<option value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>"> <?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?> </option>
-						<option value=""></option>
-						<option value="cleartext"> cleartext </option>
-						<option value="crypt"> unix crypt </option>
-						<option value="md5"> md5 </option>
-						</select>
-						</font>						
-</td></tr>
-</table>
+		<ul>
+
+                <li class='fieldset'>
+                <label for='' class='form'><?php echo $l['all']['DBPasswordEncryption']?></label>
+		<select class='form' name="config_db_pass_encrypt">
+			<option value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>"> <?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?> </option>
+			<option value=""></option>
+			<option value="cleartext"> cleartext </option>
+			<option value="crypt"> unix crypt </option>
+			<option value="md5"> md5 </option>
+		</select>
+		</li>
+
+                <li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                </li>
+
+                </ul>
+
+	</fieldset>
 
 	</div>
 </div>
-
-						<center>
-						
-						<br/><br/>
-						<input type="submit" name="submit" value="Apply" />
-						
-						</center>
 
 
 				</form>
