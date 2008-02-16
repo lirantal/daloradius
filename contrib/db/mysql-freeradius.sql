@@ -19,16 +19,16 @@ CREATE TABLE radacct (
   UserName varchar(64) NOT NULL default '',
   Realm varchar(64) default '',
   NASIPAddress varchar(15) NOT NULL default '',
-  NASPortId int(12) default NULL,
+  NASPortId varchar(15) default NULL,
   NASPortType varchar(32) default NULL,
   AcctStartTime datetime NOT NULL default '0000-00-00 00:00:00',
   AcctStopTime datetime NOT NULL default '0000-00-00 00:00:00',
   AcctSessionTime int(12) default NULL,
   AcctAuthentic varchar(32) default NULL,
-  ConnectInfo_start varchar(32) default NULL,
-  ConnectInfo_stop varchar(32) default NULL,
-  AcctInputOctets bigint(12) default NULL,
-  AcctOutputOctets bigint(12) default NULL,
+  ConnectInfo_start varchar(50) default NULL,
+  ConnectInfo_stop varchar(50) default NULL,
+  AcctInputOctets bigint(20) default NULL,
+  AcctOutputOctets bigint(20) default NULL,
   CalledStationId varchar(50) NOT NULL default '',
   CallingStationId varchar(50) NOT NULL default '',
   AcctTerminateCause varchar(32) NOT NULL default '',
@@ -37,6 +37,7 @@ CREATE TABLE radacct (
   FramedIPAddress varchar(15) NOT NULL default '',
   AcctStartDelay int(12) default NULL,
   AcctStopDelay int(12) default NULL,
+  XAscendSessionSvrKey varchar(10) default NULL,
   PRIMARY KEY  (RadAcctId),
   KEY UserName (UserName),
   KEY FramedIPAddress (FramedIPAddress),
@@ -85,7 +86,6 @@ CREATE TABLE radgroupreply (
   Attribute varchar(32)  NOT NULL default '',
   op char(2) NOT NULL DEFAULT '=',
   Value varchar(253)  NOT NULL default '',
-  prio int unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY GroupName (GroupName(32))
 ) ;
@@ -110,10 +110,9 @@ CREATE TABLE radreply (
 #
 
 CREATE TABLE usergroup (
-  id int(11) unsigned NOT NULL auto_increment,
   UserName varchar(64) NOT NULL default '',
   GroupName varchar(64) NOT NULL default '',
-  PRIMARY KEY  (id),
+  priority int(11) NOT NULL default '1',
   KEY UserName (UserName(32))
 ) ;
 
@@ -163,4 +162,20 @@ CREATE TABLE nas (
   description varchar(200) DEFAULT 'RADIUS Client',
   PRIMARY KEY (id),
   KEY nasname (nasname)
+);
+
+#
+# Table structure for table 'radippool'
+#
+CREATE TABLE radippool (
+  id                    int(11) unsigned NOT NULL auto_increment,
+  pool_name             varchar(30) NOT NULL,
+  FramedIPAddress       varchar(15) NOT NULL default '',
+  NASIPAddress          varchar(15) NOT NULL default '',
+  CalledStationId       VARCHAR(30) NOT NULL,
+  CallingStationID      VARCHAR(30) NOT NULL,
+  expiry_time           DATETIME NOT NULL default '0000-00-00 00:00:00',
+  username              varchar(64) NOT NULL default '',
+  pool_key              varchar(30) NOT NULL,
+  PRIMARY KEY (id)
 );
