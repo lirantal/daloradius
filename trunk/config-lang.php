@@ -43,34 +43,31 @@
 
 				<form name="langsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+        <fieldset>
+
+                <h302> <?php echo $l['title']['Settings']; ?> </h302>
+                <br/>
+
+                <ul>
 
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-						<?php if (!($configValues['CONFIG_LANG'])) { echo "<font color='#FF0000'>";  }?>
+                <li class='fieldset'>
+                <label for='config_lan' class='form'><?php echo $l['all']['PrimaryLanguage']?></label>
+		<select name="config_lang">
+			<option value="en"> en </option>
+			<option value="ru"> ru </option>
+		</select>
+		</li>
 
-						<b><?php echo $l['all']['PrimaryLanguage'] ?></b>
-</td><td>
-						<select name="config_lang">
-						<option value="en"> en </option>
-						<option value="ru"> ru </option>
-						</select>
-						</font>
-</td></tr>
+                <li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                </li>
 
+                </ul>
 
-</table>
-
-						<center>						
-						<br/>
-						<input type="submit" name="submit" value="Apply" />
-						</center>						
-
+        </fieldset>
 
 				</form>
 

@@ -47,60 +47,47 @@
 
 				<form name="interfacesettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+	<fieldset>
 
+                <h302> <?php echo $l['title']['Settings']; ?> </h302>
+                <br/>
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-						<?php if (!($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'])) { echo "<font color='#FF0000'>";  }?>
+                <ul>
 
-						<b><?php echo $l['all']['PasswordHidden'] ?></b>
-</td><td>
-						<select name="config_iface_pass_hidden">
-						<option value="<?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?>"> <?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?> </option>
-						<option value="">  </option>
-						<option value="no"> no </option>
-						<option value="yes"> yes </option>
-						</select>
-						</font>
-</td></tr>
-<tr><td>
+                <li class='fieldset'>
+                <label for='config_iface_pass_hidden' class='form'><?php echo $l['all']['PasswordHidden']?></label>
+		<select name="config_iface_pass_hidden">
+			<option value="<?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?>"> <?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
 
-						<?php if (!($configValues['CONFIG_IFACE_TABLES_LISTING'])) { echo "<font color='#FF0000'>";  }?>
+                <li class='fieldset'>
+                <label for='config_iface_tablelisting' class='form'><?php echo $l['all']['TablesListing'] ?></label>
+		<input value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING'] ?>" name="config_iface_tableslisting" />
+		</li>
 
-						<b><?php echo $l['all']['TablesListing'] ?></b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING'] ?>" name="config_iface_tableslisting" />
-						</font>
-</td></tr>
-<tr><td>
+                <li class='fieldset'>
+                <label for='config_iface_tablelisting_num' class='form'><?php echo $l['all']['TablesListingNum'] ?></label>
+		<select class='form' name="config_iface_tableslisting_num">
+			<option value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?>"> <?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
 
-						<?php if (!($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'])) { echo "<font color='#FF0000'>";  }?>
+                <li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                </li>
 
-						<b><?php echo $l['all']['TablesListingNum'] ?></b>
-</td><td>
-						<select name="config_iface_tableslisting_num">
-						<option value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?>"> <?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?> </option>
-						<option value="">  </option>
-						<option value="no"> no </option>
-						<option value="yes"> yes </option>
-						</select>
+                </ul>
 
-						</font>
-
-</td></tr>
-
-
-</table>
-
-						<center>						
-						<br/>
-						<input type="submit" name="submit" value="Apply" />
-						</center>						
+        </fieldset>
 
 
 				</form>

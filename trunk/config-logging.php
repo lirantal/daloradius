@@ -54,105 +54,80 @@
 
 				<form name="loggingsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-<table border='2' class='table1'>
-                                        <thead>
-                                                        <tr>
-                                                        <th colspan='2'> <?php echo $l['table']['Settings']; ?> </th>
-                                                        </tr>
-                                        </thead>
-<tr><td>
-						<?php if (!($configValues['CONFIG_LOG_PAGES'])) { echo "<font color='#FF0000'>";  }?>
 
-						<b><?php echo $l['all']['PagesLogging'] ?></b>
-</td><td>
-						<select name="config_pageslogging">
-						<option value="<?php echo $configValues['CONFIG_LOG_PAGES'] ?>"> <?php echo $configValues['CONFIG_LOG_PAGES'] ?> </option>
-						<option value="">  </option>
-						<option value="no"> no </option>
-						<option value="yes"> yes </option>
-						</select>
-						</font>
-</td></tr>
-<tr><td>
+        <fieldset>
 
-						<?php if (!($configValues['CONFIG_LOG_QUERIES'])) { echo "<font color='#FF0000'>";  }?>
+                <h302> <?php echo $l['title']['Settings']; ?> </h302>
+		<br/>
 
-						<b><?php echo $l['all']['QueriesLogging'] ?></b>
-</td><td>
-						<select name="config_querieslogging">
-						<option value="<?php echo $configValues['CONFIG_LOG_QUERIES'] ?>"> <?php echo $configValues['CONFIG_LOG_QUERIES'] ?> </option>
-						<option value="">  </option>
-						<option value="no"> no </option>
-						<option value="yes"> yes </option>
-						</select>
-						</font>
+                <ul>
 
+                <li class='fieldset'>
+                <label for='config_pageslogging' class='form'><?php echo $l['all']['PagesLogging'] ?></label>
+		<select class='form' name="config_pageslogging">
+			<option value="<?php echo $configValues['CONFIG_LOG_PAGES'] ?>"> <?php echo $configValues['CONFIG_LOG_PAGES'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
 
-</td></tr>
-<tr><td>
+                <li class='fieldset'>
+                <label for='config_querieslogging' class='form'><?php echo $l['all']['QueriesLogging'] ?></label>
+		<select class='form' name="config_querieslogging">
+			<option value="<?php echo $configValues['CONFIG_LOG_QUERIES'] ?>"> <?php echo $configValues['CONFIG_LOG_QUERIES'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
 
+                <li class='fieldset'>
+                <label for='config_actionslogging' class='form'><?php echo $l['all']['ActionsLogging'] ?></label>
+		<select class='form' name="config_actionslogging">
+			<option value="<?php echo $configValues['CONFIG_LOG_ACTIONS'] ?>"> <?php echo $configValues['CONFIG_LOG_ACTIONS'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
 
-						<?php if (!($configValues['CONFIG_LOG_ACTIONS'])) { echo "<font color='#FF0000'>";  }?>
+                <li class='fieldset'>
+                <label for='config_debuglogging' class='form'><?php echo $l['all']['LoggingDebugInfo'] ?></label>
+		<select class='form' name="config_debuglogging">
+			<option value="<?php echo $configValues['CONFIG_DEBUG_SQL'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
 
-						<b><?php echo $l['all']['ActionsLogging'] ?></b>
-</td><td>
-						<select name="config_actionslogging">
-						<option value="<?php echo $configValues['CONFIG_LOG_ACTIONS'] ?>"> <?php echo $configValues['CONFIG_LOG_ACTIONS'] ?> </option>
-						<option value="">  </option>
-						<option value="no"> no </option>
-						<option value="yes"> yes </option>
-						</select>
-						</font>
-</td></tr>
-<tr><td>
+                <li class='fieldset'>
+                <label for='config_debugpageslogging' class='form'><? echo $l['all']['LoggingDebugOnPages'] ?></label>
+		<select class='form' name="config_debugpageslogging">
+			<option value="<?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
 
-
-						<?php if (!($configValues['CONFIG_DEBUG_SQL'])) { echo "<font color='#FF0000'>";  }?>
-
-						<b>Logging of Debug info</b>
-</td><td>
-						<select name="config_debuglogging">
-						<option value="<?php echo $configValues['CONFIG_DEBUG_SQL'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL'] ?> </option>
-						<option value="">  </option>
-						<option value="no"> no </option>
-						<option value="yes"> yes </option>
-						</select>
-						</font>
-</td></tr>
-<tr><td>
+                <li class='fieldset'>
+                <label for='config_filenamelogging' class='form'><?php echo $l['all']['FilenameLogging'] ?></label>
+		<input value="<?php echo $configValues['CONFIG_LOG_FILE'] ?>" name="config_filenamelogging" />
+		</li>
 
 
-						<?php if (!($configValues['CONFIG_DEBUG_SQL_ONPAGE'])) { echo "<font color='#FF0000'>";  }?>
+                <li class='fieldset'>
+                <br/>
+                <hr><br/>
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                </li>
 
-						<b>Logging of Debug info on pages</b>
-</td><td>
-						<select name="config_debugpageslogging">
-						<option value="<?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?> </option>
-						<option value="">  </option>
-						<option value="no"> no </option>
-						<option value="yes"> yes </option>
-						</select>
-						</font>
-</td></tr>
-<tr><td>
+                </ul>
 
-						<?php if (!($configValues['CONFIG_LOG_FILE'])) { echo "<font color='#FF0000'>";  }?>
+        </fieldset>
 
-						<b><?php echo $l['all']['FilenameLogging'] ?></b>
-</td><td>
-						<input value="<?php echo $configValues['CONFIG_LOG_FILE'] ?>" name="config_filenamelogging" />
-						</font>
-
-
-</td></tr>
-
-
-</table>
-
-						<center>						
-						<br/>
-						<input type="submit" name="submit" value="Apply" />
-						</center>						
 
 
 				</form>

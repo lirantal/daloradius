@@ -94,6 +94,8 @@ $l['all']['PagesLogging'] = "Logging of Pages (page visits)";
 $l['all']['QueriesLogging'] = "Logging of Queries (reports and graphs)";
 $l['all']['ActionsLogging'] = "Logging of Actions (form submits)";
 $l['all']['FilenameLogging'] = "Logging filename (full path)";
+$l['all']['LoggingDebugOnPages'] = "Logging of Debug info on pages";
+$l['all']['LoggingDebugInfo'] = "Logging of Debug Info";
 
 $l['all']['PasswordHidden'] = "Enable Password Hiding (asterisk will be shown)";
 $l['all']['TablesListing'] = "Rows/Records per Tables Listing page";
@@ -112,6 +114,18 @@ $l['all']['MaxAllSession'] = "Max-All-Session";
 $l['all']['SessionTimeout'] = "Session Timeout";
 $l['all']['IdleTimeout'] = "Idle Timeout";
 
+$l['all']['DBEngine'] = "DB Engine";
+$l['all']['radcheck'] = "radcheck";
+$l['all']['radreply'] = "radreply";
+$l['all']['radgroupcheck'] = "radgroupcheck";
+$l['all']['radgroupreply'] = "radgroupreply";
+$l['all']['usergroup'] = "usergroup";
+$l['all']['radacct'] = "radacct";
+$l['all']['operators'] = "operators";
+$l['all']['rates'] = "rates";
+$l['all']['hotspots'] = "hotspots";
+
+$l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
 
 
 /* **********************************************************************************
@@ -212,6 +226,11 @@ $l['title']['RADIUSCheck'] = "Check Attributes";
 $l['title']['RADIUSReply'] = "Reply Attributes";
 
 $l['title']['Settings'] = "Settings";
+$l['title']['DatabaseSettings'] = "Database Settings";
+$l['title']['DatabaseTables'] = "Database Tables";
+$l['title']['AdvancedSettings'] = "Advanced Settings";
+
+
 $l['title']['Advanced'] = "Advanced";
 $l['title']['Optional'] = "Optional";
 
