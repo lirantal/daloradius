@@ -1,7 +1,7 @@
-<?php 
+<?php
 
-    include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
+	include ("library/checklogin.php");
+	$operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
@@ -15,7 +15,7 @@
 
 	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
 	isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
- 	isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
+	isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
 
 	isset($_POST['group']) ? $group = $_POST['group'] : $group = "";
 	isset($_POST['macaddress']) ? $macaddress = $_POST['macaddress'] : $macaddress = "";
@@ -34,132 +34,135 @@
 	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
 
 
-function addGroups($dbSocket, $username, $group) {
+	function addGroups($dbSocket, $username, $group) {
 
-	global $logDebugSQL;
-	global $configValues;
-				// insert usergroup mapping
-				if (isset($group) && (trim($group) != "")) {
-					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($group)."',0) ";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-				}
-}
+		global $logDebugSQL;
+		global $configValues;
 
-function addUserInfo($dbSocket, $username) {
-
-	global $firstname;
-	global $lastname;
-	global $email;
-	global $department;
-	global $company;
-	global $workphone;
-	global $homephone;
-	global $mobilephone;
-	global $notes;
-	global $logDebugSQL;
-	global $configValues;
-
-	$currDate = date('Y-m-d H:i:s');
-
-		                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
-	                        $res = $dbSocket->query($sql);
-	                        $logDebugSQL .= $sql . "\n";
-
-	                        // if there were no records for this user present in the userinfo table
-	                        if ($res->numRows() == 0) {
-					// insert user information table
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, 
-'".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', 
-'".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."', 
-'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', 
-'".$dbSocket->escapeSimple($notes)."', '$currDate')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-
-				} //FIXME:
-				  //if the user already exist in userinfo then we should somehow alert the user
-				  //that this has happened and the administrator/operator will take care of it
-
-}
+		// insert usergroup mapping
+		if (isset($group) && (trim($group) != "")) {
+			$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".
+				$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+		}
+	}
 
 
-function addAttributes($dbSocket, $username) {
+	function addUserInfo($dbSocket, $username) {
+
+		global $firstname;
+		global $lastname;
+		global $email;
+		global $department;
+		global $company;
+		global $workphone;
+		global $homephone;
+		global $mobilephone;
+		global $notes;
+		global $logDebugSQL;
+		global $configValues;
+
+		$currDate = date('Y-m-d H:i:s');
+
+	        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".
+			$dbSocket->escapeSimple($username)."'";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
+
+                // if there were no records for this user present in the userinfo table
+                if ($res->numRows() == 0) {
+			// insert user information table
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, 
+				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
+				$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
+				$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
+				$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
+				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."', '$currDate')";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+
+		} //FIXME:
+		  //if the user already exist in userinfo then we should somehow alert the user
+		  //that this has happened and the administrator/operator will take care of it
+
+	}
+
+
+	function addAttributes($dbSocket, $username) {
 		
-	global $logDebugSQL;
-	global $configValues;
+		global $logDebugSQL;
+		global $configValues;
 
-				foreach($_POST as $element=>$field) { 
+		foreach($_POST as $element=>$field) { 
 
-					// switch case to rise the flag for several $attribute which we do not
-					// wish to process (ie: do any sql related stuff in the db)
-					switch ($element) {
+			// switch case to rise the flag for several $attribute which we do not
+			// wish to process (ie: do any sql related stuff in the db)
+			switch ($element) {
 
-						case "authType":
+				case "authType":
 
-						case "username":
-						case "password":
-						case "passwordType":
-						case "group":
-						case "macaddress":
-						case "pincode":
-						case "submit":
-						case "firstname":
-						case "lastname":
-						case "email":
-						case "department":
-						case "company":
-						case "workphone":
-						case "homephone":
-						case "mobilephone":
-						case "notes":
-							$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
-										// to skip the loop (continue) without entering it as
-										// we do not want to process this $attribute in the following
-										// code block
-							break;
+				case "username":
+				case "password":
+				case "passwordType":
+				case "group":
+				case "macaddress":
+				case "pincode":
+				case "submit":
+				case "firstname":
+				case "lastname":
+				case "email":
+				case "department":
+				case "company":
+				case "workphone":
+				case "homephone":
+				case "mobilephone":
+				case "notes":
+					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
+								// to skip the loop (continue) without entering it as
+								// we do not want to process this $attribute in the following
+								// code block
+					break;
 
-					}
-				
-					if ($skipLoopFlag == 1) {
-                                                $skipLoopFlag = 0;              // resetting the loop flag
-						continue;
-					}
+			}
+	
+			if ($skipLoopFlag == 1) {
+                                $skipLoopFlag = 0;              // resetting the loop flag
+				continue;
+			}
 
-	                                if (isset($field[0]))
-	                                        $attribute = $field[0];
-	                                if (isset($field[1]))
-	                                        $value = $field[1];
-	                                if (isset($field[2]))
-	                                        $op = $field[2];
-	                                if (isset($field[3]))
-	                                        $table = $field[3];
+                        if (isset($field[0]))
+                                $attribute = $field[0];
+                        if (isset($field[1]))
+                                $value = $field[1];
+                        if (isset($field[2]))
+                                $op = $field[2];
+                        if (isset($field[3]))
+                                $table = $field[3];
 
-					if ( isset($table) && ($table == 'check') )
-						$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-					if ( isset($table) && ($table == 'reply') )
-						$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+			if ( isset($table) && ($table == 'check') )
+				$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+			if ( isset($table) && ($table == 'reply') )
+				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
-					if ( (isset($field)) && (!isset($field[1])) )
-						continue;
-				
-					$sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')  ";
+			if ( (isset($field)) && (!isset($field[1])) )
+				continue;
+	
+			$sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".
+				$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op)."', '".
+				$dbSocket->escapeSimple($value)."')  ";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+		} // foreach
 
-				} // foreach
-
-}
+	}
 
 
 	if (isset($_POST['submit'])) {
 
 		include 'library/opendb.php';
-        	include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
+        	include 'include/management/attributes.php';
 
 		global $username;
 		global $authType;
@@ -206,12 +209,12 @@ function addAttributes($dbSocket, $username) {
 				}
 				
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($passwordtype)."', ':=', $dbPassword)";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
+					$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($passwordtype).
+					"', ':=', $dbPassword)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-
 				addGroups($dbSocket, $username, $group);
 				addUserInfo($dbSocket, $username);
 				addAttributes($dbSocket, $username);
@@ -230,12 +233,11 @@ function addAttributes($dbSocket, $username) {
 		   } elseif ($authType == "macAuth") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($macaddress)."', 
-'Auth-Type', ':=', 'Accept')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
+					$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-
 				addGroups($dbSocket, $macaddress, $group);
 				addUserInfo($dbSocket, $macaddress);
 				addAttributes($dbSocket, $macaddress);
@@ -247,8 +249,8 @@ function addAttributes($dbSocket, $username) {
 		   } elseif ($authType == "pincodeAuth") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($pincode)."', 
-'Auth-Type', ':=', 'Accept')";
+				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
+					$dbSocket->escapeSimple($pincode)."', 'Auth-Type', ':=', 'Accept')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -278,9 +280,8 @@ function addAttributes($dbSocket, $username) {
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
-	
 	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
 		$hiddenPassword = "type=\"password\"";
 	
@@ -351,7 +352,6 @@ function addAttributes($dbSocket, $username) {
 			onfocus="javascript:toggleShowDiv('usernameTooltip')"
 			onblur="javascript:toggleShowDiv('usernameTooltip')" />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
-		<br/>
 
 		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/error.png' alt='Tip' border='0' /> 
@@ -393,7 +393,6 @@ function addAttributes($dbSocket, $username) {
 		        include_once 'include/management/populate_selectbox.php';
 		        populate_groups("Select Groups","group");
 		?>
-		<br/>
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/error.png' alt='Tip' border='0' /> 
 			<?php echo $l['Tooltip']['groupTooltip'] ?>
@@ -571,7 +570,7 @@ function addAttributes($dbSocket, $username) {
 		
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 
