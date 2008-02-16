@@ -19,13 +19,13 @@
 	<h3>NAS Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-rad-nas-list.php" tabindex=1><b>&raquo;</b>List NAS</a></li>
-		<li><a href="mng-rad-nas-new.php" tabindex=2><b>&raquo;</b>New NAS</a></li>
-		<li><a href="javascript:document.mngradnasedit.submit();" tabindex=3 ><b>&raquo;</b>Edit NAS</a>
+		<li><a href="mng-rad-nas-list.php" tabindex=1><b>&raquo;</b><?php echo $l['button']['ListNAS'] ?></a></li>
+		<li><a href="mng-rad-nas-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewNAS'] ?></a></li>
+		<li><a href="javascript:document.mngradnasedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditNAS'] ?></a>
 			<form name="mngradnasedit" action="mng-rad-nas-edit.php" method="get" class="sidebar">
 			<input name="nashost" type="text" tabindex=4>
 			</form></li>
-		<li><a href="mng-rad-nas-del.php" tabindex=5><b>&raquo;</b>Remove NAS</a></li>
+		<li><a href="mng-rad-nas-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveNAS'] ?></a></li>
 		
 	</ul>
 
