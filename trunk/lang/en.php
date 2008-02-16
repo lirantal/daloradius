@@ -188,6 +188,47 @@ $l['button']['OrderBy'] = "Order By";
 $l['button']['HotspotAccounting'] = "Hotspot Accounting";
 $l['button']['HotspotsComparison'] = "Hotspots Comparison";
 
+$l['button']['ListUsers'] = "List Users";
+$l['button']['NewUser'] = "New User";
+$l['button']['NewUserQuick'] = "New User - Quick Add";
+$l['button']['BatchAddUsers'] = "Batch Add Users";
+$l['button']['EditUser'] = "Edit User";
+$l['button']['SearchUsers'] = "Search Users";
+$l['button']['RemoveUsers'] = "Remove Users";
+$l['button']['ListHotspots'] = "ListHotspot";
+$l['button']['NewHotspot'] = "New Hotspot";
+$l['button']['EditHotspot'] = "Edit Hotspot";
+$l['button']['RemoveHotspot'] = "Remove Hotspot";
+
+$l['button']['ListNAS'] = "List NAS";
+$l['button']['NewNAS'] = "New NAS";
+$l['button']['EditNAS'] = "Edit NAS";
+$l['button']['RemoveNAS'] = "Remove NAS";
+
+$l['button']['ListUserGroup'] = "List User-Group Mappings";
+$l['button']['ListUsersGroup'] = "List  User's Group Mappings";
+$l['button']['NewUserGroup'] = "New User-Group Mappings";
+$l['button']['EditUserGroup'] = "Edit User-Group Mappings";
+$l['button']['RemoveUserGroup'] = "Remove User-Group Mappings";
+
+$l['button']['ListProfiles'] = "List Profiles";
+$l['button']['NewProfile'] = "New Profile";
+$l['button']['EditProfile'] = "Edit Profile";
+$l['button']['RemoveProfile'] = "Remove Profile";
+
+$l['button']['ListGroupReply'] = "List Group Reply Mappings";
+$l['button']['SearchGroupReply'] = "Search Group Reply";
+$l['button']['NewGroupReply'] = "New Group Reply Mapping";
+$l['button']['EditGroupReply'] = "Edit Group Reply Mapping";
+$l['button']['RemoveGroupReply'] = "Remove Group Reply Mapping";
+
+$l['button']['ListGroupCheck'] = "List Group Check Mappings";
+$l['button']['SearchGroupCheck'] = "Search Group Check";
+$l['button']['NewGroupCheck'] = "New Group Check Mapping";
+$l['button']['EditGroupCheck'] = "Edit Group Check Mapping";
+$l['button']['RemoveGroupCheck'] = "Remove Group Check Mapping";
+
+
 $l['button']['ProcessQuery'] = "Process Query";
 
  

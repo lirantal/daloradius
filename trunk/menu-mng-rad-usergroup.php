@@ -20,22 +20,22 @@
 	<h3>User-Group Management</h3>
 	<ul class="subnav">
 
-		<li><a href="mng-rad-usergroup-list.php"><b>&raquo;</b>List User-Group Mappings</a></li>
-		<li><a href="javascript:document.mngradusrgrplist.submit();""><b>&raquo;</b>List User's Group Mapping<a>
+		<li><a href="mng-rad-usergroup-list.php"><b>&raquo;</b><?php echo $l['button']['ListUserGroup'] ?></a></li>
+		<li><a href="javascript:document.mngradusrgrplist.submit();""><b>&raquo;</b><?php echo $l['button']['ListUsersGroup'] ?><a>
 			<form name="mngradusrgrplist" action="mng-rad-usergroup-list-user.php" method="get" 
 				class="sidebar">
 			<input name="username" type="text">
 			</form></li>
 
-		<li><a href="mng-rad-usergroup-new.php"><b>&raquo;</b>New User-Group Mapping</a></li>
-		<li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b>Edit User-Group Mapping<a>
+		<li><a href="mng-rad-usergroup-new.php"><b>&raquo;</b><?php echo $l['button']['NewUserGroup'] ?></a></li>
+		<li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditUserGroup'] ?><a>
 			<form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
 			<input name="username" type="text" value="[username]">
 			<input name="group" type="text" value="[groupname]">
 			</form></li>
 
 
-		<li><a href="mng-rad-usergroup-del.php"><b>&raquo;</b>Remove User-Group Mapping</a></li>
+		<li><a href="mng-rad-usergroup-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveUserGroup'] ?></a></li>
 	</ul>
 
 </div>

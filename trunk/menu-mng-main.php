@@ -19,37 +19,37 @@
 	<h3>Users Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-list-all.php"><b>&raquo;</b>List Users</a></li>
-		<li><a href="mng-new.php"><b>&raquo;</b>New User</a></li>
-		<li><a href="mng-new-quick.php"><b>&raquo;</b>New User - Quick add </a></li>
-		<li><a href="mng-batch.php"><b>&raquo;</b>Batch-Add Users <a></li>
-		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>Edit User<a>
+		<li><a href="mng-list-all.php"><b>&raquo;</b><?php echo $l['button']['ListUsers'] ?></a></li>
+		<li><a href="mng-new.php"><b>&raquo;</b><?php echo $l['button']['NewUser'] ?></a></li>
+		<li><a href="mng-new-quick.php"><b>&raquo;</b><?php echo $l['button']['NewUserQuick'] ?></a></li>
+		<li><a href="mng-batch.php"><b>&raquo;</b><?php echo $l['button']['BatchAddUsers'] ?><a></li>
+		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditUser'] ?><a>
 			<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
 			<input name="username" type="text"
 				value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
 			</form></li>
-		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>Search Users<a>
+		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b><?php echo $l['button']['SearchUsers'] ?><a>
 			<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
 			<input name="username" type="text" 
 				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 			</form></li>
 			
-		<li><a href="mng-del.php"><b>&raquo;</b>Remove User</a></li>
+		<li><a href="mng-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveUsers'] ?></a></li>
 		
 	</ul>
 
 	<h3>Hotspots Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-hs-list.php"><b>&raquo;</b>List Hotspots</a></li>
-		<li><a href="mng-hs-new.php"><b>&raquo;</b>New Hotspot</a></li>
-		<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b>Edit Hotspot<a>
+		<li><a href="mng-hs-list.php"><b>&raquo;</b><?php echo $l['button']['ListHotspots'] ?></a></li>
+		<li><a href="mng-hs-new.php"><b>&raquo;</b><?php echo $l['button']['NewHotspot'] ?></a></li>
+		<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditHotspot'] ?><a>
 			<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
 			<input name="name" type="text" 
 				value="<?php if (isset($edit_hotspotname)) echo $edit_hotspotname; ?>" tabindex=3>
 			</form></li>
 			
-		<li><a href="mng-hs-del.php"><b>&raquo;</b>Remove Hotspot</a></li>
+		<li><a href="mng-hs-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveHotspot'] ?></a></li>
 		
 	</ul>
 	
