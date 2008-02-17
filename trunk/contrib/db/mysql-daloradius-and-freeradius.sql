@@ -299,7 +299,7 @@ DROP TABLE IF EXISTS `usergroup`;
 CREATE TABLE `usergroup` (
   `UserName` varchar(64) NOT NULL default '',
   `GroupName` varchar(64) NOT NULL default '',
-  `priority` int(11) NOT NULL default '1',
+  `priority` int(11) NOT NULL default '0',
   KEY `UserName` (`UserName`(32))
 ) ENGINE=MyISAM;
 
