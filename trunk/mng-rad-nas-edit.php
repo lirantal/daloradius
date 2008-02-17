@@ -162,7 +162,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
                 <br />
 
                 <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
-                <input name='nassecret' type='text' id='nassecret' value='<?php echo $nashost ?>' tabindex=101 />
+                <input name='nassecret' type='text' id='nassecret' value='<?php echo $nassecret ?>' tabindex=101 />
                 <br />
 
                 <label for='nastype' class='form'><?php echo $l['all']['NasType'] ?></label>
