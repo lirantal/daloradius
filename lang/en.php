@@ -257,6 +257,19 @@ $l['button']['ViewMAP'] = "View MAP";
 $l['button']['EditMAP'] = "Edit MAP";
 $l['button']['RegisterGoogleMapsAPI'] = "RegisterGoogleMaps API";
 
+$l['button']['DatabaseSettings'] = "Database Settings";
+$l['button']['LanguageSettings'] = "Language Settings";
+$l['button']['LoggingSettings'] = "Logging Settings";
+$l['button']['InterfaceSettings'] = "Interface Settings";
+
+$l['button']['TestUserConnectivity'] = "Test User Connectivity";
+$l['button']['DisconnectUser'] = "Disconnect User";
+
+$l['button']['ListOperators'] = "List Operators";
+$l['button']['NewOperator'] = "New Operator";
+$l['button']['EditOperator'] = "Edit Operator";
+$l['button']['RemoveOperator'] = "Remove Operator";
+
 $l['button']['ProcessQuery'] = "Process Query";
 
  

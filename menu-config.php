@@ -8,16 +8,16 @@
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <body>
 <?php
-        include_once ("lang/main.php");
+	include_once ("lang/main.php");
 ?>
 
 <div id="wrapper">
 <div id="innerwrapper">
 		
 <?php
-    $m_active = "Config";
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/config-subnav.php");
+	$m_active = "Config";
+	include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/config-subnav.php");
 ?>      
 
 <div id="sidebar">
@@ -28,10 +28,10 @@
 	
 	<ul class="subnav">
 
-		<li><a href="config-db.php"><b>&raquo;</b>Database Settings</a></li>
-		<li><a href="config-lang.php"><b>&raquo;</b>Language Settings</a></li>
-		<li><a href="config-logging.php"><b>&raquo;</b>Logging Settings</a></li>
-		<li><a href="config-interface.php"><b>&raquo;</b>Interface Settings</a></li>
+		<li><a href="config-db.php"><b>&raquo;</b><?php echo $l['button']['DatabaseSettings'] ?></a></li>
+		<li><a href="config-lang.php"><b>&raquo;</b><?php echo $l['button']['LanguageSettings'] ?></a></li>
+		<li><a href="config-logging.php"><b>&raquo;</b><?php echo $l['button']['LoggingSettings'] ?></a></li>
+		<li><a href="config-interface.php"><b>&raquo;</b><?php echo $l['button']['InterfaceSettings'] ?></a></li>
 
 	</ul>
 	
