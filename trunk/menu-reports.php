@@ -28,9 +28,12 @@ include_once ("lang/main.php");
 				<h3>Users Reports</h3>
 				<ul class="subnav">
 				
-						<li><a href="rep-online.php"><b>&raquo;</b>Online Users</a>
-                                                <li><a href="rep-lastconnect.php"><b>&raquo;</b>Last Connection Attempts</a></li>
-						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>Top User</a>
+						<li><a href="rep-online.php"><b>&raquo;</b>
+							<?php $l['button']['OnlineUsers'] ?></a>
+                                                <li><a href="rep-lastconnect.php"><b>&raquo;</b>
+							<?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
+						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
+							<?php echo $l['button']['TopUser'] ?></a>
 							<form name="topusers" action="rep-topusers.php" method="post" class="sidebar">
 							<select name="limit" type="text">
 								<option value="5"> 5

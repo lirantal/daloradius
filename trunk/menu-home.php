@@ -9,6 +9,7 @@
 </head>
  
 <body>
+
 <?php
         include_once ("lang/main.php");
 ?>
@@ -17,43 +18,44 @@
 <div id="innerwrapper">
 		
 <?php
-    $m_active = "Home";
-    include_once ("include/menu/menu-items.php");
+	$m_active = "Home";
+	include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/home-subnav.php");
 ?>      
 
-		<div id="sidebar">
-		
-				<h2>Home</h2>
-				
-				<h3>Status</h3>
-				
+<div id="sidebar">
 
-                                <ul class="subnav">
-                                
-                                                <li><a href="rep-stat-server.php"><b>&raquo;</b>Server Status</a></li>
-                                                <li><a href="rep-stat-radius.php"><b>&raquo;</b>RADIUS Status </a></li>
-                                                <li><a href="rep-lastconnect.php"><b>&raquo;</b>Last Connection Attempts</a></li>
+	<h2>Home</h2>
 
-				<h3>Logs</h3>
-				
-                                                <li><a href="rep-logs-radius.php"><b>&raquo;</b>radius log</a></li>
-                                                <li><a href="rep-logs-system.php"><b>&raquo;</b>system log</a></li>
-				</ul>	
-				<h3>Support</h3>
-				
-				<p class="news">
-					daloRADIUS <br/>
-					RADIUS Management 
-					<a href="http://www.enginx.com" class="more">Read More &raquo;</a>
-				</p>
-				
-			
-				<h2>Search</h2>
-				
-				<input name="" type="text" value="Search" />
-		
-		</div>
+	<h3>Status</h3>
+
+	<ul class="subnav">
+
+		<li><a href="rep-stat-server.php"><b>&raquo;</b><?php echo $l['button']['ServerStatus'] ?></a></li>
+		<li><a href="rep-stat-radius.php"><b>&raquo;</b><?php echo $l['button']['ServicesStatus'] ?></a></li>
+		<li><a href="rep-lastconnect.php"><b>&raquo;</b><?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
+
+	<h3>Logs</h3>
+
+	        <li><a href="rep-logs-radius.php"><b>&raquo;</b><?php echo $l['button']['RadiusLog'] ?></a></li>
+	        <li><a href="rep-logs-system.php"><b>&raquo;</b><?php echo $l['button']['SystemLog'] ?></a></li>
+
+	</ul>
+	
+	<h3>Support</h3>
+
+	<p class="news">
+		daloRADIUS <br/>
+		RADIUS Management 
+		<a href="http://www.enginx.com" class="more">Read More &raquo;</a>
+	</p>
+
+
+	<h2>Search</h2>
+
+	<input name="" type="text" value="Search" />
+
+</div>
 		
 	
 

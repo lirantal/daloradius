@@ -36,28 +36,28 @@
 	<h3>Users Accounting</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b>User Accounting<a>
+		<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b><?php echo $l['button']['UserAccounting'] ?><a>
 			<form name="acctusername" action="acct-username.php" method="post" class="sidebar">
 			<input name="username" type="text" 
 					value="<?php if (isset($accounting_username)) echo $accounting_username;
 					else echo 'username'; ?>">
 			</form></li>
 
-		<li><a href="javascript:document.acctipaddress.submit();"><b>&raquo;</b>IP Accounting<a>
+		<li><a href="javascript:document.acctipaddress.submit();"><b>&raquo;</b><?php echo $l['button']['IPAccounting'] ?><a>
 			<form name="acctipaddress" action="acct-ipaddress.php" method="post" class="sidebar">
 			<input name="ipaddress" type="text" 
 				value="<?php if (isset($accounting_ipaddress)) echo $accounting_ipaddress;
 				else echo '0.0.0.0'; ?>">
 			</form></li>
 
-		<li><a href="javascript:document.acctnasipaddress.submit();"><b>&raquo;</b>NAS IP Accounting<a>
+		<li><a href="javascript:document.acctnasipaddress.submit();"><b>&raquo;</b><?php echo $l['button']['NASIPAccounting'] ?><a>
 			<form name="acctnasipaddress" action="acct-nasipaddress.php" method="post" class="sidebar">
 			<input name="nasipaddress" type="text" 
 				value="<?php if (isset($accounting_nasipaddress)) echo $accounting_nasipaddress;
 				else echo '0.0.0.0'; ?>">
 			</form></li>
 
-		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b>Date Accounting<a>
+		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?><a>
 			<form name="acctdate" action="acct-date.php" method="post" class="sidebar">
 			<input name="username" type="text" 
 				value="<?php if (isset($accounting_date_username)) echo $accounting_date_username;
@@ -83,8 +83,8 @@
 
 			</form></li>
 
-		<li><a href="acct-all.php"><b>&raquo;</b>All Records</a></li>
-		<li><a href="acct-active.php"><b>&raquo;</b>Active Records</a></li>
+		<li><a href="acct-all.php"><b>&raquo;</b><?php echo $l['button']['AllRecords'] ?></a></li>
+		<li><a href="acct-active.php"><b>&raquo;</b><?php echo $l['button']['ActiveRecords'] ?></a></li>
 
 	</ul>
 
