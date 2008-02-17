@@ -8,18 +8,21 @@
 	include "library/googlemaps.php";
 ?>
 </head>
+
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <body onload="load()" onunload="GUnload()">
+
 <?php
-    include_once ("lang/main.php");
+	include_once ("lang/main.php");
 ?>
+
 <div id="wrapper">
 <div id="innerwrapper">
 
 <?php
 	$m_active = "Gis";
-    include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/gis-subnav.php");
 ?>      
 
@@ -29,14 +32,15 @@
 	
 	<h3>GIS Mapping</h3>
 	<ul class="subnav">
-		<li><a href="gis-viewmap.php"><b>&raquo;</b>View MAP</a></li>
-		<li><a href="gis-editmap.php"><b>&raquo;</b>Edit MAP</a></li>		
+		<li><a href="gis-viewmap.php"><b>&raquo;</b><?php echo $l['button']['ViewMAP'] ?></a></li>
+		<li><a href="gis-editmap.php"><b>&raquo;</b><?php echo $l['button']['EditMAP'] ?></a></li>		
 	</ul>
 
 	<h3>Settings</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.gisregister.submit();"/><b>&raquo;</b>Register GoogleMaps API<a>
+		<li><a href="javascript:document.gisregister.submit();"/><b>&raquo;</b><?php echo $l['button']['RegisterGoogleMapsAPI']?>
+			</a>
 			<form name="gisregister" action="gis-main.php" method="get" class="sidebar">
 			<input name="code" type="text">
 			<input name="submit" type="submit" value="Register code">

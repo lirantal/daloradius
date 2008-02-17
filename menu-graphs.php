@@ -8,16 +8,17 @@
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <body>
+
 <?php
-    include_once ("lang/main.php");
+	include_once ("lang/main.php");
 ?>
 
 <div id="wrapper">
 <div id="innerwrapper">
 
 <?php
-    $m_active = "Graphs";
-    include_once ("include/menu/menu-items.php");
+	$m_active = "Graphs";
+	include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/graphs-subnav.php");
 ?>      
 
@@ -25,11 +26,12 @@
 <div id="sidebar">
 
 	<h2>Graphs</h2>
-	
+
 	<h3>User Graph</h3>
 	<ul class="subnav">
 
-		<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>User Logins</a>
+		<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>
+			<?php echo $l['button']['UserLogins'] ?></a>
 			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
 			<input name="username" type="text" 
 				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username;
@@ -43,7 +45,8 @@
 		</li>
 
 
-		<li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>User Downloads</a>
+		<li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>
+			<?php echo $l['button']['UserDownloads'] ?></a>
 			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
 			<input name="username" type="text" 
 				value="<?php if (isset($overall_download_username)) echo $overall_download_username;
@@ -57,7 +60,8 @@
 		</li>
 
 
-		<li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>User Uploads</a>
+		<li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>
+			<?php echo $l['button']['UserUploads'] ?></a>
 			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
 			<input name="username" type="text" 
 				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username;
@@ -71,12 +75,13 @@
 		</li>
 
 	</ul>
-	
+
 	<h3>Statistics</h3>
 	<ul class="subnav">
 
 
-		<li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>Total Logins</a>
+		<li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>
+			<?php echo $l['button']['TotalLogins'] ?></a>
 			<form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
 			<select name="type" type="text">
 				<option value="daily"> Daily
@@ -87,7 +92,8 @@
 
 
 
-		<li><a href="javascript:document.alltime_traffic_compare.submit();"><b>&raquo;</b>Total Traffic Use</a>
+		<li><a href="javascript:document.alltime_traffic_compare.submit();"><b>&raquo;</b>
+			<?php echo $l['button']['TotalTraffic'] ?></a>
 			<form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" 
 				class="sidebar">
 			<select name="type" type="text">

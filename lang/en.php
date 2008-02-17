@@ -228,6 +228,34 @@ $l['button']['NewGroupCheck'] = "New Group Check Mapping";
 $l['button']['EditGroupCheck'] = "Edit Group Check Mapping";
 $l['button']['RemoveGroupCheck'] = "Remove Group Check Mapping";
 
+$l['button']['UserAccounting'] = "User Accounting";
+$l['button']['IPAccounting'] = "IP Accounting";
+$l['button']['NASIPAccounting'] = "NAS IP Accounting";
+$l['button']['DateAccounting'] = "Date Accounting";
+$l['button']['AllRecords'] = "All Records";
+$l['button']['ActiveRecords'] = "Active Records";
+
+$l['button']['OnlineUsers'] = "Online Users";
+$l['button']['LastConnectionAttempts'] = "Last Connection Attempts";
+$l['button']['TopUser'] = "Top User";
+
+$l['button']['ServerStatus'] = "Server Status";
+$l['button']['ServicesStatus'] = "Services Status";
+
+$l['button']['daloRADIUSLog'] = "daloRADIUS Log";
+$l['button']['RadiusLog'] = "Radius Log";
+$l['button']['SystemLog'] = "System Log";
+$l['button']['BootLog'] = "Boot Log";
+
+$l['button']['UserLogins'] = "User Logins";
+$l['button']['UserDownloads'] = "User Downloads";
+$l['button']['UserUploads'] = "User Uploads";
+$l['button']['TotalLogins'] = "Total Logins";
+$l['button']['TotalTraffic'] = "Total Traffic";
+
+$l['button']['ViewMAP'] = "View MAP";
+$l['button']['EditMAP'] = "Edit MAP";
+$l['button']['RegisterGoogleMapsAPI'] = "RegisterGoogleMaps API";
 
 $l['button']['ProcessQuery'] = "Process Query";
 
