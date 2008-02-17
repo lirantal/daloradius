@@ -8,16 +8,16 @@
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <body>
 <?php
-        include_once ("lang/main.php");
+	include_once ("lang/main.php");
 ?>
 
 <div id="wrapper">
 <div id="innerwrapper">
 		
 <?php
-    $m_active = "Config";
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/config-subnav.php");
+	$m_active = "Config";
+	include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/config-subnav.php");
 ?>      
 
 <div id="sidebar">
@@ -29,8 +29,8 @@
 
 	<ul class="subnav">
 
-		<li><a href="config-maint-test-user.php"><b>&raquo;</b>Test User Connectivity</a></li>
-		<li><a href="config-maint-disconnect-user.php"><b>&raquo;</b>Disconnect User</a></li>
+		<li><a href="config-maint-test-user.php"><b>&raquo;</b><?php echo $l['button']['TestUserConnectivity'] ?></a></li>
+		<li><a href="config-maint-disconnect-user.php"><b>&raquo;</b><?php echo $l['button']['DisconnectUser'] ?></a></li>
 		
 	</ul>
 	
