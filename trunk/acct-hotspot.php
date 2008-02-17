@@ -37,7 +37,7 @@
 		
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 

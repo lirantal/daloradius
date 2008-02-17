@@ -62,7 +62,8 @@
 				</select>
 				</form></li>
 			
-				<li><a href="acct-hotspot-compare.php"><b>&raquo;</b><?php echo $l['button']['HotspotsComparison'] </a></li>
+				<li><a href="acct-hotspot-compare.php"><b>&raquo;</b><?php echo $l['button']['HotspotsComparison'] ?>
+					</a></li>
 			</ul>
 			
 			<br/><br/>
