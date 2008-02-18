@@ -107,6 +107,8 @@
 				case "password":
 				case "passwordType":
 				case "group":
+				case "group_macaddress":
+				case "group_pincode":
 				case "macaddress":
 				case "pincode":
 				case "submit":
@@ -234,7 +236,7 @@
 		   } elseif ($authType == "macAuth") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
 					$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
