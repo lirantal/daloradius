@@ -24,9 +24,11 @@ function toggleUserAuth() {
 
 	//disable the mac auth
 	document.newuser.macaddress.disabled=true;
+	document.newuser.group_macaddress.disabled=true;
 
 	// disable pincode auth
 	document.newuser.pincode.disabled=true;
+	document.newuser.group_pincode.disabled=true;
 
 	//enable the user auth
 	document.newuser.username.disabled=false;
@@ -41,9 +43,11 @@ function togglePinCode() {
 
 	// disable pincode auth
 	document.newuser.pincode.disabled=false;
+	document.newuser.group_pincode.disabled=false;
 
 	//disable the mac auth
 	document.newuser.macaddress.disabled=true;
+	document.newuser.group_macaddress.disabled=true;
 
 	// disable the user auth
 	document.newuser.username.disabled=true;
@@ -58,6 +62,7 @@ function toggleMacAuth(state) {
 
 	// enable the mac auth
 	document.newuser.macaddress.disabled=false;
+	document.newuser.group_macaddress.disabled=false;
 
 	// disable the user auth
 	document.newuser.username.disabled=true;
@@ -68,22 +73,7 @@ function toggleMacAuth(state) {
 
 	// disable pincode auth
 	document.newuser.pincode.disabled=true;
-
-
-/*
-if (div.childNodes && div.childNodes.length > 0) {
-      for (var x = 0; x < div.childNodes.length; x++) {
-//	document.newuser.username.disabled=true;	//works
-//        toggleDisabled(el.childNodes[x]);
-//	var user = document.getElementById();
-//	user.disabled=true;
-//	div.childNodes[x].disabled=true;
-	divNodes[x].disabled=true;
-
-       }
-}
-
-*/
+	document.newuser.group_pincode.disabled=true;
 
 }
 
@@ -106,6 +96,26 @@ function setText(srcObj,dstObj) {
 
 }
 
+
+/***********************************************************************
+ * setStringTextObj
+ * srcId	- the source object (the reference given is an id) text
+ * dstObj	- the dstination object is set to the source object text
+ ***********************************************************************/
+function setStringTextObj(srcId,dstObj) {
+	
+	alert(document.getElementById(srcId).value);
+//	alert(document.getElementById(dstObj).value);
+//	dstObj.value = document.getElementById(srcId).value;
+
+}
+
+
+function test1(elem1) {
+	alert('in test1');
+	alert(document.getElementById(elem1).value);
+//	alert(document.getElementById(elem2).value);
+}
 
 
 /***********************************************************************

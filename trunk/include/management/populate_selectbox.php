@@ -10,9 +10,9 @@
  * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
  *
  */
-function populate_groups($defaultOption = "Select Group",$elementName = "", $cssClass = "form") {
+function populate_groups($defaultOption = "Select Group",$elementName = "", $cssClass = "form", $mode = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' 
+	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
 			name='$elementName' class='$cssClass' tabindex=105
                         onfocus=\"javascript:toggleShowDiv('".$elementName."Tooltip')\"
                         onblur=\"javascript:toggleShowDiv('".$elementName."Tooltip')\" />

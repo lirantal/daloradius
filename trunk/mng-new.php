@@ -17,9 +17,11 @@
 	isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
 	isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
 
-	isset($_POST['group']) ? $group = $_POST['group'] : $group = "";
 	isset($_POST['macaddress']) ? $macaddress = $_POST['macaddress'] : $macaddress = "";
 	isset($_POST['pincode']) ? $pincode = $_POST['pincode'] : $pincode = "";
+
+	isset($_POST['group_macaddress']) ? $group_macaddress = $_POST['group_macaddress'] : $group_macaddress = "";
+	isset($_POST['group_pincode']) ? $group_pincode = $_POST['group_pincode'] : $group_pincode = "";
 
 	isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
 	isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
@@ -101,7 +103,6 @@
 			switch ($element) {
 
 				case "authType":
-
 				case "username":
 				case "password":
 				case "passwordType":
@@ -238,7 +239,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				addGroups($dbSocket, $macaddress, $group);
+				addGroups($dbSocket, $macaddress, $group_macaddress);
 				addUserInfo($dbSocket, $macaddress);
 				addAttributes($dbSocket, $macaddress);
 
@@ -254,7 +255,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				addGroups($dbSocket, $pincode, $group);
+				addGroups($dbSocket, $pincode, $group_macaddress);
 				addUserInfo($dbSocket, $pincode);
 				addAttributes($dbSocket, $pincode);
 
@@ -424,14 +425,22 @@
 
 		<li class='fieldset'>
 		<label for='macaddress' class='form'><?php echo $l['all']['MACAddress']?></label>
-		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 
+		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 disabled
 			onfocus="javascript:toggleShowDiv('macaddressTooltip')"
 			onblur="javascript:toggleShowDiv('macaddressTooltip')" />
                 <div id='macaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['macaddressTooltip'] ?>
                 </div>
-		<br/>
+		</li>
+
+		<li class='fieldset'>
+		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
+		<?php   
+		        include_once 'include/management/populate_selectbox.php';
+		        populate_groups("Select Groups", "group_macaddress", "form", "disabled");
+		?>
+		</li>
 
 		<li class='fieldset'>
 		<br/>
@@ -458,7 +467,7 @@
 
 		<li class='fieldset'>
 		<label for='pincode' class='form'><?php echo $l['all']['PINCode']?></label>
-		<input name='pincode' type='text' id='pincode' value='' tabindex=106
+		<input name='pincode' type='text' id='pincode' value='' tabindex=106 disabled
 			onfocus="javascript:toggleShowDiv('pincodeTooltip')"
 			onblur="javascript:toggleShowDiv('pincodeTooltip')" />
 		<input type='button' value='Generate' class='button' onclick="javascript:randomAlphanumeric('pincode',10)" />
@@ -466,7 +475,16 @@
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['pincodeTooltip'] ?>
                 </div>
-		<br/>
+		</li>
+
+		<li class='fieldset'>
+		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
+		<?php   
+		        include_once 'include/management/populate_selectbox.php';
+		        populate_groups("Select Groups", "group_pincode", "form", "disabled");
+		?>
+		</li>
+
 
 		<li class='fieldset'>
 		<br/>
