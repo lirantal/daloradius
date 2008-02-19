@@ -32,7 +32,7 @@
 	<ul class="subnav">
 
 		<li><a href="rep-stat-server.php"><b>&raquo;</b><?php echo $l['button']['ServerStatus'] ?></a></li>
-		<li><a href="rep-stat-radius.php"><b>&raquo;</b><?php echo $l['button']['ServicesStatus'] ?></a></li>
+		<li><a href="rep-stat-services.php"><b>&raquo;</b><?php echo $l['button']['ServicesStatus'] ?></a></li>
 		<li><a href="rep-lastconnect.php"><b>&raquo;</b><?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
 
 	<h3>Logs</h3>
