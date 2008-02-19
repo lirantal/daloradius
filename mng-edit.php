@@ -14,6 +14,8 @@
 
 	if (isset($_REQUEST['submit'])) {
 
+                $currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
+
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
 
@@ -47,7 +49,7 @@
 values (0, '".$dbSocket->escapeSimple($username)."',
 '".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."',
 '".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."',
-'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."')";
+'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."', '$currDate')";
                                 $res = $dbSocket->query($sql);
                                 $logDebugSQL .= $sql . "\n";
 			} else {
@@ -123,7 +125,6 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 					continue;
 				}
 
-
                                 if (isset($field[0]))
 					$attribute = $field[0];
                                 if (isset($field[1]))
@@ -139,7 +140,7 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
                                         $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
 
-                                if (!($value))
+                                if ( (!($value)) || (!($attribute)) )
    	                             continue;
 
 				$counter = 0;
