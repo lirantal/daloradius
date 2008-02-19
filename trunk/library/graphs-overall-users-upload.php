@@ -35,7 +35,7 @@ function daily($username) {
 	
 	header("Content-type: image/png");
 
-	$chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where 
 	username='$username' group by day;";
@@ -70,7 +70,7 @@ function monthly($username) {
 
 	header("Content-type: image/png");
 	
-	$chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." 
 	where username='$username' group by month;";
@@ -104,7 +104,7 @@ function yearly($username) {
 	
 	header("Content-type: image/png");
 
-	$chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT UserName, sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." where 
 	username='$username' group by year;";

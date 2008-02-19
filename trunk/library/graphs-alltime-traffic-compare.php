@@ -31,7 +31,7 @@ function daily() {
 
 	header("Content-type: image/png");
 
-	$chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by day;";
 	$res = $dbSocket->query($sql);
@@ -62,7 +62,7 @@ function monthly() {
 
 	header("Content-type: image/png");
 
-	$chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Month;";
 	$res = $dbSocket->query($sql);
@@ -93,7 +93,7 @@ function yearly() {
 
 	header("Content-type: image/png");
 
-	$chart = new VerticalChart(920,500);
+	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".$configValues['CONFIG_DB_TBL_RADACCT']." group by Year;";
 	$res = $dbSocket->query($sql);
