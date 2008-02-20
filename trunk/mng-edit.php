@@ -327,7 +327,7 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 ?>
 
 <?php
-	include ("menu-mng-main.php");	
+	include ("menu-mng-users.php");	
 ?>
 		
 		<div id="contentnorightbar">

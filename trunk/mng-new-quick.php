@@ -154,7 +154,7 @@
 
 <?php
 
-	include ("menu-mng-main.php");
+	include ("menu-mng-users.php");
 	
 ?>
 

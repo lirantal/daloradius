@@ -107,7 +107,7 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
  
 <?php
 
-	include ("menu-mng-main.php");
+	include ("menu-mng-hs.php");
 	
 ?>		
 		<div id="contentnorightbar">
