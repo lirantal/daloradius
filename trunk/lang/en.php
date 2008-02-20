@@ -899,6 +899,8 @@ Then you may be able to use Google Maps services. <br/><br/>";
 $l['messages']['noCheckAttributesForUser'] = "This user has no check attributes associated with it";
 $l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
 
+$l['messages']['noCheckAttributesForGroup'] = "This group has no check attributes associated with it";
+$l['messages']['noReplyAttributesForGroup'] = "This group has no reply attributes associated with it";
 
 $l['messages']['nogroupdefinedforuser'] = "This user has no Groups associated with it";
 $l['messages']['wouldyouliketocreategroup'] = "Would you like to create one?";
