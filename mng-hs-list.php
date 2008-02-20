@@ -28,7 +28,7 @@
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <?php
 
-	include ("menu-mng-main.php");
+	include ("menu-mng-hs.php");
 	
 ?>
 		
