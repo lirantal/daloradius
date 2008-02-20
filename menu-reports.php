@@ -29,7 +29,7 @@ include_once ("lang/main.php");
 				<ul class="subnav">
 				
 						<li><a href="rep-online.php"><b>&raquo;</b>
-							<?php $l['button']['OnlineUsers'] ?></a>
+							<?php echo $l['button']['OnlineUsers'] ?></a>
                                                 <li><a href="rep-lastconnect.php"><b>&raquo;</b>
 							<?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
