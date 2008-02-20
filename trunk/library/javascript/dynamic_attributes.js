@@ -123,9 +123,6 @@ function addElement(enableTable) {
 	""+
 	tableElement+
 	""+
-        "       <b>Util:</b>"+
-        "       <select id='dictFunc' name='dictFunc' class='form' style='width:100px' >"+
-        "       </select>"+
         "       <br/><br/>"+
 	""+
         "     <div id='dictInfo"+num+"' style='display:none;visibility:visible'>"+
