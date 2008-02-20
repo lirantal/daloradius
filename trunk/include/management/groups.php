@@ -38,11 +38,11 @@
 
 	if ($res->numRows() == 0) {
 		echo "
-			<br/><center> ".$l['messages']['nogroupdefinedforuser']." <br/>".
+			<center> ".$l['messages']['nogroupdefinedforuser']." <br/>".
 					str_replace("create", "<a href='mng-rad-usergroup-new.php?username=$username'>create</a>", 
 						$l['messages']['wouldyouliketocreategroup'])."
 
-			</center><br/>";
+			</center>";
 	} else {
 
 		$counter = 0;
