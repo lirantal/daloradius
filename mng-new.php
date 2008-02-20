@@ -544,12 +544,7 @@
                 <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
                 </select>
 
-		<br/>
-		<b>Util:</b>
-		<div id='util'>
-		</div>
 		<br/><br/>
-
 		<div id='dictInfo0' style='display:none;visibility:visible'>
 			<span id='dictTooltip0'>
 				<b>Attribute Tooltip:</b>
