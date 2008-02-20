@@ -29,14 +29,14 @@
 	<ul class="subnav">
 	
 		<li><a href="config-operators-list.php"><b>&raquo;</b><?php echo $l['button']['ListOperators'] ?></a></li>
-		<li><a href="config-operators-new.php"><b>&raquo;</b><?php echo $l['button']['NewOperators'] ?></a></li>
-		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditOperators'] ?></a>
+		<li><a href="config-operators-new.php"><b>&raquo;</b><?php echo $l['button']['NewOperator'] ?></a></li>
+		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditOperator'] ?></a>
 			<form name="mngedit" action="config-operators-edit.php" method="get" class="sidebar">
 			<input name="operator_username" type="text">
 			</form>
 		</li>
 
-		<li><a href="config-operators-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveOperators'] ?></a></li>
+		<li><a href="config-operators-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveOperator'] ?></a></li>
 	
 	</ul>
 
