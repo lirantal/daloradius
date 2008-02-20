@@ -152,6 +152,7 @@
                 <h302> <?php echo $l['title']['RADIUSCheck']?> </h302>
                 <br/>
 
+		<ul>
 <?php
 
 
@@ -163,6 +164,13 @@
         $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
+
+        if ($numrows = $res->numRows() == 0) {  
+                echo "<center>";
+                echo $l['messages']['noCheckAttributesForGroup'];
+                echo "</center>";
+        }
+
         while($row = $res->fetchRow()) {
 
                 echo "<label class='attributes'>";
@@ -206,7 +214,8 @@
         <hr><br/>
         <br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
-        <br/>
+
+	</ul>
 
         </fieldset>
         </div>
@@ -218,12 +227,20 @@
                 <h302> <?php echo $l['title']['RADIUSReply']?> </h302>
                 <br/>
 
+		<ul>
+
 <?php
 
         $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE 
 GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
+
+        if ($numrows = $res->numRows() == 0) {
+                echo "<center>";
+                echo $l['messages']['noReplyAttributesForGroup'];
+                echo "</center>";
+        }
 
         while($row = $res->fetchRow()) {
 
@@ -270,6 +287,8 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
         <br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
         <br/>
+
+	</ul>
 
         </fieldset>
 	</div>
