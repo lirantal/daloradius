@@ -354,6 +354,7 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
                 <h302> <?php echo $l['title']['RADIUSCheck']; ?> </h302>
                 <br/>
 
+		<ul>
 <?php
 
 	include 'library/opendb.php';
@@ -364,6 +365,13 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
+
+	if ($numrows = $res->numRows() == 0) {
+		echo "<center>";
+		echo $l['messages']['noCheckAttributesForUser'];
+		echo "</center>";
+	}
+
 
 	while($row = $res->fetchRow()) {
 
@@ -411,6 +419,8 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
 	<br/>
 
+	</ul>
+
 	</fieldset>
 	</div>
 
@@ -421,11 +431,18 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
                 <h302> <?php echo $l['title']['RADIUSReply']; ?> </h302>
                 <br/>
 
+		<ul>
 
 <?php
 	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
+
+	if ($numrows = $res->numRows() == 0) {
+		echo "<center>";
+		echo $l['messages']['noReplyAttributesForUser'];
+		echo "</center>";
+	}
 	
 	while($row = $res->fetchRow()) {
 		
@@ -470,6 +487,9 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
         <br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
         <br/>
+
+	
+	</ul>
 
         </fieldset>  
         </div>  
