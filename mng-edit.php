@@ -376,7 +376,7 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 	while($row = $res->fetchRow()) {
 
 		echo "<label class='attributes'>";		
-		echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$row[0]&tablename=radcheck'>
+		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[0]&tablename=radcheck'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
 		echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
@@ -447,7 +447,7 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 	while($row = $res->fetchRow()) {
 		
 		echo "<label class='attributes'>";
-		echo "<a class='tablenovisit' href='mng-del?username=$username&attribute=$row[0]&tablename=radreply'>
+		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[0]&tablename=radreply'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
