@@ -16,17 +16,20 @@
 
 	$groupname = $_REQUEST['groupname'];
 	$value = $_REQUEST['value'];
-	$valueOld = $_REQUEST['value'];	
+	$valueOld = $_REQUEST['value'];
+	$attribute = $_REQUEST['attribute'];
 
-	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' 
-AND Value='".$dbSocket->escapeSimple($value)."'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname).
+		"' AND Value='".$dbSocket->escapeSimple($value)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 	$res = $dbSocket->query($sql);
+
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
+
 	$row = $res->fetchRow();		// array fetched with values from $sql query
-		$op = $row[3];
-		$attribute = $row[2];
+
+	$op = $row[3];
+	$attribute = $row[2];
 	
 
 	if (isset($_POST['submit'])) {
@@ -38,8 +41,8 @@ AND Value='".$dbSocket->escapeSimple($value)."'";
 
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'
-AND Value='".$dbSocket->escapeSimple($valueOld)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname).
+			"'AND Value='".$dbSocket->escapeSimple($valueOld)."'  AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -47,9 +50,10 @@ AND Value='".$dbSocket->escapeSimple($valueOld)."'";
 
 			if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." SET Value='".$dbSocket->escapeSimple($value)."',
-op='".$dbSocket->escapeSimple($op)."', Attribute='".$dbSocket->escapeSimple($attribute)."'
-WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($valueOld)."'";
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." SET Value='".$dbSocket->escapeSimple($value).
+					"', op='".$dbSocket->escapeSimple($op)."', Attribute='".$dbSocket->escapeSimple($attribute).
+					"' WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($valueOld).
+					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			

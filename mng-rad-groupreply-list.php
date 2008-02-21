@@ -133,7 +133,7 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
-					<a class='tablenovisit' href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]'> $row[0] </a></td>
+					<a class='tablenovisit' href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]''> $row[0] </a></td>
 				<td> $row[1] </td>
 				<td> $row[2] </td>						
 				<td> $row[3] </td>						
