@@ -7,7 +7,12 @@
 # General Public License Version 2, provided that the above copyright
 # notice and this permission notice is included in all copies or
 # substantial portions of the software.
-
+#
+# daloRADIUS edition - fixed up variable definition through-out the code
+# as well as parted the code for the sake of modularity and ability to 
+# to support templates and languages easier.
+# Copyright (C) Enginx and Liran Tal 2007, 2008
+#
 # Redirects from ChilliSpot daemon:
 #
 # Redirection when not yet or already authenticated
