@@ -1,4 +1,4 @@
-release 0.9-6 - 17 Februray 2008
+release 0.9-6 - 25 Februray 2008
 	- added major improvement to attributes management which is now supporting all possible vendors
 	  and attributes which comes with latest freeradius 1.1.7, dynamically from the database using
 	  ajax support in the interface to easy management.
@@ -6,7 +6,9 @@ release 0.9-6 - 17 Februray 2008
 	- added new authentication methods - mac auth and pincode auth
 	- added new dynamic tooltips on the managment forms
 	- added createdate field to userinfo table
-	- added - attributes automatically appear with the tooltip/help text (requested by Carlos Cessario)
+	- added in attributes, automatically appear with the tooltip/help text (requested by Carlos Cessario)
+	- added hotspotlogin.php chillispot hotspot code-base, based on the php version along with
+	  customized templates and modular code (allowing of templates, translation, etc)
 	- improved status pages layout (thanks to Carlos Cesario)
 	- improved code security on maintenance pages using system calls
 	- improved forms interface design (bye bye not-so-pretty tables layout!) and overall interface
@@ -17,6 +19,10 @@ release 0.9-6 - 17 Februray 2008
 	  were reset to a random value on every save.
 	- fixed bug on adding new operator
 	- fixed bug on new user page of undefined indexes
+	- fixed bug on group management pages (updating a record would update all other attributes)
+	- fixed bug on edit user page (it would add another empty record to the database)
+	  (thanks to Joachim)
+	- fixed layout on graphs to use a lower size chart image (thanks to Joachim)
 
 
 release 0.9-5 - 23 December 2007
