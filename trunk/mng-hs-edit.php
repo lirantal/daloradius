@@ -133,23 +133,43 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
                 <h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
 		<br/>
 
+		<ul>
+
+                <li class='fieldset'>
                 <label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
                 <input disabled name='name' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
-                <br/>
+                </li>
 
+                <li class='fieldset'>
                 <label for='macaddress' class='form'><?php echo $l['all']['MACAddress'] ?></label>
-                <input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
-                <br/>
+                <input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101
+                        onfocus="javascript:toggleShowDiv('hotspotMacaddressTooltip')"
+                        onblur="javascript:toggleShowDiv('hotspotMacaddressTooltip')" />
+                <div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
+                </div>
+                </li>
 
+                <li class='fieldset'>
                 <label for='geocode' class='form'><?php echo $l['all']['Geocode'] ?></label>
-                <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
+                <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102
+                        onfocus="javascript:toggleShowDiv('geocodeTooltip')"
+                        onblur="javascript:toggleShowDiv('geocodeTooltip')" />
+                <div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['geocodeTooltip'] ?>
+                </div>
+                </li>
+
+                <li class='fieldset'>
                 <br/>
-
-                <br/><br/>
                 <hr><br/>
-
                 <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
                         class='button' />
+		</li>
+
+		<ul>
 
         </fieldset>
 
