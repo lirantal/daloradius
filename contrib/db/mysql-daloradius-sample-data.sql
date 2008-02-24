@@ -173,7 +173,6 @@ CREATE TABLE `operators` (
 LOCK TABLES `operators` WRITE;
 INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Sys','Administrator','','','','','','','','','','','0000-00-00 00:00:00','0000-00-00 00:00:00'),(2,'liran','1234','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Liran','Tal','Developer','daloRADIUS','Enginx','','','liran.tal@gmail.com','liran@enginx.com','','','','0000-00-00 00:00:00','0000-00-00 00:00:00');
 UNLOCK TABLES;
-
 --
 -- Table structure for table `radacct`
 --
@@ -412,7 +411,7 @@ CREATE TABLE `userinfo` (
 
 
 LOCK TABLES `userinfo` WRITE;
-INSERT INTO `userinfo` VALUES (1,'liran','liran','tal','test@gmail.com','none','vvcvc','00','01','02','vbvcbvcbc'),(2,'nTAxLCPI','ss','ss','ss','cccv','vv','ww','22','ff',''),(3,'nTAxLCPI','das','das','cv','a','','','','',''),(4,'nTAxLCPI','d','d','d','n','b','v','n','n','n'),(5,'nTAxLCPI','v','v','','b','vv','d','','',''),(6,'nTAxLCPI','b','bbb','b','b','bb','bvv','bb','b','vv'),(7,'tata','test1','test2','m','m','m','m','m','m','m');
+INSERT INTO `userinfo` VALUES (1,'liran','liran','tal','test@gmail.com','none','vvcvc','00','01','02','vbvcbvcbc','0000-00-00 00:00:00'),(2,'nTAxLCPI','ss','ss','ss','cccv','vv','ww','22','ff','','0000-00-00 00:00:00'),(3,'nTAxLCPI','das','das','cv','a','','','','','','0000-00-00 00:00:00'),(4,'nTAxLCPI','d','d','d','n','b','v','n','n','n','0000-00-00 00:00:00'),(5,'nTAxLCPI','v','v','','b','vv','d','','','','0000-00-00 00:00:00'),(6,'nTAxLCPI','b','bbb','b','b','bb','bvv','bb','b','vv','0000-00-00 00:00:00'),(7,'tata','test1','test2','m','m','m','m','m','m','m','0000-00-00 00:00:00');
 UNLOCK TABLES;
 
 
