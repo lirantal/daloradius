@@ -5,6 +5,11 @@ $l['all']['copyright1'] = "Radius Reporting, Billing and Management by <a href=\
 $l['all']['copyright2'] = "Copyright of <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
+
+$l['all']['VendorID'] = "Vendor ID";
+$l['all']['VendorName'] = "Vendor Name";
+$l['all']['VendorAttribute'] = "Vendor Attribute";
+
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
 $l['all']['NasIPHost'] = "NAS IP/Host";
@@ -192,6 +197,12 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
 /* **********************************************************************************
  * Links and Buttons
  ************************************************************************************/
+$l['button']['ListAttributesforVendor'] = "List Attributes for Vendor:";
+$l['button']['NewVendorAttribute'] = "New Vendor Attribute";
+$l['button']['EditVendorAttribute'] = "Edit Vendor's Attribute";
+$l['button']['RemoveVendorAttribute'] = "Remove Vendor's Attribute";
+
+
 $l['button']['BetweenDates'] = "Between Dates:";
 $l['button']['Where'] = "Where";
 $l['button']['AccountingFieldsinQuery'] = "Accounting Fields in Query:";
@@ -373,6 +384,9 @@ $l['ContactInfo']['Website'] = "Website";
 
 $l['Intro']['msgerrorpermissions.php'] = "Error";
 
+$l['Intro']['mngradattributes.php'] = "Vendor's Attributes Management";
+$l['Intro']['mngradattributeslist.php'] = "Vendor's Attributes List";
+
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
 $l['Intro']['acctall.php'] = "All Users Accounting";
@@ -502,6 +516,9 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 
 
 $l['helpPage']['login'] = "";
+
+$l['helpPage']['mngradattributes'] = "";
+$l['helpPage']['mngradattributeslist'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
 Please consult with your System Administrator. <br/>";
