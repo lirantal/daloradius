@@ -38,5 +38,37 @@ UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCH
 	echo "</select>";
 }
 
+
+
+
+
+
+function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $cssClass = "form", $mode = "") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
+			name='$elementName' class='$cssClass' tabindex=105
+			<option value=''>$defaultOption</option>";
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+	$configValues['CONFIG_DB_TBL_DICTIONARY'] = "dictionary";
+
+        $sql = "SELECT distinct(Vendor) as Vendor FROM ".$configValues['CONFIG_DB_TBL_DICTIONARY']." ORDER BY Vendor ASC;";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "  
+                        <option value='$row[0]'> $row[0] </option>
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+
+	echo "</select>";
+}
+
 ?>
 
