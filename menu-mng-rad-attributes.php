@@ -32,7 +32,8 @@
 		<li><a href="mng-rad-attributes-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewVendorAttribute'] ?></a></li>
 		<li><a href="javascript:document.mngradattributesedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditVendorAttribute'] ?></a>
 			<form name="mngradattributesedit" action="mng-rad-attributes-edit.php" method="get" class="sidebar">
-			<input name="nashost" type="text" tabindex=4>
+			<input name="vendor" type="text" tabindex=4>
+			<input name="attribute" type="text" tabindex=5>
 			</form></li>
 		<li><a href="mng-rad-nas-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveVendorAttribute'] ?></a></li>
 		
