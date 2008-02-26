@@ -6,9 +6,16 @@ $l['all']['copyright2'] = "Copyright of <a href=\"http://www.enginx.com\">Enginx
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 
+/********************************************************************************/
+/* Vendor Attributes related translation                                        */
+/********************************************************************************/
 $l['all']['VendorID'] = "Vendor ID";
 $l['all']['VendorName'] = "Vendor Name";
 $l['all']['VendorAttribute'] = "Vendor Attribute";
+$l['all']['RecommendedOP'] = "Recommended OP";
+$l['all']['RecommendedTable'] = "Recommended Table";
+$l['all']['RecommendedTooltip'] = "Recommended Tooltip";
+/********************************************************************************/
 
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
@@ -137,6 +144,23 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Tooltips
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
+
+$l['Tooltip']['vendorNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['typeTooltip'] = "Example: string<br/>&nbsp;&nbsp;&nbsp;
+                                        The attributes variable type<br/>&nbsp;&nbsp;&nbsp;
+					(string, integer, date, ipaddr).";
+$l['Tooltip']['attributeTooltip'] = "Example: Framed-IPAddress<br/>&nbsp;&nbsp;&nbsp;
+                                        The exact attribute name.<br/>&nbsp;&nbsp;&nbsp;";
+
+$l['Tooltip']['RecommendedOPTooltip'] = "Example: :=<br/>&nbsp;&nbsp;&nbsp;
+                                        The recommended attribute's operator.<br/>&nbsp;&nbsp;&nbsp;
+					(one of: := == != etc...)";
+$l['Tooltip']['RecommendedTableTooltip'] = "Example: check<br/>&nbsp;&nbsp;&nbsp;
+                                        The recommended target table.<br/>&nbsp;&nbsp;&nbsp;
+					(either check or reply).";
+$l['Tooltip']['RecommendedTooltipTooltip'] = "Example: the ip address for the user<br/>&nbsp;&nbsp;&nbsp;
+                                        The recommended tooltip.<br/>&nbsp;&nbsp;&nbsp;";
 
 $l['Tooltip']['UserEdit'] = "Edit User";
 $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
@@ -304,6 +328,9 @@ $l['button']['ProcessQuery'] = "Process Query";
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
+$l['title']['VendorAttribute'] = "Vendor Attribute";
+
+
 $l['title']['AccountRemoval'] = "Account Removal";
 $l['title']['AccountInfo'] = "Account Info";
 
@@ -386,6 +413,9 @@ $l['Intro']['msgerrorpermissions.php'] = "Error";
 
 $l['Intro']['mngradattributes.php'] = "Vendor's Attributes Management";
 $l['Intro']['mngradattributeslist.php'] = "Vendor's Attributes List";
+$l['Intro']['mngradattributesnew.php'] = "New Vendor Attributes";
+$l['Intro']['mngradattributesedit.php'] = "Edit Vendor's Attributes";
+$l['Intro']['mngradattributesdel.php'] = "Remove Vendor's Attributes";
 
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
@@ -519,6 +549,9 @@ $l['helpPage']['login'] = "";
 
 $l['helpPage']['mngradattributes'] = "";
 $l['helpPage']['mngradattributeslist'] = "";
+$l['helpPage']['mngradattributesnew'] = "";
+$l['helpPage']['mngradattributesedit'] = "";
+$l['helpPage']['mngradattributesdel'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
 Please consult with your System Administrator. <br/>";
