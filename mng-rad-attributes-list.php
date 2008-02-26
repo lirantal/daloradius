@@ -127,7 +127,7 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
                                 <td> <input type='checkbox' name='vendor[]' value='$row[1]'> $row[0] </td>
-				<td> $row[1] </td>
+				<td> <a class='tablenovisit' href='mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]'>$row[1]</a></td>
 				<td> $row[2] </td>
 		</tr>";
 	}
