@@ -44,7 +44,7 @@
 				$logDebugSQL .= $sql . "\n";
 
 				$actionStatus = "success";
-				$actionMsg = "Added to database new hotspot: <b> $name";
+				$actionMsg = "Added to database new hotspot: <b>$name</b>";
 				$logAction = "Successfully added new hotspot [$name] on page: ";
 			} else {
 				$actionStatus = "failure";
