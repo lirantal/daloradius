@@ -31,7 +31,7 @@
 		
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS']." WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -44,7 +44,7 @@
 				}
 				
 				// insert nas details
-				$sql = "INSERT INTO nas values (0, '".$dbSocket->escapeSimple($nashost)."', '".$dbSocket->escapeSimple($nasname)."',
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADNAS']." values (0, '".$dbSocket->escapeSimple($nashost)."', '".$dbSocket->escapeSimple($nasname)."',
 '".$dbSocket->escapeSimple($nastype)."', ".$dbSocket->escapeSimple($nasports).", '".$dbSocket->escapeSimple($nassecret)."',
 '".$dbSocket->escapeSimple($nascommunity)."', '".$dbSocket->escapeSimple($nasdescription)."')";
 				$res = $dbSocket->query($sql);
