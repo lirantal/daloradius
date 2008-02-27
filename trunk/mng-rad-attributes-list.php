@@ -69,7 +69,7 @@
 	/* END */
 
 
-        echo "<form name='listvendorattributes' method='post' action='mng-rad-nas-del.php'>";
+        echo "<form name='listvendorattributes' method='post' action='mng-rad-attributes-del.php'>";
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
@@ -126,7 +126,7 @@
 		</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-                                <td> <input type='checkbox' name='vendor[]' value='$row[1]'> $row[0] </td>
+                                <td> <input type='checkbox' name='vendor[]' value='$row[1]||$row[2]'> $row[0] </td>
 				<td> <a class='tablenovisit' href='mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]'>$row[1]</a></td>
 				<td> $row[2] </td>
 		</tr>";
