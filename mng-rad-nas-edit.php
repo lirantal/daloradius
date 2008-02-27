@@ -22,7 +22,7 @@
 	$logDebugSQL = "";
 
 	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS']." WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -52,7 +52,7 @@
 			
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM nas WHERE nasname='".$dbSocket->escapeSimple($nashostold)."' ";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS']." WHERE nasname='".$dbSocket->escapeSimple($nashostold)."' ";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -65,7 +65,7 @@
 				}
 
 				// insert nas details
-				$sql = "UPDATE nas SET nasname='".$dbSocket->escapeSimple($nashost)."', shortname='".$dbSocket->escapeSimple($nasname)."',
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADNAS']." SET nasname='".$dbSocket->escapeSimple($nashost)."', shortname='".$dbSocket->escapeSimple($nasname)."',
 type='".$dbSocket->escapeSimple($nastype)."', ports=".$dbSocket->escapeSimple($nasports).", secret='".$dbSocket->escapeSimple($nassecret)."',
 community='".$dbSocket->escapeSimple($nascommunity)."', description='".$dbSocket->escapeSimple($nasdescription)."'
 WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
