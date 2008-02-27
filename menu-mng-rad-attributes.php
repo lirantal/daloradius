@@ -35,7 +35,7 @@
 			<input name="vendor" type="text" tabindex=4>
 			<input name="attribute" type="text" tabindex=5>
 			</form></li>
-		<li><a href="mng-rad-nas-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveVendorAttribute'] ?></a></li>
+		<li><a href="mng-rad-attributes-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveVendorAttribute'] ?></a></li>
 		
 	</ul>
 
