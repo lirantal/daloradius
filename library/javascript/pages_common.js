@@ -98,38 +98,21 @@ function setText(srcObj,dstObj) {
 
 
 /***********************************************************************
- * setStringTextObj
- * srcId	- the source object (the reference given is an id) text
- * dstObj	- the dstination object is set to the source object text
- ***********************************************************************/
-function setStringTextObj(srcId,dstObj) {
-	
-	alert(document.getElementById(srcId).value);
-//	alert(document.getElementById(dstObj).value);
-//	dstObj.value = document.getElementById(srcId).value;
-
-}
-
-
-function test1(elem1) {
-	alert('in test1');
-	alert(document.getElementById(elem1).value);
-//	alert(document.getElementById(elem2).value);
-}
-
-
-/***********************************************************************
  * setStringText
- * srcObj	- the source object text
- * dstObj	- the dstination object is set to the source object text
+ * srcId	- the source object text
+ * dstId	- the dstination object is set to the source object text
  ***********************************************************************/
-function setStringText(srcObj,dstObj) {
+function setStringText(srcId,dstId) {
 
-	var srcElem = document.getElementById(srcObj);
-	var elemVal = srcElem.options[srcElem.selectedIndex].value;
+	var srcElem = document.getElementById(srcId);
 
-	var dstElem = document.getElementById(dstObj);
-	var dstElemVal = dstElem.value;
+	if (srcElem.type == "text")
+		var elemVal = srcElem.value;
+
+	if (srcElem.type == "select-one")
+		var elemVal = srcElem.options[srcElem.selectedIndex].value;
+
+	var dstElem = document.getElementById(dstId);
 	dstElem.value = elemVal;
 
 }
