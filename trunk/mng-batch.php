@@ -24,7 +24,6 @@
 		$group_priority = $_REQUEST['group_priority'];
 		
 		include 'library/opendb.php';
-		include 'include/management/attributes.php';                            // required for checking if an attribute
 
 		$actionMsgBadUsernames = "";
 		$actionMsgGoodUsernames = "";
