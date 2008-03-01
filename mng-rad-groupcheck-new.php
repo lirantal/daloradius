@@ -16,7 +16,6 @@
         
         
         include 'library/opendb.php';   
-        include 'include/management/attributes.php';                            // required for checking if an attribute belongs to the
 
         $groupname = $_REQUEST['groupname'];
 

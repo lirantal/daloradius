@@ -8,9 +8,6 @@
 	$logDebugSQL = ""; 	// initialize variable
 
 	include 'library/opendb.php';
-		// required for checking if an attribute belongs to the
-		// radcheck table or the radreply based upon it's name	
-	include 'include/management/attributes.php';				
 
 	if (isset($_REQUEST['submit'])) {
 
@@ -190,11 +187,10 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 				}
 
 
-				/* since we have added include/management/attributes.php to the form which 
-				   populates the page with all the existing attributes for us to choose from, even
-				   those that are not exist, we can't simply UPDATE because it might be that the attribute
+				   /* we can't simply UPDATE because it might be that the attribute
 				   doesn't exist at all and we need to insert it. 
-				   for this reason we need to check if it exists or not, if exists we update, if not we insert */
+				   for this reason we need to check if it exists or not, if exists we update, if not we insert 
+				   */
 
 				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username)."' 
 AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
