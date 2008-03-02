@@ -119,9 +119,15 @@
 
                 <li class='fieldset'>
 		<label for='type' class='form'><?php echo $l['all']['Type'] ?></label>
-		<input name='type' type='text' id='type' value='' tabindex=102
+		<select name='type' type='text' id='type' class='form' tabindex=102
                         onfocus="javascript:toggleShowDiv('typeTooltip')"
                         onblur="javascript:toggleShowDiv('typeTooltip')" />
+			<option value=''>Select Type...</option>
+		<?php
+			include_once('include/management/populate_selectbox.php');
+			drawTypes();
+		?>
+		</select>
                 <div id='typeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['typeTooltip'] ?>
@@ -130,9 +136,15 @@
 
                 <li class='fieldset'>
 		<label for='RecommendedOP' class='form'><?php echo $l['all']['RecommendedOP'] ?></label>
-		<input name='RecommendedOP' type='text' id='RecommendedOP' value='' tabindex=103
+		<select name='RecommendedOP' id='RecommendedOP' class='form' tabindex=103 
                         onfocus="javascript:toggleShowDiv('RecommendedOPTooltip')"
                         onblur="javascript:toggleShowDiv('RecommendedOPTooltip')" />
+			<option value=''>Select OP...</option>
+		<?php
+			include_once('include/management/populate_selectbox.php');
+			drawOptions();
+		?>
+		</select>
                 <div id='RecommendedOPTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedOPTooltip'] ?>
@@ -141,9 +153,15 @@
 
                 <li class='fieldset'>
 		<label for='RecommendedTable' class='form'><?php echo $l['all']['RecommendedTable'] ?></label>
-		<input name='RecommendedTable' type='text' id='RecommendedTable' value='' tabindex=104
+                <select name='RecommendedTable' id='RecommendedTable' class='form' tabindex=104
                         onfocus="javascript:toggleShowDiv('RecommendedTableTooltip')"
-                        onblur="javascript:toggleShowDiv('RecommendedTableTooltip')" />
+                        onblur="javascript:toggleShowDiv('RecommendedTableTooltip')" />		
+			<option value=''>Select Table...</option>
+		<?php
+			include_once('include/management/populate_selectbox.php');
+			drawTables();
+		?>
+		</select>
                 <div id='RecommendedTableTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedTableTooltip'] ?>
