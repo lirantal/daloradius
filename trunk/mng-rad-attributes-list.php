@@ -53,14 +53,15 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Vendor like '$vendor';";
+	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Vendor = '$vendor' AND Type <> '';";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	$numrows = $res->numRows();
 
-	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Vendor like '$vendor' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;;";
+	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Vendor = '$vendor' AND Type <> '' ".
+		"ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
