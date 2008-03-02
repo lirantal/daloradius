@@ -14,11 +14,10 @@
 ALTER TABLE operators ADD mng_rad_attributes_list VARCHAR(32);
 ALTER TABLE operators ADD mng_rad_attributes_new VARCHAR(32);
 ALTER TABLE operators ADD mng_rad_attributes_edit VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_attributes_search VARCHAR(32);
 ALTER TABLE operators ADD mng_rad_attributes_del VARCHAR(32);
 UPDATE operators SET mng_rad_attributes_list='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_attributes_new='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_attributes_edit='yes' WHERE username='administrator';
+UPDATE operators SET mng_rad_attributes_search='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_attributes_del='yes' WHERE username='administrator';
-
-
-

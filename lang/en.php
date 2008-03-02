@@ -224,6 +224,7 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
 $l['button']['ListAttributesforVendor'] = "List Attributes for Vendor:";
 $l['button']['NewVendorAttribute'] = "New Vendor Attribute";
 $l['button']['EditVendorAttribute'] = "Edit Vendor's Attribute";
+$l['button']['SearchVendorAttribute'] = "Search Attribute";
 $l['button']['RemoveVendorAttribute'] = "Remove Vendor's Attribute";
 
 
@@ -415,6 +416,7 @@ $l['Intro']['mngradattributes.php'] = "Vendor's Attributes Management";
 $l['Intro']['mngradattributeslist.php'] = "Vendor's Attributes List";
 $l['Intro']['mngradattributesnew.php'] = "New Vendor Attributes";
 $l['Intro']['mngradattributesedit.php'] = "Edit Vendor's Attributes";
+$l['Intro']['mngradattributessearch.php'] = "Search Attributes";
 $l['Intro']['mngradattributesdel.php'] = "Remove Vendor's Attributes";
 
 
@@ -551,6 +553,7 @@ $l['helpPage']['mngradattributes'] = "";
 $l['helpPage']['mngradattributeslist'] = "";
 $l['helpPage']['mngradattributesnew'] = "";
 $l['helpPage']['mngradattributesedit'] = "";
+$l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
