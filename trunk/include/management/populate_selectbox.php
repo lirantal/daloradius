@@ -42,7 +42,12 @@ UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCH
 
 
 
-
+/*
+ * populate_vendors()
+ *
+ * the populate vendors function returns all the vendors found in the dictionary table in an ascending 
+ * alphabetical order
+ */
 function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $cssClass = "form", $mode = "") {
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
@@ -70,5 +75,76 @@ function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $c
 	echo "</select>";
 }
 
-?>
 
+
+
+
+/*
+ * drawTables()
+ *
+ * an aid function to return the possible options for tables (check or reply)
+ */
+function drawTables() {
+
+	echo "
+		<option value='check'>check</option>
+		<option value='reply'>reply</option>
+	";
+}
+
+
+
+
+
+
+/*
+ * drawOptions()
+ *
+ * an aid function to return the possible options for op (operator) values
+ * for attributes
+ */
+function drawOptions() {
+
+	echo "
+                <option value='='>=</option>
+                <option value=':='>:=</option>
+                <option value='=='>==</option>
+                <option value='+='>+=</option>
+                <option value='!='>!=</option>
+                <option value='>'>></option>
+                <option value='>='>>=</option>
+                <option value='<'><</option>
+                <option value='<='><=</option>
+                <option value='=~'>=~</option>
+                <option value='!~'>!~</option>
+                <option value='=*'>=*</option>
+                <option value='!*'>!*</option>
+
+        ";
+}
+
+
+
+
+
+/*
+ * drawTypes()
+ *
+ * an aid function to return the possible attribute types for
+ * a given attribute
+ */
+function drawTypes() {
+
+	echo "
+                <option value='string'>string</option>
+                <option value='integer'>integer</option>
+                <option value='ipaddr'>ipaddr</option>
+                <option value='date'>date</option>
+                <option value='octets'>octets</option>
+                <option value='ipv6addr'>ipv6addr</option>
+                <option value='ifid'>ifid</option>
+                <option value='abinary'>abinary</option>
+        ";
+}
+
+?>
