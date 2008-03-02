@@ -91,10 +91,12 @@ echo "
 
 		<br/>
                 <label for='operator_lastlogin' class='form'>Operator Last Login</label>
-                <input disabled type='text' value='$operator_lastlogin' />
+                <input disabled type='text' value='"; if (isset($operator_lastlogin)) 
+			echo $operator_lastlogin; echo "' />
 	        <br/>
 	        <label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
-	        <input disabled value='"; if (isset($operator_creationdate)) echo $operator_creationdate; echo "' />
+	        <input disabled type='text' value='"; if (isset($operator_creationdate)) 
+			echo $operator_creationdate; echo "' />
 	        <br/>
 
                 <br/><br/>
