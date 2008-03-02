@@ -69,12 +69,12 @@
 
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-        $attribute = $row['Attribute'];
-        $type = $row['Type'];
-        $vendor = $row['Vendor'];
-        $RecommendedOP = $row['RecommendedOP'];
-        $RecommendedTable = $row['RecommendedTable'];
-        $RecommendedTooltip = $row['RecommendedTooltip'];
+        isset($row['Attribute']) ? $attribute = $row['Attribute'] : $attribute = "";
+        isset($row['Type']) ? $type = $row['Type'] : $type = "";
+        isset($row['Vendor']) ? $vendor = $row['Vendor'] : $vendor = "";
+        isset($row['RecommendedOP']) ? $RecommendedOP = $row['RecommendedOP'] : $RecommendedOP = "";
+        isset($row['RecommendedTable']) ? $RecommendedTable = $row['RecommendedTable'] : $RecommendedTable = "";
+        isset($row['RecommendedTooltip']) ? $RecommendedTooltip = $row['RecommendedTooltip'] : $RecommendedTooltip = "";
 
 	include 'library/closedb.php';
 
@@ -148,9 +148,15 @@
 
                 <li class='fieldset'>
 		<label for='type' class='form'><?php echo $l['all']['Type'] ?></label>
-		<input name='type' type='text' id='type' value='<?php if (isset($type)) echo $type ?>' tabindex=102
+		<select name='type' type='text' id='type' class='form' tabindex=102
                         onfocus="javascript:toggleShowDiv('typeTooltip')"
                         onblur="javascript:toggleShowDiv('typeTooltip')" />
+			<option value='<?php echo $type; ?>'><?php echo $type; ?></option>
+                <?php
+                        include_once('include/management/populate_selectbox.php');
+                        drawTypes();
+                ?>
+		</select>
                 <div id='typeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['typeTooltip'] ?>
@@ -159,9 +165,15 @@
 
                 <li class='fieldset'>
 		<label for='RecommendedOP' class='form'><?php echo $l['all']['RecommendedOP'] ?></label>
-		<input name='RecommendedOP' type='text' id='RecommendedOP' value='<?php if (isset($RecommendedOP)) echo $RecommendedOP ?>' tabindex=103
+		<select name='RecommendedOP' type='text' id='RecommendedOP' class='form' tabindex=103
                         onfocus="javascript:toggleShowDiv('RecommendedOPTooltip')"
                         onblur="javascript:toggleShowDiv('RecommendedOPTooltip')" />
+			<option value='<?php echo $RecommendedOP; ?>'><?php echo $RecommendedOP; ?></option>
+                <?php
+                        include_once('include/management/populate_selectbox.php');
+                        drawOptions();
+                ?>
+		</select>
                 <div id='RecommendedOPTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedOPTooltip'] ?>
@@ -170,9 +182,14 @@
 
                 <li class='fieldset'>
 		<label for='RecommendedTable' class='form'><?php echo $l['all']['RecommendedTable'] ?></label>
-		<input name='RecommendedTable' type='text' id='RecommendedTable' value='<?php if (isset($RecommendedTable)) echo $RecommendedTable ?>' tabindex=104
+		<select name='RecommendedTable' type='text' id='RecommendedTable' class='form' tabindex=104
                         onfocus="javascript:toggleShowDiv('RecommendedTableTooltip')"
                         onblur="javascript:toggleShowDiv('RecommendedTableTooltip')" />
+			<option value='<?php echo $RecommendedTable; ?>'><?php echo $RecommendedTable; ?></option>
+                <?php
+                        include_once('include/management/populate_selectbox.php');
+                        drawTables();
+                ?>
                 <div id='RecommendedTableTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedTableTooltip'] ?>
