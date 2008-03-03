@@ -275,24 +275,24 @@ $l['button']['NewGroupCheck'] = "New Group Check Mapping";
 $l['button']['EditGroupCheck'] = "Edit Group Check Mapping";
 $l['button']['RemoveGroupCheck'] = "Remove Group Check Mapping";
 
-$l['button']['UserAccounting'] = "User Accounting";
-$l['button']['IPAccounting'] = "IP Accounting";
-$l['button']['NASIPAccounting'] = "NAS IP Accounting";
-$l['button']['DateAccounting'] = "Date Accounting";
-$l['button']['AllRecords'] = "All Records";
-$l['button']['ActiveRecords'] = "Active Records";
+$l['button']['UserAccounting'] = "Аккаунтинг пользователя";
+$l['button']['IPAccounting'] = "IP-аккаунтинг";
+$l['button']['NASIPAccounting'] = "NAS IP-аккаунтинг";
+$l['button']['DateAccounting'] = "Аккаунтинг по дате";
+$l['button']['AllRecords'] = "Все записи";
+$l['button']['ActiveRecords'] = "Активные записи";
 
-$l['button']['OnlineUsers'] = "Online Users";
-$l['button']['LastConnectionAttempts'] = "Last Connection Attempts";
-$l['button']['TopUser'] = "Top User";
+$l['button']['OnlineUsers'] = "Пользователи онлайн";
+$l['button']['LastConnectionAttempts'] = "Последние попытки установления соединения";
+$l['button']['TopUser'] = "Рейтинг пользователей";
 
-$l['button']['ServerStatus'] = "Server Status";
-$l['button']['ServicesStatus'] = "Services Status";
+$l['button']['ServerStatus'] = "Статус сервера";
+$l['button']['ServicesStatus'] = "Статус сервера";
 
-$l['button']['daloRADIUSLog'] = "daloRADIUS Log";
-$l['button']['RadiusLog'] = "Radius Log";
-$l['button']['SystemLog'] = "System Log";
-$l['button']['BootLog'] = "Boot Log";
+$l['button']['daloRADIUSLog'] = "Лог daloRADIUS";
+$l['button']['RadiusLog'] = "Лог Radius";
+$l['button']['SystemLog'] = "Системный лог (syslog)";
+$l['button']['BootLog'] = "Лог загрузки (dmesg)";
 
 $l['button']['UserLogins'] = "User Logins";
 $l['button']['UserDownloads'] = "User Downloads";
