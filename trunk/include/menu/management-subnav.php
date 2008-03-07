@@ -7,6 +7,8 @@
                          <li><a href="mng-rad-profiles.php"><em>P</em>rofiles</a></li>
 						<li><a href="mng-rad-groups.php"><em>G</em>roups</a></li>
 
+						<li><a href="mng-rad-attributes.php"><em>A</em>ttributes</a></li>
+
 <div id="logindiv" style="text-align: right;">
 
 						<li>Welcome, <?php echo $operator; ?></li>
