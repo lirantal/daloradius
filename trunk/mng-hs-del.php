@@ -29,7 +29,7 @@
 				
 				$actionStatus = "success";
 				$actionMsg = "Deleted hotspot(s): <b> $allHotspots </b>";
-				$logAction = "Successfully deleted hotpot(s) [$allHotspots] on page: ";
+				$logAction = "Successfully deleted hotspot(s) [$allHotspots] on page: ";
 				
 			} else { 
 				$actionStatus = "failure";
