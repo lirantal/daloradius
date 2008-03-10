@@ -17,6 +17,17 @@ $l['all']['RecommendedTable'] = "Recommended Table";
 $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 /********************************************************************************/
 
+$l['all']['Realm'] = "Realm";
+$l['all']['RealmName'] = "Realm Name";
+$l['all']['RealmSecret'] = "Realm Secert";
+$l['all']['AuthHost'] = "Auth Host";
+$l['all']['AcctHost'] = "Acct Host";
+$l['all']['Ldflag'] = "ldflag";
+$l['all']['Nostrip'] = "nostrip";
+$l['all']['Notrealm'] = "notrealm";
+$l['all']['Hints'] = "hints";
+
+
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
 $l['all']['NasIPHost'] = "NAS IP/Host";
@@ -145,6 +156,26 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
+$l['Tooltip']['realmNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmTypeTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmSecretTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmAuthhostTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmAccthostTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmLdflagTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmNostripTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmHintsTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmNotrealmTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+
+
 $l['Tooltip']['vendorNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
                                         The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['typeTooltip'] = "Example: string<br/>&nbsp;&nbsp;&nbsp;
@@ -221,6 +252,13 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
 /* **********************************************************************************
  * Links and Buttons
  ************************************************************************************/
+
+$l['button']['ListRealms'] = "List Realms";
+$l['button']['NewRealm'] = "New Realm";
+$l['button']['EditRealm'] = "Edit Realm";
+$l['button']['RemoveRealm'] = "Remove Realm";
+
+
 $l['button']['ListAttributesforVendor'] = "List Attributes for Vendor:";
 $l['button']['NewVendorAttribute'] = "New Vendor Attribute";
 $l['button']['EditVendorAttribute'] = "Edit Vendor's Attribute";
@@ -329,8 +367,11 @@ $l['button']['ProcessQuery'] = "Process Query";
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
-$l['title']['VendorAttribute'] = "Vendor Attribute";
+$l['title']['RealmInfo'] = "Realm Info";
 
+$l['title']['ProxyInfo'] = "Proxy Info";
+
+$l['title']['VendorAttribute'] = "Vendor Attribute";
 
 $l['title']['AccountRemoval'] = "Account Removal";
 $l['title']['AccountInfo'] = "Account Info";
@@ -361,7 +402,6 @@ $l['title']['Settings'] = "Settings";
 $l['title']['DatabaseSettings'] = "Database Settings";
 $l['title']['DatabaseTables'] = "Database Tables";
 $l['title']['AdvancedSettings'] = "Advanced Settings";
-
 
 $l['title']['Advanced'] = "Advanced";
 $l['title']['Optional'] = "Optional";
@@ -411,6 +451,13 @@ $l['ContactInfo']['Website'] = "Website";
 
 
 $l['Intro']['msgerrorpermissions.php'] = "Error";
+
+
+$l['Intro']['mngradrealms.php'] = "Realms  Management";
+$l['Intro']['mngradrealmsnew.php'] = "New Realm";
+$l['Intro']['mngradrealmslist.php'] = "List Realm";
+$l['Intro']['mngradrealmsedit.php'] = "Edit Realm";
+$l['Intro']['mngradrealmsdel.php'] = "Remove Realm";
 
 $l['Intro']['mngradattributes.php'] = "Vendor's Attributes Management";
 $l['Intro']['mngradattributeslist.php'] = "Vendor's Attributes List";
@@ -548,6 +595,13 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 
 
 $l['helpPage']['login'] = "";
+
+
+$l['helpPage']['mngradrealms'] = "";
+$l['helpPage']['mngradrealmslist'] = "";
+$l['helpPage']['mngradrealmsnew'] = "";
+$l['helpPage']['mngradrealmsedit'] = "";
+$l['helpPage']['mngradrealmsdel'] = "";
 
 $l['helpPage']['mngradattributes'] = "";
 $l['helpPage']['mngradattributeslist'] = "";

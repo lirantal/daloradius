@@ -21,3 +21,12 @@ UPDATE operators SET mng_rad_attributes_new='yes' WHERE username='administrator'
 UPDATE operators SET mng_rad_attributes_edit='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_attributes_search='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_attributes_del='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD mng_rad_realms_list VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_realms_new VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_realms_edit VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_realms_del VARCHAR(32);
+UPDATE operators SET mng_rad_realms_list='yes' WHERE username='administrator';
+UPDATE operators SET mng_rad_realms_new='yes' WHERE username='administrator';
+UPDATE operators SET mng_rad_realms_edit='yes' WHERE username='administrator';
+UPDATE operators SET mng_rad_realms_del='yes' WHERE username='administrator';

@@ -70,11 +70,48 @@ function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $c
 
         }
 
-        include 'library/closedb.php';
-
 	echo "</select>";
+
+        include 'library/closedb.php';
 }
 
+
+
+
+
+/*
+ * populate_realms()
+ *
+ * the populate realms function returns all the realms found in the realms table in ascending
+ * alphabetical order
+ */
+function populate_realms($defaultOption = "Select Realm",$elementName = "", $cssClass = "form", $mode = "") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'realm')\" id='realmlist' $mode
+			name='$elementName' class='$cssClass' tabindex=105
+			<option value=''>$defaultOption</option>";
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+	$configValues['CONFIG_DB_TBL_DALOREALMS'] = "realms";
+
+        $sql = "SELECT distinct(RealmName) as Realm FROM ".$configValues['CONFIG_DB_TBL_DALOREALMS']." ORDER BY Realm ASC;";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "  
+                        <option value='$row[0]'> $row[0] </option>
+                        ";
+
+        }
+
+	echo "</select>";
+
+        include 'library/closedb.php';
+
+}
 
 
 

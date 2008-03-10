@@ -19,6 +19,21 @@
 -- Table structure for table `hotspots`
 --
 
+DROP TABLE IF EXISTS `realms`;
+CREATE TABLE realms (
+        id bigint(20) NOT NULL auto_increment,
+        realmname VARCHAR(128) default NULL,
+        type VARCHAR(32) default NULL,
+        authhost VARCHAR(256) default NULL,
+        accthost VARCHAR(256) default NULL,
+        secret VARCHAR(128) default NULL,
+        ldflag VARCHAR(64) default NULL,
+        nostrip INT(8) default NULL,
+        hints INT(8) default NULL,
+        notrealm INT(8) default NULL,
+        PRIMARY KEY (id)
+) ENGINE=MyISAM;
+
 DROP TABLE IF EXISTS `hotspots`;
 CREATE TABLE `hotspots` (
   `id` bigint(20) NOT NULL auto_increment,
