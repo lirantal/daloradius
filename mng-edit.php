@@ -354,7 +354,7 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 <?php
 
 	include 'library/opendb.php';
-	include ('include/management/op_select_options.php');
+	include 'include/management/populate_selectbox.php';
 
 	$editCounter = 0;
 

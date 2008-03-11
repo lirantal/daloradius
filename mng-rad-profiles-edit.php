@@ -157,7 +157,6 @@
 
 
         include 'library/opendb.php';
-        include ('include/management/op_select_options.php');
 
         $editCounter = 0;
 

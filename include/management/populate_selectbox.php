@@ -116,6 +116,50 @@ function populate_realms($defaultOption = "Select Realm",$elementName = "", $css
 
 
 
+
+
+
+/*
+ * populate_proxys()
+ *
+ * the populate realms function returns all the realms found in the realms table in ascending
+ * alphabetical order
+ */
+function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $cssClass = "form", $mode = "") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'proxy')\" id='proxylist' $mode
+			name='$elementName' class='$cssClass' tabindex=105
+			<option value=''>$defaultOption</option>";
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+	$configValues['CONFIG_DB_TBL_DALOPROXYS'] = "proxys";
+
+        $sql = "SELECT distinct(ProxyName) as Proxy FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." ORDER BY Proxy ASC;";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "  
+                        <option value='$row[0]'> $row[0] </option>
+                        ";
+
+        }
+
+	echo "</select>";
+
+        include 'library/closedb.php';
+
+}
+
+
+
+
+
+
+
+
 /*
  * drawTables()
  *
