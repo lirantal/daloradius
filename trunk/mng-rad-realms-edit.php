@@ -26,33 +26,26 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
-		if ($res->numRows() == 0) {
-			if (trim($realmname) != "") {
-
+		if (trim($realmname) != "") {
 				// update realm entry in database
-                                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOREALMS']." SET type='".
-                                        $dbSocket->escapeSimple($type)."', authhost='".
-                                        $dbSocket->escapeSimple($authhost)."', accthost='".$dbSocket->escapeSimple($accthost)."', secret='".
-                                        $dbSocket->escapeSimple($secret)."', ldflag='".$dbSocket->escapeSimple($ldflag)."', nostrip='".
-                                        $dbSocket->escapeSimple($nostrip)."', hints='".$dbSocket->escapeSimple($hints)."', notrealm='".
-                                        $dbSocket->escapeSimple($notrealm)."' WHERE realmname=$realmname;";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+                        $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOREALMS']." SET type='".
+				$dbSocket->escapeSimple($type)."', authhost='".
+                                $dbSocket->escapeSimple($authhost)."', accthost='".$dbSocket->escapeSimple($accthost)."', secret='".
+                                $dbSocket->escapeSimple($secret)."', ldflag='".$dbSocket->escapeSimple($ldflag)."', nostrip='".
+                                $dbSocket->escapeSimple($nostrip)."', hints='".$dbSocket->escapeSimple($hints)."', notrealm='".
+                                $dbSocket->escapeSimple($notrealm)."' WHERE realmname='$realmname';";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new hotspot: <b>$name</b>";
-				$logAction = "Successfully added new hotspot [$name] on page: ";
-			} else {
-				$actionStatus = "failure";
-				$actionMsg = "you must provide atleast a hotspot name and mac-address";	
-				$logAction = "Failed adding new hotspot [$name] on page: ";	
-			}
-		} else { 
+			$actionStatus = "success";
+			$actionMsg = "Updated database with realm: <b>$realmname</b>";
+			$logAction = "Updated realm [$realmname] on page: ";
+		} else {
 			$actionStatus = "failure";
-			$actionMsg = "You have tried to add a hotspot that already exist in the database: $name";	
-			$logAction = "Failed adding new hotspot already in database [$name] on page: ";		
+			$actionMsg = "you must provide atleast a realm name";
+			$logAction = "Updated realm [$realmname] on page: ";	
 		}
-	
+
 		include 'library/closedb.php';
 
 	}
@@ -126,9 +119,11 @@
 
 		<ul>
 
+		<input type='hidden' name='realmname' id='realmname' value='<?php if (isset($realmname)) echo $realmname; ?>' />
+
                 <li class='fieldset'>
 		<label for='realmname' class='form'><?php echo $l['all']['RealmName'] ?></label>
-		<input name='realmname' type='text' id='realmname' value='<?php if (isset($realmname)) echo $realmname; ?>' tabindex=100
+		<input disabled name='realmname' type='text' id='realmname' value='<?php if (isset($realmname)) echo $realmname; ?>' tabindex=100
                         onfocus="javascript:toggleShowDiv('realmNameTooltip')"
                         onblur="javascript:toggleShowDiv('realmNameTooltip')" />
                 <div id='realmNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
