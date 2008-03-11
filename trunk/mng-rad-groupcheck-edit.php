@@ -143,7 +143,8 @@
                 <label for='op' class='form'><?php echo $l['all']['Operator'] ?></label>
                 <select name='op' id='op' class='form' tabindex=101 />
                         <option value='<?php echo $op ?>'><?php echo $op ?></option>
-                        <?php include ('include/management/op_select_options.php');
+                        <?php
+                                include 'include/management/populate_selectbox.php';
                                 drawOptions();
                         ?>
                 </select>
