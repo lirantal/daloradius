@@ -53,6 +53,10 @@ $arrayPagesAvailable = array(
 	 'mng_rad_realms_new' => 'Management Realms',
 	 'mng_rad_realms_edit' => 'Management Realms',
 	 'mng_rad_realms_del' => 'Management Realms',
+	 'mng_rad_proxys_list' => 'Management Proxys',
+	 'mng_rad_proxys_new' => 'Management Proxys',
+	 'mng_rad_proxys_edit' => 'Management Proxys',
+	 'mng_rad_proxys_del' => 'Management Proxys',
 	 'rep_topusers' => 'Reporting Core',
 	 'rep_online' => 'Reporting Core',
 	 'rep_lastconnect' => 'Reporting Core',
@@ -664,6 +668,73 @@ echo "</table>";
 /*
  *  block ends ***********************************************************************
 */
+
+
+
+
+
+
+
+/* 
+ * Management Proxys category related pages *************************************************
+ *
+*/
+
+echo <<<EOF
+	<tr><td>		
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryManagementProxys')">
+    <b> Management - Proxys </b> <br/>
+    <div id="categoryManagementProxys" style="display:none;visibility:visible" >
+EOF;
+echo "<br/><table border='2' class='table1'>";
+	foreach ($arrayPagesAvailable as $page => $descr) {
+		if ($descr != 'Management Proxys')
+			continue;
+
+                echo "<tr><td width='350'>";
+                echo "<font size='2'> $page </font>";
+                echo "</td><td>";
+
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
+                } else  {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                }
+echo "</td></tr>";
+	}
+echo "</table>";
+	echo "</td></tr>
+		</div>";
+
+/*
+ *  block ends ***********************************************************************
+*/
+
+
+
 
 
 

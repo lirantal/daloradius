@@ -19,6 +19,17 @@
 -- Table structure for table `hotspots`
 --
 
+DROP TABLE IF EXISTS `proxys`;
+CREATE TABLE proxys (
+        id bigint(20) NOT NULL auto_increment,
+        proxyname VARCHAR(128) default NULL,
+        retry_delay INT(8) default NULL,
+        retry_count INT(8) default NULL,
+        dead_time INT(8) default NULL,
+        default_fallback INT(8) default NULL,
+        PRIMARY KEY (id)
+) ENGINE=MyISAM;
+
 DROP TABLE IF EXISTS `realms`;
 CREATE TABLE realms (
         id bigint(20) NOT NULL auto_increment,

@@ -27,6 +27,13 @@ $l['all']['Nostrip'] = "nostrip";
 $l['all']['Notrealm'] = "notrealm";
 $l['all']['Hints'] = "hints";
 
+$l['all']['Proxy'] = "Proxy";
+$l['all']['ProxyName'] = "Proxy Name";
+$l['all']['ProxySecret'] = "Proxy Secert";
+$l['all']['DeadTime'] = "Dead Time";
+$l['all']['RetryDelay'] = "Retry Delay";
+$l['all']['RetryCount'] = "Retry Count";
+$l['all']['DefaultFallback'] = "Default Fallback";
 
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
@@ -156,24 +163,37 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
-$l['Tooltip']['realmNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmTypeTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmSecretTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmAuthhostTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmAccthostTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmLdflagTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmNostripTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmHintsTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmNotrealmTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['proxyNameTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['proxyRetryDelayTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['proxyRetryCountTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['proxyDeadTimeTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['proxyDefaultFallbackTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+
+
+
+$l['Tooltip']['realmNameTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmTypeTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmSecretTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmAuthhostTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmAccthostTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmLdflagTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmNostripTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmHintsTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['realmNotrealmTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
+                                        .<br/>&nbsp;&nbsp;&nbsp;";
 
 
 $l['Tooltip']['vendorNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
@@ -258,6 +278,10 @@ $l['button']['NewRealm'] = "New Realm";
 $l['button']['EditRealm'] = "Edit Realm";
 $l['button']['RemoveRealm'] = "Remove Realm";
 
+$l['button']['ListProxys'] = "List Proxys";
+$l['button']['NewProxy'] = "New Proxy";
+$l['button']['EditProxy'] = "Edit Proxy";
+$l['button']['RemoveProxy'] = "Remove Proxy";
 
 $l['button']['ListAttributesforVendor'] = "List Attributes for Vendor:";
 $l['button']['NewVendorAttribute'] = "New Vendor Attribute";
@@ -452,8 +476,13 @@ $l['ContactInfo']['Website'] = "Website";
 
 $l['Intro']['msgerrorpermissions.php'] = "Error";
 
+$l['Intro']['mngradproxys.php'] = "Proxys Management";
+$l['Intro']['mngradproxysnew.php'] = "New Proxy";
+$l['Intro']['mngradproxyslist.php'] = "List Proxy";
+$l['Intro']['mngradproxysedit.php'] = "Edit Proxy";
+$l['Intro']['mngradproxysdel.php'] = "Remove Proxy";
 
-$l['Intro']['mngradrealms.php'] = "Realms  Management";
+$l['Intro']['mngradrealms.php'] = "Realms Management";
 $l['Intro']['mngradrealmsnew.php'] = "New Realm";
 $l['Intro']['mngradrealmslist.php'] = "List Realm";
 $l['Intro']['mngradrealmsedit.php'] = "Edit Realm";
@@ -596,6 +625,11 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 
 $l['helpPage']['login'] = "";
 
+$l['helpPage']['mngradproxys'] = "";
+$l['helpPage']['mngradproxyslist'] = "";
+$l['helpPage']['mngradproxysnew'] = "";
+$l['helpPage']['mngradproxysedit'] = "";
+$l['helpPage']['mngradproxysdel'] = "";
 
 $l['helpPage']['mngradrealms'] = "";
 $l['helpPage']['mngradrealmslist'] = "";
