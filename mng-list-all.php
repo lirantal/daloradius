@@ -146,10 +146,16 @@
 
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
-				<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]' title='".$l['Tooltip']['UserEdit']."'> $row[0] </a> </td>
-				<td> $row[1] </td>
-				<td> $row[3] </td>
+			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
+			<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]' title='".$l['Tooltip']['UserEdit']."'>$row[0]</a></td>
+			";
+		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
+			echo "<td>[Password is hidden]</td>";
+		} else {
+			echo "<td>$row[1]</td>";
+		}
+		echo "
+			<td>$row[3]</td>
 		</tr>";
 	}
 	

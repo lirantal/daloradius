@@ -148,12 +148,18 @@
 			$fullname = "$row[4], $row[3]";
 
 		echo "<tr>
-				<td> <input type='checkbox' name='operator_username[]' value='$row[1]'> $row[0] </td>
-				<td> <a class='tablenovisit' href='config-operators-edit.php?operator_username=$row[1]' title='".
-					$l['Tooltip']['UserEdit']."'>$row[1] </a> </td>
-				<td> $row[2] </td>
-				<td> $fullname </td>
-				<td> $row[5] </td>
+			<td> <input type='checkbox' name='operator_username[]' value='$row[1]'>$row[0]</td>
+			<td> <a class='tablenovisit' href='config-operators-edit.php?operator_username=$row[1]' title='".
+			$l['Tooltip']['UserEdit']."'>$row[1]</a> </td>
+			";
+                if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
+                        echo "<td>[Password is hidden]</td>";
+                } else {
+                        echo "<td>$row[2]</td>";
+                }
+                echo "
+			<td>$fullname</td>
+			<td>$row[5]</td>
 
 		</tr>";
 	}
