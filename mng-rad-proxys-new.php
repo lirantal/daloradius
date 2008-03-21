@@ -16,8 +16,14 @@
                 isset($_POST['default_fallback']) ? $default_fallback = $_POST['default_fallback'] :  $default_fallback = "";
 		
 		include 'library/opendb.php';
-                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-                $fileFlag = 1;
+
+                if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
+                        $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                        $fileFlag = 1;
+                } else {
+                        $filenameRealmsProxys = "";
+                        $fileFlag = 0;
+                }
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
 		$res = $dbSocket->query($sql);
