@@ -827,3 +827,57 @@ h302 {
 
 /********************* END Carlos Changes ************************/
 
+
+
+
+
+
+
+/********************* BEGIN Carlos box containers ***************/
+
+
+
+.failure {
+    //border-bottom: 1px solid #fa601d;
+    border-bottom: 1px solid #CC6600;
+    padding: 9pt 9pt 9pt 33pt;
+    color: #484554;
+    //color: #996600;
+    font-family:"Lucida Grande","Lucida Sans Unicode","Lucida Sans",Verdana,Arial,sans-serif;
+    font-size: 8pt;
+//    background: #FDDDD9 url("../images/error.gif") 6pt 6pt no-repeat;
+background: #FFCC66;
+    margin: 1em 0px 0em 0px;
+}
+
+.warning {
+    background:#F8FEA5 url(../images/warning.gif) no-repeat scroll 6pt;
+    border-bottom:1px solid #EBFA1D;
+    color:#484554;
+    font-size:8pt;
+    margin:1em 0px 10px;
+    padding:9pt 9pt 9pt 33pt;
+}
+
+.success {
+    background:#DFEF7A url(../images/msg.gif) no-repeat scroll 6pt;
+    border-bottom:1px solid #A9C500;
+    color:#484554;
+    font-size:8pt;
+    margin:1em 0px 0em;
+    padding:9pt 9pt 9pt 33pt;
+}
+
+
+.help {
+    background:#DFEF7A url(../images/msg.gif) no-repeat scroll 6pt;
+    border-bottom: 1px solid #1d4efa;
+    padding: 9pt 9pt 9pt 33pt;
+    color: #484554;
+    font-size: 8pt;
+    background: #DFF5FE url("../images/help.gif") 6pt 6pt no-repeat;
+    margin: 1em 0px 1em 0px;
+}
+
+
+/********************* END Carlos box containers *****************/
