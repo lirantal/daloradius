@@ -18,8 +18,13 @@
 
 		include 'library/opendb.php';
 
-                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-                $fileFlag = 1;
+                if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
+                        $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                        $fileFlag = 1;
+                } else {
+                        $filenameRealmsProxys = "";
+                        $fileFlag = 0;
+                }
 
                 foreach ($proxynameArray as $variable=>$value) {
 			if (trim($value) != "") {

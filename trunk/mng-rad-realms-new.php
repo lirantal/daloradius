@@ -21,8 +21,13 @@
 		
 		include 'library/opendb.php';
 
-		$filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-		$fileFlag = 1;
+		if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
+			$filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+			$fileFlag = 1;
+		} else {
+			$filenameRealmsProxys = "";
+			$fileFlag = 0;
+		}
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOREALMS']." WHERE realmname='".$dbSocket->escapeSimple($realmname)."'";
 		$res = $dbSocket->query($sql);
