@@ -53,6 +53,7 @@
 
 <?php
 
+/*
         if ((isset($actionStatus)) && ($actionStatus == "success")) {
                 echo <<<EOF
                         <div id="contentnorightbar">
@@ -80,5 +81,7 @@ EOF;
 
         }
 
+
+*/
 
 ?>

@@ -5,6 +5,8 @@
 	include('library/check_operator_perm.php');
 
         isset($_REQUEST['proxyname']) ? $proxynameArray = $_REQUEST['proxyname'] : $proxynameArray = "";
+
+	$logAction = "";
 	$logDebugSQL = "";
 
         if (isset($_REQUEST['proxyname'])) {
@@ -15,7 +17,10 @@
 		$allProxys = "";
 
 		include 'library/opendb.php';
-	
+
+                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                $fileFlag = 1;
+
                 foreach ($proxynameArray as $variable=>$value) {
 			if (trim($value) != "") {
 
@@ -27,17 +32,20 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$actionStatus = "success";
-				$actionMsg = "Deleted proxy(s): <b> $allProxys </b>";
-				$logAction = "Successfully deleted proxy(s) [$allProxys] on page: ";
+				$successMsg = "Deleted proxy(s): <b> $allProxys </b>";
+				$logAction .= "Successfully deleted proxy(s) [$allProxys] on page: ";
 				
 			} else { 
-				$actionStatus = "failure";
-				$actionMsg = "no proxy was entered, please specify a proxy name to remove from database";
-				$logAction = "Failed deleting proxy(s) [$allProxys] on page: ";
+				$failureMsg = "no proxy was entered, please specify a proxy name to remove from database";
+				$logAction .= "Failed deleting proxy(s) [$allProxys] on page: ";
 			}
 
 		} //foreach
+
+               /*******************************************************************/
+               /* enumerate from database all proxy entries */
+               include_once('include/management/saveRealmsProxys.php');
+               /*******************************************************************/
 
 		include 'library/closedb.php';
 
@@ -45,7 +53,7 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -73,7 +81,10 @@
 					<?php echo $l['helpPage']['mngradproxysdel'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php   
+                        include_once('include/common/actionMessages.php');
+                ?>
+
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

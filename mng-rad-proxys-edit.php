@@ -6,6 +6,7 @@
 
         isset($_GET['proxyname']) ? $proxyname = $_GET['proxyname'] : $proxyname = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST["submit"])) {
@@ -17,12 +18,26 @@
                 isset($_POST['default_fallback']) ? $default_fallback = $_POST['default_fallback'] :  $default_fallback = "";
 		
 		include 'library/opendb.php';
+                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                $fileFlag = 1;
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
 		if (trim($proxyname) != "") {
+
+                        if (!(file_exists($filenameRealmsProxys))) {
+                                $logAction .= "Failed non-existed proxys configuration file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save proxys information to the file";
+                                $fileFlag = 0;
+                        }
+
+                        if (!(is_writable($filenameRealmsProxys))) {
+                                $logAction .= "Failed writing proxys configuration to file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save proxys information to the file";
+                                $fileFlag = 0;
+                        }
 
 			// update proxy entry in database
                         $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." SET retry_delay=".
@@ -33,13 +48,17 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$actionStatus = "success";
-			$actionMsg = "Updated database proxy: <b>$proxyname</b>";
-			$logAction = "Successfully updated proxy [$proxyname] on page: ";
+			$successMsg = "Updated database proxy: <b>$proxyname</b>";
+			$logAction .= "Successfully updated proxy [$proxyname] on page: ";
+
+                        /*******************************************************************/
+                        /* enumerate from database all proxy entries */
+                        include_once('include/management/saveRealmsProxys.php');
+                        /*******************************************************************/
+
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "you must provide atleast a proxy name";
-			$logAction = "Failed updating proxy [$proxyname] on page: ";	
+			$failureMsg = "you must provide atleast a proxy name";
+			$logAction .= "Failed updating proxy [$proxyname] on page: ";	
 		}
 	
 		include 'library/closedb.php';
@@ -64,7 +83,7 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -96,7 +115,9 @@
 					<?php echo $l['helpPage']['mngradproxysedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php   
+                        include_once('include/common/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
