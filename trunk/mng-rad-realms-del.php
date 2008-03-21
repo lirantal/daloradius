@@ -5,6 +5,8 @@
 	include('library/check_operator_perm.php');
 
         isset($_REQUEST['realmname']) ? $realmnameArray = $_REQUEST['realmname'] : $realmnameArray = "";
+
+	$logAction = "";
 	$logDebugSQL = "";
 
         if (isset($_REQUEST['realmname'])) {
@@ -15,6 +17,9 @@
 		$allRealms = "";
 
 		include 'library/opendb.php';
+
+                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                $fileFlag = 1;
 	
                 foreach ($realmnameArray as $variable=>$value) {
 			if (trim($value) != "") {
@@ -23,21 +28,25 @@
                                 $allRealms .= $realmname . ", ";
 
 				// delete all realms
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOREALMS']." WHERE realmname='".$dbSocket->escapeSimple($realmname)."'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOREALMS']." WHERE realmname='".
+					$dbSocket->escapeSimple($realmname)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$actionStatus = "success";
-				$actionMsg = "Deleted realm(s): <b> $allRealms </b>";
-				$logAction = "Successfully deleted realm(s) [$allRealms] on page: ";
+				$successMsg = "Deleted realm(s): <b> $allRealms </b>";
+				$logAction .= "Successfully deleted realm(s) [$allRealms] on page: ";
 				
 			} else { 
-				$actionStatus = "failure";
-				$actionMsg = "no realm was entered, please specify a realm name to remove from database";
-				$logAction = "Failed deleting realm(s) [$allRealms] on page: ";
+				$failureMsg = "no realm was entered, please specify a realm name to remove from database";
+				$logAction .= "Failed deleting realm(s) [$allRealms] on page: ";
 			}
 
 		} //foreach
+
+               /*******************************************************************/
+               /* enumerate from database all realm entries */
+               include_once('include/management/saveRealmsProxys.php');
+               /*******************************************************************/
 
 		include 'library/closedb.php';
 
@@ -45,7 +54,7 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -73,7 +82,10 @@
 					<?php echo $l['helpPage']['mngradrealmsdel'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php   
+                        include_once('include/common/actionMessages.php');
+                ?>
+
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

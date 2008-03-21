@@ -6,6 +6,7 @@
 
         isset($_GET['realmname']) ? $realmname = $_GET['realmname'] : $realmname = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST["submit"])) {
@@ -22,12 +23,28 @@
 		
 		include 'library/opendb.php';
 
+		$filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                $fileFlag = 1;
+
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOREALMS']." WHERE realmname='".$dbSocket->escapeSimple($realmname)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
 		if (trim($realmname) != "") {
-				// update realm entry in database
+
+                        if (!(file_exists($filenameRealmsProxys))) {
+                                $logAction .= "Failed non-existed realms configuration file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save realms information to the file";
+                                $fileFlag = 0;
+                        }
+
+                        if (!(is_writable($filenameRealmsProxys))) {
+                                $logAction .= "Failed writing realms configuration to file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save realms information to the file";
+                                $fileFlag = 0;
+                        }
+
+			// update realm entry in database
                         $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOREALMS']." SET type='".
 				$dbSocket->escapeSimple($type)."', authhost='".
                                 $dbSocket->escapeSimple($authhost)."', accthost='".$dbSocket->escapeSimple($accthost)."', secret='".
@@ -37,13 +54,17 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$actionStatus = "success";
-			$actionMsg = "Updated database with realm: <b>$realmname</b>";
-			$logAction = "Updated realm [$realmname] on page: ";
+			$successMsg = "Updated database with realm: <b>$realmname</b>";
+			$logAction .= "Updated realm [$realmname] on page: ";
+
+	                /*******************************************************************/
+                        /* enumerate from database all realm entries */
+                        include_once('include/management/saveRealmsProxys.php');
+                        /*******************************************************************/
+
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "you must provide atleast a realm name";
-			$logAction = "Updated realm [$realmname] on page: ";	
+			$failureMsg = "you must provide atleast a realm name";
+			$logAction .= "Updated realm [$realmname] on page: ";	
 		}
 
 		include 'library/closedb.php';
@@ -72,7 +93,7 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -104,7 +125,9 @@
 					<?php echo $l['helpPage']['mngradrealmsedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/common/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

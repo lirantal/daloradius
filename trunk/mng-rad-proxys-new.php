@@ -4,6 +4,7 @@
 
 	include('library/check_operator_perm.php');
 
+        $logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST["submit"])) {
@@ -15,12 +16,27 @@
                 isset($_POST['default_fallback']) ? $default_fallback = $_POST['default_fallback'] :  $default_fallback = "";
 		
 		include 'library/opendb.php';
+                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                $fileFlag = 1;
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
+
+                        if (!(file_exists($filenameRealmsProxys))) {
+                                $logAction .= "Failed non-existed proxys configuration file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save proxys information to the file";
+                                $fileFlag = 0;
+                        }
+
+                        if (!(is_writable($filenameRealmsProxys))) {
+                                $logAction .= "Failed writing proxys configuration to file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save proxys information to the file";
+                                $fileFlag = 0;
+                        }
+
 			if (trim($proxyname) != "") {
 
 				// insert proxy to database
@@ -31,18 +47,21 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new proxy: <b>$proxyname</b>";
-				$logAction = "Successfully added new proxy [$proxyname] on page: ";
+				$successMsg = "Added to database new proxy: <b>$proxyname</b>";
+				$logAction .= "Successfully added new proxy [$proxyname] on page: ";
+
+                                /*******************************************************************/
+                                /* enumerate from database all realm entries */   
+                                include_once('include/management/saveRealmsProxys.php');
+                                /*******************************************************************/
+
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "you must provide at least a proxy name";
-				$logAction = "Failed adding new proxy [$proxyname] on page: ";	
+				$failureMsg = "you must provide at least a proxy name";
+				$logAction .= "Failed adding new proxy [$proxyname] on page: ";	
 			}
 		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "You have tried to add a proxy that already exist in the database: $proxyname";
-			$logAction = "Failed adding new proxy already in database [$proxyname] on page: ";
+			$failureMsg = "You have tried to add a proxy that already exist in the database: $proxyname";
+			$logAction .= "Failed adding new proxy already in database [$proxyname] on page: ";
 		}
 	
 		include 'library/closedb.php';
@@ -51,7 +70,7 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -83,7 +102,10 @@
 					<?php echo $l['helpPage']['mngradproxysnew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php   
+                        include_once('include/common/actionMessages.php');
+                ?>
+
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

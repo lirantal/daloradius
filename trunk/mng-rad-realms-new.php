@@ -1,9 +1,10 @@
 <?php 
-    include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
+	include ("library/checklogin.php");
+	$operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST["submit"])) {
@@ -20,11 +21,27 @@
 		
 		include 'library/opendb.php';
 
+		$filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+		$fileFlag = 1;
+
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOREALMS']." WHERE realmname='".$dbSocket->escapeSimple($realmname)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
+
+			if (!(file_exists($filenameRealmsProxys))) {
+				$logAction .= "Failed non-existed realms configuration file [$filenameRealmsProxys] on page: ";
+				$failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save realms information to the file";
+				$fileFlag = 0;
+			}
+	
+			if (!(is_writable($filenameRealmsProxys))) {
+				$logAction .= "Failed writing realms configuration to file [$filenameRealmsProxys] on page: ";	
+				$failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save realms information to the file";
+				$fileFlag = 0;
+			}	
+
 			if (trim($realmname) != "") {
 
 				// insert realm to database
@@ -37,27 +54,31 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new realm: <b>$realmname</b>";
-				$logAction = "Successfully added new realm [$realmname] on page: ";
+				$successMsg = "Added to database new realm: <b>$realmname</b>";
+				$logAction .= "Successfully added new realm [$realmname] on page: ";
+
+				/*******************************************************************/
+				/* enumerate from database all realm entries */
+				include_once('include/management/saveRealmsProxys.php');
+				/*******************************************************************/
+
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "you must provide at least a realm name";
-				$logAction = "Failed adding new realm [$realmname] on page: ";	
+				$failureMsg = "you must provide at least a realm name";
+				$logAction .= "Failed adding new realm [$realmname] on page: ";	
 			}
+
 		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "You have tried to add a realm that already exist in the database: $realmname";
-			$logAction = "Failed adding new realm already in database [$realmname] on page: ";
+			$failureMsg = "You have tried to add a realm that already exist in the database: $realmname";
+			$logAction .= "Failed adding new realm already in database [$realmname] on page: ";
 		}
-	
+
 		include 'library/closedb.php';
 
 	}
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -89,8 +110,11 @@
 					<?php echo $l['helpPage']['mngradrealmsnew'] ?>
 					<br/>
 				</div>
-				<br/>
+		<?php 
 
+			include_once('include/common/actionMessages.php');
+
+		?>
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
@@ -261,8 +285,4 @@
 
 </body>
 </html>
-
-
-
-
 
