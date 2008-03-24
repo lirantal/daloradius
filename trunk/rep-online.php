@@ -64,7 +64,7 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT Username, FramedIPAddress, AcctStartTime, AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL)";
+	$sql = "SELECT Username, FramedIPAddress, CalledStationId, AcctStartTime, AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL)";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -73,7 +73,7 @@
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-	$sql = "SELECT Username, FramedIPAddress, AcctStartTime, AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL) ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$sql = "SELECT Username, FramedIPAddress, CalledStationId, AcctStartTime, AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL) ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -144,11 +144,13 @@
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $row[0] </td>
-				<td> $row[1] </td>
-				<td> $row[2] </td>
+				<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]' 
+					title='".$l['Tooltip']['UserEdit']."'>$row[0]</a>
+					</td>
+				<td> <b>IP:</b> $row[1]<br/> <b>MAC:</b> $row[2]</td>
 				<td> $row[3] </td>
 				<td> $row[4] </td>
+				<td> $row[5] </td>
 		 </td>
 
 		</tr>";
