@@ -1,3 +1,14 @@
+release 0.9-7rc1 - 16 April 2008
+	- fixed support for password hiding in users/operators listings
+	- added quick editing of online users and showing mac addresses listing
+	- added new pages - realms and proxys configurations
+
+	
+	
+	
+	
+
+
 release 0.9-6 - 25 Februray 2008
 	- added major improvement to attributes management which is now supporting all possible vendors
 	  and attributes which comes with latest freeradius 1.1.7, dynamically from the database using
