@@ -225,7 +225,8 @@ function drawAuthType($num) {
 	$inputId = "dictValues".$num;
 
         echo <<<EOF
-	objHelper.innerHTML = "<select style='width: 100px' class='form'>"+
+	objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawAuthType$num' "+
+				"style='width: 100px' class='form'>"+
 				"<option value=''>Select...</option>"+
 				"<option value='Local'>Local</option>"+
 				"<option value='System'>System</option>"+
