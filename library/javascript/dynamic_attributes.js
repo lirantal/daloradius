@@ -42,26 +42,34 @@ function createAttributes(index,attributesSel) {
         eval(ajax[index].response);     // Executing the response from Ajax as Javascript code
 }
 
-function getValuesList(sel,valuesSel,opSel,tableSel,attrTooltip,attrType) {
-        var attributeName = sel.options[sel.selectedIndex].value;
+function getValuesList(sel,valuesSel,opSel,tableSel,attrTooltip,attrType,attrHelper) {
+
+        var attributeName = document.getElementById(sel).value;
+
         document.getElementById(valuesSel).value = '';		 // clear input
         document.getElementById(opSel).options.length = 0;       // clear select box
 	if (document.getElementById(tableSel).type == "select")
 	        document.getElementById(tableSel).options.length = 0;    // clear select box
 
+
         document.getElementById(attrType).value = '';       	 // clear input
         document.getElementById(attrTooltip).value = '';         // clear input
+	document.getElementById(attrHelper).value = '';
+
+	num = dictCounter - 1;
+
         if(attributeName.length>0) {
                 var index = ajax.length;
                 ajax[index] = new sack();
-                ajax[index].requestFile = 'include/management/dynamic_attributes.php?getValuesForAttribute='+attributeName;    // Specifying which file to get
-                ajax[index].onCompletion = function(){ createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType) };   // Specify function that will be executed after file has been found
+                ajax[index].requestFile = 'include/management/dynamic_attributes.php?getValuesForAttribute='+attributeName+'&instanceNum='+num+'&dictValueId='+valuesSel;    // Specifying which file to get
+                ajax[index].onCompletion = function(){ createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType,attrHelper) };   // Specify function that will be executed after file has been found
                 ajax[index].runAJAX();          // Execute AJAX function
         }
 }
 
-function createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType) {
+function createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType,attrHelper) {
 
+	var objHelper = document.getElementById(attrHelper);
 	var objTooltip = document.getElementById(attrTooltip);
 	var objType = document.getElementById(attrType);
         var objValues = document.getElementById(valuesSel);
@@ -72,7 +80,24 @@ function createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType) {
 
 
 
-function addElement(enableTable) {
+
+function parseAttribute(tag) {
+
+        var attributeCustom = document.getElementById('dictAttributesCustom');
+	var attributeCustomVal = attributeCustom.value;
+
+	if (attributeCustomVal == '') {
+	        var attributeOfDatabase = document.getElementById('dictAttributesDatabase');
+	        var attributeOfDatabaseVal = attributeOfDatabase.options[attributeOfDatabase.selectedIndex].value;
+		addElement(tag, 'dictAttributesDatabase');
+	} else {
+		addElement(tag, 'dictAttributesCustom');
+	}
+
+}
+
+function addElement(enableTable, elementId) {
+
   dictCounter++;			// incrementing elements counter
 
   var divContainer = document.getElementById('divContainer');
@@ -84,70 +109,84 @@ function addElement(enableTable) {
   var divIdName = 'attrib'+num+'Div';
   attributeDiv.setAttribute('id',divIdName);
 
+
   if (enableTable == 1) {
 	tableElement = ""+
-		"<b>Target:</b>"+	
-	 	"<select id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' style='width: 90px' class='form'>"+
+		"&nbsp;&nbsp;<b>Target:</b>&nbsp;"+	
+	 	"<select id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' style='width: 70px' class='form'>"+
 		"</select>";
   } else {
 	tableElement = "<input type='hidden' id='dictTable"+num+"' name='dictValues"+dictCounter+"[]' >";
   };
 
+        // get top-page attribute's value
+
+      var srcElem = document.getElementById(elementId);
+
+	if (elementId == 'dictAttributesDatabase') {
+	      var elemVal = srcElem.options[srcElem.selectedIndex].value;
+	} else {
+	      var elemVal = srcElem.value;
+	}
 
   var content = "" +
 	""+
         "<fieldset>"+
 	""+
-        "       <label for='vendor' class='form'>Vendor:</label>"+
-        "       <select id='dictVendors"+num+"' onchange=\"getAttributesList(this,'dictAttributes"+num+"')\""+
-        "               style='width: 215px' onfocus=\"getVendorsList('dictVendors"+num+"')\" class='form' >"+
-        "               <option value=''>Select Vendor...</option>"+
-        "       </select>"+
-        "       <br/>"+
+        "       &nbsp;<b>Attribute:</b>"+
+        "       <input type='text' id='dictAttributes1' name='dictValues"+dictCounter+"[]' value='"+elemVal+"' "+
 	""+
-        "       <label for='attribute' class='form'>Attribute:</label>"+
-        "       <select id='dictAttributes"+num+"' name='dictValues"+dictCounter+"[]'"+
-        "                onchange=\"getValuesList(this,'dictValues"+num+"','dictOP"+num+"','dictTable"+num+"','dictTooltip"+num+"','dictType"+num+"')\""+
-        "               style='width: 270px' class='form' >"+
+	"		style='width: 220px' class='form' >"+
 	""+
         "       </select>"+
         "       <br/>"+
 	""+
-        "        &nbsp;"+
+        "       &nbsp;&nbsp;"+
+        "       &nbsp;"+
         "       <b>Value:</b>"+
-        "       <input type='text' id='dictValues"+num+"' name='dictValues"+dictCounter+"[]' style='width: 115px' class='form' >"+
+        "       <input type='text' id='dictValues"+num+"' name='dictValues"+dictCounter+"[]' style='width: 220px' class='form' >"+
 	""+
-        "       <b>Op:</b>"+
+        "       <span id='dictHelper"+num+"'>"+
+        "	"+
+        "       </span>"+
+	""+
+        "       &nbsp;<b>Op:</b>"+
         "       <select id='dictOP"+num+"' name='dictValues"+dictCounter+"[]' style='width: 45px' class='form' >"+
         "       </select>"+
 	""+
 	tableElement+
 	""+
-        "       <br/><br/>"+
+        "     <br/>"+
 	""+
         "     <div id='dictInfo"+num+"' style='display:none;visibility:visible'>"+
-        "                <span id='dictTooltip"+num+"'>"+
-        "                        <b>Attribute Tooltip:</b>"+
-        "                </span>"+
 	""+
+        "                <br/>"+
+	""+
+        "                <span id='dictTooltip"+num+"'>"+
+        "                        <b>Description:</b>"+
+        "                </span>"+
         "                <br/>"+
 	""+
         "                <span id='dictType"+num+"'>"+
         "                        <b>Type:<b/>"+
         "                </span>"+
-        "        </div>"+
 	""+
-        "<hr><br/>"+
+        "        <br/></div>"+
 	""+
-	"<input type='button' name='addAttributes' value='Add Attributes' onclick=\"javascript:addElement("+enableTable+");\" class='button'>"+
-	"<input type='button' name='removeAttributes' value='Remove Attributes' onclick=\"javascript:removeElement(\'"+divIdName+"\');\" class='button'>"+
-	"<input type='button' name='infoAttribute' value='Attribute Info' onclick=\"javascript:toggleShowDiv(\'dictInfo"+num+"\');\" class='button'>"+
-	""+
+        ""+
+	"<br/><hr>"+
+	"<input type='button' name='removeAttributes' value='Remove' onclick=\"javascript:removeElement(\'"+divIdName+"\');\" class='button'>"+
+	"<input type='button' name='infoAttribute' value='Info' onclick=\"javascript:toggleShowDiv(\'dictInfo"+num+"\');\" class='button'>"+
         "</fieldset>"+
+	"<div id='chooserSpan"+num+"' class='dateChooser select-free' style='display: none; visibility: hidden; width: 160px;'></div>"+
 	"<br/>";
-	
+
+
   attributeDiv.innerHTML = content;
   divContainer.appendChild(attributeDiv);
+
+  getValuesList(elementId,'dictValues'+num,'dictOP'+num,'dictTable'+num,'dictTooltip'+num,'dictType'+num,'dictHelper'+num);
+
 }
 
 

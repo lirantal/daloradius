@@ -165,7 +165,6 @@
 	if (isset($_POST['submit'])) {
 
 		include 'library/opendb.php';
-        	include 'include/management/attributes.php';
 
 		global $username;
 		global $authType;
@@ -508,8 +507,6 @@
 ?>
      </div>
 
-
-
      <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 
 	<fieldset>
@@ -518,51 +515,41 @@
 		<br/>
 
 		<label for='vendor' class='form'>Vendor:</label>
-                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
-			style='width: 215px' onfocus="getVendorsList('dictVendors0')" class='form' >
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributesDatabase')" 
+			style='width: 215px' class='form' >
                         <option value=''>Select Vendor...</option>
-                </select>
-		<br/>
+			<?php
+			        include 'library/opendb.php';
 	
-		<label for='attribute' class='form'>Attribute:</label>
-                <select id='dictAttributes0' name='dictValues0[]' 
-			onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
-			style='width: 270px' class='form' >
+			        $sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>'' ORDER BY Vendor ASC";
+			        $res = $dbSocket->query($sql);
+	
+			        while($row = $res->fetchRow()) {
+			                echo "<option value=$row[0]>$row[0]</option>";
+			        }
 
+			        include 'library/closedb.php';
+			?>
                 </select>
+		<input type='button' name='reloadAttributes' value='Reload Vendors' 
+			onclick="javascript:getVendorsList('dictVendors0');" class='button'>
+
+
+		<label for='attribute' class='form'>
+			Attribute:</label>
+                <select id='dictAttributesDatabase' style='width: 270px' class='form' >
+                </select>
+		<input type='button' name='addAttributes' value='Add Attribute' 
+			onclick="javascript:parseAttribute(1);" class='button'>
+
+		<label for='attribute' class='form'>
+			Custom Attribute:</label>
+		<input type='text' id='dictAttributesCustom' style='width: 264px' />
 		<br/>
 
-		&nbsp;
-		<b>Value:</b>
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
 
-		<b>Op:</b>
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
-                </select>
-
-		<b>Target:</b>
-                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
-                </select>
-
-		<br/><br/>
-		<div id='dictInfo0' style='display:none;visibility:visible'>
-			<span id='dictTooltip0'>
-				<b>Attribute Tooltip:</b>
-			</span>
-
-			<br/>	
-
-			<span id='dictType0'>
-				<b>Type:</b>
-			</span>
-		</div>
-
-	<hr><br/>
+	<br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-	<input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement(1);" 
-		class='button'>
-	<input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');" 
-		class='button'>
 
 	</fieldset>
 	<br/>
@@ -598,8 +585,4 @@
 
 </body>
 </html>
-
-
-
-
 
