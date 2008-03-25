@@ -533,7 +533,7 @@
                 </select>
 		<input type='button' name='reloadAttributes' value='Reload Vendors' 
 			onclick="javascript:getVendorsList('dictVendors0');" class='button'>
-
+		<br/>
 
 		<label for='attribute' class='form'>
 			Attribute:</label>
@@ -541,6 +541,7 @@
                 </select>
 		<input type='button' name='addAttributes' value='Add Attribute' 
 			onclick="javascript:parseAttribute(1);" class='button'>
+		<br/>
 
 		<label for='attribute' class='form'>
 			Custom Attribute:</label>
