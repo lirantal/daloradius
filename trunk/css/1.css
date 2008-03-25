@@ -535,6 +535,7 @@ input.button {
 	padding:0px;
 	font:90% Verdana;
 	color:#000000;
+        margin-top: 5px;
 }
 
 input.integer {
@@ -546,7 +547,7 @@ input[type="radio"] {
 }
 
 select.form {
-        width:130px;
+        width:185px;
 	height:20px;
 	padding:1px;
 	border:1;
