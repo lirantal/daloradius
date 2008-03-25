@@ -66,10 +66,12 @@ if(isset($_GET['vendorAttributes'])) {
 if(isset($_GET['getValuesForAttribute'])) {
 
 	$attribute = $_GET['getValuesForAttribute'];
+	$dictValueId = $_GET['dictValueId'];
+	$num = $_GET['instanceNum'];
 
 	include '../../library/opendb.php';
 
-	$sql = "SELECT RecommendedOP,RecommendedTable,RecommendedTooltip,type FROM dictionary 
+	$sql = "SELECT RecommendedOP,RecommendedTable,RecommendedTooltip,type,RecommendedHelper FROM dictionary 
 		WHERE Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
 	$res = $dbSocket->query($sql);
@@ -78,43 +80,100 @@ if(isset($_GET['getValuesForAttribute'])) {
 	$RecommendedTable = $row[1];
 	$RecommendedTooltip = $row[2];
 	$type = $row[3];
+	$RecommendedHelper = $row[4];
 
-	//set the first option of the dictOP select box to be the default recommended OP
-	//from the dictionary table
+
+
+
+	/*******************************************************************************************************/
+	/* RecommendedOP
+	/* set the first option of the dictOP select box to be the default recommended OP from the
+	/* dictionary table
+	/*******************************************************************************************************/
 	if (isset($RecommendedOP)) {
 		echo "objOP.options[objOP.options.length] = new Option('$RecommendedOP',
 		'$RecommendedOP');\n";
 	}
-	//then we populate the dictOP select box with the normal possible values
-	//for it:
-	populateOPs();
+	populateOPs(); 	//then we populate the dictOP select box with the normal possible values for it:
+	/*******************************************************************************************************/
 
-	//next up we set as the first option of the select box the default target table
-	//for this attribute
+
+
+	/*******************************************************************************************************/
+	/* RecommendedTable
+	/* next up we set as the first option of the select box the default target table for this attribute
+	/*******************************************************************************************************/
 	if (isset($RecommendedTable)) {
-		echo "if (objTable.type == \"select\") objTable.options[objTable.options.length] = new Option('$RecommendedTable','$RecommendedTable');\n";
+		echo "objTable.options[objTable.options.length] = new Option('$RecommendedTable','$RecommendedTable');\n";
 	}
-	//and ofcourse populate it also with the possible tables
-	populateTables();
+	populateTables();		//and ofcourse populate it also with the possible tables
+	/*******************************************************************************************************/
 
-	//setting the dictValue to be empty
+
+
+	/*******************************************************************************************************/
+	/* setting the dictValue to be empty
+	/*******************************************************************************************************/
 	echo "objValues.value = '';\n";
+	/*******************************************************************************************************/
 
 
-	//setting the tooltip 
-	echo "objTooltip.innerHTML = \"<b>Attribute Tooltip:</b>$RecommendedTooltip\";";
 
-	//setting the format
-	echo "objType.innerHTML = \"<b>Integer:</b> $type\";";
+	/*******************************************************************************************************/
+	/* RecommendedHelper
+	/* this draws the appropriate helper function/for the attribute using the innerHTML method to the 
+	/* html <span> element within the dynamic attribute boxes
+	/*******************************************************************************************************/
+	switch($RecommendedHelper) {
+
+		case "datetime":
+			drawHelperDateTime($num);
+			break;
+
+		case "date":
+			drawHelperDate($num);
+			break;
+
+		case "authtype":
+			drawAuthType($num);
+			break;
+
+
+
+	}
+	/*******************************************************************************************************/
+
+
+
+	/*******************************************************************************************************/
+	/* RecommendedTooltip
+	/* setting the tooltip 
+	/*******************************************************************************************************/
+	echo "objTooltip.innerHTML = \"<b>Description:</b> $RecommendedTooltip\";";
+	/*******************************************************************************************************/
+
+
+
+	/*******************************************************************************************************/
+	/* Format type
+	/* setting the format
+	/*******************************************************************************************************/
+	echo "objType.innerHTML = \"<b>Type:</b> $type\";";
+	/*******************************************************************************************************/
+
 
 	include '../../library/closedb.php';
 
 }
 
+
+
+
 function populateTables() {
 	echo "if (objTable.type == \"select-one\") objTable.options[objTable.options.length] = new Option('check','check');\n";
 	echo "if (objTable.type == \"select-one\") objTable.options[objTable.options.length] = new Option('reply','reply');\n";
 }
+
 
 
 function populateOPs() {
@@ -131,8 +190,60 @@ function populateOPs() {
 	echo "objOP.options[objOP.options.length] = new Option('!~','!~');\n";
 	echo "objOP.options[objOP.options.length] = new Option('=*','=*');\n";
 	echo "objOP.options[objOP.options.length] = new Option('!*','!*');\n";
+}
+
+
+
+function drawHelperDateTime($num) {
+
+	$inputId = "dictValues".$num;
+
+        echo <<<EOF
+	objHelper.innerHTML = "<img src='library/js_date/calendar.gif' onClick=\"showChooser(this, '$inputId', 'chooserSpan$num', 1950, 2010, 'Y-m-d H:i:s', true);\">";
+
+EOF;
 
 }
+
+
+
+function drawHelperDate($num) {
+
+	$inputId = "dictValues".$num;
+
+        echo <<<EOF
+	objHelper.innerHTML = "<img src='library/js_date/calendar.gif' onClick=\"showChooser(this, '$inputId', 'chooserSpan$num', 1950, 2010, 'd M Y', false);\">";
+
+EOF;
+
+}
+
+
+
+function drawAuthType($num) {
+
+	$inputId = "dictValues".$num;
+
+        echo <<<EOF
+	objHelper.innerHTML = "<select style='width: 100px' class='form'>"+
+				"<option value=''>Select...</option>"+
+				"<option value='Local'>Local</option>"+
+				"<option value='System'>System</option>"+
+				"<option value='Accept'>Accept</option>"+
+			      "</select>";
+
+EOF;
+
+}
+
+
+
+
+
+
+
+
+
 
 
 ?>
