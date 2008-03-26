@@ -28,28 +28,30 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $req
 	// on page one
 	if ($pageNum > 1)       {
 		$page = $pageNum - 1;
-		$prev = " <a class=\"table\" class='novisit' href=\"?page=$page&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[Prev]</a> ";
-		$first = "<a class=\"table\" class='novisit' href=\"?page=1&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[First Page]</a> ";
+		$prev = " <a href=\"?page=$page&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\"><img alt='[Prev]' src='images/icons/r.gif' border='0' /></a> ";
+		$first = "<a href=\"?page=1&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\"><img alt='[First Page]' src='images/icons/rw.gif' border='0' /></a> ";
 	} else {
-		$prev  = ' [Prev] ';       // we're on page one, don't enable 'previous' link
-		$first = ' [First Page] '; // nor 'first page' link
+		$prev = "<img alt=' [Prev] ' src='images/icons/r_non.gif' />";
+		$first = "<img alt=' [First Page] ' src='images/icons/rw_non.gif' />";
 	}
 
 
 	if ($pageNum < $maxPage) {
 		$page = $pageNum + 1;
-		$next = " <a class=\"table\" class='novisit' href=\"?page=$page&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[Next]</a> ";
-		$last = " <a class=\"table\" class='novisit' href=\"?page=$maxPage&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">[Last Page]</a> ";
+		$next = " <a class='novisit' href=\"?page=$page&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\"><img alt='[Next]' src='images/icons/f.gif' border='0' /></a> ";
+		$last = " <a class='tablenovisit' href=\"?page=$maxPage&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\"><img alt='[Next]' src='images/icons/ff.gif' border='0' /></a> ";
+
 	} else {
-		$next = ' [Next] ';      // we're on the last page, don't enable 'next' link
-		$last = ' [Last Page] '; // nor 'last page' link
+		$next = "<img alt=' [Next] ' src='images/icons/f_non.gif' />";      // we're on the last page, don't enable 'next' link
+		$last = "<img alt=' [Last Page] ' src='images/icons/ff_non.gif' />"; // nor 'last page' link
 	}
 
 	$greyColorBeg = "<font color='#5F5A59'>";
 	$greyColorEnd = "</font>";
 
-echo "$first $prev $greyColorBeg $pageNum $greyColorEnd of $greyColorBeg $maxPage $greyColorEnd $next $last";
-echo "<br/>";
+	echo "$greyColorBeg Page $pageNum $greyColorEnd of $greyColorBeg $maxPage $greyColorEnd<br/>";
+	echo "$first $prev $next $last "; //$greyColorBeg $pageNum $greyColorEnd of $greyColorBeg $maxPage $greyColorEnd";
+	echo "<br/>";
 
 }
 
