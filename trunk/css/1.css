@@ -359,7 +359,6 @@ h2 a:hover {
 	color:#5F9128;
 }
 
-
 #footer {
 	clear:both;
 	border-top:1px solid #eee;
@@ -739,6 +738,7 @@ tbody a:visited:after {
 
 tbody a.novisit {
 //        border-bottom: 1px dotted #fff
+	border: none;
 }
 
 tbody a.tablenovisit {
@@ -839,20 +839,18 @@ h302 {
 
 
 .failure {
-    //border-bottom: 1px solid #fa601d;
-    border-bottom: 1px solid #CC6600;
+    border-bottom: 1px solid #fa601d;
     padding: 9pt 9pt 9pt 33pt;
     color: #484554;
     //color: #996600;
     font-family:"Lucida Grande","Lucida Sans Unicode","Lucida Sans",Verdana,Arial,sans-serif;
     font-size: 8pt;
-//    background: #FDDDD9 url("../images/error.gif") 6pt 6pt no-repeat;
-background: #FFCC66;
+    background: #FDDDD9 url("../images/icons/action-error.gif") 6pt 6pt no-repeat;
     margin: 1em 0px 0em 0px;
 }
 
 .warning {
-    background:#F8FEA5 url(../images/warning.gif) no-repeat scroll 6pt;
+    background:#F8FEA5 url(../images/icons/action-warning.gif) no-repeat scroll 6pt;
     border-bottom:1px solid #EBFA1D;
     color:#484554;
     font-size:8pt;
@@ -861,7 +859,7 @@ background: #FFCC66;
 }
 
 .success {
-    background:#DFEF7A url(../images/msg.gif) no-repeat scroll 6pt;
+    background:#DFEF7A url(../images/icons/action-success.gif) no-repeat scroll 6pt;
     border-bottom:1px solid #A9C500;
     color:#484554;
     font-size:8pt;
@@ -871,12 +869,11 @@ background: #FFCC66;
 
 
 .help {
-    background:#DFEF7A url(../images/msg.gif) no-repeat scroll 6pt;
     border-bottom: 1px solid #1d4efa;
     padding: 9pt 9pt 9pt 33pt;
     color: #484554;
     font-size: 8pt;
-    background: #DFF5FE url("../images/help.gif") 6pt 6pt no-repeat;
+    background: #DFF5FE url("../images/icons/action-help.gif") 6pt 6pt no-repeat;
     margin: 1em 0px 1em 0px;
 }
 
