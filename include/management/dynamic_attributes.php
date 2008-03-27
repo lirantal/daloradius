@@ -138,6 +138,10 @@ if(isset($_GET['getValuesForAttribute'])) {
 			drawAuthType($num);
 			break;
 
+		case "servicetype":
+			drawServiceType($num);
+			break;
+
 
 
 	}
@@ -231,6 +235,65 @@ function drawAuthType($num) {
 				"<option value='Local'>Local</option>"+
 				"<option value='System'>System</option>"+
 				"<option value='Accept'>Accept</option>"+
+				"<option value='Reject'>Reject</option>"+
+				"<option value='SecurID'>SecurID</option>"+
+				"<option value='Crypt-Local'>Crypt-Local</option>"+
+				"<option value='ActivCard'>ActivCard</option>"+
+				"<option value='EAP'>EAP</option>"+
+				"<option value='PAP'>PAP</option>"+
+				"<option value='CHAP'>CHAP</option>"+
+				"<option value='MS-CHAP'>MS-CHAP</option>"+
+				"<option value='PAM'>PAM</option>"+
+				"<option value='Kerberos'>Kerberos</option>"+
+				"<option value='CRAM'>CRAM</option>"+
+				"<option value='NS-MTA-MD5'>NS-MTA-MD5</option>"+
+				"<option value='SMB'>SMB</option>"+
+				"<option value='Unix'>Unix</option>"+
+				"<option value='None'>None</option>"+
+				"<option value='ARAP'>ARAP</option>"+
+			      "</select>";
+
+EOF;
+
+}
+
+
+
+
+
+function drawServiceType($num) {
+
+	$inputId = "dictValues".$num;
+
+        echo <<<EOF
+	objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawServiceType$num' "+
+				"style='width: 100px' class='form'>"+
+				"<option value=''>Select...</option>"+
+				"<option value='Login-User'>Login-User</option>"+
+				"<option value='Framed-User'>Framed-User</option>"+
+				"<option value='Callback-Login-User'>Callback-Login-User</option>"+
+				"<option value='Callback-Framed-User'>Callback-Framed-User</option>"+
+				"<option value='Outbound-User'>Outbound-User</option>"+
+				"<option value='Administrative-User'>Administrative-User</option>"+
+				"<option value='NAS-Prompt-User'>NAS-Prompt-User</option>"+
+				"<option value='Authenticate-Only'>Authenticate-Only</option>"+
+				"<option value='Callback-NAS-Prompt'>Callback-NAS-Prompt</option>"+
+				"<option value='Call-Check'>Call-Check</option>"+
+				"<option value='Callback-Administrative'>Callback-Administrative</option>"+
+				"<option value='Sip-session'>Sip-session</option>"+
+				"<option value='Annex-Authorize-Only'>Annex-Authorize-Only</option>"+
+				"<option value='Annex-Framed-Tunnel'>Annex-Framed-Tunnel</option>"+
+				"<option value='Authorize-Only'>Authorize-Only</option>"+
+				"<option value='Shell-User'>Shell-User</option>"+
+				"<option value='Dialback-Login-User'>Dialback-Login-User</option>"+
+				"<option value='Dialback-Framed-User'>Dialback-Framed-User</option>"+
+				"<option value='Login'>Login</option>"+
+				"<option value='Framed'>Framed</option>"+
+				"<option value='Callback-Login'>Callback-Login</option>"+
+				"<option value='Callback-Framed'>Callback-Framed</option>"+
+				"<option value='Exec-User'>Exec-User</option>"+
+				"<option value='Sip-Session'>Sip-Session</option>"+
+				"<option value='Dialout-Framed-User'>Dialout-Framed-User</option>"+
 			      "</select>";
 
 EOF;
