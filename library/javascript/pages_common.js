@@ -118,6 +118,30 @@ function setStringText(srcId,dstId) {
 }
 
 
+/***********************************************************************
+ * setStringTextMulti
+ * srcId	- the source object text
+ * dstId1	- the dstination object is set to the source object text
+ * dstId2	- 
+ ***********************************************************************/
+function setStringTextMulti(srcId,dstId1, dstId2) {
+
+	var srcElem = document.getElementById(srcId);
+
+	if (srcElem.type == "select-one")
+		var elemVal = srcElem.options[srcElem.selectedIndex].value;
+
+	var srcElemValArray = elemVal.split("||");
+
+	var dstElem1 = document.getElementById(dstId1);
+	dstElem1.value = srcElemValArray[0];
+
+	var dstElem2 = document.getElementById(dstId2);
+	dstElem2.value = srcElemValArray[1];
+
+}
+
+
 
 /***********************************************************************
  * toggleShowDiv
