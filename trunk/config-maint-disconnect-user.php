@@ -115,34 +115,9 @@
                 <label for='nasaddr' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
                 <input name='nasaddr' type='text' id='nasaddr' value='' tabindex=102 />
 
-		<select onChange="javascript:setStringText(this.id,'nasaddr')" id='naslist' tabindex=103 class='form' >
+		<select onChange="javascript:setStringTextMulti(this.id,'nasaddr','nassecret')" id='naslist' tabindex=103 
+			class='form' >
 			<option value=""> Choose NAS... </option>
-<?php
-
-        include 'library/opendb.php';
-
-        // Grabing the group lists from usergroup table
-
-        $sql = "SELECT distinct(nasname) FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].";";
-        $res = $dbSocket->query($sql);
-
-        while($row = $res->fetchRow()) {
-                echo "
-                        <option value='$row[0]'> $row[0] </option>
-                        ";
-
-        }
-
-        include 'library/closedb.php';
-?>
-		</select>
-                <br/>
-
-                <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
-                <input name='nassecret' type='text' id='nassecret' value='' tabindex=104 />
-		<select onChange="javascript:setStringText(this.id,'nassecret')" id='nassecretlist' class='form' 
-			tabindex=105 >
-			<option value=""> Choose NAS Secret... </option>
 <?php
 
         include 'library/opendb.php';
@@ -154,7 +129,7 @@
 
         while($row = $res->fetchRow()) {
                 echo "
-                        <option value='$row[1]'> NAS: $row[0] - Secret: $row[1] </option>
+                        <option value='$row[0]||$row[1]'> $row[0] </option>
                         ";
 
         }
@@ -162,7 +137,10 @@
         include 'library/closedb.php';
 ?>
 		</select>
+                <br/>
 
+                <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
+                <input name='nassecret' type='text' id='nassecret' value='' tabindex=104 />
                 <br/>
 
                 <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?></label>
