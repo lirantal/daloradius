@@ -35,15 +35,19 @@
 
 
 				// delete all attributes associated with a username
-				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where Username='".$dbSocket->escapeSimple($username)."'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$sql = "delete from ".$configValues['CONFIG_DB_TBL_RADREPLY']." where Username='".$dbSocket->escapeSimple($username)."'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$sql = "delete from ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." where Username='".$dbSocket->escapeSimple($username)."'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -71,7 +75,7 @@
 
 		include 'library/opendb.php';
 
-		$sql = "delete from ".$dbSocket->escapeSimple($tablename)." where Username='".$dbSocket->escapeSimple($username)."'
+		$sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE Username='".$dbSocket->escapeSimple($username)."'
 			AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
