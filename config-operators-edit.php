@@ -175,6 +175,11 @@
         drawPagesPermissions($arrayPagesAvailable, $operator_username);
 ?>
 
+                <br/><br/>
+                <hr><br/>
+
+                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+
 	</div>
 </div>
 
