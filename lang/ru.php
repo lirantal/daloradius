@@ -145,13 +145,13 @@ $l['all']['DBPasswordEncryption'] = "Тип шифрования паролей 
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
-$l['Tooltip']['vendorNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['typeTooltip'] = "Example: string<br/>&nbsp;&nbsp;&nbsp;
-                                        The attributes variable type<br/>&nbsp;&nbsp;&nbsp;
+$l['Tooltip']['vendorNameTooltip'] = "Пример: Cisco<br/>&nbsp;&nbsp;&nbsp;
+                                        Имя производителя.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['typeTooltip'] = "Пример: string<br/>&nbsp;&nbsp;&nbsp;
+                                        Тип значения аттрибута<br/>&nbsp;&nbsp;&nbsp;
 					(string, integer, date, ipaddr).";
-$l['Tooltip']['attributeTooltip'] = "Example: Framed-IPAddress<br/>&nbsp;&nbsp;&nbsp;
-                                        The exact attribute name.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['attributeTooltip'] = "Например: Framed-IPAddress<br/>&nbsp;&nbsp;&nbsp;
+                                        Имя аттрибута.<br/>&nbsp;&nbsp;&nbsp;";
 
 $l['Tooltip']['RecommendedOPTooltip'] = "Example: :=<br/>&nbsp;&nbsp;&nbsp;
                                         The recommended attribute's operator.<br/>&nbsp;&nbsp;&nbsp;
@@ -162,14 +162,14 @@ $l['Tooltip']['RecommendedTableTooltip'] = "Example: check<br/>&nbsp;&nbsp;&nbsp
 $l['Tooltip']['RecommendedTooltipTooltip'] = "Example: the ip address for the user<br/>&nbsp;&nbsp;&nbsp;
                                         The recommended tooltip.<br/>&nbsp;&nbsp;&nbsp;";
 
-$l['Tooltip']['UserEdit'] = "Edit User";
-$l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
+$l['Tooltip']['UserEdit'] = "Редактировать пользователя";
+$l['Tooltip']['HotspotEdit'] = "Редактировать точку доступа";
 
-$l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+$l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "Если вы укажете значение, то будет удалена только запись, соответствующая значениям, которые вы ввели. Если вы ничего не укажете, будут удалены все записи из данной группы!";
 
-$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "Если вы укажете значение, то будет удалена только запись, соответствующая значениям, которые вы ввели. Если вы ничего не укажете, то будут удалены все записи из данной группы!";
 
-$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive name)";
+$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(название)";
 
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
@@ -300,22 +300,22 @@ $l['button']['UserUploads'] = "User Uploads";
 $l['button']['TotalLogins'] = "Total Logins";
 $l['button']['TotalTraffic'] = "Total Traffic";
 
-$l['button']['ViewMAP'] = "View MAP";
-$l['button']['EditMAP'] = "Edit MAP";
+$l['button']['ViewMAP'] = "Просмотреть карту";
+$l['button']['EditMAP'] = "Редактировать карту";
 $l['button']['RegisterGoogleMapsAPI'] = "RegisterGoogleMaps API";
 
-$l['button']['DatabaseSettings'] = "Database Settings";
-$l['button']['LanguageSettings'] = "Language Settings";
-$l['button']['LoggingSettings'] = "Logging Settings";
-$l['button']['InterfaceSettings'] = "Interface Settings";
+$l['button']['DatabaseSettings'] = "Настройки БД";
+$l['button']['LanguageSettings'] = "Языковые настройки";
+$l['button']['LoggingSettings'] = "Настройки логгирования";
+$l['button']['InterfaceSettings'] = "Настройки интерфейса";
 
-$l['button']['TestUserConnectivity'] = "Test User Connectivity";
-$l['button']['DisconnectUser'] = "Disconnect User";
+$l['button']['TestUserConnectivity'] = "Тестовый вход";
+$l['button']['DisconnectUser'] = "Сбросить пользователя с линии";
 
-$l['button']['ListOperators'] = "List Operators";
-$l['button']['NewOperator'] = "New Operator";
-$l['button']['EditOperator'] = "Edit Operator";
-$l['button']['RemoveOperator'] = "Remove Operator";
+$l['button']['ListOperators'] = "Список операторов";
+$l['button']['NewOperator'] = "Новый оператор";
+$l['button']['EditOperator'] = "Редактировать оператора";
+$l['button']['RemoveOperator'] = "Удалить оператора";
 
 $l['button']['ProcessQuery'] = "Process Query";
 
