@@ -228,4 +228,25 @@ function drawTypes() {
         ";
 }
 
+
+/*
+ * drawRecommendedHelpers()
+ *
+ * an aid function to return the possible helper functions for
+ * different attributes
+ */
+function drawRecommendedHelper() {
+
+	echo "
+                <option value='date'>date</option>
+                <option value='datetime'>datetime</option>
+                <option value='authtype'>authtype</option>
+                <option value='servicetype'>servicetype</option>
+        ";
+}
+
+
+
+
+
 ?>
