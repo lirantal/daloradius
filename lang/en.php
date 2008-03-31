@@ -15,6 +15,7 @@ $l['all']['VendorAttribute'] = "Vendor Attribute";
 $l['all']['RecommendedOP'] = "Recommended OP";
 $l['all']['RecommendedTable'] = "Recommended Table";
 $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
+$l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
 $l['all']['CleanupSessions'] = "Cleanup sessions older than";
@@ -218,6 +219,8 @@ $l['Tooltip']['RecommendedTableTooltip'] = "Example: check<br/>&nbsp;&nbsp;&nbsp
 					(either check or reply).";
 $l['Tooltip']['RecommendedTooltipTooltip'] = "Example: the ip address for the user<br/>&nbsp;&nbsp;&nbsp;
                                         The recommended tooltip.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be<br/>&nbsp;&nbsp;&nbsp;
+                                        available when adding this attribute<br/>&nbsp;&nbsp;&nbsp;";
 
 $l['Tooltip']['UserEdit'] = "Edit User";
 $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";

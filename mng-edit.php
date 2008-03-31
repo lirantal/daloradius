@@ -273,18 +273,18 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+	$row = $res->fetchRow();
 
-	$ui_firstname = $row['firstname'];
-	$ui_lastname = $row['lastname'];
-	$ui_email = $row['email'];
-	$ui_department = $row['department'];
-	$ui_company = $row['company'];
-	$ui_workphone = $row['workphone'];
-	$ui_homephone = $row['homephone'];
-	$ui_mobilephone = $row['mobilephone'];
-	$ui_notes = $row['notes'];
-	$ui_creationdate = $row['creationdate'];
+	$ui_firstname = $row[0];
+	$ui_lastname = $row[1];
+	$ui_email = $row[2];
+	$ui_department = $row[3];
+	$ui_company = $row[4];
+	$ui_workphone = $row[5];
+	$ui_homephone = $row[6];
+	$ui_mobilephone = $row[7];
+	$ui_notes = $row[8];
+	$ui_creationdate = $row[9];
 
 
 	include 'library/closedb.php';

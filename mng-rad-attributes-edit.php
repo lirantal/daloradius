@@ -18,6 +18,7 @@
 		isset($_POST['RecommendedOP']) ? $RecommendedOP = $_POST['RecommendedOP'] : $RecommendedOP = "";
 		isset($_POST['RecommendedTable']) ? $RecommendedTable = $_POST['RecommendedTable'] : $RecommendedTable = "";
 		isset($_POST['RecommendedTooltip']) ? $RecommendedTooltip = $_POST['RecommendedTooltip'] : $RecommendedTooltip = "";
+		isset($_POST['RecommendedHelper']) ? $RecommendedHelper = $_POST['RecommendedHelper'] : $RecommendedHelper = "";
 
 		include 'library/opendb.php';
 
@@ -33,9 +34,10 @@
 					type='".
 					$dbSocket->escapeSimple($type)."', attribute='".$dbSocket->escapeSimple($attribute).
 					"', RecommendedOP='".$dbSocket->escapeSimple($RecommendedOP).
-					"', RecommendedTable='".$dbSocket->escapeSimple($RecommendedTable)."', RecommendedTooltip='".
-					$dbSocket->escapeSimple($RecommendedTooltip)."'  
-					WHERE Vendor='$vendor' AND Attribute='$attributeOld'";
+					"', RecommendedTable='".$dbSocket->escapeSimple($RecommendedTable).
+					"', RecommendedTooltip='".$dbSocket->escapeSimple($RecommendedTooltip).
+					"', RecommendedHelper='".$dbSocket->escapeSimple($RecommendedHelper).
+					"' WHERE Vendor='$vendor' AND Attribute='$attributeOld'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -75,6 +77,7 @@
         isset($row['RecommendedOP']) ? $RecommendedOP = $row['RecommendedOP'] : $RecommendedOP = "";
         isset($row['RecommendedTable']) ? $RecommendedTable = $row['RecommendedTable'] : $RecommendedTable = "";
         isset($row['RecommendedTooltip']) ? $RecommendedTooltip = $row['RecommendedTooltip'] : $RecommendedTooltip = "";
+        isset($row['RecommendedHelper']) ? $RecommendedHelper = $row['RecommendedHelper'] : $RecommendedHelper = "";
 
 	include 'library/closedb.php';
 
@@ -190,6 +193,7 @@
                         include_once('include/management/populate_selectbox.php');
                         drawTables();
                 ?>
+		</select>
                 <div id='RecommendedTableTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedTableTooltip'] ?>
@@ -207,6 +211,23 @@
                 </div>
 		</li>
 
+
+                <li class='fieldset'>
+		<label for='RecommendedHelper' class='form'><?php echo $l['all']['RecommendedHelper'] ?></label>
+		<select name='RecommendedHelper' type='text' id='RecommendedHelper' class='form' tabindex=104
+                        onfocus="javascript:toggleShowDiv('RecommendedHelperTooltip')"
+                        onblur="javascript:toggleShowDiv('RecommendedHelperTooltip')" />
+			<option value='<?php echo $RecommendedHelper; ?>'><?php echo $RecommendedHelper; ?></option>
+                <?php
+                        include_once('include/management/populate_selectbox.php');
+                        drawRecommendedHelper();
+                ?>
+		</select>
+                <div id='RecommendedHelperTooltip'  style='display:none;visibility:visible' class='Tooltip'>
+                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['RecommendedHelperTooltip'] ?>
+                </div>
+		</li>
 	
                 <li class='fieldset'>
                 <br/>
