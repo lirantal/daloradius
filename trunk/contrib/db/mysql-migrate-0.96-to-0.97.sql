@@ -66,3 +66,8 @@ UPDATE operators SET mng_rad_proxys_list='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_proxys_new='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_proxys_edit='yes' WHERE username='administrator';
 UPDATE operators SET mng_rad_proxys_del='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD acct_maintenance_cleanup VARCHAR(32);
+UPDATE operators SET acct_maintenance_cleanup='yes' WHERE username='administrator';
+ALTER TABLE operators ADD acct_maintenance_delete VARCHAR(32);
+UPDATE operators SET acct_maintenance_delete='yes' WHERE username='administrator';
