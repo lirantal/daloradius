@@ -85,9 +85,6 @@
 				<br/>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-<div class="tabber">
-
 	<fieldset>
 
 		<h302> <?php echo $l['title']['VendorAttribute']; ?> </h302>
