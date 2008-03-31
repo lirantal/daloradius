@@ -223,7 +223,7 @@
                         drawRecommendedHelper();
                 ?>
 		</select>
-                <div id='RecommendedHelperTooltip'  style='display:none;visibility:visible' class='Tooltip'>
+                <div id='RecommendedHelperTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedHelperTooltip'] ?>
                 </div>
