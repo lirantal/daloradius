@@ -17,6 +17,12 @@ $l['all']['RecommendedTable'] = "Recommended Table";
 $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 /********************************************************************************/
 
+$l['all']['CleanupSessions'] = "Cleanup sessions older than";
+$l['all']['DeleteSessions'] = "Delete sessions older than";
+
+$l['all']['StartingDate'] = "Starting Date";
+$l['all']['EndingDate'] = "Ending Date";
+
 $l['all']['Realm'] = "Realm";
 $l['all']['RealmName'] = "Realm Name";
 $l['all']['RealmSecret'] = "Realm Secert";
@@ -297,6 +303,9 @@ $l['button']['OrderBy'] = "Order By";
 $l['button']['HotspotAccounting'] = "Hotspot Accounting";
 $l['button']['HotspotsComparison'] = "Hotspots Comparison";
 
+$l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
+$l['button']['DeleteAccountingRecords'] = "Delete Accounting Records";
+
 $l['button']['ListUsers'] = "List Users";
 $l['button']['NewUser'] = "New User";
 $l['button']['NewUserQuick'] = "New User - Quick Add";
@@ -390,6 +399,9 @@ $l['button']['ProcessQuery'] = "Process Query";
  * Titles
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
+
+$l['title']['CleanupRecords'] = "Cleanup Records";
+$l['title']['DeleteRecords'] = "Delete Records";
 
 $l['title']['RealmInfo'] = "Realm Info";
 
@@ -507,6 +519,9 @@ $l['Intro']['acctnasipaddress.php'] = "NAS IP Accounting";
 $l['Intro']['acctusername.php'] = "Users Accounting";
 $l['Intro']['acctcustom.php'] = "Custom Accountings";
 $l['Intro']['acctcustomquery.php'] = "Custom Query Accounting";
+$l['Intro']['acctmaintenance.php'] = "Accounting Records Maintenance";
+$l['Intro']['acctmaintenancecleanup.php'] = "Cleanup Stale-connections";
+$l['Intro']['acctmaintenancedelete.php'] = "Delete Accounting Records";
 
 $l['Intro']['billmain.php'] = "Billing Page";
 $l['Intro']['billpersecond.php'] = "Prepaid Accounting";
@@ -1004,6 +1019,20 @@ $l['helpPage']['acctcustom'] = "
 <br/>
 ";
 $l['helpPage']['acctcustomquery'] = "";
+$l['helpPage']['acctmaintenance'] = "
+<h200><b>Cleanup stale-sessions</b></h200> - 
+	Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
+	user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
+	record (false positive).
+<br/>
+<h200><b>Delete accounting records</b></h200> - 
+	Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
+	except for a supervised administrator access to this page.
+<br/>
+";
+$l['helpPage']['acctmaintenancecleanup'] = "";
+$l['helpPage']['acctmaintenancedelete'] = "";
+
 
 
 $l['helpPage']['giseditmap'] = "
