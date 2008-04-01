@@ -215,9 +215,11 @@
 		<li class='fieldset'>
                 <label for='numberInstances' class='form'><?php 
 			echo $l['all']['NumberInstances'] ?></label>
-                <input name='number' type='text' id='number' value='' tabindex=101
+                <input class="integer" name='number' type='text' id='number' value='1' tabindex=101
                         onfocus="javascript:toggleShowDiv('instancesToCreateTooltip')"
                         onblur="javascript:toggleShowDiv('instancesToCreateTooltip')" />
+		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('number','increment')" />
+		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('number','decrement')"/>
 		<br/>
                 <div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/error.png' alt='Tip' border='0' />
