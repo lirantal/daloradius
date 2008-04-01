@@ -124,7 +124,7 @@
 				$actionMsg = "Exported Usernames -  <a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>
 				Added to database new user: <b> $actionMsgGoodUsernames </b><br/>";
 
-				$logAction = "Successfully added to database new users [$actionMsgGoodUsernames] on page: ";
+				$logAction = "Successfully added to database new users [$actionMsgGoodUsernames] with prefix [$username_prefix] on page: ";
 			}
 		
 		}
