@@ -175,6 +175,7 @@ function addElement(enableTable, elementId) {
 	""+
         ""+
 	"<br/><hr>"+
+	"&nbsp;<a href='#top'><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>"+
 	"<input type='button' name='removeAttributes' value='Remove' onclick=\"javascript:removeElement(\'"+divIdName+"\');\" class='button'>"+
 	"<input type='button' name='infoAttribute' value='Info' onclick=\"javascript:toggleShowDiv(\'dictInfo"+num+"\');\" class='button'>"+
         "</fieldset>"+
