@@ -160,7 +160,8 @@
 
         $editCounter = 0;
 
-        $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
+        $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
+		" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
 
@@ -173,7 +174,7 @@
         while($row = $res->fetchRow()) {
 
                 echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-profiles-del?profile=$profile&attribute=$row[0]&tablename=radgroupcheck'>
+                echo "<a class='tablenovisit' href='mng-rad-groupcheck-del?groupname=$profile&attribute=$row[0]&value=$row[2]'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
@@ -230,8 +231,8 @@
 
 <?php
 
-        $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE 
-GroupName='".$dbSocket->escapeSimple($profile)."'";
+        $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+		" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
 
@@ -245,7 +246,7 @@ GroupName='".$dbSocket->escapeSimple($profile)."'";
 
 
                 echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-profiles-del?profile=$profile&attribute=$row[0]&tablename=radgroupreply'>
+                echo "<a class='tablenovisit' href='mng-rad-groupreply-del?groupname=$profile&attribute=$row[0]&value=$row[2]'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";

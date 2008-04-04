@@ -13,8 +13,8 @@
 	if (isset($_POST['group'])) {
 		$group_array = $_POST['group'];
 	} else {
-		if (isset($_POST['groupname']))
-		$group_array = array($_POST['groupname']."||".$_POST['attribute']."||".$_POST['value']);
+		if (isset($_GET['groupname']))
+		$group_array = array($_GET['groupname']."||".$_GET['attribute']."||".$_GET['value']);
 	}			
 
  	
@@ -125,7 +125,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='$value' AND
 				</div>
 				<br/>
 				
-                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 
 
         <fieldset>
