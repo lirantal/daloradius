@@ -1,7 +1,14 @@
 release 0.9-7rc1 - 16 April 2008
 	- fixed support for password hiding in users/operators listings
+	- fixed deletion of usergroup instances of the user
+	- fixed saving encrypted password changes in database (reported by kreg, thanks)
+	- fixed deletion of attributes from profiles page (reported by kreg, thanks)
+	- improved usability on disconnect user page 
+	- improved greatly attributes management with support for dynamic helper functions
 	- added quick editing of online users and showing mac addresses listing
 	- added new pages - realms and proxys configurations
+	- added vendor/attributes management page to allow editing of official and custom attributes
+	- added more icons, variable translation and layout changes
 
 	
 	
