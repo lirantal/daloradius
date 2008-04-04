@@ -192,31 +192,34 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 				   for this reason we need to check if it exists or not, if exists we update, if not we insert 
 				   */
 
-				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username)."' 
-AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username).
+					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				if ($res->numRows() == 0) {
 
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
 
-					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($op)."', $value)";
+					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($username)."', '".
+						$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op).
+						"', $value)";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 				} else {
 				
 					/* we update the $value[0] entry which is the attribute's value */
-					$sql = "UPDATE $table SET 
-Value=$value WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+					$sql = "UPDATE $table SET Value=$value WHERE UserName='".
+						$dbSocket->escapeSimple($username)."' AND Attribute='".
+						$dbSocket->escapeSimple($attribute)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 
 					/* then we update $value[1] which is the attribute's operator */
-					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op)."' 
-WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
+						"' WHERE UserName='".$dbSocket->escapeSimple($username).
+						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
@@ -256,8 +259,8 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND Attribute='".$dbSock
 	
 	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
 	*/
-	$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."' 
-AND Attribute like '%Password'";
+	$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
+		$dbSocket->escapeSimple($username)."' AND Attribute like '%Password'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -379,22 +382,22 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 
 		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
 
-			if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
-				echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
+		if (preg_match("/.*-Password/", $row[0])) {
+			if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 				echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
-				echo "&nbsp;";
-				echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-				echo "<option value='$row[1]'>$row[1]</option>";
-				drawOptions();
-				echo "</select>";
+				echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
 			} else {
-				echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
-				echo "&nbsp;";
-				echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-				echo "<option value='$row[1]'>$row[1]</option>";
-				drawOptions();
-				echo "</select>";
+				echo "<input type='text' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
+				echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
 			}
+		} else {
+			echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
+		}
+		echo "&nbsp;";
+		echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
+		echo "<option value='$row[1]'>$row[1]</option>";
+		drawOptions();
+		echo "</select>";
 
 		echo "       
 		        <input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'>
