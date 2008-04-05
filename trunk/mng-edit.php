@@ -541,8 +541,6 @@
         <div id="divContainer"> </div> <br/>
      </div>		
 
-</div>
-
 
      <div class="tabbertab" title="<?php echo $l['title']['Groups']; ?>">
 	
