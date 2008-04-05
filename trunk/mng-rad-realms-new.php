@@ -139,7 +139,7 @@
                         onfocus="javascript:toggleShowDiv('realmNameTooltip')"
                         onblur="javascript:toggleShowDiv('realmNameTooltip')" />
                 <div id='realmNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmNameTooltip'] ?>
                 </div>
 		</li>
@@ -150,7 +150,7 @@
                         onfocus="javascript:toggleShowDiv('realmTypeTooltip')"
                         onblur="javascript:toggleShowDiv('realmTypeTooltip')" />
                 <div id='realmTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmTypeTooltip'] ?>
                 </div>
 		</li>
@@ -161,7 +161,7 @@
                         onfocus="javascript:toggleShowDiv('realmAuthhostTooltip')"
                         onblur="javascript:toggleShowDiv('realmAuthhostTooltip')" />
                 <div id='realmAuthhostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmAuthhostTooltip'] ?>
                 </div>
 		</li>
@@ -172,7 +172,7 @@
                         onfocus="javascript:toggleShowDiv('realmAccthostTooltip')"
                         onblur="javascript:toggleShowDiv('realmAccthostTooltip')" />
                 <div id='realmAccthostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmAccthostTooltip'] ?>
                 </div>
 		</li>
@@ -183,7 +183,7 @@
                         onfocus="javascript:toggleShowDiv('realmSecretTooltip')"
                         onblur="javascript:toggleShowDiv('realmSecretTooltip')" />
                 <div id='realmSecretTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmSecretTooltip'] ?>
                 </div>
 		</li>
@@ -215,7 +215,7 @@
                         onfocus="javascript:toggleShowDiv('realmLdflagTooltip')"
                         onblur="javascript:toggleShowDiv('realmLdflagTooltip')" />
                 <div id='realmLdflagTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmLdflagTooltip'] ?>
                 </div>
 		</li>
@@ -226,7 +226,7 @@
                         onfocus="javascript:toggleShowDiv('realmNostripTooltip')"
                         onblur="javascript:toggleShowDiv('realmNostripTooltip')" />
                 <div id='realmNostripTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmNostripTooltip'] ?>
                 </div>
 		</li>
@@ -237,7 +237,7 @@
                         onfocus="javascript:toggleShowDiv('realmHintsTooltip')"
                         onblur="javascript:toggleShowDiv('realmHintsTooltip')" />
                 <div id='realmHintsTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmHintsTooltip'] ?>
                 </div>
 		</li>
@@ -248,7 +248,7 @@
                         onfocus="javascript:toggleShowDiv('realmNotrealmTooltip')"
                         onblur="javascript:toggleShowDiv('realmNotrealmTooltip')" />
                 <div id='realmNotrealmTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['realmNotrealmTooltip'] ?>
                 </div>
 		</li>

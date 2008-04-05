@@ -356,7 +356,7 @@
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
 
 		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/error.png' alt='Tip' border='0' /> 
+			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
 			<?php echo $l['Tooltip']['usernameTooltip'] ?>
 		</div>
 		</li>
@@ -370,7 +370,7 @@
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8)" />
 
 		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/error.png' alt='Tip' border='0' /> 
+			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
 			<?php echo $l['Tooltip']['passwordTooltip'] ?>
 		</div>
 		</li>
@@ -396,7 +396,7 @@
 		        populate_groups("Select Groups","group");
 		?>
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/error.png' alt='Tip' border='0' /> 
+			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
 			<?php echo $l['Tooltip']['groupTooltip'] ?>
 		</div>
 		</li>
@@ -430,7 +430,7 @@
 			onfocus="javascript:toggleShowDiv('macaddressTooltip')"
 			onblur="javascript:toggleShowDiv('macaddressTooltip')" />
                 <div id='macaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['macaddressTooltip'] ?>
                 </div>
 		</li>
@@ -473,7 +473,7 @@
 			onblur="javascript:toggleShowDiv('pincodeTooltip')" />
 		<input type='button' value='Generate' class='button' onclick="javascript:randomAlphanumeric('pincode',10)" />
                 <div id='pincodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['pincodeTooltip'] ?>
                 </div>
 		</li>

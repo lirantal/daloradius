@@ -117,7 +117,7 @@
                         onfocus="javascript:toggleShowDiv('hotspotNameTooltip')"
                         onblur="javascript:toggleShowDiv('hotspotNameTooltip')" />
                 <div id='hotspotNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['hotspotNameTooltip'] ?>
                 </div>
 		</li>
@@ -128,7 +128,7 @@
                         onfocus="javascript:toggleShowDiv('hotspotMacaddressTooltip')"
                         onblur="javascript:toggleShowDiv('hotspotMacaddressTooltip')" />
                 <div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
                 </div>
 		</li>
@@ -139,7 +139,7 @@
                         onfocus="javascript:toggleShowDiv('geocodeTooltip')"
                         onblur="javascript:toggleShowDiv('geocodeTooltip')" />
                 <div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['geocodeTooltip'] ?>
                 </div>
 		</li>

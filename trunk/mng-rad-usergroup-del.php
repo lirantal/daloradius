@@ -126,7 +126,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
                         populate_groups("Select Groups","long");
                 ?>
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['groupTooltip'] ?>
                 </div>
                 </li>
