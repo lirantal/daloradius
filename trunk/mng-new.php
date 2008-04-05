@@ -509,7 +509,6 @@
 
      <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 
-	<a name='top'></a>
 	<fieldset>
 
                 <h302> <?php echo $l['title']['Attributes']; ?> </h302>
