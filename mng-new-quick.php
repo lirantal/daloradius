@@ -190,7 +190,7 @@
                 <br />
 
                 <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['usernameTooltip'] ?>
                 </div>
 		</li>
@@ -205,7 +205,7 @@
                 <br />
 
                 <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['passwordTooltip'] ?>
                 </div>
 		</li>
@@ -230,7 +230,7 @@
                         populate_groups("Select Groups","group");
                 ?>
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['groupTooltip'] ?>
                 </div>
 		</li>

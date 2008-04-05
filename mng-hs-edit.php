@@ -146,7 +146,7 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
                         onfocus="javascript:toggleShowDiv('hotspotMacaddressTooltip')"
                         onblur="javascript:toggleShowDiv('hotspotMacaddressTooltip')" />
                 <div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
                 </div>
                 </li>
@@ -157,7 +157,7 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
                         onfocus="javascript:toggleShowDiv('geocodeTooltip')"
                         onblur="javascript:toggleShowDiv('geocodeTooltip')" />
                 <div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['geocodeTooltip'] ?>
                 </div>
                 </li>

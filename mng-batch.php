@@ -207,7 +207,7 @@
                         onblur="javascript:toggleShowDiv('usernamePrefixTooltip')" />
 		<br/>
                 <div id='usernamePrefixTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['usernamePrefixTooltip'] ?>
                 </div>
 		</li>
@@ -222,7 +222,7 @@
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('number','decrement')"/>
 		<br/>
                 <div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['instancesToCreateTooltip'] ?>
                 </div>
 		<li>
@@ -238,7 +238,7 @@
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_user','decrement')"/>
 		<br/>
                 <div id='lengthOfUsernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['lengthOfUsernameTooltip'] ?>
                 </div>
 		</li>
@@ -254,7 +254,7 @@
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_pass','decrement')"/>
 		<br/>
                 <div id='lengthOfPasswordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['lengthOfPasswordTooltip'] ?>
                 </div>
 		</li>
@@ -266,7 +266,7 @@
 		        populate_groups("Select Groups","group");
 		?>
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['groupTooltip'] ?>
                 </div>
 		</li>

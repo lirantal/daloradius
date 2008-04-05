@@ -129,7 +129,7 @@
                         onfocus="javascript:toggleShowDiv('vendorNameTooltip')"
                         onblur="javascript:toggleShowDiv('vendorNameTooltip')" />
                 <div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['vendorNameTooltip'] ?>
                 </div>
 		</li>
@@ -142,7 +142,7 @@
                         onfocus="javascript:toggleShowDiv('attributeTooltip')"
                         onblur="javascript:toggleShowDiv('attributeTooltip')" />
                 <div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['attributeTooltip'] ?>
                 </div>
 		</li>
@@ -159,7 +159,7 @@
                 ?>
 		</select>
                 <div id='typeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['typeTooltip'] ?>
                 </div>
 		</li>
@@ -176,7 +176,7 @@
                 ?>
 		</select>
                 <div id='RecommendedOPTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedOPTooltip'] ?>
                 </div>
 		</li>
@@ -193,7 +193,7 @@
                 ?>
 		</select>
                 <div id='RecommendedTableTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedTableTooltip'] ?>
                 </div>
 		</li>
@@ -204,7 +204,7 @@
                         onfocus="javascript:toggleShowDiv('RecommendedTooltipTooltip')"
                         onblur="javascript:toggleShowDiv('RecommendedTooltipTooltip')" />
                 <div id='RecommendedTooltipTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedTooltipTooltip'] ?>
                 </div>
 		</li>
@@ -222,7 +222,7 @@
                 ?>
 		</select>
                 <div id='RecommendedHelperTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedHelperTooltip'] ?>
                 </div>
 		</li>

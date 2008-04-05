@@ -132,7 +132,7 @@
                         onfocus="javascript:toggleShowDiv('proxyNameTooltip')"
                         onblur="javascript:toggleShowDiv('proxyNameTooltip')" />
                 <div id='proxyNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['proxyNameTooltip'] ?>
                 </div>
 		</li>
@@ -143,7 +143,7 @@
                         onfocus="javascript:toggleShowDiv('proxyRetryDelayTooltip')"
                         onblur="javascript:toggleShowDiv('proxyRetryDelayTooltip')" />
                 <div id='proxyRetryDelayTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['proxyRetryDelayTooltip'] ?>
                 </div>
 		</li>
@@ -154,7 +154,7 @@
                         onfocus="javascript:toggleShowDiv('proxyRetryCountTooltip')"
                         onblur="javascript:toggleShowDiv('proxyRetryCountTooltip')" />
                 <div id='proxyRetryCountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['proxyRetryCountTooltip'] ?>
                 </div>
 		</li>
@@ -165,7 +165,7 @@
                         onfocus="javascript:toggleShowDiv('proxyDeadTimeTooltip')"
                         onblur="javascript:toggleShowDiv('proxyDeadTimeTooltip')" />
                 <div id='proxyDeadTimeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['proxyDeadTimeTooltip'] ?>
                 </div>
 		</li>
@@ -176,7 +176,7 @@
                         onfocus="javascript:toggleShowDiv('proxyDefaultFallbackTooltip')"
                         onblur="javascript:toggleShowDiv('proxyDefaultFallbackTooltip')" />
                 <div id='proxyDefaultFallbackTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['proxyDefaultFallbackTooltip'] ?>
                 </div>
 		</li>

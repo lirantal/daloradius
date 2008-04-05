@@ -112,7 +112,7 @@
                         onfocus="javascript:toggleShowDiv('vendorNameTooltip')"
                         onblur="javascript:toggleShowDiv('vendorNameTooltip')" />
                 <div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['vendorNameTooltip'] ?>
                 </div>
 		</li>
@@ -123,7 +123,7 @@
                         onfocus="javascript:toggleShowDiv('attributeTooltip')"
                         onblur="javascript:toggleShowDiv('attributeTooltip')" />
                 <div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/error.png' alt='Tip' border='0' />
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['attributeTooltip'] ?>
                 </div>
 		</li>
