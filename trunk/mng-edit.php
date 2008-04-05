@@ -1,7 +1,7 @@
 <?php 
 
-    include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
+	include ("library/checklogin.php");
+	$operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
@@ -11,24 +11,24 @@
 
 	if (isset($_REQUEST['submit'])) {
 
-                $currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
+		$currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
 
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
 
-                isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
-                isset ($_REQUEST['groups']) ? $groups = $_REQUEST['groups'] : $groups = "";
-                isset ($_REQUEST['groups_priority']) ? $groups_priority = $_REQUEST['groups_priority'] : $groups_priority = "";
+		isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
+		isset ($_REQUEST['groups']) ? $groups = $_REQUEST['groups'] : $groups = "";
+		isset ($_REQUEST['groups_priority']) ? $groups_priority = $_REQUEST['groups_priority'] : $groups_priority = "";
 
-                $firstname = $_REQUEST['firstname'];
-                $lastname = $_REQUEST['lastname'];
-                $email = $_REQUEST['email'];
-                $department = $_REQUEST['department'];
-                $company = $_REQUEST['company'];
-                $workphone = $_REQUEST['workphone'];
-                $homephone = $_REQUEST['homephone'];
-                $mobilephone = $_REQUEST['mobilephone'];
-                $notes = $_REQUEST['notes'];
+		$firstname = $_REQUEST['firstname'];
+		$lastname = $_REQUEST['lastname'];
+		$email = $_REQUEST['email'];
+		$department = $_REQUEST['department'];
+		$company = $_REQUEST['company'];
+		$workphone = $_REQUEST['workphone'];
+		$homephone = $_REQUEST['homephone'];
+		$mobilephone = $_REQUEST['mobilephone'];
+		$notes = $_REQUEST['notes'];
 
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
 
@@ -41,23 +41,24 @@
 			// if there were no records for this user present in the userinfo table
 			if ($res->numRows() == 0) {
 				// we add these records to the userinfo table
-                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." 
-(id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, creationdate) 
-values (0, '".$dbSocket->escapeSimple($username)."',
-'".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."',
-'".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."',
-'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."', '$currDate')";
-                                $res = $dbSocket->query($sql);
-                                $logDebugSQL .= $sql . "\n";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+					" (id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone,".
+					" notes, creationdate) values (0, '".$dbSocket->escapeSimple($username)."', '".
+					$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".
+					$dbSocket->escapeSimple($email)."','".$dbSocket->escapeSimple($department)."', '".
+					$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."','".
+					$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".
+					$dbSocket->escapeSimple($notes)."', '$currDate')";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 			} else {
-
 				// update user information table
-			   $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".$dbSocket->escapeSimple($firstname)."', 
-lastname='".$dbSocket->escapeSimple($lastname)."', email='".$dbSocket->escapeSimple($email)."', 
-department='".$dbSocket->escapeSimple($department)."', company='".$dbSocket->escapeSimple($company)."', 
-workphone='".$dbSocket->escapeSimple($workphone)."', homephone='".$dbSocket->escapeSimple($homephone)."', 
-mobilephone='".$dbSocket->escapeSimple($mobilephone)."', notes='".$dbSocket->escapeSimple($notes)."' 
-WHERE username='".$dbSocket->escapeSimple($username)."'";
+			   $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
+					$dbSocket->escapeSimple($firstname)."', lastname='".$dbSocket->escapeSimple($lastname)."', email='".
+					$dbSocket->escapeSimple($email)."', department='".$dbSocket->escapeSimple($department)."', company='".
+					$dbSocket->escapeSimple($company)."', workphone='".$dbSocket->escapeSimple($workphone)."', homephone='".
+					$dbSocket->escapeSimple($homephone)."', mobilephone='".$dbSocket->escapeSimple($mobilephone)."', notes='".
+					$dbSocket->escapeSimple($notes)."' WHERE username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			}
@@ -75,15 +76,14 @@ WHERE username='".$dbSocket->escapeSimple($username)."'";
 					else
 						$group_priority = $groups_priority[$grpcnt];
 
-					$sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET
-UserName='".$dbSocket->escapeSimple($username)."', 
-GroupName='".$dbSocket->escapeSimple($group)."', priority=".$dbSocket->escapeSimple($group_priority)." 
-WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldgroup)."';";
+					$sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='".
+						$dbSocket->escapeSimple($username)."', GroupName='".$dbSocket->escapeSimple($group)."', priority=".
+						$dbSocket->escapeSimple($group_priority)." WHERE UserName='".$dbSocket->escapeSimple($username).
+						"' AND GroupName='".$dbSocket->escapeSimple($oldgroup)."';";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 					$grpcnt++;		// we increment group index count so we can access the group priority array
-
 				}
 			}
 
@@ -92,29 +92,26 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 				// switch case to rise the flag for several $attribute which we do not
 				// wish to process (ie: do any sql related stuff in the db)
 				switch ($element) {
-
-						case "username":
-						case "submit":
-						case "oldgroups":
-						case "groups":
-						case "groups_priority":
-						case "firstname":
-						case "lastname":
-						case "email":
-						case "department":
-						case "company":
-						case "workphone":
-						case "homephone":
-						case "mobilephone":
-						case "notes":
-						case "passwordOrig":
-
-								$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
-														// to skip the loop (continue) without entering it as
-														// we do not want to process this $attribute in the following
-														// code block
-								break;
-
+					case "username":
+					case "submit":
+					case "oldgroups":
+					case "groups":
+					case "groups_priority":
+					case "firstname":
+					case "lastname":
+					case "email":
+					case "department":
+					case "company":
+					case "workphone":
+					case "homephone":
+					case "mobilephone":
+					case "notes":
+					case "passwordOrig":
+						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
+												// to skip the loop (continue) without entering it as
+												// we do not want to process this $attribute in the following
+												// code block
+						break;
 				}
 
 				if ($skipLoopFlag == 1) {
@@ -122,23 +119,23 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 					continue;
 				}
 
-                                if (isset($field[0]))
+				if (isset($field[0]))
 					$attribute = $field[0];
-                                if (isset($field[1]))
+                if (isset($field[1]))
 					$value = $field[1];
-                                if (isset($field[2]))
+                if (isset($field[2]))
 					$op = $field[2];
-                                if (isset($field[3]))
+                if (isset($field[3]))
 					$table = $field[3];
 
-                                if ($table == 'check')
-                                        $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-                                if ($table == 'reply')
-                                        $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+                if ($table == 'check')
+					$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+                if ($table == 'reply')
+					$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
 
-                                if ( (!($value)) || (!($attribute)) )
-   	                             continue;
+				if ( (!($value)) || (!($attribute)) )
+					continue;
 
 				$counter = 0;
 
@@ -158,13 +155,12 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 					case "SHA1-Password":
 						$value = "'$value'";
 						$passwordAttribute = 1;	// if this is a password 
-						break;			// attribute then we tag it
-									// as true
+						break;					// attribute then we tag it
+												// as true
 					default:
 						$value = "'$value'";
 						$passwordAttribute = 0;
 				}
-
 
 				// first we check that the config option is actually set and available in the config file
 				if ( (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) and ($passwordAttribute == 1) ) {
@@ -186,7 +182,6 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 					}
 				}
 
-
 				   /* we can't simply UPDATE because it might be that the attribute
 				   doesn't exist at all and we need to insert it. 
 				   for this reason we need to check if it exists or not, if exists we update, if not we insert 
@@ -196,18 +191,15 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
+				
 				if ($res->numRows() == 0) {
-
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
-
 					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($username)."', '".
 						$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op).
 						"', $value)";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
-
 				} else {
-				
 					/* we update the $value[0] entry which is the attribute's value */
 					$sql = "UPDATE $table SET Value=$value WHERE UserName='".
 						$dbSocket->escapeSimple($username)."' AND Attribute='".
@@ -215,14 +207,12 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
-
 					/* then we update $value[1] which is the attribute's operator */
 					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
 						"' WHERE UserName='".$dbSocket->escapeSimple($username).
 						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
-
 				}
 
 				$counter++;
@@ -256,7 +246,6 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 
 	$edit_username = $username; //feed the sidebar variables
 
-	
 	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
 	*/
 	$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
@@ -271,8 +260,9 @@ WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSock
 	/* fill-in all the user info details */
 
 
-	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, 
-creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, ".
+		" creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName='".
+		$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -289,11 +279,10 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 	$ui_notes = $row[8];
 	$ui_creationdate = $row[9];
 
-
 	include 'library/closedb.php';
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -322,38 +311,38 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 
 <?php
-        include_once ("library/tabber/tab-layout.php");
+	include_once ("library/tabber/tab-layout.php");
 ?>
 
 <?php
 	include ("menu-mng-users.php");	
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?>
-				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngedit'] ?>
-					<br/>
-				</div>
-				<br/>
+<div id="contentnorightbar">
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?>
+	<h144>+</h144></a></h2>
 
-				<input type="hidden" value="<?php echo $username ?>" name="username" />
+	<div id="helpPage" style="display:none;visibility:visible" >
+		<?php echo $l['helpPage']['mngedit'] ?>
+		<br/>
+	</div>
+	<br/>
 
-<div class="tabber">
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-     <div class="tabbertab" title="<?php echo $l['title']['RADIUSCheck']; ?>">
+	<input type="hidden" value="<?php echo $username ?>" name="username" />
 
-	<fieldset>
+	<div class="tabber">
 
-                <h302> <?php echo $l['title']['RADIUSCheck']; ?> </h302>
-                <br/>
+		<div class="tabbertab" title="<?php echo $l['title']['RADIUSCheck']; ?>">
 
-		<ul>
+		<fieldset>
+
+			<h302> <?php echo $l['title']['RADIUSCheck']; ?> </h302>
+			<br/>
+
+			<ul>
 <?php
 
 	include 'library/opendb.php';
@@ -361,7 +350,8 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 
 	$editCounter = 0;
 
-	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
+		$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -370,7 +360,6 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 		echo $l['messages']['noCheckAttributesForUser'];
 		echo "</center>";
 	}
-
 
 	while($row = $res->fetchRow()) {
 
@@ -399,41 +388,41 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 		drawOptions();
 		echo "</select>";
 
-		echo "       
-		        <input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'>
-		";
-		echo "<br/>";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'><br/>";
 
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
 
 	}
 
 ?>
-	<br/><br/>
-        <hr><br/>
-	<?php
-		include 'include/management/buttons.php';
-	?>
-	<br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
-	<br/>
+			<br/><br/>
+			<hr><br/>
+		
+<?php
+	include 'include/management/buttons.php';
+?>
 
-	</ul>
+			<br/>
+			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+			<br/>
 
-	</fieldset>
+			</ul>
+
+		</fieldset>
 	</div>
 
 	<div class='tabbertab' title='<?php echo $l['title']['RADIUSReply']?>' >
 
 	<fieldset>
 
-                <h302> <?php echo $l['title']['RADIUSReply']; ?> </h302>
-                <br/>
+		<h302> <?php echo $l['title']['RADIUSReply']; ?> </h302>
+		<br/>
 
 		<ul>
 
 <?php
-	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
+		" WHERE UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -469,104 +458,90 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 			echo "</select>";
 		}
 
-		echo "       
-		        <input type='hidden' name='editValues".$editCounter."[]' value='radreply' style='width: 90px'>
-		";
-		echo "<br/>";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radreply' style='width: 90px'><br/>";
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
-
 	}
 
 ?>
         <br/><br/>
         <hr><br/>
-        <?php
-                include 'include/management/buttons.php';
-        ?>
+<?php
+	include 'include/management/buttons.php';
+?>
         <br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
         <br/>
 
-	
 	</ul>
 
         </fieldset>  
-        </div>  
+    </div>  
 
 <?php
-        include 'library/closedb.php';
+    include 'library/closedb.php';
 ?>
-     <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
+
+    <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
 
 <?php
-        include_once('include/management/userinfo.php');
+    include_once('include/management/userinfo.php');
 ?>
 
 	</div>
 
+    <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 
-     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
+	<fieldset>
 
-        <fieldset>
-
-                <h302> <?php echo $l['title']['Attributes']; ?> </h302>
+        <h302> <?php echo $l['title']['Attributes']; ?> </h302>
 		<br/>
 
-                <label for='vendor' class='form'>Vendor:</label>
-                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')" 
-                        style='width: 215px' onfocus="getVendorsList('dictVendors0')" class='form' >
+		<label for='vendor' class='form'>Vendor:</label>
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributesDatabase')" 
+			style='width: 215px' class='form' >
                         <option value=''>Select Vendor...</option>
+			<?php
+			        include 'library/opendb.php';
+	
+			        $sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>'' ORDER BY Vendor ASC";
+			        $res = $dbSocket->query($sql);
+	
+			        while($row = $res->fetchRow()) {
+			            echo "<option value=$row[0]>$row[0]</option>";
+			        }
+
+			        include 'library/closedb.php';
+			?>
                 </select>
-                <br/>
-        
-                <label for='attribute' class='form'>Attribute:</label>
-                <select id='dictAttributes0' name='dictValues0[]' 
-                        onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
-                        style='width: 270px' class='form' >
+		<input type='button' name='reloadAttributes' value='Reload Vendors' 
+			onclick="javascript:getVendorsList('dictVendors0');" class='button'>
+		<br/>
 
+		<label for='attribute' class='form'>
+			Attribute:</label>
+                <select id='dictAttributesDatabase' style='width: 270px' class='form' >
                 </select>
-                <br/>
+		<input type='button' name='addAttributes' value='Add Attribute' 
+			onclick="javascript:parseAttribute(1);" class='button'>
+		<br/>
 
-                &nbsp;
-                <b>Value:</b>
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
+		<label for='attribute' class='form'>
+			Custom Attribute:</label>
+		<input type='text' id='dictAttributesCustom' style='width: 264px' />
+		<br/>
 
-                <b>Op:</b>
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
-                </select>
 
-                <b>Target:</b>
-                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
-                </select>
-
-                <br/><br/>
-                <div id='dictInfo0' style='display:none;visibility:visible'>
-                        <span id='dictTooltip0'>
-                                <b>Attribute Tooltip:</b>
-                        </span>
-
-                        <br/>   
-
-                        <span id='dictType0'>
-                                <b>Type:</b>
-                        </span>
-                </div>
-
-        <hr><br/>
+	<br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-        <input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement(1);" 
-                class='button'>
-        <input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');" 
-                class='button'>
 
-        </fieldset>
+	</fieldset>
+	<br/>
 
-<br/>
         <input type="hidden" value="0" id="divCounter" />
         <div id="divContainer"> </div> <br/>
+     </div>		
 
-        <br/>
-     </div>
+</div>
 
 
      <div class="tabbertab" title="<?php echo $l['title']['Groups']; ?>">
@@ -582,27 +557,26 @@ creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName
 
 </div>
 
-				</form>
+	</form>
 
 
 <?php
 	include('include/config/logging.php');
 ?>
 		
-		</div>
+	</div>
 	
-		<div id="footer">
-		
+	<div id="footer">
+
 <?php
-        include 'page-footer.php';
+       include 'page-footer.php';
 ?>
 
-		
-		</div>
-		
-</div>
-</div>
 
+	</div>
+
+</div>
+</div>
 
 </body>
 </html>
