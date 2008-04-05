@@ -173,66 +173,58 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 
         <br/>
 
-        <fieldset>
+ 	<fieldset>
 
-                <h302> <?php echo $l['title']['ProfileAttributes'] ?> </h302>
-                <br/>
+                <h302> <?php echo $l['title']['Attributes']; ?> </h302>
+		<br/>
 
-
-                <label for='vendor' class='form'>Vendor:</label>
-                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
-                        style='width: 215px' onfocus="getVendorsList('dictVendors0')" class='form' >
+		<label for='vendor' class='form'>Vendor:</label>
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributesDatabase')" 
+			style='width: 215px' class='form' >
                         <option value=''>Select Vendor...</option>
+			<?php
+			        include 'library/opendb.php';
+	
+			        $sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>'' ORDER BY Vendor ASC";
+			        $res = $dbSocket->query($sql);
+	
+			        while($row = $res->fetchRow()) {
+			                echo "<option value=$row[0]>$row[0]</option>";
+			        }
+
+			        include 'library/closedb.php';
+			?>
                 </select>
-                <br/>
+		<input type='button' name='reloadAttributes' value='Reload Vendors' 
+			onclick="javascript:getVendorsList('dictVendors0');" class='button'>
+		<br/>
 
-                <label for='attribute' class='form'>Attribute:</label>
-                <select id='dictAttributes0' name='dictValues0[]'
-                        onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
-                        style='width: 270px' class='form' >
-
+		<label for='attribute' class='form'>
+			Attribute:</label>
+                <select id='dictAttributesDatabase' style='width: 270px' class='form' >
                 </select>
-                <br/>
+		<input type='button' name='addAttributes' value='Add Attribute' 
+			onclick="javascript:parseAttribute(1);" class='button'>
+		<br/>
 
-                &nbsp;
-                <b>Value:</b>
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
+		<label for='attribute' class='form'>
+			Custom Attribute:</label>
+		<input type='text' id='dictAttributesCustom' style='width: 264px' />
+		<br/>
 
-                <b>Op:</b>
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
-                </select>
 
-                <b>Table:</b>
-                <select id='dictTable0' name='dictValues0[]' style='width: 90px' class='form'>
-                </select>
-
-                <br/><br/>
-                <div id='dictInfo0' style='display:none;visibility:visible'>
-                        <span id='dictTooltip0'>
-                                <b>Attribute Tooltip:</b>
-                        </span>
-
-                        <br/>
-
-                        <span id='dictType0'>
-                                <b>Type:</b>
-                        </span>
-                </div>
-
-        <hr><br/>
+	<br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-        <input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement();"
-                class='button'>
-        <input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');"
-                class='button'>
 
-        </fieldset>
+	</fieldset>
 
-<br/>   
+	<br/>
+
         <input type="hidden" value="0" id="divCounter" />
         <div id="divContainer"> </div> <br/>
 
-                                </form>
+		
+	</form>
 
 
 <?php
