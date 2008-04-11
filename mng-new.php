@@ -297,6 +297,7 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/auto-complete.css" media="screen" type="text/css">
 <link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
 <!--[if lte IE 6.5]>
 <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
@@ -310,7 +311,7 @@
 
 <script type="text/javascript" src="library/javascript/ajax.js"></script>
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
-
+ 
 <?php
         include_once ("library/tabber/tab-layout.php");
 ?>
@@ -548,6 +549,24 @@
 		<input type='text' id='dictAttributesCustom' style='width: 264px' />
 		<br/>
 
+<?php
+
+	include_once('library/config_read.php');
+
+	if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) && 
+		(strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") ) {
+		
+		echo "
+			<script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
+			<script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
+
+			<script type=\"text/javascript\">
+				autoCom = new DHTMLSuite.autoComplete();
+				autoCom.add('dictAttributesCustom','include/management/dynamic_attributes.php','_large');
+			</script>
+		";
+	}
+?>
 
 	<br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
