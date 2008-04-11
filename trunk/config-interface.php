@@ -18,7 +18,9 @@
 		if (isset($_REQUEST['config_iface_tableslisting']))
 			$configValues['CONFIG_IFACE_TABLES_LISTING'] = $_REQUEST['config_iface_tableslisting'];
 		if (isset($_REQUEST['config_iface_tableslisting_num']))
-			$configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = $_REQUEST['config_iface_tableslisting_num'];			
+			$configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = $_REQUEST['config_iface_tableslisting_num'];
+		if (isset($_REQUEST['config_iface_auto_complete']))
+			$configValues['CONFIG_IFACE_AUTO_COMPLETE'] = $_REQUEST['config_iface_auto_complete'];
 			
             include ("library/config_write.php");
     }
@@ -70,9 +72,19 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_iface_tablelisting_num' class='form'><?php echo $l['all']['TablesListingNum'] ?></label>
+                <label for='config_iface_tableslisting_num' class='form'><?php echo $l['all']['TablesListingNum'] ?></label>
 		<select class='form' name="config_iface_tableslisting_num">
 			<option value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?>"> <?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?> </option>
+			<option value="">  </option>
+			<option value="no"> no </option>
+			<option value="yes"> yes </option>
+		</select>
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_iface_auto_complete' class='form'><?php echo $l['all']['AjaxAutoComplete'] ?></label>
+		<select class='form' name="config_iface_auto_complete">
+			<option value="<?php echo $configValues['CONFIG_IFACE_AUTO_COMPLETE'] ?>"> <?php echo $configValues['CONFIG_IFACE_AUTO_COMPLETE'] ?> </option>
 			<option value="">  </option>
 			<option value="no"> no </option>
 			<option value="yes"> yes </option>
