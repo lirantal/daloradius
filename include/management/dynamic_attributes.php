@@ -1,5 +1,25 @@
 <?php
 
+if(isset($_GET['getAjaxAttributes'])) {
+
+	$getAjaxAttributes = $_GET['getAjaxAttributes'];
+
+	include '../../library/opendb.php';
+
+	$sql = "SELECT distinct(Attribute) as Attribute FROM dictionary WHERE Attribute LIKE '$getAjaxAttributes%' ".
+		"ORDER BY Vendor ASC";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+		echo "$row[0]###$row[0]|";
+	}
+
+	include '../../library/closedb.php';
+
+}
+
+
+
 /*
  * getVendorsList is set to yes when the user clicks on the Vendor select box
  * upon which the javascript code executes a call with this value which we catch
