@@ -85,9 +85,6 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='10'>".$l['all']['Records']."</th>
-							</tr>
-							<tr>
 							<th colspan='10' align='left'> 
 				Select:
 				<a class=\"table\" href=\"javascript:SetChecked(1,'username[]','listallusers')\">All</a> 
@@ -108,39 +105,36 @@
 			</tr>
 			</thead>
 			";
+	
+	if ($orderType == "asc") {
+		$orderType = "desc";
+		// $orderChar = "<<";
+		$orderChar = "<img src='images/icons/arrow_down.png' alt='>' border='0' />";
+ 	} else 	if ($orderType == "desc") {
+		$orderType = "asc";
+		// $orderChar = ">>";
+		$orderChar = "<img src='images/icons/arrow_up.png' alt='>' border='0' />";
+	}
 
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['ID']."
-
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] .  "?orderBy=id&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		".$l['all']['ID']."$orderChar
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['Username']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
+		".$l['all']['Username']."$orderChar
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['Password']." 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderType\">
+		".$l['all']['Password']."$orderChar
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['title']['Groups']." 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
+		".$l['title']['Groups']."$orderChar
 		</th>
 		</tr> </thread>";
 
