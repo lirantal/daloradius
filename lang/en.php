@@ -137,6 +137,7 @@ $l['all']['LoggingDebugInfo'] = "Logging of Debug Info";
 $l['all']['PasswordHidden'] = "Enable Password Hiding (asterisk will be shown)";
 $l['all']['TablesListing'] = "Rows/Records per Tables Listing page";
 $l['all']['TablesListingNum'] = "Enable Tables Listing Numbering";
+$l['all']['AjaxAutoComplete'] = "Enable Ajax Auto-Complete";
 
 $l['all']['RadiusServer'] = "Radius Server";
 $l['all']['RadiusPort'] = "Radius Port";
