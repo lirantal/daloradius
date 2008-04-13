@@ -67,8 +67,8 @@
 		<div id="contentnorightbar">
 		
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsdel.php'] ?>
-				<h144>+</h144></a></h2>
-				
+				:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
+
 				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mnghsdel'] ?>
 					<br/>
