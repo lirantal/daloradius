@@ -120,6 +120,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/auto-complete.css" media="screen" type="text/css">
 <link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
 <!--[if lte IE 6.5]>
 <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
@@ -175,51 +176,63 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
                 <h302> <?php echo $l['title']['GroupAttributes'] ?> </h302>
                 <br/>
 
-
                 <label for='vendor' class='form'>Vendor:</label>
-                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributes0')"
-                        style='width: 215px' onfocus="getVendorsList('dictVendors0')" class='form' >
+                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributesDatabase')"
+                        style='width: 215px' class='form' >
                         <option value=''>Select Vendor...</option>
+                        <?php
+                                include 'library/opendb.php';
+
+                                $sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>'' ".
+					" ORDER BY Vendor ASC";
+                                $res = $dbSocket->query($sql);
+
+                                while($row = $res->fetchRow()) {
+                                        echo "<option value=$row[0]>$row[0]</option>";
+                                }
+
+                                include 'library/closedb.php';
+                        ?>
                 </select>
+                <input type='button' name='reloadAttributes' value='Reload Vendors'
+                        onclick="javascript:getVendorsList('dictVendors0');" class='button'>
                 <br/>
 
-                <label for='attribute' class='form'>Attribute:</label>
-                <select id='dictAttributes0' name='dictValues0[]'
-                        onchange="getValuesList(this,'dictValues0','dictOP0','dictTable0','dictTooltip0','dictType0')"
-                        style='width: 270px' class='form' >
-
+                <label for='attribute' class='form'>
+                        Attribute:</label>
+                <select id='dictAttributesDatabase' style='width: 270px' class='form' >
                 </select>
+                <input type='button' name='addAttributes' value='Add Attribute'
+                        onclick="javascript:parseAttribute(1);" class='button'>
                 <br/>
 
-                &nbsp;
-                <b>Value:</b>
-                <input type='text' id='dictValues0' name='dictValues0[]' style='width: 115px' class='form' >
+                <label for='attribute' class='form'>
+                        Custom Attribute:</label>
+                <input type='text' id='dictAttributesCustom' style='width: 264px' />
+                <br/>
 
-                <b>Op:</b>
-                <select id='dictOP0' name='dictValues0[]' style='width: 45px' class='form' >
-                </select>
 
-                <input type='hidden' id='dictTable0' name='dictValues0[]' style='width: 45px'>
+<?php
 
-                <br/><br/>
-                <div id='dictInfo0' style='display:none;visibility:visible'>
-                        <span id='dictTooltip0'>
-                                <b>Attribute Tooltip:</b>
-                        </span>
+        include_once('library/config_read.php');
 
-                        <br/>   
+        if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
+                (strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") ) {
 
-                        <span id='dictType0'>
-                                <b>Type:</b>
-                        </span>
-                </div>
+                echo "
+                        <script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
+                        <script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
 
-        <hr><br/>
+                        <script type=\"text/javascript\">
+                                autoCom = new DHTMLSuite.autoComplete();
+                                autoCom.add('dictAttributesCustom','include/management/dynamic_attributes.php','_large');
+                        </script>
+                ";
+        }
+?>
+
+        <br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-        <input type='button' name='addAttributes' value='Add Attributes' onclick="javascript:addElement(0);" 
-                class='button'>
-        <input type='button' name='infoAttribute' value='Attribute Info' onclick="javascript:toggleShowDiv('dictInfo0');" 
-                class='button'>
 
         </fieldset>
 
