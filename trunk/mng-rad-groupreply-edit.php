@@ -14,10 +14,10 @@
     $attribute = "";
 	$logDebugSQL = "";
 
-	$groupname = $_REQUEST['groupname'];
-	$value = $_REQUEST['value'];
-	$valueOld = $_REQUEST['value'];	
-	$attribute = $_REQUEST['attribute'];
+	isset($_GET['groupname']) ? $groupname = $_GET['groupname'] : $groupname = "";
+	isset($_GET['value']) ? $value = $_GET['value'] : $value = "";
+	isset($_GET['value']) ? $valueOld = $_GET['value'] : $valueOld = "";
+	isset($_GET['attribute']) ? $attribute = $_GET['attribute'] : $attribute = "";
 
 	// fill-in nashost details in html textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='".$dbSocket->escapeSimple($groupname).

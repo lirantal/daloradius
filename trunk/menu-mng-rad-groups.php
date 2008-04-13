@@ -31,7 +31,7 @@
 		<li><a href="javascript:document.mngradgrprplyedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditGroupReply'] ?><a>
 			<form name="mngradgrprplyedit" action="mng-rad-groupreply-edit.php" method="get" class="sidebar">
 			<input name="groupname" type="text" value="[groupname]">
-			<input name="value" type="text" value="[attribute]">
+			<input name="attribute" type="text" value="[attribute]">
 			</form></li>
 		<li><a href="mng-rad-groupreply-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveGroupReply'] ?></a></li>
 		
@@ -52,7 +52,7 @@
 		<li><a href="javascript:document.mngradgrpchkedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditGroupCheck'] ?><a>
 			<form name="mngradgrpchkedit" action="mng-rad-groupcheck-edit.php" method="get" class="sidebar">
 			<input name="groupname" type="text" value="[groupname]">
-			<input name="value" type="text" value="[attribute]">
+			<input name="attribute" type="text" value="[attribute]">
 			</form></li>
 		<li><a href="mng-rad-groupcheck-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveGroupCheck'] ?></a></li>
 		
