@@ -136,7 +136,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 		<div id="contentnorightbar">
 		
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasedit.php'] ?>
-				<h144>+</h144></a></h2>
+				:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>+</h144></a></h2>
 
 				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mngradnasedit'] ?>

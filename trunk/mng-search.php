@@ -41,7 +41,7 @@
 		<div id="contentnorightbar">
 		
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngsearch.php']; ?>
-				<h144>+</h144></a></h2>
+				:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo "searched for user $username" ?><br/>
