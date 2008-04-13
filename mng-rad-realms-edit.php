@@ -85,14 +85,14 @@
         $logDebugSQL .= $sql . "\n";
 
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-        $type = $row[type];
-        $authhost = $row[authhost];
-        $accthost = $row[accthost];
-        $secret = $row[secret];
-        $ldflag = $row[ldflag];
-        $nostrip = $row[nostrip];
-        $hints = $row[hints];
-        $notrealm = $row[notrealm];
+        $type = $row['type'];
+        $authhost = $row['authhost'];
+        $accthost = $row['accthost'];
+        $secret = $row['secret'];
+        $ldflag = $row['ldflag'];
+        $nostrip = $row['nostrip'];
+        $hints = $row['hints'];
+        $notrealm = $row['notrealm'];
 
 	include 'library/closedb.php';
 

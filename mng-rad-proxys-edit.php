@@ -80,10 +80,10 @@
         $logDebugSQL .= $sql . "\n";
 
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-        $retry_count = $row[retry_count];
-        $retry_delay = $row[retry_delay];
-        $dead_time = $row[dead_time];
-        $default_fallback = $row[default_fallback];
+        $retry_count = $row['retry_count'];
+        $retry_delay = $row['retry_delay'];
+        $dead_time = $row['dead_time'];
+        $default_fallback = $row['default_fallback'];
 
 	include 'library/closedb.php';
 
