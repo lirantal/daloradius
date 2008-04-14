@@ -111,22 +111,22 @@ $rowsPerPage;";
 	echo "<thread> <tr>
 		<th scope='col'>".$l['all']['Groupname']."
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderType\">
-		".$l['all']['Groupname']."
+		".$l['all']['Groupname']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderType\">
-		".$l['all']['Attribute']."
+		".$l['all']['Attribute']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=$orderType\">
-		".$l['all']['Operator']."
+		".$l['all']['Operator']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=$orderType\">
-		".$l['all']['Value']."
+		".$l['all']['Value']."</a>
 		</th>
 
 	</tr> </thread>";

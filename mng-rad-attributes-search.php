@@ -105,17 +105,17 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType&attribute=$attribute\">
-		".$l['all']['VendorID']."
+		".$l['all']['VendorID']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=$orderType&attribute=$attribute\">
-		".$l['all']['VendorName']."
+		".$l['all']['VendorName']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderType&attribute=$attribute\">
-		".$l['all']['VendorAttribute']."
+		".$l['all']['VendorAttribute']."</a>
 		</th>
 
 		</tr> </thread>";

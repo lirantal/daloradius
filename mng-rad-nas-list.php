@@ -103,49 +103,49 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['NasID']."
+		".$l['all']['NasID']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=$orderType\">
-		".$l['all']['NasIPHost']."
+		".$l['all']['NasIPHost']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=$orderType\">
-		".$l['all']['NasShortname']."
+		".$l['all']['NasShortname']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=$orderType\">
-		".$l['all']['NasType']."
+		".$l['all']['NasType']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=$orderType\">
-		".$l['all']['NasPorts']."
+		".$l['all']['NasPorts']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
-		".$l['all']['NasSecret']."
+		".$l['all']['NasSecret']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=$orderType\">
-		".$l['all']['NasCommunity']."
+		".$l['all']['NasCommunity']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=$orderType\">
-		".$l['all']['NasDescription']."
+		".$l['all']['NasDescription']."</a>
 		<br/>
 		</th>
 

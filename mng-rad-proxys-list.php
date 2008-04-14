@@ -102,7 +102,7 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=proxyname&orderType=$orderType\">
-		".$l['all']['ProxyName']."
+		".$l['all']['ProxyName']."</a>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
