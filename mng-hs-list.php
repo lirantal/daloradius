@@ -94,45 +94,36 @@
 
                         ";
 
+        if ($orderType == "asc") {
+                $orderType = "desc";
+        } else  if ($orderType == "desc") {
+                $orderType = "asc";
+        }
+
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
 		".$l['all']['ID']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=$orderType\">
 		".$l['all']['HotSpot']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=$orderType\">
 		".$l['ContactInfo']['OwnerName']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderType\">
 		".$l['ContactInfo']['Company']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderType\">
 		 ".$l['ContactInfo']['HotspotType']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 	</tr> </thread>";

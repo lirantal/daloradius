@@ -10,7 +10,6 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 	
-		
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -105,36 +104,32 @@
 			</tr>
 			</thead>
 			";
-	
-	if ($orderType == "asc") {
-		$orderType = "desc";
-		// $orderChar = "<<";
-		$orderChar = "<img src='images/icons/arrow_down.png' alt='>' border='0' />";
- 	} else 	if ($orderType == "desc") {
-		$orderType = "asc";
-		// $orderChar = ">>";
-		$orderChar = "<img src='images/icons/arrow_up.png' alt='>' border='0' />";
-	}
 
+        if ($orderType == "asc") {
+                $orderType = "desc";
+        } else  if ($orderType == "desc") {
+                $orderType = "asc";
+        }
+	
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['ID']."$orderChar
+		".$l['all']['ID']."
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
-		".$l['all']['Username']."$orderChar
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
+		".$l['all']['Username']."
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderType\">
-		".$l['all']['Password']."$orderChar
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderType\">
+		".$l['all']['Password']."
 		</th>
 
 		<th scope='col'> 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
-		".$l['title']['Groups']."$orderChar
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
+		".$l['title']['Groups']."
 		</th>
 		</tr> </thread>";
 

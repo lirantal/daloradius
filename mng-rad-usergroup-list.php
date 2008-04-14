@@ -71,9 +71,6 @@
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
-							<tr>
-							<th colspan='10'>".$l['all']['Records']."</th>
-							</tr>
                                                         <tr>
                                                         <th colspan='10' align='left'>
 
@@ -97,30 +94,26 @@
 
                         ";
 
+        if ($orderType == "asc") {
+                $orderType = "desc";
+        } else  if ($orderType == "desc") {
+                $orderType = "asc";
+        }
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
 		".$l['all']['Username']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderType\">
 		".$l['all']['Groupname']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=$orderType\">
 		".$l['all']['Priority']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
 		<th scope='col'> ".$l['all']['Action']." </th>
