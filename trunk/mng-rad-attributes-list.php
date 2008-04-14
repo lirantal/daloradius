@@ -75,10 +75,6 @@
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
-							<tr>
-							<th colspan='10'>Records</th>
-							</tr>
-
                                                         <tr>
                                                         <th colspan='10' align='left'>
 
@@ -101,29 +97,28 @@
 
                         ";
 
+        if ($orderType == "asc") {
+                $orderType = "desc";
+        } else  if ($orderType == "desc") {
+                $orderType = "asc";
+        }
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc&vendor=$vendor\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType&vendor=$vendor\">
 		".$l['all']['VendorID']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc&vendor=$vendor\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
+
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=asc&vendor=$vendor\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=$orderType&vendor=$vendor\">
 		".$l['all']['VendorName']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=desc&vendor=$vendor\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
+
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc&vendor=$vendor\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderType&vendor=$vendor\">
 		".$l['all']['VendorAttribute']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc&vendor=$vendor\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
+
 		</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>

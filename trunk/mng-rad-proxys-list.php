@@ -8,7 +8,7 @@
 
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "ProxyName";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "ASC";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
 
@@ -71,9 +71,6 @@
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
-							<tr>
-							<th colspan='10'>".$l['all']['Records']."</th>
-							</tr>
                                                         <tr>
                                                         <th colspan='10' align='left'>
 
@@ -96,14 +93,16 @@
 
                         ";
 
+        if ($orderType == "asc") {
+                $orderType = "desc";
+        } else  if ($orderType == "desc") {
+                $orderType = "asc";
+        }
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=proxyname&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=proxyname&orderType=$orderType\">
 		".$l['all']['ProxyName']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=proxyname&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
