@@ -70,10 +70,6 @@
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
-							<tr>
-							<th colspan='15'>".$l['all']['HotSpots']."</th>
-							</tr>
-
                                                         <tr>
                                                         <th colspan='10' align='left'>
                                 Select:
