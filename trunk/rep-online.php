@@ -110,27 +110,27 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
-		".$l['all']['Username']. " 
+		".$l['all']['Username']. "</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=$orderType\">
-		".$l['all']['IPAddress']."
+		".$l['all']['IPAddress']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstarttime&orderType=$orderType\">
-		".$l['all']['StartTime']."
+		".$l['all']['StartTime']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=$orderType\">
-		".$l['all']['TotalTime']." 
+		".$l['all']['TotalTime']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderType\">
-		".$l['all']['NASIPAddress']."
+		".$l['all']['NASIPAddress']."</a>
 		</th>
 	</tr> </thread>";
 

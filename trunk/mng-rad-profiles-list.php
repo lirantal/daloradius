@@ -108,7 +108,7 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderType\">
-		".$l['all']['Groupname']."
+		".$l['all']['Groupname']."</a>
 		</th>
 
 	</tr> </thread>";

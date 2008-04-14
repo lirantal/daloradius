@@ -109,17 +109,17 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=$orderType\">
-		".$l['all']['ID']. " 
+		".$l['all']['ID']. "</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Username&orderType=$orderType\">
-	 	".$l['all']['Username']." 
+	 	".$l['all']['Username']."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Value&orderType=$orderType\">
-		".$l['all']['Password']." 
+		".$l['all']['Password']."</a>
 		</th>
 
 		<th scope='col'> ".$l['all']['Action']." </th>

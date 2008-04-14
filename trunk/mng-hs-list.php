@@ -99,27 +99,27 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['ID']."
+		".$l['all']['ID']."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=$orderType\">
-		".$l['all']['HotSpot']."
+		".$l['all']['HotSpot']."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=$orderType\">
-		".$l['ContactInfo']['OwnerName']."
+		".$l['ContactInfo']['OwnerName']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderType\">
-		".$l['ContactInfo']['Company']."
+		".$l['ContactInfo']['Company']."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderType\">
-		 ".$l['ContactInfo']['HotspotType']."
+		 ".$l['ContactInfo']['HotspotType']."</a>
 		</th>
 
 	</tr> </thread>";
