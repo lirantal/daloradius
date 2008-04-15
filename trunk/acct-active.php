@@ -69,58 +69,52 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-        echo "<table border='0' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='7'>".$l['all']['Records']."</th>
-                                </tr>
+	echo "<table border='0' class='table1'>\n";
+	echo "
+		<thead>
+				<tr>
+				<th colspan='7'>".$l['all']['Records']."</th>
+				</tr>
 
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-                <br/>
-        ";
+				<tr>
+				<th colspan='12' align='left'>
+		<br/>
+	";
 
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
 	
-        echo " </th></tr>
-                                        </thead>
+	echo " </th></tr>
+			</thead>
+	";
 
-                        ";
-
-        echo "<thread> <tr>
+	if ($orderType == "asc") {
+			$orderType = "desc";
+	} else  if ($orderType == "desc") {
+			$orderType = "asc";
+	}
+	
+	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['Username']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
-		</th>
-        	<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['Attribute']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
+		".$l['all']['Username']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['MaxTimeExpiration']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=desc\">
-		<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderType\">
+		".$l['all']['Attribute']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['UsedTime']."
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=$orderType\">
+		".$l['all']['MaxTimeExpiration']."</a>
 		</th>
-                <th scope='col'> ".$l['all']['Status']." </th>
-                <th scope='col'> ".$l['all']['Usage']." </th>
-                </tr> </thread>";
+		<th scope='col'>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=$orderType\">
+		".$l['all']['UsedTime']."</a>
+		</th>
+		<th scope='col'> ".$l['all']['Status']." </th>
+		<th scope='col'> ".$l['all']['Usage']." </th>
+		</tr> </thread>";
+	
 	while($row = $res->fetchRow()) {
 		$status="Active";
 

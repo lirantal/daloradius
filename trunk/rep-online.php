@@ -87,25 +87,24 @@
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-                <br/>
-        ";
+		<thead>
+			<tr>
+			<th colspan='10' align='left'>
+			<br/>
+	";
 
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 
-        echo " </th></tr>
-                                        </thead>
+	echo "</th></tr>
+			</thead>
+	";
 
-                        ";
-
-        if ($orderType == "asc") {
-                $orderType = "desc";
-        } else  if ($orderType == "desc") {
-                $orderType = "asc";
-        }
+	if ($orderType == "asc") {
+			$orderType = "desc";
+	} else  if ($orderType == "desc") {
+			$orderType = "asc";
+	}
 
 	echo "<thread> <tr>
 		<th scope='col'>

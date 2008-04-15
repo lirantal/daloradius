@@ -82,81 +82,86 @@
 	$session_seconds=0;
 	$session_minutes=0;
 
-        echo "<table border='0' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='15'>".$l['all']['Records']."</th>
-                                </tr>
+	echo "<table border='0' class='table1'>\n";
+	echo "
+		<thead>
+			<tr>
+			<th colspan='15'>".$l['all']['Records']."</th>
+			</tr>
 
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-                <br/>
-        ";
+			<tr>
+			<th colspan='12' align='left'>
+		<br/>
+	";
 
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
 
-        echo " </th></tr>
-                                        </thead>
+	echo " </th></tr>
+			</thead>
+	";
 
-                        ";
-
+	if ($orderType == "asc") {
+			$orderType = "desc";
+	} else  if ($orderType == "desc") {
+			$orderType = "asc";
+	}
+	
         echo "<thread> <tr>
-		<th scope='col'> ".$l['all']['ID']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=radacctid&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=radacctid&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=radacctid&orderType=$orderType\">
+		".$l['all']['ID']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['HotSpot']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=hotspot&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=hotspot&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=hotspot&orderType=$orderType\">
+		".$l['all']['HotSpot']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['Username']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=$orderType\">
+		".$l['all']['Username']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['IPAddress']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=framedipaddress&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=framedipaddress&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=framedipaddress&orderType=$orderType\">
+		".$l['all']['IPAddress']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['StartTime']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=$orderType\">
+		".$l['all']['StartTime']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['StopTime']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstoptime&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstoptime&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstoptime&orderType=$orderType\">
+		".$l['all']['StopTime']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['TotalTime']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=$orderType\">
+		".$l['all']['TotalTime']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=$orderType\">
+		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
-		<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=$orderType\">
+		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
-		<th scope='col'> ".$l['all']['Termination']."
+		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctterminatecause&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctterminatecause&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctterminatecause&orderType=$orderType\">
+		 ".$l['all']['Termination']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['NASIPAddress']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=asc\"><img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=desc\"><img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=$orderType\">
+		".$l['all']['NASIPAddress']."</a>
 		</th>
                 </tr> </thread>";
 

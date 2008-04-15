@@ -89,83 +89,67 @@
 
                         ";
 
-        echo "<thread> <tr>
-		<th scope='col'> ".$l['all']['ID']."
+	if ($orderType == "asc") {
+			$orderType = "desc";
+	} else  if ($orderType == "desc") {
+			$orderType = "asc";
+	}
+	
+	echo "<thread> <tr>
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=radacctid&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=radacctid&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=radacctid&orderType=$orderType\">
+		".$l['all']['ID']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['HotSpot']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=hotspot&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=hotspot&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=hotspot&orderType=$orderType\">
+		".$l['all']['HotSpot']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['Username']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=username&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=username&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=username&orderType=$orderType\">
+		".$l['all']['Username']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['IPAddress']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=framedipaddress&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=framedipaddress&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=framedipaddress&orderType=$orderType\">
+		".$l['all']['IPAddress']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['StartTime']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstarttime&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstarttime&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstarttime&orderType=$orderType\">
+		".$l['all']['StartTime']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['StopTime']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstoptime&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstoptime&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstoptime&orderType=$orderType\">
+		".$l['all']['StopTime']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['TotalTime']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctsessiontime&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctsessiontime&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctsessiontime&orderType=$orderType\">
+		".$l['all']['TotalTime']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctinputoctets&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctinputoctets&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctinputoctets&orderType=$orderType\">
+		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
-		<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctoutputoctets&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctoutputoctets&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctoutputoctets&orderType=$orderType\">
+		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
-		<th scope='col'> ".$l['all']['Termination']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctterminatecause&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctterminatecause&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctterminatecause&orderType=$orderType\">
+		".$l['all']['Termination']."</a>
 		</th>
-		<th scope='col'> ".$l['all']['NASIPAddress']."
+		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=nasipaddress&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=nasipaddress&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=nasipaddress&orderType=$orderType\">
+		".$l['all']['NASIPAddress']."</a>
 		</th>
 		<th scope='col'> ".$l['all']['Action']." </th>
                 </tr> </thread>";
