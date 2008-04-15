@@ -65,41 +65,37 @@
                         </thead>
                 ";
 
-        echo "<thread> <tr>
-                <th scope='col'> ".$l['all']['HotSpot']."
+	if ($orderType == "asc") {
+			$orderType = "desc";
+	} else  if ($orderType == "desc") {
+			$orderType = "asc";
+	}
+	
+	echo "<thread> <tr>
+                <th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=asc\">
-				<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=desc\">
-				<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=$orderType\">
+			".$l['all']['HotSpot']."</a>
 			</th>
-			<th scope='col'> ".$l['all']['UniqueUsers']."
+			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=asc\">
-				<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=desc\">
-				<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=$orderType\">
+			".$l['all']['UniqueUsers']."</a>
 			</th>
-			<th scope='col'> ".$l['all']['TotalHits']."
+			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=asc\">
-				<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=desc\">
-				<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=$orderType\">
+			".$l['all']['TotalHits']."</a>
 			</th>
-			<th scope='col'> ".$l['all']['AverageTime']."
+			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=asc\">
-				<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=desc\">
-				<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=$orderType\">
+			".$l['all']['AverageTime']."</a>
 			</th>
-			<th scope='col'> ".$l['all']['TotalTime']."
+			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=asc\">
-				<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=desc\">
-				<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=$orderType\">
+			".$l['all']['TotalTime']."</a>
 			</th>
         </tr> </thread>";
 	while($row = $res->fetchRow()) {

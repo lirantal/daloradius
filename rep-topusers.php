@@ -60,54 +60,61 @@ sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, sum(".$
 							</tr>
 					</thead>
 			";
-
+			
+	if ($orderType == "asc") {
+			$orderType = "desc";
+	} else  if ($orderType == "desc") {
+			$orderType = "asc";
+	}
+		
 	echo "<thread> <tr>
-					<th scope='col'> ".$l['all']['Username']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['IPAddress']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['StartTime']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['StopTime']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['TotalTime']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Upload']." (".$l['all']['Bytes'].")
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Download']." (".$l['all']['Bytes'].")
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['Termination']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> ".$l['all']['NASIPAddress']."
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=desc\"> < </a>
-					</th>
-			</tr> </thread>";
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=$orderType\">
+		".$l['all']['Username']." </a>
+		</th>
+		<th scope='col'>
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=$orderType\">
+		".$l['all']['IPAddress']."</a>
+		</th>
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=$orderType\">
+		".$l['all']['StartTime']."</a>
+		</th>
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=$orderType\">
+		".$l['all']['StopTime']."</a>
+		</th>
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=$orderType\">
+		".$l['all']['TotalTime']."</a>
+		</th>
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=$orderType\">
+		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
+		</th>
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=$orderType\">
+		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
+		</th>
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=$orderType\">
+		".$l['all']['Termination']."</a>
+		</th>
+		<th scope='col'> 
+		<br/>
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=$orderType\">
+		".$l['all']['NASIPAddress']."</a>
+		</th>
+		</tr> </thread>";
+		
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> $row[0] </td>
