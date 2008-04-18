@@ -96,16 +96,38 @@
                 ";
 	}
 
-	$sql = "select Value from ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName='$username' and Attribute='Max-All-Session'";
+	$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
+		" AND Attribute='Max-All-Session'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
-	while($row = $res->fetchRow()) {
-		//row[0] = credit (meaning the total time that this user is allowed to surf)
-	        echo "<td> $row[0] </td>";
-                $credit = $row[0];
+	$row = $res->fetchRow();
+	$credit = $row[0];
+	$dateFlag = '';
+
+	if (!($credit)) {
+		$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
+			" AND Attribute='Max-Daily-Session'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+		$row = $res->fetchRow();
+		$credit = $row[0];
+		$dateFlag = " AND (DAY(AcctStartTime) = DAY(NOW())) ";
 	}
 
-	$sql = "select SUM(AcctSessionTime), COUNT(RadAcctId), SUM(AcctInputOctets), SUM(AcctOutputOctets) from ".$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username'";
+        if (!($credit)) {
+                $sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
+                        " AND Attribute='Max-Monthly-Session'";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
+                $row = $res->fetchRow();
+                $credit = $row[0];
+		$dateFlag = " AND (MONTH(AcctStartTime) = MONTH(NOW())) ";
+        } 
+
+
+	$sql = "SELECT SUM(AcctSessionTime), COUNT(RadAcctId), SUM(AcctInputOctets), SUM(AcctOutputOctets) FROM ".
+		$configValues['CONFIG_DB_TBL_RADACCT'].
+		" WHERE UserName='$username' $dateFlag ";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 	while($row = $res->fetchRow()) {
@@ -119,17 +141,26 @@
 	        $total_bytesout = $row[3];
 	}
 
-	if ($credit == 0) { 
-        	echo "<td> - </td>";
-		$remains_per = '-';
-	        $remains_time = '-';
+	if ( (!($credit)) || ($credit == 0) ) { 
+        	echo "<td> N/A </td>";
+		$remains_per = 'N/A';
+	        $remains_time = 'N/A';
+	        echo "<td>".seconds2time($used)."</td>";
+		echo "<td>".seconds2time($remains_time)."</td>";
+	} else if ($used > $credit) {
+		echo "<td>".seconds2time($credit)."</td>";
+		$remains_per = '0';					// used up more than credit, 0% remains
+		$remains_time = ($used-$credit);
+	        echo "<td><b><font color='#FF3300'>".seconds2time($used)."</font></b></td>";
+		echo "<td><b><font color='#FF3300'>".seconds2time($remains_time)." overdue</font></b></td>";
 	} else {
+		echo "<td>".seconds2time($credit)."</td>";
 	        $remains_per = 100 - round(($used / $credit) * 100);
 	        $remains_time = $credit - $used;
+	        echo "<td>".seconds2time($used)."</td>";
+		echo "<td>".seconds2time($remains_time)."</td>";
 	}
 
-        echo "<td>".seconds2time($used)."</td>";
-        echo "<td>".seconds2time($remains_time)."</td>";
         echo "<td> $remains_per%</td>";
 	echo "<td> $total_sessions </td>";
 	echo "<td>".toxbyte($total_bytesin)."</td>";
