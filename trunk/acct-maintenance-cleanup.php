@@ -15,7 +15,7 @@
 			include 'library/opendb.php';
 
 			// delete all stale sessions in the database that occur until $enddate
-			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE AcctStopTime='0' AND AcctStartTime<'".$dbSocket->escapeSimple($enddate)."'";
+			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE AcctStopTime='0000-00-00 00:00:00' AND AcctStartTime<'".$dbSocket->escapeSimple($enddate)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
