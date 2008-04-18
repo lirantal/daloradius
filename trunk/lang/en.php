@@ -18,6 +18,8 @@ $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
+$l['all']['RemoveRadacctRecords'] = "Remove Accounting Records";
+
 $l['all']['CleanupSessions'] = "Cleanup sessions older than";
 $l['all']['DeleteSessions'] = "Delete sessions older than";
 
@@ -113,6 +115,8 @@ $l['all']['groupslist'] = "groups-list";
 $l['all']['TestUser'] = "Test User";
 $l['all']['Accounting'] = "Accounting";
 $l['all']['RADIUSReply'] = "RADIUS Reply";
+
+$l['all']['Disconnect'] = "Disconnect";
 
 $l['all']['Debug'] = "Debug";
 $l['all']['Timeout'] = "Timeout";
@@ -282,6 +286,7 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
 /* **********************************************************************************
  * Links and Buttons
  ************************************************************************************/
+$l['button']['ClearSessions'] = "Clear Sessions";
 
 $l['button']['ListRealms'] = "List Realms";
 $l['button']['NewRealm'] = "New Realm";
