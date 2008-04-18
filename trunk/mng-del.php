@@ -4,13 +4,14 @@
 
 	include('library/check_operator_perm.php');
 
-	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
-	isset($_REQUEST['attribute']) ? $attribute = $_REQUEST['attribute'] : $attribute = "";
-	isset($_REQUEST['tablename']) ? $tablename = $_REQUEST['tablename'] : $tablename = "";
+	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
+	isset($_GET['attribute']) ? $attribute = $_GET['attribute'] : $attribute = "";
+	isset($_GET['tablename']) ? $tablename = $_GET['tablename'] : $tablename = "";
+	isset($_GET['delradacct']) ? $delradacct = $_GET['delradacct'] : $delradacct = "";
 
 	$logDebugSQL = "";
 
-	if ( (isset($_REQUEST['username'])) && (!(isset($_REQUEST['attribute']))) && (!(isset($_REQUEST['tablename']))) ) {
+	if ( (isset($_GET['username'])) && (!(isset($_GET['attribute']))) && (!(isset($_GET['tablename']))) ) {
 
 		$allUsernames = "";
 		$isSuccessful = 0;
@@ -29,7 +30,6 @@
 			
 				$username = $value;
 				$allUsernames .= $username . ", ";
-				//echo "user: $username <br/>";
 
 				include 'library/opendb.php';
 
@@ -51,6 +51,12 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
+				if (strtolower($delradacct) == "yes") {
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+
 				$actionStatus = "success";
 				$actionMsg = "Deleted user(s): <b> $allUsernames </b>";
 				$logAction = "Successfully deleted user(s) [$allUsernames] on page: ";
@@ -67,7 +73,7 @@
 		} //foreach
 
 
-	} else 	if ( (isset($_REQUEST['username'])) && (isset($_REQUEST['attribute'])) && (isset($_REQUEST['tablename'])) ) {
+	} else 	if ( (isset($_GET['username'])) && (isset($_GET['attribute'])) && (isset($_GET['tablename'])) ) {
 
 		/* this section of the deletion process only deletes the username record with the specified attribute
 		 * variable from $tablename, this is in order to support just removing a single attribute for the user
@@ -123,7 +129,7 @@
 					<br/>
 				</div>
 				
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
         <fieldset>
 
                 <h302> <?php echo $l['title']['AccountRemoval'] ?> </h302>
@@ -131,6 +137,13 @@
 
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
                 <input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <br />
+
+                <label for='delradacct' class='form'><?php echo $l['all']['RemoveRadacctRecords']?></label>
+		<select class='form' tabindex=102 name='delradacct' tabindex=101>
+			<option value='no'>no</option>
+			<option value='yes'>yes</option>
+		</select>
                 <br />
 
 		<br/><br/>
