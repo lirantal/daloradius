@@ -78,7 +78,7 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-	echo "<form name='listallusers' method='post' action='mng-del.php' >";
+	echo "<form name='listallusers' method='get' action='mng-del.php' >";
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
