@@ -371,8 +371,12 @@ a {
 }
 
 a.table {
-//	color:#FFF;
 	color: #348017;
+}
+
+a.toolTip {
+//	color: #000000;
+	color: #0099FF;
 }
 
 a:hover {
@@ -545,6 +549,12 @@ input[type="radio"] {
         width:13px;
 }
 
+input[type='checkbox'] {
+	width:15px;
+	padding:1px,10px,10px,10px;
+	margin: 2px,10px,10px,10px;
+}
+
 select.form {
         width:185px;
 	height:20px;
@@ -565,14 +575,6 @@ select.long {
 	margin: 2px;
 }
 
-input[type='checkbox'] {
-	width:15px;
-	padding:4px;
-	border:1;
-	border-bottom:1px dotted #ccc;
-	font:90% Verdana;
-	color:#777;
-}
 
 div.ToolTip {
 	font:88% Verdana;
