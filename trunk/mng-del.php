@@ -8,6 +8,7 @@
 	isset($_GET['attribute']) ? $attribute = $_GET['attribute'] : $attribute = "";
 	isset($_GET['tablename']) ? $tablename = $_GET['tablename'] : $tablename = "";
 	isset($_GET['delradacct']) ? $delradacct = $_GET['delradacct'] : $delradacct = "";
+	isset($_GET['clearSessionsUsers']) ? $clearSessionsUsers = $_GET['clearSessionsUsers'] : $clearSessionsUsers = "";
 
 	$logDebugSQL = "";
 
@@ -91,6 +92,39 @@
 		$logAction = "Successfully deleted attribute [$attribute] for user [$username] on page: ";
 
 		include 'library/closedb.php';
+
+	} else if ( (isset($clearSessionsUsers)) && ($clearSessionsUsers != "") ) {
+		
+		/* this is used to remove stale user sessions from the accounting table 
+		*/
+
+		$allUsernames = "";
+
+		if (!is_array($clearSessionsUsers))
+                        $clearSessionsUsers = array($clearSessionsUsers, NULL);
+
+                foreach ($clearSessionsUsers as $variable=>$value) {
+
+                        if (trim($variable) != "") {
+
+                                $userSessions = $value;
+                                $allUsernames .= $userSessions . ", ";
+
+                                include 'library/opendb.php';
+
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE Username='$userSessions'
+					AND AcctStopTime='0000-00-00 00:00:00'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+
+				$actionStatus = "success";
+				$actionMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
+				$logAction = "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
+	
+				include 'library/closedb.php';
+			} // if trim
+
+		} // foreach
 
 	}
 
