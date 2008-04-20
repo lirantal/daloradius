@@ -226,7 +226,7 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 
                         <script type=\"text/javascript\">
                                 autoCom = new DHTMLSuite.autoComplete();
-                                autoCom.add('dictAttributesCustom','include/management/dynamic_attributes.php','_large');
+                                autoCom.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
                         </script>
                 ";
         }

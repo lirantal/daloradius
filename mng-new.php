@@ -550,7 +550,6 @@
 		<br/>
 
 <?php
-
 	include_once('library/config_read.php');
 
 	if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) && 
@@ -562,7 +561,7 @@
 
 			<script type=\"text/javascript\">
 				autoCom = new DHTMLSuite.autoComplete();
-				autoCom.add('dictAttributesCustom','include/management/dynamic_attributes.php','_large');
+				autoCom.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
 			</script>
 		";
 	}
