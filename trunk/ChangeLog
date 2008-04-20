@@ -1,12 +1,15 @@
-release 0.9-7rc1 - 16 April 2008
+release 0.9-7rc1 - 24 April 2008
 	- fixed support for password hiding in users/operators listings
 	- fixed deletion of usergroup instances of the user
 	- fixed saving encrypted password changes in database (reported by kreg, thanks)
 	- fixed deletion of attributes from profiles page (reported by kreg, thanks)
+	- fixed user accounting page to support Max-Daily-Session and Max-Monthly-Session (reported by Kelvin)
 	- improved usability on disconnect user page 
 	- improved greatly attributes management with support for dynamic helper functions
 	- added quick editing of online users and showing mac addresses listing
 	- added new pages - realms and proxys configurations
+	- added support to remove user accounting records in the delete page
+	- added dhtmlgoodies libraries for ajax auto-complete and popup tooltip
 	- added vendor/attributes management page to allow editing of official and custom attributes
 	- added more icons, variable translation and layout changes
 
