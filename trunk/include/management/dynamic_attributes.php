@@ -1,25 +1,5 @@
 <?php
 
-if(isset($_GET['getAjaxAttributes'])) {
-
-	$getAjaxAttributes = $_GET['getAjaxAttributes'];
-
-	include '../../library/opendb.php';
-
-	$sql = "SELECT distinct(Attribute) as Attribute FROM dictionary WHERE Attribute LIKE '$getAjaxAttributes%' ".
-		"ORDER BY Vendor ASC";
-        $res = $dbSocket->query($sql);
-
-        while($row = $res->fetchRow()) {
-		echo "$row[0]###$row[0]|";
-	}
-
-	include '../../library/closedb.php';
-
-}
-
-
-
 /*
  * getVendorsList is set to yes when the user clicks on the Vendor select box
  * upon which the javascript code executes a call with this value which we catch
@@ -162,6 +142,14 @@ if(isset($_GET['getValuesForAttribute'])) {
 			drawServiceType($num);
 			break;
 
+		case "framedprotocol":
+			drawFramedProtocol($num);
+			break;
+
+		case "volumebytes":
+			drawBytes($num);
+			break;
+
 
 
 	}
@@ -241,6 +229,75 @@ function drawHelperDate($num) {
 EOF;
 
 }
+
+function drawBytes($num) {
+
+        $inputId = "dictValues".$num;
+
+        echo <<<EOF
+        objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawBytes$num' "+
+                                "style='width: 100px' class='form'>"+
+                                "<option value=''>Select...</option>"+
+                                "<option value='10485760'>10Mb</option>"+
+                                "<option value='52428800'>50Mb</option>"+
+                                "<option value='104857600'>100Mb</option>"+
+                                "<option value='524288000'>500Mb</option>"+
+                                "<option value='1073741824'>1Gb</option>"+
+                                "<option value='2147483648'>2Gb</option>"+
+                                "<option value='4294967296'>4Gb</option>"+
+                                "<option value='8589934592'>8Gb</option>"+
+                                "<option value='12884901888'>12Gb</option>"+
+                                "<option value='17179869184'>16Gb</option>"+
+                              "</select>";
+
+EOF;
+
+}
+
+
+function drawFramedProtocol($num) {
+
+        $inputId = "dictValues".$num;
+
+        echo <<<EOF
+        objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawFramedProtocol$num' "+
+                                "style='width: 100px' class='form'>"+
+                                "<option value=''>Select...</option>"+
+                                "<option value='PPP'>PPP</option>"+
+                                "<option value='SLIP'>SLIP</option>"+
+                                "<option value='ARAP'>ARAP</option>"+
+                                "<option value='Gandalf-SLML'>Gandalf-SLML</option>"+
+                                "<option value='Xylogics-IPX-SLIP'>Xylogics-IPX-SLIP</option>"+
+                                "<option value='X.75-Synchronous'>X.75-Synchronous</option>"+
+                                "<option value='PPTP'>PPTP</option>"+
+                                "<option value='GPRS-PDP-Context'>GPRS-PDP-Context</option>"+
+                              "</select>";
+
+EOF;
+
+}
+
+
+
+function drawBitPerSecond($num) {
+
+        $inputId = "dictValues".$num;
+
+        echo <<<EOF
+        objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawBitPerSecond$num' "+
+                                "style='width: 100px' class='form'>"+
+                                "<option value=''>Select...</option>"+
+                                "<option value=''></option>"+
+                                "<option value=''></option>"+
+                                "<option value=''></option>"+
+                                "<option value=''></option>"+
+                                "<option value=''></option>"+
+                              "</select>";
+
+EOF;
+
+}
+
 
 
 
