@@ -98,10 +98,10 @@ DHTMLSuite.autoComplete.prototype={
      *
      * @public
      */
-    add:function(inputObjId,externalFile,cssTag)
+    add:function(inputObjId,externalFile,cssTag,autocompleteTag)
     {
        var refObject = DHTMLSuite.variableStorage.arrayDSObjects[this.objectIndex];
-       eval("document.getElementById('"+inputObjId+"').onkeyup = function(e) { refObject.__showOptions(e,'"+ inputObjId +"','"+ externalFile +"','"+ cssTag +"') };");
+       eval("document.getElementById('"+inputObjId+"').onkeyup = function(e) { refObject.__showOptions(e,'"+ inputObjId +"','"+ externalFile +"','"+ cssTag +"','"+ autocompleteTag +"') };");
        DHTMLSuite.commonObj.__addEventEl(document.getElementById(inputObjId));   
     }
 // }}}
@@ -130,7 +130,7 @@ DHTMLSuite.autoComplete.prototype={
      *
     *@private
      */          
-   __showOptions:function(e, inputObjId,externalFile,cssTag)
+   __showOptions:function(e, inputObjId,externalFile,cssTag,autocompleteTag)
    {
       var inputObj = document.getElementById(inputObjId); // input object
       var ind = this.objectIndex;   // class object index
@@ -204,7 +204,7 @@ DHTMLSuite.autoComplete.prototype={
          this.ajax_optionDiv.innerHTML = '';
          var ajaxIndex = this.ajax_list_objects.length;
          this.ajax_list_objects[ajaxIndex] = new sack();
-         var url = externalFile + '?getAjaxAttributes=' + inputObj.value.replace(" ","+");
+         var url = externalFile + '?' + autocompleteTag + '=' + inputObj.value.replace(" ","+");
          //alert(url);
          this.ajax_list_objects[ajaxIndex].requestFile = url;   // Specifying which file to get
          this.ajax_list_objects[ajaxIndex].onCompletion = function(){ DHTMLSuite.variableStorage.arrayDSObjects[ind].__ajaxOptionListShowContent(ajaxIndex,inputObj); };   // Specify function that will be executed after file has been found
