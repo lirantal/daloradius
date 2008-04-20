@@ -60,7 +60,7 @@
 
     } //if submit
 
-	
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
@@ -113,7 +113,7 @@
                 <br/>
 
                 <label for='nasaddr' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
-                <input name='nasaddr' type='text' id='nasaddr' value='' tabindex=102 />
+                <input name='nasaddr' type='text' id='nasaddr' value='<?php echo $nasaddr ?>' tabindex=102 />
 
 		<select onChange="javascript:setStringTextMulti(this.id,'nasaddr','nassecret')" id='naslist' tabindex=103 
 			class='form' >
@@ -156,7 +156,7 @@
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='Perform Test' class='button' />
+                <input type='submit' name='submit' value='<?php echo $l['button']['DisconnectUser'] ?>' class='button' />
 
         </fieldset>
 
@@ -204,7 +204,7 @@
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='Perform Test' class='button' />
+                <input type='submit' name='submit' value='<?php echo $l['button']['DisconnectUser'] ?>' class='button' />
 
         </fieldset>
 
