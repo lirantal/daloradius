@@ -6,13 +6,13 @@
 	include('library/check_operator_perm.php');
 
 	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "username";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "username";
+	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
 
 
-	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
-	isset($_REQUEST['enddate']) ? $enddate = $_REQUEST['enddate'] : $enddate = "";
-	isset($_REQUEST['startdate']) ? $startdate = $_REQUEST['startdate'] : $startdate = "";
+	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
+	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
+	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
