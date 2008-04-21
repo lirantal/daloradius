@@ -6,15 +6,18 @@
 	include('library/check_operator_perm.php');
 
 	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";	
+	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "radacctid";
+	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
 
+	if ( (isset($_GET['username'])) && ($_GET['username']) ) {
+		$username = $_GET['username'];
+	} else {
+		$username = "%";
+	}
+
+	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
+	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
 	
-	$username = $_REQUEST['username'];
-	$startdate = $_REQUEST['startdate'];
-	$enddate = $_REQUEST['enddate'];
-
-
 	//feed the sidebar variables
 	$accounting_date_username = $username;
 	$accounting_date_startdate = $startdate;
