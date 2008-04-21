@@ -43,7 +43,7 @@
 
 		// insert usergroup mapping
 		if (isset($group) && (trim($group) != "")) {
-			$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." VALUES ('".
 				$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
@@ -75,7 +75,7 @@
                 // if there were no records for this user present in the userinfo table
                 if ($res->numRows() == 0) {
 			// insert user information table
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." values (0, 
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." VALUES (0, 
 				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
 				$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
 				$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
@@ -151,7 +151,7 @@
 			if ( (isset($field)) && (!isset($field[1])) )
 				continue;
 	
-			$sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".
+			$sql = "INSERT INTO $table VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
 				$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op)."', '".
 				$dbSocket->escapeSimple($value)."')  ";
 			$res = $dbSocket->query($sql);
@@ -182,7 +182,8 @@
 				break;
 		}
 
-		$sql = "SELECT * FROM radcheck WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
+			$dbSocket->escapeSimple($username)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -211,7 +212,7 @@
 				}
 				
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".
 					$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($passwordtype).
 					"', ':=', $dbPassword)";
 				$res = $dbSocket->query($sql);
@@ -235,7 +236,7 @@
 		   } elseif ($authType == "macAuth") {
 
 				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".
 					$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -251,7 +252,7 @@
 		   } elseif ($authType == "pincodeAuth") {
 
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".
 					$dbSocket->escapeSimple($pincode)."', 'Auth-Type', ':=', 'Accept')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -522,7 +523,8 @@
 			<?php
 			        include 'library/opendb.php';
 	
-			        $sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>'' ORDER BY Vendor ASC";
+			        $sql = "SELECT distinct(Vendor) as Vendor FROM ".
+					$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE Vendor>'' ORDER BY Vendor ASC";
 			        $res = $dbSocket->query($sql);
 	
 			        while($row = $res->fetchRow()) {
