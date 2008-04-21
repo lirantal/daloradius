@@ -23,10 +23,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
  
  
@@ -121,11 +123,16 @@
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
-					<a class='tablenovisit' href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]''> $row[0] </a></td>
-				<td> $row[1] </td>
-				<td> $row[2] </td>						
-				<td> $row[3] </td>						
+			<td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
+				<a class='tablenovisit' href='javascript:return;'
+                                onclick=\"javascript:__displayTooltip();\"
+                                tooltipText=\"
+                                        <a class='toolTip' href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]'>".$l['Tooltip']['EditGroup']."</a>
+                                        <br/>\"
+				>$row[0]</a></td>
+			<td> $row[1] </td>
+			<td> $row[2] </td>						
+			<td> $row[3] </td>						
 
 		</tr>";
 	}
@@ -169,6 +176,13 @@
 </div>
 </div>
 
+<script type="text/javascript">
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>
