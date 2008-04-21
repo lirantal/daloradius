@@ -6,8 +6,8 @@
 	include('library/check_operator_perm.php');
 	
 	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "id";
+	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
 
 
 	include_once('library/config_read.php');
