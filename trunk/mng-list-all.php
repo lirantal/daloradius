@@ -19,9 +19,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 <link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
 <!--[if lte IE 6.5]>
 <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
@@ -136,7 +139,13 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
-			<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]' title='".$l['Tooltip']['UserEdit']."'>$row[0]</a></td>
+			<td> <a class='tablenovisit' href='javascript:return;'
+                                onclick=\"javascript:__displayTooltip();\"
+                                tooltipText=\"
+	                                <a class='toolTip' href='mng-edit.php?username=$row[0]'>".$l['Tooltip']['UserEdit']."</a>
+                                        <br/>\"
+				>$row[0]</a>
+				</td>
 			";
 		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 			echo "<td>[Password is hidden]</td>";
@@ -154,8 +163,7 @@
 							<th colspan='10' align='left'> 
 	";
 	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-	echo "
-							</th>
+	echo "							</th>
 							</tr>
 					</tfoot>
 		";
@@ -187,6 +195,14 @@
 </div>
 </div>
 
+
+<script type="text/javascript">
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>

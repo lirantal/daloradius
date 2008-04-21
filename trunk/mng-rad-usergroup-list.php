@@ -21,13 +21,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
-
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
  
  
@@ -115,17 +115,19 @@
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=$orderType\">
 		".$l['all']['Priority']."</a>
 		</th>
-
-		<th scope='col'> ".$l['all']['Action']." </th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
-				<td> <a href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>  $row[1] </a> </td>
-				<td> $row[2] </td><td>
-					 <a href='mng-rad-usergroup-list-user.php?username=$row[0]&group=$row[1]'> ".$l['all']['groupslist']." </a>
-					 </td>
-
+			<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
+			<td> <a class='tablenovisit' href='javascript:return;'
+                                onclick=\"javascript:__displayTooltip();\"
+                                tooltipText=\"
+                                        <a class='toolTip' href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['EditUserGroup']."</a>
+					<br/>
+                                        <a class='toolTip' href='mng-rad-usergroup-list-user.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['ListUserGroups']."</a>
+                                        <br/>\"
+					>$row[1]</a></td>
+				<td> $row[2] </td>
 		</tr>";
 	}
 
@@ -167,6 +169,13 @@
 </div>
 </div>
 
+<script type="text/javascript">
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>

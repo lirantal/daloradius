@@ -25,9 +25,11 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
- 
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 <?php
 	include ("menu-mng-rad-nas.php");
 ?>
@@ -148,22 +150,23 @@
 		".$l['all']['NasDescription']."</a>
 		<br/>
 		</th>
-
-		<th scope='col'> ".$l['all']['Action']." </th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
                                 <td> <input type='checkbox' name='nashost[]' value='$row[1]'> $row[0] </td>
-				<td> $row[1] </td>
+                                <td> <a class='tablenovisit' href='javascript:return;'
+                                onclick=\"javascript:__displayTooltip();\"
+                                tooltipText=\"
+                                        <a class='toolTip' href='mng-rad-nas-edit.php?nashost=$row[1]'>".$l['Tooltip']['EditNAS']."</a>
+                                        <a class='toolTip' href='mng-rad-nas-del.php?nashost=$row[1]'>".$l['Tooltip']['RemoveNAS']."</a>
+                                        <br/>\"
+                                        >$row[1]</a></td>
 				<td> $row[2] </td>
 				<td> $row[3] </td>
 				<td> $row[4] </td>
 				<td> $row[5] </td>
 				<td> $row[6] </td>
 				<td> $row[7] </td>
-				<td> <a href='mng-rad-nas-edit.php?nashost=$row[1]'> ".$l['all']['edit']." </a>
-					 <a href='mng-rad-nas-del.php?nashost=$row[1]'> ".$l['all']['del']." </a>
-					 </td>
 
 		</tr>";
 	}
@@ -208,6 +211,13 @@
 </div>
 </div>
 
+<script type="text/javascript">
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>
