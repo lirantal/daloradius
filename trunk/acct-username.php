@@ -124,6 +124,11 @@
 		$dateFlag = " AND (MONTH(AcctStartTime) = MONTH(NOW())) ";
         } 
 
+	if (!($credit)) {
+		// the user doesn't have neither of the Max-*-Session limitations, whats left is Expiration
+		// or something else (or none at all) but in any case we set the $dateFlag to null;
+		$dateFlag = '';
+	}
 
 	$sql = "SELECT SUM(AcctSessionTime), COUNT(RadAcctId), SUM(AcctInputOctets), SUM(AcctOutputOctets) FROM ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].
