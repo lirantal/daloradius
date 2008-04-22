@@ -211,6 +211,29 @@
 						$dbPassword = "'$password'";
 				}
 				
+				// at this stage $dbPassword contains the password string encapsulated by '' and either uses
+				// a function to encrypt it like ENCRYPT or it doesn't, it's based on the configuration
+				// but here we provide another stage, for Crypt-Password and MD5-Password it's obvious
+				// that the password need be encrypted so even if this option is not in the configuration
+				// we enforce it.
+
+				// we first check if the password attribute is to be encrypted at all
+				if (preg_match("/crypt/i", $passwordtype)) {
+					// if we don't find the encrypt function even though we identified
+					// a Crypt-Password attribute
+					if (!(preg_match("/encrypt/i",$dbPassword))) {
+						$dbPassword = "ENCRYPT('$password')";
+					}
+			
+					// we now perform the same check but for an MD5-Password attribute
+				} elseif (preg_match("/md5/i", $passwordtype)) {
+					// if we don't find the md5 function even though we identified
+					// a MD5-Password attribute
+					if (!(preg_match("/md5/i",$dbPassword))) {
+						$dbPassword = "MD5('$password')";
+					}
+				}
+
 				// insert username/password
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".
 					$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($passwordtype).
