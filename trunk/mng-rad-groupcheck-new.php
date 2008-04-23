@@ -171,67 +171,11 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
         <br/>
 
-        <fieldset>
 
-                <h302> <?php echo $l['title']['GroupAttributes'] ?> </h302>
-                <br/>
+        <?php
+                include_once('include/management/attributes.php');
+        ?>
 
-                <label for='vendor' class='form'>Vendor:</label>
-                <select id='dictVendors0' onchange="getAttributesList(this,'dictAttributesDatabase')"
-                        style='width: 215px' class='form' >
-                        <option value=''>Select Vendor...</option>
-                        <?php
-                                include 'library/opendb.php';
-
-                                $sql = "SELECT distinct(Vendor) as Vendor FROM dictionary WHERE Vendor>'' ".
-					" ORDER BY Vendor ASC";
-                                $res = $dbSocket->query($sql);
-
-                                while($row = $res->fetchRow()) {
-                                        echo "<option value=$row[0]>$row[0]</option>";
-                                }
-
-                                include 'library/closedb.php';
-                        ?>
-                </select>
-                <input type='button' name='reloadAttributes' value='Reload Vendors'
-                        onclick="javascript:getVendorsList('dictVendors0');" class='button'>
-                <br/>
-
-                <label for='attribute' class='form'>
-                        Attribute:</label>
-                <select id='dictAttributesDatabase' style='width: 270px' class='form' >
-                </select>
-                <input type='button' name='addAttributes' value='Add Attribute'
-                        onclick="javascript:parseAttribute(1);" class='button'>
-                <br/>
-
-<?php
-
-        include_once('library/config_read.php');
-
-        if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
-                (strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") ) {
-
-                echo "
-                        <script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
-                        <script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
-
-                        <script type=\"text/javascript\">
-                                autoCom = new DHTMLSuite.autoComplete();
-                                autoCom.add('dictAttributesCustom','include/management/dynamicAttributes.php','_large','getAjaxAutocompleteAttributes');
-                        </script>
-                ";
-        }
-?>
-
-        <br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-
-        </fieldset>
-<br/>   
-        <input type="hidden" value="0" id="divCounter" />
-        <div id="divContainer"> </div> <br/>
 
                                 </form>
 
@@ -244,7 +188,7 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 		
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 
