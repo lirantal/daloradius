@@ -45,8 +45,6 @@
 		
 			if (trim($username) != "" and trim($password) != "") {
 
-				$currDate = date('Y-m-d H:i:s');
-
 				// insert username/password
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
 '$passwordType', ':=', '".$dbSocket->escapeSimple($password)."')";
@@ -89,15 +87,33 @@
 					$logDebugSQL .= $sql . "\n";
 				}
 
+				//insert userinfo
+		                $currDate = date('Y-m-d H:i:s');
+		                $currBy = $_SESSION['operator_user'];
 
-				// insert user information table
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', 
-'".$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."', 
-'".$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', 
-'".$dbSocket->escapeSimple($notes)."', '$currDate')";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+		                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".
+		                        $dbSocket->escapeSimple($username)."'";
+		                $res = $dbSocket->query($sql);
+		                $logDebugSQL .= $sql . "\n";
+
+		                // if there were no records for this user present in the userinfo table
+		                if ($res->numRows() == 0) {
+		                        // insert user information table
+		                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+		                                " (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
+		                                " mobilephone, notes, creationdate, creationby, updatedate, updateby) ".
+		                                " VALUES (0,
+		                                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
+		                                $dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
+		                                $dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
+		                                $dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
+		                                $dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes).
+		                                "', '$currDate', '$currBy', NULL, NULL)";
+		                        $res = $dbSocket->query($sql);
+		                        $logDebugSQL .= $sql . "\n";
+		
+		                }
+
 
 				$actionStatus = "success";
 				$actionMsg = "Added to database new user: <b> $username";
