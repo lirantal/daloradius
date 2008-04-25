@@ -68,6 +68,18 @@ echo "
 	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=309 />
         <br/>
 
+	<label for='creationby' class='form'>".$l['all']['CreationBy']."</label>
+	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=310 />
+        <br/>
+
+	<label for='updatedate' class='form'>".$l['all']['UpdateDate']."</label>
+	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=311 />
+        <br/>
+
+	<label for='updateby' class='form'>".$l['all']['UpdateBy']."</label>
+	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=312 />
+        <br/>
+
 	<br/>
 	<hr><br/>
 
