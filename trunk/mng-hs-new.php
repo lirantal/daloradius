@@ -16,7 +16,10 @@
 	isset($_REQUEST['phone1']) ? $phone1 = $_REQUEST['phone1'] : $phone1 = "";
 	isset($_REQUEST['phone2']) ? $phone2 = $_REQUEST['phone2'] : $phone2 = "";
 	isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
-	isset($_REQUEST['website']) ? $website = $_REQUEST['website'] : $website = "";
+	isset($_REQUEST['companywebsite']) ? $companywebsite = $_REQUEST['companywebsite'] : $companywebsite = "";
+	isset($_REQUEST['companyphone']) ? $companyphone = $_REQUEST['companyphone'] : $companyphone = "";
+	isset($_REQUEST['companyemail']) ? $companyemail = $_REQUEST['companyemail'] : $companyemail = "";
+	isset($_REQUEST['companycontact']) ? $companycontact = $_REQUEST['companycontact'] : $companycontact = "";
 
 	$logDebugSQL = "";
 
@@ -34,12 +37,26 @@
 		if ($res->numRows() == 0) {
 			if (trim($name) != "" and trim($macaddress) != "") {
 
-				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." values (0, '".$dbSocket->escapeSimple($name)."', 
-'".$dbSocket->escapeSimple($macaddress)."', '".$dbSocket->escapeSimple($geocode)."','".$dbSocket->escapeSimple($owner)."',
-'".$dbSocket->escapeSimple($email_owner)."','".$dbSocket->escapeSimple($manager)."','".$dbSocket->escapeSimple($email_manager)."',
-'".$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($company)."','".$dbSocket->escapeSimple($phone1)."',
-'".$dbSocket->escapeSimple($phone2)."','".$dbSocket->escapeSimple($hotspot_type)."','".$dbSocket->escapeSimple($website)."')";
+		                $currDate = date('Y-m-d H:i:s');
+		                $currBy = $_SESSION['operator_user'];
+
+				// insert hotspot info
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+				" (id, name, mac, geocode, owner, email_owner, manager, email_manager, address, company, ".
+				"  phone1, phone2, type, companywebsite, companyemail, companycontact, companyphone, ".
+				"  creationdate, creationby, updatedate, updateby) ".
+				" VALUES (0, '".$dbSocket->escapeSimple($name)."', '".
+				$dbSocket->escapeSimple($macaddress)."', '".
+				$dbSocket->escapeSimple($geocode)."','".$dbSocket->escapeSimple($owner)."','".
+				$dbSocket->escapeSimple($email_owner)."','".$dbSocket->escapeSimple($manager)."','".
+				$dbSocket->escapeSimple($email_manager)."','".
+				$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($company)."','".
+				$dbSocket->escapeSimple($phone1)."','".$dbSocket->escapeSimple($phone2)."','".
+				$dbSocket->escapeSimple($hotspot_type)."','".$dbSocket->escapeSimple($companywebsite)."','".
+				$dbSocket->escapeSimple($companyemail)."','".
+				$dbSocket->escapeSimple($companycontact)."','".
+				$dbSocket->escapeSimple($companyphone).	"', ".
+				" '$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 

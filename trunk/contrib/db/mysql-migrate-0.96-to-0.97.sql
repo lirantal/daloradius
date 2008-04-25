@@ -39,11 +39,11 @@ CREATE TABLE proxys (
         retry_count INT(8) default NULL,
         dead_time INT(8) default NULL,
         default_fallback INT(8) default NULL,
-        PRIMARY KEY (id)
 	creationdate DATETIME default NULL,
 	creationby VARCHAR(128) default NULL,
 	updatedate DATETIME default NULL,
 	updateby VARCHAR(128) default NULL,
+        PRIMARY KEY (id)
 ) ENGINE=MyISAM;
 
 ALTER TABLE operators ADD mng_rad_attributes_list VARCHAR(32);
@@ -80,22 +80,18 @@ UPDATE operators SET acct_maintenance_cleanup='yes' WHERE username='administrato
 ALTER TABLE operators ADD acct_maintenance_delete VARCHAR(32);
 UPDATE operators SET acct_maintenance_delete='yes' WHERE username='administrator';
 
-ALTER TABLE hotspots ADD creationdate DATETIME;
-ALTER TABLE hotspots ADD creationby VARCHAR(128);
-ALTER TABLE hotspots ADD updatedate DATETIME;
-ALTER TABLE hotspots ADD updateby VARCHAR(128);
+ALTER TABLE hotspots CHANGE website companywebsite VARCHAR(128);
+ALTER TABLE hotspots ADD companyemail VARCHAR(128) AFTER companywebsite;
+ALTER TABLE hotspots ADD companycontact VARCHAR(32) AFTER companyemail;
+ALTER TABLE hotspots ADD companyphone VARCHAR(32) AFTER companycontact;
 
-ALTER TABLE userinfo ADD creationby VARCHAR(128);
-ALTER TABLE userinfo ADD updatedate DATETIME;
-ALTER TABLE userinfo ADD updateby VARCHAR(128);
+ALTER TABLE hotspots ADD creationdate DATETIME AFTER companyphone;
+ALTER TABLE hotspots ADD creationby VARCHAR(128) AFTER creationdate;
+ALTER TABLE hotspots ADD updatedate DATETIME AFTER creationby;
+ALTER TABLE hotspots ADD updateby VARCHAR(128) AFTER updatedate;
 
-ALTER TABLE realms ADD creationdate DATETIME;
-ALTER TABLE realms ADD creationby VARCHAR(128);
-ALTER TABLE realms ADD updatedate DATETIME;
-ALTER TABLE realms ADD updateby VARCHAR(128);
+ALTER TABLE userinfo ADD creationby VARCHAR(128) AFTER creationdate;
+ALTER TABLE userinfo ADD updatedate DATETIME AFTER creationby;
+ALTER TABLE userinfo ADD updateby VARCHAR(128) AFTER updatedate;
 
-ALTER TABLE proxys ADD creationdate DATETIME;
-ALTER TABLE proxys ADD creationby VARCHAR(128);
-ALTER TABLE proxys ADD updatedate DATETIME;
-ALTER TABLE proxys ADD updateby VARCHAR(128);
 

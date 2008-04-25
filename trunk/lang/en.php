@@ -108,6 +108,9 @@ $l['all']['MACAddress'] = "MAC Address";
 $l['all']['Geocode'] = "Geocode";
 $l['all']['PINCode'] = "PIN Code";
 $l['all']['CreationDate'] = "Creation Date";
+$l['all']['CreationBy'] = "Creation By";
+$l['all']['UpdateDate'] = "Update Date";
+$l['all']['UpdateBy'] = "Update By";
 
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
@@ -167,6 +170,14 @@ $l['all']['operators'] = "operators";
 $l['all']['rates'] = "rates";
 $l['all']['hotspots'] = "hotspots";
 
+
+$l['all']['BusinessName'] = "Business Name";
+$l['all']['BusinessPhone'] = "Business Phone";
+$l['all']['BusinessAddress'] = "Business Address";
+$l['all']['BusinessWebsite'] = "Business Website";
+$l['all']['BusinessEmail'] = "Business Email";
+$l['all']['BusinessContactPerson'] = "Business Contact Person";
+
 $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
 
 
@@ -174,6 +185,13 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Tooltips
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
+
+$l['Tooltip']['BusinessNameTooltip'] = "";
+$l['Tooltip']['BusinessPhoneTooltip'] = "";
+$l['Tooltip']['BusinessAddressTooltip'] = "";
+$l['Tooltip']['BusinessWebsiteTooltip'] = "";
+$l['Tooltip']['BusinessEmailTooltip'] = "";
+$l['Tooltip']['BusinessContactPersonTooltip'] = "";
 
 $l['Tooltip']['proxyNameTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
                                         .<br/>&nbsp;&nbsp;&nbsp;";
@@ -185,8 +203,6 @@ $l['Tooltip']['proxyDeadTimeTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
                                         .<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['proxyDefaultFallbackTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
                                         .<br/>&nbsp;&nbsp;&nbsp;";
-
-
 
 $l['Tooltip']['realmNameTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
                                         .<br/>&nbsp;&nbsp;&nbsp;";
@@ -229,6 +245,18 @@ $l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be<b
 
 $l['Tooltip']['UserEdit'] = "Edit User";
 $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
+$l['Tooltip']['EditNAS'] = "Edit NAS";
+$l['Tooltip']['RemoveNAS'] = "Remove NAS";
+
+$l['Tooltip']['EditUserGroup'] = "Edit User Group";
+$l['Tooltip']['ListUserGroups'] = "List User Groups";
+
+$l['Tooltip']['EditProfile'] = "Edit Profile";
+
+$l['Tooltip']['EditRealm'] = "Edit Realm";
+$l['Tooltip']['EditProxy'] = "Edit Proxy";
+
+$l['Tooltip']['EditGroup'] = "Edit Group";
 
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 
@@ -409,6 +437,8 @@ $l['button']['ProcessQuery'] = "Process Query";
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
+$l['title']['BusinessInfo'] = "Business Info";
+
 $l['title']['CleanupRecords'] = "Cleanup Records";
 $l['title']['DeleteRecords'] = "Delete Records";
 
@@ -489,7 +519,10 @@ $l['ContactInfo']['Address'] = "Address";
 $l['ContactInfo']['Phone1'] = "Phone 1";
 $l['ContactInfo']['Phone2'] = "Phone 2";
 $l['ContactInfo']['HotspotType'] = "Hotspot Type";
-$l['ContactInfo']['Website'] = "Website";
+$l['ContactInfo']['CompanyWebsite'] = "Company Website";
+$l['ContactInfo']['CompanyPhone'] = "Company Phone";
+$l['ContactInfo']['CompanyEmail'] = "Company Email";
+$l['ContactInfo']['CompanyContact'] = "Company Contact";
 
 /* ********************************************************************************** */
 
@@ -623,9 +656,12 @@ $l['Intro']['configinterface.php'] = "Web Interface Configuration";
 $l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
 $l['Intro']['configmain.php'] = "Database Configuration";
 $l['Intro']['configmaint.php'] = "Maintenance";
+$l['Intro']['configbusiness.php'] = "Business Details";
+$l['Intro']['configbusinessinfo.php'] = "Business Information";
 $l['Intro']['configbackup.php'] = "Backup";
 $l['Intro']['configbackupbackup.php'] = "Backup";
 $l['Intro']['configmaintdisconnectuser.php'] = "Disconnect User";
+$l['button']['BusinessInformation'] = "Business Information";
 
 $l['Intro']['configoperators.php'] = "Operators Configuration";
 $l['Intro']['configoperatorsdel.php'] = "Remove Operator";
@@ -791,6 +827,11 @@ default are not used, and the password encryption type in the database.<br/>
 <h200><b>Maintenance </b></h200> - Maintenance options for Testing users connections or terminating their sessions <br/>
 <h200><b>Operators</b></h200> - Configure Operators Access Control List (ACL) <br/>
 ";
+$l['helpPage']['configbusiness'] = "
+<b>Business Information</b><br/>
+<h200><b>Business Contact</b></h200> - set the business contact information (owners, title, address, phone, etc)<br/>
+";
+$l['helpPage']['configbusinessinfo'] = "";
 $l['helpPage']['configmaint'] = "
 <b>Maintenance</b><br/>
 <h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid<br/>
