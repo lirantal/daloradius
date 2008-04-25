@@ -19,7 +19,10 @@
         isset($_REQUEST['phone1']) ? $phone1 = $_REQUEST['phone1'] : $phone1 = "";
         isset($_REQUEST['phone2']) ? $phone2 = $_REQUEST['phone2'] : $phone2 = "";
         isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
-        isset($_REQUEST['website']) ? $website = $_REQUEST['website'] : $website = "";
+        isset($_REQUEST['companywebsite']) ? $companywebsite = $_REQUEST['companywebsite'] : $companywebsite = "";
+        isset($_REQUEST['companyphone']) ? $companyphone = $_REQUEST['companyphone'] : $companyphone = "";
+        isset($_REQUEST['companyemail']) ? $companyemail = $_REQUEST['companyemail'] : $companyemail = "";
+        isset($_REQUEST['companycontact']) ? $companycontact = $_REQUEST['companycontact'] : $companycontact = "";
 
 	$edit_hotspotname = $name; //feed the sidebar variables	
 
@@ -33,13 +36,27 @@
 
 		if (trim($name) != "") {
 
-			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET mac='".$dbSocket->escapeSimple($macaddress)."', 
-geocode='".$dbSocket->escapeSimple($geocode)."', owner='".$dbSocket->escapeSimple($owner)."', 
-email_owner='".$dbSocket->escapeSimple($email_owner)."', manager='".$dbSocket->escapeSimple($manager)."', 
-email_manager='".$dbSocket->escapeSimple($email_manager)."', address='".$dbSocket->escapeSimple($address)."', 
-company='".$dbSocket->escapeSimple($company)."', phone1='".$dbSocket->escapeSimple($phone1)."', phone2='".$dbSocket->escapeSimple($phone2)."', 
-type='".$dbSocket->escapeSimple($hotspot_type)."', website='".$dbSocket->escapeSimple($website)."' 
-WHERE name='".$dbSocket->escapeSimple($name)."'";
+                        $currDate = date('Y-m-d H:i:s');
+                        $currBy = $_SESSION['operator_user'];
+
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET ".
+			" mac='".$dbSocket->escapeSimple($macaddress)."', ".
+			" geocode='".$dbSocket->escapeSimple($geocode).	"', ".
+			" owner='".$dbSocket->escapeSimple($owner)."', ".
+			" email_owner='".$dbSocket->escapeSimple($email_owner)."', ".
+			" manager='".$dbSocket->escapeSimple($manager)."', ".
+			" email_manager='".$dbSocket->escapeSimple($email_manager)."', ".
+			" address='".$dbSocket->escapeSimple($address)."', ".
+			" company='".$dbSocket->escapeSimple($company)."', ".
+			" phone1='".$dbSocket->escapeSimple($phone1)."', ".
+			" phone2='".$dbSocket->escapeSimple($phone2)."', ".
+			" type='".$dbSocket->escapeSimple($hotspot_type)."', ".
+			" companywebsite='".$dbSocket->escapeSimple($companywebsite)."' , ".
+			" companyemail='".$dbSocket->escapeSimple($companyemail)."' , ".
+			" companycontact='".$dbSocket->escapeSimple($companycontact)."' , ".
+			" companyphone='".$dbSocket->escapeSimple($companyphone)."' , ".
+			" updatedate='$currDate', updateby='$currBy' ".
+			" WHERE name='".$dbSocket->escapeSimple($name)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
@@ -74,7 +91,14 @@ WHERE name='".$dbSocket->escapeSimple($name)."'";
 	$phone1 = $row[10];
 	$phone2 = $row[11];
 	$hotspot_type = $row[12];
-	$website = $row[13];
+	$companywebsite = $row[13];
+	$companyemail = $row[14];
+	$companycontact = $row[15];
+	$companyphone = $row[16];
+	$creationdate = $row[17];
+	$creationby = $row[18];
+	$updatedate = $row[19];
+	$updateby = $row[20];
 
 	include 'library/closedb.php';
 
