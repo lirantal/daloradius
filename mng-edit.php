@@ -12,6 +12,7 @@
 	if (isset($_REQUEST['submit'])) {
 
 		$currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
+		$currBy = $_SESSION['operator_user'];
 
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
@@ -43,22 +44,29 @@
 				// we add these records to the userinfo table
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" (id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone,".
-					" notes, creationdate) values (0, '".$dbSocket->escapeSimple($username)."', '".
+					" notes, creationdate, creationby, updatedate, updateby) ".
+					" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
 					$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".
 					$dbSocket->escapeSimple($email)."','".$dbSocket->escapeSimple($department)."', '".
 					$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."','".
 					$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".
-					$dbSocket->escapeSimple($notes)."', '$currDate')";
+					$dbSocket->escapeSimple($notes)."', '$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			} else {
 				// update user information table
 			   $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
-					$dbSocket->escapeSimple($firstname)."', lastname='".$dbSocket->escapeSimple($lastname)."', email='".
-					$dbSocket->escapeSimple($email)."', department='".$dbSocket->escapeSimple($department)."', company='".
-					$dbSocket->escapeSimple($company)."', workphone='".$dbSocket->escapeSimple($workphone)."', homephone='".
-					$dbSocket->escapeSimple($homephone)."', mobilephone='".$dbSocket->escapeSimple($mobilephone)."', notes='".
-					$dbSocket->escapeSimple($notes)."' WHERE username='".$dbSocket->escapeSimple($username)."'";
+					$dbSocket->escapeSimple($firstname).
+					"', lastname='".$dbSocket->escapeSimple($lastname).
+					"', email='".$dbSocket->escapeSimple($email).
+					"', department='".$dbSocket->escapeSimple($department).
+					"', company='".$dbSocket->escapeSimple($company).
+					"', workphone='".$dbSocket->escapeSimple($workphone).
+					"', homephone='".$dbSocket->escapeSimple($homephone).
+					"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
+					"', notes='".$dbSocket->escapeSimple($notes).
+					"', updatedate='$currDate', updateby='$currBy' ".
+					" WHERE username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			}
@@ -261,7 +269,8 @@
 
 
 	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, ".
-		" creationdate FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE UserName='".
+		" creationdate, creationby, updatedate, updateby FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+		" WHERE UserName='".
 		$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
@@ -278,6 +287,9 @@
 	$ui_mobilephone = $row[7];
 	$ui_notes = $row[8];
 	$ui_creationdate = $row[9];
+	$ui_creationby = $row[10];
+	$ui_updatedate = $row[11];
+	$ui_updateby = $row[12];
 
 	include 'library/closedb.php';
 
