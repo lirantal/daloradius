@@ -11,43 +11,68 @@
 	<br/>
 
 	<label for='ownername' class='form'><?php echo $l['ContactInfo']['OwnerName'] ?></label>
-	<input name='owner' type='text' id='owner' value='' tabindex=300 />
+	<input name='owner' type='text' id='owner' value='<?php if (isset($owner)) echo $owner; ?>' 
+		tabindex=300 />
 	<br/>
 
 	<label for='emailowner' class='form'><?php echo $l['ContactInfo']['OwnerEmail'] ?></label>
-	<input name='email_owner' type='text' id='email_owner' value='' tabindex=301 />
+	<input name='email_owner' type='text' id='email_owner' value='<?php if (isset($email_owner)) echo $email_owner; ?>'
+		tabindex=301 />
 	<br/>
 
 	<label for='managername' class='form'><?php echo $l['ContactInfo']['ManagerName'] ?></label>
-	<input name='manager' type='text' id='manager' value='' tabindex=302 />
+	<input name='manager' type='text' id='manager' value='<?php if (isset($manager)) echo $manager; ?>'
+		tabindex=302 />
 	<br/>
 
 	<label for='emailmanager' class='form'><?php echo $l['ContactInfo']['ManagerEmail'] ?></label>
-	<input name='email_manager' type='text' id='email_manager' value='' tabindex=303 />
+	<input name='email_manager' type='text' id='email_manager' value='<?php if (isset($email_manager)) echo $email_manager; ?>'
+		tabindex=303 />
 	<br/>
 
 	<label for='company' class='form'><?php echo $l['ContactInfo']['Company'] ?></label>
-	<input name='company' type='text' id='company' value='' tabindex=304 />
+	<input name='company' type='text' id='company' value='<?php if (isset($company)) echo $company; ?>'
+		tabindex=304 />
 	<br/>
 
 	<label for='address' class='form'><?php echo $l['ContactInfo']['Address'] ?></label>
-	<input name='address' type='text' id='address' value='' tabindex=305 />
+	<input name='address' type='text' id='address' value='<?php if (isset($address)) echo $address; ?>'
+		tabindex=305 />
 	<br/>
 
 	<label for='phone1' class='form'><?php echo $l['ContactInfo']['Phone1'] ?></label>
-	<input name='phone1' type='text' id='phone1' value='' tabindex=306 />
+	<input name='phone1' type='text' id='phone1' value='<?php if (isset($phone1)) echo $phone1; ?>'
+		tabindex=306 />
 	<br/>
 
 	<label for='phone2' class='form'><?php echo $l['ContactInfo']['Phone2'] ?></label>
-	<input name='phone1' type='text' id='phone2' value='' tabindex=307 />
+	<input name='phone2' type='text' id='phone2' value='<?php if (isset($phone2)) echo $phone2; ?>'
+		tabindex=307 />
 	<br/>
 
 	<label for='hotspot_type' class='form'><?php echo $l['ContactInfo']['HotspotType'] ?></label>
-	<input name='hotspot_type' type='text' id='hotspot_type' value='' tabindex=308 />
+	<input name='hotspot_type' type='text' id='hotspot_type' value='<?php if (isset($hotspot_type)) echo $hotspot_type; ?>'
+		tabindex=308 />
 	<br/>
 
-	<label for='website' class='form'><?php echo $l['ContactInfo']['Website'] ?></label>
-	<input name='website' type='text' id='website' value='' tabindex=309 />
+	<label for='companywebsite' class='form'><?php echo $l['ContactInfo']['CompanyWebsite'] ?></label>
+	<input name='companywebsite' type='text' id='companywebsite' value='<?php if (isset($companywebsite)) echo $companywebsite; ?>'
+		tabindex=309 />
+	<br/>
+
+	<label for='companyemail' class='form'><?php echo $l['ContactInfo']['CompanyEmail'] ?></label>
+	<input name='companyemail' type='text' id='companyemail' value='<?php if (isset($companyemail)) echo $companyemail; ?>'
+		tabindex=310 />
+	<br/>
+
+	<label for='companyphone' class='form'><?php echo $l['ContactInfo']['CompanyPhone'] ?></label>
+	<input name='companyphone' type='text' id='companyphone' value='<?php if (isset($companyphone)) echo $companyphone; ?>'
+		tabindex=311 />
+	<br/>
+
+	<label for='companycontact' class='form'><?php echo $l['ContactInfo']['CompanyContact'] ?></label>
+	<input name='companycontact' type='text' id='companycontact' value='<?php if (isset($companycontact)) echo $companycontact; ?>'
+		tabindex=312 />
 	<br/>
 
         <br/><br/>
