@@ -75,6 +75,28 @@
 		tabindex=312 />
 	<br/>
 
+        <br/>
+        <h301> Other </h301>
+        <br/>
+
+        <br/>
+        <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
+        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <br/>
+
+        <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
+        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <br/>
+
+        <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
+        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <br/>
+
+        <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
+        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <br/>
+
+
         <br/><br/>
         <hr><br/>
 
