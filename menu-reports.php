@@ -49,6 +49,8 @@ include_once ("lang/main.php");
 								<option value="AcctSessionTime"> time
 							</select>
 							</form></li>
+                                                <li><a href="rep-history.php"><b>&raquo;</b>
+							<?php echo $l['button']['History'] ?></a></li>
 				</ul>
 		
 				

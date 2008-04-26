@@ -79,6 +79,8 @@ ALTER TABLE operators ADD acct_maintenance_cleanup VARCHAR(32);
 UPDATE operators SET acct_maintenance_cleanup='yes' WHERE username='administrator';
 ALTER TABLE operators ADD acct_maintenance_delete VARCHAR(32);
 UPDATE operators SET acct_maintenance_delete='yes' WHERE username='administrator';
+ALTER TABLE operators ADD rep_history VARCHAR(32);
+UPDATE operators SET rep_history='yes' WHERE username='administrator';
 
 ALTER TABLE hotspots CHANGE website companywebsite VARCHAR(128);
 ALTER TABLE hotspots ADD companyemail VARCHAR(128) AFTER companywebsite;
