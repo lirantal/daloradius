@@ -27,7 +27,8 @@
                         $fileFlag = 0;
                 }
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS'].
+			" WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -45,12 +46,17 @@
                                 $fileFlag = 0;
                         }
 
+                        $currDate = date('Y-m-d H:i:s');
+                        $currBy = $_SESSION['operator_user'];
+
 			// update proxy entry in database
-                        $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." SET retry_delay=".
-				$dbSocket->escapeSimple($retry_delay).", retry_count=".
-                                $dbSocket->escapeSimple($retry_count).", dead_time=".
-                                $dbSocket->escapeSimple($dead_time).", default_fallback=".
-                                $dbSocket->escapeSimple($default_fallback)." WHERE proxyname='$proxyname';";
+                        $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." SET ".
+				" retry_delay=".$dbSocket->escapeSimple($retry_delay).", ".
+				" retry_count=".$dbSocket->escapeSimple($retry_count).", ".
+				" dead_time=".$dbSocket->escapeSimple($dead_time).", ".
+				" default_fallback=".$dbSocket->escapeSimple($default_fallback).", ".
+                                " updatedate='$currDate', updateby='$currBy' ".
+				" WHERE proxyname='$proxyname';";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 

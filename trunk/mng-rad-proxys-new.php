@@ -45,11 +45,17 @@
 
 			if (trim($proxyname) != "") {
 
+                                $currDate = date('Y-m-d H:i:s');
+                                $currBy = $_SESSION['operator_user'];
+
 				// insert proxy to database
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." values (0, '".
-					$dbSocket->escapeSimple($proxyname)."','".$dbSocket->escapeSimple($retry_delay)."','".
-					$dbSocket->escapeSimple($retry_count)."','".$dbSocket->escapeSimple($dead_time)."','".
-					$dbSocket->escapeSimple($default_fallback)."')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." VALUES ".
+					" (0, '".$dbSocket->escapeSimple($proxyname)."','".
+					$dbSocket->escapeSimple($retry_delay)."','".
+					$dbSocket->escapeSimple($retry_count)."','".
+					$dbSocket->escapeSimple($dead_time)."','".
+					$dbSocket->escapeSimple($default_fallback)."', ".
+					" '$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
