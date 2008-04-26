@@ -18,6 +18,9 @@ $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
+$l['all']['Section'] = "Section";
+$l['all']['Item'] = "Item";
+
 $l['all']['RemoveRadacctRecords'] = "Remove Accounting Records";
 
 $l['all']['CleanupSessions'] = "Cleanup sessions older than";
@@ -393,6 +396,7 @@ $l['button']['ActiveRecords'] = "Active Records";
 $l['button']['OnlineUsers'] = "Online Users";
 $l['button']['LastConnectionAttempts'] = "Last Connection Attempts";
 $l['button']['TopUser'] = "Top User";
+$l['button']['History'] = "History";
 
 $l['button']['ServerStatus'] = "Server Status";
 $l['button']['ServicesStatus'] = "Services Status";
@@ -584,6 +588,7 @@ $l['Intro']['graphsoveralldownload.php'] = "User Downlads";
 $l['Intro']['graphsoveralllogins.php'] = "User Logins";
 $l['Intro']['graphsoverallupload.php'] = "User Uploads";
 
+$l['Intro']['rephistory.php'] = "Action History";
 $l['Intro']['replastconnect.php'] = "Last 50 Connection Attempts";
 $l['Intro']['repstatradius.php'] = "Daemons Information";
 $l['Intro']['repstatserver.php'] = "Server Status and Information";
@@ -903,6 +908,8 @@ $l['helpPage']['graphsoveralllogins'] = "Plots a graphical chart of the Login at
 
 
 
+$l['helpPage']['rephistory'] = "Lists all activity performed on management items and provides information on <br/>
+Creation Date, Creation By as well as Updated Date and Update By history fields";
 $l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
 $l['helpPage']['replogsboot'] = "Monitor Operating System Boot log - equivalent to running the dmesg command.";
 $l['helpPage']['replogsdaloradius'] = "Monitor daloRADIUS's Logfile.";
