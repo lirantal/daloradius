@@ -167,8 +167,6 @@
 				<td> $row[3] </td>
 				<td> $totalTime </td>
 				<td> $row[5] </td>
-		 </td>
-
 		</tr>";
 	}
 
