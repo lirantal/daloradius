@@ -18,7 +18,7 @@
 		isset($_POST['secret']) ? $secret = $_POST['secret'] : $secert = "";
 		isset($_POST['ldflag']) ? $ldflag = $_POST['ldflag'] : $ldflag = "";
 		isset($_POST['nostrip']) ? $nostrip = $_POST['nostrip'] : $nostrip = "";
-		isset($_POST['hints']) ? $hints = $_POST['hinst'] : $hints = "";
+		isset($_POST['hints']) ? $hints = $_POST['hints'] : $hints = "";
 		isset($_POST['notrealm']) ? $notrealm = $_POST['notrealm'] :  $notrealm = "";
 		
 		include 'library/opendb.php';
@@ -49,13 +49,21 @@
                                 $fileFlag = 0;
                         }
 
+        	        $currDate = date('Y-m-d H:i:s');
+	                $currBy = $_SESSION['operator_user'];
+
 			// update realm entry in database
-                        $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOREALMS']." SET type='".
-				$dbSocket->escapeSimple($type)."', authhost='".
-                                $dbSocket->escapeSimple($authhost)."', accthost='".$dbSocket->escapeSimple($accthost)."', secret='".
-                                $dbSocket->escapeSimple($secret)."', ldflag='".$dbSocket->escapeSimple($ldflag)."', nostrip='".
-                                $dbSocket->escapeSimple($nostrip)."', hints='".$dbSocket->escapeSimple($hints)."', notrealm='".
-                                $dbSocket->escapeSimple($notrealm)."' WHERE realmname='$realmname';";
+                        $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOREALMS']." SET ".
+				" type='".$dbSocket->escapeSimple($type)."', ".
+				" authhost='".$dbSocket->escapeSimple($authhost)."', ".
+				" accthost='".$dbSocket->escapeSimple($accthost)."', ".
+				" secret='".$dbSocket->escapeSimple($secret)."', ".
+				" ldflag='".$dbSocket->escapeSimple($ldflag)."', ".
+				" nostrip='".$dbSocket->escapeSimple($nostrip)."', ".
+				" hints='".$dbSocket->escapeSimple($hints)."', ".
+				" notrealm='".$dbSocket->escapeSimple($notrealm)."', ".
+				" updatedate='$currDate', updateby='$currBy' ".
+				" WHERE realmname='$realmname';";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
