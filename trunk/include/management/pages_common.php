@@ -71,6 +71,10 @@ function toxbyte($size)
 }
 
 
-
+// set of functions to ease the usage of escaping " chars in echo or print functions
+// thanks to php.net
+function qq($text) {return str_replace('`','"',$text); }
+function printq($text) { print qq($text); }
+function printqn($text) { print qq($text)."\n"; }
 
 ?>
