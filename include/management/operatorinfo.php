@@ -98,6 +98,18 @@ echo "
 	        <input disabled type='text' value='"; if (isset($operator_creationdate)) 
 			echo $operator_creationdate; echo "' />
 	        <br/>
+	        <label for='creationby' class='form'>".$l['all']['CreationBy']."</label>
+	        <input disabled type='text' value='"; if (isset($operator_creationby)) 
+			echo $operator_creationby; echo "' />
+	        <br/>
+                <label for='updatedate' class='form'>".$l['all']['UpdateDate']."</label>
+                <input disabled type='text' value='"; if (isset($operator_updatedate))
+                        echo $operator_updatedate; echo "' />
+                <br/>
+                <label for='updateby' class='form'>".$l['all']['UpdateBy']."</label>
+                <input disabled type='text' value='"; if (isset($operator_updateby))
+                        echo $operator_updateby; echo "' />
+                <br/>
 
                 <br/><br/>
                 <hr><br/>

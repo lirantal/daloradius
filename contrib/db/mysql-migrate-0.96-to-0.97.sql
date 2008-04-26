@@ -94,4 +94,8 @@ ALTER TABLE userinfo ADD creationby VARCHAR(128) AFTER creationdate;
 ALTER TABLE userinfo ADD updatedate DATETIME AFTER creationby;
 ALTER TABLE userinfo ADD updateby VARCHAR(128) AFTER updatedate;
 
+ALTER TABLE operators ADD creationby VARCHAR(128) AFTER creationdate;
+ALTER TABLE operators ADD updatedate DATETIME AFTER creationby;
+ALTER TABLE operators ADD updateby VARCHAR(128) AFTER updatedate;
+
 

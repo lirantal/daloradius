@@ -6,7 +6,6 @@
 	include('library/check_operator_perm.php');
 
 	$logDebugSQL = "";
-	$currDate = date('Y-m-d H:i:s');
 
 	if (isset($_POST['submit'])) {
 		(isset($_REQUEST['operator_username'])) ? $operator_username = $_REQUEST['operator_username'] : $operator_username = "";
@@ -23,13 +22,19 @@
 			// there is no operator in the database with this username
 			if ($res->numRows() == 0) {
 
+				$currDate = date('Y-m-d H:i:s');
+				$currBy = $_SESSION['operator_user'];
+
 				// insert username and password of operator into the database
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." (id, username, password) values (0, '$operator_username', '$operator_password')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOOPERATOR'].
+					" (id, username, password) VALUES (0, '$operator_username', '$operator_password')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
 				// set creation date for this operator
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET creationdate='$currDate' WHERE username='$operator_username' ";
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET ".
+					" creationdate='$currDate', creationby='$currBy' ".
+					" WHERE username='$operator_username' ";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -41,7 +46,9 @@
 					if ($field == "submit")
 						continue; // we skip these variables as it is of no important for us
 			
-					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET $field='$value' WHERE username='$operator_username' ";
+					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET ".
+						" $field='$value' ".
+						" WHERE username='$operator_username' ";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
