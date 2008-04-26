@@ -49,13 +49,17 @@
 
 			if (trim($realmname) != "") {
 
+		                $currDate = date('Y-m-d H:i:s');
+		                $currBy = $_SESSION['operator_user'];
+
 				// insert realm to database
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOREALMS']." values (0, '".
 					$dbSocket->escapeSimple($realmname)."', '".$dbSocket->escapeSimple($type)."', '".
 					$dbSocket->escapeSimple($authhost)."','".$dbSocket->escapeSimple($accthost)."','".
 					$dbSocket->escapeSimple($secret)."','".$dbSocket->escapeSimple($ldflag)."','".
 					$dbSocket->escapeSimple($nostrip)."','".$dbSocket->escapeSimple($hints)."','".
-					$dbSocket->escapeSimple($notrealm)."')";
+					$dbSocket->escapeSimple($notrealm)."' ".
+					", '$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
