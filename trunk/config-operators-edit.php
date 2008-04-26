@@ -7,14 +7,21 @@
 
 	$logDebugSQL = "";
 	include 'library/opendb.php';
-		// required for checking if an attribute belongs to the
-		// radcheck table or the radreply based upon it's name	
-
 
 	if (isset($_REQUEST['submit'])) {
 
 		$operator_username = $_REQUEST['operator_username'];
 		if (trim($operator_username) != "") {
+
+                         $currDate = date('Y-m-d H:i:s');
+                         $currBy = $_SESSION['operator_user'];
+
+                         // set creation date for this operator
+                         $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET ".
+				" updatedate='$currDate', updateby='$currBy' ".
+				" WHERE username='$operator_username' ";
+                         $res = $dbSocket->query($sql);
+                         $logDebugSQL .= $sql . "\n";
 
 			 foreach( $_POST as $field=>$value ) { 
 
@@ -24,7 +31,9 @@
 				if ( ($field == "lastlogin") )
 					continue;	
 					
-					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET $field='$value' WHERE username='$operator_username'";
+					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET ".
+						" $field='$value' ".
+						" WHERE username='$operator_username'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
@@ -63,7 +72,7 @@
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 	$operator_password = $row['password'];
 	$operator_firstname = $row['firstname'];
 	$operator_lastname = $row['lastname'];
@@ -79,15 +88,11 @@
 	$operator_notes = $row['notes'];
 	$operator_lastlogin = $row['lastlogin'];
 	$operator_creationdate = $row['creationdate'];
-
-
-
-
-
+	$operator_creationby = $row['creationby'];
+	$operator_updatedate = $row['updatedate'];
+	$operator_updateby = $row['updateby'];
 
 	include 'library/closedb.php';
-
-
 
     include_once('library/config_read.php');
     $log = "visited page: ";
