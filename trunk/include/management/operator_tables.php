@@ -60,6 +60,7 @@ $arrayPagesAvailable = array(
 	 'rep_topusers' => 'Reporting Core',
 	 'rep_online' => 'Reporting Core',
 	 'rep_lastconnect' => 'Reporting Core',
+	 'rep_history' => 'Reporting Core',
 	 'rep_logs_radius' => 'Reporting Logs',
 	 'rep_stat_services' => 'Reporting Status',
 	 'rep_stat_server' => 'Reporting Status',
