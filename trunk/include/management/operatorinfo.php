@@ -48,7 +48,7 @@ echo "
 			value='".$operator_department."' >
                 <br/>
 
-                <label for='company' class='form'>Operator company</label>
+                <label for='company' class='form'>Operator Company</label>
                 <input name='company' type='text' id='company'
 			value='".$operator_company."' >
                 <br/>
@@ -84,10 +84,8 @@ echo "
                 <br/>
 
                 <label for='notes' class='form'>Operator Notes</label>
-                <input name='notes' type='text' id='notes'
-			value='".$operator_notes."' >
+	        <textarea class='form' name='notes' id='notes' value='".$operator_notes."' ></textarea>
                 <br/>
-
 
 		<br/>
                 <label for='operator_lastlogin' class='form'>Operator Last Login</label>

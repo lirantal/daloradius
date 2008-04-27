@@ -60,7 +60,7 @@ echo "
 	<br/>
 
 	<label for='notes' class='form'>".$l['ContactInfo']['Notes']."</label>
-	<input value='"; if (isset($ui_notes)) echo $ui_notes; echo "' name='notes' tabindex=308 />
+	<textarea class='form' name='notes' value='"; if (isset($ui_notes)) echo $ui_notes; echo "' tabindex=308 ></textarea> 
         <br/>
 
 	<br/>
