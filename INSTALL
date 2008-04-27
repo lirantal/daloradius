@@ -125,10 +125,6 @@ Installation
     installed the radius database on your MySQL system then I
     have provided you with a file that includes both daloRADIUS's own tables as well
     as the tables that FreeRADIUS requires, the file is mysql-daloradius-and-freeradius.sql
-
-    I have also provided you with a sample file of my own test system
-    that you can play with (it includes both freeradius and daloradius tables)
-
  
     Installing the Database Scheme:
 
