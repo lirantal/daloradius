@@ -150,6 +150,10 @@ if(isset($_GET['getValuesForAttribute'])) {
 			drawBytes($num);
 			break;
 
+		case "bitspersecond":
+			drawBitPerSecond($num);
+			break;
+
 
 
 	}
@@ -287,11 +291,19 @@ function drawBitPerSecond($num) {
         objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawBitPerSecond$num' "+
                                 "style='width: 100px' class='form'>"+
                                 "<option value=''>Select...</option>"+
-                                "<option value=''></option>"+
-                                "<option value=''></option>"+
-                                "<option value=''></option>"+
-                                "<option value=''></option>"+
-                                "<option value=''></option>"+
+                                "<option value='32000'>32kbps</option>"+
+                                "<option value='64000'>64kbps</option>"+
+                                "<option value='128000'>128kbps</option>"+
+                                "<option value='256000'>256kbps</option>"+
+                                "<option value='512000'>512kbps</option>"+
+                                "<option value='750000'>750kbps</option>"+
+                                "<option value='1048576'>1mbps</option>"+
+                                "<option value='1572864'>1.5mbps</option>"+
+                                "<option value='2097152'>2mbps</option>"+
+                                "<option value='3145728'>3mbps</option>"+
+                                "<option value='5242880'>5mbps</option>"+
+                                "<option value='8388608'>8mbps</option>"+
+                                "<option value='10485760'>10mbps</option>"+
                               "</select>";
 
 EOF;
