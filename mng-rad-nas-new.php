@@ -174,7 +174,7 @@
                 <br />
 
                 <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
-                <input name='nasdescription' type='text' id='nasdescription' value='' tabindex=107 />
+                <textarea class='form' name='nasdescription' id='nasdescription' value='' tabindex=107 ></textarea>
                 <br />
 
                 <br/><br/>

@@ -593,14 +593,14 @@ option {
 }
 
 
-textarea {
-	width:400px;
-	padding:4px;
-	font:90% Verdana;
-	border:1px solid #eee;
-	height:200px;
-	display:block;
-	color:#777;
+textarea.form {
+        padding:4px;
+	margin:2px;
+        background:#ffffff;
+        color:#000000;
+        font:90% Verdana;
+        width:175px;
+	height:60px;
 }
 
 p img {

@@ -36,8 +36,7 @@
 	<br/>
 
 	<label for='address' class='form'><?php echo $l['ContactInfo']['Address'] ?></label>
-	<input name='address' type='text' id='address' value='<?php if (isset($address)) echo $address; ?>'
-		tabindex=305 />
+        <textarea class='form' name='address' value='<?php if (isset($address)) echo $address; ?>' tabindex=305 ></textarea>
 	<br/>
 
 	<label for='phone1' class='form'><?php echo $l['ContactInfo']['Phone1'] ?></label>

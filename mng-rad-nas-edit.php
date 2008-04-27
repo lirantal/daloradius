@@ -213,7 +213,8 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
                 <br />
 
                 <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
-                <input name='nasdescription' type='text' id='nasdescription' value='<?php echo $nasdescription ?>' tabindex=107 />
+	        <textarea class='form' name='nasdescription' id='nasdescription' value='<?php echo $nasdescription ?>' tabindex=308 >
+		</textarea>
                 <br />
 
                 <br/><br/>
