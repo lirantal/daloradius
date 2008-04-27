@@ -28,10 +28,13 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
- 
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
-
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
 <?php
 
 	include ("menu-mng-users.php");
@@ -45,16 +48,14 @@
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo "searched for user $username" ?><br/>
-					<br/>
 				</div>
-				<br/>
 
 <br/>
 
 <?php
 
-
-    include 'library/opendb.php';
+        include 'include/management/pages_common.php';
+	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as method to get total rows - this is required for the pages_numbering.php page
@@ -121,20 +122,37 @@
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Value&orderType=$orderType\">
 		".$l['all']['Password']."</a>
 		</th>
-
-		<th scope='col'> ".$l['all']['Action']." </th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
-			echo "<tr>
-					<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
-					<td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]'> $row[0] </a> </td>
-					<td> $row[1] </td>
-					<td>
-					 <a href='config-maint-test-user.php?username=$row[0]&password=$row[1]'> ".$l['all']['TestUser']." </a>
-					 <a href='acct-username.php?username=$row[0]'> ".$l['all']['Accounting']." </a>
-			 </td>
+		printqn("<tr>
+			<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
+                        <td> <a class='tablenovisit' href='javascript:return;'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo\",\"retBandwidthInfo\",\"divContainer\",\"username=$row[0]\");
+                                        javascript:__displayTooltip();'
+                                tooltipText='
+                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
+	                                        {$l['Tooltip']['UserEdit']}
+                                        </a>&nbsp
+					<br/>
+					<a class=\"toolTip\" href=\"config-maint-test-user.php?username=$row[0]&password=$row[1]\">
+						{$l['all']['TestUser']}
+					</a>&nbsp
+					 <a class=\"toolTip\" href=\"acct-username.php?username=$row[0]\">
+						{$l['all']['Accounting']}
+					</a>
+                                        <br/><br/>
 
-			</tr>";
+                                        <div id=\"divContainer\">
+                                                Loading...
+                                        </div>
+                                        <br/>'
+                                >$row[0]</a>
+                        </td>
+
+			<td> $row[1] </td>
+
+			</tr>");
+
 	}
 
         echo "
@@ -174,6 +192,14 @@
 		
 </div>
 </div>
+
+<script type="text/javascript">
+	var tooltipObj = new DHTMLgoodies_formTooltip();
+	tooltipObj.setTooltipPosition('right');
+	tooltipObj.setPageBgColor('#EEEEEE');
+	tooltipObj.setTooltipCornerSize(15);
+	tooltipObj.initFormFieldTooltip();
+</script>
 
 
 </body>

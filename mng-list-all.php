@@ -21,6 +21,10 @@
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
 <script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
@@ -50,7 +54,8 @@
 
 <?php
 
-    include 'library/opendb.php';
+	include 'include/management/pages_common.php';
+	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
@@ -137,16 +142,25 @@
 		</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
-		echo "<tr>
+		printqn("
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
 			<td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
-                                tooltipText=\"
-	                                <a class='toolTip' href='mng-edit.php?username=$row[0]'>".$l['Tooltip']['UserEdit']."</a>
-                                        <br/>\"
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo\",\"retBandwidthInfo\",\"divContainer\",\"username=$row[0]\");
+					javascript:__displayTooltip();'
+                                tooltipText='
+	                                <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
+					{$l['Tooltip']['UserEdit']}
+					</a>
+					<br/><br/>
+
+					<div id=\"divContainer\">
+						Loading...
+					</div>
+                                        <br/>'
 				>$row[0]</a>
-				</td>
-			";
+			</td>
+			");
+
 		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 			echo "<td>[Password is hidden]</td>";
 		} else {
@@ -197,11 +211,11 @@
 
 
 <script type="text/javascript">
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();
+	var tooltipObj = new DHTMLgoodies_formTooltip();
+	tooltipObj.setTooltipPosition('right');
+	tooltipObj.setPageBgColor('#EEEEEE');
+	tooltipObj.setTooltipCornerSize(15);
+	tooltipObj.initFormFieldTooltip();
 </script>
 
 </body>
