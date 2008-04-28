@@ -51,6 +51,15 @@
 
 	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
 	$username = $dbSocket->escapeSimple($username);	
+
+
+
+	// setup php session variables for exporting
+	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+	$_SESSION['reportQuery'] = " WHERE UserName='$username'";
+	$_SESSION['reportType'] = "accountingGeneric";
+
+
 	
 	//checking if the username exist in the db
 	$sql = "select * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName like '$username'";
@@ -175,11 +184,39 @@
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	
-    $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE UserName='$username';";
+    	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		" ON ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		".mac WHERE UserName='$username';";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 	
-    $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE UserName='$username' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		" ON ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		".mac WHERE UserName='$username' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -189,14 +226,17 @@
 
         echo "<table border='0' class='table1'>\n";
         echo "
-                        <thead>
-                                <tr>
-                                <th colspan='15'>".$l['all']['Records']."</th>
-                                </tr>
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
+ 		<thead>
+			<tr>
+                        <th colspan='12' align='left'>
+
+			<input class='button' type='button' value='CSV Export'
+			onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+			/>
+			<br/>
                 <br/>
         ";
+
 
         if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username");
