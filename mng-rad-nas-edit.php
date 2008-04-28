@@ -168,6 +168,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
                 <label for='nastype' class='form'><?php echo $l['all']['NasType'] ?></label>
                 <input name='nastype' type='text' id='nastype' value='<?php echo $nastype ?>' tabindex=102 />
                 <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
+                        <option value="">Select Type...</option>
                         <option value="other">other</option>
                         <option value="cisco">cisco</option>
                         <option value="livingston">livingston</option>

@@ -129,6 +129,7 @@
                 <label for='nastype' class='form'><?php echo $l['all']['NasType'] ?></label>
                 <input name='nastype' type='text' id='nastype' value='' tabindex=102 />
                 <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
+			<option value="">Select Type...</option>
 	                <option value="other">other</option>
 	                <option value="cisco">cisco</option>
 	                <option value="livingston">livingston</option>
@@ -166,7 +167,7 @@
 		<br/>
 
                 <label for='nasports' class='form'><?php echo $l['all']['NasPorts'] ?></label>
-                <input name='nasports' type='text' id='nasports' value='' tabindex=105 />
+                <input name='nasports' type='text' id='nasports' value='0' tabindex=105 />
                 <br />
 
                 <label for='nascommunity' class='form'><?php echo $l['all']['NasCommunity'] ?></label>
