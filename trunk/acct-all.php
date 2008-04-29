@@ -42,6 +42,11 @@
 	include 'include/management/pages_common.php';	
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+        $_SESSION['reportQuery'] = "";
+        $_SESSION['reportType'] = "accountingGeneric";
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac;";
 	$res = $dbSocket->query($sql);
@@ -58,15 +63,16 @@
 	/* END */
 
 	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-			<th colspan='15'>".$l['all']['Records']."</th>
-			</tr>
+        echo "
+                <thead>
+                        <tr>
+                        <th colspan='12' align='left'>
 
-			<tr>
-			<th colspan='12' align='left'>
-		<br/>
+                        <input class='button' type='button' value='CSV Export'
+                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                        />
+                        <br/>
+                <br/>
         ";
 
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
