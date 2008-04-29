@@ -105,15 +105,17 @@
 
                 foreach ($clearSessionsUsers as $variable=>$value) {
 
-                        if (trim($variable) != "") {
+                        if (trim($value) != "") {
 
-                                $userSessions = $value;
+				list($userSessions,$acctStartTime) = split('\|\|', $value);
+
                                 $allUsernames .= $userSessions . ", ";
 
                                 include 'library/opendb.php';
 
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE Username='$userSessions'
-					AND AcctStopTime='0000-00-00 00:00:00'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+					" WHERE Username='$userSessions' AND AcctStartTime='$acctStartTime' ".
+					" AND AcctStopTime='0000-00-00 00:00:00'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 

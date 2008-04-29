@@ -153,13 +153,15 @@
 		$totalTime = seconds2time($dateDiff);
 
 		echo "<tr>
-				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$row[0]'>
+				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$row[0]||$row[3]'>
 					<a class='tablenovisit' href='javascript:return;'
 					onclick=\"javascript:__displayTooltip();\" 
 					tooltipText=\"
-						<a class='toolTip' href='mng-edit.php?username=$row[0]'>".$l['Tooltip']['UserEdit']."</a>
-						<a class='toolTip' href='config-maint-disconnect-user.php?username=$row[0]&nasaddr=$row[5]'>
-						".$l['all']['Disconnect']."</a>
+						<a class='toolTip' href='mng-edit.php?username=$row[0]'>".
+							$l['Tooltip']['UserEdit']."</a>
+						&nbsp;
+						<a class='toolTip' href='config-maint-disconnect-user.php?username=$row[0]&nasaddr=$row[5]'>".
+							$l['all']['Disconnect']."</a>
 						<br/>\"
 					>$row[0]</a>
 					</td>
