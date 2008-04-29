@@ -18,8 +18,8 @@ if (isset($_GET['retBandwidthInfo'])) {
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	$upload = bytes2megabytes($row['Upload'])."Mb";
-	$download = bytes2megabytes($row['Download'])."Mb";
+	$upload = toxbyte($row['Upload']);
+	$download = toxbyte($row['Download']);
 	
 
 	printqn("
