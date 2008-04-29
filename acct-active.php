@@ -45,6 +45,7 @@
 	include 'library/opendb.php';
 	include 'library/datediff.php';
         include 'include/common/calcs.php';
+	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	$currdate = date("j M Y");
 
@@ -72,10 +73,6 @@
 	echo "<table border='0' class='table1'>\n";
 	echo "
 		<thead>
-				<tr>
-				<th colspan='7'>".$l['all']['Records']."</th>
-				</tr>
-
 				<tr>
 				<th colspan='12' align='left'>
 		<br/>
@@ -131,13 +128,27 @@
 			}
 		}
 
-                echo "<tr>
-                        <td> <a class='tablenovisit' href='mng-edit.php?username=$row[0]'> $row[0] </a> </td>
+                printqn("<tr>
+                        <td> <a class='tablenovisit' href='javascript:return;'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
+                                        javascript:__displayTooltip();'
+                                tooltipText='
+                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
+                                                {$l['Tooltip']['UserEdit']}</a>
+                                        <br/><br/>
+
+                                        <div id=\"divContainerUserInfo\">
+                                                Loading...
+                                        </div>
+                                        <br/>'
+                                >$row[0]</a>
+                        </td>
+
                         <td> $row[1] </td>
                         <td> $row[2] </td>
                         <td>".seconds2time($row[3])."</td>
                         <td> $status </td>
-			<td> ";
+			<td> ");
 
 		if ($row[1] == "Expiration") {		
 			$difference = datediff('d', $row[2], "$currdate", false);
@@ -197,6 +208,13 @@
 </div>
 </div>
 
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>
