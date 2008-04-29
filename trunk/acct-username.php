@@ -310,10 +310,27 @@
 		</th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
-                echo "<tr>
+
+                printqn("<tr>
                         <td> $row[0] </td>
                         <td> $row[1] </td>
-                        <td> <a class='tablenovisit' href='mng-edit.php?username=$row[2]'> $row[2] </a> </td>
+
+                        <td> <a class='tablenovisit' href='javascript:return;'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo.php\",\"retBandwidthInfo\",\"divContainer\",\"username=$row[2]\");
+                                        javascript:__displayTooltip();'
+                                tooltipText='
+                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
+                                        {$l['Tooltip']['UserEdit']}
+                                        </a>
+                                        <br/><br/>
+
+                                        <div id=\"divContainer\">
+                                                Loading...
+                                        </div>
+                                        <br/>'
+                                >$row[2]</a>
+                        </td>
+
                         <td> $row[3] </td>
                         <td> $row[4] </td>
                         <td> $row[5] </td>
@@ -322,7 +339,7 @@
                         <td> ".toxbyte($row[8])."</td>
                         <td> $row[9] </td>
                         <td> $row[10] </td>
-                </tr>";
+                </tr>");
         }
 
         echo "
@@ -366,6 +383,13 @@
 </div>
 </div>
 
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>
