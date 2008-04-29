@@ -47,10 +47,19 @@
 
 <?php
 
-    include 'library/opendb.php';
+	include 'library/opendb.php';
 	include 'include/common/calcs.php';
 
-	$sql = "select ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, count(distinct(UserName)) as uniqueusers, count(radacctid) as totalhits, avg(AcctSessionTime) as avgsessiontime, sum(AcctSessionTime) as totaltime from ".$configValues['CONFIG_DB_TBL_RADACCT']." join ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid like ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) group by ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name  ORDER BY $orderBy $orderType;;";
+	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		".name AS hotspot, count(distinct(UserName)) AS uniqueusers, count(radacctid) AS totalhits, ".
+		" avg(AcctSessionTime) AS avgsessiontime, sum(AcctSessionTime) AS totaltime, ".
+		" avg(AcctInputOctets) AS avgInputOctets, sum(AcctInputOctets) AS sumInputOctets, ".
+		" avg(AcctOutputOctets) AS avgOutputOctets, sum(AcctOutputOctets) AS sumOutputOctets ".
+		" FROM ".
+		$configValues['CONFIG_DB_TBL_RADACCT']." JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		" on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid LIKE ".
+		$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) GROUP BY ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
+		".name  ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
