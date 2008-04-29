@@ -61,6 +61,13 @@
 	$username = $dbSocket->escapeSimple($username);
 	$startdate = $dbSocket->escapeSimple($startdate);
 	$enddate = $dbSocket->escapeSimple($enddate);
+
+
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+        $_SESSION['reportQuery'] = " WHERE AcctStartTime>'$startdate' AND AcctStartTime<'$enddate' AND UserName LIKE '$username'";
+        $_SESSION['reportType'] = "accountingGeneric";
+
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
     $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE AcctStartTime>'$startdate' and AcctStartTime<'$enddate' and UserName like '$username';";
@@ -86,16 +93,17 @@
 	$session_minutes=0;
 
 	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-			<th colspan='15'>".$l['all']['Records']."</th>
-			</tr>
+        echo "
+                <thead>
+                        <tr>
+                        <th colspan='12' align='left'>
 
-			<tr>
-			<th colspan='12' align='left'>
-		<br/>
-	";
+                        <input class='button' type='button' value='CSV Export'
+                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                        />
+                        <br/>
+                <br/>
+        ";
 
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");

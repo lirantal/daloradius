@@ -51,6 +51,11 @@
 	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
 	$nasipaddress = $dbSocket->escapeSimple($nasipaddress);
 
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+        $_SESSION['reportQuery'] = " WHERE NASIPAddress='$nasipaddress'";
+        $_SESSION['reportType'] = "accountingGeneric";
+
 	
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
@@ -71,13 +76,14 @@
 
         echo "<table border='0' class='table1'>\n";
         echo "
-                        <thead>
-                                <tr>
-                                <th colspan='15'>".$l['all']['Records']."</th>
-                                </tr>
+                <thead>
+                        <tr>
+                        <th colspan='12' align='left'>
 
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
+                        <input class='button' type='button' value='CSV Export'
+                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                        />
+                        <br/>
                 <br/>
         ";
 
