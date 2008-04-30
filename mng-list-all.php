@@ -145,15 +145,14 @@
 		printqn("
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
 			<td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo\",\"retBandwidthInfo\",\"divContainer\",\"username=$row[0]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
 					javascript:__displayTooltip();'
                                 tooltipText='
 	                                <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-					{$l['Tooltip']['UserEdit']}
-					</a>
+						{$l['Tooltip']['UserEdit']}</a>
 					<br/><br/>
 
-					<div id=\"divContainer\">
+					<div id=\"divContainerUserInfo\">
 						Loading...
 					</div>
                                         <br/>'
