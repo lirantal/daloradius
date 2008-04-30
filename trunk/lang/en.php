@@ -18,6 +18,8 @@ $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
+$l['all']['Compare'] = "Compare";
+
 $l['all']['Section'] = "Section";
 $l['all']['Item'] = "Item";
 
