@@ -62,7 +62,7 @@ function toxbyte($size)
         }
 
         // Bytes
-        if ($size <= 1024 )
+        if ( ($size != "") && ($size <= 1024 ) )
         {
                 $ret = $size." B";
                 return $ret;
