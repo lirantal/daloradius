@@ -239,12 +239,20 @@ function removeCheckbox(formName,pageDst) {
 
         var count = 0;
         var form = document.getElementsByTagName('input');
+
         for (var i=0; i < form.length; ++i) {
                 var e = form[i];
                 if (e.type == 'checkbox'
                 && e.checked)
                 ++count;
         }
+
+
+	// if no items were checked there's no reason to submit the form
+	if (count == 0) {
+		alert("No items selected");
+		return;
+	}
 
 
         if (confirm("You are about to remove " + count + " records from database\nDo you want to continue?"))  {
