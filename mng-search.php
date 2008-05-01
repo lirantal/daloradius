@@ -127,22 +127,22 @@
 		printqn("<tr>
 			<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo\",\"retBandwidthInfo\",\"divContainer\",\"username=$row[0]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-	                                        {$l['Tooltip']['UserEdit']}
-                                        </a>&nbsp
+	                                        {$l['Tooltip']['UserEdit']}</a>
+                                        &nbsp
 					<br/>
 					<a class=\"toolTip\" href=\"config-maint-test-user.php?username=$row[0]&password=$row[1]\">
-						{$l['all']['TestUser']}
-					</a>&nbsp
+						{$l['all']['TestUser']}</a>
+					&nbsp
+					<br/>
 					 <a class=\"toolTip\" href=\"acct-username.php?username=$row[0]\">
-						{$l['all']['Accounting']}
-					</a>
+						{$l['all']['Accounting']}</a>
                                         <br/><br/>
 
-                                        <div id=\"divContainer\">
+                                        <div id=\"divContainerUserInfo\">
                                                 Loading...
                                         </div>
                                         <br/>'
