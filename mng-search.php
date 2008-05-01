@@ -88,7 +88,7 @@
 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'username[]','searchusers')\">None</a>
                         <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeUserCheckbox(\"searchusers\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"searchusers\",\"mng-del.php\")' />
                                 <br/><br/>
 	";
 
