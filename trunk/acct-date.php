@@ -199,7 +199,7 @@
                         </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
