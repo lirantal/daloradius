@@ -66,6 +66,35 @@ if (isset($_GET['reportFormat'])) {
 
 				break;
 
+
+                case "usernameListGeneric":
+				include_once('../../library/opendb.php');
+
+				$outputHeader = "Id,Username,Attribute,Value".
+						"\n";
+				$outputContent = "";
+
+                                $sql = "SELECT Id, Username, Attribute, Value FROM ".
+                                        $configValues['CONFIG_DB_TBL_RADCHECK'].
+                                        " $reportQuery ORDER BY Username ASC";
+
+
+				if ($reportFormat == "csv") {
+
+				        $res = $dbSocket->query($sql);
+
+				        while($row = $res->fetchRow()) {
+						$outputContent .= "$row[0],$row[1],$row[2]\n";
+					}
+
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+
+					include_once('../../library/closedb.php');
+				}
+
+                                break;
+
 	}
 
 

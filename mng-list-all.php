@@ -57,6 +57,13 @@
 	include 'include/management/pages_common.php';
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+
+
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
+        $_SESSION['reportQuery'] = " WHERE UserName LIKE '%'";
+        $_SESSION['reportType'] = "usernameListGeneric";
+
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
@@ -99,6 +106,10 @@
 				<a class=\"table\" href=\"javascript:SetChecked(0,'username[]','listallusers')\">None</a>
 			<br/>
 				<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
+        	                <input class='button' type='button' value='CSV Export'
+	                        	onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                		        />
+
 				<br/><br/>
 		";
 
@@ -145,7 +156,7 @@
 		printqn("
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
 			<td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserinfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
 					javascript:__displayTooltip();'
                                 tooltipText='
 	                                <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
