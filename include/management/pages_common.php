@@ -77,4 +77,41 @@ function qq($text) {return str_replace('`','"',$text); }
 function printq($text) { print qq($text); }
 function printqn($text) { print qq($text)."\n"; }
 
+
+
+// function taken from dialup_admin
+function time2str($time) {
+
+	$str = "";				// initialize variable
+	$time = floor($time);
+	if (!$time)
+		return "0 seconds";
+	$d = $time/86400;
+	$d = floor($d);
+	if ($d){
+		$str .= "$d days, ";
+		$time = $time % 86400;
+	}
+	$h = $time/3600;
+	$h = floor($h);
+	if ($h){
+		$str .= "$h hours, ";
+		$time = $time % 3600;
+	}
+	$m = $time/60;
+	$m = floor($m);
+	if ($m){
+		$str .= "$m minutes, ";
+		$time = $time % 60;
+	}
+	if ($time)
+		$str .= "$time seconds, ";
+	$str = ereg_replace(', $','',$str);
+	return $str;
+}
+
+
+
+
+
 ?>

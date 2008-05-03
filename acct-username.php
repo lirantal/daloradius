@@ -45,7 +45,6 @@
 <?php
 
     include 'library/opendb.php';
-	include 'include/common/calcs.php';
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
@@ -159,20 +158,20 @@
         	echo "<td> N/A </td>";
 		$remains_per = 'N/A';
 	        $remains_time = 'N/A';
-	        echo "<td>".seconds2time($used)."</td>";
-		echo "<td>".seconds2time($remains_time)."</td>";
+	        echo "<td>".time2str($used)."</td>";
+		echo "<td>".time2str($remains_time)."</td>";
 	} else if ($used > $credit) {
-		echo "<td>".seconds2time($credit)."</td>";
+		echo "<td>".time2str($credit)."</td>";
 		$remains_per = '0';					// used up more than credit, 0% remains
 		$remains_time = ($used-$credit);
-	        echo "<td><b><font color='#FF3300'>".seconds2time($used)."</font></b></td>";
-		echo "<td><b><font color='#FF3300'>".seconds2time($remains_time)." overdue</font></b></td>";
+	        echo "<td><b><font color='#FF3300'>".time2str($used)."</font></b></td>";
+		echo "<td><b><font color='#FF3300'>".time2str($remains_time)." overdue</font></b></td>";
 	} else {
-		echo "<td>".seconds2time($credit)."</td>";
+		echo "<td>".time2str($credit)."</td>";
 	        $remains_per = 100 - round(($used / $credit) * 100);
 	        $remains_time = $credit - $used;
-	        echo "<td>".seconds2time($used)."</td>";
-		echo "<td>".seconds2time($remains_time)."</td>";
+	        echo "<td>".time2str($used)."</td>";
+		echo "<td>".time2str($remains_time)."</td>";
 	}
 
         echo "<td> $remains_per%</td>";
@@ -350,7 +349,7 @@
                         <td> $row[3] </td>
                         <td> $row[4] </td>
                         <td> $row[5] </td>
-                        <td> ".seconds2time($row[6])." </td>
+                        <td> ".time2str($row[6])." </td>
                         <td> ".toxbyte($row[7])."</td>
                         <td> ".toxbyte($row[8])."</td>
                         <td> $row[9] </td>
