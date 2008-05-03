@@ -38,7 +38,6 @@
 <?php
 
 	include 'library/opendb.php';
-	include 'include/common/calcs.php';	
 	include 'include/management/pages_common.php';	
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
@@ -187,7 +186,7 @@
 				<td> $row[3] </td>
 				<td> $row[4] </td>
 				<td> $row[5] </td>
-				<td> ".seconds2time($row[6])."</td>
+				<td> ".time2str($row[6])."</td>
 				<td> ".toxbyte($row[7])."</td>
 				<td> ".toxbyte($row[8])."</td>
 				<td> $row[9] </td>

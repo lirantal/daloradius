@@ -48,7 +48,7 @@
 <?php
 
 	include 'library/opendb.php';
-	include 'include/common/calcs.php';
+	include 'include/management/pages_common.php';
 
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
 		".name AS hotspot, count(distinct(UserName)) AS uniqueusers, count(radacctid) AS totalhits, ".
@@ -69,7 +69,7 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='5'>".$l['all']['Records']."</th>
+                                <th colspan='10'>".$l['all']['Records']."</th>
                                 </tr>
                         </thead>
                 ";
@@ -106,14 +106,26 @@
 			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=$orderType\">
 			".$l['all']['TotalTime']."</a>
 			</th>
+			<th scope='col'> 
+			<br/>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=sumInputOctets&orderType=$orderType\">
+			Total Uploads</a>
+			</th>
+			<th scope='col'> 
+			<br/>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=sumOutputOctets&orderType=$orderType\">
+			Total Downloads</a>
+			</th>
         </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
                         <td> $row[0] </td>
                         <td> $row[1] </td>
                         <td> $row[2] </td>
-                        <td> ".seconds2time($row[3])." </td>
-                        <td> ".seconds2time($row[4])." </td>
+                        <td> ".time2str($row[3])." </td>
+                        <td> ".time2str($row[4])." </td>
+			<td> ".toxbyte($row[6])."</td>
+			<td> ".toxbyte($row[7])."</td>
                 </tr>";
         }
         echo "</table>";
