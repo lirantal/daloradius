@@ -49,6 +49,12 @@
 	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
 	$hotspot = $dbSocket->escapeSimple($hotspot);
 
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+        $_SESSION['reportQuery'] = " WHERE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name='$hotspot'";
+        $_SESSION['reportType'] = "accountingGeneric";
+
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name='$hotspot';";
 	$res = $dbSocket->query($sql);
@@ -69,12 +75,14 @@
         echo "<table border='0' class='table1'>\n";
         echo "
                         <thead>
-                                <tr>
-                                <th colspan='15'>Records</th>
-                                </tr>
+				<tr>
+                                <th colspan='12' align='left'>
 
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
+                        <input class='button' type='button' value='CSV Export'
+                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                        />
+			<br/>
+
                 <br/>
         ";
 
