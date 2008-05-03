@@ -1,9 +1,6 @@
 <?php
 
 include_once('pages_common.php');
-include_once('../common/calcs.php');
-
-
 
 if (isset($_GET['retBandwidthInfo'])) {
 
