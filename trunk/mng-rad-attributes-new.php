@@ -167,9 +167,9 @@
 
                 <li class='fieldset'>
 		<label for='RecommendedTooltip' class='form'><?php echo $l['all']['RecommendedTooltip'] ?></label>
-		<input name='RecommendedTooltip' type='text' id='RecommendedTooltip' value='' tabindex=105
+		<textarea class='form' name='RecommendedTooltip' type='text' id='RecommendedTooltip' tabindex=105
                         onfocus="javascript:toggleShowDiv('RecommendedTooltipTooltip')"
-                        onblur="javascript:toggleShowDiv('RecommendedTooltipTooltip')" />
+                        onblur="javascript:toggleShowDiv('RecommendedTooltipTooltip')" ></textarea>
                 <div id='RecommendedTooltipTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['RecommendedTooltipTooltip'] ?>
