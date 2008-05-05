@@ -1,9 +1,6 @@
 <?php
 
 include_once('pages_common.php');
-include_once('../common/calcs.php');
-
-
 
 if (isset($_GET['retHotspotGeneralStat'])) {
 
@@ -32,14 +29,13 @@ if (isset($_GET['retHotspotGeneralStat'])) {
 	$sumDownload = toxbyte($row['sumOutputOctets']);
 	$sumHits = $row['totalhits'];
 
+
 	printqn("
 		var divContainer = document.getElementById('{$divContainer}');
-		divContainer.innerHTML = 'Total Uploads: $sumUpload <br/> ".
-					" Total Downloads: $sumDownload <br/> ".
-					" Total Hits: $sumHits'
+		divContainer.innerHTML = '<span style=\"font-weight:normal;\">Total Uploads:</span> $sumUpload <br/> ".
+					" <span style=\"font-weight:normal;\">Total Downloads:</span> $sumDownload <br/> ".
+					" <span style=\"font-weight:normal;\">Total Hits:</span> $sumHits'
 	");
-
-
 
 }
 
