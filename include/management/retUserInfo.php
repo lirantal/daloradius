@@ -21,7 +21,8 @@ if (isset($_GET['retBandwidthInfo'])) {
 
 	printqn("
 		var divContainer = document.getElementById('{$divContainer}');
-		divContainer.innerHTML = 'Upload: $upload <br/> Download: $download';
+		divContainer.innerHTML = '<span style=\"font-weight:normal;\">Upload:</span> $upload <br/>".
+						"<span style=\"font-weight:normal;\">Download: </span> $download';
 	");
 
 
