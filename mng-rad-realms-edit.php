@@ -139,7 +139,7 @@
 					<br/>
 				</div>
                 <?php
-                        include_once('include/common/actionMessages.php');
+                        include_once('include/management/actionMessages.php');
                 ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">

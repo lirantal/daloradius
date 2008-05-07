@@ -87,7 +87,7 @@
 					<br/>
 				</div>
                 <?php   
-                        include_once('include/common/actionMessages.php');
+                        include_once('include/management/actionMessages.php');
                 ?>
 
 
