@@ -100,4 +100,11 @@ ALTER TABLE operators ADD creationby VARCHAR(128) AFTER creationdate;
 ALTER TABLE operators ADD updatedate DATETIME AFTER creationby;
 ALTER TABLE operators ADD updateby VARCHAR(128) AFTER updatedate;
 
-
+ALTER TABLE operators ADD mng_rad_ippool_list VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_ippool_new VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_ippool_edit VARCHAR(32);
+ALTER TABLE operators ADD mng_rad_ippool_del VARCHAR(32);
+UPDATE operators SET mng_rad_ippool_list='yes' WHERE username='administrator';
+UPDATE operators SET mng_rad_ippool_new='yes' WHERE username='administrator';
+UPDATE operators SET mng_rad_ippool_edit='yes' WHERE username='administrator';
+UPDATE operators SET mng_rad_ippool_del='yes' WHERE username='administrator';
