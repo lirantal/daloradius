@@ -192,6 +192,10 @@ CREATE TABLE `operators` (
   `mng_rad_proxys_del` varchar(32) default NULL,
   `acct_maintenance_cleanup` varchar(32) default NULL,
   `acct_maintenance_delete` varchar(32) default NULL,
+  `mng_rad_ippool_list` varchar(32) default NULL,
+  `mng_rad_ippool_new` varchar(32) default NULL,
+  `mng_rad_ippool_edit` varchar(32) default NULL,
+  `mng_rad_ippool_del` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
