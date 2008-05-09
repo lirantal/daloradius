@@ -101,12 +101,12 @@
 		<br/>
 
                 <label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
-                <input name='poolname' type='text' id='poolname' value='' tabindex=100 />
+                <input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
                 <br />
 
 
                 <label for='ipaddress' class='form'><?php echo $l['all']['IPAddress'] ?></label>
-                <input name='ipaddress' type='text' id='ipaddress' value='' tabindex=101 />
+                <input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
                 <br />
 
                 <br/><br/>
