@@ -208,35 +208,32 @@ $l['Tooltip']['BusinessWebsiteTooltip'] = "";
 $l['Tooltip']['BusinessEmailTooltip'] = "";
 $l['Tooltip']['BusinessContactPersonTooltip'] = "";
 
-$l['Tooltip']['proxyNameTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['proxyRetryDelayTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['proxyRetryCountTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['proxyDeadTimeTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['proxyDefaultFallbackTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-
-$l['Tooltip']['realmNameTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmTypeTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmSecretTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmAuthhostTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmAccthostTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmLdflagTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmNostripTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmHintsTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['realmNotrealmTooltip'] = "Example: <br/>&nbsp;&nbsp;&nbsp;
-                                        .<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['proxyNameTooltip'] = "Proxy name";
+$l['Tooltip']['proxyRetryDelayTooltip'] = "The time (in seconds) to wait <br/>
+					for a response from the proxy, <br/>
+					before re-sending the proxied request.";
+$l['Tooltip']['proxyRetryCountTooltip'] = "The number of retries to send <br/>
+					before giving up, and sending a <br/>
+					reject message to the NAS.";
+$l['Tooltip']['proxyDeadTimeTooltip'] = "If the home server does not respond <br/>
+					to any of the multiple retries, <br/>
+					then FreeRADIUS will stop sending it <br/>
+					proxy requests, and mark it 'dead'.";
+$l['Tooltip']['proxyDefaultFallbackTooltip'] = "If all exact matching realms <br/>
+						did not respond, we can try the <br/>
+						";
+$l['Tooltip']['realmNameTooltip'] = "Realm name";
+$l['Tooltip']['realmTypeTooltip'] = "Set to radius for default";
+$l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS shared secret";
+$l['Tooltip']['realmAuthhostTooltip'] = "Realm authentication host";
+$l['Tooltip']['realmAccthostTooltip'] = "Realm accounting host";
+$l['Tooltip']['realmLdflagTooltip'] = "Allows for load balancing<br/>
+					Allowed values are 'fail_over' <br/>
+					and 'round_robin'.";
+$l['Tooltip']['realmNostripTooltip'] = "Whether to strip or not the <br/>
+					realm suffix";
+$l['Tooltip']['realmHintsTooltip'] = "";
+$l['Tooltip']['realmNotrealmTooltip'] = "";
 
 
 $l['Tooltip']['vendorNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
@@ -813,11 +810,16 @@ for convenience reasons and daloRADIUS will translate it to %
 ";
 
 
-$l['helpPage']['mngradippool'] = "";
-$l['helpPage']['mngradippoollist'] = "";
-$l['helpPage']['mngradippoolnew'] = "";
-$l['helpPage']['mngradippooledit'] = "";
-$l['helpPage']['mngradippooldel'] = "";
+$l['helpPage']['mngradippool'] = "
+<h200><b>List IP Pools</b></h200> - List Configured IP Pools and their assigned IP Addresses <br/>
+<h200><b>New IP Pool</b></h200> - Add a new IP Address to a configured IP Pool <br/>
+<h200><b>Edit IP Pool</b></h200> - Edit an IP Address for a configured IP Pool <br/>
+<h200><b>Remove IP Pool</b></h200> - Remove an IP Address from a configured IP Pool <br/>
+";
+$l['helpPage']['mngradippoollist'] = "<h200><b>List IP Pools</b></h200> - List Configured IP Pools and their assigned IP Addresses <br/>";
+$l['helpPage']['mngradippoolnew'] = "<h200><b>New IP Pool</b></h200> - Add a new IP Address to a configured IP Pool <br/>";
+$l['helpPage']['mngradippooledit'] = "<h200><b>Edit IP Pool</b></h200> - Edit an IP Address for a configured IP Pool <br/>";
+$l['helpPage']['mngradippooldel'] = "<h200><b>Remove IP Pool</b></h200> - Remove an IP Address from a configured IP Pool <br/>";
 
 
 $l['helpPage']['mngradnas'] = "";
