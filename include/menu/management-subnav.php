@@ -9,6 +9,7 @@
 
 						<li><a href="mng-rad-attributes.php"><em>A</em>ttributes</a></li>
 						<li><a href="mng-rad-realms.php"><em>R</em>ealms/Proxys	</a></li>
+						<li><a href="mng-rad-ippool.php"><em>I</em>P-Pool	</a></li>
 
 <div id="logindiv" style="text-align: right;">
 

@@ -5,6 +5,11 @@ $l['all']['copyright1'] = "Radius Reporting, Billing and Management by <a href=\
 $l['all']['copyright2'] = "Copyright of <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
+$l['all']['PoolName'] = "Pool Name";
+$l['all']['CalledStationId'] = "CalledStationId";
+$l['all']['CallingStationID'] = "CallingStationID";
+$l['all']['ExpiryTime'] = "Expiry Time";
+$l['all']['PoolKey'] = "Pool Key";
 
 /********************************************************************************/
 /* Vendor Attributes related translation                                        */
@@ -191,6 +196,11 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
+$l['Tooltip']['EditIPPool'] = "Edit IP-Pool";
+$l['Tooltip']['RemoveIPPool'] = "Remove IP-Pool";
+$l['Tooltip']['EditIPAddress'] = "Edit IP Address";
+$l['Tooltip']['RemoveIPAddress'] = "Remove IP Address";
+
 $l['Tooltip']['BusinessNameTooltip'] = "";
 $l['Tooltip']['BusinessPhoneTooltip'] = "";
 $l['Tooltip']['BusinessAddressTooltip'] = "";
@@ -360,6 +370,11 @@ $l['button']['NewHotspot'] = "New Hotspot";
 $l['button']['EditHotspot'] = "Edit Hotspot";
 $l['button']['RemoveHotspot'] = "Remove Hotspot";
 
+$l['button']['ListIPPools'] = "List IP-Pools";
+$l['button']['NewIPPool'] = "New IP-Pool";
+$l['button']['EditIPPool'] = "Edit IP-Pool";
+$l['button']['RemoveIPPool'] = "Remove IP-Pool";
+
 $l['button']['ListNAS'] = "List NAS";
 $l['button']['NewNAS'] = "New NAS";
 $l['button']['EditNAS'] = "Edit NAS";
@@ -442,6 +457,8 @@ $l['button']['ProcessQuery'] = "Process Query";
  * Titles
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
+
+$l['title']['IPPoolInfo'] = "IP-Pool Info";
 
 $l['title']['BusinessInfo'] = "Business Info";
 
@@ -629,12 +646,17 @@ $l['Intro']['mngradusergrouplist'] = "User-Group Mapping in Database";
 $l['Intro']['mngradusergrouplistuser'] = "User-Group Mapping in Database";
 $l['Intro']['mngradusergroupedit'] = "Edit User-Group Mapping for User:";
 
+$l['Intro']['mngradippool.php'] = "IP-Pool Configuration";
+$l['Intro']['mngradippoolnew.php'] = "New IP-Pool";
+$l['Intro']['mngradippoollist.php'] = "List IP-Pools";
+$l['Intro']['mngradippooledit.php'] = "Edit IP-Pool";
+$l['Intro']['mngradippooldel.php'] = "Remove IP-Pool";
+
 $l['Intro']['mngradnas.php'] = "NAS Configuration";
 $l['Intro']['mngradnasnew.php'] = "New NAS Record";
 $l['Intro']['mngradnaslist.php'] = "NAS Listing in Database";
 $l['Intro']['mngradnasedit.php'] = "Edit NAS Record";
 $l['Intro']['mngradnasdel.php'] = "Remove NAS Record";
-
 
 $l['Intro']['mngradprofiles.php'] = "Profiles Configuration";
 $l['Intro']['mngradprofilesedit.php'] = "Edit Profiles";
@@ -789,6 +811,13 @@ $l['helpPage']['mngradgroupreplysearch'] = "
 to use a wildcard you may either type the % character which is familiar in SQL or you may use the more common *
 for convenience reasons and daloRADIUS will translate it to %
 ";
+
+
+$l['helpPage']['mngradippool'] = "";
+$l['helpPage']['mngradippoollist'] = "";
+$l['helpPage']['mngradippoolnew'] = "";
+$l['helpPage']['mngradippooledit'] = "";
+$l['helpPage']['mngradippooldel'] = "";
 
 
 $l['helpPage']['mngradnas'] = "";
