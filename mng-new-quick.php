@@ -184,8 +184,7 @@
 					<br/>
 				</div>
 
-				<form name="newuser" action="mng-new-quick.php" method="post">
-
+				<form name="newuser" action="mng-new-quick.php" method="post" >
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
@@ -325,9 +324,85 @@
 
      <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
 
-<?php
-        include_once('include/management/userinfo.php');
-?>
+	<fieldset>
+
+        <h302> Contact Info </h302>
+        <br/>
+
+        <h301> Personal </h301>
+        <br/>
+
+        <label for='username' class='form'><?php echo $l['ContactInfo']['FirstName'] ?></label>
+        <input value='<?php if (isset($ui_firstname)) echo $ui_firstname; ?>' name='firstname' tabindex=300 />
+        <br/>
+
+        <label for='lastname' class='form'><?php echo $l['ContactInfo']['LastName'] ?></label>
+        <input value='<?php if (isset($ui_lastname)) echo $ui_lastname; ?>' name='lastname' tabindex=301 />
+        <br/>
+
+        <label for='email' class='form'><?php echo $l['ContactInfo']['Email'] ?></label>
+        <input value='<?php if (isset($ui_email)) echo $ui_email; ?>' name='email' tabindex=302 />
+        <br/>
+
+        <br/>
+        <h301> Business </h301>
+        <br/>
+
+        <label for='department' class='form'><?php echo $l['ContactInfo']['Department'] ?></label>
+        <input value='<?php if (isset($ui_department)) echo $ui_department; ?>' name='department' tabindex=303 />
+        <br/>
+
+        <label for='company' class='form'><?php echo $l['ContactInfo']['Company'] ?></label>
+        <input value='<?php if (isset($ui_company)) echo $ui_company; ?>' name='company' tabindex=304 />
+        <br/>
+
+        <label for='workphone' class='form'><?php echo $l['ContactInfo']['WorkPhone'] ?></label>
+        <input value='<?php if (isset($ui_workphone)) echo $ui_workphone; ?>' name='workphone' tabindex=305 />
+        <br/>
+
+        <label for='homephone' class='form'><?php echo $l['ContactInfo']['HomePhone'] ?></label>
+        <input value='<?php if (isset($ui_homephone)) echo $ui_homephone; ?>' name='homephone' tabindex=306 />
+        <br/>
+
+        <label for='mobilephone' class='form'><?php echo $l['ContactInfo']['MobilePhone'] ?></label>
+        <input value='<?php if (isset($ui_mobilephone)) echo $ui_mobilephone; ?>' name='mobilephone' tabindex=307 />
+        <br/>
+
+        <br/>
+        <h301> Other </h301>
+        <br/>
+
+        <label for='notes' class='form'><?php echo $l['ContactInfo']['Notes'] ?></label>
+        <textarea class='form' name='notes' value='<?php if (isset($ui_notes)) echo $ui_notes; ?>' tabindex=308 ></textarea>
+        <br/>
+
+        <br/>
+        <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
+        <input disabled value='<?php if (isset($ui_creationdate)) echo $ui_creationdate; ?>' tabindex=309 />
+        <br/>
+
+        <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
+        <input disabled value='<?php if (isset($ui_creationby)) echo $ui_creationby; ?>' tabindex=310 />
+        <br/>
+
+        <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
+        <input disabled value='<?php if (isset($ui_updatedate)) echo $ui_updatedate; ?>' tabindex=311 />
+        <br/>
+
+        <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
+        <input disabled value='<?php if (isset($ui_updateby)) echo $ui_updateby; ?>' tabindex=312 />
+        <br/>
+
+        <br/>
+        <hr><br/>
+
+		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" 
+			onclick = "javascript:small_window(document.newuser.username.value, 
+			document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 
+			class='button' />
+
+	</fieldset>
+
      </div>
 
 
