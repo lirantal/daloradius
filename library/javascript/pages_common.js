@@ -190,6 +190,7 @@ function small_window(user,pass,time) {
 	var props = "scrollBars=yes,resizable=yes,toolbar=no,menubar=no,location=no,directories=no,width=500,height=200";
 	newWindow = window.open("about:blank","blank",props);
 
+        newWindow.document.write("<html><body>");
 	newWindow.document.write("Thank you. <br/>");
 	newWindow.document.write("Your username is: ");
 	newWindow.document.write(user);
@@ -206,6 +207,9 @@ function small_window(user,pass,time) {
 	newWindow.document.write("<br/>");
 	newWindow.document.write("Enginx HotSpot System ");
 	newWindow.document.write("<br/>");
+        newWindow.document.write("</body></html>");
+        newWindow.document.close();
+
 }
 
 
