@@ -18,6 +18,7 @@
 	$username = $_REQUEST['username'];
 	$groupOld = $_REQUEST['group'];
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	// fill-in nashost details in html textboxes
@@ -61,19 +62,16 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 						
-				$actionStatus = "success";
-				$actionMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
-				$logAction = "Successfully updated attributes for user-group mapping of user [$username] with group [$group] on page: ";
+				$successMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
+				$logAction .= "Successfully updated attributes for user-group mapping of user [$username] with group [$group] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
-				$logAction = "Failed updating (missing attributes) attributes on page: ";
+				$failureMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
+				$logAction .= "Failed updating (missing attributes) attributes on page: ";
 			}
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "The user $username already exists in the user-group mapping database
+			$failureMsg = "The user $username already exists in the user-group mapping database
 			<br/> It seems that you have duplicate entries for User-Group mapping. Check your database";
-			$logAction = "Failed updating already existing user [$username] with group [$group] on page: ";
+			$logAction .= "Failed updating already existing user [$username] with group [$group] on page: ";
 		} 
 
 		include 'library/closedb.php';
@@ -90,8 +88,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 		$group = "";
 		
 	if (trim($username) == "" OR trim($group) == "") {
-		$actionStatus = "failure";
-		$actionMsg = "no username or groupname was entered, please specify a username and groupname to edit ";
+		$failureMsg = "no username or groupname was entered, please specify a username and groupname to edit ";
 	}	
 
 
@@ -127,7 +124,9 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 					<?php echo $l['helpPage']['mngradusergroupedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 				
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
