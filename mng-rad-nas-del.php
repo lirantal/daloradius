@@ -8,6 +8,7 @@
 
         isset($_REQUEST['nashost']) ? $nashost = $_REQUEST['nashost'] : $nashost = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
         if (isset($_REQUEST['nashost'])) {
@@ -39,16 +40,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Deleted all NASs from database: <b> $allNASs </b>";
-				$logAction = "Successfully deleted nas(s) [$allNASs] on page: ";
+				$successMsg = "Deleted all NASs from database: <b> $allNASs </b>";
+				$logAction .= "Successfully deleted nas(s) [$allNASs] on page: ";
 					
 				include 'library/closedb.php';
 	
 			}  else {
-				$actionStatus = "failure";
-				$actionMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
-				$logAction = "Failed deleting empty nas on page: ";
+				$failureMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
+				$logAction .= "Failed deleting empty nas on page: ";
 			} //if trim
 
 		} //foreach
@@ -87,8 +86,9 @@
 					<?php echo $l['helpPage']['mngradnasdel'] ?>
 					<br/>
 				</div>
-				<br/>
-
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

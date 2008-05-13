@@ -19,6 +19,7 @@
 
 	isset($_REQUEST['nashost']) ? $nashost = $_REQUEST['nashost'] : $nashost = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	// fill-in nashost details in html textboxes
@@ -72,25 +73,21 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Updated NAS settings in database: <b> $nashost </b>  ";
-				$logAction = "Successfully updated attributes for nas [$nashost] on page: ";
+				$successMsg = "Updated NAS settings in database: <b> $nashost </b>  ";
+				$logAction .= "Successfully updated attributes for nas [$nashost] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
-				$logAction = "Failed updating attributes for nas [$nashost] on page: ";
+				$failureMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
+				$logAction .= "Failed updating attributes for nas [$nashost] on page: ";
 			}
 			
 		} elseif ($res->numRows() > 1) {
-			$actionStatus = "failure";
-			$actionMsg = "The NAS IP/Host <b> $nashost </b> already exists in the database
+			$failureMsg = "The NAS IP/Host <b> $nashost </b> already exists in the database
 			<br/> Please check that there are no duplicate entries in the database";
-			$logAction = "Failed updating attributes for already existing nas [$nashost] on page: ";
+			$logAction .= "Failed updating attributes for already existing nas [$nashost] on page: ";
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "The NAS IP/Host <b> $nashost </b> doesn't exist at all in the database.
+			$failureMsg = "The NAS IP/Host <b> $nashost </b> doesn't exist at all in the database.
 			<br/>Please re-check the nashost ou specified.";
-			$logAction = "Failed updating empty nas on page: ";
+			$logAction .= "Failed updating empty nas on page: ";
 		}
 
 		include 'library/closedb.php';
@@ -102,8 +99,7 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 		$nashost = "";
 
 	if (trim($nashost) == "") {
-		$actionStatus = "failure";
-		$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
+		$failureMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
 	}		
 
 
@@ -142,8 +138,9 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 					<?php echo $l['helpPage']['mngradnasedit'] ?>
 					<br/>
 				</div>
-				<br/>
-
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 
                                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">

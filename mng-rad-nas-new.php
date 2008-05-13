@@ -6,7 +6,6 @@
 	include('library/check_operator_perm.php');
 
 
-
 	// declaring variables
 	$nashost = "";
 	$nassecret = "";
@@ -16,6 +15,7 @@
 	$nasdescription = "";
 	$nascommunity = "";
 
+        $logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
@@ -50,18 +50,15 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-				$actionStatus = "success";
-				$actionMsg = "Added new NAS to database: <b> $nashost </b>  ";
-				$logAction = "Successfully added nas [$nashost] on page: ";
+				$successMsg = "Added new NAS to database: <b> $nashost </b>  ";
+				$logAction .= "Successfully added nas [$nashost] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
-				$logAction = "Failed adding (missing nas/secret) nas [$nashost] on page: ";
+				$failureMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
+				$logAction .= "Failed adding (missing nas/secret) nas [$nashost] on page: ";
 			}
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "The NAS IP/Host $nashost already exists in the database";	
-			$logAction = "Failed adding already existing nas [$nashost] on page: ";
+			$failureMsg = "The NAS IP/Host $nashost already exists in the database";	
+			$logAction .= "Failed adding already existing nas [$nashost] on page: ";
 		}
 
 		include 'library/closedb.php';
@@ -104,9 +101,12 @@
 					<?php echo $l['helpPage']['mngradnasnew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 				
-                                <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+
+                <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['NASInfo']; ?>">
