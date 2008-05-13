@@ -15,6 +15,7 @@
 			$usergroup_array = array($_REQUEST['username']."||".$_REQUEST['group']);
 	}
 	
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($usergroup_array)) {
@@ -39,9 +40,8 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 
 				$allUsernames .= $username . ", ";
 				$allGroups .= $group . ", ";
-				$actionStatus = "success";
-				$actionMsg = "Deleted all Usernames: <b> $allUsernames </b> and all their Groupnames: <b> $allGroups </b>";
-				$logAction = "Successfully deleted all users [$allUsernames] and their groups [$allGroups] on page: ";
+				$successMsg = "Deleted all Usernames: <b> $allUsernames </b> and all their Groupnames: <b> $allGroups </b>";
+				$logAction .= "Successfully deleted all users [$allUsernames] and their groups [$allGroups] on page: ";
 
 				include 'library/closedb.php';
 							
@@ -51,17 +51,15 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Deleted all instances for Username: <b> $allUsernames </b>";
-				$logAction = "Successfully deleted all group instances for users [$allUsernames] on page: ";
+				$successMsg = "Deleted all instances for Username: <b> $allUsernames </b>";
+				$logAction .= "Successfully deleted all group instances for users [$allUsernames] on page: ";
 
 				include 'library/closedb.php';
 			}
 
 		}  else {
-			$actionStatus = "failure";
-			$actionMsg = "No user was entered, please specify a username to remove from database";
-			$logAction = "Failed deleting empty user on page: ";
+			$failureMsg = "No user was entered, please specify a username to remove from database";
+			$logAction .= "Failed deleting empty user on page: ";
 		}
 
 		}
@@ -100,7 +98,9 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 					<?php echo $l['helpPage']['mngradusergroupdel'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 				
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

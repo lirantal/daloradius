@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="css/auto-complete.css" media="screen" type="text/css">
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
 
 <body>
 <?php
@@ -30,10 +32,27 @@
 			</form></li>
 		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b><?php echo $l['button']['SearchUsers'] ?><a>
 			<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
-			<input name="username" type="text" 
+			<input name="username" type="text" id="usernameSearch"
 				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 			</form></li>
-			
+		
+<?php
+        include_once('library/config_read.php');
+
+        if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
+                (strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") ) {
+
+                echo "
+                        <script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
+                        <script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
+
+                        <script type=\"text/javascript\">
+                                autoCom = new DHTMLSuite.autoComplete();
+                                autoCom.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                        </script>
+                ";
+        }
+?>
 		<li><a href="mng-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveUsers'] ?></a></li>
 		
 	</ul>

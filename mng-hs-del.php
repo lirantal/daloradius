@@ -5,6 +5,7 @@
 	include('library/check_operator_perm.php');
 
         isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
+	$logAction = "";
 	$logDebugSQL = "";
 
         if (isset($_REQUEST['name'])) {
@@ -27,14 +28,12 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$actionStatus = "success";
-				$actionMsg = "Deleted hotspot(s): <b> $allHotspots </b>";
-				$logAction = "Successfully deleted hotspot(s) [$allHotspots] on page: ";
+				$successMsg = "Deleted hotspot(s): <b> $allHotspots </b>";
+				$logAction .= "Successfully deleted hotspot(s) [$allHotspots] on page: ";
 				
 			} else { 
-				$actionStatus = "failure";
-				$actionMsg = "no hotspot was entered, please specify a hotspot name to remove from database";
-				$logAction = "Failed deleting hotspot(s) [$allHotspots] on page: ";
+				$failureMsg = "no hotspot was entered, please specify a hotspot name to remove from database";
+				$logAction .= "Failed deleting hotspot(s) [$allHotspots] on page: ";
 			}
 
 		} //foreach
@@ -73,7 +72,10 @@
 					<?php echo $l['helpPage']['mnghsdel'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
+
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

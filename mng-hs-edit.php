@@ -26,6 +26,7 @@
 
 	$edit_hotspotname = $name; //feed the sidebar variables	
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_REQUEST['submit'])) {
@@ -61,14 +62,12 @@
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
 			
-			$actionStatus = "success";
-			$actionMsg = "Updated attributes for: <b> $name </b>";
-			$logAction = "Successfully updates attributes for hotspot [$name] on page: ";
+			$successMsg = "Updated attributes for: <b> $name </b>";
+			$logAction .= "Successfully updates attributes for hotspot [$name] on page: ";
 			
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "no hotspot name was entered, please specify a hotspot name to edit";
-			$logAction = "Failed updating attributes for hotspot [$name] on page: ";
+			$failureMsg = "no hotspot name was entered, please specify a hotspot name to edit";
+			$logAction .= "Failed updating attributes for hotspot [$name] on page: ";
 		}
 		
 	}
@@ -104,8 +103,7 @@
 
 
 	if (trim($name) == "") {
-		$actionStatus = "failure";
-		$actionMsg = "no hotspot name was entered, please specify a hotspot name to edit</b>";
+		$failureMsg = "no hotspot name was entered, please specify a hotspot name to edit</b>";
 	}
 
 
@@ -143,7 +141,9 @@
 					<?php echo $l['helpPage']['mnghsedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

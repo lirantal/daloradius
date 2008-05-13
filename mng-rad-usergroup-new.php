@@ -39,18 +39,15 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$actionStatus = "success";
-				$actionMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";
-				$logAction = "Successfully added user-group mapping of user [$username] with group [$group] on page: ";
+				$successMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";
+				$logAction .= "Successfully added user-group mapping of user [$username] with group [$group] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
-				$logAction = "Failed adding (missing attributes) for user or group on page: ";
+				$failureMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
+				$logAction .= "Failed adding (missing attributes) for user or group on page: ";
 			}
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "The user $username already exists in the user-group mapping database";
-			$logAction = "Failed adding already existing user-group mapping for user [$username] with group [$group] on page: ";
+			$failureMsg = "The user $username already exists in the user-group mapping database";
+			$logAction .= "Failed adding already existing user-group mapping for user [$username] with group [$group] on page: ";
 		}
 
 		include 'library/closedb.php';
@@ -91,7 +88,9 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 					<?php echo $l['helpPage']['mngradusergroupnew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 				
                                 <form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

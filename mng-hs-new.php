@@ -21,6 +21,7 @@
 	isset($_REQUEST['companyemail']) ? $companyemail = $_REQUEST['companyemail'] : $companyemail = "";
 	isset($_REQUEST['companycontact']) ? $companycontact = $_REQUEST['companycontact'] : $companycontact = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST["submit"])) {
@@ -60,18 +61,15 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new hotspot: <b>$name</b>";
-				$logAction = "Successfully added new hotspot [$name] on page: ";
+				$successMsg = "Added to database new hotspot: <b>$name</b>";
+				$logAction .= "Successfully added new hotspot [$name] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "you must provide atleast a hotspot name and mac-address";	
-				$logAction = "Failed adding new hotspot [$name] on page: ";	
+				$failureMsg = "you must provide atleast a hotspot name and mac-address";	
+				$logAction .= "Failed adding new hotspot [$name] on page: ";	
 			}
 		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "You have tried to add a hotspot that already exist in the database: $name";	
-			$logAction = "Failed adding new hotspot already in database [$name] on page: ";		
+			$failureMsg = "You have tried to add a hotspot that already exist in the database: $name";	
+			$logAction .= "Failed adding new hotspot already in database [$name] on page: ";		
 		}
 	
 		include 'library/closedb.php';
@@ -113,7 +111,9 @@
 					<?php echo $l['helpPage']['mnghsnew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
