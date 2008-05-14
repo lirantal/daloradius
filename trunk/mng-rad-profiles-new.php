@@ -8,6 +8,7 @@
 	// declaring variables
 	//	isset($_GET['profile']) ? $group = $_GET['profile'] : $profile = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
@@ -15,107 +16,61 @@
 		$profile = $_POST['profile'];
 		if ($profile != "") {
 
-		include 'library/opendb.php';
+			include 'library/opendb.php';
 
-			 foreach($_POST as $element=>$field) { 
+			foreach($_POST as $element=>$field) { 
 
-                                        switch ($element) {
-
-                                                case "submit":
-                                                case "profile":
-                                                        $skipLoopFlag = 1; 
+				switch ($element) {
+					case "submit":
+					case "profile":
+							$skipLoopFlag = 1; 
 							break;
-                                        }
-                                
-                                        if ($skipLoopFlag == 1) {
-                                                $skipLoopFlag = 0;             
-                                                continue;
-					}
-
-                                        if (isset($field[0]))
-                                                $attribute = $field[0];
-                                        if (isset($field[1]))
-                                                $value = $field[1];
-                                        if (isset($field[2]))
-                                                $op = $field[2];
-                                        if (isset($field[3]))
-                                                $table = $field[3];
-
-                                        if ($table == 'check')
-                                                $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-                                        if ($table == 'reply')
-                                                $table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
-
-
-                                        if (!($value))
-                                                continue;
-
-                                        $sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($profile)."', '".$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')  ";
-
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
-
+				}
+		
+				if ($skipLoopFlag == 1) {
+					$skipLoopFlag = 0;             
+					continue;
 				}
 
-                                $actionStatus = "success";
-                                $actionMsg = "Added to database new profile: <b> $profile </b>";
-                                $logAction = "Successfully added new profile [$profile] on page: ";
+				if (isset($field[0]))
+					$attribute = $field[0];
+				if (isset($field[1]))
+					$value = $field[1];
+				if (isset($field[2]))
+					$op = $field[2];
+				if (isset($field[3]))
+					$table = $field[3];
+
+				if ($table == 'check')
+					$table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+				if ($table == 'reply')
+					$table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
 
 
-		include 'library/closedb.php';
+				if (!($value))
+					continue;
 
-		} else { // if $profile != ""
-
-                                $actionStatus = "failure";
-                                $actionMsg = "profile name is empty";
-                                $logAction = "Failed adding (possibly empty) profile name [$profile] on page: ";
-		}
-
-	} // if isset($submit)
- 
-
-/*
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($group)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-
-		if ($res->numRows() == 0) {
-
-			if (trim($username) != "" and trim($group) != "") {
-
-				if (!isset($priority)) {
-					$priority = 1;		// default in mysql table for usergroup
-				}
-				
-				// insert usergroup details
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('".$dbSocket->escapeSimple($username)."',
-'".$dbSocket->escapeSimple($group)."', ".$dbSocket->escapeSimple($priority).")";
+				$sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($profile)."', '".
+						$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '".
+						$dbSocket->escapeSimple($value)."')  ";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-				
-				$actionStatus = "success";
-				$actionMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";
-				$logAction = "Successfully added user-group mapping of user [$username] with group [$group] on page: ";
-			} else {
-				$actionStatus = "failure";
-				$actionMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
-				$logAction = "Failed adding (missing attributes) for user or group on page: ";
+
 			}
-		} else {
-			$actionStatus = "failure";
-			$actionMsg = "The user $username already exists in the user-group mapping database";
-			$logAction = "Failed adding already existing user-group mapping for user [$username] with group [$group] on page: ";
+
+			$successMsg = "Added to database new profile: <b> $profile </b>";
+			$logAction .= "Successfully added new profile [$profile] on page: ";
+
+			include 'library/closedb.php';
+
+			} else { // if $profile != ""
+
+				$failureMsg = "profile name is empty";
+				$logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
 		}
 
-		include 'library/closedb.php';
 	}
-
-*/
-
-
 	
-        
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
@@ -150,9 +105,11 @@ AND GroupName='".$dbSocket->escapeSimple($group)."'";
 					<?php echo $l['helpPage']['mngradprofilesnew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 				
-                                <form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <fieldset>
 
