@@ -12,6 +12,7 @@
     $value = "";
     $op = "";
     $attribute = "";
+	$logAction = "";
 	$logDebugSQL = "";
 
         isset($_GET['groupname']) ? $groupname = $_GET['groupname'] : $groupname = "";
@@ -57,21 +58,18 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-			$actionStatus = "success";
-			$actionMsg = "Updated group attributes for: <b> $groupname </b>";
-			$logAction = "Successfully updated attributes for group [$groupname] on page: ";
+			$successMsg = "Updated group attributes for: <b> $groupname </b>";
+			$logAction .= "Successfully updated attributes for group [$groupname] on page: ";
 
 			} else { // if groupname  != ""
-				$actionStatus = "failure";
-				$actionMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
-				$logAction = "Failed updating (possible missing attributes) attributes for group [$groupname] on page: ";
+				$failureMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
+				$logAction .= "Failed updating (possible missing attributes) attributes for group [$groupname] on page: ";
 			}
 
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "The group <b> $groupname </b> already exists in the database with value <b> $value </b>
+			$failureMsg = "The group <b> $groupname </b> already exists in the database with value <b> $value </b>
 			<br/> Please check that there are no duplicate entries in the database";
-			$logAction = "Failed updating already existing group [$groupname] with value [$value] on page: ";
+			$logAction .= "Failed updating already existing group [$groupname] with value [$value] on page: ";
 		} 
 
 		include 'library/closedb.php';
@@ -86,8 +84,7 @@
 	if (trim($groupname) != "") {
 		$groupname = $_REQUEST['groupname'];
 	} else {
-		$actionStatus = "failure";
-		$actionMsg = "no Groupname was entered, please specify a Groupname to edit </b>";
+		$failureMsg = "no Groupname was entered, please specify a Groupname to edit </b>";
 	}	
 
 
@@ -124,7 +121,9 @@
 					<?php echo $l['helpPage']['mngradgroupcheckedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 				
                                 <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

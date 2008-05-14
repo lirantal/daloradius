@@ -8,6 +8,7 @@
 	// declaring variables
 	$groupname = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 	$allValues = "";
 	$allAttributes = "";
@@ -77,13 +78,11 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					$logDebugSQL .= $sql . "\n";
 					$counter++;
 					
-					$actionStatus = "success";
-					$actionMsg = "Added to database new group: <b> $groupname </b> with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b>";
-					$logAction = "Successfully added group [$groupname] with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b> on page: ";
+					$successMsg = "Added to database new group: <b> $groupname </b> with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b>";
+					$logAction .= "Successfully added group [$groupname] with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b> on page: ";
 			} else { 
-				$actionStatus = "failure";
-				$actionMsg = "The group <b> $groupname </b> already exist in the database with attribute(s) <b> $allAttributes </b>";
-				$logAction = "Failed adding already existing group [$groupname] with attribute(s) [$allAttributes] on page: ";
+				$failureMsg = "The group <b> $groupname </b> already exist in the database with attribute(s) <b> $allAttributes </b>";
+				$logAction .= "Failed adding already existing group [$groupname] with attribute(s) [$allAttributes] on page: ";
 
 		        } // end else if mysql
 
@@ -92,9 +91,8 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 		    }
 
    		} else { // if groupname isset
-			$actionStatus = "failure";
-			$actionMsg = "No groupname was defined";
-			$logAction = "Failed adding missing values for groupname on page: ";
+			$failureMsg = "No groupname was defined";
+			$logAction .= "Failed adding missing values for groupname on page: ";
    		}
 
 
@@ -148,7 +146,9 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 					<?php echo $l['helpPage']['mngradgroupreplynew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
                                 <form name="newgroupreply" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
