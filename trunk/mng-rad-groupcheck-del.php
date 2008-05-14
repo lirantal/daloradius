@@ -8,6 +8,7 @@
         $groupname = "";
         $attribute = "";
         $value = "";
+		$logAction = "";
         $logDebugSQL = "";
 
         if (isset($_POST['group'])) {
@@ -43,9 +44,8 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
                                         $res = $dbSocket->query($sql);
                                         $logDebugSQL .= $sql . "\n";
 
-                                        $actionStatus = "success";
-                                        $actionMsg = "Deleted Group(s): <b> $allGroups </b> with Attribute(s): <b> $allAttributes </b> and it's Value: <b> $allValues </b>";
-                                        $logAction = "Successfully deleted group(s) [$allGroups] with attribute [$allAttributes] and it's value [$allValues] on page: ";
+                                        $successMsg = "Deleted Group(s): <b> $allGroups </b> with Attribute(s): <b> $allAttributes </b> and it's Value: <b> $allValues </b>";
+                                        $logAction .= "Successfully deleted group(s) [$allGroups] with attribute [$allAttributes] and it's value [$allValues] on page: ";
 
                                         include 'library/closedb.php';
 
@@ -57,9 +57,8 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
                                         $res = $dbSocket->query($sql);
                                         $logDebugSQL .= $sql . "\n";
 
-                                        $actionStatus = "success";
-                                        $actionMsg = "Deleted all instances for Group(s): <b> $allGroups </b>";
-                                        $logAction = "Successfully deleted all instances for group(s) [$allGroups] on page: ";
+                                        $successMsg = "Deleted all instances for Group(s): <b> $allGroups </b>";
+                                        $logAction .= "Successfully deleted all instances for group(s) [$allGroups] on page: ";
 
                                         include 'library/closedb.php';
 
@@ -67,9 +66,8 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 
                         } else {
 
-                                        $actionStatus = "failure";
-                                        $actionMsg = "No groupname was entered, please specify a groupname to remove from database";
-                                        $logAction = "Failed deleting empty group on page: ";
+                                        $failureMsg = "No groupname was entered, please specify a groupname to remove from database";
+                                        $logAction .= "Failed deleting empty group on page: ";
                         }
 
                 } // foreach
@@ -112,7 +110,9 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 					<?php echo $l['helpPage']['mngradgroupcheckdel'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 
