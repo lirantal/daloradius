@@ -4,6 +4,7 @@
 
 	include('library/check_operator_perm.php');
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	isset($_REQUEST['vendor']) ? $vendor = $_REQUEST['vendor'] : $vendor = "";
@@ -41,19 +42,16 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Updated database with vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
-				$logAction = "Successfully update vendor [$vendor] and attribute [$attribute] on page: ";
+				$successMsg = "Updated database with vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
+				$logAction .= "Successfully update vendor [$vendor] and attribute [$attribute] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "you must provide atleast a vendor name and attribute";	
-				$logAction = "Failed updating vendor [$vendor] and attribute [$attribute] on page: ";
+				$failureMsg = "you must provide atleast a vendor name and attribute";	
+				$logAction .= "Failed updating vendor [$vendor] and attribute [$attribute] on page: ";
 			}
 		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "You have tried to update a vendor's attribute that either is not present in the database or there
+			$failureMsg = "You have tried to update a vendor's attribute that either is not present in the database or there
 					may be more than 1 entry for this vendor attribute in database (attribute :$attribute)";
-			$logAction = "Failed updating vendor attribute already in database [$attribute] on page: ";		
+			$logAction .= "Failed updating vendor attribute already in database [$attribute] on page: ";		
 		}
 	
 		include 'library/closedb.php';
@@ -110,7 +108,9 @@
 					<?php echo $l['helpPage']['mngradattributesedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

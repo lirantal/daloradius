@@ -4,6 +4,7 @@
 
 	include('library/check_operator_perm.php');
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	isset($_GET['vendor']) ? $vendor = $$_GET['vendor'] : $vendor = "";
@@ -42,19 +43,16 @@
 						$res = $dbSocket->query($sql);
 						$logDebugSQL .= $sql . "\n";
 
-						$actionStatus = "success";
-						$actionMsg = "Removed from database vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
-						$logAction = "Successfully removed vendor [$vendor] and attribute [$attribute] from database on page: ";
+						$successMsg = "Removed from database vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
+						$logAction .= "Successfully removed vendor [$vendor] and attribute [$attribute] from database on page: ";
 					} else {
-						$actionStatus = "failure";
-						$actionMsg = "you must provide atleast a vendor name and attribute";	
-						$logAction = "Failed removing vendor [$vendor] and attribute [$attribute] from database on page: ";
+						$failureMsg = "you must provide atleast a vendor name and attribute";	
+						$logAction .= "Failed removing vendor [$vendor] and attribute [$attribute] from database on page: ";
 					}
 				} else { 
-					$actionStatus = "failure";
-					$actionMsg = "You have tried to remove a vendor's attribute that either is not present in the database or there
+					$failureMsg = "You have tried to remove a vendor's attribute that either is not present in the database or there
 							may be more than 1 entry for this vendor attribute in database (attribute :$attribute)";
-					$logAction = "Failed removing vendor attribute already in database [$attribute] on page: ";		
+					$logAction .= "Failed removing vendor attribute already in database [$attribute] on page: ";		
 				} //if ($res->numRows() == 1)
 			
 				include 'library/closedb.php';
@@ -95,7 +93,9 @@
 					<?php echo $l['helpPage']['mngradattributesdel'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

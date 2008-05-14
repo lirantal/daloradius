@@ -5,93 +5,84 @@
 
 	include('library/check_operator_perm.php');
 
-        $profile = $_REQUEST['profile'];
+	$profile = $_REQUEST['profile'];
+	$logAction = "";
 	$logDebugSQL = "";
 
-        if (isset($_REQUEST['submit'])) {
+	if (isset($_REQUEST['submit'])) {
+		$profile = $_REQUEST['profile'];
 
-                $profile = $_REQUEST['profile'];
-
-			include 'library/opendb.php';
-		
+	include 'library/opendb.php';
+	
 		if ($profile != "") {
-
+			foreach( $_POST as $element=>$field ) { 
+				switch ($element) {
+						case "submit":
+						case "profile":
+								$skipLoopFlag = 1; 
+								break;
+				}
 		
-                        foreach( $_POST as $element=>$field ) { 
+				if ($skipLoopFlag == 1) {
+					$skipLoopFlag = 0;             
+					continue;
+				}
 
+				if (isset($field[0]))
+					$attribute = $field[0];
+				if (isset($field[1]))
+					$value = $field[1];
+				if (isset($field[2]))
+					$op = $field[2];
+				if (isset($field[3]))
+					$table = $field[3];
 
-                                        switch ($element) {
+				if ($table == 'check')
+					$table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+				if ($table == 'reply')
+					$table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
 
-                                                case "submit":
-                                                case "profile":
-                                                        $skipLoopFlag = 1; 
-                                                        break;
-                                        }
-                                
-                                        if ($skipLoopFlag == 1) {
-                                                $skipLoopFlag = 0;             
-                                                continue;
-                                        }
+				if (!($value))
+					continue;
 
-                                        if (isset($field[0]))
-                                                $attribute = $field[0];
-                                        if (isset($field[1]))
-                                                $value = $field[1];
-                                        if (isset($field[2]))
-                                                $op = $field[2];
-                                        if (isset($field[3]))
-                                                $table = $field[3];
+				$value = $dbSocket->escapeSimple($value);
 
-                                        if ($table == 'check')
-                                                $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-                                        if ($table == 'reply')
-                                                $table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
+				$sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
+				if ($res->numRows() == 0) {
 
-                                        if (!($value))
-                                                continue;
+					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
 
-					$value = $dbSocket->escapeSimple($value);
+					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($profile)."', '".$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
-  $sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-                                $res = $dbSocket->query($sql);
-                                $logDebugSQL .= $sql . "\n";
-                                if ($res->numRows() == 0) {
+				} else {
 
-                                        /* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
+						/* we update the $value[0] entry which is the attribute's value */
+						$sql = "UPDATE $table SET Value='$value' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
 
-                                        $sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($profile)."', '".$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
+						/* then we update $value[1] which is the attribute's operator */
+						$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op)."' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
 
-                                } else {
+				}
 
-                                        /* we update the $value[0] entry which is the attribute's value */
-                                        $sql = "UPDATE $table SET Value='$value' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
+			} //foreach $_POST
 
-
-                                        /* then we update $value[1] which is the attribute's operator */
-                                        $sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op)."' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
-
-                                }
-
-                } //foreach $_POST
-
-                        $actionStatus = "success";
-                        $actionMsg = "Updated attributes for: <b> $profile </b>";
-                        $logAction = "Successfully updates attributes for profile [$profile] on page:";
+			$successMsg = "Updated attributes for: <b> $profile </b>";
+			$logAction .= "Successfully updates attributes for profile [$profile] on page:";
 
 		include 'library/closedb.php';
 
-
 		} else { // $profile is empty
 
-                                $actionStatus = "failure";
-                                $actionMsg = "profile name is empty";
-                                $logAction = "Failed adding (possibly empty) profile name [$profile] on page: ";
+			$failureMsg = "profile name is empty";
+			$logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
 
 		}
 
@@ -138,11 +129,13 @@
 					<?php echo $l['helpPage']['mngradprofilesedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 				
-                                <form name="mngradprofiles" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="mngradprofiles" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-                                                <input type="hidden" value="<?php echo $profile ?>" name="profile" />
+					<input type="hidden" value="<?php echo $profile ?>" name="profile" />
 
 
 <div class="tabber">

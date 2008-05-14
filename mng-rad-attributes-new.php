@@ -3,7 +3,8 @@
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
-
+	
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST["submit"])) {
@@ -33,18 +34,15 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
-				$logAction = "Successfully added new vendor [$vendor] and attribute [$attribute] on page: ";
+				$successMsg = "Added to database new vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
+				$logAction .= "Successfully added new vendor [$vendor] and attribute [$attribute] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "you must provide atleast a vendor name and attribute";	
-				$logAction = "Failed adding new vendor [$vendor] and attribute [$attribute] on page: ";
+				$failureMsg = "You must provide atleast a vendor name and attribute";	
+				$logAction .= "Failed adding new vendor [$vendor] and attribute [$attribute] on page: ";
 			}
 		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "You have tried to add a vendor's attribute that already exist in the database: $attribute";
-			$logAction = "Failed adding new vendor attribute already in database [$attribute] on page: ";		
+			$failureMsg = "You have tried to add a vendor's attribute that already exist in the database: $attribute";
+			$logAction .= "Failed adding new vendor attribute already in database [$attribute] on page: ";		
 		}
 	
 		include 'library/closedb.php';
@@ -82,7 +80,9 @@
 					<?php echo $l['helpPage']['mngradattributesnew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 	<fieldset>
