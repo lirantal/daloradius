@@ -72,8 +72,11 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 			if ($res->numRows() == 0) {
 					// insert radgroupreply details
 					// assuming there's no groupname with that attribute in the table
-					$sql = "INSERT INTO $table VALUES (0,'".$dbSocket->escapeSimple($groupname)."',
-'".$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')";
+					$sql = "INSERT INTO $table (id, GroupName, Attribute, Op, Value) ".
+						" VALUES (0,'".$dbSocket->escapeSimple($groupname)."','".
+						$dbSocket->escapeSimple($attribute)."', '".
+						$dbSocket->escapeSimple($op)."', '".
+						$dbSocket->escapeSimple($value)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 					$counter++;
