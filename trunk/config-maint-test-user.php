@@ -60,8 +60,7 @@
 					"debug" => $debug,
 					);
 
-		$actionStatus = "informational";
-		$actionMsg = user_auth($options,$username, $password, $radius, $radiusport, $secret);
+		$successMsg = user_auth($options,$username, $password, $radius, $radiusport, $secret);
 		$logAction = "Informative action performed on user [$username] on page: ";	
     }
 
@@ -92,7 +91,9 @@
 					<?php echo $l['helpPage']['configmainttestuser'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form name="mainttestuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

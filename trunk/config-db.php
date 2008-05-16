@@ -109,7 +109,9 @@
 					<?php echo $l['helpPage']['configdb'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form name="dbsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

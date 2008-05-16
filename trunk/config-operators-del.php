@@ -26,6 +26,8 @@
 	include('library/check_operator_perm.php');
 
 	isset($_POST['operator_username']) ? $operator_username = $_POST['operator_username'] : $operator_username = "";
+	
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if ($operator_username != "") {
@@ -47,14 +49,12 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
-				$actionStatus = "success";
-				$actionMsg = "Deleted operator(s): <b> $allOperators";
-				$logAction = "Successfully deleted operator(s) [$allOperators] on page: ";
+				$successMsg = "Deleted operator(s): <b> $allOperators";
+				$logAction .= "Successfully deleted operator(s) [$allOperators] on page: ";
 	
 			}  else { 
-				$actionStatus = "failure";
-				$actionMsg = "no operator username was entered, please specify an operator username to remove from database";		
-				$logAction = "Failed deleting operator username [$allOperators] on page: ";
+				$failureMsg = "no operator username was entered, please specify an operator username to remove from database";		
+				$logAction .= "Failed deleting operator username [$allOperators] on page: ";
 			}
 		}
 
@@ -94,7 +94,9 @@
 					<?php echo $l['helpPage']['configoperatorsdel'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

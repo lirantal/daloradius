@@ -59,7 +59,9 @@
 					<?php echo $l['helpPage']['configlang'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form name="langsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

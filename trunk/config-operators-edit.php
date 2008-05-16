@@ -25,6 +25,7 @@
 
 	include('library/check_operator_perm.php');
 
+	$logAction = "";
 	$logDebugSQL = "";
 	include 'library/opendb.php';
 
@@ -59,14 +60,12 @@
 
 	        } //foreach $_POST
 
-			$actionStatus = "success";
-			$actionMsg = "Updated settings for: <b> $operator_username </b>";
-			$logAction = "Successfully updated settings for operator user [$operator_username] on page: ";
+			$successMsg = "Updated settings for: <b> $operator_username </b>";
+			$logAction .= "Successfully updated settings for operator user [$operator_username] on page: ";
 			
 		} else { // if username != ""
-			$actionStatus = "failure";
-			$actionMsg = "no operator user was entered, please specify an operator username to edit";
-			$logAction = "Failed updating settings for operator user [$operator_username] on page: ";
+			$failureMsg = "no operator user was entered, please specify an operator username to edit";
+			$logAction .= "Failed updating settings for operator user [$operator_username] on page: ";
 		}
 	} // if isset post submit
 
@@ -79,8 +78,7 @@
 	if (trim($operator_username) != "") {
 		$operator_username = $_REQUEST['operator_username'];
 	} else {
-		$actionStatus = "failure";
-		$actionMsg = "no operator user was entered, please specify an operator username to edit";
+		$failureMsg = "no operator user was entered, please specify an operator username to edit";
 	}
 
 	
@@ -150,7 +148,9 @@
 					<?php echo $l['helpPage']['configoperatorsedit'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">

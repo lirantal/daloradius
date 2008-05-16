@@ -23,13 +23,11 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-
-        
 	include_once('library/config_read.php');
     $log = "visited page: ";
 	
 ?>
-		
+
 <?php
 
     include ("menu-config-operators.php");
@@ -44,8 +42,10 @@
 						<?php echo $l['helpPage']['configoperators'] ?>
 						<br/>
 					</div>
-					<br/>
-				
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
+
 <?php
 	include('include/config/logging.php');
 ?>
@@ -54,7 +54,7 @@
 		
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 		

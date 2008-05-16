@@ -65,7 +65,9 @@
 					<?php echo $l['helpPage']['configinterface'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form name="interfacesettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

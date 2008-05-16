@@ -25,6 +25,7 @@
 
 	include('library/check_operator_perm.php');
 
+	$logAction = "";
 
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
 	isset($_REQUEST['nasaddr']) ? $nasaddr = $_REQUEST['nasaddr'] : $nasaddr = "";
@@ -36,15 +37,13 @@
 
 	if ( ($nasaddr == "") || ($nasport == "") || ($nassecret == "") ) {
 
-		$actionStatus = "failure";
-		$actionMsg = "One of NAS Address, NAS Port or NAS Secret fields were left empty";
-		$logAction = "Failed performing disconnect on user [$username] because of missing NAS fields on page: ";
+		$failureMsg = "One of NAS Address, NAS Port or NAS Secret fields were left empty";
+		$logAction .= "Failed performing disconnect on user [$username] because of missing NAS fields on page: ";
 
 	} else if ($username == "") {
 
-		$actionStatus = "failure";
-		$actionMsg = "The User-Name to disconnect was not provided";
-		$logAction = "Failed performing disconnect on user [$username] because of missing User-Name on page: ";
+		$failureMsg = "The User-Name to disconnect was not provided";
+		$logAction .= "Failed performing disconnect on user [$username] because of missing User-Name on page: ";
 
 	} else {
 
@@ -72,9 +71,8 @@
                                         "debug" => $debug,
                                         );
 
-		$actionStatus = "informational";
-		$actionMsg = user_disconnect($options,$username,$nasaddr,$nasport,$nassecret,$packettype);
-		$logAction = "Informative action performed on user [$username] on page: ";
+		$successMsg = user_disconnect($options,$username,$nasaddr,$nasport,$nassecret,$packettype);
+		$logAction .= "Informative action performed on user [$username] on page: ";
 
 	} 
 
@@ -100,16 +98,18 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmaintdisconnectuser.php'] ?>
-				<h144>+</h144> </a></h2>
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmaintdisconnectuser.php'] ?>
+			<h144>+</h144> </a></h2>
 
-		                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configmaintdisconnectuser'] ?>
-					<br/>
-				</div>
+			<div id="helpPage" style="display:none;visibility:visible" >
+				<?php echo $l['helpPage']['configmaintdisconnectuser'] ?>
 				<br/>
+			</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
 
-				<form name="maintdisconnectuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="maintdisconnectuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
