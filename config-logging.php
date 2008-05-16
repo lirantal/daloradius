@@ -70,7 +70,9 @@
 					<?php echo $l['helpPage']['configlogging'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form name="loggingsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

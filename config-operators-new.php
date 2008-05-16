@@ -25,6 +25,7 @@
 
 	include('library/check_operator_perm.php');
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
@@ -74,26 +75,23 @@
 
 				} // foreach
 
-                                $actionStatus = "success";
-                                $actionMsg = "Added to database new operator user: <b> $operator_username </b>";
-                                $logAction = "Successfully added new operator user [$operator_username] on page: ";
+                                $successMsg = "Added to database new operator user: <b> $operator_username </b>";
+                                $logAction .= "Successfully added new operator user [$operator_username] on page: ";
 
 			} else {
 				// if statement returns false which means there is at least one operator
 				// in the database with the same username
 
-	                        $actionStatus = "failure";
-	                        $actionMsg = "operator user already exist in database: <b> $operator_username </b>";
-	                        $logAction = "Failed adding new operator user already existing in database [$operator_username] on page: ";
+	                        $failureMsg = "operator user already exist in database: <b> $operator_username </b>";
+	                        $logAction .= "Failed adding new operator user already existing in database [$operator_username] on page: ";
 			}
 			
 		} else {
 			// if statement returns false which means that the user has left an empty field for
 			// either the username or password, or both
 
-                        $actionStatus = "failure";
-                        $actionMsg = "username or password are empty";
-                        $logAction = "Failed adding (possible empty user/pass) new operator user [$operator_username] on page: ";
+						$failureMsg = "username or password are empty";
+                        $logAction .= "Failed adding (possible empty user/pass) new operator user [$operator_username] on page: ";
 		}
 
 
@@ -145,7 +143,9 @@
 					<?php echo $l['helpPage']['configoperatorsnew'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form name="newoperator" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
