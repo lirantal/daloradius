@@ -31,12 +31,10 @@ if ($fp) {
         fwrite($fp, $_configOption . " = " . $configValues[$_configOption] . "\n");
 	}
 	fclose($fp);
-	$actionStatus = "success";
-	$actionMsg = "Updated database settings for configuration file";
+	$successMsg = "Updated database settings for configuration file";
 } else {
-	$actionStatus = "failure";
-	$actionMsg = "could not open the file for writing:<b> $configFile </b>
-	<br/> Check file permissions. The file should be writable by the webserver's user/group";
+	$failureMsg = "Could not open the file for writing: <b>$configFile</b>
+	<br/>Check file permissions. The file should be writable by the webserver's user/group";
 }
 
 ?>
