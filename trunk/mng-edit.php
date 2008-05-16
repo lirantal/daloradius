@@ -5,6 +5,7 @@
 
 	include('library/check_operator_perm.php');
 
+	$logAction = "";
 	$logDebugSQL = ""; 	// initialize variable
 
 	include 'library/opendb.php';
@@ -228,14 +229,12 @@
 
 	        } //foreach $_POST
 
-			$actionStatus = "success";
-			$actionMsg = "Updated attributes for: <b> $username </b>";
-			$logAction = "Successfully updates attributes for user [$username] on page: ";
+			$successMsg = "Updated attributes for: <b> $username </b>";
+			$logAction .= "Successfully updates attributes for user [$username] on page: ";
 			
 		} else { // if username != ""
-			$actionStatus = "failure";
-			$actionMsg = "no user was entered, please specify a username to edit";		
-			$logAction = "Failed updating attributes for user [$username] on page: ";
+			$failureMsg = "no user was entered, please specify a username to edit";		
+			$logAction .= "Failed updating attributes for user [$username] on page: ";
 		}
 	} // if isset post submit
 
@@ -248,8 +247,7 @@
 	if (trim($username) != "") {
 		$username = $_REQUEST['username'];
 	} else {
-		$actionStatus = "failure";
-		$actionMsg = "no user was entered, please specify a username to edit";
+		$failureMsg = "no user was entered, please specify a username to edit";
 	}
 
 	$edit_username = $username; //feed the sidebar variables
@@ -340,7 +338,9 @@
 		<?php echo $l['helpPage']['mngedit'] ?>
 		<br/>
 	</div>
-	<br/>
+	<?php
+		include_once('include/management/actionMessages.php');
+	?>
 
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

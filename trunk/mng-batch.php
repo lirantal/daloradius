@@ -13,6 +13,7 @@
 	$group = "";
 	$group_priority = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
@@ -43,9 +44,8 @@
 			$logDebugSQL .= $sql . "\n";
 
 			if ($res->numRows() > 0) {
-				$actionStatus = "failure";
 				$actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
-				$actionMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
+				$failureMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
 			} else {
 				// insert username/password
 				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."',  'User-Password', ':=', '".$dbSocket->escapeSimple($password)."')";
@@ -120,11 +120,10 @@
 				$actionMsgGoodUsernames = $actionMsgGoodUsernames . $username . ", " ;
 				$exportCSV .= "$username,$password||";
 				
-				$actionStatus = "success";
-				$actionMsg = "Exported Usernames -  <a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>
+				$successMsg = "Exported Usernames -  <a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>
 				Added to database new user: <b> $actionMsgGoodUsernames </b><br/>";
 
-				$logAction = "Successfully added to database new users [$actionMsgGoodUsernames] with prefix [$username_prefix] on page: ";
+				$logAction .= "Successfully added to database new users [$actionMsgGoodUsernames] with prefix [$username_prefix] on page: ";
 			}
 		
 		}
@@ -186,7 +185,9 @@
 					<?php echo $l['helpPage']['mngbatch'] ?>
 					<br/>
 				</div>
-				<br/>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 
 				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 

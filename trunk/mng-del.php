@@ -10,6 +10,7 @@
 	isset($_GET['delradacct']) ? $delradacct = $_GET['delradacct'] : $delradacct = "";
 	isset($_GET['clearSessionsUsers']) ? $clearSessionsUsers = $_GET['clearSessionsUsers'] : $clearSessionsUsers = "";
 
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if ( (isset($_GET['username'])) && (!(isset($_GET['attribute']))) && (!(isset($_GET['tablename']))) ) {
@@ -58,16 +59,14 @@
 					$logDebugSQL .= $sql . "\n";
 				}
 
-				$actionStatus = "success";
-				$actionMsg = "Deleted user(s): <b> $allUsernames </b>";
-				$logAction = "Successfully deleted user(s) [$allUsernames] on page: ";
+				$successMsg = "Deleted user(s): <b> $allUsernames </b>";
+				$logAction .= "Successfully deleted user(s) [$allUsernames] on page: ";
 
 				include 'library/closedb.php';
 
 			}  else { 
-				$actionStatus = "failure";
-				$actionMsg = "no user was entered, please specify a username to remove from database";		
-				$logAction = "Failed deleting user(s) [$allUsernames] on page: ";
+				$failureMsg = "no user was entered, please specify a username to remove from database";		
+				$logAction .= "Failed deleting user(s) [$allUsernames] on page: ";
 			}
 
 
@@ -87,9 +86,8 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
-		$actionStatus = "success";
-		$actionMsg = "Deleted attribute: <b> $attribute </b> for user(s): <b> $username </b> from database";
-		$logAction = "Successfully deleted attribute [$attribute] for user [$username] on page: ";
+		$successMsg = "Deleted attribute: <b> $attribute </b> for user(s): <b> $username </b> from database";
+		$logAction .= "Successfully deleted attribute [$attribute] for user [$username] on page: ";
 
 		include 'library/closedb.php';
 
@@ -119,9 +117,8 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$actionStatus = "success";
-				$actionMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
-				$logAction = "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
+				$successMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
+				$logAction .= "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
 	
 				include 'library/closedb.php';
 			} // if trim
@@ -164,6 +161,9 @@
 					<?php echo $l['helpPage']['mngdel'] ?>
 					<br/>
 				</div>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 				
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
         <fieldset>

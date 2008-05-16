@@ -11,6 +11,8 @@
 	$expiration = "";
 	$sessiontimeout = "";
 	$idletimeout = "";
+	
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
@@ -115,18 +117,15 @@
 		                }
 
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new user: <b> $username";
-				$logAction = "Successfully added new user [$username] on page: ";
+				$successMsg = "Added to database new user: <b> $username";
+				$logAction .= "Successfully added new user [$username] on page: ";
 			} else {
-				$actionStatus = "failure";
-				$actionMsg = "username or password are empty";
-				$logAction = "Failed adding (possible empty user/pass) new user [$username] on page: ";
+				$failureMsg = "username or password are empty";
+				$logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
 			}
 		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "user already exist in database: <b> $username </b>";
-			$logAction = "Failed adding new user already existing in database [$username] on page: ";
+			$failureMsg = "user already exist in database: <b> $username </b>";
+			$logAction .= "Failed adding new user already existing in database [$username] on page: ";
 		}
 		
 		include 'library/closedb.php';
@@ -183,7 +182,10 @@
 					<?php echo $l['helpPage']['mngnewquick'] ?>
 					<br/>
 				</div>
-
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
+				
 				<form name="newuser" action="mng-new-quick.php" method="post" >
 <div class="tabber">
 
