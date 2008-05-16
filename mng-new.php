@@ -6,6 +6,7 @@
 	include('library/check_operator_perm.php');
 
 	// declaring variables
+	$logAction = "";
 	$logDebugSQL = "";
 
 	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
@@ -250,15 +251,13 @@
 				addUserInfo($dbSocket, $username);
 				addAttributes($dbSocket, $username);
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new user: <b> $username </b>";
-				$logAction = "Successfully added new user [$username] on page: ";
+				$successMsg = "Added to database new user: <b> $username </b>";
+				$logAction .= "Successfully added new user [$username] on page: ";
 
 			} else {
 
-				$actionStatus = "failure";
-				$actionMsg = "username or password are empty";
-				$logAction = "Failed adding (possible empty user/pass) new user [$username] on page: ";
+				$failureMsg = "username or password are empty";
+				$logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
 			}
 
 		   } elseif ($authType == "macAuth") {
@@ -273,9 +272,8 @@
 				addUserInfo($dbSocket, $macaddress);
 				addAttributes($dbSocket, $macaddress);
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new mac auth user: <b> $macaddress </b>";
-				$logAction = "Successfully added new mac auth user [$macaddress] on page: ";
+				$successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
+				$logAction .= "Successfully added new mac auth user [$macaddress] on page: ";
 
 		   } elseif ($authType == "pincodeAuth") {
 
@@ -289,18 +287,16 @@
 				addUserInfo($dbSocket, $pincode);
 				addAttributes($dbSocket, $pincode);
 
-				$actionStatus = "success";
-				$actionMsg = "Added to database new pincode: <b> $pincode </b>";
-				$logAction = "Successfully added new pincode [$pincode] on page: ";
+				$successMsg = "Added to database new pincode: <b> $pincode </b>";
+				$logAction .= "Successfully added new pincode [$pincode] on page: ";
 
 		   } else {
 			echo "unknown authentication method <br/>";
 		   }
 
 		} else { 
-			$actionStatus = "failure";
-			$actionMsg = "user already exist in database: <b> $username </b>";
-			$logAction = "Failed adding new user already existing in database [$username] on page: ";
+			$failureMsg = "user already exist in database: <b> $username </b>";
+			$logAction .= "Failed adding new user already existing in database [$username] on page: ";
 		}
 		
 		include 'library/closedb.php';
@@ -360,6 +356,9 @@
 					<?php echo $l['helpPage']['mngnew'] ?>
 					<br/>
 				</div>
+                <?php
+					include_once('include/management/actionMessages.php');
+                ?>
 				
 				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
