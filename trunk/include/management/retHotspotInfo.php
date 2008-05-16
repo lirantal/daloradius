@@ -29,6 +29,14 @@ if (isset($_GET['retHotspotGeneralStat'])) {
 	$sumDownload = toxbyte($row['sumOutputOctets']);
 	$sumHits = $row['totalhits'];
 
+	if ($sumUpload <= 0)
+		$sumUpload = 0;
+
+	if ($sumDownload <= 0)
+		$sumDownload = 0;
+
+	if ($sumHits <= 0)
+		$sumHits = 0;
 
 	printqn("
 		var divContainer = document.getElementById('{$divContainer}');
