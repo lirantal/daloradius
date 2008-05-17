@@ -1,4 +1,24 @@
-<?php 
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -202,80 +222,72 @@
 
 		<ul>
 		<li class='fieldset'>
-                <label for='usernamePrefix' class='form'><?php 
-			echo $l['all']['UsernamePrefix'] ?></label>
-                <input name='username_prefix' type='text' id='username_prefix' value='' tabindex100 
-                        onfocus="javascript:toggleShowDiv('usernamePrefixTooltip')"
-                        onblur="javascript:toggleShowDiv('usernamePrefixTooltip')" />
-		<br/>
-                <div id='usernamePrefixTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['usernamePrefixTooltip'] ?>
-                </div>
+		<label for='usernamePrefix' class='form'><?php echo $l['all']['UsernamePrefix'] ?></label>
+		<input name='username_prefix' type='text' id='username_prefix' value='' tabindex100 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernamePrefixTooltip')" />
+		
+		<div id='usernamePrefixTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['usernamePrefixTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
-                <label for='numberInstances' class='form'><?php 
-			echo $l['all']['NumberInstances'] ?></label>
-                <input class="integer" name='number' type='text' id='number' value='1' tabindex=101
-                        onfocus="javascript:toggleShowDiv('instancesToCreateTooltip')"
-                        onblur="javascript:toggleShowDiv('instancesToCreateTooltip')" />
+		<label for='numberInstances' class='form'><?php echo $l['all']['NumberInstances'] ?></label>
+		<input class="integer" name='number' type='text' id='number' value='1' tabindex=101 />
 		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('number','increment')" />
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('number','decrement')"/>
-		<br/>
-                <div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['instancesToCreateTooltip'] ?>
-                </div>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('instancesToCreateTooltip')" />
+
+		<div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['instancesToCreateTooltip'] ?>
+		</div>
 		<li>
 
 
 		<li class='fieldset'>
-                <label for='usernameLength' class='form'><?php 
-			echo $l['all']['UsernameLength'] ?></label>
-                <input class="integer" name='length_user' type='text' id='length_user' value='8' tabindex=102
-                        onfocus="javascript:toggleShowDiv('lengthOfUsernameTooltip')"
-                        onblur="javascript:toggleShowDiv('lengthOfUsernameTooltip')" />
+		<label for='usernameLength' class='form'><?php echo $l['all']['UsernameLength'] ?></label>
+		<input class="integer" name='length_user' type='text' id='length_user' value='8' tabindex=102 />
 		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('length_user','increment')" />
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_user','decrement')"/>
-		<br/>
-                <div id='lengthOfUsernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['lengthOfUsernameTooltip'] ?>
-                </div>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('lengthOfUsernameTooltip')" />
+		
+		<div id='lengthOfUsernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['lengthOfUsernameTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
-                <label for='passwordLength' class='form'><?php 
-			echo $l['all']['PasswordLength'] ?></label>
-
-                <input class="integer" name='length_pass' type='text' id='length_pass' value='8' tabindex=103
-                        onfocus="javascript:toggleShowDiv('lengthOfUsernameTooltip')"
-                        onblur="javascript:toggleShowDiv('lengthOfUsernameTooltip')" />
+		<label for='passwordLength' class='form'><?phpecho $l['all']['PasswordLength'] ?></label>
+		<input class="integer" name='length_pass' type='text' id='length_pass' value='8' tabindex=103 />
 		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('length_pass','increment')" />
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_pass','decrement')"/>
-		<br/>
-                <div id='lengthOfPasswordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['lengthOfPasswordTooltip'] ?>
-                </div>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('lengthOfPasswordTooltip')" />
+
+		<div id='lengthOfPasswordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['lengthOfPasswordTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
-                <label for='group' class='form'><?php echo $l['all']['Group']?></label>
+		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php
 		        include 'include/management/populate_selectbox.php';
 		        populate_groups("Select Groups","group");
 		?>
-                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
-                </div>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['groupTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
-                <label for='groupPriority' class='form'><?php echo $l['all']['GroupPriority'] ?></label>
-                <input class="integer" name='group_priority' type='text' id='group_priority' value='0' tabindex=105 />
+		<label for='groupPriority' class='form'><?php echo $l['all']['GroupPriority'] ?></label>
+		<input class="integer" name='group_priority' type='text' id='group_priority' value='0' tabindex=105 />
 		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('group_priority','increment')" />
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('group_priority','decrement')"/>
 		</li>

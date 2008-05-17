@@ -1,4 +1,25 @@
-<?php 
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
+ 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -149,15 +170,15 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['HotspotInfo']; ?>">
+	<div class="tabbertab" title="<?php echo $l['title']['HotspotInfo']; ?>">
 
 
-        <fieldset>
+		<fieldset>
 
-                <h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
-		<br/>
+			<h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
+			<br/>
 
-		<ul>
+			<ul>
 
                 <li class='fieldset'>
                 <label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
@@ -166,52 +187,52 @@
 
                 <li class='fieldset'>
                 <label for='macaddress' class='form'><?php echo $l['all']['MACAddress'] ?></label>
-                <input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101
-                        onfocus="javascript:toggleShowDiv('hotspotMacaddressTooltip')"
-                        onblur="javascript:toggleShowDiv('hotspotMacaddressTooltip')" />
+                <input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
+				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotMacaddressTooltip')" /> 
+				
                 <div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
+					<img src='images/icons/comment.png' alt='Tip' border='0' />
+					<?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
                 </div>
                 </li>
 
                 <li class='fieldset'>
                 <label for='geocode' class='form'><?php echo $l['all']['Geocode'] ?></label>
-                <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102
-                        onfocus="javascript:toggleShowDiv('geocodeTooltip')"
-                        onblur="javascript:toggleShowDiv('geocodeTooltip')" />
+                <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
+				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('geocodeTooltip')" /> 
+				
                 <div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['geocodeTooltip'] ?>
+					<img src='images/icons/comment.png' alt='Tip' border='0' />
+					<?php echo $l['Tooltip']['geocodeTooltip'] ?>
                 </div>
                 </li>
 
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
-                        class='button' />
-		</li>
+				<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+					class='button' />
+				</li>
 
-		<ul>
+			</ul>
 
         </fieldset>
 
-					<input type=hidden value="<?php echo $name ?>" name="name"/>
+		<input type=hidden value="<?php echo $name ?>" name="name"/>
 
 </div>
 
 <div class="tabbertab" title="<?php echo $l['title']['ContactInfo']; ?>">
 
 <?php
-        include_once('include/management/contactinfo.php');
+	include_once('include/management/contactinfo.php');
 ?>
 
         </div>
 
 </div>
 
-				</form>
+		</form>
 
 <?php
 	include('include/config/logging.php');
@@ -221,7 +242,7 @@
 		
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 

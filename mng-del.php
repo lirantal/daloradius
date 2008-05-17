@@ -1,4 +1,25 @@
-<?php 
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
+ 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -151,36 +172,38 @@
 	include ("menu-mng-users.php");
 	
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngdel.php'] ?>
-				:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngdel'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-        <fieldset>
 
-                <h302> <?php echo $l['title']['AccountRemoval'] ?> </h302>
+<div id="contentnorightbar">
+	
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngdel.php'] ?>
+	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
+
+	<div id="helpPage" style="display:none;visibility:visible" >
+		<?php echo $l['helpPage']['mngdel'] ?>
+		<br/>
+	</div>
+	<?php
+		include_once('include/management/actionMessages.php');
+	?>
+
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+	
+	<fieldset>
+
+		<h302> <?php echo $l['title']['AccountRemoval'] ?> </h302>
 		<br/>
 
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-                <input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-                <br />
+		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
+		<input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+		<br />
 
-                <label for='delradacct' class='form'><?php echo $l['all']['RemoveRadacctRecords']?></label>
+		<label for='delradacct' class='form'><?php echo $l['all']['RemoveRadacctRecords']?></label>
 		<select class='form' tabindex=102 name='delradacct' tabindex=101>
 			<option value='no'>no</option>
 			<option value='yes'>yes</option>
 		</select>
-                <br />
+		<br />
 
 		<br/><br/>
 		<hr><br/>
@@ -188,24 +211,24 @@
 			class='button' />
 
 	</fieldset>
-
-				</form>
+	
+	</form>
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+	
 		</div>
-		
+	
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+	
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

@@ -1,30 +1,52 @@
-<?php 
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
+ 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
-        isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
+	isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
 	$logAction = "";
 	$logDebugSQL = "";
 
-        if (isset($_REQUEST['name'])) {
+	if (isset($_REQUEST['name'])) {
 
-                if (!is_array($name))
-                        $name = array($name, NULL);
+		if (!is_array($name))
+			$name = array($name, NULL);
 
 		$allHotspots = "";
 
 		include 'library/opendb.php';
 	
-                foreach ($name as $variable=>$value) {
+		foreach ($name as $variable=>$value) {
 			if (trim($value) != "") {
 
-                                $name = $value;
-                                $allHotspots .= $name . ", ";
+				$name = $value;
+				$allHotspots .= $name . ", ";
 
 				// delete all attributes associated with a username
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='".$dbSocket->escapeSimple($name)."'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='".
+						$dbSocket->escapeSimple($name)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
@@ -63,52 +85,53 @@
 	include ("menu-mng-hs.php");
 	
 ?>		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsdel.php'] ?>
-				:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mnghsdel'] ?>
-					<br/>
-				</div>
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
+<div id="contentnorightbar">
+
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsdel.php'] ?>
+	:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
+
+	<div id="helpPage" style="display:none;visibility:visible" >
+		<?php echo $l['helpPage']['mnghsdel'] ?>
+		<br/>
+	</div>
+	<?php
+		include_once('include/management/actionMessages.php');
+	?>
 
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-        <fieldset>
+	<fieldset>
 
-                <h302> <?php echo $l['title']['HotspotRemoval'] ?> </h302>
+		<h302> <?php echo $l['title']['HotspotRemoval'] ?> </h302>
 		<br/>
 
-                <label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
-                <input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
-                <br/>
+		<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
+		<input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
+		<br/>
 
-                <br/><br/>
-                <hr><br/>
+		<br/><br/>
+		<hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=1000 
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=1000 
 			class='button' />
 
 	</fieldset>
 
-				</form>
+	</form>
 
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+	
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+	
+<?php
+	include 'page-footer.php';
 ?>
 
 		
