@@ -17,6 +17,12 @@ if (isset($_GET['retBandwidthInfo'])) {
 
 	$upload = toxbyte($row['Upload']);
 	$download = toxbyte($row['Download']);
+
+	if ($upload <= 0)
+		$upload = 0;
+	
+	if ($download <= 0)
+		$download = 0;
 	
 
 	printqn("
