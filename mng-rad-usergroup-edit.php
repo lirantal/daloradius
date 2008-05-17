@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -22,16 +42,15 @@
 	$logDebugSQL = "";
 
 	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
+		" WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 	$row = $res->fetchRow();		// array fetched with values from $sql query
 
-					// assignment of values from query to local variables
-					// to be later used in html to display on textboxes (input)
-					
+	// assignment of values from query to local variables
+	// to be later used in html to display on textboxes (input)
 	$priority = $row[2];
 
 	if (isset($_POST['submit'])) {
@@ -42,10 +61,10 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 		
 		include 'library/opendb.php';
 
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
+			" WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 1) {
 
@@ -86,7 +105,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 		$group = $_REQUEST['group'];
 	else
 		$group = "";
-		
+
 	if (trim($username) == "" OR trim($group) == "") {
 		$failureMsg = "no username or groupname was entered, please specify a username and groupname to edit ";
 	}	
@@ -114,23 +133,23 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 <?php
 	include ("menu-mng-rad-usergroup.php");
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupedit'] ?> 
-				<?php echo $username ?><h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >				
-					<?php echo $l['helpPage']['mngradusergroupedit'] ?>
-					<br/>
-				</div>
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
+	<div id="contentnorightbar">
+	
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupedit'] ?> 
+		<?php echo $username ?><h144>+</h144></a></h2>
+
+		<div id="helpPage" style="display:none;visibility:visible" >				
+			<?php echo $l['helpPage']['mngradusergroupedit'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
 				
-                                <form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-                                                <input type="hidden" value="<?php echo $username ?>" name="username" />
+			<input type="hidden" value="<?php echo $username ?>" name="username" />
 
         <fieldset>
 
@@ -150,18 +169,18 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
                 <label for='groupOld' class='form'><?php echo $l['all']['CurrentGroupname'] ?></label>
                 <input type='hidden' name='groupOld' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
                 <input disabled type='text' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
-		Old Group Name
+				Old Group Name
                 </li>
 
                 <li class='fieldset'>
                 <label for='group' class='form'><?php echo $l['all']['NewGroupname'] ?></label>
                 <?php   
-                        include 'include/management/populate_selectbox.php';
-                        populate_groups("Select Groups","group","long");
+					include 'include/management/populate_selectbox.php';
+					populate_groups("Select Groups","group","long");
                 ?>
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+					<img src='images/icons/comment.png' alt='Tip' border='0' />
+					<?php echo $l['Tooltip']['groupTooltip'] ?>
                 </div>
                 </li>
 
@@ -190,18 +209,18 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 <?php
 	include('include/config/logging.php');
 ?>
-				
+
 		</div>
-		
+	
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+	
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

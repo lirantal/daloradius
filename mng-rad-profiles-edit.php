@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -47,28 +67,33 @@
 
 				$value = $dbSocket->escapeSimple($value);
 
-				$sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-						$res = $dbSocket->query($sql);
-						$logDebugSQL .= $sql . "\n";
+				$sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile).
+						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 				if ($res->numRows() == 0) {
 
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
 
-					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($profile)."', '".$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
+					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($profile)."', '".
+							$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 				} else {
 
-						/* we update the $value[0] entry which is the attribute's value */
-						$sql = "UPDATE $table SET Value='$value' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-						$res = $dbSocket->query($sql);
-						$logDebugSQL .= $sql . "\n";
+					/* we update the $value[0] entry which is the attribute's value */
+					$sql = "UPDATE $table SET Value='$value' WHERE GroupName='".
+							$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
-						/* then we update $value[1] which is the attribute's operator */
-						$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op)."' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-						$res = $dbSocket->query($sql);
-						$logDebugSQL .= $sql . "\n";
+					/* then we update $value[1] which is the attribute's operator */
+					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
+							"' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".
+							$dbSocket->escapeSimple($attribute)."'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
 				}
 
@@ -118,24 +143,24 @@
 <?php
 	include ("menu-mng-rad-profiles.php");
 ?>
+
+	<div id="contentnorightbar">
+
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofilesedit.php'] ?>
+		:: <?php if (isset($profile)) { echo $profile; } ?><h144>+</h144></a></h2>
 		
-		<div id="contentnorightbar">
 
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofilesedit.php'] ?>
-				:: <?php if (isset($profile)) { echo $profile; } ?><h144>+</h144></a></h2>
-				
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradprofilesedit'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+		
+		<form name="mngradprofiles" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradprofilesedit'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-				<form name="mngradprofiles" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-					<input type="hidden" value="<?php echo $profile ?>" name="profile" />
+			<input type="hidden" value="<?php echo $profile ?>" name="profile" />
 
 
 <div class="tabber">
@@ -156,14 +181,14 @@
         $editCounter = 0;
 
         $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-		" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
+				" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
 
         if ($numrows = $res->numRows() == 0) {  
-                echo "<center>";
-                echo $l['messages']['noCheckAttributesForGroup'];
-                echo "</center>";
+			echo "<center>";
+			echo $l['messages']['noCheckAttributesForGroup'];
+			echo "</center>";
         }
 
         while($row = $res->fetchRow()) {
@@ -289,14 +314,14 @@
 	</div>
 
 <?php   
-        include 'library/closedb.php';
+	include 'library/closedb.php';
 ?>  
 
 
 
      <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
         <?php
-                include_once('include/management/attributes.php');
+			include_once('include/management/attributes.php');
         ?>
      </div>
 
@@ -310,18 +335,18 @@
 <?php
 	include('include/config/logging.php');
 ?>
-				
+
 		</div>
-		
+
 		<div id="footer">
-		
+
 <?php
-        include 'page-footer.php';
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
