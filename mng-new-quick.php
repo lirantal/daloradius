@@ -1,5 +1,24 @@
 <?php 
-
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -117,7 +136,7 @@
 		                }
 
 
-				$successMsg = "Added to database new user: <b> $username";
+				$successMsg = "Added to database new user: <b> $username </b>";
 				$logAction .= "Successfully added new user [$username] on page: ";
 			} else {
 				$failureMsg = "username or password are empty";
@@ -200,56 +219,54 @@
 
 		<li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-                <input name='username' type='text' id='username' value='' tabindex=100 
-                        onfocus="javascript:toggleShowDiv('usernameTooltip')"
-                        onblur="javascript:toggleShowDiv('usernameTooltip')" />
+                <input name='username' type='text' id='username' value='' tabindex=100  />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
-                <br />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
-                <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['usernameTooltip'] ?>
-                </div>
+		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['usernameTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
-                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
-                <input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword))
-			 echo $hiddenPassword ?> tabindex=101
-                        onfocus="javascript:toggleShowDiv('passwordTooltip')"
-                        onblur="javascript:toggleShowDiv('passwordTooltip')" />
+		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
+		<input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword)) 
+			echo $hiddenPassword ?> tabindex=101 />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8)" />
-                <br />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
-                <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['passwordTooltip'] ?>
-                </div>
+		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['passwordTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
-                <label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
-                <select class='form' tabindex=102 name='passwordType' >
-                        <option value='User-Password'>User-Password</option>
-                        <option value='Cleartext-Password'>Cleartext-Password</option>
-                        <option value='Crypt-Password'>Crypt-Password</option>
-                        <option value='MD5-Password'>MD5-Password</option>
-                        <option value='SHA1-Password'>SHA1-Password</option>
-                        <option value='CHAP-Password'>CHAP-Password</option>
-                </select>
-                <br />
+		<label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
+		<select class='form' tabindex=102 name='passwordType' >
+			<option value='User-Password'>User-Password</option>
+			<option value='Cleartext-Password'>Cleartext-Password</option>
+			<option value='Crypt-Password'>Crypt-Password</option>
+			<option value='MD5-Password'>MD5-Password</option>
+			<option value='SHA1-Password'>SHA1-Password</option>
+			<option value='CHAP-Password'>CHAP-Password</option>
+		</select>
+		<br />
 		</li>
 
 		<li class='fieldset'>
-                <label for='group' class='form'><?php echo $l['all']['Group']?></label>
-                <?php   
-                        include_once 'include/management/populate_selectbox.php';
-                        populate_groups("Select Groups","group");
-                ?>
-                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
-                </div>
+		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
+		<?php   
+			include_once 'include/management/populate_selectbox.php';
+			populate_groups("Select Groups","group");
+		?>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+
+		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['groupTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
