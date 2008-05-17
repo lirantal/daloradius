@@ -1,4 +1,25 @@
-<?php 
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
+
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -106,34 +127,33 @@
 
 		<ul>
 
-                <li class='fieldset'>
+		<li class='fieldset'>
 		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
-		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100
-                        onfocus="javascript:toggleShowDiv('vendorNameTooltip')"
-                        onblur="javascript:toggleShowDiv('vendorNameTooltip')" />
-                <div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['vendorNameTooltip'] ?>
-                </div>
+		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
+		
+		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['vendorNameTooltip'] ?>
+		</div>
 		</li>
 
-                <li class='fieldset'>
+		<li class='fieldset'>
 		<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
-		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101
-                        onfocus="javascript:toggleShowDiv('attributeTooltip')"
-                        onblur="javascript:toggleShowDiv('attributeTooltip')" />
-                <div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['attributeTooltip'] ?>
-                </div>
+		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('attributeTooltip')" />
+		
+		<div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['attributeTooltip'] ?>
+		</div>
 		</li>
 
 	
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
-			class='button' />
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>
@@ -144,18 +164,18 @@
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
