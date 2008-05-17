@@ -379,13 +379,12 @@
 <div id='UserContainer'>
 		<li class='fieldset'>
 		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
-		<input name='username' type='text' id='username' value='' tabindex=100 
-			onfocus="javascript:toggleShowDiv('usernameTooltip')"
-			onblur="javascript:toggleShowDiv('usernameTooltip')" />
+		<input name='username' type='text' id='username' value='' tabindex=100 />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" /> 
 
 		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
 			<?php echo $l['Tooltip']['usernameTooltip'] ?>
 		</div>
 		</li>
@@ -393,10 +392,9 @@
 		<li class='fieldset'>
 		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
 		<input name='password' type='text' id='password' value='' 
-			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101
-			onfocus="javascript:toggleShowDiv('passwordTooltip')"
-			onblur="javascript:toggleShowDiv('passwordTooltip')" />
+			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101 />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8)" />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
 		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
@@ -424,6 +422,8 @@
 		        include_once 'include/management/populate_selectbox.php';
 		        populate_groups("Select Groups","group");
 		?>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
 			<?php echo $l['Tooltip']['groupTooltip'] ?>
@@ -455,9 +455,9 @@
 
 		<li class='fieldset'>
 		<label for='macaddress' class='form'><?php echo $l['all']['MACAddress']?></label>
-		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 disabled
-			onfocus="javascript:toggleShowDiv('macaddressTooltip')"
-			onblur="javascript:toggleShowDiv('macaddressTooltip')" />
+		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 disabled />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('macaddressTooltip')"  />
+
                 <div id='macaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['macaddressTooltip'] ?>
@@ -497,10 +497,10 @@
 
 		<li class='fieldset'>
 		<label for='pincode' class='form'><?php echo $l['all']['PINCode']?></label>
-		<input name='pincode' type='text' id='pincode' value='' tabindex=106 disabled
-			onfocus="javascript:toggleShowDiv('pincodeTooltip')"
-			onblur="javascript:toggleShowDiv('pincodeTooltip')" />
+		<input name='pincode' type='text' id='pincode' value='' tabindex=106 disabled />
 		<input type='button' value='Generate' class='button' onclick="javascript:randomAlphanumeric('pincode',10)" />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('pincodeTooltip')" />		
+		
                 <div id='pincodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['pincodeTooltip'] ?>
