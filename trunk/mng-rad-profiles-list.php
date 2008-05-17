@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -72,38 +92,33 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-        echo "<form name='listprofiles' method='post' action='mng-rad-profiles-del.php'>";
+	echo "<form name='listprofiles' method='post' action='mng-rad-profiles-del.php'>";
 	
 	echo "<table border='0' class='table1'>\n";
 	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
+		<thead>
+			<tr>
+			<th colspan='10' align='left'>
+			Select:
+			<a class=\"table\" href=\"javascript:SetChecked(1,'profile[]','listprofiles')\">All</a>
+			<a class=\"table\" href=\"javascript:SetChecked(0,'profile[]','listprofiles')\">None</a>
+			<br/>
+			<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listprofiles\",\"mng-rad-profiles-del.php\")' />
+			<br/><br/>
+	";
 
-                                Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'profile[]','listprofiles')\">All</a>
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'profile[]','listprofiles')\">None</a>
-                                <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listprofiles\",\"mng-rad-profiles-del.php\")' />
-                                <br/><br/>
+	echo "	</th></tr>
+			</thead>
+	";
 
-
-                ";
-
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-        echo " </th></tr>
-                                        </thead>
-
-                        ";
-
-        if ($orderType == "asc") {
-                $orderType = "desc";
-        } else  if ($orderType == "desc") {
-                $orderType = "asc";
-        }
+	if ($orderType == "asc") {
+		$orderType = "desc";
+	} else  if ($orderType == "desc") {
+		$orderType = "asc";
+	}
 
 	echo "<thread> <tr>
 		<th scope='col'>
@@ -124,21 +139,19 @@
 		</tr>";
 	}
 
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
+	echo "
+		<tfoot>
+			<tr>
+			<th colspan='10' align='left'>
+	";
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	echo "
+			</th>
+			</tr>
+		</tfoot>
+	";
 
-
-	echo "</table>";
-	echo "</form>";
+	echo "</table></form>";
 
 	include 'library/closedb.php';
 ?>
@@ -147,18 +160,18 @@
 <?php
 	include('include/config/logging.php');
 ?>
-				
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

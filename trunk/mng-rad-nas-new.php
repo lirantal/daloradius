@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -31,7 +51,8 @@
 		
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS']." WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].
+			" WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -44,9 +65,11 @@
 				}
 				
 				// insert nas details
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADNAS']." values (0, '".$dbSocket->escapeSimple($nashost)."', '".$dbSocket->escapeSimple($nasname)."',
-'".$dbSocket->escapeSimple($nastype)."', ".$dbSocket->escapeSimple($nasports).", '".$dbSocket->escapeSimple($nassecret)."',
-'".$dbSocket->escapeSimple($nascommunity)."', '".$dbSocket->escapeSimple($nasdescription)."')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADNAS'].
+					" values (0, '".$dbSocket->escapeSimple($nashost)."', '".$dbSocket->escapeSimple($nasname).
+					"', '".$dbSocket->escapeSimple($nastype)."', ".$dbSocket->escapeSimple($nasports).
+					", '".$dbSocket->escapeSimple($nassecret)."', '".$dbSocket->escapeSimple($nascommunity).
+					"', '".$dbSocket->escapeSimple($nasdescription)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
@@ -85,25 +108,25 @@
 
 
 <?php
-        include_once ("library/tabber/tab-layout.php");
+	include_once ("library/tabber/tab-layout.php");
 ?> 
  
 <?php
 	include ("menu-mng-rad-nas.php");
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasnew.php'] ?>
-				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >				
-					<?php echo $l['helpPage']['mngradnasnew'] ?>
-					<br/>
-				</div>
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
+	<div id="contentnorightbar">
+	
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasnew.php'] ?>
+		<h144>+</h144></a></h2>
+
+		<div id="helpPage" style="display:none;visibility:visible" >				
+			<?php echo $l['helpPage']['mngradnasnew'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
 				
 
                 <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -129,16 +152,16 @@
                 <label for='nastype' class='form'><?php echo $l['all']['NasType'] ?></label>
                 <input name='nastype' type='text' id='nastype' value='' tabindex=102 />
                 <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
-			<option value="">Select Type...</option>
+					<option value="">Select Type...</option>
 	                <option value="other">other</option>
 	                <option value="cisco">cisco</option>
 	                <option value="livingston">livingston</option>
         	        <option value="computon">computon</option>
-		        <option value="max40xx">max40xx</option>
-		        <option value="multitech">multitech</option>
-		        <option value="natserver">natserver</option>
-		        <option value="pathras">pathras</option>
-		        <option value="patton">patton</option>
+					<option value="max40xx">max40xx</option>
+					<option value="multitech">multitech</option>
+					<option value="natserver">natserver</option>
+					<option value="pathras">pathras</option>
+					<option value="patton">patton</option>
 	                <option value="portslave">portslave</option>
 	                <option value="tc">tc</option>
 	                <option value="usrhiper">usrhiper</option>
@@ -198,13 +221,13 @@
 		
 		<div id="footer">
 		
-								<?php
-        include 'page-footer.php';
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

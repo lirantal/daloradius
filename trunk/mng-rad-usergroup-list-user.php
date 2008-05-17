@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -35,20 +55,20 @@
 <?php
 	include ("menu-mng-rad-usergroup.php");
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergrouplistuser'] ?>
-				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradusergrouplistuser'] ?>
-					<br/>
-				</div>			
-				<br/>
+	<div id="contentnorightbar">
+		
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergrouplistuser'] ?>
+		<h144>+</h144></a></h2>
+
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradusergrouplistuser'] ?>
+			<br/>
+		</div>			
+		<br/>
+
 <?php
 
-	
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
@@ -71,32 +91,30 @@
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-                                Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'usergroup[]','listallusergroup')\">All</a>
+		<thead>
+			<tr>
+			<th colspan='10' align='left'>
+			Select:
+			<a class=\"table\" href=\"javascript:SetChecked(1,'usergroup[]','listallusergroup')\">All</a>
+			<a class=\"table\" href=\"javascript:SetChecked(0,'usergroup[]','listallusergroup')\">None</a>
+			<br/>
+			<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusergroup\",\"mng-rad-usergroup-del.php\")' />
+			<br/><br/>
+	";
 
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'usergroup[]','listallusergroup')\">None</a>
-                                <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusergroup\",\"mng-rad-usergroup-del.php\")' />
-                                <br/><br/>
-                ";
 
-
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
 		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, "&username=$username");
 
-        echo " </th></tr>
-                                        </thead>
+	echo "	</th></tr>
+			</thead>
+	";
 
-                        ";
-
-        if ($orderType == "asc") {
-                $orderType = "desc";
-        } else  if ($orderType == "desc") {
-                $orderType = "asc";
-        }
+	if ($orderType == "asc") {
+		$orderType = "desc";
+	} else  if ($orderType == "desc") {
+		$orderType = "asc";
+	}
 
 	echo "<thread> <tr>
 		<th scope='col'>
@@ -128,21 +146,20 @@
 		</tr>";
 	}
 
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-        ";
+	echo "
+		<tfoot>
+			<tr>
+			<th colspan='10' align='left'>
+	";
 	setupLinks($pageNum, $maxPage, $orderBy, $orderType, "&username=$username");
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
+	echo "
+			</th>
+			</tr>
+		</tfoot>
+	";
 
 
-	echo "</table>";
-	echo "</form>";
+	echo "</table></form>";
 	include 'library/closedb.php';
 ?>
 
@@ -150,18 +167,18 @@
 <?php
 	include('include/config/logging.php');
 ?>
-				
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
