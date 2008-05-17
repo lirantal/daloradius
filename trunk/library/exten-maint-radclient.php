@@ -16,8 +16,8 @@
  *********************************************************************************************************
  * Description:
  *		This code allows for running the 'radtest' binary tool provided with freeradius
-*		for performing a dry-run check to see if a user is able to successfully login
-*		or that there may be problems connecting.
+ *		for performing a dry-run check to see if a user is able to successfully login
+ *		or that there may be problems connecting.
  *
  * Authors:	Liran Tal <liran@enginx.com>
  *		Giso Kegal <kegel@barum.de>
@@ -50,14 +50,14 @@ function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command
 				escapeshellarg($options['timeout'])." ".$options['debug'];
 
 	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
-	$print_cmd = "<b>Executed:</b> $cmd <br/><b>Results:</b><br/><br/>";
+	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";
 	$res = shell_exec($cmd);
 
 	if ($res == "") {
-		echo "<b>Error:</b> command did not return any results<br/>";
-		echo "please check that you have the radclient binary program installed and that
+		echo "<b>Error:</b> Command did not return any results<br/>";
+		echo "Please check that you have the radclient binary program installed and that
 			it is found in your \$PATH variable<br/>
-			You may also consult the library/exten-maint-radclient.php for other problems<br/>
+			You may also consult the file library/exten-maint-radclient.php for other problems<br/>
 		";
 	}
 
@@ -89,14 +89,14 @@ function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$com
 				escapeshellarg($options['timeout'])." ".$options['debug'];
 
 	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
-	$print_cmd = "<b>Executed:</b> $cmd <br/><b>Results:</b><br/><br/>";
+	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";
 	$res = shell_exec($cmd);
 
 	if ($res == "") {
-		echo "<b>Error:</b> command did not return any results<br/>";
-		echo "please check that you have the radclient binary program installed and that
+		echo "<b>Error:</b> Command did not return any results<br/>";
+		echo "Please check that you have the radclient binary program installed and that
 			it is found in your \$PATH variable<br/>
-			You may also consult the library/exten-maint-radclient.php for other problems<br/>
+			You may also consult the file library/exten-maint-radclient.php for other problems<br/>
 		";
 	}
 
