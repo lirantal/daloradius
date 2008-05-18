@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -29,9 +29,10 @@
 	isset($_REQUEST['startdate']) ? $startdate = $_REQUEST['startdate'] : $startdate = "";
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
 
+	$logAction =  "";
 	$logDebugSQL = "";
 
-        if (isset($_POST['submit'])) {
+	if (isset($_POST['submit'])) {
 
 		if ( (trim($startdate) != "") || (trim($enddate) != "") || (trim($username) != "") ) {
 			
@@ -58,16 +59,14 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$actionStatus = "success";
-			$actionMsg = "Deleted records between <b>$startdate</b> to <b>$enddate</b> for user <b>$username</b>";
-			$logAction = "Successfully deleted records between [$startdate] and [$enddate] for user [$username] on page: ";
+			$successMsg = "Deleted records between <b>$startdate</b> to <b>$enddate</b> for user <b>$username</b>";
+			$logAction .= "Successfully deleted records between [$startdate] and [$enddate] for user [$username] on page: ";
 
 			include 'library/closedb.php';
 
 		}  else { 
-			$actionStatus = "failure";
-			$actionMsg = "no username, ending date or starting date was provided, please at least one of those";
-			$logAction = "Failed deleting records from database, missing fields on page: ";
+			$failureMsg = "no username, ending date or starting date was provided, please at least one of those";
+			$logAction .= "Failed deleting records from database, missing fields on page: ";
 		}
 
 	}
@@ -99,43 +98,45 @@
 <?php
 	include ("menu-accounting-maintenance.php");	
 ?>
+
+	<div id="contentnorightbar">
 		
-		<div id="contentnorightbar">
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctmaintenancedelete.php'] ?>
+		<h144>+</h144></a></h2>
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctmaintenancedelete.php'] ?>
-				<h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['acctmaintenancedelete'] ?>
-					<br/>
-				</div>
-				
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['acctmaintenancedelete'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+		
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
         <fieldset>
 
-                <h302> <?php echo $l['title']['DeleteRecords'] ?> </h302>
-		<br/>
+			<h302> <?php echo $l['title']['DeleteRecords'] ?> </h302>
+			<br/>
 
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-                <br />
+			<label for='username' class='form'><?php echo $l['all']['Username']?></label>
+			<input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+			<br />
 
-                <label for='startdate' class='form'><?php echo $l['all']['StartingDate']?></label>
-                <input name='startdate' type='text' id='startdate' value='<?php echo $startdate ?>' tabindex=100 />
+			<label for='startdate' class='form'><?php echo $l['all']['StartingDate']?></label>
+			<input name='startdate' type='text' id='startdate' value='<?php echo $startdate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
-				"showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
-                <br />
+			"showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
+			<br />
 
-                <label for='enddate' class='form'><?php echo $l['all']['EndingDate']?></label>
-                <input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
+			<label for='enddate' class='form'><?php echo $l['all']['EndingDate']?></label>
+			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
-				"showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
-                <br />
+			"showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
+			<br />
 
-		<br/><br/>
-		<hr><br/>
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 
-			class='button' />
+			<br/><br/>
+			<hr><br/>
+			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 class='button' />
 
 	</fieldset>
 
@@ -143,23 +144,23 @@
 		style="display: none; visibility: hidden; width: 160px;">
 	</div>
 
-				</form>
+	</form>
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
