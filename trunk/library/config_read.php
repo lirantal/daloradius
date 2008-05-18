@@ -38,8 +38,7 @@ if ($_configFp) {
 	}
 	fclose($_configFp);
 } else {
-	$actionStatus = "failure";
-	$actionMsg = "could not open the file for reading:<b> $_configFile </b>
+	$failureMsg = "Could not open the file for reading:<b> $_configFile </b>
 	<br/>Check file permissions. The file should be readable by the webserver's user/group";
 }
 
