@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -29,27 +29,26 @@
 
 	$logDebugSQL = "";
 
-        if (isset($_POST['submit'])) {
+	if (isset($_POST['submit'])) {
 
 		if (trim($enddate) != "") {
 			
 			include 'library/opendb.php';
 
 			// delete all stale sessions in the database that occur until $enddate
-			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE AcctStopTime='0000-00-00 00:00:00' AND AcctStartTime<'".$dbSocket->escapeSimple($enddate)."'";
+			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+					" WHERE AcctStopTime='0000-00-00 00:00:00' AND AcctStartTime<'".$dbSocket->escapeSimple($enddate)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$actionStatus = "success";
-			$actionMsg = "Cleaned up stale sessions until date: <b> $enddate </b>";
-			$logAction = "Successfully cleaned up stale sessions until date [$enddate] on page: ";
+			$successMsg = "Cleaned up stale sessions until date: <b> $enddate </b>";
+			$logAction .= "Successfully cleaned up stale sessions until date [$enddate] on page: ";
 
 			include 'library/closedb.php';
 
 		}  else { 
-			$actionStatus = "failure";
-			$actionMsg = "no ending date was entered, please specify an ending date for cleaning up stale sessions from the database";
-			$logAction = "Failed cleaning up stale sessions until end date [$enddate] on page: ";
+			$failureMsg = "no ending date was entered, please specify an ending date for cleaning up stale sessions from the database";
+			$logAction .= "Failed cleaning up stale sessions until end date [$enddate] on page: ";
 		}
 
 	}
@@ -81,56 +80,57 @@
 <?php
 	include ("menu-accounting-maintenance.php");	
 ?>
+
+	<div id="contentnorightbar">
 		
-		<div id="contentnorightbar">
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctmaintenancecleanup.php'] ?>
+		<h144>+</h144></a></h2>
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctmaintenancecleanup.php'] ?>
-				<h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['acctmaintenancecleanup'] ?>
-					<br/>
-				</div>
-				
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['acctmaintenancecleanup'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+		
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
         <fieldset>
-
-                <h302> <?php echo $l['title']['CleanupRecords'] ?> </h302>
-		<br/>
-                <label for='enddate' class='form'><?php echo $l['all']['CleanupSessions']?></label>
-                <input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
+			<h302> <?php echo $l['title']['CleanupRecords'] ?> </h302>
+			<br/>
+			
+			<label for='enddate' class='form'><?php echo $l['all']['CleanupSessions']?></label>
+			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
-				"showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
-                <br />
+			"showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
+			<br />
 
-		<br/><br/>
-		<hr><br/>
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 
-			class='button' />
-
+			<br/><br/>
+			<hr><br/>
+			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 class='button' />
 	</fieldset>
 
 	<div id="chooserSpan" class="dateChooser select-free" 
 		style="display: none; visibility: hidden; width: 160px;">
 	</div>
 
-				</form>
+	</form>
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
