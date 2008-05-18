@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -40,8 +60,9 @@
 					include 'library/opendb.php';
 
 				        // delete only a specific groupname and it's attribute
-					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." 
-WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='$value' AND Attribute='$attribute'";
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+							" WHERE GroupName='".$dbSocket->escapeSimple($groupname).
+							"' AND Value='$value' AND Attribute='$attribute'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
@@ -95,65 +116,65 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='$value' AND
 <?php
 	include ("menu-mng-rad-groups.php");
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplydel.php'] ?>
-				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradgroupreplydel'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+	<div id="contentnorightbar">
+	
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplydel.php'] ?>
+		<h144>+</h144></a></h2>
+
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradgroupreplydel'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
-                <br/>
+			<h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+			<br/>
 
-                <label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
-                <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
-                <br/>
+			<label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
+			<input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
+			<br/>
 
-                <label for='value' class='form'><?php echo $l['all']['Value'] ?></label>
-                <input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=101 />
-                <br/>
+			<label for='value' class='form'><?php echo $l['all']['Value'] ?></label>
+			<input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=101 />
+			<br/>
 
-                <label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
-                <input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=102 />
-                <br/>
+			<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
+			<input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=102 />
+			<br/>
 
-                <br/><br/>
-                <hr><br/>
+			<br/><br/>
+			<hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
 
         </fieldset>
 
 
-                                </form>
+		</form>
 
 
 <?php
 	include('include/config/logging.php');
 ?>	
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

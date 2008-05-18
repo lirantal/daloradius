@@ -1,42 +1,62 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
-        isset($_REQUEST['poolname']) ? $poolname = $_REQUEST['poolname'] : $poolname = "";
-        isset($_REQUEST['ipaddress']) ? $ipaddress = $_REQUEST['ipaddress'] : $ipaddress = "";
+	isset($_REQUEST['poolname']) ? $poolname = $_REQUEST['poolname'] : $poolname = "";
+	isset($_REQUEST['ipaddress']) ? $ipaddress = $_REQUEST['ipaddress'] : $ipaddress = "";
 
-        $logAction = "";
+	$logAction = "";
 	$logDebugSQL = "";
 
-        if (isset($_POST['poolname'])) {
+	if (isset($_POST['poolname'])) {
 
 		$allPoolNames = "";
 		$allIPAddresses = "";
 
-                /* since the foreach loop will report an error/notice of undefined variable $value because
-                   it is possible that the $poolname is not an array, but rather a simple GET request
-                   with just some value, in this case we check if it's not an array and convert it to one with
-                   a NULL 2nd element
-                */
+		/* since the foreach loop will report an error/notice of undefined variable $value because
+		it is possible that the $poolname is not an array, but rather a simple GET request
+		with just some value, in this case we check if it's not an array and convert it to one with
+		a NULL 2nd element
+		*/
 
-                if (is_array($poolname)) {
-                        $itemsArray = $poolname;
-                } else {
-                        $itemsArray = array($poolname."||".$ipaddress);
-                }
+		if (is_array($poolname)) {
+			$itemsArray = $poolname;
+		} else {
+			$itemsArray = array($poolname."||".$ipaddress);
+		}
 
-                foreach ($itemsArray as $value) {
+		foreach ($itemsArray as $value) {
 
-                        list($poolname, $ipaddress) = split('\|\|', $value);
+			list($poolname, $ipaddress) = split('\|\|', $value);
 
-                        if ( (trim($poolname) != "") && (trim($ipaddress) != "") ) {
+			if ( (trim($poolname) != "") && (trim($ipaddress) != "") ) {
 
 				include 'library/opendb.php';
 
-                                $allPoolNames .= $poolname . ", ";
+				$allPoolNames .= $poolname . ", ";
 				$allIPAddresses .= $ipaddress .", ";
 
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL']." WHERE ".
@@ -49,7 +69,7 @@
 				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolname] on page: ";
 					
 				include 'library/closedb.php';
-	
+		
 			}  else {
 				$failureMsg = "No IPAddress/Pool Name was entered, please specify an IPAddress/Pool Name to remove from database";
 				$logAction .= "Failed deleting empty IP Address/Pool Name on page: ";
@@ -80,62 +100,61 @@
 <?php
 	include ("menu-mng-rad-ippool.php");
 ?>
+
+	<div id="contentnorightbar">
+
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradippooldel.php'] ?>
+		:: <?php if (isset($poolname)) { echo $poolname; } ?><h144>+</h144></a></h2>
 		
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradippooldel.php'] ?>
-				:: <?php if (isset($poolname)) { echo $poolname; } ?><h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradippooldel'] ?>
-					<br/>
-				</div>
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradippooldel'] ?>
+			<br/>
+		</div>
 <?php
-        include_once('include/management/actionMessages.php');
+	include_once('include/management/actionMessages.php');
 ?>
 
 
-                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['IPPoolInfo'] ?> </h302>
-                <br/>
+			<h302> <?php echo $l['title']['IPPoolInfo'] ?> </h302>
+			<br/>
 
-                <label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
-                <input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
-                <br />
+			<label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
+			<input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
+			<br />
 
-                <label for='ipaddress' class='form'><?php echo $l['all']['IPAddress'] ?></label>
-                <input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
-                <br />
+			<label for='ipaddress' class='form'><?php echo $l['all']['IPAddress'] ?></label>
+			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
+			<br />
 
-                <br/><br/>
-                <hr><br/>
+			<br/><br/>
+			<hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
 
         </fieldset>
 
 
-                                </form>
+		</form>
 
 <?php
 	include('include/config/logging.php');
 ?>
-				
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

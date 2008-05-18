@@ -51,8 +51,8 @@
 
 				include 'library/opendb.php';
 
-				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE vendor='".$dbSocket->escapeSimple($vendor).
-					"' AND attribute='".$dbSocket->escapeSimple($attribute)."'";
+				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE vendor='".
+						$dbSocket->escapeSimple($vendor)."' AND attribute='".$dbSocket->escapeSimple($attribute)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -104,21 +104,21 @@
 	include ("menu-mng-rad-attributes.php");
 	
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesdel.php'] ?>
-				<h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradattributesdel'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="contentnorightbar">
+	
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesdel.php'] ?>
+			<h144>+</h144></a></h2>
+			
+			<div id="helpPage" style="display:none;visibility:visible" >
+				<?php echo $l['helpPage']['mngradattributesdel'] ?>
+				<br/>
+			</div>
+			<?php
+				include_once('include/management/actionMessages.php');
+			?>
+
+			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 	<fieldset>
 
@@ -159,7 +159,7 @@
 		</ul>
 	</fieldset>
 
-				</form>
+	</form>
 
 <?php
 	include('include/config/logging.php');

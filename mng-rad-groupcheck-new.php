@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -10,18 +30,16 @@
 
 	$logAction = "";
 	$logDebugSQL = "";
-        $allValues = "";
-        $allAttributes = "";
+	$allValues = "";
+	$allAttributes = "";
 
     if (isset($_POST['submit'])) {
-        
-        
+
         include 'library/opendb.php';   
 
         $groupname = $_REQUEST['groupname'];
 
         if ($groupname) {
-                
                 $counter = 0;
                 foreach ($_POST as $element=>$field) {
 
@@ -65,9 +83,9 @@
                         $allAttributes .= $attribute . "\n";
 
                                         
-                        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE 
-GroupName='".$dbSocket->escapeSimple($groupname)."'
-AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+                        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
+								" WHERE GroupName='".$dbSocket->escapeSimple($groupname).
+								"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
                         $res = $dbSocket->query($sql);
                         $logDebugSQL .= $sql . "\n";
 
@@ -92,8 +110,6 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
                         } // end else if mysql
 
-
-                                
                     }
 
                 } else { // if groupname isset
@@ -107,9 +123,9 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
         }
 
 
-        isset($groupname) ? $groupname = $groupname : $groupname = "";
+	isset($groupname) ? $groupname = $groupname : $groupname = "";
 
-        include_once('library/config_read.php');
+	include_once('library/config_read.php');
     $log = "visited page: ";
 
 ?>
@@ -141,35 +157,35 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 <?php
 	include ("menu-mng-rad-groups.php");
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupchecknew.php'] ?>
-				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradgroupchecknew'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-                                <form name="newgroupcheck" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="contentnorightbar">
+
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupchecknew.php'] ?>
+		<h144>+</h144></a></h2>
+
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradgroupchecknew'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+		
+		<form name="newgroupcheck" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
-                <br/>
+			<h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+			<br/>
 
-                <label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
-                <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
-                <br />
+			<label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
+			<input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
+			<br />
 
-                <br/><br/>
-                <hr><br/>
+			<br/><br/>
+			<hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
 
         </fieldset>
 
@@ -177,11 +193,11 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
 
         <?php
-                include_once('include/management/attributes.php');
+			include_once('include/management/attributes.php');
         ?>
 
 
-                                </form>
+		</form>
 
 
 <?php
@@ -189,16 +205,15 @@ AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 ?>				
 
 		</div>
-		
+
 		<div id="footer">
-		
+
 <?php
-        include 'page-footer.php';
+	include 'page-footer.php';
 ?>
 
-		
 		</div>
-		
+
 </div>
 </div>
 
