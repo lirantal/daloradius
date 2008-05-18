@@ -183,7 +183,7 @@
 <script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
 
 <?php
-        include_once ("library/tabber/tab-layout.php");
+	include_once ("library/tabber/tab-layout.php");
 ?>
 
 <?php
@@ -192,34 +192,34 @@
 	
 ?>
 
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnewquick.php'] ?>
-				<h144>+</h144></a></h2>
+	<div id="contentnorightbar">
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngnewquick'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-				<form name="newuser" action="mng-new-quick.php" method="post" >
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnewquick.php'] ?>
+		<h144>+</h144></a></h2>
+
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngnewquick'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+		
+		<form name="newuser" action="mng-new-quick.php" method="post" >
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
-		<br/>
+			<h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+			<br/>
 		
 		<ul>
 
 		<li class='fieldset'>
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-                <input name='username' type='text' id='username' value='' tabindex=100  />
+		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
+		<input name='username' type='text' id='username' value='' tabindex=100  />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
@@ -274,8 +274,7 @@
                 <hr><br/>
 		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" 
 			onclick = "javascript:small_window(document.newuser.username.value, 
-			document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 
-			class='button' />
+			document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 class='button' />
 		</li>
 		</ul>
         </fieldset>
@@ -284,38 +283,38 @@
 
 	<fieldset>
 
-                <h302> <?php echo $l['title']['Attributes']; ?> </h302>
+		<h302> <?php echo $l['title']['Attributes']; ?> </h302>
 
 		<label for='expiration' class='form'><?php echo $l['all']['Expiration']?></label>		
 		<input value='' id='expiration' name='expiration'  tabindex=106 />
 
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
+		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
 
 		<br/>
 
 		<label for='sessiontimeout' class='form'><?php echo $l['all']['SessionTimeout']?></label>
 		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=107 />
 		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0" class='form' >
-	                <option value="1">calculate time</option>
-	                <option value="1">seconds</option>
-	                <option value="60">minutes</option>
-	                <option value="3600">hours</option>
-        	        <option value="86400">days</option>
-	                <option value="604800">weeks</option>
-	                <option value="2592000">months (30 days)</option>
+			<option value="1">calculate time</option>
+			<option value="1">seconds</option>
+			<option value="60">minutes</option>
+			<option value="3600">hours</option>
+			<option value="86400">days</option>
+			<option value="604800">weeks</option>
+			<option value="2592000">months (30 days)</option>
 		</select>
 		<br/>
 
 		<label for='idletimeout' class='form'><?php echo $l['all']['IdleTimeout']?></label>
 		<input value='' id='idletimeout' name='idletimeout'  tabindex=107 />
 		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1" class='form' >
-	                <option value="1">calculate time</option>
-	                <option value="1">seconds</option>
-	                <option value="60">minutes</option>
-	                <option value="3600">hours</option>
-	                <option value="86400">days</option>
-	                <option value="604800">weeks</option>
-	                <option value="2592000">months (30 days)</option>
+			<option value="1">calculate time</option>
+			<option value="1">seconds</option>
+			<option value="60">minutes</option>
+			<option value="3600">hours</option>
+			<option value="86400">days</option>
+			<option value="604800">weeks</option>
+			<option value="2592000">months (30 days)</option>
 		</select>
 		<br/>
 
@@ -323,13 +322,13 @@
 			echo $l['all']['MaxAllSession'] ?></label>
 		<input value='' id='maxallsession' name='maxallsession'  tabindex=108 />
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2" class='form' >
-	                <option value="1">calculate time</option>
-	                <option value="1">seconds</option>
-	                <option value="60">minutes</option>
-	                <option value="3600">hours</option>
-	                <option value="86400">days</option>
-	                <option value="604800">weeks</option>
-	                <option value="2592000">months (30 days)</option>
+			<option value="1">calculate time</option>
+			<option value="1">seconds</option>
+			<option value="60">minutes</option>
+			<option value="3600">hours</option>
+			<option value="86400">days</option>
+			<option value="604800">weeks</option>
+			<option value="2592000">months (30 days)</option>
 		</select>
 		<br/>
 
@@ -427,24 +426,24 @@
 
 </div>
 
-				</form>
+		</form>
 
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

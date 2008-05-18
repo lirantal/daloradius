@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -30,8 +50,8 @@
 
 	$row = $res->fetchRow();		// array fetched with values from $sql query
 
-					// assignment of values from query to local variables
-					// to be later used in html to display on textboxes (input)
+	// assignment of values from query to local variables
+	// to be later used in html to display on textboxes (input)
 	$nassecret = $row[5];
 	$nasname = $row[2];
 	$nasports = $row[4];
@@ -53,7 +73,8 @@
 			
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS']." WHERE nasname='".$dbSocket->escapeSimple($nashostold)."' ";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].
+				" WHERE nasname='".$dbSocket->escapeSimple($nashostold)."' ";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -66,10 +87,15 @@
 				}
 
 				// insert nas details
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADNAS']." SET nasname='".$dbSocket->escapeSimple($nashost)."', shortname='".$dbSocket->escapeSimple($nasname)."',
-type='".$dbSocket->escapeSimple($nastype)."', ports=".$dbSocket->escapeSimple($nasports).", secret='".$dbSocket->escapeSimple($nassecret)."',
-community='".$dbSocket->escapeSimple($nascommunity)."', description='".$dbSocket->escapeSimple($nasdescription)."'
-WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADNAS'].
+					" SET nasname='".$dbSocket->escapeSimple($nashost)."', ".
+					" shortname='".$dbSocket->escapeSimple($nasname)."', ".
+					" type='".$dbSocket->escapeSimple($nastype)."', ".
+					" ports=".$dbSocket->escapeSimple($nasports).", ".
+					" secret='".$dbSocket->escapeSimple($nassecret)."', ".
+					" community='".$dbSocket->escapeSimple($nascommunity)."', ".
+					" description='".$dbSocket->escapeSimple($nasdescription)."' ".
+					" WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -121,32 +147,33 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 </head>
 
 <?php
-        include_once ("library/tabber/tab-layout.php");
+	include_once ("library/tabber/tab-layout.php");
 ?>
  
  
 <?php
 	include ("menu-mng-rad-nas.php");
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasedit.php'] ?>
-				:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradnasedit'] ?>
-					<br/>
-				</div>
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
+	<div id="contentnorightbar">
 
-                                <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasedit.php'] ?>
+			:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>+</h144></a></h2>
+
+			<div id="helpPage" style="display:none;visibility:visible" >
+				<?php echo $l['helpPage']['mngradnasedit'] ?>
+				<br/>
+			</div>
+			<?php
+				include_once('include/management/actionMessages.php');
+			?>
+
+			<form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['NASInfo']; ?>">
-                                                <input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
+		<input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
 
 
         <fieldset>
@@ -232,18 +259,18 @@ WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
 <?php
 	include('include/config/logging.php');
 ?>
-				
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

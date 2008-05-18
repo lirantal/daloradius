@@ -1,4 +1,24 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
@@ -11,12 +31,12 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
 
-        isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "%";
+	isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "%";
 
-        $search_groupname = $groupname; //feed the sidebar variables
-        $groupname = str_replace('*', '%', $groupname);
+	$search_groupname = $groupname; //feed the sidebar variables
+	$groupname = str_replace('*', '%', $groupname);
 
-
+	
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -38,17 +58,17 @@
 <?php
 	include ("menu-mng-rad-groups.php");
 ?>
+
+	<div id="contentnorightbar">
+	
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplysearch.php'] ?>
+		<h144>+</h144></a></h2>
 		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplysearch.php'] ?>
-				<h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradgroupreplysearch'] ?>
-					<br/>
-				</div>
-				<br/>
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradgroupreplysearch'] ?>
+			<br/>
+		</div>
+		<br/>
 
 <?php
 
@@ -57,16 +77,14 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as method to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT GroupName, Attribute, op, Value FROM 
-".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName LIKE 
-'".$dbSocket->escapeSimple($groupname)."%' GROUP BY GroupName";
+	$sql = "SELECT GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+			" WHERE GroupName LIKE '".$dbSocket->escapeSimple($groupname)."%' GROUP BY GroupName";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-	$sql = "SELECT GroupName, Attribute, op, Value FROM 
-".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName LIKE
-'".$dbSocket->escapeSimple($groupname)."%' ORDER BY $orderBy $orderType LIMIT $offset, 
-$rowsPerPage;";
+	$sql = "SELECT GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+			" WHERE GroupName LIKE '".$dbSocket->escapeSimple($groupname)."%' ".
+			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -75,38 +93,35 @@ $rowsPerPage;";
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-        echo "<form name='listgroupreply' method='post' action='mng-rad-groupreply-del.php'>";
+	echo "<form name='listgroupreply' method='post' action='mng-rad-groupreply-del.php'>";
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
+		<thead>
+			<tr>
+			<th colspan='10' align='left'>
 
 
-                                Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'group[]','listgroupreply')\">All</a>
+			Select:
+			<a class=\"table\" href=\"javascript:SetChecked(1,'group[]','listgroupreply')\">All</a>
+			<a class=\"table\" href=\"javascript:SetChecked(0,'group[]','listgroupreply')\">None</a>
+			<br/>
+			<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listgroupreply\",\"mng-rad-groupreply-del.php\")' />
+			<br/><br/>
+	";
 
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'group[]','listgroupreply')\">None</a>
-                                <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listgroupreply\",\"mng-rad-groupreply-del.php\")' />
-                                <br/><br/>
+	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
 
-                ";
+	echo "	</th></tr>
+			</thead>
+	";
 
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-        echo " </th></tr>
-                                        </thead>
-
-                        ";
-
-        if ($orderType == "asc") {
-                $orderType = "desc";
-        } else  if ($orderType == "desc") {
-                $orderType = "asc";
-        }
+	if ($orderType == "asc") {
+		$orderType = "desc";
+	} else  if ($orderType == "desc") {
+		$orderType = "asc";
+	}
 
 	echo "<thread> <tr>
 		<th scope='col'>".$l['all']['Groupname']."
@@ -140,20 +155,19 @@ $rowsPerPage;";
 		</tr>";
 	}
 
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
+	echo "
+		<tfoot>
+			<tr>
+			<th colspan='10' align='left'>
+	";
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	echo "
+			</th>
+			</tr>
+		</tfoot>
+	";
 
-	echo "</table>";
-	echo "</form>";
+	echo "</table></form>";
 
 	include 'library/closedb.php';
 ?>
@@ -164,18 +178,18 @@ $rowsPerPage;";
 <?php
 	include('include/config/logging.php');
 ?>
-				
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
