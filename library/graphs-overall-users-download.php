@@ -1,15 +1,27 @@
 <?php
-/*******************************************************************
-* Extension name: graphs-overall-users-login.php
-*                                                                  
-* Description:    
-* this graph extension procduces a query of the overall logins 
-* made by a particular user on a daily, monthly and yearly basis.                                                
-*                                                                  
-* Author: Liran Tal <liran@enginx.com>                             
-*                                                                  
-*******************************************************************/
-
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ * Description:
+ *		this graph extension procduces a query of the overall logins 
+ *		made by a particular user on a daily, monthly and yearly basis.
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
 $type = $_REQUEST['type'];
 $username = $_REQUEST['user'];
@@ -37,8 +49,8 @@ function daily($username) {
 
 	$chart = new VerticalChart(680,500);
 
-	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT']." where 
-	username='$username' group by day;";
+	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day FROM ".
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' GROUP BY day;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
@@ -71,7 +83,8 @@ function monthly($username) {
 
 	$chart = new VerticalChart(680,500);
 
-	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, MONTHNAME(AcctStartTime) AS month from ".$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by month;";
+	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, MONTHNAME(AcctStartTime) AS month FROM ".
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' GROUP BY month;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
@@ -104,8 +117,8 @@ function yearly($username) {
 
 	$chart = new VerticalChart(680,500);
 
-	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year from ".$configValues['CONFIG_DB_TBL_RADACCT']." 
-	where username='$username' group by year;";
+	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year FROM ".
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' GROUP BY year;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
