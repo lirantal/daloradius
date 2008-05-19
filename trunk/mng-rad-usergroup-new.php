@@ -54,8 +54,9 @@
 				}
 				
 				// insert usergroup details
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." values ('".$dbSocket->escapeSimple($username)."',
-'".$dbSocket->escapeSimple($group)."', ".$dbSocket->escapeSimple($priority).")";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+						" VALUES ('".$dbSocket->escapeSimple($username)."', '".
+						$dbSocket->escapeSimple($group)."', ".$dbSocket->escapeSimple($priority).")";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
