@@ -71,8 +71,10 @@
 				$currBy = $_SESSION['operator_user'];
 
 				// insert proxy to database
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." VALUES ".
-					" (0, '".$dbSocket->escapeSimple($proxyname)."','".
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPROXYS'].
+					" (id,proxyname,retry_delay,retry_count,dead_time,default_fallback,creationdate,".
+					" 	creationby,updatedate,updateby) ".
+					" VALUES (0, '".$dbSocket->escapeSimple($proxyname)."','".
 					$dbSocket->escapeSimple($retry_delay)."','".
 					$dbSocket->escapeSimple($retry_count)."','".
 					$dbSocket->escapeSimple($dead_time)."','".

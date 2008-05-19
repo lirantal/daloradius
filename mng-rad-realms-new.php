@@ -75,7 +75,10 @@
 				$currBy = $_SESSION['operator_user'];
 
 				// insert realm to database
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOREALMS']." values (0, '".
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOREALMS'].
+					" (id,realmname,type,authhost,accthost,secret,ldflag,nostrip,hints,notrealm,creationdate,creationby,".
+					"	updatedate,updateby) ".
+					" VALUES (0, '".
 					$dbSocket->escapeSimple($realmname)."', '".$dbSocket->escapeSimple($type)."', '".
 					$dbSocket->escapeSimple($authhost)."','".$dbSocket->escapeSimple($accthost)."','".
 					$dbSocket->escapeSimple($secret)."','".$dbSocket->escapeSimple($ldflag)."','".

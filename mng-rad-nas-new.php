@@ -35,7 +35,7 @@
 	$nasdescription = "";
 	$nascommunity = "";
 
-        $logAction = "";
+	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
@@ -48,11 +48,10 @@
 		$nasdescription = $_POST['nasdescription'];
 		$nascommunity = $_POST['nascommunity'];
 
-		
 		include 'library/opendb.php';
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].
-			" WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
+				" WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -66,6 +65,7 @@
 				
 				// insert nas details
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADNAS'].
+					" (id,nasname,shortname,type,ports,secret,community,description) ".
 					" values (0, '".$dbSocket->escapeSimple($nashost)."', '".$dbSocket->escapeSimple($nasname).
 					"', '".$dbSocket->escapeSimple($nastype)."', ".$dbSocket->escapeSimple($nasports).
 					", '".$dbSocket->escapeSimple($nassecret)."', '".$dbSocket->escapeSimple($nascommunity).

@@ -32,15 +32,15 @@
 	if (isset($_REQUEST['submit'])) {
 		$profile = $_REQUEST['profile'];
 
-	include 'library/opendb.php';
+		include 'library/opendb.php';
 	
 		if ($profile != "") {
 			foreach( $_POST as $element=>$field ) { 
 				switch ($element) {
-						case "submit":
-						case "profile":
-								$skipLoopFlag = 1; 
-								break;
+					case "submit":
+					case "profile":
+							$skipLoopFlag = 1; 
+							break;
 				}
 		
 				if ($skipLoopFlag == 1) {
@@ -74,8 +74,8 @@
 				if ($res->numRows() == 0) {
 
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
-
-					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($profile)."', '".
+					$sql = "INSERT INTO $table (id,GroupName,Attribute,op,Value) ".
+							" VALUES (0,'".$dbSocket->escapeSimple($profile)."', '".
 							$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";

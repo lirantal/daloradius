@@ -68,7 +68,9 @@
 				$failureMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
 			} else {
 				// insert username/password
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."',  'User-Password', ':=', '".$dbSocket->escapeSimple($password)."')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($username)."',  'User-Password', ':=', '".
+						$dbSocket->escapeSimple($password)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -77,19 +79,20 @@
 
 					if (!($group_priority))
 						$group_priority=0;		// if group priority wasn't set we
-										// initialize it to 0 by default
-					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($group)."', ".$dbSocket->escapeSimple($group_priority).") ";
+												// initialize it to 0 by default
+					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+							" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."', ".
+							$dbSocket->escapeSimple($group_priority).") ";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
 
-                                foreach($_POST as $element=>$field) {
+				foreach($_POST as $element=>$field) {
 
-                                        // switch case to rise the flag for several $attribute which we do not
-                                        // wish to process (ie: do any sql related stuff in the db)
-                                        switch ($element) {
+					// switch case to rise the flag for several $attribute which we do not
+					// wish to process (ie: do any sql related stuff in the db)
+					switch ($element) {
 
 						case "username_prefix":
 						case "passwordType":
@@ -99,43 +102,44 @@
 						case "submit":
 						case "group":
 						case "group_priority":
-                                                        $skipLoopFlag = 1;      // if any of the cases above has been met weset a flag
-                                                                                // to skip the loop (continue) without entering it as
-                                                                                // we do not want to process this $attributein the following
-                                                                                // code block
-                                                        break;
+							$skipLoopFlag = 1;      // if any of the cases above has been met weset a flag
+													// to skip the loop (continue) without entering it as
+													// we do not want to process this $attributein the following
+													// code block
+							break;
 
-                                        }
+					}
 
-                                        if ($skipLoopFlag == 1) {
-                                                $skipLoopFlag = 0;              // resetting the loop flag
-                                                continue;
-                                        }
+					if ($skipLoopFlag == 1) {
+						$skipLoopFlag = 0;              // resetting the loop flag
+						continue;
+					}
 
 
-                                        if (isset($field[0]))
-                                                $attribute = $field[0];
-                                        if (isset($field[1]))
-                                                $value = $field[1];
-                                        if (isset($field[2]))
-                                                $op = $field[2];
-                                        if (isset($field[3]))
-                                                $table = $field[3];
+					if (isset($field[0]))
+						$attribute = $field[0];
+					if (isset($field[1]))
+						$value = $field[1];
+					if (isset($field[2]))
+						$op = $field[2];
+					if (isset($field[3]))
+						$table = $field[3];
 
-                                        if ( isset($table) && ($table == 'check') )
-                                                $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-                                        if ( isset($table) && ($table == 'reply') )
-                                                $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+					if ( isset($table) && ($table == 'check') )
+						$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+					if ( isset($table) && ($table == 'reply') )
+						$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
-                                        if ( (isset($field)) && (!isset($field[1])) )
-                                                continue;
+					if ( (isset($field)) && (!isset($field[1])) )
+						continue;
                                 
-                                        $sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute)."', 
-'".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')  ";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
+					$sql = "INSERT INTO $table (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($attribute).
+							"', '".$dbSocket->escapeSimple($op)."', '".$dbSocket->escapeSimple($value)."')  ";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
-                                } // foreach
+				} // foreach
 
 				$actionMsgGoodUsernames = $actionMsgGoodUsernames . $username . ", " ;
 				$exportCSV .= "$username,$password||";
@@ -156,7 +160,7 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
 ?>
 
@@ -195,29 +199,29 @@
 	
 ?>
 
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngbatch.php'] ?>
-				<h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngbatch'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
+	<div id="contentnorightbar">
+	
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngbatch.php'] ?>
+			<h144>+</h144></a></h2>
 
-				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<div id="helpPage" style="display:none;visibility:visible" >
+				<?php echo $l['helpPage']['mngbatch'] ?>
+				<br/>
+			</div>
+			<?php
+				include_once('include/management/actionMessages.php');
+			?>
+
+			<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
+	<div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
 
 	<fieldset>
 
-                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+		<h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 		<br/>
 
 		<ul>
@@ -302,14 +306,14 @@
 	</fieldset>
 
 
-     </div>
+	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
+	<div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 	<?php
-       		include_once('include/management/attributes.php');
-     	?>
-     </div>		
+		include_once('include/management/attributes.php');
+	?>
+	</div>		
 
 </div>
 
@@ -317,28 +321,28 @@
 
 	<br/>
 
-     </div>
+	</div>
 
 </div>
 
-				</form>
+	</form>
 
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

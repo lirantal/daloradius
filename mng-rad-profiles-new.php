@@ -70,7 +70,8 @@
 				if (!($value))
 					continue;
 
-				$sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($profile)."', '".
+				$sql = "INSERT INTO $table (id,GroupName,Attribute,op,Value) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($profile)."', '".
 						$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '".
 						$dbSocket->escapeSimple($value)."')  ";
 				$res = $dbSocket->query($sql);
@@ -83,10 +84,9 @@
 
 			include 'library/closedb.php';
 
-			} else { // if $profile != ""
-
-				$failureMsg = "profile name is empty";
-				$logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
+		} else { // if $profile != ""
+			$failureMsg = "profile name is empty";
+			$logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
 		}
 
 	}

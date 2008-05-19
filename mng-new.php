@@ -64,8 +64,8 @@
 
 		// insert usergroup mapping
 		if (isset($group) && (trim($group) != "")) {
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." VALUES ('".
-				$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+				" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 		}
@@ -89,13 +89,13 @@
 		$currDate = date('Y-m-d H:i:s');
 		$currBy = $_SESSION['operator_user'];
 
-	        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".
-			$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+				" WHERE username='".$dbSocket->escapeSimple($username)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 
-                // if there were no records for this user present in the userinfo table
-                if ($res->numRows() == 0) {
+		// if there were no records for this user present in the userinfo table
+		if ($res->numRows() == 0) {
 			// insert user information table
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 				" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
@@ -109,7 +109,6 @@
 				"', '$currDate', '$currBy', NULL, NULL)";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
-
 		} //FIXME:
 		  //if the user already exist in userinfo then we should somehow alert the user
 		  //that this has happened and the administrator/operator will take care of it
@@ -152,22 +151,21 @@
 								// we do not want to process this $attribute in the following
 								// code block
 					break;
-
 			}
 	
 			if ($skipLoopFlag == 1) {
-                                $skipLoopFlag = 0;              // resetting the loop flag
+				$skipLoopFlag = 0;              // resetting the loop flag
 				continue;
 			}
 
-                        if (isset($field[0]))
-                                $attribute = $field[0];
-                        if (isset($field[1]))
-                                $value = $field[1];
-                        if (isset($field[2]))
-                                $op = $field[2];
-                        if (isset($field[3]))
-                                $table = $field[3];
+			if (isset($field[0]))
+				$attribute = $field[0];
+			if (isset($field[1]))
+				$value = $field[1];
+			if (isset($field[2]))
+				$op = $field[2];
+			if (isset($field[3]))
+				$table = $field[3];
 
 			if ( isset($table) && ($table == 'check') )
 				$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
@@ -177,9 +175,10 @@
 			if ( (isset($field)) && (!isset($field[1])) )
 				continue;
 	
-			$sql = "INSERT INTO $table VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
-				$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op)."', '".
-				$dbSocket->escapeSimple($value)."')  ";
+			$sql = "INSERT INTO $table (id,Username,Attribute,op,Value) ".
+					" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
+					$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op)."', '".
+					$dbSocket->escapeSimple($value)."')  ";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
@@ -209,7 +208,7 @@
 		}
 
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
-			$dbSocket->escapeSimple($username)."'";
+				$dbSocket->escapeSimple($username)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -217,74 +216,74 @@
 
 		    if ($authType == "userAuth") {
 
-			if (trim($username) != "" and trim($password) != "") {
+				if (trim($username) != "" and trim($password) != "") {
 
-				// we need to perform the secure method escapeSimple on $dbPassword early because as seen below
-				// we manipulate the string and manually add to it the '' which screw up the query if added in $sql
-				$password = $dbSocket->escapeSimple($password);
+					// we need to perform the secure method escapeSimple on $dbPassword early because as seen below
+					// we manipulate the string and manually add to it the '' which screw up the query if added in $sql
+					$password = $dbSocket->escapeSimple($password);
 
-				switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
-					case "cleartext":
-						$dbPassword = "'$password'";
-						break;
-					case "crypt":
-						$dbPassword = "ENCRYPT('$password')";
-						break;
-					case "md5":
-						$dbPassword = "MD5('$password')";
-						break;
-					default:
-						$dbPassword = "'$password'";
-				}
-				
-				// at this stage $dbPassword contains the password string encapsulated by '' and either uses
-				// a function to encrypt it like ENCRYPT or it doesn't, it's based on the configuration
-				// but here we provide another stage, for Crypt-Password and MD5-Password it's obvious
-				// that the password need be encrypted so even if this option is not in the configuration
-				// we enforce it.
-
-				// we first check if the password attribute is to be encrypted at all
-				if (preg_match("/crypt/i", $passwordtype)) {
-					// if we don't find the encrypt function even though we identified
-					// a Crypt-Password attribute
-					if (!(preg_match("/encrypt/i",$dbPassword))) {
-						$dbPassword = "ENCRYPT('$password')";
+					switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
+						case "cleartext":
+							$dbPassword = "'$password'";
+							break;
+						case "crypt":
+							$dbPassword = "ENCRYPT('$password')";
+							break;
+						case "md5":
+							$dbPassword = "MD5('$password')";
+							break;
+						default:
+							$dbPassword = "'$password'";
 					}
-			
-					// we now perform the same check but for an MD5-Password attribute
-				} elseif (preg_match("/md5/i", $passwordtype)) {
-					// if we don't find the md5 function even though we identified
-					// a MD5-Password attribute
-					if (!(preg_match("/md5/i",$dbPassword))) {
-						$dbPassword = "MD5('$password')";
-					}
-				}
+					
+					// at this stage $dbPassword contains the password string encapsulated by '' and either uses
+					// a function to encrypt it like ENCRYPT or it doesn't, it's based on the configuration
+					// but here we provide another stage, for Crypt-Password and MD5-Password it's obvious
+					// that the password need be encrypted so even if this option is not in the configuration
+					// we enforce it.
 
-				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".
-					$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($passwordtype).
-					"', ':=', $dbPassword)";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+					// we first check if the password attribute is to be encrypted at all
+					if (preg_match("/crypt/i", $passwordtype)) {
+						// if we don't find the encrypt function even though we identified
+						// a Crypt-Password attribute
+						if (!(preg_match("/encrypt/i",$dbPassword))) {
+							$dbPassword = "ENCRYPT('$password')";
+						}
 				
-				addGroups($dbSocket, $username, $group);
-				addUserInfo($dbSocket, $username);
-				addAttributes($dbSocket, $username);
+						// we now perform the same check but for an MD5-Password attribute
+					} elseif (preg_match("/md5/i", $passwordtype)) {
+						// if we don't find the md5 function even though we identified
+						// a MD5-Password attribute
+						if (!(preg_match("/md5/i",$dbPassword))) {
+							$dbPassword = "MD5('$password')";
+						}
+					}
 
-				$successMsg = "Added to database new user: <b> $username </b>";
-				$logAction .= "Successfully added new user [$username] on page: ";
+					// insert username/password
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($passwordtype).
+							"', ':=', $dbPassword)";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+					
+					addGroups($dbSocket, $username, $group);
+					addUserInfo($dbSocket, $username);
+					addAttributes($dbSocket, $username);
 
-			} else {
+					$successMsg = "Added to database new user: <b> $username </b>";
+					$logAction .= "Successfully added new user [$username] on page: ";
 
-				$failureMsg = "username or password are empty";
-				$logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
-			}
+				} else {
+
+					$failureMsg = "username or password are empty";
+					$logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
+				}
 
 		   } elseif ($authType == "macAuth") {
 
 				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".
-					$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
@@ -298,8 +297,8 @@
 		   } elseif ($authType == "pincodeAuth") {
 
 				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".
-					$dbSocket->escapeSimple($pincode)."', 'Auth-Type', ':=', 'Accept')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($pincode)."', 'Auth-Type', ':=', 'Accept')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -311,7 +310,7 @@
 				$logAction .= "Successfully added new pincode [$pincode] on page: ";
 
 		   } else {
-			echo "unknown authentication method <br/>";
+				echo "unknown authentication method <br/>";
 		   }
 
 		} else { 
@@ -358,29 +357,26 @@
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
  
 <?php
-        include_once ("library/tabber/tab-layout.php");
+	include_once ("library/tabber/tab-layout.php");
 ?>
 
 <?php
-
 	include ("menu-mng-users.php");
-	
 ?>
+	<div id="contentnorightbar">
+
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnew.php'] ?>
+		<h144>+</h144></a></h2>
 		
-		<div id="contentnorightbar">
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngnew'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnew.php'] ?>
-				<h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngnew'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-				<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
@@ -388,7 +384,7 @@
 
 	<fieldset>
 
-	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+		<h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 
 		<input checked type='radio' value="userAuth" name="authType" onclick="javascript:toggleUserAuth()"/>
 		<b> Username Authentication </b>
@@ -396,7 +392,7 @@
 
 		<ul>
 
-<div id='UserContainer'>
+		<div id='UserContainer'>
 		<li class='fieldset'>
 		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
 		<input name='username' type='text' id='username' value='' tabindex=100 />
@@ -421,7 +417,7 @@
 			<?php echo $l['Tooltip']['passwordTooltip'] ?>
 		</div>
 		</li>
-</div>
+		</div>
 
 
 		<li class='fieldset'>
@@ -439,8 +435,8 @@
 		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php   
-		        include_once 'include/management/populate_selectbox.php';
-		        populate_groups("Select Groups","group");
+			include_once 'include/management/populate_selectbox.php';
+			populate_groups("Select Groups","group");
 		?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
 
@@ -464,7 +460,7 @@
 
 	<fieldset>
 
-	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+		<h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 
 
 		<input type='radio' name="authType" value="macAuth"  onclick="javascript:toggleMacAuth()"/>
@@ -478,17 +474,17 @@
 		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 disabled />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('macaddressTooltip')"  />
 
-                <div id='macaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['macaddressTooltip'] ?>
-                </div>
+		<div id='macaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['macaddressTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php   
-		        include_once 'include/management/populate_selectbox.php';
-		        populate_groups("Select Groups", "group_macaddress", "form", "disabled");
+			include_once 'include/management/populate_selectbox.php';
+			populate_groups("Select Groups", "group_macaddress", "form", "disabled");
 		?>
 		</li>
 
@@ -507,7 +503,7 @@
 
 	<fieldset>
 
-	        <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+		<h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 
 		<input type='radio' name="authType" value="pincodeAuth" onclick="javascript:togglePinCode()"/>
 		<b> PIN Code Authentication </b>
@@ -521,17 +517,17 @@
 		<input type='button' value='Generate' class='button' onclick="javascript:randomAlphanumeric('pincode',10)" />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('pincodeTooltip')" />		
 		
-                <div id='pincodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['pincodeTooltip'] ?>
-                </div>
+		<div id='pincodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['pincodeTooltip'] ?>
+		</div>
 		</li>
 
 		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php   
-		        include_once 'include/management/populate_selectbox.php';
-		        populate_groups("Select Groups", "group_pincode", "form", "disabled");
+			include_once 'include/management/populate_selectbox.php';
+			populate_groups("Select Groups", "group_pincode", "form", "disabled");
 		?>
 		</li>
 
@@ -546,27 +542,27 @@
 
 	</fieldset>
 
-     </div>
+	</div>
 
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
+	<div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
 	<?php
 		include_once('include/management/userinfo.php');
 	?>
-     </div>
+	</div>
 
-     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
+	<div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
 	<?php
 		include_once('include/management/attributes.php');
 	?>
-     </div>	
+	</div>	
 	
 
 </div>
 
 
-				</form>
+	</form>
 
 
 <?php

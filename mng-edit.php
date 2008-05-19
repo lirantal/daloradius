@@ -56,9 +56,10 @@
 
 		if (trim($username) != "") {
 
-			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
+			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+					" WHERE username='".$dbSocket->escapeSimple($username)."'";
 			$res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";
+			$logDebugSQL .= $sql . "\n";
 
 			// if there were no records for this user present in the userinfo table
 			if ($res->numRows() == 0) {
@@ -211,10 +212,10 @@
 					}
 				}
 
-				   /* we can't simply UPDATE because it might be that the attribute
-				   doesn't exist at all and we need to insert it. 
-				   for this reason we need to check if it exists or not, if exists we update, if not we insert 
-				   */
+				/* we can't simply UPDATE because it might be that the attribute
+				doesn't exist at all and we need to insert it. 
+				for this reason we need to check if it exists or not, if exists we update, if not we insert 
+				*/
 
 				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username).
 					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
@@ -223,7 +224,8 @@
 				
 				if ($res->numRows() == 0) {
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
-					$sql = "INSERT INTO $table values(0,'".$dbSocket->escapeSimple($username)."', '".
+					$sql = "INSERT INTO $table (id,Username,Attribute,op,Value) ".
+						" VALUES (0,'".$dbSocket->escapeSimple($username)."', '".
 						$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op).
 						"', $value)";
 					$res = $dbSocket->query($sql);

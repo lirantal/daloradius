@@ -44,17 +44,15 @@
 		$sessiontimeout = $_REQUEST['sessiontimeout'];
 		$idletimeout = $_REQUEST['idletimeout'];
 
-                isset($_REQUEST['firstname']) ? $firstname = $_REQUEST['firstname'] : $firstname = "";
-                isset($_REQUEST['lastname']) ? $lastname = $_REQUEST['lastname'] : $lastname = " ";
-                isset($_REQUEST['email']) ? $email = $_REQUEST['email'] : $email = "";
-                isset($_REQUEST['department']) ? $department = $_REQUEST['department'] : $department = "";
-                isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
-                isset($_REQUEST['workphone']) ? $workphone = $_REQUEST['workphone'] : $workphone =  "";
-                isset($_REQUEST['homephone']) ? $homephone = $_REQUEST['homephone'] : $homephone = "";
-                isset($_REQUEST['mobilephone']) ? $mobilephone = $_REQUEST['mobilephone'] : $mobilephone = "";
-                isset($_REQUEST['notes']) ? $notes = $_REQUEST['notes'] : $notes = "";
-
-
+		isset($_REQUEST['firstname']) ? $firstname = $_REQUEST['firstname'] : $firstname = "";
+		isset($_REQUEST['lastname']) ? $lastname = $_REQUEST['lastname'] : $lastname = " ";
+		isset($_REQUEST['email']) ? $email = $_REQUEST['email'] : $email = "";
+		isset($_REQUEST['department']) ? $department = $_REQUEST['department'] : $department = "";
+		isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
+		isset($_REQUEST['workphone']) ? $workphone = $_REQUEST['workphone'] : $workphone =  "";
+		isset($_REQUEST['homephone']) ? $homephone = $_REQUEST['homephone'] : $homephone = "";
+		isset($_REQUEST['mobilephone']) ? $mobilephone = $_REQUEST['mobilephone'] : $mobilephone = "";
+		isset($_REQUEST['notes']) ? $notes = $_REQUEST['notes'] : $notes = "";
 
 		include 'library/opendb.php';
 		
@@ -67,73 +65,77 @@
 			if (trim($username) != "" and trim($password) != "") {
 
 				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
-'$passwordType', ':=', '".$dbSocket->escapeSimple($password)."')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($username)."', '$passwordType', ':=', '".
+						$dbSocket->escapeSimple($password)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
 				if ($maxallsession) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."',
-'Max-All-Session', ':=', '".$dbSocket->escapeSimple($maxallsession)."')";
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Max-All-Session', ':=', '".
+							$dbSocket->escapeSimple($maxallsession)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
 				if ($expiration) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
-'Expiration', ':=', '".$dbSocket->escapeSimple($expiration)."')";
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Expiration', ':=', '".
+							$dbSocket->escapeSimple($expiration)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
 				if ($sessiontimeout) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
-'Session-Timeout', ':=', '".$dbSocket->escapeSimple($sessiontimeout)."')";
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Session-Timeout', ':=', '".
+							$dbSocket->escapeSimple($sessiontimeout)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
 				if ($idletimeout) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." VALUES (0, '".$dbSocket->escapeSimple($username)."', 
-'Idle-Timeout', ':=', '".$dbSocket->escapeSimple($idletimeout)."')";
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Idle-Timeout', ':=', '".
+							$dbSocket->escapeSimple($idletimeout)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
-
 				if (isset($group)) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." VALUES ('".$dbSocket->escapeSimple($username)."', 
-'".$dbSocket->escapeSimple($group)."', '0')";
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (Username,GroupName,priority) ".
+							" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."', '0')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
 
 				//insert userinfo
-		                $currDate = date('Y-m-d H:i:s');
-		                $currBy = $_SESSION['operator_user'];
+				$currDate = date('Y-m-d H:i:s');
+				$currBy = $_SESSION['operator_user'];
 
-		                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE username='".
-		                        $dbSocket->escapeSimple($username)."'";
-		                $res = $dbSocket->query($sql);
-		                $logDebugSQL .= $sql . "\n";
+				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+						" WHERE username='".$dbSocket->escapeSimple($username)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 
-		                // if there were no records for this user present in the userinfo table
-		                if ($res->numRows() == 0) {
-		                        // insert user information table
-		                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-		                                " (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-		                                " mobilephone, notes, creationdate, creationby, updatedate, updateby) ".
-		                                " VALUES (0,
-		                                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
-		                                $dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
-		                                $dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
-		                                $dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-		                                $dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes).
-		                                "', '$currDate', '$currBy', NULL, NULL)";
-		                        $res = $dbSocket->query($sql);
-		                        $logDebugSQL .= $sql . "\n";
-		
-		                }
+				// if there were no records for this user present in the userinfo table
+				if ($res->numRows() == 0) {
+					// insert user information table
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+							" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
+							" mobilephone, notes, creationdate, creationby, updatedate, updateby) ".
+							" VALUES (0,
+							'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
+							$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
+							$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
+							$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
+							$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes).
+							"', '$currDate', '$currBy', NULL, NULL)";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+
+				}
 
 
 				$successMsg = "Added to database new user: <b> $username </b>";
