@@ -43,84 +43,74 @@
                 $counter = 0;
                 foreach ($_POST as $element=>$field) {
 
-                                        // switch case to rise the flag for several $attribute which we do not
-                                        // wish to process (ie: do any sql related stuff in the db)
-                                        switch ($element) {
+					// switch case to rise the flag for several $attribute which we do not
+					// wish to process (ie: do any sql related stuff in the db)
+					switch ($element) {
+						case "groupname":
+						case "submit":
+								$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
+														// to skip the loop (continue) without entering it as
+														// we do not want to process this $attribute in the following
+														// code block
+								break;
+					}
+
+					if ($skipLoopFlag == 1) {
+						$skipLoopFlag = 0;              // resetting the loop flag
+						continue;
+					}
+
+					if (isset($field[0]))
+						$attribute = $field[0];
+					if (isset($field[1]))
+						$value = $field[1];
+					if (isset($field[2]))
+						$op = $field[2];
+
+					// we explicitly set the table target to be radgroupcheck
+					$table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+
+					if (!($value))
+						continue;       // we don't process empty values attributes
+
+					$allValues .= $value . "\n";
+					$allAttributes .= $attribute . "\n";
+
+					$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
+							" WHERE GroupName='".$dbSocket->escapeSimple($groupname).
+							"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+
+					if ($res->numRows() == 0) {
+						// insert radgroupcheck details
+						// assuming there's no groupname with that attribute in the table
+						$sql = "INSERT INTO $table (id, GroupName, Attribute, Op, Value) ".
+								" VALUES (0,'".$dbSocket->escapeSimple($groupname)."','".
+								$dbSocket->escapeSimple($attribute)."', '".
+								$dbSocket->escapeSimple($op)."', '".
+								$dbSocket->escapeSimple($value)."')";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
+						$counter++;
+						
+						$successMsg = "Added to database new group: <b> $groupname </b> with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b>";
+						$logAction .= "Successfully added group [$groupname] with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b> on page: ";
+					} else { 
+						$failureMsg = "The group <b> $groupname </b> already exist in the database with attribute(s) <b> $allAttributes </b>";
+						$logAction .= "Failed adding already existing group [$groupname] with attribute(s) [$allAttributes] on page: ";
+					} // end else if mysql
+
+				}
+			} else { // if groupname isset
+				$failureMsg = "No groupname was defined";
+				$logAction .= "Failed adding missing values for groupname on page: ";
+			}
 
 
-                                                case "groupname":
-                                                case "submit":
-                                                        $skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
-                                                                                // to skip the loop (continue) without entering it as
-                                                                                // we do not want to process this $attribute in the following
-                                                                                // code block
-                                                        break;
+		include 'library/closedb.php';
 
-                                        }
-
-                                        if ($skipLoopFlag == 1) {
-                                                $skipLoopFlag = 0;              // resetting the loop flag
-                                                continue;
-                                        }
-
-
-
-                                        if (isset($field[0]))
-                                                $attribute = $field[0];
-                                        if (isset($field[1]))
-                                                $value = $field[1];
-                                        if (isset($field[2]))
-                                                $op = $field[2];
-
-                                        // we explicitly set the table target to be radgroupcheck
-                                        $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-
-                                        if (!($value))
-                                                continue;       // we don't process empty values attributes
-
-
-                        $allValues .= $value . "\n";
-                        $allAttributes .= $attribute . "\n";
-
-                                        
-                        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-								" WHERE GroupName='".$dbSocket->escapeSimple($groupname).
-								"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";
-
-                                
-                        if ($res->numRows() == 0) {
-                                        // insert radgroupcheck details
-                                        // assuming there's no groupname with that attribute in the table
-                                        $sql = "INSERT INTO $table (id, GroupName, Attribute, Op, Value)".
-						" VALUES (0,'".$dbSocket->escapeSimple($groupname)."','".
-						$dbSocket->escapeSimple($attribute)."', '".
-						$dbSocket->escapeSimple($op)."', '".
-						$dbSocket->escapeSimple($value)."')";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
-                                        $counter++;
-                                        
-                                        $successMsg = "Added to database new group: <b> $groupname </b> with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b>";
-                                        $logAction .= "Successfully added group [$groupname] with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b> on page: ";
-                        } else { 
-                                $failureMsg = "The group <b> $groupname </b> already exist in the database with attribute(s) <b> $allAttributes </b>";
-                                $logAction .= "Failed adding already existing group [$groupname] with attribute(s) [$allAttributes] on page: ";
-
-                        } // end else if mysql
-
-                    }
-
-                } else { // if groupname isset
-                        $failureMsg = "No groupname was defined";
-                        $logAction .= "Failed adding missing values for groupname on page: ";
-                }
-
-
-        include 'library/closedb.php';
-
-        }
+	}
 
 
 	isset($groupname) ? $groupname = $groupname : $groupname = "";

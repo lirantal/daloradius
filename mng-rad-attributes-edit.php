@@ -88,15 +88,15 @@
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-        isset($row['Attribute']) ? $attribute = $row['Attribute'] : $attribute = "";
-        isset($row['Type']) ? $type = $row['Type'] : $type = "";
-        isset($row['Vendor']) ? $vendor = $row['Vendor'] : $vendor = "";
-        isset($row['RecommendedOP']) ? $RecommendedOP = $row['RecommendedOP'] : $RecommendedOP = "";
-        isset($row['RecommendedTable']) ? $RecommendedTable = $row['RecommendedTable'] : $RecommendedTable = "";
-        isset($row['RecommendedTooltip']) ? $RecommendedTooltip = $row['RecommendedTooltip'] : $RecommendedTooltip = "";
-        isset($row['RecommendedHelper']) ? $RecommendedHelper = $row['RecommendedHelper'] : $RecommendedHelper = "";
+	isset($row['Attribute']) ? $attribute = $row['Attribute'] : $attribute = "";
+	isset($row['Type']) ? $type = $row['Type'] : $type = "";
+	isset($row['Vendor']) ? $vendor = $row['Vendor'] : $vendor = "";
+	isset($row['RecommendedOP']) ? $RecommendedOP = $row['RecommendedOP'] : $RecommendedOP = "";
+	isset($row['RecommendedTable']) ? $RecommendedTable = $row['RecommendedTable'] : $RecommendedTable = "";
+	isset($row['RecommendedTooltip']) ? $RecommendedTooltip = $row['RecommendedTooltip'] : $RecommendedTooltip = "";
+	isset($row['RecommendedHelper']) ? $RecommendedHelper = $row['RecommendedHelper'] : $RecommendedHelper = "";
 
 	include 'library/closedb.php';
 
@@ -119,21 +119,21 @@
 	include ("menu-mng-rad-attributes.php");
 	
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesedit.php'] ?>
-				:: <?php if (isset($vendor)) { echo $vendor; } ?><h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradattributesedit'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="contentnorightbar">
+		
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesedit.php'] ?>
+		:: <?php if (isset($vendor)) { echo $vendor; } ?><h144>+</h144></a></h2>
+		
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradattributesedit'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 	<fieldset>
 
@@ -144,7 +144,7 @@
 
 		<input type='hidden' name='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' />
 
-                <li class='fieldset'>
+		<li class='fieldset'>
 		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
 		<input disabled name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
@@ -168,7 +168,7 @@
 		</div>
 		</li>
 
-			<li class='fieldset'>
+		<li class='fieldset'>
 		<label for='type' class='form'><?php echo $l['all']['Type'] ?></label>
 		<select name='type' type='text' id='type' class='form' tabindex=102 />
 		<option value='<?php echo $type; ?>'><?php echo $type; ?></option>
@@ -202,7 +202,7 @@
 		</div>
 		</li>
 
-	<li class='fieldset'>
+		<li class='fieldset'>
 		<label for='RecommendedTable' class='form'><?php echo $l['all']['RecommendedTable'] ?></label>
 		<select name='RecommendedTable' type='text' id='RecommendedTable' class='form' tabindex=104 />
 		<option value='<?php echo $RecommendedTable; ?>'><?php echo $RecommendedTable; ?></option>
@@ -250,26 +250,25 @@
 		</div>
 		</li>
 	
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
-			class='button' />
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>
 	</fieldset>
 
-				</form>
+	</form>
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
+
 <?php
 	include 'page-footer.php';
 ?>

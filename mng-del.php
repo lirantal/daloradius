@@ -102,8 +102,8 @@
 
 		include 'library/opendb.php';
 
-		$sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE Username='".$dbSocket->escapeSimple($username)."'
-			AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+		$sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE Username='".$dbSocket->escapeSimple($username)."' ".
+				" AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -116,32 +116,31 @@
 		
 		/* this is used to remove stale user sessions from the accounting table 
 		*/
-
 		$allUsernames = "";
 
 		if (!is_array($clearSessionsUsers))
-                        $clearSessionsUsers = array($clearSessionsUsers, NULL);
+			$clearSessionsUsers = array($clearSessionsUsers, NULL);
 
-                foreach ($clearSessionsUsers as $variable=>$value) {
+			foreach ($clearSessionsUsers as $variable=>$value) {
 
-                        if (trim($value) != "") {
+				if (trim($value) != "") {
 
-				list($userSessions,$acctStartTime) = split('\|\|', $value);
+					list($userSessions,$acctStartTime) = split('\|\|', $value);
 
-                                $allUsernames .= $userSessions . ", ";
+					$allUsernames .= $userSessions . ", ";
 
-                                include 'library/opendb.php';
+					include 'library/opendb.php';
 
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-					" WHERE Username='$userSessions' AND AcctStartTime='$acctStartTime' ".
-					" AND AcctStopTime='0000-00-00 00:00:00'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+						" WHERE Username='$userSessions' AND AcctStartTime='$acctStartTime' ".
+						" AND AcctStopTime='0000-00-00 00:00:00'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
-				$logAction .= "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
-	
-				include 'library/closedb.php';
+					$successMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
+					$logAction .= "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
+		
+					include 'library/closedb.php';
 			} // if trim
 
 		} // foreach

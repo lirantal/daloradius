@@ -47,8 +47,8 @@
 		if ($res->numRows() == 0) {
 			if (trim($vendor) != "" and trim($attribute) != "") {
 				// insert vendor/attribute pairs to database
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." 
-					(id, type, attribute, vendor, RecommendedOP, RecommendedTable, RecommendedTooltip) values (0, '".
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
+					" (id, type, attribute, vendor, RecommendedOP, RecommendedTable, RecommendedTooltip) VALUES (0, '".
 					$dbSocket->escapeSimple($type)."', '".$dbSocket->escapeSimple($attribute)."','".
 					$dbSocket->escapeSimple($vendor)."','".	$dbSocket->escapeSimple($RecommendedOP)."','".
 					$dbSocket->escapeSimple($RecommendedTable)."','".$dbSocket->escapeSimple($RecommendedTooltip)."')";
@@ -91,21 +91,22 @@
 	include ("menu-mng-rad-attributes.php");
 	
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesnew.php'] ?>
-				<h144>+</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradattributesnew'] ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="contentnorightbar">
+
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesnew.php'] ?>
+		<h144>+</h144></a></h2>
+		
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mngradattributesnew'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
+
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	
 	<fieldset>
 
 		<h302> <?php echo $l['title']['VendorAttribute']; ?> </h302>
@@ -207,7 +208,7 @@
 		</ul>
 	</fieldset>
 
-				</form>
+	</form>
 
 <?php
 	include('include/config/logging.php');

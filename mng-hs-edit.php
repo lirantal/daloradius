@@ -28,22 +28,22 @@
 
 	include 'library/opendb.php';
 
-        isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
-        isset($_REQUEST['macaddress']) ? $macaddress = $_REQUEST['macaddress'] : $macaddress = "";
-        isset($_REQUEST['geocode']) ? $geocode = $_REQUEST['geocode'] : $geocode = "";
-        isset($_REQUEST['owner']) ? $owner = $_REQUEST['owner'] : $owner = "";
-        isset($_REQUEST['email_owner']) ? $email_owner = $_REQUEST['email_owner'] : $email_owner = "";
-        isset($_REQUEST['manager']) ? $manager = $_REQUEST['manager'] : $manager = "";
-        isset($_REQUEST['email_manager']) ? $email_manager = $_REQUEST['email_manager'] : $email_manager = "";
-        isset($_REQUEST['address']) ? $address = $_REQUEST['address'] : $address = "";
-        isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
-        isset($_REQUEST['phone1']) ? $phone1 = $_REQUEST['phone1'] : $phone1 = "";
-        isset($_REQUEST['phone2']) ? $phone2 = $_REQUEST['phone2'] : $phone2 = "";
-        isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
-        isset($_REQUEST['companywebsite']) ? $companywebsite = $_REQUEST['companywebsite'] : $companywebsite = "";
-        isset($_REQUEST['companyphone']) ? $companyphone = $_REQUEST['companyphone'] : $companyphone = "";
-        isset($_REQUEST['companyemail']) ? $companyemail = $_REQUEST['companyemail'] : $companyemail = "";
-        isset($_REQUEST['companycontact']) ? $companycontact = $_REQUEST['companycontact'] : $companycontact = "";
+	isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
+	isset($_REQUEST['macaddress']) ? $macaddress = $_REQUEST['macaddress'] : $macaddress = "";
+	isset($_REQUEST['geocode']) ? $geocode = $_REQUEST['geocode'] : $geocode = "";
+	isset($_REQUEST['owner']) ? $owner = $_REQUEST['owner'] : $owner = "";
+	isset($_REQUEST['email_owner']) ? $email_owner = $_REQUEST['email_owner'] : $email_owner = "";
+	isset($_REQUEST['manager']) ? $manager = $_REQUEST['manager'] : $manager = "";
+	isset($_REQUEST['email_manager']) ? $email_manager = $_REQUEST['email_manager'] : $email_manager = "";
+	isset($_REQUEST['address']) ? $address = $_REQUEST['address'] : $address = "";
+	isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
+	isset($_REQUEST['phone1']) ? $phone1 = $_REQUEST['phone1'] : $phone1 = "";
+	isset($_REQUEST['phone2']) ? $phone2 = $_REQUEST['phone2'] : $phone2 = "";
+	isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
+	isset($_REQUEST['companywebsite']) ? $companywebsite = $_REQUEST['companywebsite'] : $companywebsite = "";
+	isset($_REQUEST['companyphone']) ? $companyphone = $_REQUEST['companyphone'] : $companyphone = "";
+	isset($_REQUEST['companyemail']) ? $companyemail = $_REQUEST['companyemail'] : $companyemail = "";
+	isset($_REQUEST['companycontact']) ? $companycontact = $_REQUEST['companycontact'] : $companycontact = "";
 
 	$edit_hotspotname = $name; //feed the sidebar variables	
 
@@ -58,8 +58,8 @@
 
 		if (trim($name) != "") {
 
-                        $currDate = date('Y-m-d H:i:s');
-                        $currBy = $_SESSION['operator_user'];
+			$currDate = date('Y-m-d H:i:s');
+			$currBy = $_SESSION['operator_user'];
 
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET ".
 			" mac='".$dbSocket->escapeSimple($macaddress)."', ".
@@ -145,80 +145,78 @@
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <?php
-        include_once ("library/tabber/tab-layout.php");
+	include_once ("library/tabber/tab-layout.php");
 ?>
  
 <?php
-
 	include ("menu-mng-hs.php");
-	
 ?>		
-		<div id="contentnorightbar">
+	<div id="contentnorightbar">
 		
-				<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsedit.php'] ?>
-				:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsedit.php'] ?>
+		:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mnghsedit'] ?>
-					<br/>
-				</div>
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['mnghsedit'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
 	<div class="tabbertab" title="<?php echo $l['title']['HotspotInfo']; ?>">
 
 
-		<fieldset>
+	<fieldset>
 
-			<h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
+		<h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
+		<br/>
+
+		<ul>
+
+			<li class='fieldset'>
+			<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
+			<input disabled name='name' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
+			</li>
+
+			<li class='fieldset'>
+			<label for='macaddress' class='form'><?php echo $l['all']['MACAddress'] ?></label>
+			<input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotMacaddressTooltip')" /> 
+			
+			<div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+				<img src='images/icons/comment.png' alt='Tip' border='0' />
+				<?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
+			</div>
+			</li>
+
+			<li class='fieldset'>
+			<label for='geocode' class='form'><?php echo $l['all']['Geocode'] ?></label>
+			<input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('geocodeTooltip')" /> 
+			
+			<div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+				<img src='images/icons/comment.png' alt='Tip' border='0' />
+				<?php echo $l['Tooltip']['geocodeTooltip'] ?>
+			</div>
+			</li>
+
+			<li class='fieldset'>
 			<br/>
+			<hr><br/>
+			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+				class='button' />
+			</li>
 
-			<ul>
+		</ul>
 
-                <li class='fieldset'>
-                <label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
-                <input disabled name='name' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
-                </li>
+	</fieldset>
 
-                <li class='fieldset'>
-                <label for='macaddress' class='form'><?php echo $l['all']['MACAddress'] ?></label>
-                <input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
-				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotMacaddressTooltip')" /> 
-				
-                <div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-					<img src='images/icons/comment.png' alt='Tip' border='0' />
-					<?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <label for='geocode' class='form'><?php echo $l['all']['Geocode'] ?></label>
-                <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
-				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('geocodeTooltip')" /> 
-				
-                <div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-					<img src='images/icons/comment.png' alt='Tip' border='0' />
-					<?php echo $l['Tooltip']['geocodeTooltip'] ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-				<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
-					class='button' />
-				</li>
-
-			</ul>
-
-        </fieldset>
-
-		<input type=hidden value="<?php echo $name ?>" name="name"/>
+	<input type=hidden value="<?php echo $name ?>" name="name"/>
 
 </div>
 
@@ -237,18 +235,18 @@
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
+
 <?php
-        include 'page-footer.php';
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
