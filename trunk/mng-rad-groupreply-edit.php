@@ -59,12 +59,10 @@
 		$op = $_REQUEST['op'];;
 		$attribute = $_REQUEST['attribute'];;
 
-			
 		include 'library/opendb.php';
 
-
-                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='".$dbSocket->escapeSimple($groupname).
-                        "'AND Value='".$dbSocket->escapeSimple($valueOld)."'  AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." WHERE GroupName='".$dbSocket->escapeSimple($groupname).
+				"'AND Value='".$dbSocket->escapeSimple($valueOld)."'  AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
@@ -73,16 +71,15 @@
 
 			if (trim($groupname) != "" and trim($value) != "" and trim($op) != "" and trim($attribute) != "") {
 
-                                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='".$dbSocket->escapeSimple($value).
-                                        "', op='".$dbSocket->escapeSimple($op)."', Attribute='".$dbSocket->escapeSimple($attribute).
-                                        "' WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($valueOld).
-                                        "' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
-
+				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." SET Value='".$dbSocket->escapeSimple($value).
+						"', op='".$dbSocket->escapeSimple($op)."', Attribute='".$dbSocket->escapeSimple($attribute).
+						"' WHERE GroupName='".$dbSocket->escapeSimple($groupname)."' AND Value='".$dbSocket->escapeSimple($valueOld).
+						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-			$successMsg = "Updated group attributes for: <b> $groupname </b>";
-			$logAction .= "Successfully updated attributes for group [$groupname] on page: ";
+				$successMsg = "Updated group attributes for: <b> $groupname </b>";
+				$logAction .= "Successfully updated attributes for group [$groupname] on page: ";
 
 			} else { // if groupname  != ""
 				$failureMsg = "you are missing possible values for Groupname, Attribute, Operator or Value";	
@@ -111,7 +108,6 @@
 	
 
 
-        
 	include_once('library/config_read.php');
     $log = "visited page: ";
 

@@ -125,18 +125,18 @@
 
 <div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsnew.php'] ?>
-		<h144>+</h144></a></h2>
-		
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mnghsnew'] ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsnew.php'] ?>
+	<h144>+</h144></a></h2>
+	
+	<div id="helpPage" style="display:none;visibility:visible" >
+		<?php echo $l['helpPage']['mnghsnew'] ?>
+		<br/>
+	</div>
+	<?php
+		include_once('include/management/actionMessages.php');
+	?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
 
@@ -185,8 +185,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
-			class='button' />
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>
@@ -205,7 +204,7 @@
 
 </div>
 
-				</form>
+	</form>
 
 <?php
 	include('include/config/logging.php');
@@ -216,12 +215,12 @@
 		<div id="footer">
 		
 <?php
-        include 'page-footer.php';
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
