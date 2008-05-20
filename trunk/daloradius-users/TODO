@@ -1,0 +1,11 @@
+
+* dologin.php
+	fix authenticating the user to have crypt/md5 support because if the user is using crypt-password
+	attribute then most probably the password passed in the form is required to be encrypted using crypt()
+
+* pref-userinfo-edit.php
+	fix - its possible that the user doesn't have an entry in userinfo, add a check for that, if the user
+	doesn't have this entry it is required to ADD the records, not update them.
+
+	the updateby and updatedate fields were removed from the code, check first if it is required to have it
+	updates for user changes and if so add support for it
