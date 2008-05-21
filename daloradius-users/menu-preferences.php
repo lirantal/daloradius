@@ -1,4 +1,26 @@
-
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
+?> 
+ 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
@@ -30,8 +52,8 @@
 
 <?php
 	$m_active = "Preferences";
-        include_once ("include/menu/menu-items.php");
-        include_once ("include/menu/pref-subnav.php");
+	include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/pref-subnav.php");
 ?>	
 
 <div id="sidebar">
@@ -41,8 +63,8 @@
 	<h3>Settings</h3>
 	<ul class="subnav">
 	
-		<li><a href="pref-password-edit.php"><b>&raquo;</b><?php echo $l['button']['ChangePassword'] ?></a></li>
-		<li><a href="pref-userinfo-edit.php"><b>&raquo;</b><?php echo $l['button']['EditUserInfo'] ?></a></li>
+	<li><a href="pref-password-edit.php"><b>&raquo;</b><?php echo $l['button']['ChangePassword'] ?></a></li>
+	<li><a href="pref-userinfo-edit.php"><b>&raquo;</b><?php echo $l['button']['EditUserInfo'] ?></a></li>
 
 	</ul>
 
