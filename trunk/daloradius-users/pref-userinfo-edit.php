@@ -1,10 +1,31 @@
-<?php 
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
+ 
     include ("library/checklogin.php");
     $login = $_SESSION['login_user'];
 
-        isset($_POST['currentpassword']) ? $currentpassword = $_POST['currentpassword'] : $currentpassword = "";
-        isset($_POST['newpassword']) ? $newpassword = $_POST['newpassword'] : $newpassword = "";
-        isset($_POST['verifypassword']) ? $verifypassword = $_POST['verifypassword'] : $verifypassword = "";
+	isset($_POST['currentpassword']) ? $currentpassword = $_POST['currentpassword'] : $currentpassword = "";
+	isset($_POST['newpassword']) ? $newpassword = $_POST['newpassword'] : $newpassword = "";
+	isset($_POST['verifypassword']) ? $verifypassword = $_POST['verifypassword'] : $verifypassword = "";
 
 	$logAction = "";
 	$logDebugSQL = "";
@@ -13,27 +34,27 @@
 
 		include 'library/opendb.php';
 
-                $firstname = $_POST['firstname'];
-                $lastname = $_POST['lastname'];
-                $email = $_POST['email'];
-                $department = $_POST['department'];
-                $company = $_POST['company'];
-                $workphone = $_POST['workphone'];
-                $homephone = $_POST['homephone'];
-                $mobilephone = $_POST['mobilephone'];
+		$firstname = $_POST['firstname'];
+		$lastname = $_POST['lastname'];
+		$email = $_POST['email'];
+		$department = $_POST['department'];
+		$company = $_POST['company'];
+		$workphone = $_POST['workphone'];
+		$homephone = $_POST['homephone'];
+		$mobilephone = $_POST['mobilephone'];
 
-                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
-	                $dbSocket->escapeSimple($firstname).
-                        "', lastname='".$dbSocket->escapeSimple($lastname).
-                        "', email='".$dbSocket->escapeSimple($email).
-                        "', department='".$dbSocket->escapeSimple($department).
-                        "', company='".$dbSocket->escapeSimple($company).
-                        "', workphone='".$dbSocket->escapeSimple($workphone).
-                        "', homephone='".$dbSocket->escapeSimple($homephone).
-                        "', mobilephone='".$dbSocket->escapeSimple($mobilephone).
-                        " WHERE username='".$dbSocket->escapeSimple($login)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+		$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
+			$dbSocket->escapeSimple($firstname).
+				"', lastname='".$dbSocket->escapeSimple($lastname).
+				"', email='".$dbSocket->escapeSimple($email).
+				"', department='".$dbSocket->escapeSimple($department).
+				"', company='".$dbSocket->escapeSimple($company).
+				"', workphone='".$dbSocket->escapeSimple($workphone).
+				"', homephone='".$dbSocket->escapeSimple($homephone).
+				"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
+				" WHERE username='".$dbSocket->escapeSimple($login)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 	
 		$successMsg = "Updated user information for user: <b>$login</b>";
 		$logAction .= "Successfully updated user information for user [$login] on page: ";
@@ -45,28 +66,28 @@
 
 
 
-        include 'library/opendb.php';	
+	include 'library/opendb.php';	
 
-        /* fill-in all the user info details */
+	/* fill-in all the user info details */
 
-        $sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone ".
-                " FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-                " WHERE UserName='".$dbSocket->escapeSimple($login)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
+	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone ".
+			" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+			" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
+	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
 
-        $row = $res->fetchRow();
+	$row = $res->fetchRow();
 
-        $ui_firstname = $row[0];
-        $ui_lastname = $row[1];
-        $ui_email = $row[2];
-        $ui_department = $row[3];
-        $ui_company = $row[4];
-        $ui_workphone = $row[5];
-        $ui_homephone = $row[6];
-        $ui_mobilephone = $row[7];
+	$ui_firstname = $row[0];
+	$ui_lastname = $row[1];
+	$ui_email = $row[2];
+	$ui_department = $row[3];
+	$ui_company = $row[4];
+	$ui_workphone = $row[5];
+	$ui_homephone = $row[6];
+	$ui_mobilephone = $row[7];
 
-        include 'library/closedb.php';	
+	include 'library/closedb.php';	
 
 
 	include_once('library/config_read.php');
@@ -91,43 +112,42 @@
 	include ("menu-preferences.php");
 	
 ?>		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['prefuserinfoedit.php'] ?>
-				:: <?php if (isset($login)) { echo $login; } ?><h144>+</h144></a></h2>
+	<div id="contentnorightbar">
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['prefuserinfoedit'] ?>
-					<br/>
-				</div>
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['prefuserinfoedit.php'] ?>
+		:: <?php if (isset($login)) { echo $login; } ?><h144>+</h144></a></h2>
 
-				<form name="prefuserinfoedit" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['prefuserinfoedit'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
 
-        <?php
-                include_once('include/management/userinfo.php');
-        ?>
+		<form name="prefuserinfoedit" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+
+	<?php
+		include_once('include/management/userinfo.php');
+	?>
 
 
-				</form>
+		</form>
 
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 		</div>
-		
+
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+
+<?php
+	include 'page-footer.php';
 ?>
 
-		
 		</div>
-		
+
 </div>
 </div>
 
