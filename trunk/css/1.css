@@ -256,6 +256,14 @@ body {
 }
 
 #sidebar select {
+	background:#2c2c2c;
+	border:1px solid #222222;
+	color:#FFFFFF;
+        font:90% Verdana;
+        width:160px;
+}	
+
+#sidebar select.generic {
 	padding:4px;
 	background:#2c2c2c;
 	border:1px solid #222222;

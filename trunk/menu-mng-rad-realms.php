@@ -26,7 +26,7 @@
 			<form name="mngradrealmedit" action="mng-rad-realms-edit.php" method="get" class="sidebar">
 			<?php   
 				include_once('include/management/populate_selectbox.php');
-				populate_realms("Select Realm","realmname","");
+				populate_realms("Select Realm","realmname","generic");
 			?>
 			</form></li>
 
@@ -42,7 +42,7 @@
 		<li><a href="javascript:document.mngradproxyedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditProxy'] ?><a>
 			<form name="mngradproxyedit" action="mng-rad-proxys-edit.php" method="get" class="sidebar">
 			<?php   
-				populate_proxys("Select Proxy","proxyname","");
+				populate_proxys("Select Proxy","proxyname","generic");
 			?>
 			</form></li>
 

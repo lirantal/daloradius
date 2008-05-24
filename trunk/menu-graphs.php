@@ -36,7 +36,7 @@
 			<input name="username" type="text" 
 				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username;
 				else echo 'username'; ?>">
-			<select name="type" type="text">
+			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
 				<option value="yearly"> Yearly
@@ -51,7 +51,7 @@
 			<input name="username" type="text" 
 				value="<?php if (isset($overall_download_username)) echo $overall_download_username;
 				else echo 'username'; ?>">
-			<select name="type" type="text">
+			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
 				<option value="yearly"> Yearly
@@ -66,7 +66,7 @@
 			<input name="username" type="text" 
 				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username;
 				else echo 'username'; ?>">
-			<select name="type" type="text">
+			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
 				<option value="yearly"> Yearly
@@ -83,7 +83,7 @@
 		<li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>
 			<?php echo $l['button']['TotalLogins'] ?></a>
 			<form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
-			<select name="type" type="text">
+			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
 				<option value="yearly"> Yearly
@@ -96,7 +96,7 @@
 			<?php echo $l['button']['TotalTraffic'] ?></a>
 			<form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" 
 				class="sidebar">
-			<select name="type" type="text">
+			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
 				<option value="yearly"> Yearly

@@ -35,7 +35,7 @@ include_once ("lang/main.php");
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
 							<?php echo $l['button']['TopUser'] ?></a>
 							<form name="topusers" action="rep-topusers.php" method="post" class="sidebar">
-							<select name="limit" type="text">
+							<select class="generic" name="limit" type="text">
 								<option value="5"> 5
 								<option value="10"> 10
 								<option value="20"> 20
@@ -44,7 +44,7 @@ include_once ("lang/main.php");
 								<option value="500"> 500
 								<option value="1000"> 1000
 							</select>
-							<select name="orderBy" type="text">
+							<select class="generic" name="orderBy" type="text">
 								<option value="AcctInputOctets"> bandwidth
 								<option value="AcctSessionTime"> time
 							</select>
