@@ -24,7 +24,7 @@
                         <form name="mngradattributeslist" action="mng-rad-attributes-list.php" method="get" class="sidebar">
                         <?php
                                 include 'include/management/populate_selectbox.php';
-                                populate_vendors("Select Vendor","vendor","");
+                                populate_vendors("Select Vendor","vendor","generic");
                         ?>
 			</form>
 		</li>

@@ -26,7 +26,7 @@
 			<form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="get" class="sidebar">
 			<?php   
 				include 'include/management/populate_selectbox.php';
-				populate_groups("Select Profile","profile","");
+				populate_groups("Select Profile","profile","generic");
 			?>
 			</form></li>
 
