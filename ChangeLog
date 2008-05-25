@@ -1,3 +1,24 @@
+release 0.9-7rc2 - 26 May 2008
+	- fixed better support on SQL queries to NOT rely on the schema being the default (tuc)
+	- fixed bug in hotspots edit page where contact info tab didn't load values from the database
+	- fixed up documentation and added INSTALL.quick for rapid deployment of daloRADIUS
+	- fixed bug in search users page of delete button not functioning
+	- fixed bug in quick add user page of infinite recipt popup page loading and apply button on 
+	  user info tab doesn't open the recipt popup page.
+	- fixed support in radgroupreply/radgroupcheck to use explicit field names (tuc)
+	- added support for new success/failure messages on form submits
+	- added new IP Pools management pages for sqlippool freeradius module support
+	- added new fields to hotspots,realms,proxys,userinfo tables
+	  (creationdate,createby,updatedate,updateby)
+	- added support in hotspot pages for newly added createion and update fields as well as 
+	  new company detail fields
+	- added new History page in Reports category
+	- added support for CSV export functionality of accounting pages and user pages
+	- added new action messages layout
+	- added CIA bot to #daloradius to track subversion commits
+	- other: general code cleanup
+
+
 release 0.9-7rc1 - 24 April 2008
 	- fixed support for password hiding in users/operators listings
 	- fixed deletion of usergroup instances of the user
@@ -14,11 +35,6 @@ release 0.9-7rc1 - 24 April 2008
 	- added more icons, variable translation and layout changes
 
 	
-	
-	
-	
-
-
 release 0.9-6 - 25 Februray 2008
 	- added major improvement to attributes management which is now supporting all possible vendors
 	  and attributes which comes with latest freeradius 1.1.7, dynamically from the database using
