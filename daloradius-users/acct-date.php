@@ -192,39 +192,8 @@
 	while($row = $res->fetchRow()) {
 		printqn("<tr>
 				<td> $row[0] </td>
-
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");
-                                        javascript:__displayTooltip();'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
-                                                {$l['Tooltip']['HotspotEdit']}</a>
-                                        &nbsp;
-                                        <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
-                                                {$l['all']['Compare']}</a>
-                                        <br/><br/>
-
-                                        <div id=\"divContainerHotspotInfo\">
-                                                Loading...
-                                        </div>
-                                        <br/>'
-                                >$row[1]</a>
-                        </td>
-
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");
-                                        javascript:__displayTooltip();'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
-	                                        {$l['Tooltip']['UserEdit']}</a>
-                                        <br/><br/>
-
-                                        <div id=\"divContainerUserInfo\">
-                                                Loading...
-                                        </div>
-                                        <br/>'
-                                >$row[2]</a>
-                        </td>
+		                <td> $row[1] </td>
+	                        <td> $row[2] </td>
 				<td> $row[3] </td>
 				<td> $row[4] </td>
 				<td> $row[5] </td>
