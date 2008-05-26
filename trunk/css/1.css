@@ -596,6 +596,14 @@ div.ToolTip {
 }
 
 
+div.ToolTip2 {
+	font:88% Verdana;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	color:#646729;
+}
+
+
 option {
         padding:2px;
 }
