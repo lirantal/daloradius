@@ -381,12 +381,20 @@
 <?php
 
 	include 'library/opendb.php';
+	include 'include/management/pages_common.php';
 	include 'include/management/populate_selectbox.php';
 
 	$editCounter = 0;
 
-	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
-		$dbSocket->escapeSimple($username)."'";
+	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute, ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".op, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value, ".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+		" FROM ".
+		$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
+		" ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute=".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute WHERE ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -398,7 +406,7 @@
 
 	while($row = $res->fetchRow()) {
 
-		echo "<label class='attributes'>";		
+		echo "<label class='attributes'>";
 		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[0]&tablename=radcheck'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
@@ -423,9 +431,27 @@
 		drawOptions();
 		echo "</select>";
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'><br/>";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'>";
 
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
+
+
+		if (!$row[3])
+			$row[3] = "unavailable";
+		if (!$row[4])
+			$row[4] = "unavailable";
+
+		printq("
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
+			<br/>
+	                <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
+	                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<i><b>Type:</b> $row[3]</i><br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<i><b>Tooltip Description:</b> $row[4]</i><br/>
+				<br/>
+	                </div>
+		");
 
 	}
 
@@ -456,8 +482,16 @@
 		<ul>
 
 <?php
-	$sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
-		" WHERE UserName='".$dbSocket->escapeSimple($username)."'";
+
+	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute, ".
+		$configValues['CONFIG_DB_TBL_RADREPLY'].".op, ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Value, ".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+		" FROM ".
+		$configValues['CONFIG_DB_TBL_RADREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
+		" ON ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute=".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute WHERE ".
+		$configValues['CONFIG_DB_TBL_RADREPLY'].".UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -493,8 +527,26 @@
 			echo "</select>";
 		}
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radreply' style='width: 90px'><br/>";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radreply' style='width: 90px'>";
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
+
+		if (!$row[3])
+			$row[3] = "unavailable";
+		if (!$row[4])
+			$row[4] = "unavailable";
+
+		printq("
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
+			<br/>
+	                <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
+	                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<i><b>Type:</b> $row[3]</i><br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<i><b>Tooltip Description:</b> $row[4]</i><br/>
+				<br/>
+	                </div>
+		");
+
 	}
 
 ?>
