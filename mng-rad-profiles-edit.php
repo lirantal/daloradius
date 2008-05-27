@@ -177,11 +177,21 @@
 
 
         include 'library/opendb.php';
+        include 'include/management/pages_common.php';
 
         $editCounter = 0;
 
-        $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-				" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute, ".
+                $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".op, ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Value, ".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+                " FROM ".
+                $configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
+                " ON ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute=".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
+		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value=NULL ".
+		" WHERE ".
+                $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
 
@@ -221,13 +231,27 @@
                 echo "  
                         <input type='hidden' name='editValues".$editCounter."[]' value='radgroupcheck' style='width: 90px'>
                 ";
-                echo "<br/>";
 
                 $editCounter++;                 // we increment the counter for the html elements of the edit attributes
 
+                if (!$row[3])
+                        $row[3] = "unavailable";
+                if (!$row[4])
+                        $row[4] = "unavailable";
 
-        }
+                printq("
+                        <img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
+                        <br/>
+                        <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <i><b>Type:</b> $row[3]</i><br/>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <i><b>Tooltip Description:</b> $row[4]</i><br/>
+                                <br/>
+                        </div>
+                ");
 
+	}
 ?>
 
         <br/><br/>
@@ -251,8 +275,17 @@
 
 <?php
 
-        $sql = "SELECT Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
-		" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute, ".
+                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".op, ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Value, ".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+                " FROM ".
+                $configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
+                " ON ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute=".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
+		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value=NULL ".
+		" WHERE ".
+                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
 
@@ -292,10 +325,25 @@
                 echo "       
                         <input type='hidden' name='editValues".$editCounter."[]' value='radgroupreply' style='width: 90px'>
                 ";
-		echo "<br/>";
 
                 $editCounter++;                 // we increment the counter for the html elements of the edit attributes
 
+                if (!$row[3])
+                        $row[3] = "unavailable";
+                if (!$row[4])
+                        $row[4] = "unavailable";
+
+                printq("
+                        <img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
+                        <br/>
+                        <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <i><b>Type:</b> $row[3]</i><br/>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <i><b>Tooltip Description:</b> $row[4]</i><br/>
+                                <br/>
+                        </div>
+                ");
 
         }
 
