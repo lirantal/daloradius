@@ -1,3 +1,9 @@
+release 0.9-7 - 4 June 2008
+	- added support for attributes type/description in Edit User page and Edit Profile page
+	- added support for showing the user's summary information like in Username Accounting
+	- added to daloRADIUS Users portal the Graphs pages for the user (client) 
+
+
 release 0.9-7rc2 - 26 May 2008
 	- fixed better support on SQL queries to NOT rely on the schema being the default (tuc)
 	- fixed bug in hotspots edit page where contact info tab didn't load values from the database
