@@ -46,6 +46,7 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
+	$logDebugSQL = "";
 
 ?>
 
@@ -55,19 +56,15 @@
 	
 ?>
 
-		
-		
-		<div id="contentnorightbar">
+	<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['acctdate.php']; ?>
 		<h144>+</h144></a></h2>
-				
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['acctdate'] ?>
 			<br/>
 		</div>
 		<br/>
-
 
 
 <?php
@@ -81,139 +78,138 @@
 	$startdate = $dbSocket->escapeSimple($startdate);
 	$enddate = $dbSocket->escapeSimple($enddate);
 
-
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE AcctStartTime>'$startdate' AND AcctStartTime<'$enddate' AND UserName LIKE '$username'";
-        $_SESSION['reportType'] = "accountingGeneric";
-
-
-
+	// setup php session variables for exporting
+	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+	$_SESSION['reportQuery'] = " WHERE AcctStartTime>'$startdate' AND AcctStartTime<'$enddate' AND UserName LIKE '$username'";
+	$_SESSION['reportType'] = "accountingGeneric";
 
 	//checking if the username exist in the db
 	$sql = "select * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." where UserName like '$username'";
 	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	if ($res->numRows() != 0) {		//if the user exist display information
 
-	$credit = 0;
+		$credit = 0;
 
-	$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' AND ( (Attribute like '%Password') OR (Attribute='Auth-Type') )";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-	
-	echo "
-	        <table border='0' class='table1'>
-                        <thead>
-                                <tr>
-                                <th colspan='15'>".$l['all']['Statistics']."</th>
-                                </tr>
-                        </thead>
-	        <thead>
-	        <th> ".$l['all']['ID']." </th>
-	        <th> ".$l['all']['Username']." </th>
-                <th> ".$l['all']['Password']." </th>
-                <th> ".$l['all']['Credit']." </th>
-                <th> ".$l['all']['Used']." </th>
-                <th> ".$l['all']['LeftTime']." </th>
-                <th> ".$l['all']['LeftPercent']." </th>
-                <th> ".$l['all']['TotalSessions']." </th>
-                <th> ".$l['all']['Upload']." (".$l['all']['Bytes'].")</th>
-                <th> ".$l['all']['Download']." (".$l['all']['Bytes'].") </th>
-        	</th></thead>
-        ";
-	while($row = $res->fetchRow()) {
-	//row[0] = id
-	//row[1] = username
-	//row[2] = password
-        echo "<tr>
-        	<td> $row[0] </td>
-                <td> $row[1] </td>
-                <td> $row[2] </td>
-                ";
-	}
+		$sql = "SELECT id, UserName, Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
+				" WHERE UserName='$username' AND ( (Attribute like '%Password') OR (Attribute='Auth-Type') )";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+		
+		echo "
+			<table border='0' class='table1'>
+					<thead>
+							<tr>
+							<th colspan='15'>".$l['all']['Statistics']."</th>
+							</tr>
+					</thead>
+		        <thead>
+		        <th> ".$l['all']['ID']." </th>
+		        <th> ".$l['all']['Username']." </th>
+	                <th> ".$l['all']['Password']." </th>
+	                <th> ".$l['all']['Credit']." </th>
+	                <th> ".$l['all']['Used']." </th>
+	                <th> ".$l['all']['LeftTime']." </th>
+	                <th> ".$l['all']['LeftPercent']." </th>
+	                <th> ".$l['all']['TotalSessions']." </th>
+	                <th> ".$l['all']['Upload']." (".$l['all']['Bytes'].")</th>
+	                <th> ".$l['all']['Download']." (".$l['all']['Bytes'].") </th>
+	        	</th></thead>
+	        ";
 
-	$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
-		" AND Attribute='Max-All-Session'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-	$row = $res->fetchRow();
-	$credit = $row[0];
-	$dateFlag = '';
+		while($row = $res->fetchRow()) {
+			//row[0] = id
+			//row[1] = username
+			//row[2] = password
+	        echo "<tr>
+	        	<td> $row[0] </td>
+	                <td> $row[1] </td>
+	                <td> $row[2] </td>
+			";
+		}
 
-	if (!($credit)) {
 		$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
-			" AND Attribute='Max-Daily-Session'";
+			" AND Attribute='Max-All-Session'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 		$row = $res->fetchRow();
 		$credit = $row[0];
-		$dateFlag = " AND (DAY(AcctStartTime) = DAY(NOW())) ";
-	}
-
-        if (!($credit)) {
-                $sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
-                        " AND Attribute='Max-Monthly-Session'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-                $row = $res->fetchRow();
-                $credit = $row[0];
-		$dateFlag = " AND (MONTH(AcctStartTime) = MONTH(NOW())) ";
-        } 
-
-	if (!($credit)) {
-		// the user doesn't have neither of the Max-*-Session limitations, whats left is Expiration
-		// or something else (or none at all) but in any case we set the $dateFlag to null;
 		$dateFlag = '';
-	}
 
-	$sql = "SELECT SUM(AcctSessionTime), COUNT(RadAcctId), SUM(AcctInputOctets), SUM(AcctOutputOctets) FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE UserName='$username' $dateFlag AND AcctStartTime>'$startdate' AND AcctStartTime<'$enddate'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-	while($row = $res->fetchRow()) {
-		//row[0] = used - meaning the total seconds that this user has used so far
-		//row[1] = total sessions - the number of time this user has logged on
-		//row[2] = total bytes in
-		//row[3] = total bytes out
-	        $used = $row[0];
-	        $total_sessions = $row[1];
-	        $total_bytesin = $row[2];
-	        $total_bytesout = $row[3];
-	}
+		if (!($credit)) {
+			$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
+				" AND Attribute='Max-Daily-Session'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+			$row = $res->fetchRow();
+			$credit = $row[0];
+			$dateFlag = " AND (DAY(AcctStartTime) = DAY(NOW())) ";
+		}
 
-	if ( (!($credit)) || ($credit == 0) ) { 
-        	echo "<td> N/A </td>";
-		$remains_per = 'N/A';
-	        $remains_time = 'N/A';
-	        echo "<td>".time2str($used)."</td>";
-		echo "<td>".time2str($remains_time)."</td>";
-	} else if ($used > $credit) {
-		echo "<td>".time2str($credit)."</td>";
-		$remains_per = '0';					// used up more than credit, 0% remains
-		$remains_time = ($used-$credit);
-	        echo "<td><b><font color='#FF3300'>".time2str($used)."</font></b></td>";
-		echo "<td><b><font color='#FF3300'>".time2str($remains_time)." overdue</font></b></td>";
-	} else {
-		echo "<td>".time2str($credit)."</td>";
-	        $remains_per = 100 - round(($used / $credit) * 100);
-	        $remains_time = $credit - $used;
-	        echo "<td>".time2str($used)."</td>";
-		echo "<td>".time2str($remains_time)."</td>";
-	}
+		if (!($credit)) {
+			$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username' ".
+				" AND Attribute='Max-Monthly-Session'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+			$row = $res->fetchRow();
+			$credit = $row[0];
+			$dateFlag = " AND (MONTH(AcctStartTime) = MONTH(NOW())) ";
+		} 
 
-        echo "<td> $remains_per%</td>";
-	echo "<td> $total_sessions </td>";
-	echo "<td>".toxbyte($total_bytesin)."</td>";
-	echo "<td>".toxbyte($total_bytesout)."</td>";
-        echo "</tr>";
-	echo "</table> <br/>";
+		if (!($credit)) {
+			// the user doesn't have neither of the Max-*-Session limitations, whats left is Expiration
+			// or something else (or none at all) but in any case we set the $dateFlag to null;
+			$dateFlag = '';
+		}
 
+		$sql = "SELECT SUM(AcctSessionTime), COUNT(RadAcctId), SUM(AcctInputOctets), SUM(AcctOutputOctets) FROM ".
+			$configValues['CONFIG_DB_TBL_RADACCT'].
+			" WHERE UserName='$username' $dateFlag AND AcctStartTime>'$startdate' AND AcctStartTime<'$enddate'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+		
+		while($row = $res->fetchRow()) {
+			//row[0] = used - meaning the total seconds that this user has used so far
+			//row[1] = total sessions - the number of time this user has logged on
+			//row[2] = total bytes in
+			//row[3] = total bytes out
+			$used = $row[0];
+			$total_sessions = $row[1];
+			$total_bytesin = $row[2];
+			$total_bytesout = $row[3];
+		}
 
-	}
+		if ( (!($credit)) || ($credit == 0) ) { 
+			echo "<td> N/A </td>";
+			$remains_per = 'N/A';
+			$remains_time = 'N/A';
+			echo "<td>".time2str($used)."</td>";
+			echo "<td>".time2str($remains_time)."</td>";
+			
+		} else if ($used > $credit) {
+			echo "<td>".time2str($credit)."</td>";
+			$remains_per = '0';					// used up more than credit, 0% remains
+			$remains_time = ($used-$credit);
+			echo "<td><b><font color='#FF3300'>".time2str($used)."</font></b></td>";
+			echo "<td><b><font color='#FF3300'>".time2str($remains_time)." overdue</font></b></td>";
+			
+		} else {
+			echo "<td>".time2str($credit)."</td>";
+			$remains_per = 100 - round(($used / $credit) * 100);
+			$remains_time = $credit - $used;
+			echo "<td>".time2str($used)."</td>";
+			echo "<td>".time2str($remains_time)."</td>";
+		}
+
+		echo "<td> $remains_per%</td>";
+		echo "<td> $total_sessions </td>";
+		echo "<td>".toxbyte($total_bytesin)."</td>";
+		echo "<td>".toxbyte($total_bytesout)."</td>";
+		echo "</tr>";
+		echo "</table> <br/>";
+
+	} // if username exist in radcheck...
 
 
 
