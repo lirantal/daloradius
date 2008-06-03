@@ -47,9 +47,14 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
- 
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script> 
 <?php
 	include ("menu-mng-rad-attributes.php");
 ?>
@@ -70,6 +75,7 @@
 
         
 	include 'library/opendb.php';
+        include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
@@ -141,11 +147,26 @@
 
 		</tr> </thread>";
 	while($row = $res->fetchRow()) {
-		echo "<tr>
+		printqn ("<tr>
                                 <td> <input type='checkbox' name='vendor[]' value='$row[1]||$row[2]'> $row[0] </td>
 				<td> <a class='tablenovisit' href='mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]'>$row[1]</a></td>
-                                <td> <a class='tablenovisit' href='mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]'>$row[2]</a></td>
-		</tr>";
+		                <td> <a class='tablenovisit' href='javascript:return;'
+                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=$row[2]\");
+                                        javascript:__displayTooltip();'
+                                tooltipText='
+                                        <a class=\"toolTip\" href=\"mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]\">
+                                                {$l['Tooltip']['AttributeEdit']}</a>
+                                        <br/><br/>
+
+                                        <div id=\"divContainerAttributeInfo\">
+                                                Loading...
+                                        </div>
+                                        <br/>'
+                                >$row[2]</a>
+        	                </td>
+			</tr>
+			");
+
 	}
 
         echo "
@@ -188,6 +209,13 @@
 </div>
 </div>
 
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>
