@@ -23,7 +23,10 @@
 		<li><a href="mng-rad-ippool-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewIPPool'] ?></a></li>
 		<li><a href="javascript:document.mngradippooledit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditIPPool'] ?></a>
 			<form name="mngradippooledit" action="mng-rad-ippool-edit.php" method="get" class="sidebar">
-			<input name="ippool" type="text" tabindex=4>
+			<input name="poolname" type="text" 
+				value="<?php (isset($poolname)) ? print $poolname : print '[poolname]' ?>" tabindex=4>
+			<input name="ipaddressold" type="text" 
+				value="<?php (isset($ipaddressold)) ? print $ipaddressold : print '[ipaddress]' ?>" tabindex=4>
 			</form></li>
 		<li><a href="mng-rad-ippool-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveIPPool'] ?></a></li>
 		
