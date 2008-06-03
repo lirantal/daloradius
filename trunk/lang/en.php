@@ -278,6 +278,11 @@ $l['Tooltip']['RecommendedTooltipTooltip'] = "Example: the ip address for the us
 $l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be<br/>&nbsp;&nbsp;&nbsp;
                                         available when adding this attribute<br/>&nbsp;&nbsp;&nbsp;";
 
+
+
+$l['Tooltip']['AttributeEdit'] = "Edit Attribute";
+
+
 $l['Tooltip']['UserEdit'] = "Edit User";
 $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
 $l['Tooltip']['EditNAS'] = "Edit NAS";
