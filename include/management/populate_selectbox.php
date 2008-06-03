@@ -239,7 +239,10 @@ function drawRecommendedHelper() {
                 <option value='date'>date</option>
                 <option value='datetime'>datetime</option>
                 <option value='authtype'>authtype</option>
+                <option value='framedprotocol'>framedprotocol</option>
                 <option value='servicetype'>servicetype</option>
+                <option value='bitspersecond'>bitspersecond</option>
+                <option value='volumebytes'>volumebytes</option>
         ";
 }
 
