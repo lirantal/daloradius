@@ -32,12 +32,15 @@
 		<li><a href="mng-rad-attributes-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewVendorAttribute'] ?></a></li>
 		<li><a href="javascript:document.mngradattributesedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditVendorAttribute'] ?></a>
 			<form name="mngradattributesedit" action="mng-rad-attributes-edit.php" method="get" class="sidebar">
-			<input name="vendor" type="text" value="[vendor]" tabindex=4>
-			<input name="attribute" type="text" value="[attribute]" tabindex=5>
+			<input name="vendor" type="text" 
+				value="<?php if (isset($vendor)) echo $vendor; ?>" tabindex=4>
+			<input name="attribute" type="text" 
+				value="<?php if (isset($attribute)) echo $attribute; ?>" tabindex=5>
 			</form></li>
 		<li><a href="javascript:document.mngradattributessearch.submit();" tabindex=6 ><b>&raquo;</b><?php echo $l['button']['SearchVendorAttribute'] ?></a>
 			<form name="mngradattributessearch" action="mng-rad-attributes-search.php" method="get" class="sidebar">
-			<input name="attribute" type="text" value="[attribute]" tabindex=7>
+			<input name="attribute" type="text" 
+				value="<?php if (isset($attribute)) echo $attribute; ?>" tabindex=7>
 			</form></li>
 		<li><a href="mng-rad-attributes-del.php" tabindex=8><b>&raquo;</b><?php echo $l['button']['RemoveVendorAttribute'] ?></a></li>
 		
