@@ -12,10 +12,13 @@ $configValues['CONFIG_DB_ENGINE'] = "mysql";
 $configValues['CONFIG_DB_USER'] = "root";
 $configValues['CONFIG_DB_PASS'] = "";
 $configValues['CONFIG_DB_HOST'] = "127.0.0.1";
-$configValues['CONFIG_DB_NAME'] = "radius";
+$configValues['CONFIG_DB_NAME'] = "radius097";
 
 $configValues['CONFIG_GROUP_NAME'] = "somegroup";	/* the group name to add the user to */
 $configValues['CONFIG_GROUP_PRIORITY'] = 0;		/* an integer only! */
+
+$usernamePrefix = "guest";
+
  /**********************************************************************************************************/
 
 
@@ -62,8 +65,8 @@ function randomAlphanumeric($length) {
 	                        /* let's generate a random username and password
 	                           of length 4 and with username prefix 'guest' */
 	                        $rand = randomAlphanumeric(4);
-	                        $username = "guest" . $rand;
-        	                $password = $rand;
+	                        $username = $usernamePrefix . $rand;
+        	                $password = randomAlphanumeric(4);
 
 	                        /* adding the user to the radcheck table */
 	                        $sql = "INSERT INTO radcheck values (0, '$username', 'User-Password', '==', '$password')";
