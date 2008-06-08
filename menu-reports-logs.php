@@ -50,7 +50,10 @@ include_once ("lang/main.php");
                                 </select>
 	                        <select class="generic" name="filter" type="text">
 					<?php if (isset($filter)) {
-						echo "<option value='$filter'> $filter </option>";
+						if ($filter == ".") 
+							echo "<option value='$filter'> Any </option>";
+						else
+							echo "<option value='$filter'> $filter </option>";
 					      } else {
 						echo "<option value='.'> No filter </option>";
 					      }
