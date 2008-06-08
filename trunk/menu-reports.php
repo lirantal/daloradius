@@ -36,17 +36,17 @@ include_once ("lang/main.php");
 							<?php echo $l['button']['TopUser'] ?></a>
 							<form name="topusers" action="rep-topusers.php" method="post" class="sidebar">
 							<select class="generic" name="limit" type="text">
-								<option value="5"> 5
-								<option value="10"> 10
-								<option value="20"> 20
-								<option value="50"> 50
-								<option value="100"> 100
-								<option value="500"> 500
-								<option value="1000"> 1000
+								<option value="5"> 5 </option>
+								<option value="10"> 10 </option>
+								<option value="20"> 20 </option>
+								<option value="50"> 50 </option>
+								<option value="100"> 100 </option>
+								<option value="500"> 500 </option>
+								<option value="1000"> 1000 </option>
 							</select>
 							<select class="generic" name="orderBy" type="text">
-								<option value="AcctInputOctets"> bandwidth
-								<option value="AcctSessionTime"> time
+								<option value="AcctInputOctets"> bandwidth </option>
+								<option value="AcctSessionTime"> time </option>
 							</select>
 							</form></li>
                                                 <li><a href="rep-history.php"><b>&raquo;</b>
