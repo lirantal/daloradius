@@ -20,8 +20,8 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
+	include ("library/checklogin.php");
+	$operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
@@ -30,9 +30,9 @@
 
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-    include('include/config/logging.php');
+	$log = "visited page: ";
+	$logQuery = "performed query on page: ";
+	include('include/config/logging.php');
 
 
 ?>
@@ -42,9 +42,9 @@
     include ("menu-reports-logs.php");
   	
 ?>	
-		
-		
-		<div id="contentnorightbar">
+
+
+	<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogsdaloradius.php']; ?>
 		:: <?php if (isset($lineCount)) { echo $lineCount . " Lines Count "; } ?>
@@ -58,65 +58,19 @@
 		<br/>
 
 <?php
-
-/*******************************************************************
-* Extension name: daloradius log file                              *
-*                                                                  *
-* Description:                                                     *
-* this script displays the daloradius log file ofcourse            *
-* proper premissions must be applied on the log file for the web   *
-* server to be able to read it                                     *
-*                                                                  *
-* Author: Liran Tal <liran@enginx.com>                             *
-*                                                                  *
-*******************************************************************/
-
-
-if (isset($configValues['CONFIG_LOG_FILE'])) {
-	$logfile = $configValues['CONFIG_LOG_FILE'];
-
-	if (!file_exists($logfile)) {
-	        echo "<br/><br/>
-	                error reading log file: <br/><br/>
-	                looked for log file in $logfile but couldn't find it.<br/>
-	                if you know where your daloradius log file is located, set it's location in your library/daloradius.conf file";
-	        exit;
-	}
-
-
-	if (is_readable($logfile) == false) {
-	        echo "<br/><br/>
-	                error reading log file: <u>$logfile</u> <br/><br/>
-	                possible cause is file premissions or file doesn't exist.<br/>";
-	} else {
-	        if (file_get_contents($logfile)) {
-			$fileReversed = array_reverse(file($logfile));
-			$counter = $lineCount;
-			foreach ($fileReversed as $line) {
-				if (preg_match("/$filter/i", $line)) {
-					if ($counter == 0)
-						break;
-					$ret = eregi_replace("\n", "<br>", $line);
-					echo $ret;
-					$counter--;
-				}
-			}
-		}
-	}
-}
-
+	include 'library/exten-daloradius_log.php';
 ?>
 
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+	</div>
+	
+	<div id="footer">
+	
+<?php
+	include 'page-footer.php';
 ?>
-		
-		</div>
-		
+
+	</div>
+
 </div>
 </div>
 
