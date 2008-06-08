@@ -30,7 +30,38 @@ include_once ("lang/main.php");
 
 		<h3>Log Files</h3>
 
-			<li><a href="rep-logs-daloradius.php"><b>&raquo;</b><?php echo $l['button']['daloRADIUSLog'] ?></a></li>
+			<li><a href="javascript:document.daloradius_log.submit();"><b>&raquo;</b><?php echo $l['button']['daloRADIUSLog'] ?></a>
+                        <form name="daloradius_log" action="rep-logs-daloradius.php" method="get" class="sidebar">
+	                        <select class="generic" name="linecount" type="text">
+					<?php if (isset($lineCount)) {
+						echo "<option value='$lineCount'> $lineCount Lines </option>";
+					      } else {
+						echo "<option value='50'> 50 Lines Output Limit </option>";
+					      }
+					?>
+        	                        <option value="50"></option>
+        	                        <option value="5"> 5 Lines </option>
+                                        <option value="10"> 10 Lines </option>
+                                        <option value="20"> 20 Lines </option> 
+                                        <option value="50"> 50 Lines </option>
+                                        <option value="100"> 100 Lines </option>
+                                        <option value="500"> 500 Lines </option>
+                                        <option value="1000"> 1000 Lines </option>
+                                </select>
+	                        <select class="generic" name="filter" type="text">
+					<?php if (isset($filter)) {
+						echo "<option value='$filter'> $filter </option>";
+					      } else {
+						echo "<option value='.'> No filter </option>";
+					      }
+					?>
+        	                        <option value="."></option>
+        	                        <option value="QUERY"> Query Only </option>
+                                        <option value="NOTICE"> Notice Only </option>
+                                        <option value="INSERT"> SQL INSERT Only </option> 
+                                        <option value="SELECT"> SQL SELECT Only </option>
+                                </select>
+                        </form></li>
 			<li><a href="rep-logs-radius.php"><b>&raquo;</b><?php echo $l['button']['RadiusLog'] ?></a></li>
 			<li><a href="rep-logs-system.php"><b>&raquo;</b><?php echo $l['button']['SystemLog'] ?></a></li>
 			<li><a href="rep-logs-boot.php"><b>&raquo;</b><?php echo $l['button']['BootLog'] ?></a></li>
