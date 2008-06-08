@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -25,6 +25,8 @@
 
 	include('library/check_operator_perm.php');
 
+	isset($_GET['linecount']) ? $lineCount = $_GET['linecount'] : $lineCount = 50;
+	isset($_GET['filter']) ? $filter = $_GET['filter'] : $filter = ".";
 
 
 	include_once('library/config_read.php');
@@ -45,6 +47,8 @@
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogsdaloradius.php']; ?>
+		:: <?php if (isset($lineCount)) { echo $lineCount . " Lines Count "; } ?>
+		   <?php if (isset($filter)) { echo " with filter set to " . $filter; } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
@@ -56,10 +60,10 @@
 <?php
 
 /*******************************************************************
-* Extension name: radius log file                                  *
+* Extension name: daloradius log file                              *
 *                                                                  *
 * Description:                                                     *
-* this script displays the radius log file ofcourse                *
+* this script displays the daloradius log file ofcourse            *
 * proper premissions must be applied on the log file for the web   *
 * server to be able to read it                                     *
 *                                                                  *
@@ -85,10 +89,19 @@ if (isset($configValues['CONFIG_LOG_FILE'])) {
 	                error reading log file: <u>$logfile</u> <br/><br/>
 	                possible cause is file premissions or file doesn't exist.<br/>";
 	} else {
-	        if ($filedata = file_get_contents($logfile)) {
-	                $ret = eregi_replace("\n", "<br>", $filedata);
-	                echo $ret;
-	        }
+	        if (file_get_contents($logfile)) {
+			$fileReversed = array_reverse(file($logfile));
+			$counter = $lineCount;
+			foreach ($fileReversed as $line) {
+				if (preg_match("/$filter/i", $line)) {
+					if ($counter == 0)
+						break;
+					$ret = eregi_replace("\n", "<br>", $line);
+					echo $ret;
+					$counter--;
+				}
+			}
+		}
 	}
 }
 
