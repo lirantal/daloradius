@@ -32,28 +32,26 @@ include_once ("lang/main.php");
 
 			<li><a href="javascript:document.daloradius_log.submit();"><b>&raquo;</b><?php echo $l['button']['daloRADIUSLog'] ?></a>
                         <form name="daloradius_log" action="rep-logs-daloradius.php" method="get" class="sidebar">
-	                        <select class="generic" name="linecount" type="text">
-					<?php if (isset($lineCount)) {
-						echo "<option value='$lineCount'> $lineCount Lines </option>";
+	                        <select class="generic" name="daloradiusLineCount" type="text">
+					<?php if (isset($daloradiusLineCount)) {
+						echo "<option value='$daloradiusLineCount'> $daloradiusLineCount Lines </option>";
 					      } else {
 						echo "<option value='50'> 50 Lines Output Limit </option>";
 					      }
 					?>
         	                        <option value="50"></option>
-        	                        <option value="5"> 5 Lines </option>
-                                        <option value="10"> 10 Lines </option>
-                                        <option value="20"> 20 Lines </option> 
+                                        <option value="20"> 20 Lines </option>
                                         <option value="50"> 50 Lines </option>
                                         <option value="100"> 100 Lines </option>
                                         <option value="500"> 500 Lines </option>
                                         <option value="1000"> 1000 Lines </option>
                                 </select>
-	                        <select class="generic" name="filter" type="text">
-					<?php if (isset($filter)) {
-						if ($filter == ".") 
-							echo "<option value='$filter'> Any </option>";
+	                        <select class="generic" name="daloradiusFilter" type="text">
+					<?php if (isset($daloradiusFilter)) {
+						if ($daloradiusFilter == ".") 
+							echo "<option value='$daloradiusFilter'> Any </option>";
 						else
-							echo "<option value='$filter'> $filter </option>";
+							echo "<option value='$daloradiusFilter'> $daloradiusFilter </option>";
 					      } else {
 						echo "<option value='.'> No filter </option>";
 					      }
@@ -65,9 +63,80 @@ include_once ("lang/main.php");
                                         <option value="SELECT"> SQL SELECT Only </option>
                                 </select>
                         </form></li>
-			<li><a href="rep-logs-radius.php"><b>&raquo;</b><?php echo $l['button']['RadiusLog'] ?></a></li>
-			<li><a href="rep-logs-system.php"><b>&raquo;</b><?php echo $l['button']['SystemLog'] ?></a></li>
-			<li><a href="rep-logs-boot.php"><b>&raquo;</b><?php echo $l['button']['BootLog'] ?></a></li>
+
+			<li><a href="javascript:document.radius_log.submit();"><b>&raquo;</b><?php echo $l['button']['RadiusLog'] ?></a>
+                        <form name="radius_log" action="rep-logs-radius.php" method="get" class="sidebar">
+	                        <select class="generic" name="radiusLineCount" type="text">
+					<?php if (isset($radiusLineCount)) {
+						echo "<option value='$radiusLineCount'> $radiusLineCount Lines </option>";
+					      } else {
+						echo "<option value='50'> 50 Lines Output Limit </option>";
+					      }
+					?>
+        	                        <option value="50"></option>
+                                        <option value="20"> 20 Lines </option> 
+                                        <option value="50"> 50 Lines </option>
+                                        <option value="100"> 100 Lines </option>
+                                        <option value="500"> 500 Lines </option>
+                                        <option value="1000"> 1000 Lines </option>
+                                </select>
+	                        <select class="generic" name="radiusFilter" type="text">
+					<?php if (isset($radiusFilter)) {
+						if ($radiusFilter == ".") 
+							echo "<option value='$radiusFilter'> Any </option>";
+						else
+							echo "<option value='$radiusFilter'> $radiusFilter </option>";
+					      } else {
+						echo "<option value='.'> No filter </option>";
+					      }
+					?>
+        	                        <option value="."></option>
+        	                        <option value="Auth"> Auth Only </option>
+                                        <option value="Info"> Info Only </option>
+                                        <option value="Error"> Error Only </option>
+                                </select>
+                        </form></li>
+
+			<li><a href="javascript:document.system_log.submit();"><b>&raquo;</b><?php echo $l['button']['SystemLog'] ?></a>
+                        <form name="system_log" action="rep-logs-system.php" method="get" class="sidebar">
+	                        <select class="generic" name="systemLineCount" type="text">
+					<?php if (isset($systemLineCount)) {
+						echo "<option value='$systemLineCount'> $systemLineCount Lines </option>";
+					      } else {
+						echo "<option value='50'> 50 Lines Output Limit </option>";
+					      }
+					?>
+        	                        <option value="50"></option>
+                                        <option value="20"> 20 Lines </option> 
+                                        <option value="50"> 50 Lines </option>
+                                        <option value="100"> 100 Lines </option>
+                                        <option value="500"> 500 Lines </option>
+                                        <option value="1000"> 1000 Lines </option>
+                                </select>
+	                        <input type="text" name="systemFilter" 
+					value="<?php if (isset($systemFilter)) echo $systemFilter; ?>" />
+                        </form></li>
+
+
+			<li><a href="javascript:document.boot_log.submit();"><b>&raquo;</b><?php echo $l['button']['BootLog'] ?></a>
+                        <form name="boot_log" action="rep-logs-boot.php" method="get" class="sidebar">
+	                        <select class="generic" name="bootLineCount" type="text">
+					<?php if (isset($bootLineCount)) {
+						echo "<option value='$bootLineCount'> $bootLineCount Lines </option>";
+					      } else {
+						echo "<option value='50'> 50 Lines Output Limit </option>";
+					      }
+					?>
+        	                        <option value="50"></option>
+                                        <option value="20"> 20 Lines </option> 
+                                        <option value="50"> 50 Lines </option>
+                                        <option value="100"> 100 Lines </option>
+                                        <option value="500"> 500 Lines </option>
+                                        <option value="1000"> 1000 Lines </option>
+                                </select>
+	                        <input type="text" name="bootFilter" 
+					value="<?php if (isset($bootFilter)) echo $bootFilter; ?>" />
+                        </form></li>
 
 		</ul>
 

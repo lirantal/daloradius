@@ -45,10 +45,19 @@ if (is_readable($logfile) == false) {
 		error reading log file: <u>$logfile</u> <br/><br/>
 		possible cause is file premissions or file doesn't exist.<br/>";
 } else {
-	if ($filedata = file_get_contents($logfile)) {
-		$ret = eregi_replace("\n", "<br>", $filedata);
-		echo $ret;
-	}
+                if (file_get_contents($logfile)) {
+                        $fileReversed = array_reverse(file($logfile));
+                        $counter = $bootLineCount;
+                        foreach ($fileReversed as $line) {
+                                if (preg_match("/$bootFilter/i", $line)) {
+                                        if ($counter == 0)
+                                                break;
+                                        $ret = eregi_replace("\n", "<br>", $line);
+                                        echo $ret;
+                                        $counter--;
+                                }
+                        }
+                }
 }
 
 ?>

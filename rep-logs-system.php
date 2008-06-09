@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -25,7 +25,8 @@
 
 	include('library/check_operator_perm.php');
 
-
+        isset($_GET['systemLineCount']) ? $systemLineCount = $_GET['systemLineCount'] : $systemLineCount = 50;
+        isset($_GET['systemFilter']) ? $systemFilter = $_GET['systemFilter'] : $systemFilter = ".";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -42,6 +43,8 @@
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogssystem.php']; ?>
+                :: <?php if (isset($systemLineCount)) { echo $systemLineCount . " Lines Count "; } ?>
+                   <?php if (isset($systemFilter)) { echo " with filter set to " . $systemFilter; } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >

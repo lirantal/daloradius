@@ -44,9 +44,9 @@ if (isset($configValues['CONFIG_LOG_FILE'])) {
 	} else {
 	        if (file_get_contents($logfile)) {
 			$fileReversed = array_reverse(file($logfile));
-			$counter = $lineCount;
+			$counter = $daloradiusLineCount;
 			foreach ($fileReversed as $line) {
-				if (preg_match("/$filter/i", $line)) {
+				if (preg_match("/$daloradiusFilter/i", $line)) {
 					if ($counter == 0)
 						break;
 					$ret = eregi_replace("\n", "<br>", $line);
