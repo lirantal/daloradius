@@ -92,7 +92,7 @@
                 $user = $row[0];
                 $pass = $row[1];
                 $starttime = $row[3];
-                $reply = $row[2];
+                $reply = $row[2];		
 
                 array_push($array_users, "$user");
                 array_push($array_pass, "$pass");
@@ -150,11 +150,17 @@
 
         $i = 0;
         while ($i != $count) {
+
+		if ($array_reply[$i] == "Access-Reject")
+			$reply = "<font color='red'> $array_reply[$i] </font>";
+		else
+			$reply = $array_reply[$i];
+
                 echo "<tr>
                         <td> $array_users[$i] </td>
                         <td> $array_pass[$i] </td>
                         <td> $array_starttime[$i] </td>
-                        <td> $array_reply[$i] </td>
+                        <td> $reply </td>
                 </tr>";
                 $i++;
         }
