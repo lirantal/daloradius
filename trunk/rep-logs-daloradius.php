@@ -25,8 +25,8 @@
 
 	include('library/check_operator_perm.php');
 
-	isset($_GET['linecount']) ? $lineCount = $_GET['linecount'] : $lineCount = 50;
-	isset($_GET['filter']) ? $filter = $_GET['filter'] : $filter = ".";
+	isset($_GET['daloradiusLineCount']) ? $daloradiusLineCount = $_GET['daloradiusLineCount'] : $daloradiusLineCount = 50;
+	isset($_GET['daloradiusFilter']) ? $daloradiusFilter = $_GET['daloradiusFilter'] : $daloradiusFilter = ".";
 
 
 	include_once('library/config_read.php');
@@ -47,8 +47,8 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogsdaloradius.php']; ?>
-		:: <?php if (isset($lineCount)) { echo $lineCount . " Lines Count "; } ?>
-		   <?php if (isset($filter)) { echo " with filter set to " . $filter; } ?>
+		:: <?php if (isset($daloradiusLineCount)) { echo $daloradiusLineCount . " Lines Count "; } ?>
+		   <?php if (isset($daloradiusFilter)) { echo " with filter set to " . $daloradiusFilter; } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >

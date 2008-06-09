@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -25,6 +25,8 @@
 
 	include('library/check_operator_perm.php');
 
+        isset($_GET['radiusLineCount']) ? $radiusLineCount = $_GET['radiusLineCount'] : $radiusLineCount = 50;
+        isset($_GET['radiusFilter']) ? $radiusFilter = $_GET['radiusFilter'] : $radiusFilter = ".";
 
 
 	include_once('library/config_read.php');
@@ -45,6 +47,8 @@
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogsradius.php']; ?>
+                :: <?php if (isset($radiusLineCount)) { echo $radiusLineCount . " Lines Count "; } ?>
+                   <?php if (isset($radiusFilter)) { echo " with radiusFilter set to " . $radiusFilter; } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
