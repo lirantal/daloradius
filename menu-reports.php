@@ -34,7 +34,7 @@ include_once ("lang/main.php");
 							<?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
 							<?php echo $l['button']['TopUser'] ?></a>
-							<form name="topusers" action="rep-topusers.php" method="post" class="sidebar">
+							<form name="topusers" action="rep-topusers.php" method="get" class="sidebar">
 							<select class="generic" name="limit" type="text">
 								<option value="5"> 5 </option>
 								<option value="10"> 10 </option>
@@ -45,8 +45,8 @@ include_once ("lang/main.php");
 								<option value="1000"> 1000 </option>
 							</select>
 							<select class="generic" name="orderBy" type="text">
-								<option value="AcctInputOctets"> bandwidth </option>
-								<option value="AcctSessionTime"> time </option>
+								<option value="Bandwidth"> bandwidth </option>
+								<option value="Time"> time </option>
 							</select>
 							</form></li>
                                                 <li><a href="rep-history.php"><b>&raquo;</b>
