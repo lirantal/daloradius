@@ -28,12 +28,10 @@
 	isset($_GET['daloradiusLineCount']) ? $daloradiusLineCount = $_GET['daloradiusLineCount'] : $daloradiusLineCount = 50;
 	isset($_GET['daloradiusFilter']) ? $daloradiusFilter = $_GET['daloradiusFilter'] : $daloradiusFilter = ".";
 
-
 	include_once('library/config_read.php');
 	$log = "visited page: ";
 	$logQuery = "performed query on page: ";
 	include('include/config/logging.php');
-
 
 ?>
 
@@ -55,11 +53,14 @@
 			<?php echo $l['helpPage']['replogsdaloradius'] ?>
 			<br/>
 		</div>
-		<br/>
 
 <?php
 	include 'library/exten-daloradius_log.php';
 ?>
+
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
 
 	</div>
 	

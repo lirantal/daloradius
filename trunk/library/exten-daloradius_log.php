@@ -29,29 +29,30 @@ if (isset($configValues['CONFIG_LOG_FILE'])) {
 	$logfile = $configValues['CONFIG_LOG_FILE'];
 
 	if (!file_exists($logfile)) {
-	        echo "<br/><br/>
-	                error reading log file: <br/><br/>
-	                looked for log file in $logfile but couldn't find it.<br/>
-	                if you know where your daloradius log file is located, set it's location in your library/daloradius.conf file";
-	        exit;
-	}
 
-
-	if (is_readable($logfile) == false) {
-	        echo "<br/><br/>
-	                error reading log file: <u>$logfile</u> <br/><br/>
-	                possible cause is file premissions or file doesn't exist.<br/>";
+                $failureMsg = "error reading log file: <b>$logfile</b><br/>".
+				"looked for log file in $logfile but couldn't find it.<br/>".
+				"if you know where your daloradius log file is located, set it's location in your library/daloradius.conf file";
 	} else {
-	        if (file_get_contents($logfile)) {
-			$fileReversed = array_reverse(file($logfile));
-			$counter = $daloradiusLineCount;
-			foreach ($fileReversed as $line) {
-				if (preg_match("/$daloradiusFilter/i", $line)) {
-					if ($counter == 0)
-						break;
-					$ret = eregi_replace("\n", "<br>", $line);
-					echo $ret;
-					$counter--;
+
+
+		if (is_readable($logfile) == false) {
+
+	                $failureMsg = "error reading log file: <b>$logfile</b><br/>".
+				"possible cause is file premissions or file doesn't exist.<br/>";
+
+		} else {
+		        if (file_get_contents($logfile)) {
+				$fileReversed = array_reverse(file($logfile));
+				$counter = $daloradiusLineCount;
+				foreach ($fileReversed as $line) {
+					if (preg_match("/$daloradiusFilter/i", $line)) {
+						if ($counter == 0)
+							break;
+						$ret = eregi_replace("\n", "<br>", $line);
+						echo $ret;
+						$counter--;
+					}
 				}
 			}
 		}
