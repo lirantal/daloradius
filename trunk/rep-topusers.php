@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -28,7 +28,7 @@
 
 	//setting values for the order by and order type variables
 	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "radacctid";
-	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "desc";	
+	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "desc";
 
 	if (isset($_GET['limit']))
 		$limit = $_GET['limit'];
@@ -122,12 +122,12 @@
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctinputoctets&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Upload&orderType=$orderType\">
 		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctoutputoctets&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Download&orderType=$orderType\">
 		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
