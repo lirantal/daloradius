@@ -57,6 +57,11 @@
 	include 'library/exten-syslog_log.php';
 ?>
 
+                <?php
+                        include_once('include/management/actionMessages.php');
+                ?>
+
+
 		</div>
 		
 		<div id="footer">
