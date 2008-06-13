@@ -43,6 +43,7 @@
 		$expiration = $_REQUEST['expiration'];
 		$sessiontimeout = $_REQUEST['sessiontimeout'];
 		$idletimeout = $_REQUEST['idletimeout'];
+		$simultaneoususe = $_REQUEST['simultaneoususe'];
 
 		isset($_REQUEST['firstname']) ? $firstname = $_REQUEST['firstname'] : $firstname = "";
 		isset($_REQUEST['lastname']) ? $lastname = $_REQUEST['lastname'] : $lastname = " ";
@@ -99,6 +100,14 @@
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." (id,Username,Attribute,op,Value) ".
 							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Idle-Timeout', ':=', '".
 							$dbSocket->escapeSimple($idletimeout)."')";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+
+				if ($simultaneoususe) {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Simultaneous-Use', ':=', '".
+							$dbSocket->escapeSimple($simultaneoususe)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
@@ -289,9 +298,17 @@
 
 		<label for='expiration' class='form'><?php echo $l['all']['Expiration']?></label>		
 		<input value='' id='expiration' name='expiration'  tabindex=106 />
-
 		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
+		<br/>
 
+		<label for='simultaneoususe' class='form'><?php echo $l['all']['SimultaneousUse']?></label>
+		<select name='simultaneoususe' class='form' tabindex=107 >
+			<option value="">No Login Restriction</option>
+			<option value="1">1 Login</option>
+			<option value="2">2 Logins</option>
+			<option value="5">5 Logins</option>
+			<option value="10">10 Logins</option>
+		</select>
 		<br/>
 
 		<label for='sessiontimeout' class='form'><?php echo $l['all']['SessionTimeout']?></label>
