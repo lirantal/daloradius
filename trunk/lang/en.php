@@ -77,6 +77,7 @@ $l['all']['RetryDelay'] = "Retry Delay";
 $l['all']['RetryCount'] = "Retry Count";
 $l['all']['DefaultFallback'] = "Default Fallback";
 
+$l['all']['SimultaneousUse'] = "Simultaneous-Use";
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
 $l['all']['NasIPHost'] = "NAS IP/Host";
