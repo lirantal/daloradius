@@ -144,12 +144,12 @@
 
         // Grabing the group lists from usergroup table
 
-        $sql = "SELECT distinct(nasname), secret FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].";";
+        $sql = "SELECT distinct(nasname), shortname, secret FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].";";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
                 echo "
-                        <option value='$row[0]||$row[1]'> $row[0] </option>
+                        <option value='$row[0]||$row[2]'> $row[2] - $row[0] </option>
                         ";
 
         }
