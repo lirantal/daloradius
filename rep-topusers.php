@@ -117,7 +117,7 @@
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctsessiontime&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Time&orderType=$orderType\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
