@@ -296,23 +296,17 @@
 
 		<h302> <?php echo $l['title']['Attributes']; ?> </h302>
 
+		<label for='simultaneoususe' class='form'><?php echo $l['all']['SimultaneousUse']?></label>
+		<input name='simultaneoususe' type='text' value='' tabindex=106 />
+		<br/>
+
 		<label for='expiration' class='form'><?php echo $l['all']['Expiration']?></label>		
-		<input value='' id='expiration' name='expiration'  tabindex=106 />
+		<input value='' id='expiration' name='expiration'  tabindex=107 />
 		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
 		<br/>
 
-		<label for='simultaneoususe' class='form'><?php echo $l['all']['SimultaneousUse']?></label>
-		<select name='simultaneoususe' class='form' tabindex=107 >
-			<option value="">No Login Restriction</option>
-			<option value="1">1 Login</option>
-			<option value="2">2 Logins</option>
-			<option value="5">5 Logins</option>
-			<option value="10">10 Logins</option>
-		</select>
-		<br/>
-
 		<label for='sessiontimeout' class='form'><?php echo $l['all']['SessionTimeout']?></label>
-		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=107 />
+		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=108 />
 		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0" class='form' >
 			<option value="1">calculate time</option>
 			<option value="1">seconds</option>
@@ -325,7 +319,7 @@
 		<br/>
 
 		<label for='idletimeout' class='form'><?php echo $l['all']['IdleTimeout']?></label>
-		<input value='' id='idletimeout' name='idletimeout'  tabindex=107 />
+		<input value='' id='idletimeout' name='idletimeout'  tabindex=109 />
 		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1" class='form' >
 			<option value="1">calculate time</option>
 			<option value="1">seconds</option>
@@ -339,7 +333,7 @@
 
 		<label for='maxallsession' class='form'><?php 
 			echo $l['all']['MaxAllSession'] ?></label>
-		<input value='' id='maxallsession' name='maxallsession'  tabindex=108 />
+		<input value='' id='maxallsession' name='maxallsession'  tabindex=110 />
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2" class='form' >
 			<option value="1">calculate time</option>
 			<option value="1">seconds</option>
