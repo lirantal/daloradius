@@ -65,10 +65,27 @@
 		
 			if (trim($username) != "" and trim($password) != "") {
 
+				$password = $dbSocket->escapeSimple($password);
+
+                                switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
+                                	case "cleartext":
+                        	                $dbPassword = "'$password'";
+                                                break;
+                                        case "crypt":
+                                                $dbPassword = "ENCRYPT('$password')";
+                                                break;
+                                        case "md5":
+                                                $dbPassword = "MD5('$password')";
+                                                break;
+                                        default:
+                                                $dbPassword = "'$password'";
+                                }
+
 				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($username)."', '$passwordType', ':=', '".
-						$dbSocket->escapeSimple($password)."')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK'].
+						" (id,Username,Attribute,op,Value) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($username)."', '$passwordType', ".
+						" ':=', $dbPassword)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 	
