@@ -21,16 +21,21 @@
 	<h3>Users Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-list-all.php"><b>&raquo;</b><?php echo $l['button']['ListUsers'] ?></a></li>
-		<li><a href="mng-new.php"><b>&raquo;</b><?php echo $l['button']['NewUser'] ?></a></li>
-		<li><a href="mng-new-quick.php"><b>&raquo;</b><?php echo $l['button']['NewUserQuick'] ?></a></li>
-		<li><a href="mng-batch.php"><b>&raquo;</b><?php echo $l['button']['BatchAddUsers'] ?><a></li>
-		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditUser'] ?><a>
+		<li><a href="mng-list-all.php"><img src='images/icons/userList.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['ListUsers'] ?></a></li>
+		<li><a href="mng-new.php">
+		<img src='images/icons/userNew.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['NewUser'] ?></a></li>
+		<li><a href="mng-new-quick.php">
+		<img src='images/icons/userNew.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['NewUserQuick'] ?></a></li>
+		<li><a href="mng-batch.php">
+		<img src='images/icons/userNew.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['BatchAddUsers'] ?><a></li>
+		<li><a href="javascript:document.mngedit.submit();"">
+			<img src='images/icons/userEdit.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['EditUser'] ?><a>
 			<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
 			<input name="username" type="text"
 				value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
 			</form></li>
-		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b><?php echo $l['button']['SearchUsers'] ?><a>
+		<li><a href="javascript:document.mngsearch.submit();"">
+			<img src='images/icons/userSearch.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['SearchUsers'] ?><a>
 			<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameSearch"
 				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
@@ -53,7 +58,8 @@
                 ";
         }
 ?>
-		<li><a href="mng-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveUsers'] ?></a></li>
+		<li><a href="mng-del.php">
+			<img src='images/icons/userRemove.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['RemoveUsers'] ?></a></li>
 		
 	</ul>
 
