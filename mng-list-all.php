@@ -67,10 +67,13 @@
 				<h144>+</h144></a></h2>
 				
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mnglistall'] ?>
-					<br/>
-				</div>
-				<br/>
+			<?php echo $l['helpPage']['mnglistall'] ?>
+			<br/>
+		</div>
+
+		<div id="returnMessages">
+		</div>
+
 
 <?php
 
@@ -125,11 +128,13 @@
 				
 				<a class=\"table\" href=\"javascript:SetChecked(0,'username[]','listallusers')\">None</a>
 			<br/>
-				<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
+				<input class='button' type='button' value='Delete' 
+					onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
+        	                <input class='button' type='button' value='Disable'
+					onClick='javascript:disableCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
         	                <input class='button' type='button' value='CSV Export'
 	                        	onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
                 		        />
-
 				<br/><br/>
 		";
 
