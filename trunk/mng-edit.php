@@ -342,6 +342,7 @@
 
 <script type="text/javascript" src="library/javascript/ajax.js"></script>
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
 
 <?php
 	include_once ("library/tabber/tab-layout.php");
@@ -362,6 +363,11 @@
 	</div>
 	<?php
 		include_once('include/management/actionMessages.php');
+	?>
+
+	<?php
+		include_once('include/management/userOperations.php');
+		checkDisabled($username);
 	?>
 
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
