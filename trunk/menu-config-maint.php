@@ -29,8 +29,14 @@
 
 	<ul class="subnav">
 
-		<li><a href="config-maint-test-user.php"><b>&raquo;</b><?php echo $l['button']['TestUserConnectivity'] ?></a></li>
-		<li><a href="config-maint-disconnect-user.php"><b>&raquo;</b><?php echo $l['button']['DisconnectUser'] ?></a></li>
+		<li><a href="config-maint-test-user.php"><b>&raquo;</b>
+			<img src='images/icons/configMaintenance.png' border='0'>
+			<?php echo $l['button']['TestUserConnectivity'] ?></a>
+		</li>
+		<li><a href="config-maint-disconnect-user.php"><b>&raquo;</b>
+			<img src='images/icons/configMaintenance.png' border='0'>
+			<?php echo $l['button']['DisconnectUser'] ?></a>
+		</li>
 		
 	</ul>
 	
