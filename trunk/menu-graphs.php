@@ -31,6 +31,7 @@
 	<ul class="subnav">
 
 		<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>
+			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['UserLogins'] ?></a>
 			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
 			<input name="username" type="text" 
@@ -46,6 +47,7 @@
 
 
 		<li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>
+			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['UserDownloads'] ?></a>
 			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
 			<input name="username" type="text" 
@@ -61,6 +63,7 @@
 
 
 		<li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>
+			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['UserUploads'] ?></a>
 			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
 			<input name="username" type="text" 
@@ -81,6 +84,7 @@
 
 
 		<li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>
+			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['TotalLogins'] ?></a>
 			<form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
 			<select class="generic" name="type" type="text">
@@ -93,6 +97,7 @@
 
 
 		<li><a href="javascript:document.alltime_traffic_compare.submit();"><b>&raquo;</b>
+			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['TotalTraffic'] ?></a>
 			<form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" 
 				class="sidebar">
