@@ -29,10 +29,13 @@ include_once ("lang/main.php");
 				<ul class="subnav">
 				
 						<li><a href="rep-online.php"><b>&raquo;</b>
+							<img src='images/icons/reportsOnlineUsers.gif' border='0'>
 							<?php echo $l['button']['OnlineUsers'] ?></a>
                                                 <li><a href="rep-lastconnect.php"><b>&raquo;</b>
+							<img src='images/icons/reportsLastConnection.png' border='0'>
 							<?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
+							<img src='images/icons/reportsTopUsers.png' border='0'>
 							<?php echo $l['button']['TopUser'] ?></a>
 							<form name="topusers" action="rep-topusers.php" method="get" class="sidebar">
 							<select class="generic" name="limit" type="text">
@@ -50,6 +53,7 @@ include_once ("lang/main.php");
 							</select>
 							</form></li>
                                                 <li><a href="rep-history.php"><b>&raquo;</b>
+							<img src='images/icons/reportsHistory.png' border='0'>
 							<?php echo $l['button']['History'] ?></a></li>
 				</ul>
 		

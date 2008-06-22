@@ -30,7 +30,8 @@ include_once ("lang/main.php");
 
 		<h3>Log Files</h3>
 
-			<li><a href="javascript:document.daloradius_log.submit();"><b>&raquo;</b><?php echo $l['button']['daloRADIUSLog'] ?></a>
+			<li><a href="javascript:document.daloradius_log.submit();"><b>&raquo;</b>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['daloRADIUSLog'] ?></a>
                         <form name="daloradius_log" action="rep-logs-daloradius.php" method="get" class="sidebar">
 	                        <select class="generic" name="daloradiusLineCount" type="text">
 					<?php if (isset($daloradiusLineCount)) {
@@ -64,7 +65,8 @@ include_once ("lang/main.php");
                                 </select>
                         </form></li>
 
-			<li><a href="javascript:document.radius_log.submit();"><b>&raquo;</b><?php echo $l['button']['RadiusLog'] ?></a>
+			<li><a href="javascript:document.radius_log.submit();"><b>&raquo;</b>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['RadiusLog'] ?></a>
                         <form name="radius_log" action="rep-logs-radius.php" method="get" class="sidebar">
 	                        <select class="generic" name="radiusLineCount" type="text">
 					<?php if (isset($radiusLineCount)) {
@@ -97,7 +99,8 @@ include_once ("lang/main.php");
                                 </select>
                         </form></li>
 
-			<li><a href="javascript:document.system_log.submit();"><b>&raquo;</b><?php echo $l['button']['SystemLog'] ?></a>
+			<li><a href="javascript:document.system_log.submit();"><b>&raquo;</b>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['SystemLog'] ?></a>
                         <form name="system_log" action="rep-logs-system.php" method="get" class="sidebar">
 	                        <select class="generic" name="systemLineCount" type="text">
 					<?php if (isset($systemLineCount)) {
@@ -118,7 +121,8 @@ include_once ("lang/main.php");
                         </form></li>
 
 
-			<li><a href="javascript:document.boot_log.submit();"><b>&raquo;</b><?php echo $l['button']['BootLog'] ?></a>
+			<li><a href="javascript:document.boot_log.submit();"><b>&raquo;</b>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['BootLog'] ?></a>
                         <form name="boot_log" action="rep-logs-boot.php" method="get" class="sidebar">
 	                        <select class="generic" name="bootLineCount" type="text">
 					<?php if (isset($bootLineCount)) {
