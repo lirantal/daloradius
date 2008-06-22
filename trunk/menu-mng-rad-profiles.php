@@ -20,9 +20,15 @@
 	<h3>Profiles Management</h3>
 	<ul class="subnav">
 
-		<li><a href="mng-rad-profiles-list.php"><b>&raquo;</b><?php echo $l['button']['ListProfiles'] ?></a></li>
-		<li><a href="mng-rad-profiles-new.php"><b>&raquo;</b><?php echo $l['button']['NewProfile'] ?></a></li>
-		<li><a href="javascript:document.mngradprofileedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditProfile'] ?><a>
+		<li><a href="mng-rad-profiles-list.php"><b>&raquo;</b>
+			<img src='images/icons/groupsList.png' border='0'>
+			<?php echo $l['button']['ListProfiles'] ?></a></li>
+		<li><a href="mng-rad-profiles-new.php"><b>&raquo;</b>
+			<img src='images/icons/groupsAdd.png' border='0'>
+			<?php echo $l['button']['NewProfile'] ?></a></li>
+		<li><a href="javascript:document.mngradprofileedit.submit();""><b>&raquo;</b>
+			<img src='images/icons/groupsEdit.png' border='0'>
+			<?php echo $l['button']['EditProfile'] ?><a>
 			<form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="get" class="sidebar">
 			<?php   
 				include 'include/management/populate_selectbox.php';
@@ -30,7 +36,9 @@
 			?>
 			</form></li>
 
-		<li><a href="mng-rad-profiles-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveProfile'] ?></a></li>
+		<li><a href="mng-rad-profiles-del.php"><b>&raquo;</b>
+			<img src='images/icons/groupsRemove.png' border='0'>
+			<?php echo $l['button']['RemoveProfile'] ?></a></li>
 	</ul>
 
 </div>
