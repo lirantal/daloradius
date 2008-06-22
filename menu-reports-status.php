@@ -28,8 +28,10 @@ include_once ("lang/main.php");
 
 		<h3>Status</h3>
 
-			<li><a href="rep-stat-server.php"><b>&raquo;</b><?php echo $l['button']['ServerStatus'] ?></a></li>
-			<li><a href="rep-stat-services.php"><b>&raquo;</b><?php echo $l['button']['ServicesStatus'] ?></a></li>
+			<li><a href="rep-stat-server.php"><b>&raquo;</b>
+				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;<?php echo $l['button']['ServerStatus'] ?></a></li>
+			<li><a href="rep-stat-services.php"><b>&raquo;</b>
+				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;<?php echo $l['button']['ServicesStatus'] ?></a></li>
 
 		</ul>
 
