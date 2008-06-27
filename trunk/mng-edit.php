@@ -400,7 +400,7 @@
 		$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute=".
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
-                " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value=NULL ".
+                " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
@@ -499,7 +499,7 @@
 		$configValues['CONFIG_DB_TBL_RADREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute=".
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
-                " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value=NULL ".
+                " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
 		$configValues['CONFIG_DB_TBL_RADREPLY'].".UserName='".$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
