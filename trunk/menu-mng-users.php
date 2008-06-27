@@ -3,15 +3,27 @@
 
 <body>
 <?php
-    include_once ("lang/main.php");
+    include_once("lang/main.php");
+    include_once("library/config_read.php");
+    /**
+     * Checking if the AJAX functionality should be loaded
+     */
+    if( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
+                (strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") )
+    {
+    	$auto_complete = true; # Set boolean for throughout the page
+    	echo "
+    	<script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
+    	<script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>";
+    }
 ?>
 <div id="wrapper">
 <div id="innerwrapper">
 
 <?php
     $m_active = "Management";
-    include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/management-subnav.php");
+    include_once("include/menu/menu-items.php");
+	include_once("include/menu/management-subnav.php");
 ?>
 
 <div id="sidebar">
@@ -21,43 +33,51 @@
 	<h3>Users Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-list-all.php"><img src='images/icons/userList.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['ListUsers'] ?></a></li>
+		<li><a href="mng-list-all.php">
+			<img src='images/icons/userList.gif' border='0'>
+			&nbsp;<b>&raquo;</b>
+			<?php echo $l['button']['ListUsers'] ?></a>
+		</li>
 		<li><a href="mng-new.php">
-		<img src='images/icons/userNew.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['NewUser'] ?></a></li>
+			<img src='images/icons/userNew.gif' border='0'>
+			&nbsp;<b>&raquo;</b>
+			<?php echo $l['button']['NewUser'] ?></a>
+		</li>
 		<li><a href="mng-new-quick.php">
-		<img src='images/icons/userNew.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['NewUserQuick'] ?></a></li>
+			<img src='images/icons/userNew.gif' border='0'>
+			&nbsp;<b>&raquo;</b>
+			<?php echo $l['button']['NewUserQuick'] ?></a>
+		</li>
 		<li><a href="mng-batch.php">
-		<img src='images/icons/userNew.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['BatchAddUsers'] ?><a></li>
+			<img src='images/icons/userNew.gif' border='0'>
+			&nbsp;<b>&raquo;</b>
+			<?php echo $l['button']['BatchAddUsers'] ?><a>
+		</li>
 		<li><a href="javascript:document.mngedit.submit();"">
-			<img src='images/icons/userEdit.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['EditUser'] ?><a>
+			<img src='images/icons/userEdit.gif' border='0'>
+			&nbsp;<b>&raquo;</b>
+			<?php echo $l['button']['EditUser'] ?><a>
 			<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
-			<input name="username" type="text"
+			<input name="username" type="text" id="usernameEdit" autocomplete="off"
 				value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
 			</form></li>
 		<li><a href="javascript:document.mngsearch.submit();"">
 			<img src='images/icons/userSearch.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['SearchUsers'] ?><a>
 			<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
-			<input name="username" type="text" id="usernameSearch"
+			<input name="username" type="text" id="usernameSearch" autocomplete="off"
 				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 			</form></li>
 		
-<?php
-        include_once('library/config_read.php');
-
-        if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
-                (strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") ) {
-
-                echo "
-                        <script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
-                        <script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
-
-                        <script type=\"text/javascript\">
-                                autoCom = new DHTMLSuite.autoComplete();
-                                autoCom.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-                        </script>
-                ";
-        }
-?>
+<?php if ($auto_complete) {
+		echo "<script type=\"text/javascript\">
+			  /** Making usernameEdit interactive **/
+              autoComEdit = new DHTMLSuite.autoComplete();
+              autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+              /** Making usernameSearch interactive **/
+              autoComSearch = new DHTMLSuite.autoComplete();
+              autoComSearch.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+              </script>";
+} ?>
 		<li><a href="mng-del.php">
 			<img src='images/icons/userRemove.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['RemoveUsers'] ?></a></li>
 		
