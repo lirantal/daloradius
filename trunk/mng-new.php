@@ -53,7 +53,7 @@
 	isset($_POST['homephone']) ? $homephone = $_POST['homephone'] :  $homephone = "";
 	isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
 	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
-
+	isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
 	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
 
 
@@ -83,6 +83,7 @@
 		global $homephone;
 		global $mobilephone;
 		global $notes;
+		global $ui_changeuserinfo;
 		global $logDebugSQL;
 		global $configValues;
 
@@ -99,13 +100,14 @@
 			// insert user information table
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 				" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-				" mobilephone, notes, creationdate, creationby, updatedate, updateby) ".
+				" mobilephone, notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
 				" VALUES (0, 
 				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
 				$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
 				$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
 				$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes).
+				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."', '".
+				$dbSocket->escapeSimple($ui_changeuserinfo).
 				"', '$currDate', '$currBy', NULL, NULL)";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
@@ -146,6 +148,7 @@
 				case "homephone":
 				case "mobilephone":
 				case "notes":
+				case "changeUserInfo":
 					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
 								// to skip the loop (continue) without entering it as
 								// we do not want to process this $attribute in the following
