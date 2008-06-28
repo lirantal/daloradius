@@ -23,43 +23,56 @@
     include ("library/checklogin.php");
     $login = $_SESSION['login_user'];
 
-	isset($_POST['currentpassword']) ? $currentpassword = $_POST['currentpassword'] : $currentpassword = "";
-	isset($_POST['newpassword']) ? $newpassword = $_POST['newpassword'] : $newpassword = "";
-	isset($_POST['verifypassword']) ? $verifypassword = $_POST['verifypassword'] : $verifypassword = "";
-
 	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
 
-		include 'library/opendb.php';
-
-		$firstname = $_POST['firstname'];
-		$lastname = $_POST['lastname'];
-		$email = $_POST['email'];
-		$department = $_POST['department'];
-		$company = $_POST['company'];
-		$workphone = $_POST['workphone'];
-		$homephone = $_POST['homephone'];
-		$mobilephone = $_POST['mobilephone'];
-
-		$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
-			$dbSocket->escapeSimple($firstname).
-				"', lastname='".$dbSocket->escapeSimple($lastname).
-				"', email='".$dbSocket->escapeSimple($email).
-				"', department='".$dbSocket->escapeSimple($department).
-				"', company='".$dbSocket->escapeSimple($company).
-				"', workphone='".$dbSocket->escapeSimple($workphone).
-				"', homephone='".$dbSocket->escapeSimple($homephone).
-				"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
-				" WHERE username='".$dbSocket->escapeSimple($login)."'";
+		$sql = "SELECT changeuserinfo ".
+			" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+			" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
-	
-		$successMsg = "Updated user information for user: <b>$login</b>";
-		$logAction .= "Successfully updated user information for user [$login] on page: ";
 
-		include 'library/closedb.php';
+		$row = $res->fetchRow();
+		$ui_changeuserinfo = $row[0];
+
+		if ($ui_changeuserinfo == 1) {
+
+			include 'library/opendb.php';
+
+			$firstname = $_POST['firstname'];
+			$lastname = $_POST['lastname'];
+			$email = $_POST['email'];
+			$department = $_POST['department'];
+			$company = $_POST['company'];
+			$workphone = $_POST['workphone'];
+			$homephone = $_POST['homephone'];
+			$mobilephone = $_POST['mobilephone'];
+
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
+				$dbSocket->escapeSimple($firstname).
+					"', lastname='".$dbSocket->escapeSimple($lastname).
+					"', email='".$dbSocket->escapeSimple($email).
+					"', department='".$dbSocket->escapeSimple($department).
+					"', company='".$dbSocket->escapeSimple($company).
+					"', workphone='".$dbSocket->escapeSimple($workphone).
+					"', homephone='".$dbSocket->escapeSimple($homephone).
+					"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
+					" WHERE username='".$dbSocket->escapeSimple($login)."'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+		
+			$successMsg = "Updated user information for user: <b>$login</b>";
+			$logAction .= "Successfully updated user information for user [$login] on page: ";
+	
+			include 'library/closedb.php';
+		} else {
+
+			$failureMsg = "Failure updating user information, you are not permitted to do that.";
+			$logAction .= "Failed updating user information for user [$login], not permitted to do that on page: ";
+
+		} // checking user permission to update his settings
 
 	} // if (is submit)
 

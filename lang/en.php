@@ -558,6 +558,7 @@ $l['ContactInfo']['WorkPhone'] = "Work Phone";
 $l['ContactInfo']['HomePhone'] = "Home Phone";
 $l['ContactInfo']['MobilePhone'] = "Mobile Phone";
 $l['ContactInfo']['Notes'] = "Notes";
+$l['ContactInfo']['EnableUserUpdate'] = "Enable User Update";
 
 $l['ContactInfo']['OwnerName'] = "Owner Name";
 $l['ContactInfo']['OwnerEmail'] = "Owner Email";

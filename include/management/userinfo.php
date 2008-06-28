@@ -63,21 +63,37 @@ echo "
 	<textarea class='form' name='notes' value='"; if (isset($ui_notes)) echo $ui_notes; echo "' tabindex=308 ></textarea> 
         <br/>
 
+"; // breaking echo
+
+	if ($ui_changeuserinfo == 1) {
+		$isChecked = "checked";
+		$ui_changeuserinfo = 0;
+	} else {
+		$ui_changeuserinfo = 1;
+		$isChecked = "";
+	}
+
+echo "
+
+	<label for='userupdate' class='form'>".$l['ContactInfo']['EnableUserUpdate']."</label>
+	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isChecked tabindex=309 />
+        <br/>
+
 	<br/>
 	<label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
-	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=309 />
+	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=310 />
         <br/>
 
 	<label for='creationby' class='form'>".$l['all']['CreationBy']."</label>
-	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=310 />
+	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=311 />
         <br/>
 
 	<label for='updatedate' class='form'>".$l['all']['UpdateDate']."</label>
-	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=311 />
+	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=312 />
         <br/>
 
 	<label for='updateby' class='form'>".$l['all']['UpdateBy']."</label>
-	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=312 />
+	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=313 />
         <br/>
 
 	<br/>

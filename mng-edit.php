@@ -51,6 +51,7 @@
 		$homephone = $_REQUEST['homephone'];
 		$mobilephone = $_REQUEST['mobilephone'];
 		$notes = $_REQUEST['notes'];
+		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
 
@@ -66,13 +67,14 @@
 				// we add these records to the userinfo table
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" (id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone,".
-					" notes, creationdate, creationby, updatedate, updateby) ".
+					" notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
 					" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
 					$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".
 					$dbSocket->escapeSimple($email)."','".$dbSocket->escapeSimple($department)."', '".
 					$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."','".
 					$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".
-					$dbSocket->escapeSimple($notes)."', '$currDate', '$currBy', NULL, NULL)";
+					$dbSocket->escapeSimple($notes)."', '".$dbSocket->escapeSimple($ui_changeuserinfo)."', ".
+					"'$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			} else {
@@ -87,6 +89,7 @@
 					"', homephone='".$dbSocket->escapeSimple($homephone).
 					"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
 					"', notes='".$dbSocket->escapeSimple($notes).
+					"', changeuserinfo='".$dbSocket->escapeSimple($ui_changeuserinfo).
 					"', updatedate='$currDate', updateby='$currBy' ".
 					" WHERE username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
@@ -136,6 +139,7 @@
 					case "homephone":
 					case "mobilephone":
 					case "notes":
+					case "changeUserInfo":
 					case "passwordOrig":
 						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
 												// to skip the loop (continue) without entering it as
@@ -289,7 +293,8 @@
 
 
 	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, ".
-		" creationdate, creationby, updatedate, updateby FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+		" changeuserinfo, creationdate, creationby, updatedate, updateby FROM ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 		" WHERE UserName='".
 		$dbSocket->escapeSimple($username)."'";
 	$res = $dbSocket->query($sql);
@@ -306,10 +311,11 @@
 	$ui_homephone = $row[6];
 	$ui_mobilephone = $row[7];
 	$ui_notes = $row[8];
-	$ui_creationdate = $row[9];
-	$ui_creationby = $row[10];
-	$ui_updatedate = $row[11];
-	$ui_updateby = $row[12];
+	$ui_changeuserinfo = $row[9];
+	$ui_creationdate = $row[10];
+	$ui_creationby = $row[11];
+	$ui_updatedate = $row[12];
+	$ui_updateby = $row[13];
 
 	include 'library/closedb.php';
 
