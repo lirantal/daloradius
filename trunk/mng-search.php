@@ -127,24 +127,24 @@
 
 
 	if ($orderType == "asc") {
-		$orderType = "desc";
+		$orderTypeNextPage = "desc";
 	} else  if ($orderType == "desc") {
-		$orderType = "asc";
+		$orderTypeNextPage = "asc";
 	}
 
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=$orderTypeNextPage\">
 		".$l['all']['ID']. "</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Username&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Username&orderType=$orderTypeNextPage\">
 	 	".$l['all']['Username']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Value&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Value&orderType=$orderTypeNextPage\">
 		".$l['all']['Password']."</a>
 		</th>
 	</tr> </thread>";

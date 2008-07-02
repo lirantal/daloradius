@@ -124,24 +124,24 @@
                         ";
 
         if ($orderType == "asc") {
-                $orderType = "desc";
+                $orderTypeNextPage = "desc";
         } else  if ($orderType == "desc") {
-                $orderType = "asc";
+                $orderTypeNextPage = "asc";
         }
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType&vendor=$vendor\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage&vendor=$vendor\">
 		".$l['all']['VendorID']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=$orderType&vendor=$vendor\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=$orderTypeNextPage&vendor=$vendor\">
 		".$l['all']['VendorName']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderType&vendor=$vendor\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage&vendor=$vendor\">
 		".$l['all']['VendorAttribute']."</a>
 		</th>
 
