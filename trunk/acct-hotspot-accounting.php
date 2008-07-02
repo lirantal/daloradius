@@ -117,63 +117,63 @@
 	if ($orderType == "asc") {
 			$orderType = "desc";
 	} else  if ($orderType == "desc") {
-			$orderType = "asc";
+			$orderTypeNextPage = "asc";
 	}
 	
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=radacctid&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=radacctid&orderType=$orderTypeNextPage\">
 		".$l['all']['ID']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=hotspot&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=hotspot&orderType=$orderTypeNextPage\">
 		".$l['all']['HotSpot']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=username&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=username&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=framedipaddress&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=framedipaddress&orderType=$orderTypeNextPage\">
 		".$l['all']['IPAddress']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstarttime&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
 		".$l['all']['StartTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstoptime&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctstoptime&orderType=$orderTypeNextPage\">
 		".$l['all']['StopTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctsessiontime&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctinputoctets&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctinputoctets&orderType=$orderTypeNextPage\">
 		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctoutputoctets&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctoutputoctets&orderType=$orderTypeNextPage\">
 		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctterminatecause&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=acctterminatecause&orderType=$orderTypeNextPage\">
 		".$l['all']['Termination']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=nasipaddress&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?hotspot=$hotspot&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
 		".$l['all']['NASIPAddress']."</a>
 		</th>
 		</tr> </thread>";
