@@ -104,39 +104,39 @@
                         ";
 
         if ($orderType == "asc") {
-                $orderType = "desc";
+                $orderTypeNextPage = "desc";
         } else  if ($orderType == "desc") {
-                $orderType = "asc";
+                $orderTypeNextPage = "asc";
         }
 
         echo "<thread> <tr>
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=section&orderType=$orderType\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=section&orderType=$orderTypeNextPage\">
 		".$l['all']['Section']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=item&orderType=$orderType\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=item&orderType=$orderTypeNextPage\">
 		".$l['all']['Item']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationdate&orderType=$orderType\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationdate&orderType=$orderTypeNextPage\">
 		".$l['all']['CreationDate']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationby&orderType=$orderType\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationby&orderType=$orderTypeNextPage\">
 		".$l['all']['CreationBy']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updatedate&orderType=$orderType\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updatedate&orderType=$orderTypeNextPage\">
 		".$l['all']['UpdateDate']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updateby&orderType=$orderType\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updateby&orderType=$orderTypeNextPage\">
 		".$l['all']['UpdateBy']." 
 		</th>
         </tr> </thread>";

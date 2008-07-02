@@ -106,25 +106,25 @@
 
 	if ($orderType == "asc") {
 			$orderType = "desc";
-	} else  if ($orderType == "desc") {
+	} else  if ($orderTypeNextPage == "desc") {
 			$orderType = "asc";
 	}
 	
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
 		".$l['all']['Attribute']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=$orderTypeNextPage\">
 		".$l['all']['MaxTimeExpiration']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=$orderTypeNextPage\">
 		".$l['all']['UsedTime']."</a>
 		</th>
 		<th scope='col'> ".$l['all']['Status']." </th>
