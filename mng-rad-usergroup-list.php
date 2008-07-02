@@ -114,24 +114,24 @@
 	";
 
 	if ($orderType == "asc") {
-		$orderType = "desc";
+		$orderTypeNextPage = "desc";
 	} else  if ($orderType == "desc") {
-		$orderType = "asc";
+		$orderTypeNextPage = "asc";
 	}
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
 		".$l['all']['Groupname']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=$orderTypeNextPage\">
 		".$l['all']['Priority']."</a>
 		</th>
 	</tr> </thread>";

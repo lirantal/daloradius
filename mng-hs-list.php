@@ -118,34 +118,34 @@
                         ";
 
         if ($orderType == "asc") {
-                $orderType = "desc";
+                $orderTypeNextPage = "desc";
         } else  if ($orderType == "desc") {
-                $orderType = "asc";
+                $orderTypeNextPage = "asc";
         }
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
 		".$l['all']['ID']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=$orderTypeNextPage\">
 		".$l['all']['HotSpot']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=$orderTypeNextPage\">
 		".$l['ContactInfo']['OwnerName']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderTypeNextPage\">
 		".$l['ContactInfo']['Company']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderTypeNextPage\">
 		 ".$l['ContactInfo']['HotspotType']."</a>
 		</th>
 

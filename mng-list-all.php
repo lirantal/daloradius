@@ -150,29 +150,29 @@
 			";
 
         if ($orderType == "asc") {
-                $orderType = "desc";
+                $orderTypeNextPage = "desc";
         } else  if ($orderType == "desc") {
-                $orderType = "asc";
+                $orderTypeNextPage = "asc";
         }
 	
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
 		".$l['all']['ID']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderTypeNextPage\">
 		".$l['all']['Password']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderTypeNextPage\">
 		".$l['title']['Groups']."</a>
 		</th>
 		</tr> </thread>";
