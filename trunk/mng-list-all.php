@@ -179,6 +179,7 @@
 
 	while($row = $res->fetchRow()) {
 		printqn("
+			<tr>
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
 			<td> <a class='tablenovisit' href='javascript:return;'
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
