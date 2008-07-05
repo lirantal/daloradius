@@ -323,6 +323,7 @@ CREATE TABLE `userinfo` (
   `homephone` varchar(200) default NULL,
   `mobilephone` varchar(200) default NULL,
   `notes` varchar(200) default NULL,
+  `changeuserinfo` varchar(128) default NULL,
   `creationdate` datetime default '0000-00-00 00:00:00',
   `creationby` varchar(128) default NULL,
   `updatedate` datetime default '0000-00-00 00:00:00',
