@@ -89,7 +89,8 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL)";
+	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime, NASIPAddress, CalledStationId FROM ".
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL)";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -99,7 +100,7 @@
 	   compatibility with version 0.7        */
 	
 	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, UNIX_TIMESTAMP(`AcctStartTime`) ".
-		" as AcctSessionTime, NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		" as AcctSessionTime, NASIPAddress, CalledStationId FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" WHERE (AcctStopTime is NULL) ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -185,10 +186,10 @@
 						<br/>\"
 					>$row[0]</a>
 					</td>
-				<td> <b>IP:</b> $row[1]<br/> <b>MAC:</b> $row[2]</td>
+				<td> IP: $row[1]<br/>MAC: $row[2]</td>
 				<td> $row[3] </td>
 				<td> $totalTime </td>
-				<td> $row[5] </td>
+				<td> IP: $row[5]<br/>MAC: $row[6]</td>
 		</tr>";
 	}
 
