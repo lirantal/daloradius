@@ -105,9 +105,9 @@
 	";
 
 	if ($orderType == "asc") {
-			$orderType = "desc";
-	} else  if ($orderTypeNextPage == "desc") {
-			$orderType = "asc";
+		$orderTypeNextPage = "desc";
+	} else  if ($orderType == "desc") {
+		$orderTypeNextPage = "asc";
 	}
 	
 	echo "<thread> <tr>
