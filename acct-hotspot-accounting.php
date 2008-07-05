@@ -115,7 +115,7 @@
                         ";
 	
 	if ($orderType == "asc") {
-			$orderType = "desc";
+			$orderTypeNextPage = "desc";
 	} else  if ($orderType == "desc") {
 			$orderTypeNextPage = "asc";
 	}
