@@ -393,8 +393,8 @@
 <?php
 
 	include 'library/opendb.php';
-	include 'include/management/pages_common.php';
-	include 'include/management/populate_selectbox.php';
+	include_once('include/management/pages_common.php');
+	include_once('include/management/populate_selectbox.php');
 
 	$editCounter = 0;
 
@@ -614,6 +614,12 @@
 
 	</form>
 
+
+<?php
+	include_once('include/management/userReports.php');
+	userSubscriptionAnalysis($username, 1);			// userSubscriptionAnalysis with argument set to 1 for drawing the table
+	userConnectionStatus($username, 1);			// userConnectionStatus (same as above)
+?>
 
 <?php
 	include('include/config/logging.php');
