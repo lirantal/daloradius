@@ -38,8 +38,9 @@
 
 			include 'library/opendb.php';
 
+			$attrCount = 0;					// counter for number of attributes
 			foreach($_POST as $element=>$field) { 
-
+				
 				switch ($element) {
 					case "submit":
 					case "profile":
@@ -77,10 +78,17 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
+				$attrCount++;				// increment attribute count
+
 			}
 
-			$successMsg = "Added to database new profile: <b> $profile </b>";
-			$logAction .= "Successfully added new profile [$profile] on page: ";
+			if ($attrCount == 0) {
+				$failureMsg = "Failed adding profile name [$profile] - no attributes where provided by user";
+				$logAction .= "Failed adding profile name [$profile] - no attributes where provided by user on page: ";
+			} else {
+				$successMsg = "Added to database new profile: <b> $profile </b>";
+				$logAction .= "Successfully added new profile [$profile] on page: ";
+			}
 
 			include 'library/closedb.php';
 
