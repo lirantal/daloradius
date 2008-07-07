@@ -74,7 +74,8 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	$userSumUpload = "unavailable";
 	if (!($userLimitMaxAllSession == "none")) {
 
-	        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload' ".
+	        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
+			" COUNT(RadAcctId) AS 'Logins' ".
 			" FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE UserName='$username'";
 		$res = $dbSocket->query($sql);
 		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
@@ -82,6 +83,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
 		(isset($row['SUMSession'])) ? $userSumMaxAllSession = time2str($row['SUMSession']) : $userSumMaxAllSession = "unavailable";
 		(isset($row['SUMDownload'])) ? $userSumDownload = toxbyte($row['SUMDownload']) : $userSumDownload = "unavailable";
 		(isset($row['SUMUpload'])) ? $userSumUpload = toxbyte($row['SUMUpload']) : $userSumUpload = "unavailable";
+		(isset($row['Logins'])) ? $userAllLogins = $row['Logins'] : $userAllLogins = "unavailable";
 
 	}
 
@@ -94,7 +96,8 @@ function userSubscriptionAnalysis($username, $drawTable) {
 		$currMonth = date("Y-m-01");
 		$nextMonth = date("Y-m-01", mktime(0, 0, 0, date("m")+ 1, date("d"), date("Y")));
 
-	        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload' ".
+	        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
+			" COUNT(RadAcctId) AS 'Logins' ".
 			" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 			" WHERE AcctStartTime<'$nextMonth' AND AcctStartTime>='$currMonth' AND UserName='$username'";
 		$res = $dbSocket->query($sql);
@@ -103,6 +106,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
 		(isset($row['SUMSession'])) ? $userSumMaxMonthlySession = time2str($row['SUMSession']) : $userSumMaxMonthlySession = "unavailable";
 		(isset($row['SUMDownload'])) ? $userSumMonthlyDownload = toxbyte($row['SUMDownload']) : $userSumMonthlyDownload = "unavailable";
 		(isset($row['SUMUpload'])) ? $userSumMonthlyUpload = toxbyte($row['SUMUpload']) : $userSumMonthlyUpload = "unavailable";
+		(isset($row['Logins'])) ? $userMonthlyLogins = $row['Logins'] : $userMonthlyLogins = "unavailable";
 
 	}
 
@@ -115,7 +119,8 @@ function userSubscriptionAnalysis($username, $drawTable) {
 		$currDay = date("Y-m-d");
 		$nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
 
-	        $sql = "SELECT SUM(AcctSessionTime) AS 'SUM', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload' ".
+	        $sql = "SELECT SUM(AcctSessionTime) AS 'SUM', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
+			" COUNT(RadAcctId) AS 'Logins' ".
 			" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 			" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username'";
 		$res = $dbSocket->query($sql);
@@ -124,6 +129,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
 		(isset($row['SUMSession'])) ? $userSumMaxDailySession = time2str($row['SUMSession']) : $userSumMaxDailySession = "unavailable";
 		(isset($row['SUMDownload'])) ? $userSumDailyDownload = toxbyte($row['SUMDownload']) : $userSumDailyDownload = "unavailable";
 		(isset($row['SUMUpload'])) ? $userSumDailyUpload = toxbyte($row['SUMUpload']) : $userSumDailyUpload = "unavailable";
+		(isset($row['Logins'])) ? $userDailyLogins = $row['Logins'] : $userDailyLogins = "unavailable";
 
 	}
 
@@ -226,6 +232,13 @@ function userSubscriptionAnalysis($username, $drawTable) {
         			<td> ".($userSumDownload+$userSumUpload)."</td>
         			<td> ".($userSumMonthlyDownload+$userSumMonthlyUpload)."</td>
         			<td> ".($userSumDailyDownload+$userSumDailyUpload)."</td>
+        		</tr>
+
+        		<tr>
+        			<td>Logins</td>
+        			<td>$userAllLogins</td>
+        			<td>$userMonthlyLogins</td>
+        			<td>$userDailyLogins</td>
         		</tr>
         
         		</table>
@@ -331,7 +344,7 @@ function userConnectionStatus($username, $drawTable) {
         		<thead>
         			<tr>
         	                <th colspan='10' align='left'> 
-        				<a class=\"table\" href=\"javascript:toggleShowDiv('divConnectionStatus')\">Connection Info</a>
+        				<a class=\"table\" href=\"javascript:toggleShowDiv('divConnectionStatus')\">Session Info</a>
         	                </th>
         	                </tr>
         		</thead>
