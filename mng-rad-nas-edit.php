@@ -63,12 +63,12 @@
 	
 		$nashostold = $_REQUEST['nashostold'];
 		$nashost = $_REQUEST['nashost'];
-		$nassecret = $_REQUEST['nassecret'];;
-		$nasname = $_REQUEST['nasname'];;
-		$nasports = $_REQUEST['nasports'];;
-		$nastype = $_REQUEST['nastype'];;
-		$nasdescription = $_REQUEST['nasdescription'];;
-		$nascommunity = $_REQUEST['nascommunity'];;
+		$nassecret = $_REQUEST['nassecret'];
+		$nasname = $_REQUEST['nasname'];
+		$nasports = $_REQUEST['nasports'];
+		$nastype = $_REQUEST['nastype'];
+		$nasdescription = $_REQUEST['nasdescription'];
+		$nascommunity = $_REQUEST['nascommunity'];
 
 			
 		include 'library/opendb.php';
@@ -238,8 +238,7 @@
                 <br />
 
                 <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
-	        <textarea class='form' name='nasdescription' id='nasdescription' value='<?php echo $nasdescription ?>' tabindex=308 >
-		</textarea>
+	        <textarea class='form' name='nasdescription' id='nasdescription' tabindex=308 ><?php echo $nasdescription ?></textarea>
                 <br />
 
                 <br/><br/>
