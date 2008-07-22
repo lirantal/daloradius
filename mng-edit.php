@@ -285,7 +285,7 @@
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
-	$row = $res->numRows();
+	$row = $res->fetchRow();
 	$user_password = $row[0];
 
 
@@ -472,7 +472,7 @@
 ?>
 			<br/><br/>
 			<hr><br/>
-		
+
 <?php
 	include 'include/management/buttons.php';
 ?>
