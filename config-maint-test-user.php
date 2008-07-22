@@ -25,13 +25,13 @@
 
 	include('library/check_operator_perm.php');
 
-
 	isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
 	isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
 	isset($_REQUEST['radius']) ? $radius = $_REQUEST['radius'] : $radius = $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'];
 	isset($_REQUEST['radiusport']) ? $radiusport = $_REQUEST['radiusport'] : $radiusport = $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'];
 	isset($_REQUEST['nasport']) ? $nasport = $_REQUEST['nasport'] : $nasport = $configValues['CONFIG_MAINT_TEST_USER_NASPORT'];
 	isset($_REQUEST['secret']) ? $secret = $_REQUEST['secret'] : $secret = $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'];
+	isset($_REQUEST['dictionaryPath']) ? $dictionaryPath = $_REQUEST['dictionaryPath'] : $dictionaryPath = $configValues['CONFIG_PATH_RADIUS_DICT'];
 		
     if (isset($_REQUEST['submit'])) {
 
@@ -57,10 +57,10 @@
 
 		$options = array("count" => $count, "requests" => $requests,
 					"retries" => $retries, "timeout" => $timeout,
-					"debug" => $debug,
+					"debug" => $debug, "dictionary" => $dictionaryPath
 					);
 
-		$successMsg = user_auth($options,$username, $password, $radius, $radiusport, $secret);
+		$successMsg = user_auth($options, $username, $password, $radius, $radiusport, $secret);
 		$logAction = "Informative action performed on user [$username] on page: ";	
     }
 
@@ -182,6 +182,10 @@
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('requests','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('requests','decrement')"/>
                 <br/>
+
+                <label for='dictionaryPath' class='form'><?php echo $l['all']['RADIUSDictionaryPath'] ?></label>
+                <input name='dictionaryPath' type='text' id='dictionaryPath' value='<?php echo $dictionaryPath ?>' tabindex=111 />
+                <br />
 
                 <br/><br/>
                 <hr><br/>

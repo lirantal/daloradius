@@ -44,10 +44,14 @@ function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command
 	$radclient = "radclient"; 		// or you can change this with the full path if the binary radcilent program can not be
 									// found within your $PATH variable
 
-	$radclient_options = "-c ".escapeshellarg($options['count'])." -n ".
-				escapeshellarg($options['requests']).
-				" -r ".escapeshellarg($options['retries'])." -t ".
-				escapeshellarg($options['timeout'])." ".$options['debug'];
+	$radclient_options = "-c ".escapeshellarg($options['count']).
+				" -n ".escapeshellarg($options['requests']).
+				" -r ".escapeshellarg($options['retries']).
+				" -t ".escapeshellarg($options['timeout']).
+				" ".$options['debug'];
+
+	if ($options['dictionary'])
+		$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
 
 	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
 	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";
@@ -83,10 +87,14 @@ function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$com
 	$radclient = "radclient"; 		// or you can change this with the full path if the binary radcilent program can not be
 						// found within your $PATH variable
 
-	$radclient_options = "-c ".escapeshellarg($options['count'])." -n ".
-				escapeshellarg($options['requests']).
-				" -r ".escapeshellarg($options['retries'])." -t ".
-				escapeshellarg($options['timeout'])." ".$options['debug'];
+	$radclient_options = "-c ".escapeshellarg($options['count']).
+				" -n ".escapeshellarg($options['requests']).
+				" -r ".escapeshellarg($options['retries']).
+				" -t ".escapeshellarg($options['timeout']).
+				" ".$options['debug'];
+
+	if ($options['dictionary'])
+		$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
 
 	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
 	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";
