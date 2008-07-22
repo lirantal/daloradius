@@ -42,6 +42,7 @@ $arrayPagesAvailable = array(
 	 'mng_rad_groupreply_edit' => 'Management Groups',
 	 'mng_rad_profiles_new' => 'Management Profiles',
 	 'mng_rad_profiles_edit' => 'Management Profiles',
+	 'mng_rad_profiles_duplicate' => 'Management Profiles',
 	 'mng_rad_profiles_del' => 'Management Profiles',
 	 'mng_rad_profiles_list' => 'Management Profiles',
 	 'mng_rad_attributes_list' => 'Management Attributes',
