@@ -204,7 +204,7 @@
         while($row = $res->fetchRow()) {
 
                 echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-groupcheck-del?groupname=$profile&attribute=$row[0]&value=$row[2]'>
+                echo "<a class='tablenovisit' href='mng-rad-groupcheck-del.php?groupname=$profile&attribute=$row[0]&value=$row[2]'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
@@ -299,7 +299,7 @@
 
 
                 echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-groupreply-del?groupname=$profile&attribute=$row[0]&value=$row[2]'>
+                echo "<a class='tablenovisit' href='mng-rad-groupreply-del.php?groupname=$profile&attribute=$row[0]&value=$row[2]'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
