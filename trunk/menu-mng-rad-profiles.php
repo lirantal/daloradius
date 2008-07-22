@@ -36,6 +36,10 @@
 			?>
 			</form></li>
 
+		<li><a href="mng-rad-profiles-duplicate.php"><b>&raquo;</b>
+			<img src='images/icons/groupsEdit.png' border='0'>
+			<?php echo $l['button']['DuplicateProfile'] ?></a></li>
+
 		<li><a href="mng-rad-profiles-del.php"><b>&raquo;</b>
 			<img src='images/icons/groupsRemove.png' border='0'>
 			<?php echo $l['button']['RemoveProfile'] ?></a></li>
