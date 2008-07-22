@@ -24,7 +24,7 @@
  
 $l['all']['daloRADIUS'] = "daloRADIUS 0.9-8-SVN";
 $l['all']['daloRADIUSVersion'] = "version 0.9-8-SVN";
-$l['all']['copyright1'] = "Radius Reporting, Billing and Management by <a href=\"http://www.enginx.com\">Enginx</a>";
+$l['all']['copyright1'] = "Radius Management, Reporting and Accounting by <a href=\"http://www.enginx.com\">Enginx</a>";
 $l['all']['copyright2'] = "Copyright of <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
@@ -45,6 +45,10 @@ $l['all']['RecommendedTable'] = "Recommended Table";
 $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
+
+/* radius related text */
+$l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
+
 
 $l['all']['Compare'] = "Compare";
 
@@ -339,7 +343,7 @@ $l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
 $l['Tooltip']['hotspotNameTooltip'] = "Example: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
 					a friendly name of the hotspot<br/>";
 
-$l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00aabbccddee<br/>&nbsp;&nbsp;&nbsp;
+$l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00:aa:bb:cc:dd:ee<br/>&nbsp;&nbsp;&nbsp;
 					The MAC address of the NAS<br/>";
 
 $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
@@ -415,6 +419,7 @@ $l['button']['RemoveUserGroup'] = "Remove User-Group Mappings";
 $l['button']['ListProfiles'] = "List Profiles";
 $l['button']['NewProfile'] = "New Profile";
 $l['button']['EditProfile'] = "Edit Profile";
+$l['button']['DuplicateProfile'] = "Duplicate Profile";
 $l['button']['RemoveProfile'] = "Remove Profile";
 
 $l['button']['ListGroupReply'] = "List Group Reply Mappings";
@@ -687,6 +692,7 @@ $l['Intro']['mngradnasdel.php'] = "Remove NAS Record";
 
 $l['Intro']['mngradprofiles.php'] = "Profiles Configuration";
 $l['Intro']['mngradprofilesedit.php'] = "Edit Profiles";
+$l['Intro']['mngradprofilesduplicate.php'] = "Duplicate Profiles";
 $l['Intro']['mngradprofilesdel.php'] = "Delete Profiles";
 $l['Intro']['mngradprofileslist.php'] = "List Profiles";
 $l['Intro']['mngradprofilesnew.php'] = "New Profile";
@@ -784,6 +790,9 @@ $l['helpPage']['mngradprofilesedit'] = "
 ";
 $l['helpPage']['mngradprofilesdel'] = "
 <h200><b>Delete Profile </b></h200> - Delete a Profile <br/>
+";
+$l['helpPage']['mngradprofilesduplicate'] = "
+<h200><b>Duplicate Profile </b></h200> - Duplicate a Profile's set of attributes to a new one with a different profile name <br/>
 ";
 $l['helpPage']['mngradprofileslist'] = "
 <h200><b>List Profiles </b></h200> - List Profiles <br/>
