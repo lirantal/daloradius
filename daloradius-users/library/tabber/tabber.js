@@ -498,7 +498,7 @@ function tabberAutomaticOnLoad(tabberArgs)
     };
   } else {
     window.onload = function() {
-      oldOnLoad();
+      oldOnLoad;
       tabberAutomatic(tabberArgs);
     };
   }
