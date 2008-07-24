@@ -30,8 +30,7 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
-	isset($_REQUEST['usernameOnline']) ? $usernameOnline = $_GET['usernameOnline'] : $usernameOnline = "%";
-	
+	isset($_REQUEST['usernameOnline']) ? $usernameOnline = $_GET['usernameOnline'] : $usernameOnline = "%";	
 	
 	
 	include_once('library/config_read.php');
