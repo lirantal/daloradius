@@ -36,12 +36,19 @@ include_once ("lang/main.php");
 								<input name="usernameOnline" type="text" id="usernameOnline" autocomplete="off"
 								value="<?php if (isset($usernameOnline)) echo $usernameOnline; ?>" tabindex=1>
 							</form>
-							</li>
-							
+							</li>							
 
-                                                <li><a href="rep-lastconnect.php"><b>&raquo;</b>
+                                                <li><a href="javascript:document.replastconnect.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsLastConnection.png' border='0'>
-							<?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
+							<?php echo $l['button']['LastConnectionAttempts'] ?></a>
+
+							<form name="replastconnect" action="rep-lastconnect.php" method="get" class="sidebar">
+								<input name="usernameLastConnect" type="text" id="usernameLastConnect" autocomplete="off"
+								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect; ?>" tabindex=1>
+							</form>
+							</li>
+
+
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsTopUsers.png' border='0'>
 							<?php echo $l['button']['TopUser'] ?></a>

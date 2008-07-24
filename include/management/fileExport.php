@@ -126,8 +126,9 @@ if (isset($_GET['reportFormat'])) {
 					"\n";
 			$outputContent = "";
 
-			$sql = "SELECT user, pass, reply, date FROM ".
-				$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." $reportQuery ORDER BY Username ASC";
+			$sql = "SELECT user, pass, reply, date FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
+				" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')".
+				" $reportQuery ORDER BY User ASC";
 
 			if ($reportFormat == "csv") {
 				$res = $dbSocket->query($sql);
