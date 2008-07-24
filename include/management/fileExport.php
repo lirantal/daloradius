@@ -15,8 +15,7 @@ if (isset($_GET['reportFormat'])) {
 
 	$reportFormat = $_GET['reportFormat'];			// reportFormat is either CSV or PDF
 	$reportType = $_SESSION['reportType'];			// reportType defines the sql query string
-	$reportQuery = $_SESSION['reportQuery'];		// reportQuery adds the WHERE fields for page-specific 
-								// reports
+	$reportQuery = $_SESSION['reportQuery'];		// reportQuery adds the WHERE fields for page-specific reports
 	$reportTable = $_SESSION['reportTable'];		// get table name (radacct/radcheck/etc)
 
 	switch ($reportType) {
@@ -94,6 +93,54 @@ if (isset($_GET['reportFormat'])) {
 				}
 
                                 break;
+
+
+                case "reportsOnlineUsers":
+			include_once('../../library/opendb.php');
+
+			$outputHeader = "Username, User IP Address, User MAC Address, Start Time, Total Time, NAS IP Address, NAS MAC Address".
+					"\n";
+			$outputContent = "";
+
+		        $sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime, NASIPAddress, CalledStationId FROM ".
+					$configValues['CONFIG_DB_TBL_RADACCT']." $reportQuery ORDER BY Username ASC";
+
+			if ($reportFormat == "csv") {
+				$res = $dbSocket->query($sql);
+
+			        while($row = $res->fetchRow()) {
+					$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6]\n";
+				}
+				$output = $outputHeader . $outputContent;
+				exportCSVFile($output);	
+				include_once('../../library/closedb.php');
+			}
+
+			break;
+
+
+                case "reportsLastConnectionAttempts":
+			include_once('../../library/opendb.php');
+
+			$outputHeader = "Username, Password, Start Time, RADIUS Reply".
+					"\n";
+			$outputContent = "";
+
+			$sql = "SELECT user, pass, reply, date FROM ".
+				$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." $reportQuery ORDER BY Username ASC";
+
+			if ($reportFormat == "csv") {
+				$res = $dbSocket->query($sql);
+
+			        while($row = $res->fetchRow()) {
+					$outputContent .= "$row[0],$row[1],$row[2],$row[3]\n";
+				}
+				$output = $outputHeader . $outputContent;
+				exportCSVFile($output);	
+				include_once('../../library/closedb.php');
+			}
+
+			break;
 
 	}
 

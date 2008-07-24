@@ -29,6 +29,8 @@
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+
+	isset($_REQUEST['usernameOnline']) ? $usernameOnline = $_GET['usernameOnline'] : $usernameOnline = "%";
 	
 	
 	
@@ -87,10 +89,16 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+        $_SESSION['reportQuery'] = " WHERE (AcctStopTime is NULL) AND (UserName LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
+        $_SESSION['reportType'] = "reportsOnlineUsers";
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime, NASIPAddress, CalledStationId FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL)";
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL) AND ".
+		" (Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -101,7 +109,8 @@
 	
 	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, UNIX_TIMESTAMP(`AcctStartTime`) ".
 		" as AcctSessionTime, NASIPAddress, CalledStationId FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE (AcctStopTime is NULL) ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+		" WHERE (AcctStopTime is NULL) AND (Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')".
+		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -124,6 +133,9 @@
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'clearSessionsUsers[]','usersonline')\">None</a>
                         <br/>
                                 <input class='button' type='button' value='".$l['button']['ClearSessions']."' onClick='javascript:removeCheckbox(\"usersonline\",\"mng-del.php\")' />
+                                <input class='button' type='button' value='CSV Export'
+                                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                                        />
                                 <br/><br/>
                 ";
 
