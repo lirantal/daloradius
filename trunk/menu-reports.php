@@ -28,9 +28,17 @@ include_once ("lang/main.php");
 				<h3>Users Reports</h3>
 				<ul class="subnav">
 				
-						<li><a href="rep-online.php"><b>&raquo;</b>
+						<li><a href="javascript:document.reponline.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsOnlineUsers.gif' border='0'>
 							<?php echo $l['button']['OnlineUsers'] ?></a>
+							
+							<form name="reponline" action="rep-online.php" method="get" class="sidebar">
+								<input name="usernameOnline" type="text" id="usernameOnline" autocomplete="off"
+								value="<?php if (isset($usernameOnline)) echo $usernameOnline; ?>" tabindex=1>
+							</form>
+							</li>
+							
+
                                                 <li><a href="rep-lastconnect.php"><b>&raquo;</b>
 							<img src='images/icons/reportsLastConnection.png' border='0'>
 							<?php echo $l['button']['LastConnectionAttempts'] ?></a></li>
