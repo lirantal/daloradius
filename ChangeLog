@@ -1,3 +1,17 @@
+release 0.9-8 - 1 October 2008
+	- improved reports log pages with filter and line count restrictions
+	- improved last connection attempts page to high-light rejected connections
+	- improved support for ajax auto-complete on side-bar menus (Dennis)
+	- added option to enable/disable user information updates on daloradius-users portal
+	- added support for searchable usernames in Online Users and Last Connected Users pages
+	- added duplicate profiles menu option
+	- added subscription analysis information in Edit User page and various Accounting pages
+	- added support to CSV export data listing in Online Users and Last Connected Users pages
+	- added configuration option CONFIG_PATH_RADIUS_DICT to daloradius.conf specifying radius dictionary files path
+	- fixed mac authentication string in hotspot example
+	- fixed password field in Test Connectivity page
+	- 
+
 release 0.9-7 - 4 June 2008
 	- added support for attributes type/description in Edit User page and Edit Profile page
 	- added support for showing the user's summary information like in Username Accounting
