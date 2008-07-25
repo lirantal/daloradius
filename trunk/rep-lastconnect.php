@@ -30,7 +30,7 @@
         isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
         isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
 
-
+        isset($_REQUEST['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -62,11 +62,19 @@
         include 'library/opendb.php';
         include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-        $sql = "SELECT user, pass, reply, date from radpostauth";
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+        $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+        $_SESSION['reportType'] = "reportsLastConnectionAttempts";
+
+        $sql = "SELECT user, pass, reply, date FROM radpostauth".
+		" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-        $sql = "SELECT user, pass, reply, date from radpostauth ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+        $sql = "SELECT user, pass, reply, date FROM radpostauth ".
+		" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')".
+		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
         $res = $dbSocket->query($sql);
         $logDebugSQL = "";
         $logDebugSQL .= $sql . "\n";
@@ -109,11 +117,15 @@
 
                                                         <tr>
                                                         <th colspan='10' align='left'>
-                <br/>
+
+                                <input class='button' type='button' value='CSV Export'
+                                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                                        />
+		                <br/><br/>
         ";
 
         if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, "&usernameLastConnect=$usernameLastConnect");
 
         echo " </th></tr>
                                         </thead>
@@ -128,22 +140,22 @@
 
         echo "<thread> <tr>
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=user&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=user&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pass&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=pass&orderType=$orderTypeNextPage\">
 		".$l['all']['Password']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=date&orderType=$orderTypeNextPage\">
 		".$l['all']['StartTime']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=reply&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=reply&orderType=$orderTypeNextPage\">
 		".$l['all']['RADIUSReply']." 
 		</th>
         </tr> </thread>";
@@ -170,7 +182,7 @@
                                                         <tr>
                                                         <th colspan='10' align='left'>
         ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+        setupLinks($pageNum, $maxPage, $orderBy, $orderType, "&usernameLastConnect=$usernameLastConnect");
         echo "
                                                         </th>
                                                         </tr>
