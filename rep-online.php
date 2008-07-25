@@ -139,7 +139,7 @@
                 ";
 
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, "&usernameOnline=$usernameOnline");
 
 	echo "</th></tr>
 			</thead>
@@ -153,27 +153,27 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=username&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']. "</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=framedipaddress&orderType=$orderTypeNextPage\">
 		".$l['all']['IPAddress']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstarttime&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
 		".$l['all']['StartTime']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
 		".$l['all']['NASIPAddress']."</a>
 		</th>
 
@@ -209,7 +209,7 @@
                                                         <tr>
                                                         <th colspan='10' align='left'>
         ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+        setupLinks($pageNum, $maxPage, $orderBy, $orderType, "&usernameOnline=$usernameOnline");
         echo "
                                                         </th>
                                                         </tr>
