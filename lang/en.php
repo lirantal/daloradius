@@ -37,6 +37,7 @@ $l['all']['PoolKey'] = "Pool Key";
 /********************************************************************************/
 /* Vendor Attributes related translation                                        */
 /********************************************************************************/
+$l['all']['Dictionary'] = "Dictionary";
 $l['all']['VendorID'] = "Vendor ID";
 $l['all']['VendorName'] = "Vendor Name";
 $l['all']['VendorAttribute'] = "Vendor Attribute";
@@ -376,6 +377,7 @@ $l['button']['NewVendorAttribute'] = "New Vendor Attribute";
 $l['button']['EditVendorAttribute'] = "Edit Vendor's Attribute";
 $l['button']['SearchVendorAttribute'] = "Search Attribute";
 $l['button']['RemoveVendorAttribute'] = "Remove Vendor's Attribute";
+$l['button']['ImportVendorDictionary'] = "Import Vendor Dictionary";
 
 
 $l['button']['BetweenDates'] = "Between Dates:";
@@ -603,6 +605,7 @@ $l['Intro']['mngradattributesnew.php'] = "New Vendor Attributes";
 $l['Intro']['mngradattributesedit.php'] = "Edit Vendor's Attributes";
 $l['Intro']['mngradattributessearch.php'] = "Search Attributes";
 $l['Intro']['mngradattributesdel.php'] = "Remove Vendor's Attributes";
+$l['Intro']['mngradattributesimport.php'] = "Import Vendor Dictionary";
 
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
@@ -765,6 +768,7 @@ $l['helpPage']['mngradattributesnew'] = "";
 $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
+$l['helpPage']['mngradattributesimport'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
 Please consult with your System Administrator. <br/>";
