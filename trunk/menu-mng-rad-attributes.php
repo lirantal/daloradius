@@ -43,6 +43,7 @@
 				value="<?php isset($attribute) ? print $attribute : print '[attribute]' ?>" tabindex=7>
 			</form></li>
 		<li><a href="mng-rad-attributes-del.php" tabindex=8><b>&raquo;</b><?php echo $l['button']['RemoveVendorAttribute'] ?></a></li>
+		<li><a href="mng-rad-attributes-import.php" tabindex=8><b>&raquo;</b><?php echo $l['button']['ImportVendorDictionary'] ?></a></li>
 		
 	</ul>
 
