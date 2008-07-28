@@ -421,7 +421,7 @@
         <br/>
 
         <label for='notes' class='form'><?php echo $l['ContactInfo']['Notes'] ?></label>
-        <textarea class='form' name='notes' value='<?php if (isset($ui_notes)) echo $ui_notes; ?>' tabindex=308 ></textarea>
+        <textarea class='form' name='notes' tabindex=308 ><?php if (isset($ui_notes)) echo $ui_notes; ?></textarea>
         <br/>
 
         <br/>
