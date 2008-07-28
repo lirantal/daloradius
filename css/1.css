@@ -624,6 +624,16 @@ textarea.form {
 	height:60px;
 }
 
+textarea.form_fileimport {
+        padding:4px;
+	margin:2px;
+        background:#ffffff;
+        color:#000000;
+        font:90% Verdana;
+        width:575px;
+	height:400px;
+}
+
 p img {
 	float:left;
 	margin:0 10px 0 0;

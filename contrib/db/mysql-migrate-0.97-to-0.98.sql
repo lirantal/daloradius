@@ -9,3 +9,5 @@ ALTER TABLE userinfo ADD changeuserinfo VARCHAR(128) AFTER notes;
 ALTER TABLE operators ADD mng_rad_profiles_duplicate VARCHAR(32) AFTER mng_rad_profiles_edit;
 UPDATE operators SET mng_rad_profiles_duplicate='yes' WHERE username='administrator';
 
+ALTER TABLE operators ADD mng_rad_attributes_import VARCHAR(32) AFTER mng_rad_attributes_del;
+UPDATE operators SET mng_rad_attributes_import='yes' WHERE username='administrator';
