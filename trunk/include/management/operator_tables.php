@@ -50,6 +50,7 @@ $arrayPagesAvailable = array(
 	 'mng_rad_attributes_edit' => 'Management Attributes',
 	 'mng_rad_attributes_search' => 'Management Attributes',
 	 'mng_rad_attributes_del' => 'Management Attributes',
+	 'mng_rad_attributes_import' => 'Management Attributes',
 	 'mng_rad_realms_list' => 'Management Realms',
 	 'mng_rad_realms_new' => 'Management Realms',
 	 'mng_rad_realms_edit' => 'Management Realms',
