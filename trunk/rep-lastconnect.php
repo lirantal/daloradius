@@ -67,12 +67,12 @@
         $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
-        $sql = "SELECT user, pass, reply, date FROM radpostauth".
+        $sql = "SELECT user, pass, reply, date FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
 		" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-        $sql = "SELECT user, pass, reply, date FROM radpostauth ".
+        $sql = "SELECT user, pass, reply, date FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
 		" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
         $res = $dbSocket->query($sql);
