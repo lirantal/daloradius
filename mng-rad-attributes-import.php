@@ -39,8 +39,8 @@
 
 
 		$myVendor = $vendor;							// by default we set the vendor name to be the file name
-		$myAttribute;								// variables are initialized
-		$myType;
+		$myAttribute = '';								// variables are initialized
+		$myType = '';
 
 		$vendorUnique = 1;							// we set $vendorUnique boolean to be unique
 
