@@ -178,7 +178,7 @@
 				}
 	
 				$sqlTableQuery = substr($sqlTableQuery,0,-1);
-				$sqlTableQuery .= ";\n";
+				$sqlTableQuery .= ";\n\n\n";
 				$sqlQuery .= $sqlTableQuery;
 			}
 
