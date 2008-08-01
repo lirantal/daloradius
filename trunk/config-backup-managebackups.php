@@ -183,12 +183,17 @@
         
                 <thead>
                         <tr>
-                        	<th colspan='10' align='left'>
-        			</th>
+				<th colspan='10' align='left'>
+				</th>
 			</tr>
                 </thead>
 
-
+		<tr>
+		<td> Time of Creation </td>
+		<td> Filename </td>
+		<td> File size </td>
+		<td> Perform Action </td>
+		</tr>
 
 	<?php
 
@@ -206,6 +211,8 @@
 				$fileDate = substr($date, 0, 4) . "-" . substr($date, 4, 2) . "-" . substr($date, 6, 2);
 				$fileTime = substr($time, 0, 2) . ":" . substr($time, 2, 2) . ":" . substr($time, 4, 2);
 
+				$fileSize = filesize($filePath."/".$file);
+
 				echo "<tr>";
 				echo "<td>";
 					echo $fileDate ." ". $fileTime;
@@ -213,6 +220,10 @@
 
 				echo "<td>";
 					echo $file;
+				echo "</td>";
+
+				echo "<td>";
+					echo $fileSize . " bytes";
 				echo "</td>";
 
 				echo "<td>";
