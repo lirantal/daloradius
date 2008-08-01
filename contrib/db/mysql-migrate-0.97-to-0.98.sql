@@ -11,3 +11,9 @@ UPDATE operators SET mng_rad_profiles_duplicate='yes' WHERE username='administra
 
 ALTER TABLE operators ADD mng_rad_attributes_import VARCHAR(32) AFTER mng_rad_attributes_del;
 UPDATE operators SET mng_rad_attributes_import='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD config_backup_createbackups VARCHAR(32) AFTER config_operators_new;
+UPDATE operators SET config_backup_createbackups='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD config_backup_managebackups VARCHAR(32) AFTER config_backup_createbackups;
+UPDATE operators SET config_backup_managebackups='yes' WHERE username='administrator';

@@ -120,6 +120,7 @@ $l['all']['TotalTime'] = "Total Time";
 $l['all']['Bytes'] = "Bytes";
 $l['all']['Upload'] = "Upload";
 $l['all']['Download'] = "Download";
+$l['all']['Rollback'] = "Roll-back";
 $l['all']['Termination'] = "Termination";
 $l['all']['NASIPAddress'] = "NAS IP Address";
 $l['all']['Action'] = "Action";
@@ -474,6 +475,9 @@ $l['button']['InterfaceSettings'] = "Interface Settings";
 $l['button']['TestUserConnectivity'] = "Test User Connectivity";
 $l['button']['DisconnectUser'] = "Disconnect User";
 
+$l['button']['ManageBackups'] = "Manage Backups";
+$l['button']['CreateBackups'] = "Create Backups";
+
 $l['button']['ListOperators'] = "List Operators";
 $l['button']['NewOperator'] = "New Operator";
 $l['button']['EditOperator'] = "Edit Operator";
@@ -490,6 +494,10 @@ $l['button']['ProcessQuery'] = "Process Query";
  * Titles
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
+
+$l['title']['Backups'] = "Backups";
+$l['title']['FreeRADIUSTables'] = "FreeRADIUS Tables";
+$l['title']['daloRADIUSTables'] = "daloRADIUS Tables";
 
 $l['title']['IPPoolInfo'] = "IP-Pool Info";
 
@@ -721,12 +729,12 @@ $l['Intro']['configinterface.php'] = "Web Interface Configuration";
 $l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
 $l['Intro']['configmain.php'] = "Database Configuration";
 $l['Intro']['configmaint.php'] = "Maintenance";
+$l['Intro']['configmaintdisconnectuser.php'] = "Disconnect User";
 $l['Intro']['configbusiness.php'] = "Business Details";
 $l['Intro']['configbusinessinfo.php'] = "Business Information";
 $l['Intro']['configbackup.php'] = "Backup";
-$l['Intro']['configbackupbackup.php'] = "Backup";
-$l['Intro']['configmaintdisconnectuser.php'] = "Disconnect User";
-$l['button']['BusinessInformation'] = "Business Information";
+$l['Intro']['configbackupcreatebackups.php'] = "Create Backups";
+$l['Intro']['configbackupmanagebackups.php'] = "Manage Backups";
 
 $l['Intro']['configoperators.php'] = "Operators Configuration";
 $l['Intro']['configoperatorsdel.php'] = "Remove Operator";
@@ -961,7 +969,8 @@ $l['helpPage']['configoperatorsnew'] = "You may fill below details for a new ope
 $l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
 $l['helpPage']['configoperators'] = "Operators Configuration";
 $l['helpPage']['configbackup'] = "Perform Backup";
-$l['helpPage']['configbackupbackup'] = "Perform Backup";
+$l['helpPage']['configbackupcreatebackups'] = "Create Backups";
+$l['helpPage']['configbackupmanagebackups'] = "Manage Backups";
 
 
 $l['helpPage']['graphmain'] = "

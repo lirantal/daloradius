@@ -106,7 +106,9 @@ $arrayPagesAvailable = array(
 	 'config_operators_del' => 'Configuration Operators',
 	 'config_operators_list' => 'Configuration Operators',
 	 'config_operators_edit' => 'Configuration Operators',
-	 'config_operators_new' => 'Configuration Operators'
+	 'config_operators_new' => 'Configuration Operators',
+	 'config_backup_createbackups' => 'Configuration Backup',
+	 'config_backup_managebackups' => 'Configuration Backup'
 	 );
 
 function drawPagesPermissions($arrayPagesAvailable, $operator_username = "") {
@@ -1422,11 +1424,6 @@ echo "</table>";
 
 
 
-/*
- *  block ends ***********************************************************************
-*/
-
-
 /* 
  * Configuration Operators category related pages *************************************************
  *
@@ -1441,6 +1438,67 @@ EOF;
 echo "<br/><table border='2' class='table1'>";
 	foreach ($arrayPagesAvailable as $page => $descr) {
 		if ($descr != 'Configuration Operators')
+			continue;
+
+                echo "<tr><td width='350'>";
+                echo "<font size='2'> $page </font>";
+                echo "</td><td>";
+
+                if ($operator_username) {
+                        $sql = "SELECT $page FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+                        $res = $dbSocket->query($sql);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $pageTest = $row[$page];
+                        if ( (strcasecmp($pageTest, "y") == 0) || (strcasecmp($pageTest, "yes") == 0) || (strcasecmp($pageTest, "on") == 0) ) {
+                        echo "<select name='$page'>
+                              <option value='yes' selected> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                        } else {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no' selected> Disabled
+                              </select>
+                                <br/>
+                        ";
+			}
+                } else  {
+                        echo "<select name='$page'>
+                              <option value='yes'> Enabled
+                              <option value='no'> Disabled
+                              </select>
+                                <br/>
+                        ";
+                }
+echo "</td></tr>";
+	}
+echo "</table>";
+	echo "</td></tr>
+		</div>";
+
+/*
+ *  block ends ***********************************************************************
+*/
+
+
+
+
+/* 
+ * Configuration Backup category related pages *************************************************
+ *
+*/
+
+echo <<<EOF
+	<tr><td>	
+    <input type="checkbox" onclick="javascript:toggleShowDiv('categoryConfigurationBackup')">
+    <b> Configuration - Backup </b> <br/>
+    <div id="categoryConfigurationBackup" style="display:none;visibility:visible" >
+EOF;
+echo "<br/><table border='2' class='table1'>";
+	foreach ($arrayPagesAvailable as $page => $descr) {
+		if ($descr != 'Configuration Backup')
 			continue;
 
                 echo "<tr><td width='350'>";
