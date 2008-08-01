@@ -87,8 +87,8 @@
 			
 			include 'library/opendb.php';
 
-			$rollBackQuery = split("\n\n", $fileRollback);		// when we created the backup file we splitted every table INSERT INTO 
-										// entry with a double newline (\n\n) 2 bytes characteres and so to insert
+			$rollBackQuery = split("\n\n\n", $fileRollback);	// when we created the backup file we splitted every table INSERT INTO 
+										// entry with a tripple newline (\n\n\n) 3 bytes characteres and so to insert
 										// these again we split into an array each INSERT query because Pear DB
 										// can't handle multiple INSERTs in a concatenated string
 			foreach($rollBackQuery as $query) {
@@ -199,7 +199,7 @@
 		if (is_dir($filePath)) {
 			$dirHandler = opendir($filePath);
 			while ($file = readdir($dirHandler)) {
-				if ( ($file != '.') && ($file != '..') ) {
+				if ( ($file != '.') && ($file != '..') && ($file != '.svn') ) {
 					
 				list($junk, $date, $time) = split("-", $file);
 
@@ -220,7 +220,7 @@
 
 					echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
-					echo "<a class='tablenovisit' href='?file=$file&action=rollback'>".$l['all']['Rollback']."</a>";
+					echo "<a class='tablenovisit' href='#' onClick=\"javascript:backupRollback('$file');\">".$l['all']['Rollback']."</a>";
 				echo "</td>";
 
 				}

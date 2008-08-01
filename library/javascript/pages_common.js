@@ -312,3 +312,21 @@ function disableCheckbox(formName,pageDst) {
 
         return false;
 }
+
+
+
+/***********************************************************************
+ * backupRollback
+ * performs rollback
+ * 
+ ***********************************************************************/
+function backupRollback(file) {
+
+        if (confirm("Performing a rollback will wipe out your current database tables completely and re-create it from the rollback backup file\nDo you want to continue?"))  {
+		window.location.href='?file='+file+'&action=rollback';
+                return true;
+        }
+
+        return false;
+}
+
