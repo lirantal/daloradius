@@ -22,7 +22,13 @@
  *********************************************************************************************************
  */
  
-$_configFile = dirname(__FILE__).'/daloradius.conf';
+$_configFile = dirname(__FILE__).'/daloradius.conf.php';
+include($_configFile);
+
+/*
+****************************************************************************************************
+* deprecated for handling the configuration variables as a PHP page for the sake of security
+****************************************************************************************************
 $_configCommentChar = "#";
 
 $_configFp = fopen($_configFile, "r");
@@ -41,5 +47,7 @@ if ($_configFp) {
 	$failureMsg = "Could not open the file for reading:<b> $_configFile </b>
 	<br/>Check file permissions. The file should be readable by the webserver's user/group";
 }
+****************************************************************************************************
+*/
 
 ?>
