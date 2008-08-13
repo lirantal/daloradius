@@ -2,8 +2,8 @@
 session_start();
 
 // if the user is logged in, unset the session
-if (isset($_SESSION['logged_in'])) {
-   unset($_SESSION['logged_in']);
+if (isset($_SESSION['daloradius_logged_in'])) {
+   unset($_SESSION['daloradius_logged_in']);
 }
 
 // completely destory the session and all it's variables
