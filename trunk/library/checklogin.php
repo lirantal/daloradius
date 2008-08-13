@@ -38,9 +38,8 @@ function session_verify() {
 }
 
 
-
 if (session_verify() == "yes") {
-	if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+	if (!isset($_SESSION['daloradius_logged_in']) || $_SESSION['daloradius_logged_in'] != true) {
 		header('Location: login.php');
 		exit;
 	}

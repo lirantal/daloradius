@@ -39,8 +39,8 @@ session_start();									// initiate the session
 $errorMessage = '';
 include 'library/opendb.php';
 
-$login_user = $_REQUEST['login_user'];
-$login_pass = $_REQUEST['login_pass'];
+$login_user = $_POST['login_user'];
+$login_pass = $_POST['login_pass'];
 
 // check if the user id and password combination exist in database
 $sql = "SELECT UserName FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName = '".
@@ -57,6 +57,7 @@ if (PEAR::isError($res)) {
 if ($res->numRows() == 1) {
 	// the user id and password match,
 	// set the session
+
 	$_SESSION['logged_in'] = true;
 	$_SESSION['login_user'] = $login_user;
 

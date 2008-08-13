@@ -34,13 +34,14 @@ $session_id .= substr(md5(rand(1,1000000)), rand(1,32-$rand), 21-$rand);	// furt
 																		// to the session_id string composed of the
 																		// md5 hash for random number
 session_id($session_id);							// apply the session_id that we created
-session_start();									// initiate the session
+session_set_cookie_params(3600);						// set's the session timeout to 3600 seconds (1 hour)
+session_start();								// initiate the session
 
 $errorMessage = '';
 include 'library/opendb.php';
 
-$operator_user = $_REQUEST['operator_user'];
-$operator_pass = $_REQUEST['operator_pass'];
+$operator_user = $_POST['operator_user'];
+$operator_pass = $_POST['operator_pass'];
 
 // check if the user id and password combination exist in database
 $sql = "SELECT username FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username = '".
@@ -50,7 +51,8 @@ $res = $dbSocket->query($sql);
 if ($res->numRows() == 1) {
 	// the user id and password match,
 	// set the session
-	$_SESSION['logged_in'] = true;
+
+	$_SESSION['daloradius_logged_in'] = true;
 	$_SESSION['operator_user'] = $operator_user;
 
 	// lets update the lastlogint time for this operator
