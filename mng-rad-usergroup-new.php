@@ -31,6 +31,7 @@
 	isset($_GET['priority']) ? $priority = $_GET['priority'] : $priority = "";
 
 	$logDebugSQL = "";
+	$logAction = "";
 
 	if (isset($_POST['submit'])) {
 	
