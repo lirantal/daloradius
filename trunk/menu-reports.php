@@ -34,7 +34,7 @@ include_once ("lang/main.php");
 							
 							<form name="reponline" action="rep-online.php" method="get" class="sidebar">
 								<input name="usernameOnline" type="text" id="usernameOnline" autocomplete="off"
-								value="<?php if (isset($usernameOnline)) echo $usernameOnline; ?>" tabindex=1>
+								value="<?php (isset($usernameOnline)) ? print $usernameOnline : print "[username]"; ?>" tabindex=1>
 							</form>
 							</li>							
 
@@ -44,7 +44,7 @@ include_once ("lang/main.php");
 
 							<form name="replastconnect" action="rep-lastconnect.php" method="get" class="sidebar">
 								<input name="usernameLastConnect" type="text" id="usernameLastConnect" autocomplete="off"
-								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect; ?>" tabindex=1>
+								value="<?php (isset($usernameLastConnect)) ? print $usernameLastConnect : print "[username]"; ?>" tabindex=2>
 							</form>
 							</li>
 
@@ -53,7 +53,7 @@ include_once ("lang/main.php");
 							<img src='images/icons/reportsTopUsers.png' border='0'>
 							<?php echo $l['button']['TopUser'] ?></a>
 							<form name="topusers" action="rep-topusers.php" method="get" class="sidebar">
-							<select class="generic" name="limit" type="text">
+							<select class="generic" name="limit" type="text" tabindex=3>
 								<option value="5"> 5 </option>
 								<option value="10"> 10 </option>
 								<option value="20"> 20 </option>
@@ -62,7 +62,7 @@ include_once ("lang/main.php");
 								<option value="500"> 500 </option>
 								<option value="1000"> 1000 </option>
 							</select>
-							<select class="generic" name="orderBy" type="text">
+							<select class="generic" name="orderBy" type="text" tabindex=4>
 								<option value="Bandwidth"> bandwidth </option>
 								<option value="Time"> time </option>
 							</select>
