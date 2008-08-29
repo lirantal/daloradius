@@ -72,18 +72,31 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "(SELECT distinct(GroupName) FROM ".
-		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName)
-                FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
+		" AS Users FROM ".
+		$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName ".
+		" UNION ".
+		" SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) FROM ".
+		$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName;";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
 	
-
-	$sql = "(SELECT distinct(GroupName) as GroupName FROM ".
-		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].") UNION (SELECT distinct(GroupName)
-                as GroupName FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].")
-		ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
+		" AS Users FROM ".
+		$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName ".
+		" UNION ".
+		" SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) FROM ".
+		$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName ".
+		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -126,6 +139,11 @@
 		".$l['all']['Groupname']."</a>
 		</th>
 
+		<th scope='col'>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=users&orderType=$orderTypeNextPage\">
+		".$l['all']['TotalUsers']."</a>
+		</th>
+
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
@@ -136,6 +154,7 @@
                                         <a class='toolTip' href='mng-rad-profiles-edit.php?profile=$row[0]'>".$l['Tooltip']['EditProfile']."</a>
                                         <br/>\"
 				>$row[0]</a></td>
+			<td>$row[1]</td>
 		</tr>";
 	}
 
