@@ -90,7 +90,8 @@
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname FROM 
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, ". 
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute FROM
 		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
 		WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') GROUP BY UserName";
@@ -103,7 +104,8 @@
 	   compatibility with version 0.7        */
 	
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname FROM 
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute FROM
 		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
 		WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') 
@@ -181,7 +183,17 @@
 		printqn("
 			<tr>
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
-			<td> <a class='tablenovisit' href='javascript:return;'
+			");
+
+		echo "<td>";
+
+		if ( ($row[1] == "Reject") && ($row[4] == "Auth-Type") )
+			echo "<img title='user is disabled' src='images/icons/userStatusDisabled.gif' alt='[disabled]'>";
+		else
+			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
+
+		printqn("
+			<a class='tablenovisit' href='javascript:return;'
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
 					javascript:__displayTooltip();'
                                 tooltipText='
