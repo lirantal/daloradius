@@ -1,10 +1,6 @@
-<link rel="stylesheet" href="css/auto-complete.css" media="screen" type="text/css">
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-
 <body>
 <?php
     include_once("lang/main.php");
-    include_once("include/management/autocomplete.php");
 ?>
 <div id="wrapper">
 <div id="innerwrapper">
@@ -57,16 +53,6 @@
 				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 			</form></li>
 		
-<?php if ($autoComplete) {
-		echo "<script type=\"text/javascript\">
-			  /** Making usernameEdit interactive **/
-              autoComEdit = new DHTMLSuite.autoComplete();
-              autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-              /** Making usernameSearch interactive **/
-              autoComSearch = new DHTMLSuite.autoComplete();
-              autoComSearch.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-              </script>";
-} ?>
 		<li><a href="mng-del.php">
 			<img src='images/icons/userRemove.gif' border='0'>&nbsp;<b>&raquo;</b><?php echo $l['button']['RemoveUsers'] ?></a></li>
 		
@@ -78,3 +64,19 @@
 	<input name="" type="text" value="Search" tabindex=4 />
 
 </div>
+
+<?php 
+	include_once("include/management/autocomplete.php");
+
+	if ($autoComplete) {
+		echo "<script type=\"text/javascript\">
+			/** Making usernameEdit interactive **/
+	              autoComEdit = new DHTMLSuite.autoComplete();
+	              autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+
+			/** Making usernameSearch interactive **/
+	              autoComSearch = new DHTMLSuite.autoComplete();
+	              autoComSearch.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+	              </script>";
+	} 
+?>
