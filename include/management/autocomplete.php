@@ -31,6 +31,8 @@
     {
         $autoComplete = true; # Set boolean for throughout the page
         echo "
+		<link rel=\"stylesheet\" href=\"css/auto-complete.css\" media=\"screen\" type=\"text/css\">
+		<script type=\"text/javascript\" src=\"library/javascript/ajax.js\"></script>
                 <script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
                 <script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
                 ";
