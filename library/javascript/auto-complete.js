@@ -1,12 +1,11 @@
-
-if(!window.DHTMLSuite)var DHTMLSuite=new Object();/************************************************************************************************************
+/************************************************************************************************************
 *   DHTML auto complete script
 *
 *   Created:         Jun, 06th, 2007
 *   @module coder: Batur Orkun (batur@bilkent.edu.tr)
 *   
 *   @class Purpose of class: this script shows you a list of options based on what you type into a text input.
-         Example: Type in "A" and Ajax will get you a list of all contries starting with "A".
+*         Example: Type in "A" and Ajax will get you a list of all contries starting with "A".
 *      
 *   Css files used by this script:   auto-complete.css
 *

@@ -37,21 +37,22 @@
 		<br/>
 		
 		<?php
+
 			include_once('library/config_read.php');
 
 			if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
 				(strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") ) {
 
-				echo "
-					<script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
-					<script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
+				include_once("include/management/autocomplete.php");
 
+				echo "
 					<script type=\"text/javascript\">
 					autoCom = new DHTMLSuite.autoComplete();
 					autoCom.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
 					</script>
 				";
 			}
+
 		?>
 
 <br/>
