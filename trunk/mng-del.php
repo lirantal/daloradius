@@ -213,6 +213,19 @@
 	
 	</form>
 
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('username','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                      </script>";
+        }
+?>
+
+
 <?php
 	include('include/config/logging.php');
 ?>
@@ -234,8 +247,5 @@
 
 </body>
 </html>
-
-
-
 
 
