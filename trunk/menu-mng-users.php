@@ -4,18 +4,7 @@
 <body>
 <?php
     include_once("lang/main.php");
-    include_once("library/config_read.php");
-    /**
-     * Checking if the AJAX functionality should be loaded
-     */
-    if( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
-                (strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") )
-    {
-    	$auto_complete = true; # Set boolean for throughout the page
-    	echo "
-    	<script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
-    	<script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>";
-    }
+    include_once("include/management/autocomplete.php");
 ?>
 <div id="wrapper">
 <div id="innerwrapper">
@@ -68,7 +57,7 @@
 				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 			</form></li>
 		
-<?php if ($auto_complete) {
+<?php if ($autoComplete) {
 		echo "<script type=\"text/javascript\">
 			  /** Making usernameEdit interactive **/
               autoComEdit = new DHTMLSuite.autoComplete();
