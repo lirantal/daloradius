@@ -1,4 +1,3 @@
-
 <body>
 <?php
     include_once ("lang/main.php");
@@ -23,7 +22,7 @@
 		<li><a href="mng-hs-new.php"><b>&raquo;</b><?php echo $l['button']['NewHotspot'] ?></a></li>
 		<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditHotspot'] ?><a>
 			<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
-			<input name="name" type="text" 
+			<input name="name" type="text"  id="hotspotEdit" autocomplete="off"
 				value="<?php if (isset($edit_hotspotname)) echo $edit_hotspotname; ?>" tabindex=3>
 			</form></li>
 			
@@ -37,3 +36,17 @@
 	<input name="" type="text" value="Search" tabindex=4 />
 
 </div>
+
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('hotspotEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteHotspots');
+                      </script>";
+        }
+
+?>
+

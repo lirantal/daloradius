@@ -108,7 +108,7 @@
 		<br/>
 
 		<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
-		<input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
+		<input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 autocomplete="off" />
 		<br/>
 
 		<br/><br/>
@@ -120,6 +120,19 @@
 	</fieldset>
 
 	</form>
+
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('name','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteHotspots');
+                      </script>";
+        }
+
+?>
 
 
 <?php
