@@ -22,7 +22,7 @@
 *
 * The relevant variables are:
 *
-* $operator
+* $login
 * $_SERVER["SCRIPT_NAME"]
 * $configValues['CONFIG_LOG_FILE']
 *
@@ -30,7 +30,7 @@
 
 if ($configValues['CONFIG_LOG_PAGES'] == "yes") {
 	if (isset($log)) {
-	        $msgNotice = $operator . " " . $log;
+	        $msgNotice = $login . " " . $log;
 	        logMessage("NOTICE", $msgNotice, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
 	}
 }
@@ -39,7 +39,7 @@ if ($configValues['CONFIG_LOG_PAGES'] == "yes") {
 
 if ($configValues['CONFIG_LOG_QUERIES'] == "yes") {
 	if (isset($logQuery)) {
-	        $msgQuery = $operator . " " . $logQuery;
+	        $msgQuery = $login . " " . $logQuery;
 	        logMessage("QUERY", $msgQuery, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
 	}
 }
@@ -48,7 +48,7 @@ if ($configValues['CONFIG_LOG_QUERIES'] == "yes") {
 
 if ($configValues['CONFIG_LOG_ACTIONS'] == "yes") {
 	if (isset($logAction)) {
-	        $msgAction = $operator . " " . $logAction;
+	        $msgAction = $login . " " . $logAction;
 	        logMessage("ACTION", $msgAction, $configValues['CONFIG_LOG_FILE'], $_SERVER["SCRIPT_NAME"]);
 	}
 }
