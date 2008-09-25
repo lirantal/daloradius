@@ -28,6 +28,8 @@
 
 	if (isset($_POST['submit'])) {
 
+		include 'library/opendb.php';
+
 		$sql = "SELECT changeuserinfo ".
 			" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 			" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
@@ -38,8 +40,6 @@
 		$ui_changeuserinfo = $row[0];
 
 		if ($ui_changeuserinfo == 1) {
-
-			include 'library/opendb.php';
 
 			$firstname = $_POST['firstname'];
 			$lastname = $_POST['lastname'];
@@ -59,7 +59,7 @@
 					"', workphone='".$dbSocket->escapeSimple($workphone).
 					"', homephone='".$dbSocket->escapeSimple($homephone).
 					"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
-					" WHERE username='".$dbSocket->escapeSimple($login)."'";
+					"' WHERE username='".$dbSocket->escapeSimple($login)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 		
