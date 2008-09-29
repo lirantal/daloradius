@@ -20,11 +20,9 @@
  *********************************************************************************************************
  */
 
+	include('library/config_read.php');
 
-	$successMsg = "Dear customer, we thank you for completing your Paypal payment. <br/>".
-			"It takes a couple of seconds until Paypal performs payment validation with our systems <br/>".
-			"which upon successful validation we will <b>enable</b> your account and provide you with access.<br/><br/>".
-			"Please be patient, this web page will refresh automatically every 5 seconds to check for payment completion";
+	$successMsg = $configValues['CONFIG_PAYPAL_SUCCESS_MSG_PRE'];
 			
 	$refresh = true;
 
@@ -42,10 +40,7 @@
 		$row = $res->fetchRow();
 
 		if ( ($row[0] == $txnId) && ($row[2] == "Completed") ) {
-			$successMsg = "We have succesfully validated your payment.<br/>".
-					"Your txnId is: <b>$row[0]</b> <br/>".
-					"Your user PIN is: <b>$row[1]</b> <br/>".
-					"Please enter it at the login page to start your surfing";
+			$successMsg = "Your user PIN is: <b>$row[1]</b> <br/>".$configValues['CONFIG_PAYPAL_SUCCESS_MSG_POST'];
 			$refresh = false;
 		}
 
@@ -65,12 +60,8 @@
 </head>
 <body>
 
-<br/>
-Thanks for paying!
-<br/><br/>
-
-
 <?php
+	echo $configValues['CONFIG_PAYPAL_SUCCESS_MSG_HEADER'];
 	echo $successMsg;
 ?>
 

@@ -51,7 +51,7 @@
 			// into the database
 
 			// log the reponse with a custom message
-			logToFile("PayPal triggered for status VERIFIED:\n");
+			logToFile("PayPal Tranasction VERIFIED:\n");
 			saveToDb();
 
 			include('library/opendb.php');
@@ -120,7 +120,7 @@
 
 		} else {
 			// log for manual investigation
-			logToFile("PayPal triggered for status INVALID:\n");
+			logToFile("PayPal Tranasction INVALID:\n");
 			saveToDb();
 		} 
 
@@ -137,20 +137,29 @@
  *****************************************************************************************/
 function logToFile($customMsg) {
 
-			// log the reponse
-			$myTime = date("F j, Y, g:i a");
+	include('library/config_read.php');
 
-			$myFile = "/tmp/paypal.txt";
-			$fh = fopen($myFile, 'w');
-			fwrite($fh, $customMsg);
+	$myTime = date("F j, Y, g:i a");
+
+	$fh = fopen($configValues['CONFIG_LOG_PAYPAL_IPN_FILENAME'], 'a');
+
+	if ($fh) {
+		fwrite($fh, $myTime ." - ". $customMsg);
 	
-			//loop through the $_POST array and print all vars to the screen.
-			foreach($_POST as $key => $value){
-				$postdata = $key." = ". $value."\n";
-			        fwrite($fh, $postdata);
-			}
+		$str = $myTime . " *** PAYPAL TRANSACTION BEGIN \n";
+		fwrite($fh, $str);
+
+		//loop through the $_POST array and print all vars to the screen.
+		foreach($_POST as $key => $value){
+			$postdata = $myTime ." - ". $key." = ". $value."\n";
+		        fwrite($fh, $postdata);
+		}
+
+		$str = $myTime . " *** PAYPAL TRANSACTION END \n\n";
+		fwrite($fh, $str);
 	
-			fclose($fh);
+		fclose($fh);
+	}
 }
 
 
