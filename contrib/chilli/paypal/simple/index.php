@@ -133,18 +133,23 @@ Select your plan:
 <br/>
 
 <br/>
-Personal Details: 
-<br/>
+<b>Personal Details:</b>
+<br/><br/>
 
-    <input name="firstName" value="John" <?php if (isset($status)) echo $status ?> />
+	First Name <br/>
+    <input name="firstName" value="<?php if (isset($firstName)) echo $firstName ?>" />
 	<br/>
-    <input name="lastName" value="Norum" <?php if (isset($status)) echo $status ?> />
+	Last Name <br/>
+    <input name="lastName" value="<?php if (isset($lastName)) echo $lastName ?>" />
 	<br/>
-    <input name="address" value="Jabutinsky 76" <?php if (isset($status)) echo $status ?> />
+	Address <br/>
+    <input name="address" value="<?php if (isset($address)) echo $address ?>" />
 	<br/>
-    <input name="city" value="Ramat Gan" <?php if (isset($status)) echo $status ?> />
+	City <br/>
+    <input name="city" value="<?php if (isset($city)) echo $city ?>" />
 	<br/>
-    <input name="state" value="Israel" <?php if (isset($status)) echo $status ?> />
+	State <br/>
+    <input name="state" value="<?php if (isset($state)) echo $state ?>" />
 
 	<br/><br/>
     <input type="submit" value="submit" name="submit">
