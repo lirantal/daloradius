@@ -55,6 +55,23 @@ echo "
 	<input value='"; if (isset($ui_mobilephone)) echo $ui_mobilephone; echo "' name='mobilephone' tabindex=307 />
         <br/>
 
+        <label for='address' class='form'>".$l['ContactInfo']['Address']."</label>
+        <input value='"; if (isset($ui_address)) echo $ui_address; echo "' name='address' tabindex=308 />
+        <br/>
+
+        <label for='city' class='form'>".$l['ContactInfo']['City']."</label>
+        <input value='"; if (isset($ui_city)) echo $ui_city; echo "' name='city' tabindex=309 />
+        <br/>
+
+        <label for='state' class='form'>".$l['ContactInfo']['State']."</label>
+        <input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' tabindex=310 />
+        <br/>
+
+        <label for='zip' class='form'>".$l['ContactInfo']['Zip']."</label>
+        <input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' tabindex=311 />
+        <br/>
+
+
 	<br/>
 	<hr><br/>
 
