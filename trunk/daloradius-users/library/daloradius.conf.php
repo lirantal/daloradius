@@ -18,7 +18,7 @@
  *              daloRADIUS Configuration File
  *
  * Modification Date:
- *              Sun Aug 10 13:24:37 EDT 2008
+ *              Tue Sep 30 16:29:00 EDT 2008
  *********************************************************************************************************
  */
 
@@ -47,7 +47,7 @@ $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
 $configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/proxy.conf';
 $configValues['CONFIG_PATH_RADIUS_DICT'] = '';
 $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
-$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = 'crypt';
+$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = 'cleartext';
 $configValues['CONFIG_LANG'] = 'en';
 $configValues['CONFIG_LOG_PAGES'] = 'no';
 $configValues['CONFIG_LOG_ACTIONS'] = 'no';
@@ -58,7 +58,7 @@ $configValues['CONFIG_LOG_FILE'] = '/tmp/daloradius.log';
 $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = 'no';
 $configValues['CONFIG_IFACE_TABLES_LISTING'] = '25';
 $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = 'yes';
-$configValues['CONFIG_IFACE_AUTO_COMPLETE'] = 'yes';
+$configValues['CONFIG_IFACE_AUTO_COMPLETE'] = 'no';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = '127.0.0.1';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
 $configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
