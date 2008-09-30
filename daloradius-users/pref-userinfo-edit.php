@@ -49,6 +49,10 @@
 			$workphone = $_POST['workphone'];
 			$homephone = $_POST['homephone'];
 			$mobilephone = $_POST['mobilephone'];
+			$address = $_POST['address'];
+			$city = $_POST['city'];
+			$state = $_POST['state'];
+			$zip = $_POST['zip'];
 
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
 				$dbSocket->escapeSimple($firstname).
@@ -59,6 +63,10 @@
 					"', workphone='".$dbSocket->escapeSimple($workphone).
 					"', homephone='".$dbSocket->escapeSimple($homephone).
 					"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
+					"', address='".$dbSocket->escapeSimple($address).
+					"', city='".$dbSocket->escapeSimple($city).
+					"', state='".$dbSocket->escapeSimple($state).
+					"', zip='".$dbSocket->escapeSimple($zip).
 					"' WHERE username='".$dbSocket->escapeSimple($login)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
@@ -83,7 +91,7 @@
 
 	/* fill-in all the user info details */
 
-	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone ".
+	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, zip".
 			" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 			" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
 	$res = $dbSocket->query($sql);
@@ -99,6 +107,10 @@
 	$ui_workphone = $row[5];
 	$ui_homephone = $row[6];
 	$ui_mobilephone = $row[7];
+	$ui_address = $row[8];
+	$ui_city = $row[9];
+	$ui_state = $row[10];
+	$ui_zip = $row[11];
 
 	include 'library/closedb.php';	
 
