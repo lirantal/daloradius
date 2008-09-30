@@ -52,6 +52,10 @@
 	isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone = "";
 	isset($_POST['homephone']) ? $homephone = $_POST['homephone'] :  $homephone = "";
 	isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
+	isset($_POST['address']) ? $ui_address = $_POST['address'] : $ui_address = "";
+	isset($_POST['city']) ? $ui_city = $_POST['city'] : $ui_city = "";
+	isset($_POST['state']) ? $ui_state = $_POST['state'] : $ui_state = "";
+	isset($_POST['zip']) ? $ui_zip = $_POST['zip'] : $ui_zip = "";
 	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 	isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
 	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
@@ -82,6 +86,10 @@
 		global $workphone;
 		global $homephone;
 		global $mobilephone;
+		global $ui_address;
+		global $ui_city;
+		global $ui_state;
+		global $ui_zip;
 		global $notes;
 		global $ui_changeuserinfo;
 		global $logDebugSQL;
@@ -100,13 +108,15 @@
 			// insert user information table
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 				" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-				" mobilephone, notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
+				" mobilephone, address, city, state, zip, notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
 				" VALUES (0, 
 				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
 				$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
 				$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
 				$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($notes)."', '".
+				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
+				$dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
+				$dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
 				$dbSocket->escapeSimple($ui_changeuserinfo).
 				"', '$currDate', '$currBy', NULL, NULL)";
 			$res = $dbSocket->query($sql);
@@ -147,6 +157,10 @@
 				case "workphone":
 				case "homephone":
 				case "mobilephone":
+				case "address":
+				case "city":
+				case "state":
+				case "zip":
 				case "notes":
 				case "changeUserInfo":
 					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
@@ -551,6 +565,7 @@
 
 	<div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
 	<?php
+		$customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
 		include_once('include/management/userinfo.php');
 	?>
 	</div>

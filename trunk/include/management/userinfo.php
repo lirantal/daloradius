@@ -55,12 +55,28 @@ echo "
 	<input value='"; if (isset($ui_mobilephone)) echo $ui_mobilephone; echo "' name='mobilephone' tabindex=307 />
         <br/>
 
+	<label for='address' class='form'>".$l['ContactInfo']['Address']."</label>
+	<input value='"; if (isset($ui_address)) echo $ui_address; echo "' name='address' tabindex=308 />
+        <br/>
+
+	<label for='city' class='form'>".$l['ContactInfo']['City']."</label>
+	<input value='"; if (isset($ui_city)) echo $ui_city; echo "' name='city' tabindex=309 />
+        <br/>
+
+	<label for='state' class='form'>".$l['ContactInfo']['State']."</label>
+	<input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' tabindex=310 />
+        <br/>
+
+	<label for='zip' class='form'>".$l['ContactInfo']['Zip']."</label>
+	<input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' tabindex=311 />
+        <br/>
+
 	<br/>
 	<h301> Other </h301>
 	<br/>
 
 	<label for='notes' class='form'>".$l['ContactInfo']['Notes']."</label>
-	<textarea class='form' name='notes' tabindex=308 >"; if (isset($ui_notes)) echo $ui_notes; echo "</textarea> 
+	<textarea class='form' name='notes' tabindex=312 >"; if (isset($ui_notes)) echo $ui_notes; echo "</textarea> 
         <br/>
 
 "; // breaking echo
@@ -76,30 +92,30 @@ echo "
 echo "
 
 	<label for='userupdate' class='form'>".$l['ContactInfo']['EnableUserUpdate']."</label>
-	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isChecked tabindex=309 />
+	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isChecked tabindex=313 />
         <br/>
 
 	<br/>
 	<label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
-	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=310 />
+	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=314 />
         <br/>
 
 	<label for='creationby' class='form'>".$l['all']['CreationBy']."</label>
-	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=311 />
+	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=315 />
         <br/>
 
 	<label for='updatedate' class='form'>".$l['all']['UpdateDate']."</label>
-	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=312 />
+	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=316 />
         <br/>
 
 	<label for='updateby' class='form'>".$l['all']['UpdateBy']."</label>
-	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=313 />
+	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=317 />
         <br/>
 
 	<br/>
 	<hr><br/>
 
-	<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />
+	$customApplyButton
 
 </fieldset>
 

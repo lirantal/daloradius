@@ -50,6 +50,10 @@
 		$workphone = $_REQUEST['workphone'];
 		$homephone = $_REQUEST['homephone'];
 		$mobilephone = $_REQUEST['mobilephone'];
+		$address = $_REQUEST['address'];
+		$city = $_REQUEST['city'];
+		$state = $_REQUEST['state'];
+		$zip = $_REQUEST['zip'];
 		$notes = $_REQUEST['notes'];
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 
@@ -73,6 +77,8 @@
 					$dbSocket->escapeSimple($email)."','".$dbSocket->escapeSimple($department)."', '".
 					$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."','".
 					$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".
+					$dbSocket->escapeSimple($address)."', '".$dbSocket->escapeSimple($city)."', '".
+					$dbSocket->escapeSimple($state)."', '".$dbSocket->escapeSimple($zip)."', '".
 					$dbSocket->escapeSimple($notes)."', '".$dbSocket->escapeSimple($ui_changeuserinfo)."', ".
 					"'$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
@@ -88,6 +94,10 @@
 					"', workphone='".$dbSocket->escapeSimple($workphone).
 					"', homephone='".$dbSocket->escapeSimple($homephone).
 					"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
+					"', address='".$dbSocket->escapeSimple($address).
+					"', city='".$dbSocket->escapeSimple($city).
+					"', state='".$dbSocket->escapeSimple($state).
+					"', zip='".$dbSocket->escapeSimple($zip).
 					"', notes='".$dbSocket->escapeSimple($notes).
 					"', changeuserinfo='".$dbSocket->escapeSimple($ui_changeuserinfo).
 					"', updatedate='$currDate', updateby='$currBy' ".
@@ -138,6 +148,10 @@
 					case "workphone":
 					case "homephone":
 					case "mobilephone":
+					case "address":
+					case "city":
+					case "state":
+					case "zip":
 					case "notes":
 					case "changeUserInfo":
 					case "passwordOrig":
@@ -292,7 +306,7 @@
 	/* fill-in all the user info details */
 
 
-	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, notes, ".
+	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, zip, notes, ".
 		" changeuserinfo, creationdate, creationby, updatedate, updateby FROM ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 		" WHERE UserName='".
@@ -310,12 +324,16 @@
 	$ui_workphone = $row[5];
 	$ui_homephone = $row[6];
 	$ui_mobilephone = $row[7];
-	$ui_notes = $row[8];
-	$ui_changeuserinfo = $row[9];
-	$ui_creationdate = $row[10];
-	$ui_creationby = $row[11];
-	$ui_updatedate = $row[12];
-	$ui_updateby = $row[13];
+	$ui_address = $row[8];
+	$ui_city = $row[9];
+	$ui_state = $row[10];
+	$ui_zip = $row[11];
+	$ui_notes = $row[12];
+	$ui_changeuserinfo = $row[13];
+	$ui_creationdate = $row[14];
+	$ui_creationby = $row[15];
+	$ui_updatedate = $row[16];
+	$ui_updateby = $row[17];
 
 	include 'library/closedb.php';
 
@@ -587,6 +605,7 @@
 
      <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
         <?php
+                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
                 include_once('include/management/userinfo.php');
         ?>
      </div>
