@@ -8,9 +8,14 @@ release 0.9-8 - 1 October 2008
 	- added subscription analysis information in Edit User page and various Accounting pages
 	- added support to CSV export data listing in Online Users and Last Connected Users pages
 	- added configuration option CONFIG_PATH_RADIUS_DICT to daloradius.conf specifying radius dictionary files path
+	- added user status flags (icons) in List Users page to show enabled/disabled user (ticket #)
+	- added user count for each group in Profiles List page
+	- added captive portal pages in different styles using open source templates, ready for deployment
+	- added paypal sign-up page with complete provisioning in daloRADIUS
 	- fixed mac authentication string in hotspot example
 	- fixed password field in Test Connectivity page
-	- 
+	- fixed auto complete for input boxes in several pages
+
 
 release 0.9-7 - 4 June 2008
 	- added support for attributes type/description in Edit User page and Edit Profile page
