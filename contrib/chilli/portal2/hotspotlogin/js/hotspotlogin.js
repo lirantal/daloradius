@@ -1,3 +1,7 @@
+<?php
+
+echo "
+
 var blur = 0;
 var starttime = new Date();
 var startclock = starttime.getTime();
@@ -36,6 +40,7 @@ function doTime() {
 	} else {
 		self.status = title;
 	}
+
 }
 
 function popUp(URL) {
@@ -54,8 +59,7 @@ function doOnLoad(result, URL, userurl, redirurl, timeleft) {
 	}
 
 	if ((result == 1) && (self.name != \"chillispot_popup\")) {
-		chillispot_popup = window.open(URL,
-'chillispot_popup','toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=375');
+		chillispot_popup = window.open(URL,'chillispot_popup','toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=375');
 	}
 
 	if ((result == 2) || result == 5) {
@@ -63,8 +67,7 @@ function doOnLoad(result, URL, userurl, redirurl, timeleft) {
 	}
 
 	if ((result == 2) && (self.name != \"chillispot_popup\")) {
-		chillispot_popup = window.open('',
-'chillispot_popup','toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=400,height=200');
+		chillispot_popup = window.open('','chillispot_popup','toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=400,height=200');
 		chillispot_popup.close();
 	}
 
@@ -103,6 +106,6 @@ function doOnBlur(result) {
 
 
 
+";
 
-
-
+?>
