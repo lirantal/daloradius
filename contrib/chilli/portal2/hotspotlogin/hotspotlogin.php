@@ -7,12 +7,7 @@
 # General Public License Version 2, provided that the above copyright
 # notice and this permission notice is included in all copies or
 # substantial portions of the software.
-#
-# daloRADIUS edition - fixed up variable definition through-out the code
-# as well as parted the code for the sake of modularity and ability to 
-# to support templates and languages easier.
-# Copyright (C) Enginx and Liran Tal 2007, 2008
-#
+
 # Redirects from ChilliSpot daemon:
 #
 # Redirection when not yet or already authenticated
@@ -25,11 +20,23 @@
 #   success: Login succeded
 #
 # logoff:  Response to a logout
-
+#
+#/*
+# *********************************************************************************************************
+# *
+# * Authors:     Liran Tal <liran@enginx.com>
+# *
+# * daloRADIUS edition - fixed up variable definition through-out the code
+# * as well as parted the code for the sake of modularity and ability to
+# * to support templates and languages easier.
+# * Copyright (C) Enginx and Liran Tal 2007, 2008
+# *
+# *********************************************************************************************************
+# */
 
 # Shared secret used to encrypt challenge with. Prevents dictionary attacks.
 # You should change this to your own shared secret.
-$uamsecret = "enginxdevserver";
+$uamsecret = "enginx";
 
 # Uncomment the following line if you want to use ordinary user-password
 # for radius authentication. Must be used together with $uamsecret.
@@ -232,92 +239,9 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
   <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
   <link href=\"template/css/style.css\" rel=\"stylesheet\" type=\"text/css\" />
   <SCRIPT LANGUAGE=\"JavaScript\">
-    var blur = 0;
-    var starttime = new Date();
-    var startclock = starttime.getTime();
-    var mytimeleft = 0;
-
-    function doTime() {
-      window.setTimeout( \"doTime()\", 1000 );
-      t = new Date();
-      time = Math.round((t.getTime() - starttime.getTime())/1000);
-      if (mytimeleft) {
-        time = mytimeleft - time;
-        if (time <= 0) {
-          window.location = \"$loginpath?res=popup3&uamip=$uamip&uamport=$uamport\";
-        }
-      }
-      if (time < 0) time = 0;
-      hours = (time - (time % 3600)) / 3600;
-      time = time - (hours * 3600);
-      mins = (time - (time % 60)) / 60;
-      secs = time - (mins * 60);
-      if (hours < 10) hours = \"0\" + hours;
-      if (mins < 10) mins = \"0\" + mins;
-      if (secs < 10) secs = \"0\" + secs;
-      title = \"Online time: \" + hours + \":\" + mins + \":\" + secs;
-      if (mytimeleft) {
-        title = \"Remaining time: \" + hours + \":\" + mins + \":\" + secs;
-      }
-      if(document.all || document.getElementById){
-         document.title = title;
-      }
-      else {   
-        self.status = title;
-      }
-    }
-
-    function popUp(URL) {
-      if (self.name != \"chillispot_popup\") {
-        chillispot_popup = window.open(URL, 'chillispot_popup', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=375');
-      }
-    }
-
-    function doOnLoad(result, URL, userurl, redirurl, timeleft) {
-      if (timeleft) {
-        mytimeleft = timeleft;
-      }
-      if ((result == 1) && (self.name == \"chillispot_popup\")) {
-        doTime();
-      }
-      if ((result == 1) && (self.name != \"chillispot_popup\")) {
-        chillispot_popup = window.open(URL, 'chillispot_popup', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=375');
-      }
-      if ((result == 2) || result == 5) {
-        document.form1.UserName.focus()
-      }
-      if ((result == 2) && (self.name != \"chillispot_popup\")) {
-        chillispot_popup = window.open('', 'chillispot_popup', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=400,height=200');
-        chillispot_popup.close();
-      }
-      if ((result == 12) && (self.name == \"chillispot_popup\")) {
-        doTime();
-        if (redirurl) {
-          opener.location = redirurl;
-        }
-        else if (opener.home) {
-          opener.home();
-        }
-        else {
-          opener.location = \"about:home\";
-        }
-        self.focus();
-        blur = 0;
-      }
-      if ((result == 13) && (self.name == \"chillispot_popup\")) {
-        self.focus();
-        blur = 1;
-      }
-    }
-
-    function doOnBlur(result) {
-      if ((result == 12) && (self.name == \"chillispot_popup\")) {
-        if (blur == 0) {
-          blur = 1;
-          self.focus();
-        }
-      }
-    }
+	";
+	include('js/hotspotlogin.js');
+echo "
   </script>
 </head>
 <body onLoad=\"javascript:doOnLoad($result, '$loginpath?res=popup2&uamip=$uamip&uamport=$uamport&userurl=$userurl&redirurl=$redirurl&timeleft=$timeleft','$userurldecode', '$redirurldecode', '$timeleft')\" onBlur = 'javascript:doOnBlur($result)' bgColor = '#c0d8f4'>";
@@ -336,37 +260,8 @@ if ($result == 5) {
 }
 
 if ($result == 2 || $result == 5) {
-	//include('hotspotlogin-loginform.php');
 	include('template/loginform-header.php');
-
-  echo "
-  <form name=\"form1\" method=\"get\" action=\"$loginpath\">
-  <input type=\"hidden\" name=\"challenge\" value=\"$challenge\">
-  <input type=\"hidden\" name=\"uamip\" value=\"$uamip\">
-  <input type=\"hidden\" name=\"uamport\" value=\"$uamport\">
-  <input type=\"hidden\" name=\"userurl\" value=\"$userurl\">
-  <center>
-  <table border=\"0\" cellpadding=\"5\" cellspacing=\"0\" style=\"width: 217px;\">
-    <tbody>
-      <tr>
-        <td align=\"right\">$centerUsername:</td>
-        <td><input style=\"font-family: Arial\" type=\"text\" name=\"UserName\" size=\"20\" maxlength=\"128\"></td>
-      </tr>
-      <tr>
-        <td align=\"right\">$centerPassword:</td>
-        <td><input style=\"font-family: Arial\" type=\"password\" name=\"Password\" size=\"20\" maxlength=\"128\"></td>
-      </tr>
-      <tr>
-        <td align=\"center\" colspan=\"2\" height=\"23\"><input type=\"submit\" name=\"button\" value=\"Login\" 
-		onClick=\"javascript:popUp('$loginpath?res=popup1&uamip=$uamip&uamport=$uamport')\"></td> 
-      </tr>
-    </tbody>
-  </table>
-  </center>
-  </form>
-";
-
-
+	include('template/loginform-login.php');
 	include('template/loginform-footer.php');
 }
 
@@ -392,13 +287,13 @@ if (($result == 4) || ($result == 12)) {
   <center>
     <a href=\"http://$uamip:$uamport/logoff\">$centerLogout</a>
   </center>
-</body>
+  </body>
 </html>";
 }
 
 
 if ($result == 11) {
-        include('template/loggingin.php');
+        include('template/loggingin-popup.php');
 }
 
 
