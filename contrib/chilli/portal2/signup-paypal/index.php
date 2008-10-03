@@ -213,7 +213,7 @@
                                         </b></td></tr></table>
                                         <br/>
 
-                                        <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+                                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
                                                 <input type="hidden" name="cmd" value="_xclick" />
                                                 <input type="hidden" name="business" value="liran_1217096095_biz@enginx.com" />
 
