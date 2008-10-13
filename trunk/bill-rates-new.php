@@ -26,7 +26,8 @@
 	include('library/check_operator_perm.php');
 
 	isset($_POST['ratename']) ? $ratename = $_POST['ratename'] : $ratename = "";
-	isset($_POST['ratetype']) ? $ratetype = $_POST['ratetype'] : $ratetype = "";
+	isset($_POST['ratetypenum']) ? $ratetypenum = $_POST['ratetypenum'] : $ratetypenum = "";
+	isset($_POST['ratetypetime']) ? $ratetypetime = $_POST['ratetypetime'] : $ratetypetime = "";
 	isset($_POST['ratecost']) ? $ratecost = $_POST['ratecost'] : $ratecost = "";
 
 	$logAction = "";
@@ -34,7 +35,8 @@
 
 	if (isset($_POST["submit"])) {
 		$ratename = $_POST['ratename'];
-		$ratetype = $_POST['ratetype'];
+		$ratetypenum = $_POST['ratetypenum'];
+		$ratetypetime = $_POST['ratetypetime'];
 		$ratecost = $_POST['ratecost'];
 		
 		include 'library/opendb.php';
@@ -44,10 +46,12 @@
 		$logDebugSQL .= $sql . "\n";
 
 		if ($res->numRows() == 0) {
-			if (trim($ratename) != "" and trim($ratetype) != "" and trim($ratecost) != "") {
+			if (trim($ratename) != "" and trim($ratetypenum) != "" and trim($ratetypetime) != "" and trim($ratecost) != "") {
 
 				$currDate = date('Y-m-d H:i:s');
 				$currBy = $_SESSION['operator_user'];
+				
+				$ratetype = "$ratetypenum/$ratetypetime";
 
 				// insert rate info
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES'].
@@ -139,13 +143,18 @@
 
 		<li class='fieldset'>
 		<label for='ratetype' class='form'><?php echo $l['all']['RateType'] ?></label>
-                <select class='form' tabindex=101 name='ratetype' id='ratetype' >
-                        <option value='1s'>1 Second</option>
-                        <option value='1m'>1 Minute</option>
-                        <option value='1h'>1 Hour</option>
-                        <option value='2s'>2 Seconds</option>
-                        <option value='2m'>2 Minutes</option>
-                        <option value='2h'>2 Hours</option>
+
+		<input class='integer' name='ratetypenum' type='text' id='ratetypenum' value='1' tabindex=101 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratetypenum','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratetypenum','decrement')"/>
+
+                <select class='form' tabindex=102 name='ratetypetime' id='ratetypetime' >
+                        <option value='second'>second</option>
+                        <option value='minute'>minute</option>
+                        <option value='hour'>hour</option>
+                        <option value='day'>day</option>
+                        <option value='week'>week</option>
+                        <option value='month'>month</option>
                 </select>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateTypeTooltip')" /> 
 		
@@ -157,7 +166,7 @@
 
 		<li class='fieldset'>
 		<label for='ratecost' class='form'><?php echo $l['all']['RateCost'] ?></label>
-		<input class='integer' name='ratecost' type='text' id='ratecost' value='1' tabindex=102 />
+		<input class='integer' name='ratecost' type='text' id='ratecost' value='1' tabindex=103 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratecost','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratecost','decrement')"/>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateCostTooltip')" /> 
