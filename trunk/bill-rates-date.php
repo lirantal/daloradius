@@ -82,6 +82,13 @@
 	$username = $dbSocket->escapeSimple($username);
 	$startdate = $dbSocket->escapeSimple($startdate);
 	$enddate = $dbSocket->escapeSimple($enddate);
+	$ratename = $dbSocket->escapeSimple($ratename);
+
+        include_once('include/management/userBilling.php');
+        userBillingRatesSummary($username, $startdate, $enddate, $ratename, 1);				// draw the billing rates summary table
+
+
+        include 'library/opendb.php';
 
 	// get rate type 
 	$sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename'";
@@ -115,7 +122,6 @@
 	
 	// then the rate cost would be the amount of seconds times the prefix multiplicator thus:
 	$rateDivisor = ($ratetypenum * $multiplicate);
-
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
