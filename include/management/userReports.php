@@ -16,7 +16,7 @@
  *********************************************************************************************************
  * Description:
  *              returns user Connection Status, Subscription Analysis, Account Status etc...
- *		(borrowed from Joachim's capture pages)
+ *		(concept borrowed from Joachim's capture pages)
  *
  * Authors:     Liran Tal <liran@enginx.com>
  *
@@ -25,7 +25,7 @@
 
 /*
  *********************************************************************************************************
- * userSubscriptionAnalysis($username)
+ * userSubscriptionAnalysis
  * $username            username to provide information of
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
  * 
@@ -313,7 +313,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
 /*
  *********************************************************************************************************
- * userConnectionStatus($username
+ * userConnectionStatus
  * $username            username to provide information of
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
  * 
