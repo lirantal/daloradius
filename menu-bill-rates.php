@@ -26,13 +26,29 @@
                                 <h3>Track Rates</h3>
 	<ul class="subnav">
 
-                <li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
-                        <form name="acctdate" action="acct-date.php" method="get" class="sidebar">
+                <li><a href="javascript:document.billrates.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
+                        <form name="billrates" action="bill-rates-date.php" method="get" class="sidebar">
+			<select name="ratename" size="1">
+				<option value="<?php if (isset($billing_date_ratename)) echo $billing_date_ratename; else echo ""; ?>">
+					<?php if (isset($billing_date_ratename)) echo $billing_date_ratename; else echo "Choose Rate"; ?>
+				</option>
+			<?php
+				include 'library/opendb.php';
+
+				$sql = "SELECT rateName FROM ".$configValues['CONFIG_DB_TBL_DALORATES'].";";
+				$res = $dbSocket->query($sql);
+
+				while ($row = $res->fetchRow()) {
+					echo "<option value='$row[0]'>$row[0]</option>";
+				}
+			?>			
+			</select>
+
                         <input name="username" type="text"
-                                value="<?php if (isset($accounting_date_username)) echo $accounting_date_username;
+                                value="<?php if (isset($billing_date_username)) echo $billing_date_username;
                                 else echo 'username'; ?>">
                         <input name="startdate" type="text" id="startdate"
-                                value="<?php if (isset($accounting_date_startdate)) echo $accounting_date_startdate;
+                                value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
                         else echo date("Y-m-d"); ?>">
 
                         <img src="library/js_date/calendar.gif"
@@ -41,7 +57,7 @@
                                 style="display: none; visibility: hidden;       width: 160px;"></div>
 
                         <input name="enddate" type="text" id="enddate"
-                                value="<?php if (isset($accounting_date_enddate)) echo $accounting_date_enddate;
+                                value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
                                 else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1,
                                 date("Y"))); ?>">
 
