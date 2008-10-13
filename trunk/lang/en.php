@@ -654,8 +654,7 @@ $l['Intro']['acctmaintenancecleanup.php'] = "Cleanup Stale-connections";
 $l['Intro']['acctmaintenancedelete.php'] = "Delete Accounting Records";
 
 $l['Intro']['billmain.php'] = "Billing Page";
-$l['Intro']['billpersecond.php'] = "Prepaid Accounting";
-$l['Intro']['billprepaid.php'] = "Prepaid Accounting";
+$l['Intro']['billratesdate.php'] = "Rates Prepaid Accounting";
 $l['Intro']['billratesdel.php'] = "Delete Rate entry";
 $l['Intro']['billratesedit.php'] = "Edit Rate Details";
 $l['Intro']['billrateslist.php'] = "Rates Table";
@@ -784,7 +783,7 @@ $l['helpPage']['billrateslist'] = "";
 $l['helpPage']['billratesnew'] = "";
 $l['helpPage']['billratesedit'] = "";
 $l['helpPage']['billratesdel'] = "";
-
+$l['helpPage']['billratesdate'] = "";
 
 $l['helpPage']['mngradproxys'] = "";
 $l['helpPage']['mngradproxyslist'] = "";
