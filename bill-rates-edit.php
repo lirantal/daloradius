@@ -14,12 +14,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
-
+ 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -28,133 +28,238 @@
 
 	include 'library/opendb.php';
 
-	$type = $_REQUEST['type'];
+        isset($_REQUEST['ratename']) ? $ratename = $_REQUEST['ratename'] : $ratename = "";
+        isset($_REQUEST['ratetype']) ? $ratetype = $_REQUEST['ratetype'] : $ratetype = "";
+        isset($_REQUEST['ratecost']) ? $ratecost = $_REQUEST['ratecost'] : $ratecost = "";
 
-	// fill-in username and password in the textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
-	$res = $dbSocket->query($sql);
+	$edit_ratename = $ratename; //feed the sidebar variables	
+
+	$logAction = "";
 	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-	
-	$row = $res->fetchRow();
-	$cardbank = $row[2];
-	$rate = $row[3];
-
 
 	if (isset($_POST['submit'])) {
 
-		$type = $_REQUEST['type'];
-		$cardbank = $_REQUEST['cardbank'];
-		$rate = $_REQUEST['rate'];
+                $ratename = $_POST['ratename'];
+                $ratetype = $_POST['ratetype'];
+                $ratecost = $_POST['ratecost'];
 
-		if (trim($type) != "") {
+		if (trim($ratename) != "") {
 
-			if (trim($cardbank) != "") {
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET cardbank=$cardbank WHERE type='$type'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-			}
-		
-			if (trim($rate) != "") {
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET rate=$rate WHERE type='$type'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-				
-				$actionStatus = "success";
-				$actionMsg = "Updated rates of type: <b> $type</b>";
-				$logAction = "Successfully updated rates of type [$type] on page: ";
+			$currDate = date('Y-m-d H:i:s');
+			$currBy = $_SESSION['operator_user'];
 
-			} 
-
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET ".
+			" rateName='".$dbSocket->escapeSimple($ratename)."', ".
+			" rateType='".$dbSocket->escapeSimple($ratetype).	"', ".
+			" rateCost='".$dbSocket->escapeSimple($ratecost)."', ".
+			" updatedate='$currDate', updateby='$currBy' ".
+			" WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL = "";
+			$logDebugSQL .= $sql . "\n";
+			
+			$successMsg = "Updated rate: <b> $ratename </b>";
+			$logAction .= "Successfully updated rate [$ratename] on page: ";
+			
 		} else {
-			$actionStatus = "failure";
-			$actionMsg = "you didn't specify a rate type";
-			$logAction = "Failed updating empty rate type on page: ";
+			$failureMsg = "no rate name was entered, please specify a rate name to edit.";
+			$logAction .= "Failed updating rate [$ratename] on page: ";
 		}
+		
 	}
+	
+
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
+	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
+	$row = $res->fetchRow();
+	$ratename = $row[1];
+	$ratetype = $row[2];
+	$ratecost = $row[3];
+	$creationdate = $row[4];
+	$creationby = $row[5];
+	$updatedate = $row[6];
+	$updateby = $row[7];
 
 	include 'library/closedb.php';
 
 
-
-	if (isset($_REQUEST['type']))
-		$type = $_REQUEST['type'];
-	else
-		$type = "";
-
-	if (trim($type) != "") {
-		$type = $_REQUEST['type'];
-	} else {
-		$actionStatus = "failure";
-		$actionMsg = "no type was entered, please specify a rate type to edit";
+	if (trim($ratename) == "") {
+		$failureMsg = "no rate name was entered or found in database, please specify a rate name to edit";
 	}
 
 
-
-
-
 	include_once('library/config_read.php');
-    $log = "visited page: ";
+	$log = "visited page: ";
 
-
+	
 ?>
 
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>daloRADIUS</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+</head>
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <?php
-
-    include ("menu-billing.php");
-
+	include_once ("library/tabber/tab-layout.php");
+?>
+ 
+<?php
+	include ("menu-bill-rates.php");
 ?>		
-		<div id="contentnorightbar">
+	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><?echo $l['Intro']['billratesedit.php']; ?></h2>
-				
-				<p>
-				<?echo $l['captions']['detailsofnewrate']; ?>
-				<br/><br/>			</p>
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-<tr><td>
-						<b><?echo $l['all']['Type']; ?></b>
-</td><td>
-						<input value="<?php echo $type ?>" name="type" /><br/>
-</td></tr>
-<tr><td>
-						<b><? echo $l['all']['CardBank'];?></b>
-</td><td>
-						<input value="<?php echo $cardbank ?>" name="cardbank" /><br/>
-</td></tr>
-<tr><td>
-						<b><? echo $l['all']['Rate'];?></b>
-</td><td>
-						<input value="<?php echo $rate ?>" name="rate" /><br/>
-</td></tr>
-</table>						
-						<br/>
-<center>
-						<input type="submit" name="submit" value="<?echo $l['buttons']['savesettings'];?>"/>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesedit.php'] ?>
+		:: <?php if (isset($ratename)) { echo $ratename; } ?><h144>+</h144></a></h2>
 
-</center>
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['billratesedit'] ?>
+			<br/>
+		</div>
+		<?php
+			include_once('include/management/actionMessages.php');
+		?>
 
-				</form>
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-				
+<div class="tabber">
+
+	<div class="tabbertab" title="<?php echo $l['title']['RateInfo']; ?>">
+
+
+	<fieldset>
+
+		<h302> <?php echo $l['title']['RateInfo']; ?> </h302>
+		<br/>
+
+		<ul>
+
+			<li class='fieldset'>
+			<label for='ratename' class='form'><?php echo $l['all']['RateName'] ?></label>
+			<input disabled name='ratename' type='text' id='ratename' value='<?php echo $ratename ?>' tabindex=100 />
+			</li>
+
+			<li class='fieldset'>
+			<label for='ratetype' class='form'><?php echo $l['all']['RateType'] ?></label>
+	                <select class='form' tabindex=101 name='ratetype' id='ratetype' >
+				<option value='<?php echo $ratetype ?>'><?php echo $ratetype ?></option>
+				<option value=''></option>
+	                        <option value='1 second'>1 second</option>
+	                        <option value='1 minute'>1 minute</option>
+	                        <option value='1 hour'>1 hour</option>
+	                        <option value='2 second'>2 second</option>
+	                        <option value='2 minute'>2 minute</option>
+	                        <option value='2 hour'>2 hour</option>
+	                </select>
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateTypeTooltip')" /> 
+			
+			<div id='rateTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+				<img src='images/icons/comment.png' alt='Tip' border='0' />
+				<?php echo $l['Tooltip']['rateTypeTooltip'] ?>
+			</div>
+			</li>
+
+			<li class='fieldset'>
+			<label for='ratecost' class='form'><?php echo $l['all']['RateCost'] ?></label>
+			<input class='integer' name='ratecost' type='text' id='ratecost' value='<?php echo $ratecost ?>' tabindex=102 />
+        	        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratecost','increment')" />
+	                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratecost','decrement')"/>
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateCostTooltip')" /> 
+			
+			<div id='rateCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+				<img src='images/icons/comment.png' alt='Tip' border='0' />
+				<?php echo $l['Tooltip']['rateCostTooltip'] ?>
+			</div>
+			</li>
+
+			<li class='fieldset'>
+			<br/>
+			<hr><br/>
+			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+				class='button' />
+			</li>
+
+		</ul>
+
+	</fieldset>
+
+	<input type=hidden value="<?php echo $ratename ?>" name="ratename"/>
+
+</div>
+
+<div class="tabbertab" title="<?php echo $l['title']['Optional']; ?>">
+
+<fieldset>
+
+        <h302> Optional </h302>
+        <br/>
+
+        <br/>
+        <h301> Other </h301>
+        <br/>
+
+        <br/>
+        <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
+        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <br/>
+
+        <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
+        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <br/>
+
+        <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
+        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <br/>
+
+        <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
+        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <br/>
+
+
+        <br/><br/>
+        <hr><br/>
+
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+                class='button' />
+
+</fieldset>
+
+
+        </div>
+
+</div>
+
+		</form>
+
 <?php
 	include('include/config/logging.php');
-?>				
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
 ?>
 
-		
 		</div>
-		
+
+		<div id="footer">
+
+<?php
+	include 'page-footer.php';
+?>
+
+
+		</div>
+
 </div>
 </div>
 
 
 </body>
 </html>
+
+
+
+
+

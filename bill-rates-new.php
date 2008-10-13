@@ -14,65 +14,62 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
-
+ 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
+	isset($_POST['ratename']) ? $ratename = $_POST['ratename'] : $ratename = "";
+	isset($_POST['ratetype']) ? $ratetype = $_POST['ratetype'] : $ratetype = "";
+	isset($_POST['ratecost']) ? $ratecost = $_POST['ratecost'] : $ratecost = "";
 
-	$type = "";
-	$cardbank = "";
-	$rate = "";
+	$logAction = "";
+	$logDebugSQL = "";
 
-	if ($type == "") { $type = ""; }
-	if ($cardbank == "") { $cardbank = ""; }
-	if ($rate == "") { $rate = ""; }
+	if (isset($_POST["submit"])) {
+		$ratename = $_POST['ratename'];
+		$ratetype = $_POST['ratetype'];
+		$ratecost = $_POST['ratecost'];
+		
+		include 'library/opendb.php';
 
-	
-	if (isset($_POST['submit'])) {
-
-		$type = $_REQUEST['type'];
-		$cardbank = $_REQUEST['cardbank'];
-		$rate = $_REQUEST['rate'];
-
-				include 'library/opendb.php';
-
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE type='$type'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
 		$res = $dbSocket->query($sql);
-		$logDebugSQL = "";
 		$logDebugSQL .= $sql . "\n";
 
-		if ($res->fetchRow() == 0) {
-		
-			if (trim($type) != "" and trim($cardbank) != "") {
+		if ($res->numRows() == 0) {
+			if (trim($ratename) != "" and trim($ratetype) != "" and trim($ratecost) != "") {
 
-				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES']." VALUES (0, '$type', $cardbank, $rate)";
+				$currDate = date('Y-m-d H:i:s');
+				$currBy = $_SESSION['operator_user'];
+
+				// insert rate info
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES'].
+					" (id, ratename, ratetype, ratecost, ".
+					"  creationdate, creationby, updatedate, updateby) ".
+					" VALUES (0, '".$dbSocket->escapeSimple($ratename)."', '".
+					$dbSocket->escapeSimple($ratetype)."',".$dbSocket->escapeSimple($ratecost).",".
+					" '$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-		
-				$actionStatus = "success";
-				$actionMsg = "Added rate type: <b> $type </b> with cardbank: <b> $cardbank </b>";
-				$logAction = "Successfully added rate type [$type] with cardbank [$cardbank] on page: ";
-			} else {
-				$actionStatus = "failure";
-				$actionMsg = "you didn't specify a rate type or a cardbank, both are required";
-				$logAction = "Failed adding (missing values) rate of type [$type] with cardbank [$cardbank] on page: ";
-			}
 
-		} else {
-			$actionStatus = "failure";
-			$actionMsg = "rate type <b> $type </b> already exist in database, 
-			<br/> please check for duplicate entries";
-			$logAction = "Failed adding already existing rate of type [$type] with cardbank [$cardbank] on page: ";
+				$successMsg = "Added to database new rate: <b>$ratename</b>";
+				$logAction .= "Successfully added new rate [$ratename] on page: ";
+			} else {
+				$failureMsg = "you must provide a rate name, type and cost";	
+				$logAction .= "Failed adding new rate [$ratename] on page: ";	
+			}
+		} else { 
+			$failureMsg = "You have tried to add a rate that already exist in the database: $ratename";
+			$logAction .= "Failed adding new rate already in database [$ratename] on page: ";		
 		}
-		
+	
 		include 'library/closedb.php';
 
 	}
@@ -82,71 +79,174 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
-
 ?>
 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>daloRADIUS</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+</head>
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<?php
+	include_once ("library/tabber/tab-layout.php");
+?>
+ 
 <?php
 
-    include ("menu-billing.php");
+	include ("menu-bill-rates.php");
+	
+?>
 
-?>		
+<div id="contentnorightbar">
+
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesnew.php'] ?>
+	<h144>+</h144></a></h2>
+	
+	<div id="helpPage" style="display:none;visibility:visible" >
+		<?php echo $l['helpPage']['billratesnew'] ?>
+		<br/>
+	</div>
+	<?php
+		include_once('include/management/actionMessages.php');
+	?>
+
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+
+<div class="tabber">
+
+	<div class="tabbertab" title="<?php echo $l['title']['RateInfo']; ?>">
+
+	<fieldset>
+
+		<h302> <?php echo $l['title']['RateInfo']; ?> </h302>
+		<br/>
+
+		<ul>
+
+		<li class='fieldset'>
+		<label for='name' class='form'><?php echo $l['all']['RateName'] ?></label>
+		<input name='ratename' type='text' id='ratename' value='' tabindex=100 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateNameTooltip')" /> 
 		
-		<div id="contentnorightbar">
+		<div id='rateNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['rateNameTooltip'] ?>
+		</div>
+		</li>
 
-		<h2 id="Intro"><? echo $l['Intro']['billratesnew.php']; ?></h2>
-				
-				<p>
-				<? echo $l['captions']['filldetailsofnewrate']; ?>
-				<br/><br/>
-<?php
-		if (trim($type) == "") { echo $l['messages']['missingtype']."<br/>";  }
-		if (trim($cardbank) == "") { echo $l['messages']['missingcardbank']."<br/>";  }
-		if (trim($rate) == "") { echo $l['messages']['missingrate']."<br/>";  }
-?>
-				</p>
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<table border='2' class='table1'>
-<tr><td>
-						<b><?echo $l['all']['Type']; ?></b>
-</td><td>
-						<input value="<?php echo $type ?>" name="type"/><br/>
-</td></tr>
-<tr><td>
-						<b><?echo $l['all']['CardBank']; ?></b>
-</td><td>
-						<input value="<?php echo $cardbank ?>" name="cardbank" /><br/>
-</td></tr>
-<tr><td>
-						<b><?echo $l['all']['Rate']; ?></b>
-</td><td>
-						<input value="<?php echo $rate ?>" name="rate" /><br/>
-</td></tr>
-</table>
-						<br/>
-<center>
-						<input type="submit" name="submit" value="<?echo $l['buttons']['apply']; ?>"/>
-</center>
-				</form>
+		<li class='fieldset'>
+		<label for='ratetype' class='form'><?php echo $l['all']['RateType'] ?></label>
+                <select class='form' tabindex=101 name='ratetype' id='ratetype' >
+                        <option value='1s'>1 Second</option>
+                        <option value='1m'>1 Minute</option>
+                        <option value='1h'>1 Hour</option>
+                        <option value='2s'>2 Seconds</option>
+                        <option value='2m'>2 Minutes</option>
+                        <option value='2h'>2 Hours</option>
+                </select>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateTypeTooltip')" /> 
+		
+		<div id='rateTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['rateTypeTooltip'] ?>
+		</div>
+		</li>
+
+		<li class='fieldset'>
+		<label for='ratecost' class='form'><?php echo $l['all']['RateCost'] ?></label>
+		<input class='integer' name='ratecost' type='text' id='ratecost' value='1' tabindex=102 />
+                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratecost','increment')" />
+                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratecost','decrement')"/>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateCostTooltip')" /> 
+		
+		<div id='rateCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['rateCostTooltip'] ?>
+		</div>
+		</li>
+	
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		</li>
+
+		</ul>
+	</fieldset>
+
+	</div>
 
 
+	<div class="tabbertab" title="<?php echo $l['title']['Optional']; ?>">
+
+<fieldset>
+
+        <h302> Optional </h302>
+        <br/>
+
+        <br/>
+        <h301> Other </h301>
+        <br/>
+
+        <br/>
+        <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
+        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <br/>
+
+        <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
+        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <br/>
+
+        <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
+        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <br/>
+
+        <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
+        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <br/>
+
+
+        <br/><br/>
+        <hr><br/>
+
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+                class='button' />
+
+</fieldset>
+
+
+	</div>
+
+</div>
+
+	</form>
 
 <?php
 	include('include/config/logging.php');
-?>		
+?>
+		
 		</div>
 		
 		<div id="footer">
 		
-								<?php
-        include 'page-footer.php';
+<?php
+	include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 
 
 </body>
 </html>
+
+
+
+
+
