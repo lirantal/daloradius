@@ -137,7 +137,9 @@ $l['all']['LeftPercent'] = "% of Time Left";
 $l['all']['TotalSessions'] = "Total Sessions";
 $l['all']['LastLoginTime'] = "Last Login Time";
 $l['all']['TotalSessionTime'] = "Total Session Time";
-$l['all']['Rate'] = "Rate";
+$l['all']['RateName'] = "Rate Name";
+$l['all']['RateType'] = "Rate Type";
+$l['all']['RateCost'] = "Rate Cost";
 $l['all']['Billed'] = "Billed";
 $l['all']['TotalUsers'] = "Total Users";
 $l['all']['TotalBilled'] = "Total Billed";
@@ -225,6 +227,16 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Tooltips
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
+
+$l['Tooltip']['EditRate'] = "Edit Rate";
+$l['Tooltip']['RemoveRate'] = "Remove Rate";
+
+$l['Tooltip']['rateNameTooltip'] = "The rate friendly name,<br/>
+					to describe the purpose of the rate";
+$l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br/>
+					the operation of the rate";
+$l['Tooltip']['rateCostTooltip'] = "The rate cost amount";
+
 
 $l['Tooltip']['EditIPPool'] = "Edit IP-Pool";
 $l['Tooltip']['RemoveIPPool'] = "Remove IP-Pool";
@@ -363,6 +375,11 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
  ************************************************************************************/
 $l['button']['ClearSessions'] = "Clear Sessions";
 
+$l['button']['ListRates'] = "List Rates";
+$l['button']['NewRate'] = "New Rate";
+$l['button']['EditRate'] = "Edit Rate";
+$l['button']['RemoveRate'] = "Remove Rate";
+
 $l['button']['ListRealms'] = "List Realms";
 $l['button']['NewRealm'] = "New Realm";
 $l['button']['EditRealm'] = "Edit Realm";
@@ -494,6 +511,8 @@ $l['button']['ProcessQuery'] = "Process Query";
  * Titles
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
+
+$l['title']['RateInfo'] = "Rate Information";
 
 $l['title']['Backups'] = "Backups";
 $l['title']['FreeRADIUSTables'] = "FreeRADIUS Tables";
@@ -760,6 +779,12 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 
 
 $l['helpPage']['login'] = "";
+
+$l['helpPage']['billrateslist'] = "";
+$l['helpPage']['billratesnew'] = "";
+$l['helpPage']['billratesedit'] = "";
+$l['helpPage']['billratesdel'] = "";
+
 
 $l['helpPage']['mngradproxys'] = "";
 $l['helpPage']['mngradproxyslist'] = "";
