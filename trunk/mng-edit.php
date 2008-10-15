@@ -167,18 +167,23 @@
 					continue;
 				}
 
-				if (isset($field[0]))
-					$attribute = $field[0];
-                if (isset($field[1]))
+				if (isset($field[0])) {
+					if (preg_match('/__/', $field[0]))
+						list($columnId, $attribute) = split("__", $field[0]);
+					else 
+						$attribute = $field[0];
+				}
+
+		                if (isset($field[1]))
 					$value = $field[1];
-                if (isset($field[2]))
+		                if (isset($field[2]))
 					$op = $field[2];
-                if (isset($field[3]))
+		                if (isset($field[3]))
 					$table = $field[3];
 
-                if ($table == 'check')
+		                if ($table == 'check')
 					$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-                if ($table == 'reply')
+		                if ($table == 'reply')
 					$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
 
 
@@ -236,7 +241,7 @@
 				*/
 
 				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username).
-					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
@@ -252,14 +257,15 @@
 					/* we update the $value[0] entry which is the attribute's value */
 					$sql = "UPDATE $table SET Value=$value WHERE UserName='".
 						$dbSocket->escapeSimple($username)."' AND Attribute='".
-						$dbSocket->escapeSimple($attribute)."'";
+						$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 					/* then we update $value[1] which is the attribute's operator */
 					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
 						"' WHERE UserName='".$dbSocket->escapeSimple($username).
-						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+						"' AND Attribute='".$dbSocket->escapeSimple($attribute).
+						"' AND id=".$dbSocket->escapeSimple($columnId);
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
@@ -419,7 +425,8 @@
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute, ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".op, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value, ".
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
-		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip, ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".id ".
 		" FROM ".
 		$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute=".
@@ -439,12 +446,12 @@
 	while($row = $res->fetchRow()) {
 
 		echo "<label class='attributes'>";
-		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[0]&tablename=radcheck'>
+		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[5]__$row[0]&tablename=radcheck'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
 		echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
 
 		if (preg_match("/.*-Password/", $row[0])) {
 			if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
@@ -518,7 +525,8 @@
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute, ".
 		$configValues['CONFIG_DB_TBL_RADREPLY'].".op, ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Value, ".
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
-		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip, ".
+		$configValues['CONFIG_DB_TBL_RADREPLY'].".id ".
 		" FROM ".
 		$configValues['CONFIG_DB_TBL_RADREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute=".
@@ -538,12 +546,12 @@
 	while($row = $res->fetchRow()) {
 		
 		echo "<label class='attributes'>";
-		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[0]&tablename=radreply'>
+		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[5]__$row[0]&tablename=radreply'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
+		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
 
 		if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
 			echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
