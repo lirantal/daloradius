@@ -48,8 +48,18 @@
 					continue;
 				}
 
-				if (isset($field[0]))
-					$attribute = $field[0];
+                                if (isset($field[0])) {
+                                        if (preg_match('/__/', $field[0]))
+                                                list($columnId, $attribute) = split("__", $field[0]);
+                                        else {
+                                                $columnId = 0;                          // we need to set a non-existent column id so that the attribute would
+                                                                                        // not match in the database (as it is added from the Attributes tab)
+                                                                                        // and the if/else check will result in an INSERT instead of an UPDATE for the
+                                                                                        // the last attribute
+                                                $attribute = $field[0];
+                                        }
+                                }
+
 				if (isset($field[1]))
 					$value = $field[1];
 				if (isset($field[2]))
@@ -68,7 +78,7 @@
 				$value = $dbSocket->escapeSimple($value);
 
 				$sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile).
-						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				if ($res->numRows() == 0) {
@@ -84,14 +94,15 @@
 
 					/* we update the $value[0] entry which is the attribute's value */
 					$sql = "UPDATE $table SET Value='$value' WHERE GroupName='".
-							$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+							$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'".
+							" AND id=".$dbSocket->escapeSimple($columnId);
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
 					/* then we update $value[1] which is the attribute's operator */
 					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
 							"' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".
-							$dbSocket->escapeSimple($attribute)."'";
+							$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
@@ -184,7 +195,8 @@
         $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute, ".
                 $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".op, ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Value, ".
                 $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip, ".
+                $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".id ".
                 " FROM ".
                 $configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
                 " ON ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute=".
@@ -204,12 +216,12 @@
         while($row = $res->fetchRow()) {
 
                 echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-groupcheck-del.php?groupname=$profile&attribute=$row[0]&value=$row[2]'>
+                echo "<a class='tablenovisit' href='mng-rad-profiles-del.php?profile=$profile&attribute=$row[5]__$row[0]&tablename=radgroupcheck'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-                echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
+                echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
 
                         if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
                                 echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
@@ -278,7 +290,8 @@
         $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute, ".
                 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".op, ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Value, ".
                 $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip ".
+                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip, ".
+                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".id ".
                 " FROM ".
                 $configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
                 " ON ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute=".
@@ -299,12 +312,12 @@
 
 
                 echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-groupreply-del.php?groupname=$profile&attribute=$row[0]&value=$row[2]'>
+                echo "<a class='tablenovisit' href='mng-rad-profiles-del.php?profile=$profile&attribute=$row[5]__$row[0]&tablename=radgroupreply'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
-                echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[0]' />";
+                echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
 
                 if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
                         echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";

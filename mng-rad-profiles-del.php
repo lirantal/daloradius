@@ -81,8 +81,15 @@
 
 		include 'library/opendb.php';
 
+                if (isset($attribute)) {
+                        if (preg_match('/__/', $attribute))
+                                list($columnId, $attribute) = split("__", $attribute);
+                        else
+                                $attribute = $attribute;
+                }	
+
 		$sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE GroupName='".$dbSocket->escapeSimple($profile).
-				"' AND Attribute='".$dbSocket->escapeSimple($attribute)."'";
+				"' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
