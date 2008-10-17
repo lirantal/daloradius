@@ -48,6 +48,10 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
         // get rate type
         $sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename'";
         $res = $dbSocket->query($sql);
+
+	if ($res->numRows() == 0)
+		return;
+
         $row = $res->fetchRow();
         list($ratetypenum, $ratetypetime) = split("/",$row[0]);
 
