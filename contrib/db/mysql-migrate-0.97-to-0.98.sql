@@ -22,3 +22,21 @@ ALTER TABLE userinfo ADD address VARCHAR(200) AFTER mobilephone;
 ALTER TABLE userinfo ADD city VARCHAR(200) AFTER address;
 ALTER TABLE userinfo ADD state VARCHAR(200) AFTER city;
 ALTER TABLE userinfo ADD zip VARCHAR(200) AFTER state;
+
+ALTER TABLE operators DROP COLUMN bill_prepaid;
+ALTER TABLE operators CHANGE bill_persecond bill_rates_date varchar(32);
+
+CREATE TABLE billing_rates (
+  id int(11) unsigned NOT NULL auto_increment,
+  rateName varchar(128) NOT NULL default '',
+  rateType varchar(128) NOT NULL default '',
+  rateCost int(32) NOT NULL default 0,
+  creationdate datetime default '0000-00-00 00:00:00',
+  creationby varchar(128) default NULL,
+  updatedate datetime default '0000-00-00 00:00:00',
+  updateby varchar(128) default NULL,
+  PRIMARY KEY  (id),
+  KEY rateName (rateName(128))
+);
+
+

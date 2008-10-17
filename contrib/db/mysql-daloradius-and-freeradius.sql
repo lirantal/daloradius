@@ -176,8 +176,7 @@ CREATE TABLE `operators` (
   `acct_hotspot_accounting` varchar(32) default NULL,
   `acct_hotspot_compare` varchar(32) default NULL,
   `acct_custom_query` varchar(32) default NULL,
-  `bill_persecond` varchar(32) default NULL,
-  `bill_prepaid` varchar(32) default NULL,
+  `bill_bill_rates_date` varchar(32) default NULL,
   `bill_rates_del` varchar(32) default NULL,
   `bill_rates_new` varchar(32) default NULL,
   `bill_rates_edit` varchar(32) default NULL,
@@ -486,27 +485,32 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `radreply` ENABLE KEYS */;
 
 --
--- Table structure for table `rates`
+-- Table structure for table `billing_rates`
 --
 
-DROP TABLE IF EXISTS `rates`;
-CREATE TABLE `rates` (
-  `id` bigint(20) NOT NULL auto_increment,
-  `type` varchar(32) default NULL,
-  `cardbank` double default NULL,
-  `rate` double default NULL,
-  PRIMARY KEY  (`id`)
+DROP TABLE IF EXISTS `billing_rates`;
+CREATE TABLE `billing_rates` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `rateName` varchar(128) NOT NULL default '',
+  `rateType` varchar(128) NOT NULL default '',
+  `rateCost` int(32) NOT NULL default 0,
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  PRIMARY KEY  (id),
+  KEY rateName (rateName(128))
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `rates`
+-- Dumping data for table `billing_rates`
 --
 
 
-/*!40000 ALTER TABLE `rates` DISABLE KEYS */;
-LOCK TABLES `rates` WRITE;
+/*!40000 ALTER TABLE `billing_rates` DISABLE KEYS */;
+LOCK TABLES `billing_rates` WRITE;
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `rates` ENABLE KEYS */;
+/*!40000 ALTER TABLE `billing_rates` ENABLE KEYS */;
 
 --
 -- Table structure for table `realms`
