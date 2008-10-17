@@ -23,7 +23,7 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-//	include('library/check_operator_perm.php');
+	include('library/check_operator_perm.php');
 
 	//setting values for the order by and order type variables
 	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "radacctid";
@@ -87,41 +87,46 @@
         include_once('include/management/userBilling.php');
         userBillingRatesSummary($username, $startdate, $enddate, $ratename, 1);				// draw the billing rates summary table
 
-
         include 'library/opendb.php';
 
 	// get rate type 
 	$sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename'";
 	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow();
-	list($ratetypenum, $ratetypetime) = split("/",$row[0]);
 
-	switch ($ratetypetime) {					// we need to translate any kind of time into seconds, so a minute is 60 seconds, an hour is 3600,
-		case "second":						// and so on...
-			$multiplicate = 1;
-			break;
-		case "minute":
-			$multiplicate = 60;
-			break;
-		case "hour":
-			$multiplicate = 3600;
-			break;
-		case "day":
-			$multiplicate = 86400;
-			break;
-		case "week":
-			$multiplicate = 604800;
-			break;
-		case "month":
-			$multiplicate = 187488000;			// a month is 31 days
-			break;
-		default:
-			$multiplicate = 0;
-			break;			
-	}			
-	
-	// then the rate cost would be the amount of seconds times the prefix multiplicator thus:
-	$rateDivisor = ($ratetypenum * $multiplicate);
+	if ($res->numRows() == 0)
+		$failureMsg = "Rate was not found in database, check again please";
+	else {
+
+		$row = $res->fetchRow();
+		list($ratetypenum, $ratetypetime) = split("/",$row[0]);
+
+		switch ($ratetypetime) {					// we need to translate any kind of time into seconds, so a minute is 60 seconds, an hour is 3600,
+			case "second":						// and so on...
+				$multiplicate = 1;
+				break;
+			case "minute":
+				$multiplicate = 60;
+				break;
+			case "hour":
+				$multiplicate = 3600;
+				break;
+			case "day":
+				$multiplicate = 86400;
+				break;
+			case "week":
+				$multiplicate = 604800;
+				break;
+			case "month":
+				$multiplicate = 187488000;			// a month is 31 days
+				break;
+			default:
+				$multiplicate = 0;
+				break;			
+		}			
+		
+		// then the rate cost would be the amount of seconds times the prefix multiplicator thus:
+		$rateDivisor = ($ratetypenum * $multiplicate);
+	}
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
@@ -146,6 +151,13 @@
 	/* END */
 
 
+
+	if (isset($failureMsg)) {
+		include_once('include/management/actionMessages.php');
+		echo "<br/>";
+	}
+
+	
 	echo "<table border='0' class='table1'>\n";
         echo "
                 <thead>
