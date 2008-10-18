@@ -15,6 +15,7 @@ release 0.9-8 - 1 October 2008
 	- fixed mac authentication string in hotspot example
 	- fixed password field in Test Connectivity page
 	- fixed auto complete for input boxes in several pages
+	- fixed saving of editing/removing duplicate attributes on user/profile management pages (bug 2079457)
 
 
 release 0.9-7 - 4 June 2008
