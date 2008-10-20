@@ -115,7 +115,7 @@
 					$oldgroup = $oldgroups[$grpcnt];			
 
 					if (!($groups_priority[$grpcnt]))
-						$group_priority = 1;
+						$group_priority = 0;
 					else
 						$group_priority = $groups_priority[$grpcnt];
 

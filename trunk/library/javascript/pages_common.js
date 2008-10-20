@@ -13,7 +13,7 @@ function changeInteger(dstObj,action) {
 	if (action == 'increment') {
 		dstElem.value = parseInt(dstElemVal)+1;
 	} else {
-		if (dstElemVal <= 0)
+		if (dstElemVal < 0)
 			exit;
 		dstElem.value = parseInt(dstElemVal)-1;
 	}
