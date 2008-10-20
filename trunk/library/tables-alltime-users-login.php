@@ -237,24 +237,24 @@ function yearly($orderBy, $orderType) {
 	
 	echo "<thread> <tr>
 			<th scope='col'> Logins/Hits count</th>
+			<br/>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=desc\"> < </a>
+			</th>
 			<th scope='col'> Year </th>
+			<br/>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=desc\"> < </a>
+			</th>
 		</tr> </thread>
 	";
 
 	$i=0;
 	foreach ($array_years as $a_year) {
 			echo "<tr>
-					<td> $array_logins[$i]
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=desc\"> < </a>
-					</th>
-					<td> $a_year 
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=desc\"> < </a>
-					</th>
-			</tr>";
+					<td> $array_logins[$i]</td>
+					<td> $a_year </td>
+				</tr>";
 			$i++;
 	}
 
