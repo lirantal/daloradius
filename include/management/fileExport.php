@@ -9,7 +9,7 @@
  * formats like CSV and PDF to the user's desktop
  *********************************************************************/
 
-session_start();
+include('../../library/checklogin.php');
 
 if (isset($_GET['reportFormat'])) {
 
@@ -127,7 +127,6 @@ if (isset($_GET['reportFormat'])) {
 			$outputContent = "";
 
 			$sql = "SELECT user, pass, reply, date FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
-				" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')".
 				" $reportQuery ORDER BY User ASC";
 
 			if ($reportFormat == "csv") {
