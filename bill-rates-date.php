@@ -208,6 +208,9 @@
 		</th>
                 </tr> </thread>";
 
+	$sumBilled = 0;
+	$sumSession = 0;
+
 	while($row = $res->fetchRow()) {
 		
 		$sessionTime = $row[3];
