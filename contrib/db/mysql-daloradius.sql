@@ -148,7 +148,7 @@ CREATE TABLE `operators` (
   `acct_hotspot_accounting` varchar(32) default NULL,
   `acct_hotspot_compare` varchar(32) default NULL,
   `acct_custom_query` varchar(32) default NULL,
-  `bill_bill_rates_date` varchar(32) default NULL,
+  `bill_rates_date` varchar(32) default NULL,
   `bill_rates_del` varchar(32) default NULL,
   `bill_rates_new` varchar(32) default NULL,
   `bill_rates_edit` varchar(32) default NULL,
