@@ -84,7 +84,7 @@ echo "
                 <br/>
 
                 <label for='notes' class='form'>Operator Notes</label>
-	        <textarea class='form' name='notes' id='notes' value='".$operator_notes."' ></textarea>
+	        <textarea class='form' name='notes' id='notes'>".$operator_notes."</textarea>
                 <br/>
 
 		<br/>
