@@ -34,10 +34,18 @@ $session_id .= substr(md5(rand(1,1000000)), rand(1,32-$rand), 21-$rand);	// furt
 																		// to the session_id string composed of the
 																		// md5 hash for random number
 session_id($session_id);							// apply the session_id that we created
-session_set_cookie_params(3600);						// set's the session timeout to 3600 seconds (1 hour)
+//session_set_cookie_params(3600);						// deprecated, unsupported in older IE browsers, set's the session timeout 
+										// to 3600 seconds (1 hour)
+ini_set('session.gc_maxlifetime', 60*60);					// replaces the session_set_cookie_params directive
+
 session_start();								// initiate the session
 
 $errorMessage = '';
+
+$location_name = $_POST['location'];						// we need to set location name session variable before opening the database
+$_SESSION['location_name'] = $location_name;					// since the whole point is to authenticate to a spefific pre-defined database server
+
+
 include 'library/opendb.php';
 
 $operator_user = $_POST['operator_user'];
