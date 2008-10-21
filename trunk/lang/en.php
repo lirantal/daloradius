@@ -209,8 +209,17 @@ $l['all']['radgroupreply'] = "radgroupreply";
 $l['all']['usergroup'] = "usergroup";
 $l['all']['radacct'] = "radacct";
 $l['all']['operators'] = "operators";
-$l['all']['rates'] = "rates";
+$l['all']['billingrates'] = "billing rates";
 $l['all']['hotspots'] = "hotspots";
+$l['all']['nas'] = "nas";
+$l['all']['radpostauth'] = "radpostauth";
+$l['all']['radippool'] = "radippool";
+$l['all']['userinfo'] = "userinfo";
+$l['all']['dictionary'] = "dictionary";
+$l['all']['realms'] = "realms";
+$l['all']['proxys'] = "proxys";
+$l['all']['billingpaypal'] = "billing paypal";
+$l['all']['billingplans'] = "billing plans";
 
 
 $l['all']['BusinessName'] = "Business Name";

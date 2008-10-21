@@ -77,6 +77,32 @@
 		if (isset($_REQUEST['config_dbtbl_hotspots']))
 			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = $_REQUEST['config_dbtbl_hotspots'];
 
+		if (isset($_REQUEST['config_dbtbl_nas']))
+			$configValues['CONFIG_DB_TBL_RADNAS'] = $_REQUEST['config_dbtbl_nas'];
+
+		if (isset($_REQUEST['config_dbtbl_radpostauth']))
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'] = $_REQUEST['config_dbtbl_radpostauth'];
+
+		if (isset($_REQUEST['config_dbtbl_radippool']))
+			$configValues['CONFIG_DB_TBL_RADIPPOOL'] = $_REQUEST['config_dbtbl_radippool'];
+
+		if (isset($_REQUEST['config_dbtbl_userinfo']))
+			$configValues['CONFIG_DB_TBL_DALOUSERINFO'] = $_REQUEST['config_dbtbl_userinfo'];
+
+		if (isset($_REQUEST['config_dbtbl_dictionary']))
+			$configValues['CONFIG_DB_TBL_DALODICTIONARY'] = $_REQUEST['config_dbtbl_dictionary'];
+
+		if (isset($_REQUEST['config_dbtbl_realms']))
+			$configValues['CONFIG_DB_TBL_DALOREALMS'] = $_REQUEST['config_dbtbl_realms'];
+
+		if (isset($_REQUEST['config_dbtbl_proxys']))
+			$configValues['CONFIG_DB_TBL_DALOPROXYS'] = $_REQUEST['config_dbtbl_proxys'];
+
+		if (isset($_REQUEST['config_dbtbl_billingpaypal']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = $_REQUEST['config_dbtbl_billingpaypal'];
+
+		if (isset($_REQUEST['config_dbtbl_billingplans']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = $_REQUEST['config_dbtbl_billingplans'];
 			
 			
 		// this should probably move to some other page at some point
@@ -222,13 +248,58 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_operators' class='form'><?php echo $l['all']['operators']?></label>
-		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATOR'] ?>" name="config_dbtbl_operators" />
+                <label for='config_dbtbl_nas' class='form'><?php echo $l['all']['nas']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADNAS'] ?>" name="config_dbtbl_nas" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_rates' class='form'><?php echo $l['all']['rates']?></label>
+                <label for='config_dbtbl_radpostauth' class='form'><?php echo $l['all']['radpostauth']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADPOSTAUTH'] ?>" name="config_dbtbl_radpostauth" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_radippool' class='form'><?php echo $l['all']['radippool']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADIPPOOL'] ?>" name="config_dbtbl_radippool" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_userinfo' class='form'><?php echo $l['all']['userinfo']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOUSERINFO'] ?>" name="config_dbtbl_userinfo" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_dictionary' class='form'><?php echo $l['all']['dictionary']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALODICTIONARY'] ?>" name="config_dbtbl_dictionary" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_realms' class='form'><?php echo $l['all']['realms']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOREALMS'] ?>" name="config_dbtbl_realms" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_proxys' class='form'><?php echo $l['all']['proxys']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOPROXYS'] ?>" name="config_dbtbl_proxys" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_billingpaypal' class='form'><?php echo $l['all']['billingpaypal']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] ?>" name="config_dbtbl_billingpaypal" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_billingplans' class='form'><?php echo $l['all']['billingplans']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] ?>" name="config_dbtbl_billingplans" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_rates' class='form'><?php echo $l['all']['billingrates']?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALORATES'] ?>" name="config_dbtbl_rates" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_operators' class='form'><?php echo $l['all']['operators']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATOR'] ?>" name="config_dbtbl_operators" />
 		</li>
 
                 <li class='fieldset'>
