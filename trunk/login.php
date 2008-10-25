@@ -49,7 +49,18 @@
 						<input name="operator_user" value="administrator" type="text" tabindex=1 />
 						<li><a href="#" >Password</a> </li>
 						<input name="operator_pass" value="" type="password" tabindex=2 />
-						<br/><br/>
+						<br/>
+						<li><a href="#" >Location</a> </li>
+						<select name="location" tabindex=3 >
+							<option value="default">Default</option>
+							<?php
+								if (isset($configValues['CONFIG_LOCATIONS']) && is_array($configValues['CONFIG_LOCATIONS'])) {
+							        	foreach ($configValues['CONFIG_LOCATIONS'] as $locations=>$val)
+							                	echo "<option value='$locations'>$locations</option>";
+								}
+							?>
+						</select>
+						<br/><br/><br/>
 						<input type="submit" value="Login" tabindex=3 />
 					</ul>
 				</form>
