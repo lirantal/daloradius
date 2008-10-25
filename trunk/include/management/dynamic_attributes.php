@@ -1,5 +1,7 @@
 <?php
 
+include('../../library/checklogin.php');
+
 /*
  * getVendorsList is set to yes when the user clicks on the Vendor select box
  * upon which the javascript code executes a call with this value which we catch
