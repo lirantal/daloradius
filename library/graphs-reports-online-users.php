@@ -20,8 +20,9 @@
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
- */
- 
+ */ 
+	include('checklogin.php');
+
 	include 'opendb.php';
 	include 'libchart/libchart.php';
 

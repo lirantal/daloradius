@@ -1,5 +1,6 @@
 <?php
 
+include('../../library/checklogin.php');
 include_once('pages_common.php');
 
 if (isset($_GET['retAttributeInfo'])) {

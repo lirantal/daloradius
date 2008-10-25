@@ -20,6 +20,7 @@
  *********************************************************************************************************
  */
 
+include('../../library/checklogin.php');
 
 /* getAjaxAutocompleteHotspots
  * returns hotspot names from the hotspot table matching the getAjaxAutocompleteHotspots value wildcad
