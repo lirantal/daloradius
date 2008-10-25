@@ -46,7 +46,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
         $ratename = $dbSocket->escapeSimple($ratename);
 
         // get rate type
-        $sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename'";
+        $sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename'";
         $res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0)
@@ -84,9 +84,9 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
 
         $sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
                 $configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) AS AcctSessionTime, ".
-                $configValues['CONFIG_DB_TBL_DALORATES'].".rateCost, SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) AS AcctInputOctets, ".
+                $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateCost, SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) AS AcctInputOctets, ".
 		" SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) AS AcctOutputOctets ".
-                " FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename') GROUP BY UserName";
+                " FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename') GROUP BY UserName";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 

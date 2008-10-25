@@ -90,7 +90,7 @@
         include 'library/opendb.php';
 
 	// get rate type 
-	$sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename'";
+	$sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename'";
 	$res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0)
@@ -131,16 +131,16 @@
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".
-		$configValues['CONFIG_DB_TBL_DALORATES'].".rateCost ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename')";
+		$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateCost ".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename')";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
 	
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".
-		$configValues['CONFIG_DB_TBL_DALORATES'].".rateCost ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALORATES'].".rateName = '$ratename')".
+		$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateCost ".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";

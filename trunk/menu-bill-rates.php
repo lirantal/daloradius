@@ -35,7 +35,7 @@
 			<?php
 				include 'library/opendb.php';
 
-				$sql = "SELECT rateName FROM ".$configValues['CONFIG_DB_TBL_DALORATES'].";";
+				$sql = "SELECT rateName FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].";";
 				$res = $dbSocket->query($sql);
 
 				while ($row = $res->fetchRow()) {

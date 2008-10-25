@@ -41,7 +41,7 @@
 		
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -54,7 +54,7 @@
 				$ratetype = "$ratetypenum/$ratetypetime";
 
 				// insert rate info
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALORATES'].
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].
 					" (id, ratename, ratetype, ratecost, ".
 					"  creationdate, creationby, updatedate, updateby) ".
 					" VALUES (0, '".$dbSocket->escapeSimple($ratename)."', '".
