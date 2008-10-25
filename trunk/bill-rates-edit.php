@@ -52,7 +52,7 @@
 
 			$ratetype = "$ratetypenum/$ratetypetime";
 
-			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALORATES']." SET ".
+			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." SET ".
 			" rateName='".$dbSocket->escapeSimple($ratename)."', ".
 			" rateType='".$dbSocket->escapeSimple($ratetype).	"', ".
 			" rateCost='".$dbSocket->escapeSimple($ratecost)."', ".
@@ -73,7 +73,7 @@
 	}
 	
 
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
