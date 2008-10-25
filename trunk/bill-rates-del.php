@@ -103,11 +103,11 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['RateInformation'] ?> </h302>
+		<h302> <?php echo $l['title']['RateInfo'] ?> </h302>
 		<br/>
 
 		<label for='ratename' class='form'><?php echo $l['all']['RateName'] ?></label>
-		<input name='ratename[]' type='text' id='ratename' value='<?php echo $name ?>' tabindex=100 />
+		<input name='ratename[]' type='text' id='ratename' value='<?php echo $ratename ?>' tabindex=100 />
 		<br/>
 
 		<br/><br/>
