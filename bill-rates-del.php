@@ -45,7 +45,7 @@
 				$allRates .= $name . ", ";
 
 				// delete all rates 
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALORATES']." WHERE rateName='".
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE rateName='".
 						$dbSocket->escapeSimple($name)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";

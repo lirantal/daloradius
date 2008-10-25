@@ -72,7 +72,7 @@
 			$configValues['CONFIG_DB_TBL_DALOOPERATOR'] = $_REQUEST['config_dbtbl_operators'];
 
 		if (isset($_REQUEST['config_dbtbl_rates']))
-			$configValues['CONFIG_DB_TBL_DALORATES'] = $_REQUEST['config_dbtbl_rates'];
+			$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = $_REQUEST['config_dbtbl_rates'];
 
 		if (isset($_REQUEST['config_dbtbl_hotspots']))
 			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = $_REQUEST['config_dbtbl_hotspots'];
@@ -294,7 +294,7 @@
 
                 <li class='fieldset'>
                 <label for='config_dbtbl_rates' class='form'><?php echo $l['all']['billingrates']?></label>
-		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALORATES'] ?>" name="config_dbtbl_rates" />
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] ?>" name="config_dbtbl_rates" />
 		</li>
 
                 <li class='fieldset'>
