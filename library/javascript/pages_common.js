@@ -330,3 +330,16 @@ function backupRollback(file) {
         return false;
 }
 
+
+
+
+/***********************************************************************
+ * genericCounter
+ * a generic counter function to always return an incrementing integer
+ * along with a string in the form of str=N
+ *
+ ***********************************************************************/
+var gCounter = 0;
+function genericCounter(str) {
+	return str+"="+gCounter++;
+}
