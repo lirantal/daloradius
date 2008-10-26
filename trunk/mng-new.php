@@ -31,7 +31,7 @@
 
 	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
 	isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
-	isset($_POST['group']) ? $group = $_POST['group'] : $group = "";
+	isset($_POST['groups']) ? $groups = $_POST['groups'] : $groups = "";
 	isset($_POST['authType']) ? $authType = $_POST['authType'] : $authType = "";
 
 	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
@@ -61,17 +61,23 @@
 	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
 
 
-	function addGroups($dbSocket, $username, $group) {
+	function addGroups($dbSocket, $username, $groups) {
 
 		global $logDebugSQL;
 		global $configValues;
 
 		// insert usergroup mapping
-		if (isset($group) && (trim($group) != "")) {
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-				" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+		if (isset($groups)) {
+
+			foreach ($groups as $group) {
+
+				if (trim($group) != "") {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+						" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+			}
 		}
 	}
 
@@ -143,7 +149,7 @@
 				case "username":
 				case "password":
 				case "passwordType":
-				case "group":
+				case "groups":
 				case "group_macaddress":
 				case "group_pincode":
 				case "macaddress":
@@ -283,7 +289,7 @@
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 					
-					addGroups($dbSocket, $username, $group);
+					addGroups($dbSocket, $username, $groups);
 					addUserInfo($dbSocket, $username);
 					addAttributes($dbSocket, $username);
 
@@ -319,7 +325,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				addGroups($dbSocket, $pincode, $group_macaddress);
+				addGroups($dbSocket, $pincode, $group_pincode);
 				addUserInfo($dbSocket, $pincode);
 				addAttributes($dbSocket, $pincode);
 
@@ -372,6 +378,9 @@
 
 <script type="text/javascript" src="library/javascript/ajax.js"></script>
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+
+
  
 <?php
 	include_once ("library/tabber/tab-layout.php");
@@ -449,19 +458,29 @@
 		</select>
 		</li>
 
+
 		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php   
 			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups","group");
+			populate_groups("Select Groups","groups[]");
 		?>
+
+		<a class='tablenovisit' href='#'
+			onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter'));">Add</a>
+
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+
+		<div id='divContainerGroups'>
+		</div>
+
 
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
 			<?php echo $l['Tooltip']['groupTooltip'] ?>
 		</div>
 		</li>
+
 
 		<li class='fieldset'>
 		<br/>
