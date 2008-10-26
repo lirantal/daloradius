@@ -20,8 +20,8 @@ function populate_groups($defaultOption = "Select Group",$elementName = "", $css
 
         // Grabing the group lists from usergroup table
 
-        $sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].")
-UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
+        $sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].")".
+			"UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
