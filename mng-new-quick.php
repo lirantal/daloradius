@@ -36,29 +36,29 @@
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
-		$username = $_REQUEST['username'];
-		$password = $_REQUEST['password'];
-		$passwordType = $_REQUEST['passwordType'];
-		$group = $_REQUEST['group'];
-		$maxallsession = $_REQUEST['maxallsession'];
-		$expiration = $_REQUEST['expiration'];
-		$sessiontimeout = $_REQUEST['sessiontimeout'];
-		$idletimeout = $_REQUEST['idletimeout'];
-		$simultaneoususe = $_REQUEST['simultaneoususe'];
+		$username = $_POST['username'];
+		$password = $_POST['password'];
+		$passwordType = $_POST['passwordType'];
+		$groups = $_POST['groups'];
+		$maxallsession = $_POST['maxallsession'];
+		$expiration = $_POST['expiration'];
+		$sessiontimeout = $_POST['sessiontimeout'];
+		$idletimeout = $_POST['idletimeout'];
+		$simultaneoususe = $_POST['simultaneoususe'];
 
-		isset($_REQUEST['firstname']) ? $firstname = $_REQUEST['firstname'] : $firstname = "";
-		isset($_REQUEST['lastname']) ? $lastname = $_REQUEST['lastname'] : $lastname = " ";
-		isset($_REQUEST['email']) ? $email = $_REQUEST['email'] : $email = "";
-		isset($_REQUEST['department']) ? $department = $_REQUEST['department'] : $department = "";
-		isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
-		isset($_REQUEST['workphone']) ? $workphone = $_REQUEST['workphone'] : $workphone =  "";
-		isset($_REQUEST['homephone']) ? $homephone = $_REQUEST['homephone'] : $homephone = "";
-		isset($_REQUEST['mobilephone']) ? $mobilephone = $_REQUEST['mobilephone'] : $mobilephone = "";
+		isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
+		isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = " ";
+		isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
+		isset($_POST['department']) ? $department = $_POST['department'] : $department = "";
+		isset($_POST['company']) ? $company = $_POST['company'] : $company = "";
+		isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone =  "";
+		isset($_POST['homephone']) ? $homephone = $_POST['homephone'] : $homephone = "";
+		isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
 	        isset($_POST['address']) ? $address = $_POST['address'] : $address = "";
 	        isset($_POST['city']) ? $city = $_POST['city'] : $city = "";
 	        isset($_POST['state']) ? $state = $_POST['state'] : $state = "";
 	        isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
-		isset($_REQUEST['notes']) ? $notes = $_REQUEST['notes'] : $notes = "";
+		isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 		isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
 		include 'library/opendb.php';
 		
@@ -134,11 +134,17 @@
 					$logDebugSQL .= $sql . "\n";
 				}
 
-				if (isset($group)) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (Username,GroupName,priority) ".
-							" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."', '0')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+				if (isset($groups)) {
+
+		                        foreach ($groups as $group) {
+
+		                                if (trim($group) != "") {
+		                                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+		                                                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
+		                                        $res = $dbSocket->query($sql);
+		                                        $logDebugSQL .= $sql . "\n";
+		                                }
+		                        }
 				}
 
 				//insert userinfo
@@ -218,6 +224,9 @@
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
 
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
@@ -295,9 +304,17 @@
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php   
 			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups","group");
+			populate_groups("Select Groups","groups[]");
 		?>
+
+                <a class='tablenovisit' href='#'
+                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter'));">Add</a>
+
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+
+                <div id='divContainerGroups'>
+                </div>
+
 
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
