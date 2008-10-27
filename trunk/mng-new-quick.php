@@ -167,9 +167,9 @@
 							$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
 							$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
 							$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-							$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
-							$dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
-							$dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
+							$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($address)."', '".
+							$dbSocket->escapeSimple($city)."', '".$dbSocket->escapeSimple($state)."', '".
+							$dbSocket->escapeSimple($zip)."', '".$dbSocket->escapeSimple($notes)."', '".
 							$dbSocket->escapeSimple($ui_changeuserinfo).
 							"', '$currDate', '$currBy', NULL, NULL)";
 					$res = $dbSocket->query($sql);
