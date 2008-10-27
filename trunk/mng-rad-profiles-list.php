@@ -75,12 +75,12 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
 		" AS Users FROM ".
 		$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
-		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
-		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName ".
+		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName ".
 		" UNION ".
 		" SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) FROM ".
 		$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
-		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
 		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName;";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
@@ -89,12 +89,12 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
 		" AS Users FROM ".
 		$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
-		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
-		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName ".
+		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName ".
 		" UNION ".
 		" SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) FROM ".
 		$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
-		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName=".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
 		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName ".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
