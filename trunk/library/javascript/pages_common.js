@@ -23,57 +23,57 @@ function changeInteger(dstObj,action) {
 function toggleUserAuth() {
 
 	//disable the mac auth
-	document.newuser.macaddress.disabled=true;
-	document.newuser.group_macaddress.disabled=true;
+	document.newuser.elements['macaddress'].disabled=true;
+	document.newuser.elements['group_macaddress[]'].disabled=true;
 
 	// disable pincode auth
-	document.newuser.pincode.disabled=true;
-	document.newuser.group_pincode.disabled=true;
+	document.newuser.elements['pincode'].disabled=true;
+	document.newuser.elements['group_pincode[]'].disabled=true;
 
 	//enable the user auth
-	document.newuser.username.disabled=false;
-	document.newuser.password.disabled=false;
-	document.newuser.passwordType.disabled=false;
-	document.newuser.group.disabled=false;
-	document.newuser.usergroup.disabled=false;
+	document.newuser.elements['username'].disabled=false;
+	document.newuser.elements['password'].disabled=false;
+	document.newuser.elements['passwordType'].disabled=false;
+	document.newuser.elements['groups[]'].disabled=false;
+	document.newuser.elements['usergroup'].disabled=false;
 
 }
 
 function togglePinCode() {
 
 	// disable pincode auth
-	document.newuser.pincode.disabled=false;
-	document.newuser.group_pincode.disabled=false;
+	document.newuser.elements['pincode'].disabled=false;
+	document.newuser.elements['group_pincode[]'].disabled=false;
 
 	//disable the mac auth
-	document.newuser.macaddress.disabled=true;
-	document.newuser.group_macaddress.disabled=true;
+	document.newuser.elements['macaddress'].disabled=true;
+	document.newuser.elements['group_macaddress[]'].disabled=true;
 
 	// disable the user auth
-	document.newuser.username.disabled=true;
-	document.newuser.password.disabled=true;
-	document.newuser.passwordType.disabled=true;
-	document.newuser.group.disabled=true;
-	document.newuser.usergroup.disabled=true;
+	document.newuser.elements['username'].disabled=true;
+	document.newuser.elements['password'].disabled=true;
+	document.newuser.elements['passwordType'].disabled=true;
+	document.newuser.elements['groups[]'].disabled=true;
+	document.newuser.elements['usergroup'].disabled=true;
 
 }
 
 function toggleMacAuth(state) {
 
 	// enable the mac auth
-	document.newuser.macaddress.disabled=false;
-	document.newuser.group_macaddress.disabled=false;
+	document.newuser.elements['macaddress'].disabled=false;
+	document.newuser.elements['group_macaddress[]'].disabled=false;
 
 	// disable the user auth
-	document.newuser.username.disabled=true;
-	document.newuser.password.disabled=true;
-	document.newuser.passwordType.disabled=true;
-	document.newuser.group.disabled=true;
-	document.newuser.usergroup.disabled=true;
+	document.newuser.elements['username'].disabled=true;
+	document.newuser.elements['password'].disabled=true;
+	document.newuser.elements['passwordType'].disabled=true;
+	document.newuser.elements['groups[]'].disabled=true;
+	document.newuser.elements['usergroup'].disabled=true;
 
 	// disable pincode auth
-	document.newuser.pincode.disabled=true;
-	document.newuser.group_pincode.disabled=true;
+	document.newuser.elements['pincode'].disabled=true;
+	document.newuser.elements['group_pincode[]'].disabled=true;
 
 }
 

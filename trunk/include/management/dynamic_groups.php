@@ -36,6 +36,9 @@ if(isset($_GET['getGroups'])) {
 	if (isset($_GET['divCounter']))
 		$divCounter = $_GET['divCounter'];
 
+	if (isset($_GET['elemName']))
+		$elemName = $_GET['elemName'];
+
 
 	include '../../library/opendb.php';
 
@@ -48,7 +51,7 @@ if(isset($_GET['getGroups'])) {
 		var divContainer = document.getElementById('$divContainer');
 		var groups = ''+
 	                '<label for=\'group\' class=\'form\'>Group</label>'+
-	                '        <select class=\'form\' name=\'groups[]\' >'+
+	                '        <select class=\'form\' name=\'$elemName\' >'+
 	");
 			
 
@@ -63,7 +66,7 @@ if(isset($_GET['getGroups'])) {
         printqn("
 	        '        </select>'+
                 '&nbsp; <a class=\"tablenovisit\" href=\"#\"'+
-                '        onClick=\"javascript:ajaxGeneric(\'include/management/dynamic_groups.php\',\'delGroups\',\'divContainerGroups\',\'divCounter=$divCounter\');\">Del</a>';
+                '        onClick=\"javascript:ajaxGeneric(\'include/management/dynamic_groups.php\',\'delGroups\',\'$divContainer\',\'divCounter=$divCounter\');\">Del</a>';
 
 		var childGroup = document.createElement('div');
 		childGroup.setAttribute('id','divContainerGroups$divCounter');

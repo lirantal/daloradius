@@ -467,7 +467,7 @@
 		?>
 
 		<a class='tablenovisit' href='#'
-			onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter'));">Add</a>
+			onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter'+'&elemName=groups[]'));">Add</a>
 
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
 
@@ -520,9 +520,16 @@
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php   
 			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups", "group_macaddress", "form", "disabled");
+			populate_groups("Select Groups", "group_macaddress[]", "form", "disabled");
 		?>
+
+                <a class='tablenovisit' href='#'
+                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroupsMacAuth',genericCounter('divCounter'+'&elemName=group_macaddress[]'));">Add</a>
+
+		<div id='divContainerGroupsMacAuth'>
+		</div>
 		</li>
+
 
 		<li class='fieldset'>
 		<br/>
@@ -563,8 +570,14 @@
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php   
 			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups", "group_pincode", "form", "disabled");
+			populate_groups("Select Groups", "group_pincode[]", "form", "disabled");
 		?>
+
+                <a class='tablenovisit' href='#'
+                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroupsPinAuth',genericCounter('divCounter')+'&elemName=group_pincode[]');">Add</a>
+
+		<div id='divContainerGroupsPinAuth'>
+		</div>
 		</li>
 
 
