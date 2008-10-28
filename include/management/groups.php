@@ -28,6 +28,9 @@
                 <h302> Groups Assignment </h302>
 		<br/>
 
+	        <h301> Associated Groups </h301>
+	        <br/>
+
 		<ul>
 
 <?php
@@ -78,17 +81,5 @@
 
 	} // if-else
 ?>
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-		</li>
-
-		</ul>
-
-	</fieldset>
-	<br/>
 
 

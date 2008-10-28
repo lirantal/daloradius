@@ -467,7 +467,7 @@
 		?>
 
 		<a class='tablenovisit' href='#'
-			onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter'+'&elemName=groups[]'));">Add</a>
+			onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter')+'&elemName=groups[]');">Add</a>
 
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
 
@@ -524,7 +524,7 @@
 		?>
 
                 <a class='tablenovisit' href='#'
-                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroupsMacAuth',genericCounter('divCounter'+'&elemName=group_macaddress[]'));">Add</a>
+                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroupsMacAuth',genericCounter('divCounter')+'&elemName=group_macaddress[]');">Add</a>
 
 		<div id='divContainerGroupsMacAuth'>
 		</div>
