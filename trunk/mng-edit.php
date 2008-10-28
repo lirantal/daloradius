@@ -38,6 +38,7 @@
 		$username = $_REQUEST['username'];
 		$password = "";						// we initialize the $password variable to contain nothing
 
+		isset ($_REQUEST['newgroups']) ? $newgroups = $_REQUEST['newgroups'] : $newgroups = "";
 		isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
 		isset ($_REQUEST['groups']) ? $groups = $_REQUEST['groups'] : $groups = "";
 		isset ($_REQUEST['groups_priority']) ? $groups_priority = $_REQUEST['groups_priority'] : $groups_priority = "";
@@ -106,7 +107,7 @@
 				$logDebugSQL .= $sql . "\n";
 			}
 			
-			 // insert usergroup mapping
+			 // update usergroup mapping (existing)
 			 if ($groups) {
 
 				$grpcnt = 0;			// group counter
@@ -129,6 +130,22 @@
 					$grpcnt++;		// we increment group index count so we can access the group priority array
 				}
 			}
+
+
+			// insert usergroup mapping (new groups)
+	                if (isset($newgroups)) {
+
+	                        foreach ($newgroups as $newgroup) {
+
+               	                 if (trim($newgroup) != "") {
+               	                         $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+                	                                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($newgroup)."',0) ";
+         	                      	         $res = $dbSocket->query($sql);
+                        	                $logDebugSQL .= $sql . "\n";
+                	                }
+        	                }
+	                }
+
 
 			foreach( $_POST as $element=>$field ) { 
 
@@ -632,12 +649,55 @@
 
      <div class="tabbertab" title="<?php echo $l['title']['Groups']; ?>">
 
-	
 <?php
         include 'library/opendb.php';
         include_once('include/management/groups.php');
         include 'library/closedb.php';	
 ?>
+
+	</ul>
+
+	<br/>
+        <h301> Assign New Groups </h301>
+        <br/>
+	<ul>
+
+        <li class='fieldset'>
+
+                <li class='fieldset'>
+                <label for='group' class='form'><?php echo $l['all']['Group']?></label>
+                <?php
+                        include_once 'include/management/populate_selectbox.php';
+                        populate_groups("Select Groups","newgroups[]");
+                ?>
+
+                <a class='tablenovisit' href='#'
+                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter')+'&elemName=newgroups[]');">Add</a>
+
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+
+                <div id='divContainerGroups'>
+                </div>
+
+
+                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                </div>
+                </li>
+
+
+
+	<br/><br/>
+
+        <br/>
+        <hr><br/>
+        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        </li>
+
+        </ul>
+
+        </fieldset>
         <br/>
 
      </div>
