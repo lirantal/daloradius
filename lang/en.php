@@ -96,6 +96,7 @@ $l['all']['PacketType'] = "Packet Type";
 $l['all']['HotSpot'] = "HotSpot";
 $l['all']['HotSpots'] = "HotSpots";
 $l['all']['HotSpotName'] = "Hotspot Name";
+$l['all']['Name'] = "Name";
 $l['all']['Username'] = "Username";
 $l['all']['Password'] = "Password";
 $l['all']['PasswordType'] = "Password Type";
