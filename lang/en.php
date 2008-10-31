@@ -222,6 +222,30 @@ $l['all']['proxys'] = "proxys";
 $l['all']['billingpaypal'] = "billing paypal";
 $l['all']['billingplans'] = "billing plans";
 
+$l['all']['PaymentDate'] = "Payment Date";
+$l['all']['PaymentStatus'] = "Payment Status";
+$l['all']['FirstName'] = "First name";
+$l['all']['LastName'] = "Last name";
+$l['all']['PayerStatus'] = "Payer Status";
+$l['all']['PaymentAddressStatus'] = "Payment Address Status";
+$l['all']['PayerEmail'] = "Payer Email";
+$l['all']['TxnId'] = "Tranasction Id";
+$l['all']['PlanName'] = "PlanName";
+$l['all']['PlanId'] = "PlanId";
+$l['all']['Quantity'] = "Quantity";
+$l['all']['ReceiverEmail'] = "Receiver Email";
+$l['all']['Business'] = "Business";
+$l['all']['Tax'] = "Tax";
+$l['all']['Cost'] = "Cost";
+$l['all']['TransactionFee'] = "Transaction Fee";
+$l['all']['PaymentCurrency'] = "Payment Currency";
+$l['all']['AddressRecipient'] = "Address Recipient";
+$l['all']['Street'] = "Street";
+$l['all']['Country'] = "Country";
+$l['all']['CountryCode'] = "Country Code";
+$l['all']['City'] = "City";
+$l['all']['State'] = "State";
+$l['all']['Zip'] = "Zip";
 
 $l['all']['BusinessName'] = "Business Name";
 $l['all']['BusinessPhone'] = "Business Phone";
@@ -664,11 +688,16 @@ $l['Intro']['acctmaintenancecleanup.php'] = "Cleanup Stale-connections";
 $l['Intro']['acctmaintenancedelete.php'] = "Delete Accounting Records";
 
 $l['Intro']['billmain.php'] = "Billing Page";
+$l['Intro']['ratesmain.php'] = "Rates Billing Page";
 $l['Intro']['billratesdate.php'] = "Rates Prepaid Accounting";
 $l['Intro']['billratesdel.php'] = "Delete Rate entry";
 $l['Intro']['billratesedit.php'] = "Edit Rate Details";
 $l['Intro']['billrateslist.php'] = "Rates Table";
 $l['Intro']['billratesnew.php'] = "New Rate entry";
+
+$l['Intro']['paypalmain.php'] = "PayPal Transactions Page";
+$l['Intro']['billpaypaltransactions.php'] = "PayPal Transactions Page";
+
 
 $l['Intro']['giseditmap.php'] = "Edit MAP Mode";
 $l['Intro']['gismain.php'] = "GIS Mapping";
@@ -788,6 +817,8 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 
 
 $l['helpPage']['login'] = "";
+
+$l['helpPage']['billpaypaltransactions'] = "List all PayPal transactions";
 
 $l['helpPage']['billrateslist'] = "";
 $l['helpPage']['billratesnew'] = "";
