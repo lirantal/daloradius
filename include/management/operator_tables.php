@@ -89,6 +89,7 @@ $arrayPagesAvailable = array(
 	 'bill_rates_new' => 'Billing',
 	 'bill_rates_edit' => 'Billing',
 	 'bill_rates_list' => 'Billing',
+	 'bill_paypal_transactions' => 'Billing',
 	 'gis_editmap' => 'GeoLocation',
 	 'gis_viewmap' => 'GeoLocation',
 	 'graphs_alltime_logins' => 'Graphs',
