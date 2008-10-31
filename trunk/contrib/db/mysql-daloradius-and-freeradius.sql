@@ -181,6 +181,7 @@ CREATE TABLE `operators` (
   `bill_rates_new` varchar(32) default NULL,
   `bill_rates_edit` varchar(32) default NULL,
   `bill_rates_list` varchar(32) default NULL,
+  `bill_paypal_transactions` varchar(32) default NULL,
   `gis_editmap` varchar(32) default NULL,
   `gis_viewmap` varchar(32) default NULL,
   `graphs_alltime_logins` varchar(32) default NULL,

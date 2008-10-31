@@ -40,3 +40,5 @@ CREATE TABLE billing_rates (
 );
 
 
+ALTER TABLE operators ADD bill_paypal_transactions VARCHAR(32) AFTER bill_rates_list;
+UPDATE operators SET bill_paypal_transactions='yes' WHERE username='administrator';
