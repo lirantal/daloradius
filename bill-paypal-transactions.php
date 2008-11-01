@@ -171,7 +171,95 @@
 	// building the dybamic table list fields
 	echo "<thread> <tr>";
 	foreach ($sqlfields as $value) {
-		echo "<th scope='col'> $value   </th>";
+		switch($value) {
+
+		case "id":
+			$title = $l['all']['ID'];
+			break;
+		case "username":
+			$title = $l['all']['Username'];
+			break;
+		case "password":
+			$title = $l['all']['Password'];
+			break;
+		case "txnId":
+			$title = $l['all']['TxnId'];
+			break;
+		case "planName":
+			$title = $l['all']['PlanName'];
+			break;
+		case "planId":
+			$title = $l['all']['PlanId'];
+			break;
+		case "quantity":
+			$title = $l['all']['Quantity'];
+			break;
+		case "receiver_email":
+			$title = $l['all']['ReceiverEmail'];
+			break;
+		case "business":
+			$title = $l['all']['Business'];
+			break;
+		case "tax":
+			$title = $l['all']['Tax'];
+			break;
+		case "mc_gross":
+			$title = $l['all']['Cost'];
+			break;
+		case "mc_fee":
+			$title = $l['all']['TransactionFee'];
+			break;
+		case "mc_currency":
+			$title = $l['all']['PaymentCurrency'];
+			break;
+		case "first_name":
+			$title = $l['all']['FirstName'];
+			break;
+		case "last_name":
+			$title = $l['all']['LastName'];
+			break;
+		case "payer_email":
+			$title = $l['all']['PayerEmail'];
+			break;
+		case "address_name":
+			$title = $l['all']['AddressRecipient'];
+			break;
+		case "address_street":
+			$title = $l['all']['Street'];
+			break;
+		case "address_country":
+			$title = $l['all']['Country'];
+			break;
+		case "address_country_code":
+			$title = $l['all']['CountryCode'];
+			break;
+		case "address_city":
+			$title = $l['all']['City'];
+			break;
+		case "address_state":
+			$title = $l['all']['State'];
+			break;
+		case "address_zip":
+			$title = $l['all']['Zip'];
+			break;
+		case "payment_date":
+			$title = $l['all']['PaymentDate'];
+			break;
+		case "payment_status":
+			$title = $l['all']['PaymentStatus'];
+			break;
+		case "payer_status":
+			$title = $l['all']['PayerStatus'];
+			break;
+		case "payment_address_status":
+			$title = $l['all']['PaymentAddressStatus'];
+			break;
+		default:
+			$title = $value;
+			break;
+		}
+
+		echo "<th scope='col'> $title   </th>";
 	} //foreach $sqlfields
 	echo "</tr> </thread>";
 
