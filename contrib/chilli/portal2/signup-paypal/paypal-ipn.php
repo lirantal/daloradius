@@ -194,6 +194,8 @@ function saveToDb() {
 	$address_zip = $dbSocket->escapeSimple($_POST['address_zip']);
 	$payment_date = $dbSocket->escapeSimple($_POST['payment_date']);
 	$payment_status = $dbSocket->escapeSimple($_POST['payment_status']);
+        $payment_address_status = $dbSocket->escapeSimple($_POST['payment_address_status']);
+        $payer_status = $dbSocket->escapeSimple($_POST['payer_status']);
 
 	$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." SET ".
 		" planName='$planName',".
@@ -216,9 +218,10 @@ function saveToDb() {
 		" address_state='$address_state',".
 		" address_zip='$address_zip',".
 		" payment_date='$payment_date',".
-		" payment_status='$payment_status' ".
+                " payment_status='$payment_status', ".
+                " payment_address_status='$payment_address_status', ".
+                " payer_status='$payer_status' ".
 		" WHERE txnId='$txnId'";
-
 	$res = $dbSocket->query($sql);
 
 	include('library/closedb.php');
