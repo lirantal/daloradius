@@ -109,7 +109,7 @@
 
                 <br/><br/><br/>
                 <h109><?php echo $l['button']['AccountingFieldsinQuery']; ?></h109><br/>
-                <input type="checkbox" name="sqlfields[]" value="id" checked /> <h109> <?php echo $l['all']['ID']; ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="id" /> <h109> <?php echo $l['all']['ID']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo $l['all']['Username']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="password"  /> <h109><?php echo $l['all']['Password']; ?></h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="txnId"  /> <h109><?php echo $l['all']['TxnId']; ?> </h109> <br/>
