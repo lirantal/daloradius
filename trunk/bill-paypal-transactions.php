@@ -87,11 +87,15 @@
 		$payment_address_status = $dbSocket->escapeSimple($payment_address_status);
 		$payer_status = $dbSocket->escapeSimple($payer_status);
 		$payment_status = $dbSocket->escapeSimple($payment_status);
-		//$operator = $dbSocket->escapeSimple($operator);
-		//$value = $dbSocket->escapeSimple($value);
 		$startdate = $dbSocket->escapeSimple($startdate);
 		$enddate = $dbSocket->escapeSimple($enddate);
 
+	        include_once('include/management/userBilling.php');
+	        userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, 1);
+									                         // draw the billing rates summary table
+
+
+	        include 'library/opendb.php';
 		// since we need to span through pages, which we do using GET queries I can't rely on this page
 		// to be processed through POST but rather using GET only (with the current design anyway).
 		// For this reason, I need to build the GET query which I will later use in the page number's links

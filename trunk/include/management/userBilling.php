@@ -202,3 +202,178 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
 
 }
 
+
+
+/*
+ *********************************************************************************************************
+ * userBillingPayPalSummary
+ * $startdate		starting date, first accounting session
+ * $enddate		ending date, last accounting session
+ * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
+ * 
+ * returns user connection information: uploads, download, session time, total billed, etc...
+ *
+ *********************************************************************************************************
+ */
+function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, $drawTable) {
+
+	include_once('include/management/pages_common.php');
+	include 'library/opendb.php';
+
+        $startdate = $dbSocket->escapeSimple($startdate);
+        $enddate = $dbSocket->escapeSimple($enddate);
+        $payer_email = $dbSocket->escapeSimple($payer_email);
+        $payment_address_status = $dbSocket->escapeSimple($payment_address_status);
+        $payer_status = $dbSocket->escapeSimple($payer_status);
+        $payment_status = $dbSocket->escapeSimple($payment_status);
+
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'].".Username AS Username, payer_email, planName, planId, SUM(mc_gross) AS mc_gross, SUM(mc_fee) ".
+		" AS mc_fee, SUM(tax) AS tax, mc_currency, SUM(AcctSessionTime) AS AcctSessionTime, SUM(AcctInputOctets) AS AcctInputOctets, ".
+		" SUM(AcctOutputOctets) AS AcctOutputOctets ".
+		" FROM ".
+		$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON ".
+		$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'].".Username=".$configValues['CONFIG_DB_TBL_RADACCT'].".Username ".
+		" WHERE ".
+	        " (payer_email LIKE '$payer_email') AND ".
+                " (payment_address_status = '$payment_address_status') AND ".
+                " (payer_status = '$payer_status') AND ".
+                " (payment_status = '$payment_status') AND ".
+                " (payment_date>'$startdate' AND payment_date<'$enddate')".
+		" GROUP BY Username";
+        $res = $dbSocket->query($sql);
+
+	if ($res->numRows() == 0)
+		return;
+
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+	$planTotalCost = $row['mc_gross'];
+	$planTotalTax = $row['tax'];
+	$planTotalFee = $row['mc_fee'];
+	$userUpload = toxbyte($row['AcctInputOctets']);
+	$userDownload = toxbyte($row['AcctOutputOctets']);
+	$userOnlineTime = time2str($row['AcctSessionTime']);
+	$sessionTime = $row['AcctSessionTime'];
+	$planCurrency = $row['mc_currency'];
+	$planName = $row['planName'];
+	$planId = $row['planId'];
+	$payer_email = $row['payer_email'];
+	$username = $row['Username'];
+
+	$grossGain = ($planTotalCost-($planTotalTax+$planTotalFee));
+
+        include 'library/closedb.php';
+
+        if ($drawTable == 1) {
+
+                echo "<table border='0' class='table1'>";
+                echo "
+        		<thead>
+        			<tr>
+        	                <th colspan='10' align='left'> 
+        				<a class=\"table\" href=\"javascript:toggleShowDiv('divBillingPayPalSummary')\">Billing Summary</a>
+        	                </th>
+        	                </tr>
+        		</thead>
+        		</table>
+        	";
+        
+                echo "
+                        <div id='divBillingPayPalSummary' style='display:none;visibility:visible'>
+               		<table border='0' class='table1'>
+        		<thread>
+
+                        <tr>        
+                        <th scope='col' align='right'>
+                        Username
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $username (email: $payer_email)
+                        </th>
+                        </tr>
+
+                        <tr>
+                        <th scope='col' align='right'>
+                        Billing for period of
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $startdate until $enddate (inclusive)
+                        </th>
+                        </tr>
+
+                        <tr>
+                        <th scope='col' align='right'>
+                        Online Time
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $userOnlineTime
+                        </th>
+                        </tr>
+
+                        <tr>
+                        <th scope='col' align='right'>
+                        User Upload
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $userUpload
+                        </th>
+                        </tr>
+
+
+                        <tr>
+                        <th scope='col' align='right'>
+                        User Download
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $userDownload
+                        </th>
+                        </tr>
+
+
+                        <tr>
+                        <th scope='col' align='right'>
+                        Plan name
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $planName (planId: $planId)
+                        </th>
+                        </tr>
+
+
+                        <tr>
+                        <th scope='col' align='right'>
+                        Total Plans Cost <br/> Total Transaction Fees <br/> Total Transaction Taxs
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $planTotalCost <br/> $planTotalFee <br/> $planTotalTax
+                        </th>
+                        </tr>
+
+
+                        <tr>
+                        <th scope='col' align='right'>
+                        Gross Gain
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $grossGain $planCurrency
+                        </th>
+                        </tr>
+
+                        </table>
+
+        		</div>
+        	";
+
+	}		
+
+
+}
+
