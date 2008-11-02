@@ -32,9 +32,6 @@
 <head>
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 </head>
  
@@ -71,15 +68,6 @@
 
 </div>
 </div>
-
-
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
-</script>
 
 </body>
 </html>
