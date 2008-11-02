@@ -262,6 +262,9 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
+$l['Tooltip']['Username'] = "Type the Username";
+$l['Tooltip']['UsernameWildcard'] = "Hint: you may use the char * or % to specify a wildcard";
+
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";
 
