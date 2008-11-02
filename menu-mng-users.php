@@ -1,3 +1,7 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+
 <body>
 <?php
     include_once("lang/main.php");
@@ -84,3 +88,12 @@
 	              </script>";
 	} 
 ?>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
+
