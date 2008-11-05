@@ -22,6 +22,33 @@
 
 include('../../library/checklogin.php');
 
+
+/* getAjaxAutocompletePlans
+ * returns billing plan names from the billing_plans table matching the getAjaxAutocompleteBillingPlans value wildcad
+ */
+if(isset($_GET['getAjaxAutocompleteBillingPlans'])) {
+
+        $getAjaxAutocompleteBillingPlans = $_GET['getAjaxAutocompleteBillingPlans'];
+
+	if ( (isset($getAjaxAutocompleteBillingPlans)) && ($getAjaxAutocompleteBillingPlans) ) {
+
+	        include '../../library/opendb.php';
+
+	        $sql = "SELECT distinct(planName) as planName FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+			" WHERE planName LIKE '$getAjaxAutocompleteBillingPlans%' ORDER BY planName ASC";
+	        $res = $dbSocket->query($sql);
+
+	        while($row = $res->fetchRow()) {
+	                echo "$row[0]###$row[0]|";
+	        }
+
+	        include '../../library/closedb.php';
+	}
+
+}
+
+
+
 /* getAjaxAutocompleteHotspots
  * returns hotspot names from the hotspot table matching the getAjaxAutocompleteHotspots value wildcad
  */

@@ -42,3 +42,15 @@ CREATE TABLE billing_rates (
 
 ALTER TABLE operators ADD bill_paypal_transactions VARCHAR(32) AFTER bill_rates_list;
 UPDATE operators SET bill_paypal_transactions='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD bill_plans_list VARCHAR(32) AFTER bill_paypal_transactions;
+UPDATE operators SET bill_plans_list='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD bill_plans_new VARCHAR(32) AFTER bill_plans_list;
+UPDATE operators SET bill_plans_new='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD bill_plans_edit VARCHAR(32) AFTER bill_plans_new;
+UPDATE operators SET bill_plans_edit='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD bill_plans_del VARCHAR(32) AFTER bill_plans_edit;
+UPDATE operators SET bill_plans_del='yes' WHERE username='administrator';

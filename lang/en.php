@@ -230,8 +230,23 @@ $l['all']['PayerStatus'] = "Payer Status";
 $l['all']['PaymentAddressStatus'] = "Payment Address Status";
 $l['all']['PayerEmail'] = "Payer Email";
 $l['all']['TxnId'] = "Tranasction Id";
-$l['all']['PlanName'] = "PlanName";
-$l['all']['PlanId'] = "PlanId";
+$l['all']['PlanTimeType'] = "Plan Time Type";
+$l['all']['PlanTimeBank'] = "Plan Time Bank";
+$l['all']['PlanBandwidthUp'] = "Plan Bandwidth Up";
+$l['all']['PlanBandwidthDown'] = "Plan Bandwidth Down";
+$l['all']['PlanTrafficTotal'] = "Plan Traffic Total";
+$l['all']['PlanTrafficDown'] = "Plan Traffic Down";
+$l['all']['PlanTrafficUp'] = "Plan Traffic Up";
+$l['all']['PlanRecurring'] = "Plan Recurring";
+$l['all']['PlanRecurringPeriod'] = "Plan Recurring Period";
+$l['all']['PlanCost'] = "Plan Cost";
+$l['all']['PlanSetupCost'] = "Plan Setup Cost";
+$l['all']['PlanTax'] = "Plan Tax";
+$l['all']['PlanCurrency'] = "Plan Currency";
+$l['all']['PlanGroup'] = "Plan Group";
+$l['all']['PlanType'] = "Plan Type";
+$l['all']['PlanName'] = "Plan Name";
+$l['all']['PlanId'] = "Plan Id";
 $l['all']['Quantity'] = "Quantity";
 $l['all']['ReceiverEmail'] = "Receiver Email";
 $l['all']['Business'] = "Business";
@@ -274,6 +289,25 @@ $l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br/>
 					the operation of the rate";
 $l['Tooltip']['rateCostTooltip'] = "The rate cost amount";
 
+$l['Tooltip']['planNameTooltip'] = "The Plan's name. This is<br/>
+					a friendly name describing the
+					characeristics of the plan";
+$l['Tooltip']['planIdTooltip'] = "";
+$l['Tooltip']['planTimeTypeTooltip'] = "";
+$l['Tooltip']['planTimeBankTooltip'] = "";
+$l['Tooltip']['planBandwidthUpTooltip'] = "";
+$l['Tooltip']['planBandwidthDownTooltip'] = "";
+$l['Tooltip']['planTrafficTotalTooltip'] = "";
+$l['Tooltip']['planTrafficDownTooltip'] = "";
+$l['Tooltip']['planTrafficUpTooltip'] = "";
+
+$l['Tooltip']['planRecurringTooltip'] = "";
+$l['Tooltip']['planRecurringPeriodTooltip'] = "";
+$l['Tooltip']['planCostTooltip'] = "";
+$l['Tooltip']['planSetupCostTooltip'] = "";
+$l['Tooltip']['planTaxTooltip'] = "";
+$l['Tooltip']['planCurrencyTooltip'] = "";
+$l['Tooltip']['planGroupTooltip'] = "";
 
 $l['Tooltip']['EditIPPool'] = "Edit IP-Pool";
 $l['Tooltip']['RemoveIPPool'] = "Remove IP-Pool";
@@ -417,6 +451,11 @@ $l['button']['NewRate'] = "New Rate";
 $l['button']['EditRate'] = "Edit Rate";
 $l['button']['RemoveRate'] = "Remove Rate";
 
+$l['button']['ListPlans'] = "List Plans";
+$l['button']['NewPlan'] = "New Plan";
+$l['button']['EditPlan'] = "Edit Plan";
+$l['button']['RemovePlan'] = "Remove Plan";
+
 $l['button']['ListRealms'] = "List Realms";
 $l['button']['NewRealm'] = "New Realm";
 $l['button']['EditRealm'] = "Edit Realm";
@@ -550,6 +589,8 @@ $l['button']['ProcessQuery'] = "Process Query";
  ************************************************************************************/
 
 $l['title']['RateInfo'] = "Rate Information";
+$l['title']['PlanInfo'] = "Plan Information";
+$l['title']['PlanRemoval'] = "Plan Removal";
 
 $l['title']['Backups'] = "Backups";
 $l['title']['FreeRADIUSTables'] = "FreeRADIUS Tables";
@@ -701,6 +742,12 @@ $l['Intro']['billratesnew.php'] = "New Rate entry";
 $l['Intro']['paypalmain.php'] = "PayPal Transactions Page";
 $l['Intro']['billpaypaltransactions.php'] = "PayPal Transactions Page";
 
+$l['Intro']['billplans.php'] = "Billing Plans Page";
+$l['Intro']['billplansdel.php'] = "Delete Plan entry";
+$l['Intro']['billplansedit.php'] = "Edit Plan Details";
+$l['Intro']['billplanslist.php'] = "Plans Table";
+$l['Intro']['billplansnew.php'] = "New Plan entry";
+
 
 $l['Intro']['giseditmap.php'] = "Edit MAP Mode";
 $l['Intro']['gismain.php'] = "GIS Mapping";
@@ -822,6 +869,11 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 $l['helpPage']['login'] = "";
 
 $l['helpPage']['billpaypaltransactions'] = "List all PayPal transactions";
+
+$l['helpPage']['billplanslist'] = "";
+$l['helpPage']['billplansnew'] = "";
+$l['helpPage']['billplansedit'] = "";
+$l['helpPage']['billplansdel'] = "";
 
 $l['helpPage']['billrateslist'] = "";
 $l['helpPage']['billratesnew'] = "";
