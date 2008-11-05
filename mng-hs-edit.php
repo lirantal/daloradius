@@ -84,7 +84,7 @@
 			$logDebugSQL .= $sql . "\n";
 			
 			$successMsg = "Updated attributes for: <b> $name </b>";
-			$logAction .= "Successfully updates attributes for hotspot [$name] on page: ";
+			$logAction .= "Successfully updated attributes for hotspot [$name] on page: ";
 			
 		} else {
 			$failureMsg = "no hotspot name was entered, please specify a hotspot name to edit";
