@@ -196,6 +196,9 @@ function saveToDb() {
         $payment_address_status = $dbSocket->escapeSimple($_POST['payment_address_status']);
         $payer_status = $dbSocket->escapeSimple($_POST['payer_status']);
 
+        // convert paypal date (in PDT time zone) into local time, formatted for mysql
+        $payment_date = date('Y-m-d H:i:s', strtotime($payment_date));
+
 	$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." SET ".
 		" planName='$planName',".
 		" planId='$planId',".
@@ -228,5 +231,3 @@ function saveToDb() {
 }
 
 ?>
-
-
