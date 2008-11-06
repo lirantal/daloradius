@@ -54,3 +54,30 @@ UPDATE operators SET bill_plans_edit='yes' WHERE username='administrator';
 
 ALTER TABLE operators ADD bill_plans_del VARCHAR(32) AFTER bill_plans_edit;
 UPDATE operators SET bill_plans_del='yes' WHERE username='administrator';
+
+CREATE TABLE billing_plans (
+	id int(8) NOT NULL auto_increment,
+	planName varchar(128) default NULL,
+	planId varchar(128) default NULL,
+	planType varchar(128) default NULL,
+	planTimeBank varchar(128) default NULL,
+	planTimeType varchar(128) default NULL,
+	planBandwidthUp varchar(128) default NULL,
+	planBandwidthDown varchar(128) default NULL,
+	planTrafficTotal varchar(128) default NULL,
+	planTrafficUp varchar(128) default NULL,
+	planTrafficDown varchar(128) default NULL,
+	planRecurring varchar(128) default NULL,
+	planRecurringPeriod varchar(128) default NULL,
+	planCost varchar(128) default NULL,
+	planSetupCost varchar(128) default NULL,
+	planTax varchar(128) default NULL,
+	planCurrency varchar(128) default NULL,
+	planGroup varchar(128) default NULL,
+	creationdate datetime default '0000-00-00 00:00:00',
+	creationby varchar(128) default NULL,
+	updatedate datetime default '0000-00-00 00:00:00',
+	updateby varchar(128) default NULL,	
+	PRIMARY KEY (id),
+	KEY planName (planName)
+);
