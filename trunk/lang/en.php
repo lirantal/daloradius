@@ -290,6 +290,7 @@ $l['Tooltip']['Filter'] = "Type a filter, can be any alpha numeric string. Leave
 $l['Tooltip']['Date'] = "Type the date <br/> example: 1982-06-04 (Y-M-D)";
 $l['Tooltip']['RateName'] = "Type the Rate name";
 $l['Tooltip']['OperatorName'] = "Type the Operator name";
+$l['Tooltip']['BillingPlanName'] = "Type the Billing Plan name";
 
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";
