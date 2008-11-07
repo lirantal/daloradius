@@ -1,3 +1,6 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 
 <body>
 <?php
@@ -24,14 +27,23 @@
 		<li><a href="javascript:document.mngradusrgrplist.submit();""><b>&raquo;</b><?php echo $l['button']['ListUsersGroup'] ?><a>
 			<form name="mngradusrgrplist" action="mng-rad-usergroup-list-user.php" method="get" 
 				class="sidebar">
-			<input name="username" type="text">
+			<input name="username" type="text"
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				/>
 			</form></li>
 
 		<li><a href="mng-rad-usergroup-new.php"><b>&raquo;</b><?php echo $l['button']['NewUserGroup'] ?></a></li>
 		<li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditUserGroup'] ?><a>
 			<form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
-			<input name="username" type="text" value="[username]">
-			<input name="group" type="text" value="[groupname]">
+			<input name="username" type="text" value=""
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				/>
+			<input name="group" type="text" value=""
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+				/>
 			</form></li>
 
 
@@ -39,3 +51,11 @@
 	</ul>
 
 </div>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>

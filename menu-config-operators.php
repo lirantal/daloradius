@@ -4,8 +4,11 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 <body>
 <?php
         include_once ("lang/main.php");
@@ -32,7 +35,10 @@
 		<li><a href="config-operators-new.php"><b>&raquo;</b><?php echo $l['button']['NewOperator'] ?></a></li>
 		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditOperator'] ?></a>
 			<form name="mngedit" action="config-operators-edit.php" method="get" class="sidebar">
-			<input name="operator_username" type="text">
+			<input name="operator_username" type="text"
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['OperatorName']; ?> <br/>'
+				/>
 			</form>
 		</li>
 
@@ -42,3 +48,10 @@
 
 </div>
 
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>

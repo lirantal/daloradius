@@ -279,6 +279,17 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
 
 $l['Tooltip']['Username'] = "Type the Username";
 $l['Tooltip']['UsernameWildcard'] = "Hint: you may use the char * or % to specify a wildcard";
+$l['Tooltip']['HotspotName'] = "Type the Hotspot name";
+$l['Tooltip']['NasName'] = "Type the NAS name";
+$l['Tooltip']['GroupName'] = "Type the Group name";
+$l['Tooltip']['AttributeName'] = "Type the Attribute name";
+$l['Tooltip']['VendorName'] = "Type the Vendor name";
+$l['Tooltip']['PoolName'] = "Type the Pool name";
+$l['Tooltip']['IPAddress'] = "Type the IP address";
+$l['Tooltip']['Filter'] = "Type a filter, can be any alpha numeric string. Leave empty to match anything. ";
+$l['Tooltip']['Date'] = "Type the date <br/> example: 1982-06-04 (Y-M-D)";
+$l['Tooltip']['RateName'] = "Type the Rate name";
+$l['Tooltip']['OperatorName'] = "Type the Operator name";
 
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";

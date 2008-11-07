@@ -2,9 +2,12 @@
 <!--[if lte IE 6.5]>
 <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
 <![endif]-->
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 
 <body>
 <?php
@@ -45,9 +48,12 @@
 			</select>
 
                         <input name="username" type="text"
-                                value="<?php if (isset($billing_date_username)) echo $billing_date_username;
-                                else echo 'username'; ?>">
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                value="<?php if (isset($billing_date_username)) echo $billing_date_username; ?>">
                         <input name="startdate" type="text" id="startdate"
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
                                 value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
                         else echo date("Y-m-d"); ?>">
 
@@ -57,6 +63,8 @@
                                 style="display: none; visibility: hidden;       width: 160px;"></div>
 
                         <input name="enddate" type="text" id="enddate"
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
                                 value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
                                 else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1,
                                 date("Y"))); ?>">
@@ -78,6 +86,8 @@
                                                 <li><a href="javascript:document.billratesedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditRate'] ?></a>
                                                         <form name="billratesedit" action="bill-rates-edit.php" method="get" class="sidebar">
                                                         <input name="ratename" type="text" id="ratename" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['RateName']; ?> <br/>'
 								value="<?php if (isset($edit_rateName)) echo $edit_rateName; ?>" tabindex=3>
                                                         </form></li>
                                                 <li><a href="bill-rates-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveRate'] ?></a></li>
@@ -90,3 +100,10 @@
 
                 </div>
 
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
