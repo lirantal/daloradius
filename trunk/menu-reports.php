@@ -4,8 +4,11 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
  
 <body>
 <?php
@@ -34,7 +37,9 @@ include_once ("lang/main.php");
 							
 							<form name="reponline" action="rep-online.php" method="get" class="sidebar">
 								<input name="usernameOnline" type="text" id="usernameOnline" autocomplete="off"
-								value="<?php (isset($usernameOnline)) ? print $usernameOnline : print "[username]"; ?>" tabindex=1>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
+								value="<?php if (isset($usernameOnline)) echo $usernameOnline ?>" tabindex=1>
 							</form>
 							</li>							
 
@@ -44,7 +49,9 @@ include_once ("lang/main.php");
 
 							<form name="replastconnect" action="rep-lastconnect.php" method="get" class="sidebar">
 								<input name="usernameLastConnect" type="text" id="usernameLastConnect" autocomplete="off"
-								value="<?php (isset($usernameLastConnect)) ? print $usernameLastConnect : print "[username]"; ?>" tabindex=2>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
+								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>
 							</form>
 							</li>
 
@@ -79,6 +86,11 @@ include_once ("lang/main.php");
 				
 		
 		</div>
-		
-		
-		
+	
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>

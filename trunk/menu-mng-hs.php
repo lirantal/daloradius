@@ -1,3 +1,7 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+
 <body>
 <?php
     include_once ("lang/main.php");
@@ -23,6 +27,8 @@
 		<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditHotspot'] ?><a>
 			<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
 			<input name="name" type="text"  id="hotspotEdit" autocomplete="off"
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['HotspotName']; ?> <br/>'
 				value="<?php if (isset($edit_hotspotname)) echo $edit_hotspotname; ?>" tabindex=3>
 			</form></li>
 			
@@ -49,4 +55,12 @@
         }
 
 ?>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
 

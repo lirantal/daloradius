@@ -1,3 +1,6 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 
 <body>
 <?php
@@ -23,10 +26,22 @@
 		<li><a href="mng-rad-nas-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewNAS'] ?></a></li>
 		<li><a href="javascript:document.mngradnasedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditNAS'] ?></a>
 			<form name="mngradnasedit" action="mng-rad-nas-edit.php" method="get" class="sidebar">
-			<input name="nashost" type="text" tabindex=4>
+			<input name="nashost" type="text" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['NasName']; ?> <br/>'
+			tabindex=4>
 			</form></li>
 		<li><a href="mng-rad-nas-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveNAS'] ?></a></li>
 		
 	</ul>
 
 </div>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
+

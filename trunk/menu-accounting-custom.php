@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
@@ -9,11 +8,14 @@
 <!--[if lte IE 6.5]>
 <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
 <![endif]-->
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 
 </head>
 <script src="library/js_date/date-functions.js" type="text/javascript"></script>
 <script src="library/js_date/datechooser.js" type="text/javascript"></script>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 
 <body>
 
@@ -42,12 +44,17 @@
 	
 
                                                         <input name="startdate" type="text" id="startdate" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
 value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
 						else echo date("Y-m-d"); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
-                                                        <input name="enddate" type="text" id="enddate" value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
+                                                        <input name="enddate" type="text" id="enddate" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
 						else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, 
 							date("Y"))); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
@@ -90,6 +97,8 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 			</select>
 			</center>
 		<input type="text" name="where_field" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Filter']; ?> <br/>'
 			value="<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
 
 		<br/><br/>
@@ -173,4 +182,10 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 		
 		</div>
 
-		
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>

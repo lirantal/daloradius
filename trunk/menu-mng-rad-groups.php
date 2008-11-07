@@ -1,3 +1,6 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 
 <body>
 <?php
@@ -28,6 +31,8 @@
 			<form name="mngradgroupreplysearch" action="mng-rad-groupreply-search.php" method="get" 
 				class="sidebar">
 			<input name="groupname" type="text" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
 				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
 			</form></li>
 
@@ -38,8 +43,14 @@
 			<img src='images/icons/groupsEdit.png' border='0'>
 			<?php echo $l['button']['EditGroupReply'] ?><a>
 			<form name="mngradgrprplyedit" action="mng-rad-groupreply-edit.php" method="get" class="sidebar">
-			<input name="groupname" type="text" value="[groupname]">
-			<input name="attribute" type="text" value="[attribute]">
+			<input name="groupname" type="text" value=""
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+				/>
+			<input name="attribute" type="text" value=""
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+				/>
 			</form></li>
 		<li><a href="mng-rad-groupreply-del.php"><b>&raquo;</b>
 			<img src='images/icons/groupsRemove.png' border='0'>
@@ -59,6 +70,8 @@
 			<form name="mngradgroupchecksearch" action="mng-rad-groupcheck-search.php" method="get" 
 				class="sidebar">
 			<input name="groupname" type="text" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
 				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
 			</form></li>
 
@@ -69,8 +82,14 @@
 			<img src='images/icons/groupsEdit.png' border='0'>
 			<?php echo $l['button']['EditGroupCheck'] ?><a>
 			<form name="mngradgrpchkedit" action="mng-rad-groupcheck-edit.php" method="get" class="sidebar">
-			<input name="groupname" type="text" value="[groupname]">
-			<input name="attribute" type="text" value="[attribute]">
+			<input name="groupname" type="text" value=""
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+				/>
+			<input name="attribute" type="text" value=""
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+				/>
 			</form></li>
 		<li><a href="mng-rad-groupcheck-del.php"><b>&raquo;</b>
 			<img src='images/icons/groupsRemove.png' border='0'>
@@ -79,3 +98,12 @@
 	</ul>
 
 </div>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
+

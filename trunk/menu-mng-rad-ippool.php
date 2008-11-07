@@ -1,3 +1,6 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 
 <body>
 <?php
@@ -24,12 +27,25 @@
 		<li><a href="javascript:document.mngradippooledit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditIPPool'] ?></a>
 			<form name="mngradippooledit" action="mng-rad-ippool-edit.php" method="get" class="sidebar">
 			<input name="poolname" type="text" 
-				value="<?php (isset($poolname)) ? print $poolname : print '[poolname]' ?>" tabindex=4>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['PoolName']; ?> <br/>'
+				value="<?php if (isset($poolname)) echo $poolname ?>" tabindex=4>
 			<input name="ipaddressold" type="text" 
-				value="<?php (isset($ipaddressold)) ? print $ipaddressold : print '[ipaddress]' ?>" tabindex=4>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?> <br/>'
+				value="<?php if (isset($ipaddressold)) echo $ipaddressold  ?>" tabindex=4>
 			</form></li>
 		<li><a href="mng-rad-ippool-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveIPPool'] ?></a></li>
 		
 	</ul>
 
 </div>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
+

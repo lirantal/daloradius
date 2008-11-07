@@ -1,3 +1,6 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 
 <body>
 <?php
@@ -33,14 +36,20 @@
 		<li><a href="javascript:document.mngradattributesedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditVendorAttribute'] ?></a>
 			<form name="mngradattributesedit" action="mng-rad-attributes-edit.php" method="get" class="sidebar">
 			<input name="vendor" type="text" 
-				value="<?php isset($vendor) ? print $vendor : print '[vendor]' ?>" tabindex=4>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['VendorName']; ?> <br/>'
+				value="<?php if (isset($vendor)) echo $vendor ?>" tabindex=4>
 			<input name="attribute" type="text" 
-				value="<?php isset($attribute) ? print $attribute : print '[attribute]' ?>" tabindex=5>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+				value="<?php if (isset($attribute)) echo $attribute  ?>" tabindex=5>
 			</form></li>
 		<li><a href="javascript:document.mngradattributessearch.submit();" tabindex=6 ><b>&raquo;</b><?php echo $l['button']['SearchVendorAttribute'] ?></a>
 			<form name="mngradattributessearch" action="mng-rad-attributes-search.php" method="get" class="sidebar">
 			<input name="attribute" type="text" 
-				value="<?php isset($attribute) ? print $attribute : print '[attribute]' ?>" tabindex=7>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+				value="<?php if (isset($attribute)) echo $attribute ?>" tabindex=7>
 			</form></li>
 		<li><a href="mng-rad-attributes-del.php" tabindex=8><b>&raquo;</b><?php echo $l['button']['RemoveVendorAttribute'] ?></a></li>
 		<li><a href="mng-rad-attributes-import.php" tabindex=8><b>&raquo;</b><?php echo $l['button']['ImportVendorDictionary'] ?></a></li>
@@ -48,3 +57,12 @@
 	</ul>
 
 </div>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
+

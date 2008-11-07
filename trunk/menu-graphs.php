@@ -5,10 +5,13 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<body>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 
+<body>
 <?php
 	include_once ("lang/main.php");
 ?>
@@ -35,8 +38,9 @@
 			<?php echo $l['button']['UserLogins'] ?></a>
 			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
 			<input name="username" type="text" 
-				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username;
-				else echo 'username'; ?>">
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username; ?>">
 			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
@@ -51,8 +55,9 @@
 			<?php echo $l['button']['UserDownloads'] ?></a>
 			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
 			<input name="username" type="text" 
-				value="<?php if (isset($overall_download_username)) echo $overall_download_username;
-				else echo 'username'; ?>">
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				value="<?php if (isset($overall_download_username)) echo $overall_download_username; ?>">
 			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
@@ -67,8 +72,9 @@
 			<?php echo $l['button']['UserUploads'] ?></a>
 			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
 			<input name="username" type="text" 
-				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username;
-				else echo 'username'; ?>">
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username; ?>">
 			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
 				<option value="monthly"> Monthly
@@ -116,4 +122,10 @@
 
 </div>
 
-
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
