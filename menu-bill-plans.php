@@ -1,3 +1,7 @@
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+
 <body>
 <?php
     include_once ("lang/main.php");
@@ -23,6 +27,8 @@
 		<li><a href="javascript:document.billplansedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditPlan'] ?><a>
 			<form name="billplansedit" action="bill-plans-edit.php" method="get" class="sidebar">
 			<input name="planName" type="text" autocomplete="off"
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['BillingPlanName']; ?> <br/>'
 				value="<?php if (isset($edit_planname)) echo $edit_planname; ?>" tabindex=3>
 			</form></li>
 			
@@ -36,3 +42,11 @@
 	<input name="" type="text" value="Search" tabindex=4 />
 
 </div>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>
