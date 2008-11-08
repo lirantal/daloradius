@@ -31,6 +31,8 @@
 	isset($_GET['vendor']) ? $vendor = $$_GET['vendor'] : $vendor = "";
 	isset($_GET['attribute']) ? $attribute = $$_GET['attribute'] : $attribute = "";
 
+	$showRemoveDiv = "block";
+
 	if (isset($_POST['vendor'])) {
 
 		if (is_array($_POST['vendor'])) {
@@ -82,6 +84,8 @@
 
 		} //foreach
 
+		$showRemoveDiv = "none";
+
 	} //if (isset)
 
 
@@ -118,6 +122,7 @@
 				include_once('include/management/actionMessages.php');
 			?>
 
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 	<fieldset>
@@ -160,6 +165,7 @@
 	</fieldset>
 
 	</form>
+	</div>
 
 <?php
 	include('include/config/logging.php');

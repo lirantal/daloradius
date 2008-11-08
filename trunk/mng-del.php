@@ -34,6 +34,8 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
+	$showRemoveDiv = "block";
+
 	if ( (isset($_GET['username'])) && (!(isset($_GET['attribute']))) && (!(isset($_GET['tablename']))) ) {
 
 		$allUsernames = "";
@@ -91,6 +93,8 @@
 			}
 
 
+		$showRemoveDiv = "none";
+
 		} //foreach
 
 
@@ -118,6 +122,8 @@
 		$logAction .= "Successfully deleted attribute [$attribute] for user [$username] on page: ";
 
 		include 'library/closedb.php';
+
+		$showRemoveDiv = "none";
 
 	} else if ( (isset($clearSessionsUsers)) && ($clearSessionsUsers != "") ) {
 		
@@ -152,8 +158,9 @@
 
 		} // foreach
 
-	}
+		$showRemoveDiv = "none";
 
+	}
 
 
 
@@ -193,6 +200,7 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 	
 	<fieldset>
@@ -219,6 +227,7 @@
 	</fieldset>
 	
 	</form>
+	</div>
 
 
 <?php

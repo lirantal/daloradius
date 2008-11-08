@@ -21,7 +21,7 @@
  */
 
 	include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
+	$operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
@@ -29,6 +29,8 @@
 
 	$logAction = "";
 	$logDebugSQL = "";
+
+	$showRemoveDiv = "block";
 
 	if (isset($_REQUEST['proxyname'])) {
 
@@ -76,6 +78,7 @@
 
 		include 'library/closedb.php';
 
+		$showRemoveDiv = "none";
 	} 
 
 
@@ -111,7 +114,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 	<fieldset>
@@ -131,6 +134,7 @@
 	</fieldset>
 
 	</form>
+	</div>
 
 
 <?php

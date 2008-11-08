@@ -29,6 +29,8 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
+	$showRemoveDiv = "block";
+
 	if (isset($_REQUEST['ratename'])) {
 
 		if (!is_array($ratename))
@@ -62,6 +64,7 @@
 
 		include 'library/closedb.php';
 
+		$showRemoveDiv = "none";
 	} 
 
 
@@ -98,7 +101,7 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 	<fieldset>
@@ -119,6 +122,7 @@
 	</fieldset>
 
 	</form>
+	</div>
 
 
 <?php
