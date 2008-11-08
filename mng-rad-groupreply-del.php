@@ -31,6 +31,8 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
+	$showRemoveDiv = "block";
+
 	if (isset($_POST['group'])) {
 		$group_array = $_POST['group'];
 	} else {
@@ -94,6 +96,8 @@
 
 		} // foreach
 
+		$showRemoveDiv = "none";
+
 	} 
 	
 	include_once('library/config_read.php');
@@ -130,6 +134,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 
 
@@ -159,6 +164,7 @@
 
 
 		</form>
+	</div>
 
 
 <?php

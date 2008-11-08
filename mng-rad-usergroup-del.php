@@ -28,6 +28,8 @@
 	$username = "";
 	$group = "";
 
+	$showRemoveDiv = "block";
+
 	if (isset($_POST['usergroup'])) {
 		$usergroup_array = $_REQUEST['usergroup'];
 	} else {
@@ -78,12 +80,14 @@
 				include 'library/closedb.php';
 			}
 
+			$showRemoveDiv = "none";
+
 		}  else {
 			$failureMsg = "No user was entered, please specify a username to remove from database";
 			$logAction .= "Failed deleting empty user on page: ";
 		}
 
-		}
+		} //foreach
 	}
 	
 
@@ -124,6 +128,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 		
+		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <fieldset>
@@ -164,6 +169,7 @@
 	</fieldset>
 
 	</form>
+	</div>
 
 <?php
 	include('include/config/logging.php');

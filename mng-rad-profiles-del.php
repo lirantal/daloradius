@@ -32,6 +32,8 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
+	$showRemoveDiv = "block";
+
 	if ( (isset($_REQUEST['profile'])) && (!(isset($_REQUEST['attribute']))) && (!(isset($_REQUEST['tablename']))) ) {
 
 		$allProfiles = "";
@@ -73,6 +75,8 @@
 			
 		} //foreach
 
+		$showRemoveDiv = "none";
+
 	} else  if ( (isset($_REQUEST['profile'])) && (isset($_REQUEST['attribute'])) && (isset($_REQUEST['tablename'])) ) {
 
 		/* this section of the deletion process only deletes the username record with the specified attribute
@@ -98,6 +102,7 @@
 
 		include 'library/closedb.php';
 
+		$showRemoveDiv = "block";
 	}
 
 	include_once('library/config_read.php');
@@ -134,6 +139,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 				
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <fieldset>
@@ -152,8 +158,8 @@
 
         </fieldset>
 
-                                </form>
-
+	        </form>
+	</div>
 
 
 <?php

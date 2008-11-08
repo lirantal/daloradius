@@ -31,6 +31,8 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
+	$showRemoveDiv = "block";
+
 	if (isset($_POST['group'])) {
 		$group_array = $_POST['group'];
 	} else {
@@ -92,6 +94,8 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 
                 } // foreach
 
+		$showRemoveDiv = "none";
+
         } // if 
 
 
@@ -134,6 +138,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 			include_once('include/management/actionMessages.php');
 		?>
 
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 
         <fieldset>
@@ -161,6 +166,7 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
         </fieldset>
 
 		</form>
+	</div>
 
 <?php
 	include('include/config/logging.php');

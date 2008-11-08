@@ -31,6 +31,8 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
+	$showRemoveDiv = "block";
+
 	if (isset($_POST['poolname'])) {
 
 		$allPoolNames = "";
@@ -77,6 +79,7 @@
 
 		} //foreach
 
+		$showRemoveDiv = "none";
 	} 
 
 	include_once('library/config_read.php');
@@ -114,7 +117,7 @@
 	include_once('include/management/actionMessages.php');
 ?>
 
-
+	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <fieldset>
@@ -139,6 +142,7 @@
 
 
 		</form>
+	</div>
 
 <?php
 	include('include/config/logging.php');
