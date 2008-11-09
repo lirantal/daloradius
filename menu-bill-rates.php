@@ -20,6 +20,7 @@
     $m_active = "Billing";
     include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/billing-subnav.php");
+	include_once("include/management/autocomplete.php");
 ?>
 
 <div id="sidebar">
@@ -47,7 +48,7 @@
 			?>			
 			</select>
 
-                        <input name="username" type="text"
+                        <input name="username" type="text" id="username" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
                                 value="<?php if (isset($billing_date_username)) echo $billing_date_username; ?>">
@@ -85,7 +86,7 @@
                                                 <li><a href="bill-rates-new.php"><b>&raquo;</b><?php echo $l['button']['NewRate'] ?></a></li>
                                                 <li><a href="javascript:document.billratesedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditRate'] ?></a>
                                                         <form name="billratesedit" action="bill-rates-edit.php" method="get" class="sidebar">
-                                                        <input name="ratename" type="text" id="ratename" 
+                                                        <input name="ratename" type="text" id="ratename" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['RateName']; ?> <br/>'
 								value="<?php if (isset($edit_rateName)) echo $edit_rateName; ?>" tabindex=3>
@@ -99,6 +100,20 @@
 			<input name="" type="text" value="Search" tabindex=4 />
 
                 </div>
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('username','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('ratename','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteRateName');
+                      </script>";
+        }
+?>
 
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();

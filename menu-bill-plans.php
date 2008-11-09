@@ -13,6 +13,7 @@
     $m_active = "Billing";
     include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/billing-subnav.php");
+	include_once("include/management/autocomplete.php");
 ?>
 
 <div id="sidebar">
@@ -26,7 +27,7 @@
 		<li><a href="bill-plans-new.php"><b>&raquo;</b><?php echo $l['button']['NewPlan'] ?></a></li>
 		<li><a href="javascript:document.billplansedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditPlan'] ?><a>
 			<form name="billplansedit" action="bill-plans-edit.php" method="get" class="sidebar">
-			<input name="planName" type="text" autocomplete="off"
+			<input name="planName" type="text" id="planNameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['BillingPlanName']; ?> <br/>'
 				value="<?php if (isset($edit_planname)) echo $edit_planname; ?>" tabindex=3>
@@ -43,6 +44,16 @@
 
 </div>
 
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('planNameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteBillingPlans');
+                      </script>";
+        }
+?>
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();
         tooltipObj.setTooltipPosition('right');

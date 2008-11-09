@@ -13,6 +13,7 @@
     $m_active = "Management";
     include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/management-subnav.php");
+	include_once("include/management/autocomplete.php");
 ?>
 		
 <div id="sidebar">
@@ -35,18 +36,18 @@
 		<li><a href="mng-rad-attributes-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewVendorAttribute'] ?></a></li>
 		<li><a href="javascript:document.mngradattributesedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditVendorAttribute'] ?></a>
 			<form name="mngradattributesedit" action="mng-rad-attributes-edit.php" method="get" class="sidebar">
-			<input name="vendor" type="text" 
+			<input name="vendor" type="text" id="vendornameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['VendorName']; ?> <br/>'
 				value="<?php if (isset($vendor)) echo $vendor ?>" tabindex=4>
-			<input name="attribute" type="text" 
+			<input name="attribute" type="text" id="attributenameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
 				value="<?php if (isset($attribute)) echo $attribute  ?>" tabindex=5>
 			</form></li>
 		<li><a href="javascript:document.mngradattributessearch.submit();" tabindex=6 ><b>&raquo;</b><?php echo $l['button']['SearchVendorAttribute'] ?></a>
 			<form name="mngradattributessearch" action="mng-rad-attributes-search.php" method="get" class="sidebar">
-			<input name="attribute" type="text" 
+			<input name="attribute" type="text" id="attributenameSearch" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
 				value="<?php if (isset($attribute)) echo $attribute ?>" tabindex=7>
@@ -57,6 +58,24 @@
 	</ul>
 
 </div>
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('attributenameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteAttributes');
+
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('attributenameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteAttributes');
+
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('vendornameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteVendorName');
+                      </script>";
+        }
+
+?>
 
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();
