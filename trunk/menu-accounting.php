@@ -32,6 +32,7 @@
 	$m_active = "Accounting";
         include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/accounting-subnav.php");
+        include_once("include/management/autocomplete.php");
 ?>	
 
 <div id="sidebar">
@@ -43,7 +44,7 @@
 	
 		<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b><?php echo $l['button']['UserAccounting'] ?></a>
 			<form name="acctusername" action="acct-username.php" method="get" class="sidebar">
-			<input name="username" type="text" 
+			<input name="username" type="text" id="usernameAcct" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?>'
 				value="<?php if (isset($accounting_username)) echo $accounting_username; ?>">
@@ -67,7 +68,7 @@
 
 		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
 			<form name="acctdate" action="acct-date.php" method="get" class="sidebar">
-			<input name="username" type="text" 
+			<input name="username" type="text" id="usernameDate" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?>'
 				value="<?php if (isset($accounting_date_username)) echo $accounting_date_username;  ?>">
@@ -106,6 +107,20 @@
 	<input name="" type="text" value="Search" />
 
 </div>
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameDate','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameAcct','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                      </script>";
+        }
+?>
 
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();

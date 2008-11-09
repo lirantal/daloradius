@@ -23,6 +23,7 @@
 	$m_active = "Graphs";
 	include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/graphs-subnav.php");
+	include_once("include/management/autocomplete.php");
 ?>      
 
 
@@ -37,7 +38,7 @@
 			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['UserLogins'] ?></a>
 			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
-			<input name="username" type="text" 
+			<input name="username" type="text" id="usernameLogins" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username; ?>">
@@ -54,7 +55,7 @@
 			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['UserDownloads'] ?></a>
 			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
-			<input name="username" type="text" 
+			<input name="username" type="text" id="usernameDownloads" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				value="<?php if (isset($overall_download_username)) echo $overall_download_username; ?>">
@@ -71,7 +72,7 @@
 			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['UserUploads'] ?></a>
 			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
-			<input name="username" type="text" 
+			<input name="username" type="text" id="usernameUploads" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username; ?>">
@@ -121,6 +122,23 @@
 	<input name="" type="text" value="Search" />
 
 </div>
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameLogins','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameDownloads','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameUploads','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                      </script>";
+        }
+?>
 
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();

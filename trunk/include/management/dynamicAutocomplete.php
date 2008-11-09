@@ -22,8 +22,85 @@
 
 include('../../library/checklogin.php');
 
+/* getAjaxAutocompleteNASHost */
+if(isset($_GET['getAjaxAutocompleteNASHost'])) {
 
-/* getAjaxAutocompletePlans
+        $getAjaxAutocompleteNASHost = $_GET['getAjaxAutocompleteNASHost'];
+
+	if ( (isset($getAjaxAutocompleteNASHost)) && ($getAjaxAutocompleteNASHost) ) {
+
+	        include '../../library/opendb.php';
+
+	        $sql = "SELECT distinct(nasname) as nasName FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].
+			" WHERE nasName LIKE '$getAjaxAutocompleteNASHost%' ORDER BY nasName ASC";
+	        $res = $dbSocket->query($sql);
+
+	        while($row = $res->fetchRow()) {
+	                echo "$row[0]###$row[0]|";
+	        }
+
+	        include '../../library/closedb.php';
+	}
+
+}
+
+
+
+/* getAjaxAutocompleteGroupName */
+if(isset($_GET['getAjaxAutocompleteGroupName'])) {
+
+        $getAjaxAutocompleteGroupName = $_GET['getAjaxAutocompleteGroupName'];
+
+	if ( (isset($getAjaxAutocompleteGroupName)) && ($getAjaxAutocompleteGroupName) ) {
+
+	        include '../../library/opendb.php';
+
+	        $sql = "(SELECT distinct(GroupName) AS GroupName FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+			" WHERE GroupName LIKE '$getAjaxAutocompleteGroupName%' ORDER BY GroupName ASC) ".
+                        " UNION (SELECT distinct(GroupName) AS GroupName FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
+			" WHERE GroupName LIKE '$getAjaxAutocompleteGroupName%' ORDER BY GroupName ASC)";
+
+	        $res = $dbSocket->query($sql);
+
+	        while($row = $res->fetchRow()) {
+	                echo "$row[0]###$row[0]|";
+	        }
+
+	        include '../../library/closedb.php';
+	}
+
+}
+
+
+
+
+
+/* getAjaxAutocompleteRateName */
+if(isset($_GET['getAjaxAutocompleteRateName'])) {
+
+        $getAjaxAutocompleteRateName = $_GET['getAjaxAutocompleteRateName'];
+
+	if ( (isset($getAjaxAutocompleteRateName)) && ($getAjaxAutocompleteRateName) ) {
+
+	        include '../../library/opendb.php';
+
+	        $sql = "SELECT distinct(rateName) as rateName FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].
+			" WHERE rateName LIKE '$getAjaxAutocompleteRateName%' ORDER BY rateName ASC";
+	        $res = $dbSocket->query($sql);
+
+	        while($row = $res->fetchRow()) {
+	                echo "$row[0]###$row[0]|";
+	        }
+
+	        include '../../library/closedb.php';
+	}
+
+}
+
+
+
+
+/* getAjaxAutocompleteBillingPlans
  * returns billing plan names from the billing_plans table matching the getAjaxAutocompleteBillingPlans value wildcad
  */
 if(isset($_GET['getAjaxAutocompleteBillingPlans'])) {
@@ -132,6 +209,29 @@ if(isset($_GET['getAjaxAutocompleteAttributes'])) {
 
 }
 
+
+
+/* getAjaxAutocompleteVendorName */
+if(isset($_GET['getAjaxAutocompleteVendorName'])) {
+
+        $getAjaxAutocompleteVendorName = $_GET['getAjaxAutocompleteVendorName'];
+
+	if ( (isset($getAjaxAutocompleteVendorName)) && ($getAjaxAutocompleteVendorName) ) {
+
+	        include '../../library/opendb.php';
+
+	        $sql = "SELECT distinct(Vendor) as VendorName FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
+			" WHERE Vendor LIKE '$getAjaxAutocompleteVendorName%' ORDER BY VendorName ASC";
+	        $res = $dbSocket->query($sql);
+
+	        while($row = $res->fetchRow()) {
+	                echo "$row[0]###$row[0]|";
+	        }
+
+	        include '../../library/closedb.php';
+	}
+
+}
 
 
 ?>

@@ -86,6 +86,21 @@ include_once ("lang/main.php");
 				
 		
 		</div>
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameOnline','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameLastConnect','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                      </script>";
+        }
+?>
+
 	
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();

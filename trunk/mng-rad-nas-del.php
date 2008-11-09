@@ -153,6 +153,17 @@
 </div>
 </div>
 
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('nashost','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteNASHost');
+                      </script>";
+        }
+
+?>
 
 </body>
 </html>
