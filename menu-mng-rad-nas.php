@@ -13,6 +13,7 @@
     $m_active = "Management";
     include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/management-subnav.php");
+        include_once("include/management/autocomplete.php");
 ?>
 		
 <div id="sidebar">
@@ -26,7 +27,7 @@
 		<li><a href="mng-rad-nas-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewNAS'] ?></a></li>
 		<li><a href="javascript:document.mngradnasedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditNAS'] ?></a>
 			<form name="mngradnasedit" action="mng-rad-nas-edit.php" method="get" class="sidebar">
-			<input name="nashost" type="text" id="nashostEdit" autocomplete="off"
+			<input name="nashost" type="text" id="nashostEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['NasName']; ?> <br/>'
 			tabindex=4>
