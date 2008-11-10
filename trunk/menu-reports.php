@@ -20,8 +20,9 @@ include_once ("lang/main.php");
 
 <?php
 	$m_active = "Reports";
-    include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/reports-subnav.php");
+        include_once("include/management/autocomplete.php");
 ?>      
 
 		<div id="sidebar">
@@ -36,7 +37,8 @@ include_once ("lang/main.php");
 							<?php echo $l['button']['OnlineUsers'] ?></a>
 							
 							<form name="reponline" action="rep-online.php" method="get" class="sidebar">
-								<input name="usernameOnline" type="text" id="usernameOnline" autocomplete="off"
+								<input name="usernameOnline" type="text" id="usernameOnline"
+				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
 								value="<?php if (isset($usernameOnline)) echo $usernameOnline ?>" tabindex=1>
@@ -48,7 +50,8 @@ include_once ("lang/main.php");
 							<?php echo $l['button']['LastConnectionAttempts'] ?></a>
 
 							<form name="replastconnect" action="rep-lastconnect.php" method="get" class="sidebar">
-								<input name="usernameLastConnect" type="text" id="usernameLastConnect" autocomplete="off"
+								<input name="usernameLastConnect" type="text" id="usernameLastConnect"
+				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
 								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>

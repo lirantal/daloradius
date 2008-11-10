@@ -13,6 +13,7 @@
     $m_active = "Management";
     include_once ("include/menu/menu-items.php");
 	include_once ("include/menu/management-subnav.php");
+        include_once("include/management/autocomplete.php");
 ?>
 
 <div id="sidebar">
@@ -27,7 +28,7 @@
 		<li><a href="javascript:document.mngradusrgrplist.submit();""><b>&raquo;</b><?php echo $l['button']['ListUsersGroup'] ?><a>
 			<form name="mngradusrgrplist" action="mng-rad-usergroup-list-user.php" method="get" 
 				class="sidebar">
-			<input name="username" type="text" id="usernameList" autocomplete="off"
+			<input name="username" type="text" id="usernameList" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				/>
@@ -36,11 +37,11 @@
 		<li><a href="mng-rad-usergroup-new.php"><b>&raquo;</b><?php echo $l['button']['NewUserGroup'] ?></a></li>
 		<li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditUserGroup'] ?><a>
 			<form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
-			<input name="username" type="text" value="" id="usernameEdit" autocomplete="off"
+			<input name="username" type="text" value="" id="usernameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				/>
-			<input name="group" type="text" value="" id="groupnameEdit" autocomplete="off"
+			<input name="group" type="text" value="" id="groupnameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
 				/>
