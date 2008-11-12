@@ -602,6 +602,8 @@ $l['button']['ProcessQuery'] = "Process Query";
 
 $l['title']['RateInfo'] = "Rate Information";
 $l['title']['PlanInfo'] = "Plan Information";
+$l['title']['TimeSettings'] = "Time Settings";
+$l['title']['BandwidthSettings'] = "Bandwidth Settings";
 $l['title']['PlanRemoval'] = "Plan Removal";
 
 $l['title']['Backups'] = "Backups";
