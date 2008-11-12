@@ -145,7 +145,6 @@
 <div class="tabber">
 
 	<div class="tabbertab" title="<?php echo $l['title']['PlanInfo']; ?>">
-
 	<fieldset>
 
 		<h302> <?php echo $l['title']['PlanInfo']; ?> </h302>
@@ -182,20 +181,6 @@
                         <option value='Prepaid'>Prepaid</option>
                         <option value='Postpaid'>Postpaid</option>
                 </select>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTypeTooltip')" /> 
-		
-		<div id='planTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planTypeTooltip'] ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<label for='planTimeType' class='form'><?php echo $l['all']['PlanTimeType'] ?></label>
-                <select class='form' tabindex=102 name='planTimeType' >
-                        <option value='Accumulative'>Accumulative</option>
-                        <option value='Time-To-Finish'>Time-To-Finish</option>
-                </select>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeTypeTooltip')" /> 
 		
 		<div id='planTimeTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -204,85 +189,15 @@
 		</div>
 		</li>
 
-		<li class='fieldset'>
-		<label for='planTimeBank' class='form'><?php echo $l['all']['PlanTimeBank'] ?></label>
-		<input name='planTimeBank' type='text' id='planTimeBank' value='' tabindex=101 />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeBankTooltip')" /> 
-		
-		<div id='planTimeBankTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planTimeBankTooltip'] ?>
-		</div>
-		</li>
-
-
-
-		<li class='fieldset'>
-		<label for='planBandwidthUp' class='form'><?php echo $l['all']['PlanBandwidthUp'] ?></label>
-		<input name='planBandwidthUp' type='text' id='planBandwidthUp' value='' tabindex=101 />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planBandwidthUpTooltip')" /> 
-		
-		<div id='planBandwidthUpTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planBandwidthUpTooltip'] ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<label for='planBandwidthDown' class='form'><?php echo $l['all']['PlanBandwidthDown'] ?></label>
-		<input name='planBandwidthDown' type='text' id='planBandwidthDown' value='' tabindex=101 />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planBandwidthDownTooltip')" /> 
-		
-		<div id='planBandwidthDownTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planBandwidthDownTooltip'] ?>
-		</div>
-		</li>
-
-
-
-		<li class='fieldset'>
-		<label for='planTrafficTotal' class='form'><?php echo $l['all']['PlanTrafficTotal'] ?></label>
-		<input name='planTrafficTotal' type='text' id='planTrafficTotal' value='' tabindex=101 />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficTotalTooltip')" /> 
-		
-		<div id='planTrafficTotalTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planTrafficTotalTooltip'] ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<label for='planTrafficDown' class='form'><?php echo $l['all']['PlanTrafficDown'] ?></label>
-		<input name='planTrafficDown' type='text' id='planTrafficDown' value='' tabindex=101 />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficDownTooltip')" /> 
-		
-		<div id='planTrafficDownTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planTrafficDownTooltip'] ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<label for='planTrafficUp' class='form'><?php echo $l['all']['PlanTrafficUp'] ?></label>
-		<input name='planTrafficUp' type='text' id='planTrafficUp' value='' tabindex=101 />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficUpTooltip')" /> 
-		
-		<div id='planTrafficUpTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planTrafficUpTooltip'] ?>
-		</div>
-		</li>
-
-
-
 
 
 		<li class='fieldset'>
 		<label for='planRecurring' class='form'><?php echo $l['all']['PlanRecurring'] ?></label>
-		<input name='planRecurring' type='text' id='planRecurring' value='' tabindex=101 />
+		<select class='form' name='planRecurring' id='planRecurring' tabindex=101>
+			<option value='No'>No</option>
+			<option value='Yes'>Yes</option>
+		</select>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringTooltip')" /> 
-		
 		<div id='planRecurringTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
 			<?php echo $l['Tooltip']['planRecurringTooltip'] ?>
@@ -291,7 +206,12 @@
 
 		<li class='fieldset'>
 		<label for='planRecurringPeriod' class='form'><?php echo $l['all']['PlanRecurringPeriod'] ?></label>
-		<input name='planRecurringPeriod' type='text' id='planRecurringPeriod' value='' tabindex=101 />
+		<select class='form' name='planRecurringPeriod' id='planRecurringPeriod' tabindex=101 >
+			<option value='Never'>Never</option>
+			<option value='Daily'>Daily</option>
+			<option value='Weekly'>Weekly</option>
+			<option value='Monthly'>Monthly</option>
+		</select>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringPeriodTooltip')" /> 
 		
 		<div id='planRecurringPeriodTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -366,11 +286,7 @@
 			<?php echo $l['Tooltip']['planCurrencyTooltip'] ?>
 		</div>
 		</li>
-
-
-
-
-
+	
 		<li class='fieldset'>
 		<label for='planGroup' class='form'><?php echo $l['all']['PlanGroup'] ?></label>
 		<input name='planGroup' type='text' id='planGroup' value='' tabindex=101 />
@@ -382,9 +298,127 @@
 		</div>
 		</li>
 
-
-
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		</li>
+		
+		</ul>
 	
+	</fieldset>
+	</div>
+
+	<div class="tabbertab" title="<?php echo $l['title']['TimeSettings']; ?>">
+	<fieldset>
+
+		<h302> <?php echo $l['title']['PlanInfo']; ?> </h302>
+		<br/>
+
+		<ul>
+
+		<li class='fieldset'>
+		<label for='planTimeType' class='form'><?php echo $l['all']['PlanTimeType'] ?></label>
+                <select class='form' tabindex=102 name='planTimeType' >
+                        <option value='Accumulative'>Accumulative</option>
+                        <option value='Time-To-Finish'>Time-To-Finish</option>
+                </select>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeTypeTooltip')" /> 
+		
+		<div id='planTimeTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planTimeTypeTooltip'] ?>
+		</div>
+		</li>
+
+		<li class='fieldset'>
+		<label for='planTimeBank' class='form'><?php echo $l['all']['PlanTimeBank'] ?></label>
+		<input name='planTimeBank' type='text' id='planTimeBank' value='' tabindex=101 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeBankTooltip')" /> 
+		
+		<div id='planTimeBankTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planTimeBankTooltip'] ?>
+		</div>
+		</li>
+
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		</li>
+	
+		</ul>
+
+	</fieldset>
+	</div>
+
+
+        <div class="tabbertab" title="<?php echo $l['title']['BandwidthSettings']; ?>">
+        <fieldset>
+
+                <h302> <?php echo $l['title']['PlanInfo']; ?> </h302>
+                <br/>
+
+                <ul>
+
+		<li class='fieldset'>
+		<label for='planBandwidthUp' class='form'><?php echo $l['all']['PlanBandwidthUp'] ?></label>
+		<input name='planBandwidthUp' type='text' id='planBandwidthUp' value='' tabindex=101 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planBandwidthUpTooltip')" /> 
+		
+		<div id='planBandwidthUpTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planBandwidthUpTooltip'] ?>
+		</div>
+		</li>
+
+		<li class='fieldset'>
+		<label for='planBandwidthDown' class='form'><?php echo $l['all']['PlanBandwidthDown'] ?></label>
+		<input name='planBandwidthDown' type='text' id='planBandwidthDown' value='' tabindex=101 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planBandwidthDownTooltip')" /> 
+		
+		<div id='planBandwidthDownTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planBandwidthDownTooltip'] ?>
+		</div>
+		</li>
+
+
+
+		<li class='fieldset'>
+		<label for='planTrafficTotal' class='form'><?php echo $l['all']['PlanTrafficTotal'] ?></label>
+		<input name='planTrafficTotal' type='text' id='planTrafficTotal' value='' tabindex=101 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficTotalTooltip')" /> 
+		
+		<div id='planTrafficTotalTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planTrafficTotalTooltip'] ?>
+		</div>
+		</li>
+
+		<li class='fieldset'>
+		<label for='planTrafficDown' class='form'><?php echo $l['all']['PlanTrafficDown'] ?></label>
+		<input name='planTrafficDown' type='text' id='planTrafficDown' value='' tabindex=101 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficDownTooltip')" /> 
+		
+		<div id='planTrafficDownTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planTrafficDownTooltip'] ?>
+		</div>
+		</li>
+
+		<li class='fieldset'>
+		<label for='planTrafficUp' class='form'><?php echo $l['all']['PlanTrafficUp'] ?></label>
+		<input name='planTrafficUp' type='text' id='planTrafficUp' value='' tabindex=101 />
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficUpTooltip')" /> 
+		
+		<div id='planTrafficUpTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planTrafficUpTooltip'] ?>
+		</div>
+		</li>
+
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
@@ -392,8 +426,8 @@
 		</li>
 
 		</ul>
-	</fieldset>
 
+	</fieldset>
 	</div>
 
 </div>
