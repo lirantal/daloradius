@@ -126,7 +126,11 @@ session_start();                                                // we keep a ses
 		 *
 		 *************************************************************************************************************************************************/     
 
+		include("library/daloradius.conf.php");
+
 		function showForm() {
+
+			include("library/daloradius.conf.php");
 
 			echo "<b>".$configValues['CONFIG_SIGNUP_MSG_TITLE']."</b>
 				<br/><br/>
