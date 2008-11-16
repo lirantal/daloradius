@@ -128,9 +128,11 @@ session_start();                                                // we keep a ses
                  *************************************************************************************************************************************************/
 
                 function showForm() {
+			
+			include_once("library/daloradius.conf.php");
 
                         echo "  <b>
-                                We provide free registration service to our hotspots. <br/>Complete the form and click the Register button to generate a username and password.
+				".$configValues['CONFIG_SIGNUP_MSG_TITLE']."
 				</b>
 
                                 <br/><br/>
@@ -160,26 +162,24 @@ session_start();                                                // we keep a ses
 
 
                         case "success":
-                                echo "<font color='blue'><b>Success</b><br/><br/>
-                                        Welcome to our Hotspot <b>". $_POST['firstname']  . "</b>,<br/><br/>"
-                                        ."we have created a username and password for you to use <br/> to login to our system, and they are as follows:<br/><br/>"
-					."<table>"
+                                echo "<font color='blue'><b>Success</b><br/><br/>".
+                                        $configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER']."<b>".$_POST['firstname']."</b>,<br/><br/>".
+					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_BODY']."<table>"
                                         ."<tr><td>Username:</td><td><b>$username</b></td></tr><tr><td>Password:</td><td><b>$password</b></td></tr>"
-					."</table>"
-                                        ."<br/>Click <b><a href='http://192.168.182.1:3990/prelogin'>here</a></b> to return to the Login page and start your surfing<br/><br/>"
+					."</table>".$configValues['CONFIG_SIGNUP_SUCCESS_MSG_LOGIN_LINK']
 					."</font>";
 
                                 break;
 
 
                         case "fieldsFailure":
-                                echo "<font color='red'>You didn't fill in your first and last name, please fill-in the form again</font><br/><br/>";
+                                echo "<font color='red'>".$configValues['CONFIG_SIGNUP_FAILURE_MSG_FIELDS']."</font><br/><br/>";
                                 showForm();
                                 break;
 
 
                         case "captchaFailure":
-                                echo "<font color='red'><b>The image verification code is in-correct, please try again</b></font><br/><br/>";
+                                echo "<font color='red'><b>".$configValues['CONFIG_SIGNUP_FAILURE_MSG_CAPTCHA']."</b></font><br/><br/>";
                                 showForm();
                                 break;
 
