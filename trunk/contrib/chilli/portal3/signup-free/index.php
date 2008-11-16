@@ -128,9 +128,7 @@ session_start();                                                // we keep a ses
 
 		function showForm() {
 
-			echo "
-				We provide free registration service to our hotspots. Complete the form and click the Register button to generate a username and password.
-
+			echo "<b>".$configValues['CONFIG_SIGNUP_MSG_TITLE']."</b>
 				<br/><br/>
 				<form name='signup' action='".$_SERVER['PHP_SELF']."' method='post'>
 
@@ -157,23 +155,22 @@ session_start();                                                // we keep a ses
 
 
 			case "success":
-                                echo "<font color='blue'>Success</font><br/><br/>
-                                        Welcome to our Hotspot <b>". $_POST['firstname']  . "</b>,<br/><br/>"
-					."we have created a username and password for you to use to login to our system, and they are as follows:<br/><br/>"
-                                        ."<ul><li>Username: <b>$username</b></li><li>Password: <b>$password</b><br/></li></ul>"
-					."<br/>Click <a href='http://192.168.182.1:3990/prelogin'>here</a> to return to the Login page and start your surfing";
-
+				echo "<font color='blue'>Success</font><br/><br/>".
+					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER']."<b>".$_POST['firstname']."</b>,<br/><br/>".
+					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_BODY'].
+					"<ul><li>Username: <b>$username</b></li><li>Password: <b>$password</b><br/></li></ul>".
+					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_LOGIN_LINK'];
 				break;
 
 
 			case "fieldsFailure":
-                                echo "<font color='red'>You didn't fill in your first and last name, please fill-in the form again</font><br/><br/>";
+                                echo "<font color='red'>".$configValues['CONFIG_SIGNUP_FAILURE_MSG_FIELDS']."</font><br/><br/>";
 				showForm();
 				break;
 
 
 			case "captchaFailure":
-                                echo "<font color='red'>The image verification code is in-correct, please try again</font><br/><br/>";
+                                echo "<font color='red'>".$configValues['CONFIG_SIGNUP_FAILURE_MSG_CAPTCHA']."</font><br/><br/>";
 				showForm();
 				break;
 
