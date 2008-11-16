@@ -48,13 +48,15 @@ $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
 $configValues['CONFIG_LANG'] = 'en';
 $configValues['CONFIG_LOG_FREE_SIGNUP_FILENAME'] = '/tmp/free-signup.log';
-$configValues['CONFIG_PAYPAL_SUCCESS_MSG_PRE'] = "Dear customer, we thank you for completing your Paypal payment. <br/>".
-                        "It takes a couple of seconds until Paypal performs payment validation with our systems <br/>".
-                        "which upon successful validation we will <b>enable</b> your account and provide you with access.<br/><br/>".
-                        "Please be patient, this web page will refresh automatically every 5 seconds to check for payment completion";
-$configValues['CONFIG_PAYPAL_SUCCESS_MSG_POST'] = "We have succesfully validated your payment.<br/>".
-                                        "Please enter it at the login page to start your surfing";
-$configValues['CONFIG_PAYPAL_SUCCESS_MSG_HEADER'] = "<br/>Thanks for paying!<br/><br/>";
+$configValues['CONFIG_SIGNUP_MSG_TITLE'] = "We provide free registration service to our hotspots. <br/>".
+					"Complete the form and click the Register button to generate a username and password.";
+$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER'] = "Welcome to our Hotspot";
+$configValues['CONFIG_SIGNUP_SUCCESS_MSG_BODY'] = "we have created a username and password for you to use <br/>".
+					" to login to our system, and they are as follows:<br/><br/>";
+$configValues['CONFIG_SIGNUP_SUCCESS_MSG_LOGIN_LINK'] = "<br/>Click <b><a href='http://192.168.182.1:3990/prelogin'>here</a></b>".
+					" to return to the Login page and start your surfing<br/><br/>";
+$configValues['CONFIG_SIGNUP_FAILURE_MSG_FIELDS'] = "You didn't fill in your first and last name, please fill-in the form again";
+$configValues['CONFIG_SIGNUP_FAILURE_MSG_CAPTCHA'] = "The image verification code is in-correct, please try again";
 
 
 $configValues['CONFIG_GROUP_NAME'] = "somegroup";       /* the group name to add the user to */
