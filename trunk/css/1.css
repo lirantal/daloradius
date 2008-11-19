@@ -522,6 +522,7 @@ label.attributes {
 }
 
 input {
+	height:15px;
 	width:180px;
 	padding:1px;
 	border:1;
@@ -570,7 +571,7 @@ input[type='checkbox'].form {
 
 select.form {
         width:185px;
-	height:20px;
+	height:22px;
 	padding:1px;
 	border:1;
 	font:100% Verdana;
