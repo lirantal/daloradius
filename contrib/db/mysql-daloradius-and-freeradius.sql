@@ -609,6 +609,81 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `userinfo` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+--
+-- Table structure for table `billing_plans`
+--
+
+DROP TABLE IF EXISTS `billing_plans`;
+CREATE TABLE `billing_plans` (
+  `id` int(8) NOT NULL auto_increment,
+  `planName` varchar(128) default NULL,
+  `planId` varchar(128) default NULL,
+  `planType` varchar(128) default NULL,
+  `planTimeBank` varchar(128) default NULL,
+  `planTimeType` varchar(128) default NULL,
+  `planTimeRefillCost` varchar(128) default NULL,
+  `planBandwidthUp` varchar(128) default NULL,
+  `planBandwidthDown` varchar(128) default NULL,
+  `planTrafficTotal` varchar(128) default NULL,
+  `planTrafficUp` varchar(128) default NULL,
+  `planTrafficDown` varchar(128) default NULL,
+  `planTrafficRefillCost` varchar(128) default NULL,
+  `planRecurring` varchar(128) default NULL,
+  `planRecurringPeriod` varchar(128) default NULL,
+  `planCost` varchar(128) default NULL,
+  `planSetupCost` varchar(128) default NULL,
+  `planTax` varchar(128) default NULL,
+  `planCurrency` varchar(128) default NULL,
+  `planGroup` varchar(128) default NULL,
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `planName` (`planName`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+--
+-- Table structure for table `billing_paypal`
+--
+
+DROP TABLE IF EXISTS `billing_paypal`;
+CREATE TABLE `billing_paypal` (
+  `id` int(8) NOT NULL auto_increment,
+  `username` varchar(128) default NULL,
+  `password` varchar(128) default NULL,
+  `mac` varchar(128) default NULL,
+  `pin` varchar(128) default NULL,
+  `txnId` varchar(128) default NULL,
+  `planName` varchar(128) default NULL,
+  `planId` varchar(128) default NULL,
+  `quantity` varchar(128) default NULL,
+  `receiver_email` varchar(128) default NULL,
+  `business` varchar(128) default NULL,
+  `tax` varchar(128) default NULL,
+  `mc_gross` varchar(128) default NULL,
+  `mc_fee` varchar(128) default NULL,
+  `mc_currency` varchar(128) default NULL,
+  `first_name` varchar(128) default NULL,
+  `last_name` varchar(128) default NULL,
+  `payer_email` varchar(128) default NULL,
+  `address_name` varchar(128) default NULL,
+  `address_street` varchar(128) default NULL,
+  `address_country` varchar(128) default NULL,
+  `address_country_code` varchar(128) default NULL,
+  `address_city` varchar(128) default NULL,
+  `address_state` varchar(128) default NULL,
+  `address_zip` varchar(128) default NULL,
+  `payment_date` datetime default NULL,
+  `payment_status` varchar(128) default NULL,
+  `payment_address_status` varchar(128) default NULL,
+  `payer_status` varchar(128) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `username` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
