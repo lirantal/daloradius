@@ -44,6 +44,25 @@
 	isset($_POST['group_macaddress']) ? $group_macaddress = $_POST['group_macaddress'] : $group_macaddress = "";
 	isset($_POST['group_pincode']) ? $group_pincode = $_POST['group_pincode'] : $group_pincode = "";
 
+
+	isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
+	isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
+	isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
+	isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
+	isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
+	isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
+	isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+	isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
+	isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
+	isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
+	isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
+	isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
+	isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
+	isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
+	isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
+	isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+	isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
+
 	isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
 	isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
 	isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
@@ -57,7 +76,7 @@
 	isset($_POST['state']) ? $ui_state = $_POST['state'] : $ui_state = "";
 	isset($_POST['zip']) ? $ui_zip = $_POST['zip'] : $ui_zip = "";
 	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
-	isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
+	isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
 
 
@@ -134,6 +153,67 @@
 	}
 
 
+
+	function addUserBillInfo($dbSocket, $username) {
+
+		global $bi_contactperson;
+		global $bi_company;
+		global $bi_email;
+		global $bi_phone;
+		global $bi_address;
+		global $bi_city;
+		global $bi_state;
+		global $bi_zip;
+		global $bi_paymentmethod;
+		global $bi_cash;
+		global $bi_creditcardname;
+		global $bi_creditcardnumber;
+		global $bi_creditcardexp;
+		global $bi_creditcardverification;
+		global $bi_creditcardtype;
+		global $bi_notes;
+		global $bi_changeuserbillinfo;
+		global $logDebugSQL;
+		global $configValues;
+
+		$currDate = date('Y-m-d H:i:s');
+		$currBy = $_SESSION['operator_user'];
+
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+				" WHERE username='".$dbSocket->escapeSimple($username)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+
+		// if there were no records for this user present in the userbillinfo table
+		if ($res->numRows() == 0) {
+			// insert user billing information table
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+				" (id, username, contactperson, company, email, phone, ".
+				" address, city, state, zip, ".
+				" paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
+				" notes, changeuserbillinfo, ".
+				" creationdate, creationby, updatedate, updateby) ".
+				" VALUES (0, 
+				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
+				$dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
+				$dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
+				$dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
+				$dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
+				$dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
+				$dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
+				$dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
+				$dbSocket->escapeSimple($bi_notes)."', '".
+				$dbSocket->escapeSimple($bi_changeuserbillinfo).
+				"', '$currDate', '$currBy', NULL, NULL)";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+		} //FIXME:
+		  //if the user already exist in userinfo then we should somehow alert the user
+		  //that this has happened and the administrator/operator will take care of it
+
+	}
+
+
 	function addAttributes($dbSocket, $username) {
 		
 		global $logDebugSQL;
@@ -168,6 +248,23 @@
 				case "state":
 				case "zip":
 				case "notes":
+				case "bi_contactperson":
+				case "bi_company":
+				case "bi_email":
+				case "bi_phone":
+				case "bi_address":
+				case "bi_city":
+				case "bi_state":
+				case "bi_zip":
+				case "bi_paymentmethod":
+				case "bi_cash":
+				case "bi_creditcardname":
+				case "bi_creditcardnumber":
+				case "bi_creditcardverification":
+				case "bi_creditcardtype":
+				case "bi_creditcardexp":
+				case "bi_notes":
+				case "changeUserBillInfo":
 				case "changeUserInfo":
 					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
 								// to skip the loop (continue) without entering it as
@@ -291,6 +388,7 @@
 					
 					addGroups($dbSocket, $username, $groups);
 					addUserInfo($dbSocket, $username);
+					addUserBillInfo($dbSocket, $username);
 					addAttributes($dbSocket, $username);
 
 					$successMsg = "Added to database new user: <b> $username </b>";
@@ -312,6 +410,7 @@
 				
 				addGroups($dbSocket, $macaddress, $group_macaddress);
 				addUserInfo($dbSocket, $macaddress);
+                                addUserBillInfo($dbSocket, $username);
 				addAttributes($dbSocket, $macaddress);
 
 				$successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
@@ -327,6 +426,7 @@
 
 				addGroups($dbSocket, $pincode, $group_pincode);
 				addUserInfo($dbSocket, $pincode);
+                                addUserBillInfo($dbSocket, $username);
 				addAttributes($dbSocket, $pincode);
 
 				$successMsg = "Added to database new pincode: <b> $pincode </b>";
@@ -599,6 +699,13 @@
 	<?php
 		$customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
 		include_once('include/management/userinfo.php');
+	?>
+	</div>
+
+	<div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+	<?php
+		$customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+		include_once('include/management/userbillinfo.php');
 	?>
 	</div>
 

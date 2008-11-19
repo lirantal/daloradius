@@ -58,10 +58,29 @@
 		$notes = $_REQUEST['notes'];
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 
+	        isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
+	        isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
+	        isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
+	        isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
+	        isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
+	        isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
+	        isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+	        isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
+	        isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
+	        isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
+	        isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
+	        isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
+	        isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
+	        isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
+	        isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
+	        isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+	        isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
+
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
 
 		if (trim($username) != "") {
 
+			/* perform user info table instructions */
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" WHERE username='".$dbSocket->escapeSimple($username)."'";
 			$res = $dbSocket->query($sql);
@@ -101,6 +120,63 @@
 					"', zip='".$dbSocket->escapeSimple($zip).
 					"', notes='".$dbSocket->escapeSimple($notes).
 					"', changeuserinfo='".$dbSocket->escapeSimple($ui_changeuserinfo).
+					"', updatedate='$currDate', updateby='$currBy' ".
+					" WHERE username='".$dbSocket->escapeSimple($username)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+			}
+
+
+
+
+			/* perform user billing info table instructions */
+			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+					" WHERE username='".$dbSocket->escapeSimple($username)."'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+
+			// if there were no records for this user present in the userbillinfo table
+			if ($res->numRows() == 0) {
+	                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+	                                " (id, username, contactperson, company, email, phone, ".
+	                                " address, city, state, zip, ".
+	                                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
+	                                " notes, changeuserbillinfo, ".
+	                                " creationdate, creationby, updatedate, updateby) ".
+	                                " VALUES (0,
+	                                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
+	                                $dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
+	                                $dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
+	                                $dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
+	                                $dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
+	                                $dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
+	                                $dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
+	                                $dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
+	                                $dbSocket->escapeSimple($bi_notes)."', '".
+	                                $dbSocket->escapeSimple($bi_changeuserbillinfo).
+	                                "', '$currDate', '$currBy', NULL, NULL)";
+	                        $res = $dbSocket->query($sql);
+	                        $logDebugSQL .= $sql . "\n";
+			} else {
+				// update user information table
+			   $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." SET contactperson='".
+					$dbSocket->escapeSimple($bi_contactperson).
+					"', company='".$dbSocket->escapeSimple($bi_company).
+					"', email='".$dbSocket->escapeSimple($bi_email).
+					"', phone='".$dbSocket->escapeSimple($bi_phone).
+					"', paymentmethod='".$dbSocket->escapeSimple($bi_paymentmethod).
+					"', cash='".$dbSocket->escapeSimple($bi_cash).
+					"', creditcardname='".$dbSocket->escapeSimple($bi_creditcardname).
+					"', creditcardnumber='".$dbSocket->escapeSimple($bi_creditcardnumber).
+					"', creditcardverification='".$dbSocket->escapeSimple($bi_creditcardverification).
+					"', creditcardtype='".$dbSocket->escapeSimple($bi_creditcardtype).
+					"', creditcardexp='".$dbSocket->escapeSimple($bi_creditcardexp).
+					"', address='".$dbSocket->escapeSimple($bi_address).
+					"', city='".$dbSocket->escapeSimple($bi_city).
+					"', state='".$dbSocket->escapeSimple($bi_state).
+					"', zip='".$dbSocket->escapeSimple($bi_zip).
+					"', notes='".$dbSocket->escapeSimple($bi_notes).
+					"', changeuserbillinfo='".$dbSocket->escapeSimple($bi_changeuserbillinfo).
 					"', updatedate='$currDate', updateby='$currBy' ".
 					" WHERE username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
@@ -171,6 +247,23 @@
 					case "zip":
 					case "notes":
 					case "changeUserInfo":
+	                                case "bi_contactperson":
+	                                case "bi_company":
+	                                case "bi_email":
+	                                case "bi_phone":
+	                                case "bi_address":
+	                                case "bi_city":
+	                                case "bi_state":
+	                                case "bi_zip":
+	                                case "bi_paymentmethod":
+	                                case "bi_cash":
+	                                case "bi_creditcardname":
+	                                case "bi_creditcardnumber":
+	                                case "bi_creditcardverification":
+	                                case "bi_creditcardtype":
+	                                case "bi_creditcardexp":
+	                                case "bi_notes":
+	                                case "changeUserBillInfo":
 					case "passwordOrig":
 						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
 												// to skip the loop (continue) without entering it as
@@ -332,8 +425,6 @@
 
 
 	/* fill-in all the user info details */
-
-
 	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, zip, notes, ".
 		" changeuserinfo, creationdate, creationby, updatedate, updateby FROM ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
@@ -362,6 +453,45 @@
 	$ui_creationby = $row[15];
 	$ui_updatedate = $row[16];
 	$ui_updateby = $row[17];
+
+
+
+	/* fill-in all the user bill info details */
+	$sql = "SELECT ".
+               " contactperson, company, email, phone, ".
+               " address, city, state, zip, ".
+               " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
+               " notes, changeuserbillinfo, ".
+               " creationdate, creationby, updatedate, updateby FROM ".
+		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+		" WHERE UserName='".
+		$dbSocket->escapeSimple($username)."'";
+	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+	$bi_contactperson = $row['contactperson'];
+	$bi_company = $row['company'];
+	$bi_email = $row['email'];
+	$bi_phone = $row['phone'];
+	$bi_address = $row['address'];
+	$bi_city = $row['city'];
+	$bi_state = $row['state'];
+	$bi_zip = $row['zip'];
+	$bi_paymentmethod = $row['paymentmethod'];
+	$bi_cash = $row['cash'];
+	$bi_creditcardname = $row['creditcardname'];
+	$bi_creditcardnumber = $row['creditcardnumber'];
+	$bi_creditcardverification = $row['creditcardverification'];
+	$bi_creditcardtype = $row['creditcardtype'];
+	$bi_creditcardexp = $row['creditcardexp'];
+	$bi_notes = $row['notes'];
+	$bi_changeuserbillinfo = $row['changeuserbillinfo'];
+	$ui_creationdate = $row['creationdate'];
+	$ui_creationby = $row['creationby'];
+	$ui_updatedate = $row['updatedate'];
+	$ui_updateby = $row['updateby'];
 
 	include 'library/closedb.php';
 
@@ -640,6 +770,12 @@
         ?>
      </div>
 
+        <div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+        <?php
+                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                include_once('include/management/userbillinfo.php');
+        ?>
+        </div>
 
      <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
         <?php
