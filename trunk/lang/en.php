@@ -232,6 +232,8 @@ $l['all']['PayerEmail'] = "Payer Email";
 $l['all']['TxnId'] = "Tranasction Id";
 $l['all']['PlanTimeType'] = "Plan Time Type";
 $l['all']['PlanTimeBank'] = "Plan Time Bank";
+$l['all']['PlanTimeRefillCost'] = "Plan Refill Cost";
+$l['all']['PlanTrafficRefillCost'] = "Plan Refill Cost";
 $l['all']['PlanBandwidthUp'] = "Plan Bandwidth Up";
 $l['all']['PlanBandwidthDown'] = "Plan Bandwidth Down";
 $l['all']['PlanTrafficTotal'] = "Plan Traffic Total";
@@ -243,7 +245,7 @@ $l['all']['PlanCost'] = "Plan Cost";
 $l['all']['PlanSetupCost'] = "Plan Setup Cost";
 $l['all']['PlanTax'] = "Plan Tax";
 $l['all']['PlanCurrency'] = "Plan Currency";
-$l['all']['PlanGroup'] = "Plan Group";
+$l['all']['PlanGroup'] = "Plan Profile (Group)";
 $l['all']['PlanType'] = "Plan Type";
 $l['all']['PlanName'] = "Plan Name";
 $l['all']['PlanId'] = "Plan Id";
@@ -268,7 +270,6 @@ $l['all']['BusinessAddress'] = "Business Address";
 $l['all']['BusinessWebsite'] = "Business Website";
 $l['all']['BusinessEmail'] = "Business Email";
 $l['all']['BusinessContactPerson'] = "Business Contact Person";
-
 $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
 
 
@@ -307,6 +308,8 @@ $l['Tooltip']['planNameTooltip'] = "The Plan's name. This is<br/>
 $l['Tooltip']['planIdTooltip'] = "";
 $l['Tooltip']['planTimeTypeTooltip'] = "";
 $l['Tooltip']['planTimeBankTooltip'] = "";
+$l['Tooltip']['planTimeRefillCostTooltip'] = "";
+$l['Tooltip']['planTrafficRefillCostTooltip'] = "";
 $l['Tooltip']['planBandwidthUpTooltip'] = "";
 $l['Tooltip']['planBandwidthDownTooltip'] = "";
 $l['Tooltip']['planTrafficTotalTooltip'] = "";
@@ -635,6 +638,7 @@ $l['title']['NASInfo'] = "NAS Info";
 $l['title']['NASAdvanced'] = "NAS Advanced";
 
 $l['title']['UserInfo'] = "User Info";
+$l['title']['BillingInfo'] = "Billing Info";
 
 $l['title']['Attributes'] = "Attributes";
 $l['title']['ProfileAttributes'] = "Profile Attributes";
@@ -682,6 +686,7 @@ $l['ContactInfo']['Email'] = "Email";
 $l['ContactInfo']['Department'] = "Department";
 $l['ContactInfo']['WorkPhone'] = "Work Phone";
 $l['ContactInfo']['HomePhone'] = "Home Phone";
+$l['ContactInfo']['Phone'] = "Phone";
 $l['ContactInfo']['MobilePhone'] = "Mobile Phone";
 $l['ContactInfo']['Notes'] = "Notes";
 $l['ContactInfo']['EnableUserUpdate'] = "Enable User Update";
@@ -702,6 +707,15 @@ $l['ContactInfo']['CompanyWebsite'] = "Company Website";
 $l['ContactInfo']['CompanyPhone'] = "Company Phone";
 $l['ContactInfo']['CompanyEmail'] = "Company Email";
 $l['ContactInfo']['CompanyContact'] = "Company Contact";
+
+$l['ContactInfo']['ContactPerson'] = "Contact Person";
+$l['ContactInfo']['PaymentMethod'] = "Payment Method";
+$l['ContactInfo']['Cash'] = "Cash";
+$l['ContactInfo']['CreditCardNumber'] = "Credit Card Number";
+$l['ContactInfo']['CreditCardName'] = "Credit Card Name";
+$l['ContactInfo']['CreditCardVerificationNumber'] = "Credit Card Verification Number";
+$l['ContactInfo']['CreditCardType'] = "Credit Card Type";
+$l['ContactInfo']['CreditCardExpiration'] = "Credit Card Expiration";
 
 /* ********************************************************************************** */
 

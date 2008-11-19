@@ -33,11 +33,13 @@
         isset($_POST['planType']) ? $planType = $_POST['planType'] : $planType = "";
         isset($_POST['planTimeType']) ? $planTimeType = $_POST['planTimeType'] : $planTimeType = "";
         isset($_POST['planTimeBank']) ? $planTimeBank = $_POST['planTimeBank'] : $planTimeBank = "";
+        isset($_POST['planTimeRefillCost']) ? $planTimeRefillCost = $_POST['planTimeRefillCost'] : $planTimeRefillCost = "";
         isset($_POST['planBandwidthUp']) ? $planBandwidthUp = $_POST['planBandwidthUp'] : $planBandwidthUp = "";
         isset($_POST['planBandwidthDown']) ? $planBandwidthDown = $_POST['planBandwidthDown'] : $planBandwidthDown = "";
         isset($_POST['planTrafficTotal']) ? $planTrafficTotal = $_POST['planTrafficTotal'] : $planTrafficTotal = "";
         isset($_POST['planTrafficDown']) ? $planTrafficDown = $_POST['planTrafficDown'] : $planTrafficDown = "";
         isset($_POST['planTrafficUp']) ? $planTrafficUp = $_POST['planTrafficUp'] : $planTrafficUp = "";
+        isset($_POST['planTrafficRefillCost']) ? $planTrafficRefillCost = $_POST['planTrafficRefillCost'] : $planTrafficRefillCost = "";
         isset($_POST['planRecurring']) ? $planRecurring = $_POST['planRecurring'] : $planRecurring = "";
         isset($_POST['planRecurringPeriod']) ? $planRecurringPeriod = $_POST['planRecurringPeriod'] : $planRecurringPeriod = "";
         isset($_POST['planCost']) ? $planCost = $_POST['planCost'] : $planCost = "";
@@ -64,11 +66,13 @@
 			" planType='".$dbSocket->escapeSimple($planType)."', ".
 			" planTimeType='".$dbSocket->escapeSimple($planTimeType)."', ".
 			" planTimeBank='".$dbSocket->escapeSimple($planTimeBank)."', ".
+			" planTimeRefillCost='".$dbSocket->escapeSimple($planTimeRefillCost)."', ".
 			" planBandwidthUp='".$dbSocket->escapeSimple($planBandwidthUp)."', ".
 			" planBandwidthDown='".$dbSocket->escapeSimple($planBandwidthDown)."', ".
 			" planTrafficTotal='".$dbSocket->escapeSimple($planTrafficTotal)."', ".
 			" planTrafficDown='".$dbSocket->escapeSimple($planTrafficDown)."', ".
 			" planTrafficUp='".$dbSocket->escapeSimple($planTrafficUp)."', ".
+			" planTrafficRefillCost='".$dbSocket->escapeSimple($planTrafficRefillCost)."', ".
 			" planRecurring='".$dbSocket->escapeSimple($planRecurring)."', ".
 			" planRecurringPeriod='".$dbSocket->escapeSimple($planRecurringPeriod)."', ".
 			" planCost='".$dbSocket->escapeSimple($planCost)."', ".
@@ -104,11 +108,13 @@
 	$planType = $row['planType'];
 	$planTimeType = $row['planTimeType'];
 	$planTimeBank = $row['planTimeBank'];
+	$planTimeRefillCost = $row['planTimeRefillCost'];
 	$planBandwidthUp = $row['planBandwidthUp'];
 	$planBandwidthDown = $row['planBandwidthDown'];
 	$planTrafficTotal = $row['planTrafficTotal'];
 	$planTrafficDown = $row['planTrafficDown'];
 	$planTrafficUp = $row['planTrafficUp'];
+	$planTrafficRefillCost = $row['planTrafficRefillCost'];
 	$planRecurring = $row['planRecurring'];
 	$planRecurringPeriod = $row['planRecurringPeriod'];
 	$planCost = $row['planCost'];
@@ -364,6 +370,18 @@
                 </div>
                 </li>
 
+
+                <li class='fieldset'>
+                <label for='planTimeRefillCost' class='form'><?php echo $l['all']['PlanTimeRefillCost'] ?></label>
+                <input name='planTimeRefillCost' type='text' id='planTimeRefillCost' value='<?php echo $planTimeRefillCost ?>' tabindex=101 />
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeRefillCostTooltip')" />
+
+                <div id='planTimeRefillCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['planTimeRefillCostTooltip'] ?>
+                </div>
+                </li>
+
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
@@ -440,6 +458,19 @@
                 <div id='planTrafficUpTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['planTrafficUpTooltip'] ?>
+                </div>
+                </li>
+
+
+
+                <li class='fieldset'>
+                <label for='planTrafficRefillCost' class='form'><?php echo $l['all']['PlanTrafficRefillCost'] ?></label>
+                <input name='planTrafficRefillCost' type='text' id='planTrafficRefillCost' value='<?php echo $planTrafficRefillCost ?>' tabindex=101 />
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficRefillCostTooltip')" />
+
+                <div id='planTrafficRefillCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['planTrafficRefillCostTooltip'] ?>
                 </div>
                 </li>
 
