@@ -38,7 +38,10 @@
 				<h3>Custom Query</h3>
 				<ul class="subnav">
 
-							<form name="acctcustomquery" action="acct-custom-query.php" method="get" class="sidebar">
+	<form name="acctcustomquery" action="acct-custom-query.php" method="get" class="sidebar">
+
+	<input type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+	<br/><br/>	
 
 	<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
 	

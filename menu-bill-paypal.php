@@ -35,8 +35,12 @@
                                 <h3>Track PayPal Transactions</h3>
 	<ul class="subnav">
 
+        <form name="billpaypaltransactions" action="bill-paypal-transactions.php" method="get" class="sidebar">
+
+        <input type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+	<br/><br/>
+
 		<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
-                        <form name="billpaypaltransactions" action="bill-paypal-transactions.php" method="get" class="sidebar">
 
                         <input name="startdate" type="text" id="startdate"
                                 value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
