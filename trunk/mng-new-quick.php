@@ -31,6 +31,7 @@
 	$sessiontimeout = "";
 	$idletimeout = "";
 	$ui_changeuserinfo = "0";
+	$bi_changeuserbillinfo = "0";
 	
 	$logAction = "";
 	$logDebugSQL = "";
@@ -60,6 +61,24 @@
 	        isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
 		isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 		isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
+
+	        isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
+	        isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
+	        isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
+	        isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
+	        isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
+	        isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
+	        isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+	        isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
+	        isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
+	        isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
+	        isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
+	        isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
+	        isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
+	        isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
+	        isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
+	        isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+	        isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
 		include 'library/opendb.php';
 		
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
@@ -177,6 +196,36 @@
 
 				}
 
+
+		                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+		                                " WHERE username='".$dbSocket->escapeSimple($username)."'";
+		                $res = $dbSocket->query($sql);
+		                $logDebugSQL .= $sql . "\n";
+		
+		                // if there were no records for this user present in the userbillinfo table
+		                if ($res->numRows() == 0) {
+		                        // insert user billing information table
+		                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+		                                " (id, username, contactperson, company, email, phone, ".
+		                                " address, city, state, zip, ".
+		                                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
+		                                " notes, changeuserbillinfo, ".
+		                                " creationdate, creationby, updatedate, updateby) ".
+		                                " VALUES (0,
+		                                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
+		                                $dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
+		                                $dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
+		                                $dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
+		                                $dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
+		                                $dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
+		                                $dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
+	                	                $dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
+		                                $dbSocket->escapeSimple($bi_notes)."', '".
+		                                $dbSocket->escapeSimple($bi_changeuserbillinfo).
+		                                "', '$currDate', '$currBy', NULL, NULL)";
+			                        $res = $dbSocket->query($sql);
+		                        $logDebugSQL .= $sql . "\n";
+		                }
 
 				$successMsg = "Added to database new user: <b> $username </b>";
 				$logAction .= "Successfully added new user [$username] on page: ";
@@ -407,6 +456,15 @@
         ?>
 
      </div>
+
+
+
+        <div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+        <?php
+                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                include_once('include/management/userbillinfo.php');
+        ?>
+        </div>
 
 
 </div>
