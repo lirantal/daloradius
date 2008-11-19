@@ -531,6 +531,16 @@ input {
 	margin: 2px;
 }
 
+input.sidebutton {
+	height:25px;
+	width:180px;
+	padding:1px;
+	border:1;
+	font:100% Verdana;
+	color:#000000;
+	margin: 2px;
+}
+
 input:focus {
 //	background-color:#FFF8C6;
 	background-color:#BCE954;
