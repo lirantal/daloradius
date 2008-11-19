@@ -61,7 +61,7 @@
 							?>
 						</select>
 						<br/><br/><br/>
-						<input type="submit" value="Login" tabindex=3 />
+						<input class="sidebutton" type="submit" value="Login" tabindex=3 />
 					</ul>
 				</form>
 						
