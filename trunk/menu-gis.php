@@ -43,7 +43,7 @@
 			</a>
 			<form name="gisregister" action="gis-main.php" method="get" class="sidebar">
 			<input name="code" type="text">
-			<input name="submit" type="submit" value="Register code">
+			<input class="sidebutton" name="submit" type="submit" value="Register code">
 			</form>
 		</li>
 	</ul>

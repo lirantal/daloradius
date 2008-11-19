@@ -161,7 +161,7 @@
                         </center>
 
         <br/>
-        <input type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+        <input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
 
 
 
