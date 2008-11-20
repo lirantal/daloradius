@@ -41,6 +41,7 @@ $configValues['CONFIG_DB_TBL_DALOOPERATOR'] = 'operators';
 $configValues['CONFIG_DB_TBL_DALORATES'] = 'rates';
 $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = 'hotspots';
 $configValues['CONFIG_DB_TBL_DALOUSERINFO'] = 'userinfo';
+$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
 $configValues['CONFIG_DB_TBL_DALODICTIONARY'] = 'dictionary';
 $configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
 $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
