@@ -40,6 +40,18 @@ if(isset($_GET['getGroups'])) {
 		$elemName = $_GET['elemName'];
 
 
+	switch ($divContainer) {
+		case "divContainerProfiles":
+			$name = "Profile";
+			break;		
+		case "divContainerGroups":
+			$name = "Group";
+			break;		
+		default:
+			$name = "Group";
+			break;		
+	}
+
 	include '../../library/opendb.php';
 
         $sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].")".
@@ -50,7 +62,7 @@ if(isset($_GET['getGroups'])) {
 	printqn("
 		var divContainer = document.getElementById('$divContainer');
 		var groups = ''+
-	                '<label for=\'group\' class=\'form\'>Group</label>'+
+	                '<label for=\'$name\' class=\'form\'>$name</label>'+
 	                '        <select class=\'form\' name=\'$elemName\' >'+
 	");
 			

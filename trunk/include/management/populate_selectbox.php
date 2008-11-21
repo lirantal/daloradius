@@ -1,7 +1,37 @@
 <?php
 
+
 /*
- * populate_groups 
+ * populate_plans()
+ *
+ */
+function populate_plans($defaultOption = "Select Plan",$elementName = "", $cssClass = "form", $mode = "") {
+
+	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />
+			<option value=''>$defaultOption</option>";
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+        $sql = "SELECT distinct(planName) FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." ORDER BY planName ASC;";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow()) {
+                echo "  
+                        <option value='$row[0]'> $row[0] </option>
+                        ";
+
+        }
+
+	echo "</select>";
+
+        include 'library/closedb.php';
+}
+
+
+/*
+ * populate_groups
  * creates a select box and populates it with all groups from radgroupreply and
  * radgroupcheck
  * 
@@ -49,16 +79,14 @@ function populate_groups($defaultOption = "Select Group",$elementName = "", $css
 function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $cssClass = "form", $mode = "") {
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
-			name='$elementName' class='$cssClass' tabindex=105
+			name='$elementName' class='$cssClass' tabindex=105 />
 			<option value=''>$defaultOption</option>";
 
         include 'library/opendb.php';
 
         // Grabing the group lists from usergroup table
 
-	$configValues['CONFIG_DB_TBL_DICTIONARY'] = "dictionary";
-
-        $sql = "SELECT distinct(Vendor) as Vendor FROM ".$configValues['CONFIG_DB_TBL_DICTIONARY']." ORDER BY Vendor ASC;";
+        $sql = "SELECT distinct(Vendor) as Vendor FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." ORDER BY Vendor ASC;";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
@@ -86,7 +114,7 @@ function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $c
 function populate_realms($defaultOption = "Select Realm",$elementName = "", $cssClass = "form", $mode = "") {
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'realm')\" id='realmlist' $mode
-			name='$elementName' class='$cssClass' tabindex=105
+			name='$elementName' class='$cssClass' tabindex=105 />
 			<option value=''>$defaultOption</option>";
 
         include 'library/opendb.php';
@@ -126,7 +154,7 @@ function populate_realms($defaultOption = "Select Realm",$elementName = "", $css
 function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $cssClass = "form", $mode = "") {
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'proxy')\" id='proxylist' $mode
-			name='$elementName' class='$cssClass' tabindex=105
+			name='$elementName' class='$cssClass' tabindex=105 />
 			<option value=''>$defaultOption</option>";
 
         include 'library/opendb.php';
