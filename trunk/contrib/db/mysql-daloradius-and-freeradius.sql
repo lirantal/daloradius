@@ -181,7 +181,15 @@ CREATE TABLE `operators` (
   `bill_rates_new` varchar(32) default NULL,
   `bill_rates_edit` varchar(32) default NULL,
   `bill_rates_list` varchar(32) default NULL,
+  `bill_pos_del` varchar(32) default NULL,
+  `bill_pos_new` varchar(32) default NULL,
+  `bill_pos_edit` varchar(32) default NULL,
+  `bill_pos_list` varchar(32) default NULL,
   `bill_paypal_transactions` varchar(32) default NULL,
+  `bill_plans_del` varchar(32) default NULL,
+  `bill_plans_new` varchar(32) default NULL,
+  `bill_plans_edit` varchar(32) default NULL,
+  `bill_plans_list` varchar(32) default NULL,
   `gis_editmap` varchar(32) default NULL,
   `gis_viewmap` varchar(32) default NULL,
   `graphs_alltime_logins` varchar(32) default NULL,
@@ -249,7 +257,7 @@ CREATE TABLE `operators` (
 
 /*!40000 ALTER TABLE `operators` DISABLE KEYS */;
 LOCK TABLES `operators` WRITE;
-INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Sys','Administrator','','','','','','','','','','','0000-00-00 00:00:00','0000-00-00 00:00:00','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes',NULL,'0000-00-00 00:00:00',NULL),(2,'liran','1234','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Liran','Tal','Developer','daloRADIUS','Enginx','','','liran.tal@gmail.com','liran@enginx.com','','','','0000-00-00 00:00:00','0000-00-00 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0000-00-00 00:00:00',NULL);
+INSERT INTO `operators` VALUES (1,'administrator','radius','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Sys','Administrator','','','','','','','','','','','0000-00-00 00:00:00','0000-00-00 00:00:00','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes',NULL,'0000-00-00 00:00:00',NULL),(2,'liran','1234','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','yes','Liran','Tal','Developer','daloRADIUS','Enginx','','','liran.tal@gmail.com','liran@enginx.com','','','','0000-00-00 00:00:00','0000-00-00 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0000-00-00 00:00:00',NULL);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `operators` ENABLE KEYS */;
 
@@ -683,6 +691,50 @@ CREATE TABLE `billing_paypal` (
   KEY `username` (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+
+
+--
+-- Table structure for table `userbillinfo`
+--
+
+DROP TABLE IF EXISTS `userbillinfo`;
+CREATE TABLE `userbillinfo` (
+  `id` int(8) unsigned NOT NULL auto_increment,
+  `username` varchar(30) default NULL,
+  `planName` varchar(128) default NULL,
+  `contactperson` varchar(200) default NULL,
+  `company` varchar(200) default NULL,
+  `email` varchar(200) default NULL,
+  `phone` varchar(200) default NULL,
+  `address` varchar(200) default NULL,
+  `city` varchar(200) default NULL,
+  `state` varchar(200) default NULL,
+  `zip` varchar(200) default NULL,
+  `paymentmethod` varchar(200) default NULL,
+  `cash` varchar(200) default NULL,
+  `creditcardname` varchar(200) default NULL,
+  `creditcardnumber` varchar(200) default NULL,
+  `creditcardverification` varchar(200) default NULL,
+  `creditcardtype` varchar(200) default NULL,
+  `creditcardexp` varchar(200) default NULL,
+  `notes` varchar(200) default NULL,
+  `changeuserbillinfo` varchar(128) default NULL,
+  `lead` varchar(200) default NULL,
+  `coupon` varchar(200) default NULL,
+  `ordertaker` varchar(200) default NULL,
+  `billstatus` varchar(200) default NULL,
+  `lastbill` datetime default '0000-00-00 00:00:00',
+  `nextbill` datetime default '0000-00-00 00:00:00',
+  `postalinvoice` varchar(8) default NULL,
+  `faxinvoice` varchar(8) default NULL,
+  `emailinvoice` varchar(8) default NULL,
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `username` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
