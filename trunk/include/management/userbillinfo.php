@@ -17,6 +17,10 @@ echo "
 	<h301> Billing Information </h301>
 	<br/>
 
+	<label for='planname' class='form'>".$l['ContactInfo']['PlanName']."</label>
+	<input value='"; if (isset($bi_planname)) echo $bi_planname; echo "' name='bi_planname' disabled tabindex=401 />
+        <br/>
+
 	<label for='contactperson' class='form'>".$l['ContactInfo']['ContactPerson']."</label>
         <input value='"; if (isset($bi_contactperson)) echo $bi_contactperson; echo "' name='bi_contactperson' tabindex=400 />
 	<br/>
@@ -49,6 +53,19 @@ echo "
 	<input value='"; if (isset($bi_zip)) echo $bi_zip; echo "' name='bi_zip' tabindex=407 />
         <br/>
 
+	<label for='PostalInvoice' class='form'>".$l['all']['PostalInvoice']."</label>
+	<input value='"; if (isset($bi_postalinvoice)) echo $bi_postalinvoice; echo "' name='bi_postalinvoice' tabindex=411 />
+        <br/>
+
+	<label for='FaxInvoice' class='form'>".$l['all']['FaxInvoice']."</label>
+	<input value='"; if (isset($bi_faxinvoice)) echo $bi_faxinvoice; echo "' name='bi_faxinvoice' tabindex=411 />
+        <br/>
+
+	<label for='EmailInvoice' class='form'>".$l['all']['EmailInvoice']."</label>
+	<input value='"; if (isset($bi_emailinvoice)) echo $bi_emailinvoice; echo "' name='bi_emailinvoice' tabindex=411 />
+        <br/>
+
+
 	<br/>
 	<h301> Payment Details </h301>
 	<br/>
@@ -75,11 +92,42 @@ echo "
         <br/>
 
 	<label for='CreditCardType' class='form'>".$l['ContactInfo']['CreditCardType']."</label>
-	<input value='"; if (isset($bi_creditcardtype)) echo $bi_creditcardtype; echo "' name='bi_creditcardtype' tabindex=411 />
+	<select class='form' name='bi_creditcardtype'>
+		<option value='"; if (isset($bi_creditcardtype)) echo $bi_creditcardtype; echo "'>";if (isset($bi_creditcardtype)) echo $bi_creditcardtype; echo "</option>
+		<option value=''></option>
+		<option value='VISA'>VISA</option>
+		<option value='MasterCard'>MasterCard</option>
+		<option value='Diners'>Diners</option>
+	</select>
         <br/>
 
 	<label for='CreditCardExpiration' class='form'>".$l['ContactInfo']['CreditCardExpiration']."</label>
 	<input value='"; if (isset($bi_creditcardexp)) echo $bi_creditcardexp; echo "' name='bi_creditcardexp' tabindex=411 />
+        <br/>
+
+
+
+	<br/>
+	<h301> Promotion Details </h301>
+	<br/>
+
+	<label for='Lead' class='form'>".$l['all']['Lead']."</label>
+	<select class='form' name='bi_lead'>
+		<option value='"; if (isset($bi_lead)) echo $bi_lead; echo "'>";if (isset($bi_lead)) echo $bi_lead; echo "</option>
+		<option value=''></option>
+		<option value='Internet'>Internet</option>
+		<option value='Friend Referral'>Friend Referral</option>
+		<option value='News Medium'>News Medium</option>
+		<option value='Advertisment'>Advertisment</option>
+	</select>
+        <br/>
+
+	<label for='Coupon' class='form'>".$l['all']['Coupon']."</label>
+	<input value='"; if (isset($bi_coupon)) echo $bi_coupon; echo "' name='bi_coupon' tabindex=411 />
+        <br/>
+
+	<label for='OrderTaker' class='form'>".$l['all']['OrderTaker']."</label>
+	<input value='"; if (isset($bi_ordertaker)) echo $bi_ordertaker; echo "' name='bi_ordertaker' tabindex=411 />
         <br/>
 
 	<br/><br/>
@@ -93,17 +141,30 @@ echo "
 "; // breaking echo
 
 	if ($bi_changeuserbillinfo == 1) {
-		$isChecked = "checked";
-		$bi_changeuserbillinfo = 0;
+		$isBIChecked = "checked='yes'";
+		$bi_changeuserbillinfo = 1;
 	} else {
 		$bi_changeuserbillinfo = 1;
-		$isChecked = "";
+		$isBIChecked = "";
 	}
 
 echo "
 
 	<label for='userupdate' class='form'>".$l['ContactInfo']['EnableUserUpdate']."</label>
-	<input type='checkbox' class='form' name='changeUserBillInfo' value='$bi_changeuserbillinfo' $isChecked tabindex=413 />
+	<input type='checkbox' class='form' name='changeUserBillInfo' value='$bi_changeuserbillinfo' $isBIChecked tabindex=413 />
+        <br/>
+	<br/>
+
+	<label for='BillStatus' class='form'>".$l['all']['BillStatus']."</label>
+	<input value='"; if (isset($bi_billstatus)) echo $bi_billstatus; echo "' name='bi_billstatus' disabled tabindex=411 />
+        <br/>
+
+	<label for='LastBill' class='form'>".$l['all']['LastBill']."</label>
+	<input value='"; if (isset($bi_lastbill)) echo $bi_lastbill; echo "' name='bi_lastbill' disabled tabindex=411 />
+        <br/>
+
+	<label for='NextBill' class='form'>".$l['all']['NextBill']."</label>
+	<input value='"; if (isset($bi_nextbill)) echo $bi_nextbill; echo "' name='bi_nextbill' disabled tabindex=411 />
         <br/>
 
 	<br/>
