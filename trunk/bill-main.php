@@ -17,9 +17,7 @@
 </head>
  
 <?php
-
-	include ("menu-bill-rates.php");
-	
+	include ("menu-bill-pos.php");
 ?>		
 		
 		<div id="contentnorightbar">

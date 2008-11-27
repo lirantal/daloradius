@@ -35,11 +35,11 @@
 		$currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
 		$currBy = $_SESSION['operator_user'];
 
-		$username = $_REQUEST['username'];
+		$username = trim($_REQUEST['username']);
 		$password = "";						// we initialize the $password variable to contain nothing
 
 		isset ($_REQUEST['newgroups']) ? $newgroups = $_REQUEST['newgroups'] : $newgroups = "";
-		isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
+//		isset ($_REQUEST['oldgroups']) ? $oldgroups = $_REQUEST['oldgroups'] : $oldgroups = "";
 		isset ($_REQUEST['groups']) ? $groups = $_REQUEST['groups'] : $groups = "";
 		isset ($_REQUEST['groups_priority']) ? $groups_priority = $_REQUEST['groups_priority'] : $groups_priority = "";
 
@@ -59,6 +59,7 @@
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 
 	        isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
+		isset($_POST['bi_planname']) ? $bi_planname = $_POST['bi_planname'] : $bi_planname = "";
 	        isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
 	        isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
 	        isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
@@ -74,6 +75,15 @@
 	        isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
 	        isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
 	        isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+	        isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
+	        isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
+	        isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
+	        isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
+	        isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
+	        isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+	        isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
+	        isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
+	        isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
 	        isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
 
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
@@ -142,6 +152,7 @@
 	                                " address, city, state, zip, ".
 	                                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 	                                " notes, changeuserbillinfo, ".
+                                        " lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
 	                                " creationdate, creationby, updatedate, updateby) ".
 	                                " VALUES (0,
 	                                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
@@ -153,7 +164,12 @@
 	                                $dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
 	                                $dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
 	                                $dbSocket->escapeSimple($bi_notes)."', '".
-	                                $dbSocket->escapeSimple($bi_changeuserbillinfo).
+	                                $dbSocket->escapeSimple($bi_changeuserbillinfo)."', '".
+                                        $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
+                                        $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
+                                        $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
+                                        $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
+                                        $dbSocket->escapeSimple($bi_emailinvoice).
 	                                "', '$currDate', '$currBy', NULL, NULL)";
 	                        $res = $dbSocket->query($sql);
 	                        $logDebugSQL .= $sql . "\n";
@@ -177,6 +193,17 @@
 					"', zip='".$dbSocket->escapeSimple($bi_zip).
 					"', notes='".$dbSocket->escapeSimple($bi_notes).
 					"', changeuserbillinfo='".$dbSocket->escapeSimple($bi_changeuserbillinfo).
+                                        "', lead='".$dbSocket->escapeSimple($bi_lead).
+                                        "', coupon='".$dbSocket->escapeSimple($bi_coupon).
+                                        "', ordertaker='".$dbSocket->escapeSimple($bi_ordertaker).
+                                        "', billstatus='".$dbSocket->escapeSimple($bi_billstatus).
+/*
+                                        "', lastbill='".$dbSocket->escapeSimple($bi_lastbill).
+                                        "', nextbill='".$dbSocket->escapeSimple($bi_nextbill).
+*/
+                                        "', postalinvoice='".$dbSocket->escapeSimple($bi_postalinvoice).
+                                        "', faxinvoice='".$dbSocket->escapeSimple($bi_faxinvoice).
+                                        "', emailinvoice='".$dbSocket->escapeSimple($bi_emailinvoice).
 					"', updatedate='$currDate', updateby='$currBy' ".
 					" WHERE username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
@@ -186,23 +213,47 @@
 			 // update usergroup mapping (existing)
 			 if ($groups) {
 
+				$sql = "DELETE FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='".
+					$dbSocket->escapeSimple($username)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+
 				$grpcnt = 0;			// group counter
 				foreach ($groups as $group) {
 
-					$oldgroup = $oldgroups[$grpcnt];			
+//					$oldgroup = $oldgroups[$grpcnt];			
 
 					if (!($groups_priority[$grpcnt]))
 						$group_priority = 0;
 					else
 						$group_priority = $groups_priority[$grpcnt];
 
-					$sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='".
-						$dbSocket->escapeSimple($username)."', GroupName='".$dbSocket->escapeSimple($group)."', priority=".
-						$dbSocket->escapeSimple($group_priority)." WHERE UserName='".$dbSocket->escapeSimple($username).
-						"' AND GroupName='".$dbSocket->escapeSimple($oldgroup)."';";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+/*
+					if (trim($group) != "") {  // if the group was marked as an empty option, then it means we need to remove it
+						$sql = "DELETE FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='".
+							$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldgroup)."'";
+						$res = $dbSocket->query($sql);
+						$logDebugSQL .= $sql . "\n";
+					} else {
+*/
 
+					if (trim($group) != "") {
+		      	                         $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+                	                                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."', ".
+							$dbSocket->escapeSimple($group_priority).")";
+       	        	              	         $res = $dbSocket->query($sql);
+					}
+
+/*
+						$sql = "UPDATE ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." SET UserName='".
+							$dbSocket->escapeSimple($username)."', GroupName='".$dbSocket->escapeSimple($group)."', priority=".
+							$dbSocket->escapeSimple($group_priority)." WHERE UserName='".$dbSocket->escapeSimple($username).
+							"' AND GroupName='".$dbSocket->escapeSimple($oldgroup)."';";
+						$res = $dbSocket->query($sql);
+*/
+						$logDebugSQL .= $sql . "\n";
+//					}
+	
 					$grpcnt++;		// we increment group index count so we can access the group priority array
 				}
 			}
@@ -216,8 +267,8 @@
                	                 if (trim($newgroup) != "") {
                	                         $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
                 	                                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($newgroup)."',0) ";
-         	                      	         $res = $dbSocket->query($sql);
-                        	                $logDebugSQL .= $sql . "\n";
+       	                      	         $res = $dbSocket->query($sql);
+                       	                $logDebugSQL .= $sql . "\n";
                 	                }
         	                }
 	                }
@@ -264,6 +315,15 @@
 	                                case "bi_creditcardexp":
 	                                case "bi_notes":
 	                                case "changeUserBillInfo":
+	                                case "bi_lead":
+	                                case "bi_coupon":
+	                                case "bi_ordertaker":
+	                                case "bi_billstatus":
+	                                case "bi_lastbill":
+	                                case "bi_nextbill":
+	                                case "bi_postalinvoice":
+	                                case "bi_faxinvoice":
+	                                case "bi_emailinvoice":
 					case "passwordOrig":
 						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
 												// to skip the loop (continue) without entering it as
@@ -300,7 +360,6 @@
 					$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
 		                if ($table == 'reply')
 					$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-
 
 				if ( (!($value)) || (!($attribute)) )
 					continue;
@@ -401,12 +460,12 @@
 
 
 	if (isset($_REQUEST['username']))
-		$username = $_REQUEST['username'];
+		$username = trim($_REQUEST['username']);
 	else
 		$username = "";
 
 	if (trim($username) != "") {
-		$username = $_REQUEST['username'];
+		$username = trim($_REQUEST['username']);
 	} else {
 		$failureMsg = "no user was entered, please specify a username to edit";
 	}
@@ -458,10 +517,11 @@
 
 	/* fill-in all the user bill info details */
 	$sql = "SELECT ".
-               " contactperson, company, email, phone, ".
+               " planName, contactperson, company, email, phone, ".
                " address, city, state, zip, ".
                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
                " notes, changeuserbillinfo, ".
+               " lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
                " creationdate, creationby, updatedate, updateby FROM ".
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		" WHERE UserName='".
@@ -472,6 +532,7 @@
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
 	$bi_contactperson = $row['contactperson'];
+	$bi_planname = $row['planName'];
 	$bi_company = $row['company'];
 	$bi_email = $row['email'];
 	$bi_phone = $row['phone'];
@@ -487,6 +548,15 @@
 	$bi_creditcardtype = $row['creditcardtype'];
 	$bi_creditcardexp = $row['creditcardexp'];
 	$bi_notes = $row['notes'];
+        $bi_lead = $row['lead'];
+        $bi_coupon = $row['coupon'];
+        $bi_ordertaker = $row['ordertaker'];
+        $bi_billstatus = $row['billstatus'];
+        $bi_lastbill = $row['lastbill'];
+        $bi_nextbill = $row['nextbill'];
+        $bi_postalinvoice = $row['postalinvoice'];
+        $bi_faxinvoice = $row['faxinvoice'];
+        $bi_emailinvoice = $row['emailinvoice'];
 	$bi_changeuserbillinfo = $row['changeuserbillinfo'];
 	$ui_creationdate = $row['creationdate'];
 	$ui_creationby = $row['creationby'];

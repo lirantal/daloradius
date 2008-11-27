@@ -19,7 +19,7 @@
  *
  *********************************************************************************************************
  */
- 
+
 	include ("library/checklogin.php");
 	$operator = $_SESSION['operator_user'];
 
@@ -61,6 +61,15 @@
 	isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
 	isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
 	isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+        isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
+        isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
+        isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
+        isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
+        isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
+        isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+        isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
+        isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
+        isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
 	isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
 
 	isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
@@ -172,6 +181,15 @@
 		global $bi_creditcardverification;
 		global $bi_creditcardtype;
 		global $bi_notes;
+                global $bi_lead;
+                global $bi_coupon;
+                global $bi_ordertaker;
+                global $bi_billstatus;
+                global $bi_lastbill;
+                global $bi_nextbill;
+                global $bi_postalinvoice;
+                global $bi_faxinvoice;
+                global $bi_emailinvoice;
 		global $bi_changeuserbillinfo;
 		global $logDebugSQL;
 		global $configValues;
@@ -192,6 +210,7 @@
 				" address, city, state, zip, ".
 				" paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 				" notes, changeuserbillinfo, ".
+                                " lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
 				" creationdate, creationby, updatedate, updateby) ".
 				" VALUES (0, 
 				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
@@ -203,7 +222,12 @@
 				$dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
 				$dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
 				$dbSocket->escapeSimple($bi_notes)."', '".
-				$dbSocket->escapeSimple($bi_changeuserbillinfo).
+				$dbSocket->escapeSimple($bi_changeuserbillinfo)."', '".
+                                $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
+                                $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
+                                $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
+                                $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
+                                $dbSocket->escapeSimple($bi_emailinvoice).
 				"', '$currDate', '$currBy', NULL, NULL)";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
@@ -264,6 +288,15 @@
 				case "bi_creditcardtype":
 				case "bi_creditcardexp":
 				case "bi_notes":
+                                case "bi_lead":
+                                case "bi_coupon":
+                                case "bi_ordertaker":
+                                case "bi_billstatus":
+                                case "bi_lastbill":
+                                case "bi_nextbill":
+                                case "bi_postalinvoice":
+                                case "bi_faxinvoice":
+                                case "bi_emailinvoice":
 				case "changeUserBillInfo":
 				case "changeUserInfo":
 					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag

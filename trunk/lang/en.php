@@ -101,8 +101,10 @@ $l['all']['Username'] = "Username";
 $l['all']['Password'] = "Password";
 $l['all']['PasswordType'] = "Password Type";
 $l['all']['IPAddress'] = "IP Address";
+$l['all']['Profile'] = "Profile";
 $l['all']['Group'] = "Group";
 $l['all']['Groupname'] = "Groupname";
+$l['all']['ProfilePriority'] = "Profile Priority";
 $l['all']['GroupPriority'] = "Group Priority";
 $l['all']['CurrentGroupname'] = "Current Groupname";
 $l['all']['NewGroupname'] = "New Groupname";
@@ -154,6 +156,16 @@ $l['all']['CreationDate'] = "Creation Date";
 $l['all']['CreationBy'] = "Creation By";
 $l['all']['UpdateDate'] = "Update Date";
 $l['all']['UpdateBy'] = "Update By";
+
+$l['all']['Lead'] = "Lead";
+$l['all']['Coupon'] = "Coupon";
+$l['all']['OrderTaker'] = "Order Taker";
+$l['all']['BillStatus'] = "Bill Status";
+$l['all']['LastBill'] = "Last Bill";
+$l['all']['NextBill'] = "Next Bill";
+$l['all']['PostalInvoice'] = "Postal Invoice";
+$l['all']['FaxInvoice'] = "Fax Invoice";
+$l['all']['EmailInvoice'] = "Email Invoice";
 
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
@@ -629,6 +641,7 @@ $l['title']['VendorAttribute'] = "Vendor Attribute";
 $l['title']['AccountRemoval'] = "Account Removal";
 $l['title']['AccountInfo'] = "Account Info";
 
+$l['title']['Profiles'] = "Profiles";
 $l['title']['ProfileInfo'] = "Profile Info";
 
 $l['title']['GroupInfo'] = "Group Info";
@@ -648,6 +661,9 @@ $l['title']['HotspotRemoval'] = "Hotspot Removal";
 
 $l['title']['ContactInfo'] = "Contact Info";
 
+$l['title']['Plan'] = "Plan";
+
+$l['title']['Profile'] = "Profile";
 $l['title']['Groups'] = "Groups";
 $l['title']['RADIUSCheck'] = "Check Attributes";
 $l['title']['RADIUSReply'] = "Reply Attributes";
@@ -708,6 +724,7 @@ $l['ContactInfo']['CompanyPhone'] = "Company Phone";
 $l['ContactInfo']['CompanyEmail'] = "Company Email";
 $l['ContactInfo']['CompanyContact'] = "Company Contact";
 
+$l['ContactInfo']['PlanName'] = "Plan Name";
 $l['ContactInfo']['ContactPerson'] = "Contact Person";
 $l['ContactInfo']['PaymentMethod'] = "Payment Method";
 $l['ContactInfo']['Cash'] = "Cash";
@@ -776,6 +793,11 @@ $l['Intro']['billplansedit.php'] = "Edit Plan Details";
 $l['Intro']['billplanslist.php'] = "Plans Table";
 $l['Intro']['billplansnew.php'] = "New Plan entry";
 
+$l['Intro']['billpos.php'] = "Billing Point of Sales Page";
+$l['Intro']['billposdel.php'] = "Delete User";
+$l['Intro']['billposedit.php'] = "Edit User";
+$l['Intro']['billposlist.php'] = "List Users";
+$l['Intro']['billposnew.php'] = "New User";
 
 $l['Intro']['giseditmap.php'] = "Edit MAP Mode";
 $l['Intro']['gismain.php'] = "GIS Mapping";
@@ -902,6 +924,11 @@ $l['helpPage']['billplanslist'] = "";
 $l['helpPage']['billplansnew'] = "";
 $l['helpPage']['billplansedit'] = "";
 $l['helpPage']['billplansdel'] = "";
+
+$l['helpPage']['billposlist'] = "";
+$l['helpPage']['billposnew'] = "";
+$l['helpPage']['billposedit'] = "";
+$l['helpPage']['billposdel'] = "";
 
 $l['helpPage']['billrateslist'] = "";
 $l['helpPage']['billratesnew'] = "";
