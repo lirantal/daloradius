@@ -117,3 +117,63 @@ CREATE TABLE `billing_paypal` (
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+
+CREATE TABLE `userbillinfo` (
+  `id` int(8) unsigned NOT NULL auto_increment,
+  `username` varchar(64) default NULL,
+  `planName` varchar(128) default NULL,
+  `contactperson` varchar(200) default NULL,
+  `company` varchar(200) default NULL,
+  `email` varchar(200) default NULL,
+  `phone` varchar(200) default NULL,
+  `address` varchar(200) default NULL,
+  `city` varchar(200) default NULL,
+  `state` varchar(200) default NULL,
+  `zip` varchar(200) default NULL,
+  `paymentmethod` varchar(200) default NULL,
+  `cash` varchar(200) default NULL,
+  
+  `creditcardname` varchar(200) default NULL,
+  `creditcardnumber` varchar(200) default NULL,
+  `creditcardverification` varchar(200) default NULL,
+  `creditcardtype` varchar(200) default NULL,
+  `creditcardexp` varchar(200) default NULL,
+  
+  `notes` varchar(200) default NULL,
+  `changeuserbillinfo` varchar(128) default NULL,
+   
+  `lead` varchar(200) default NULL,
+  `coupon` varchar(200) default NULL,
+  `ordertaker` varchar(200) default NULL,
+
+  `billstatus` varchar(200) default NULL,
+  `lastbill` datetime default '0000-00-00 00:00:00',
+  `nextbill` datetime default '0000-00-00 00:00:00',
+  
+  `postalinvoice` varchar(8) default NULL,
+  `faxinvoice` varchar(8) default NULL,
+  `emailinvoice` varchar(8) default NULL,
+  
+  
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `username` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE operators ADD bill_pos_list VARCHAR(32) AFTER bill_rates_list;
+UPDATE operators SET bill_pos_list='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD bill_pos_new VARCHAR(32) AFTER bill_pos_list;
+UPDATE operators SET bill_pos_new='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD bill_pos_edit VARCHAR(32) AFTER bill_pos_new;
+UPDATE operators SET bill_pos_edit='yes' WHERE username='administrator';
+
+ALTER TABLE operators ADD bill_pos_del VARCHAR(32) AFTER bill_pos_edit;
+UPDATE operators SET bill_pos_del='yes' WHERE username='administrator';
