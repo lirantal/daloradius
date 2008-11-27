@@ -69,4 +69,28 @@ $configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
 
 
+/*
+// Locations Configuration directives
+// Locations directives are support for accessing different databases from the daloRADIUS Login console
+// adjust the locations below for databases you are running (if you are running more than one.
+$configValues['CONFIG_LOCATIONS'] =                     array(
+
+        "Location Example 1" =>                 array(
+                "Engine"   => "mysql",
+                "Username" => "root",
+                "Password" => "",
+                "Database" => "radius",
+                "Hostname" => "127.0.0.1"
+        ),
+
+        "Location Example 2" =>                 array(
+                "Engine"   => "mysql",
+                "Username" => "db_usertest",
+                "Password" => "db_passtest",
+                "Database" => "test_db1",
+                "Hostname" => "localhost"
+        )
+);
+*/
+
 ?>
