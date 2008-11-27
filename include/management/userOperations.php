@@ -24,7 +24,6 @@
  */
 
 
-
 /*
  * The following handles disabling the user
  */
@@ -33,9 +32,23 @@ if ((isset($_GET['userDisable'])) && (isset($_GET['username']))) {
 }
 
 
+
+/*
+ * The following handles refilling of user session for billing purposes
+ */
+if ((isset($_GET['refillSessionTime'])) && (isset($_GET['username'])))
+	userRefillSessionTime($_GET['username'], $_GET['divContainer']);
+
+if ((isset($_GET['refillSessionTraffic'])) && (isset($_GET['username'])))
+	userRefillSessionTraffic($_GET['username'], $_GET['divContainer']);
+
+
+
+
 function userDisable($username, $divContainer) {
 
 	include 'pages_common.php';
+	include('../../library/checklogin.php');
 	include '../../library/opendb.php';
 
 	//echo "alert('{$username}');";
@@ -118,3 +131,74 @@ function checkDisabled($username) {
 	include 'library/closedb.php';
 
 }
+
+
+
+function userRefillSessionTime($username, $divContainer) {
+
+	include 'pages_common.php';
+	include('../../library/checklogin.php');
+	include '../../library/opendb.php';
+
+	if (!is_array($username))
+		$username = array($username);
+
+	$allUsers = "";
+
+	foreach ($username as $variable=>$value) {
+	
+	        $user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
+		$allUsers .= $user . ", ";
+
+		$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADACCT'].
+			" SET AcctSessionTime=0 ".
+			" WHERE Username='$user'";
+		$res = $dbSocket->query($sql);
+
+	}
+
+	$users = substr($allUsers, 0, -2);
+	printqn("
+		var divContainer = document.getElementById('{$divContainer}');
+	        divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> session time has been successfully refilled and billed.</div>';
+	");
+
+        include '../../library/closedb.php';
+
+}
+
+
+
+function userRefillSessionTraffic($username, $divContainer) {
+
+	include 'pages_common.php';
+	include('../../library/checklogin.php');
+	include '../../library/opendb.php';
+
+	if (!is_array($username))
+		$username = array($username);
+
+	$allUsers = "";
+
+	foreach ($username as $variable=>$value) {
+	
+	        $user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
+		$allUsers .= $user . ", ";
+
+		$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADACCT'].
+			" SET AcctInputOctets=0, AcctOutputOctets=0 ".
+			" WHERE Username='$user'";
+		$res = $dbSocket->query($sql);
+
+	}
+
+	$users = substr($allUsers, 0, -2);
+	printqn("
+		var divContainer = document.getElementById('{$divContainer}');
+	        divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> session traffic has been successfully refilled and billed.</div>';
+	");
+
+        include '../../library/closedb.php';
+
+}
+

@@ -9,6 +9,12 @@
 *
 *********************************************************************/
 
+	if (!isset($groupTerminology)) {
+		$groupTerminology = "Group";
+		$groupTerminologyPriority = "GroupPriority";
+	}
+		
+
 
 	// Grabing the group lists from usergroup table
 	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
@@ -25,10 +31,10 @@
 
 	<fieldset>
 
-                <h302> Groups Assignment </h302>
+                <h302> <?php echo $groupTerminology ?> Assignment </h302>
 		<br/>
 
-	        <h301> Associated Groups </h301>
+	        <h301> Associated <?php echo $groupTerminology ?>s </h301>
 	        <br/>
 
 		<ul>
@@ -54,17 +60,16 @@
 
 			echo "
 
-				<input type='hidden' value='$row[0]' name='oldgroups[]' >
-
 				<li class='fieldset'>
-				<label for='group' class='form'>".$l['all']['Group']." #".($counter+1)."</label>
+				<label for='group' class='form'>".$l['all'][$groupTerminology]." #".($counter+1)."</label>
 				<select name='groups[]' id='usergroup$counter' tabindex=105 class='form' >
 					<option value='$row[0]'>$row[0]</option>
+					<option value=''></option>
 					".$groupOptions."
 				</select>
 
 				<br/>
-				<label for='groupPriority' class='form'>".$l['all']['GroupPriority']."</label>
+				<label for='groupPriority' class='form'>".$l['all'][$groupTerminologyPriority]."</label>
 				<input class='integer' value='$row[1]' name='groups_priority[]' id='group_priority$counter' >
 				<img src=\"images/icons/bullet_arrow_up.png\" alt=\"+\" 
 					onclick=\"javascript:changeInteger('group_priority$counter','increment')\" />

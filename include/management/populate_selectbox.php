@@ -8,7 +8,8 @@
 function populate_plans($defaultOption = "Select Plan",$elementName = "", $cssClass = "form", $mode = "") {
 
 	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>";
+			<option value=''>$defaultOption</option>
+			<option value=''></option>";
 
         include 'library/opendb.php';
 
@@ -44,7 +45,8 @@ function populate_groups($defaultOption = "Select Group",$elementName = "", $css
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
 			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>";
+			<option value=''>$defaultOption</option>
+			<option value=''></option>";
 
         include 'library/opendb.php';
 
@@ -80,7 +82,8 @@ function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $c
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
 			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>";
+			<option value=''>$defaultOption</option>
+			<option value=''></option>";
 
         include 'library/opendb.php';
 
@@ -115,7 +118,8 @@ function populate_realms($defaultOption = "Select Realm",$elementName = "", $css
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'realm')\" id='realmlist' $mode
 			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>";
+			<option value=''>$defaultOption</option>
+			<option value=''></option>";
 
         include 'library/opendb.php';
 
@@ -155,7 +159,8 @@ function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $css
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'proxy')\" id='proxylist' $mode
 			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>";
+			<option value=''>$defaultOption</option>
+			<option value=''></option>";
 
         include 'library/opendb.php';
 

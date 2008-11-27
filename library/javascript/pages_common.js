@@ -343,3 +343,104 @@ var gCounter = 0;
 function genericCounter(str) {
 	return str+"="+gCounter++;
 }
+
+
+
+
+
+
+
+/***********************************************************************
+ * refillSessionTimeCheckbox
+ * submits a form using ajax to refill a user session time
+ * 
+ * formName	- the form name
+ * pageDst	- the page destination to be submitted 
+ *
+ ***********************************************************************/
+function refillSessionTimeCheckbox(formName,pageDst) {
+
+        var count = 0;
+        var form = document.getElementsByTagName('input');
+	var values = "";
+
+        for (var i=0; i < form.length; ++i) {
+                var e = form[i];
+                if (e.type == 'checkbox' && e.checked) {
+			values += "username[]=" + e.value + "&";
+	                ++count;
+		}
+        }
+
+	var strUsernames = values.substr(0,values.length-1);
+
+
+	// if no items were checked there's no reason to submit the form
+	if (count == 0) {
+		alert("No items selected");
+		return;
+	}
+
+
+        if (confirm("You are about to refill session time fora total of " + count + " users\nDo you want to continue?\n\nSuch action will also bill the user!"))  {
+
+		ajaxGeneric("include/management/userOperations.php","refillSessionTime","returnMessages",strUsernames);
+
+		return true;
+
+        }
+
+        return false;
+}
+
+
+
+
+
+
+
+
+
+
+/***********************************************************************
+ * refillSessionTrafficCheckbox
+ * submits a form using ajax to refill a user session traffic
+ * 
+ * formName	- the form name
+ * pageDst	- the page destination to be submitted 
+ *
+ ***********************************************************************/
+function refillSessionTrafficCheckbox(formName,pageDst) {
+
+        var count = 0;
+        var form = document.getElementsByTagName('input');
+	var values = "";
+
+        for (var i=0; i < form.length; ++i) {
+                var e = form[i];
+                if (e.type == 'checkbox' && e.checked) {
+			values += "username[]=" + e.value + "&";
+	                ++count;
+		}
+        }
+
+	var strUsernames = values.substr(0,values.length-1);
+
+
+	// if no items were checked there's no reason to submit the form
+	if (count == 0) {
+		alert("No items selected");
+		return;
+	}
+
+
+        if (confirm("You are about to refill session traffic fora total of " + count + " users\nDo you want to continue?\n\nSuch action will also bill the user!"))  {
+
+		ajaxGeneric("include/management/userOperations.php","refillSessionTraffic","returnMessages",strUsernames);
+
+		return true;
+
+        }
+
+        return false;
+}

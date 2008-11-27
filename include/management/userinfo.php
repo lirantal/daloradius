@@ -82,17 +82,17 @@ echo "
 "; // breaking echo
 
 	if ($ui_changeuserinfo == 1) {
-		$isChecked = "checked";
-		$ui_changeuserinfo = 0;
+		$isUIChecked = "checked='yes'";
+		$ui_changeuserinfo = 1;
 	} else {
 		$ui_changeuserinfo = 1;
-		$isChecked = "";
+		$isUIChecked = "";
 	}
 
 echo "
 
 	<label for='userupdate' class='form'>".$l['ContactInfo']['EnableUserUpdate']."</label>
-	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isChecked tabindex=313 />
+	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isUIChecked tabindex=313 />
         <br/>
 
 	<br/>
