@@ -177,3 +177,34 @@ UPDATE operators SET bill_pos_edit='yes' WHERE username='administrator';
 
 ALTER TABLE operators ADD bill_pos_del VARCHAR(32) AFTER bill_pos_edit;
 UPDATE operators SET bill_pos_del='yes' WHERE username='administrator';
+
+
+
+CREATE TABLE `billing_history` (
+  `id` int(8) unsigned NOT NULL auto_increment,
+  `username` varchar(128) default NULL,
+  `planName` varchar(128) default NULL,
+  
+  `billAmount` varchar(128) default NULL,
+  `billAction` varchar(128) default NULL,
+  `billPerformer` varchar(128) default NULL,
+  `billReason` varchar(128) default NULL,
+
+  `paymentmethod` varchar(200) default NULL,
+  `cash` varchar(200) default NULL,
+  
+  `creditcardname` varchar(200) default NULL,
+  `creditcardnumber` varchar(200) default NULL,
+  `creditcardverification` varchar(200) default NULL,
+  `creditcardtype` varchar(200) default NULL,
+  `creditcardexp` varchar(200) default NULL,
+  
+  `notes` varchar(200) default NULL,
+  
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `username` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
