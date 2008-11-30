@@ -214,11 +214,11 @@
                         <option value='Prepaid'>Prepaid</option>
                         <option value='Postpaid'>Postpaid</option>
                 </select>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTypeTooltip')" />
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeTypeTooltip')" />
 
-                <div id='planTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                <div id='planTimeTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['planTypeTooltip'] ?>
+                        <?php echo $l['Tooltip']['planTimeTypeTooltip'] ?>
                 </div>
                 </li>
 
