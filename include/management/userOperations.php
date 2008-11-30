@@ -157,6 +157,54 @@ function userRefillSessionTime($username, $divContainer) {
 
 	}
 
+	// take care of recording the billing action in billing_history table
+        foreach ($username as $variable=>$value) {
+
+		$user = $dbSocket->escapeSimple($value);                // clean username argument from harmful code
+
+                $sql = "SELECT ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planName, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeRefillCost, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".paymentmethod, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".cash, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardname, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardnumber, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardverification, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardtype, ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardexp ".
+			" FROM ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].", ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." ".
+			" WHERE ".
+			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname=".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
+			" AND ".
+			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username='".$user."')";
+                $res = $dbSocket->query($sql);
+		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+		$refillCost = $row['planTimeRefillCost'];
+
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $_SESSION['operator_user'];
+
+		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'].
+			" (id,username,planName,billAmount,billAction,billPerformer,billReason,".
+			" paymentmethod,cash,creditcardname,creditcardnumber,creditcardverification,creditcardtype,creditcardexp,".
+			" creationdate,creationby".
+			")".
+			" VALUES ".
+			" (0,'$user','".$row['planName']."','".$row['planTimeRefillCost']."','Refill Session Time','daloRADIUS Web Interface','Refill Session Time','".
+				$row['paymentmethod']."','".$row['cash']."','".$row['creditcardname']."','".
+				$row['creditcardnumber']."','".$row['creditcardverification']."','".$row['creditcardtype']."','".$row['creditcardexp']."',".
+				"'$currDate', '$currBy'".
+			")";
+                $res = $dbSocket->query($sql);
+	
+        }
+
+
+
 	$users = substr($allUsers, 0, -2);
 	printqn("
 		var divContainer = document.getElementById('{$divContainer}');
@@ -191,6 +239,52 @@ function userRefillSessionTraffic($username, $divContainer) {
 		$res = $dbSocket->query($sql);
 
 	}
+
+        // take care of recording the billing action in billing_history table
+        foreach ($username as $variable=>$value) {
+
+                $user = $dbSocket->escapeSimple($value);                // clean username argument from harmful code
+
+                $sql = "SELECT ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planName, ".
+                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficRefillCost, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".paymentmethod, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".cash, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardname, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardnumber, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardverification, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardtype, ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardexp ".
+                        " FROM ".
+                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].", ".
+                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." ".
+                        " WHERE ".
+                        "(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname=".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
+                        " AND ".
+                        "(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username='".$user."')";
+                $res = $dbSocket->query($sql);
+                $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+                $refillCost = $row['planTrafficRefillCost'];
+
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $_SESSION['operator_user'];
+
+                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'].
+                        " (id,username,planName,billAmount,billAction,billPerformer,billReason,".
+                        " paymentmethod,cash,creditcardname,creditcardnumber,creditcardverification,creditcardtype,creditcardexp,".
+                        " creationdate,creationby".
+                        ")".
+                        " VALUES ".
+                        " (0,'$user','".$row['planName']."','".$row['planTrafficRefillCost']."','Refill Session Traffic','daloRADIUS Web Interface','Refill Session Traffic','".
+                                $row['paymentmethod']."','".$row['cash']."','".$row['creditcardname']."','".
+                                $row['creditcardnumber']."','".$row['creditcardverification']."','".$row['creditcardtype']."','".$row['creditcardexp']."',".
+                                "'$currDate', '$currBy'".
+                        ")";
+                $res = $dbSocket->query($sql);
+	}
+
 
 	$users = substr($allUsers, 0, -2);
 	printqn("
