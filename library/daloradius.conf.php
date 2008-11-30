@@ -48,6 +48,7 @@ $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
 $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
+$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
 $configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/proxy.conf';
 $configValues['CONFIG_PATH_RADIUS_DICT'] = '';
 $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
