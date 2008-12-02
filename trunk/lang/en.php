@@ -157,6 +157,11 @@ $l['all']['CreationBy'] = "Creation By";
 $l['all']['UpdateDate'] = "Update Date";
 $l['all']['UpdateBy'] = "Update By";
 
+$l['all']['Discount'] = "Discount";
+$l['all']['BillAmount'] = "Billed Amount";
+$l['all']['BillAction'] = "Billed Action";
+$l['all']['BillPerformer'] = "Bill Performer";
+$l['all']['BillReason'] = "Billing Reason";
 $l['all']['Lead'] = "Lead";
 $l['all']['Coupon'] = "Coupon";
 $l['all']['OrderTaker'] = "Order Taker";
@@ -233,6 +238,26 @@ $l['all']['realms'] = "realms";
 $l['all']['proxys'] = "proxys";
 $l['all']['billingpaypal'] = "billing paypal";
 $l['all']['billingplans'] = "billing plans";
+
+
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
+$l['all'][''] = "";
 
 $l['all']['PaymentDate'] = "Payment Date";
 $l['all']['PaymentStatus'] = "Payment Status";
@@ -737,7 +762,7 @@ $l['ContactInfo']['CreditCardExpiration'] = "Credit Card Expiration";
 /* ********************************************************************************** */
 
 
-
+$l['Intro']['billhistorymain.php'] = "Billing History";
 $l['Intro']['msgerrorpermissions.php'] = "Error";
 
 $l['Intro']['mngradproxys.php'] = "Proxys Management";
@@ -786,6 +811,8 @@ $l['Intro']['billratesnew.php'] = "New Rate entry";
 
 $l['Intro']['paypalmain.php'] = "PayPal Transactions Page";
 $l['Intro']['billpaypaltransactions.php'] = "PayPal Transactions Page";
+
+$l['Intro']['billhistoryquery.php'] = "Billing History";
 
 $l['Intro']['billplans.php'] = "Billing Plans Page";
 $l['Intro']['billplansdel.php'] = "Delete Plan entry";
@@ -919,6 +946,7 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 $l['helpPage']['login'] = "";
 
 $l['helpPage']['billpaypaltransactions'] = "List all PayPal transactions";
+$l['helpPage']['billhistoryquery'] = "List all billing history for a user(s)";
 
 $l['helpPage']['billplanslist'] = "";
 $l['helpPage']['billplansnew'] = "";
