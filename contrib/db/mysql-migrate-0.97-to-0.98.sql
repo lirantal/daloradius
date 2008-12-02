@@ -199,6 +199,9 @@ CREATE TABLE `billing_history` (
   `creditcardtype` varchar(200) default NULL,
   `creditcardexp` varchar(200) default NULL,
   
+  `coupon` varchar(200) default NULL,
+  `discount` varchar(200) default NULL,
+  
   `notes` varchar(200) default NULL,
   
   `creationdate` datetime default '0000-00-00 00:00:00',
@@ -207,4 +210,7 @@ CREATE TABLE `billing_history` (
   `updateby` varchar(128) default NULL,
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+)
+
+ALTER TABLE operators ADD bill_history_query VARCHAR(32) AFTER bill_plans_list;
+UPDATE operators SET bill_history_query='yes' WHERE username='administrator';
