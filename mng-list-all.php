@@ -173,6 +173,11 @@
 		</th>
 
 		<th scope='col'> 
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=firstname&orderType=$orderTypeNextPage\">
+		".$l['all']['Name']."</a>
+		</th>
+
+		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderTypeNextPage\">
 		".$l['all']['Password']."</a>
 		</th>
@@ -180,11 +185,6 @@
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderTypeNextPage\">
 		".$l['title']['Groups']."</a>
-		</th>
-
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=firstname&orderType=$orderTypeNextPage\">
-		".$l['all']['Name']."</a>
 		</th>
 
 		</tr> </thread>";
@@ -219,6 +219,8 @@
 			</td>
 			");
 
+		echo "<td>$row[5] $row[6]</td>";
+
 		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 			echo "<td>[Password is hidden]</td>";
 		} else {
@@ -226,7 +228,6 @@
 		}
 		echo "
 			<td>$row[3]</td>
-			<td>$row[5] $row[6]</td>
 		</tr>";
 	}
 	

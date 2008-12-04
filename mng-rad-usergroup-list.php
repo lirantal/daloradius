@@ -72,13 +72,21 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT distinct(UserName), GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
+	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".UserName), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName, ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".priority, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname ".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
 			" GROUP BY UserName;";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
 	
-	$sql = "SELECT distinct(UserName), GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
+	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".UserName), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName, ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".priority, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname ".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
 			" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -125,6 +133,11 @@
 		".$l['all']['Username']."</a>
 		</th>
 
+                <th scope='col'>
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=firstname&orderType=$orderTypeNextPage\">
+                ".$l['all']['Name']."</a>
+                </th>
+
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
 		".$l['all']['Groupname']."</a>
@@ -134,10 +147,12 @@
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=$orderTypeNextPage\">
 		".$l['all']['Priority']."</a>
 		</th>
+
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 			<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
+			<td> $row[3] $row[4] </td>
 			<td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
