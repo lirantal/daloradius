@@ -98,6 +98,7 @@ $arrayPagesAvailable = array(
 	 'bill_plans_new' => 'Billing',
 	 'bill_plans_edit' => 'Billing',
 	 'bill_plans_list' => 'Billing',
+	 'bill_history_query' => 'Billing',	
 	 'gis_editmap' => 'GeoLocation',
 	 'gis_viewmap' => 'GeoLocation',
 	 'graphs_alltime_logins' => 'Graphs',
