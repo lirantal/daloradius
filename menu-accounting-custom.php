@@ -67,7 +67,7 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 		<br/><br/>
 		<h109><?php echo $l['button']['Where']; ?></h109> <br/>
 			<center>
-			<select name="fields" size="1">
+			<select name="fields" size="1" class="generic" >
 				<option value="RadAcctId"> RadAcctId </option>
 				<option value="AcctSessionId"> AcctSessionId </option>
 				<option value="AcctUniqueId"> AcctUniqueId </option>
@@ -94,7 +94,7 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 				<option value="AcctStopDelay"> AcctStopDelay </option>
 			</select>
 
-			<select name="operator" size="1">
+			<select name="operator" size="1" class="generic" >
 				<option value="="> Equals </option>
 				<option value="LIKE"> Contains </option>
 			</select>
@@ -171,7 +171,7 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 
 
 	<br/>
-	<input type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+	<input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
 	</form></li>
 				
 
