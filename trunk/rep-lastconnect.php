@@ -67,13 +67,13 @@
         $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
-        $sql = "SELECT user, pass, reply, date FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
-		" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+        $sql = "SELECT ".$row['postauth']['user'].", pass, reply, ".$row['postauth']['date']." FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
+		" WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-        $sql = "SELECT user, pass, reply, date FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
-		" WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')".
+        $sql = "SELECT ".$row['postauth']['user'].", pass, reply, ".$row['postauth']['date']." FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
+		" WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
         $res = $dbSocket->query($sql);
         $logDebugSQL = "";
@@ -140,7 +140,7 @@
 
         echo "<thread> <tr>
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=user&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=".$row['postauth']['user']."&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']." 
 		</th>
 
@@ -150,7 +150,7 @@
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=date&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=".$row['postauth']['user']."&orderType=$orderTypeNextPage\">
 		".$l['all']['StartTime']." 
 		</th>
 
