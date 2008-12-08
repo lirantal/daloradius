@@ -21,6 +21,7 @@
  */
  
 	include (dirname(__FILE__).'/config_read.php');
+	include (dirname(__FILE__).'/tableConventions.php');
 
 	// setup database connectio information according to the session's location name which is held in $SESSION['location_name'].
 	// this is introduced in order to provide daloRADIUS to authenticate and manage several database backends without having to
