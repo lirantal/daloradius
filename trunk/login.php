@@ -51,7 +51,7 @@
 						<input name="operator_pass" value="" type="password" tabindex=2 />
 						<br/>
 						<li><a href="#" >Location</a> </li>
-						<select name="location" tabindex=3 >
+						<select name="location" tabindex=3 class="generic" >
 							<option value="default">Default</option>
 							<?php
 								if (isset($configValues['CONFIG_LOCATIONS']) && is_array($configValues['CONFIG_LOCATIONS'])) {
