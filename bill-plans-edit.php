@@ -222,11 +222,17 @@
                 </div>
                 </li>
 
+
+
                 <li class='fieldset'>
                 <label for='planRecurring' class='form'><?php echo $l['all']['PlanRecurring'] ?></label>
-                <input name='planRecurring' type='text' id='planRecurring' value='<?php echo $planRecurring ?>' tabindex=101 />
+                <select class='form' name='planRecurring' id='planRecurring' tabindex=101>
+			<option value='<?php echo $planRecurring ?>'><?php echo $planRecurring ?></option>
+			<option value=''></option>
+                        <option value='No'>No</option>
+                        <option value='Yes'>Yes</option>
+                </select>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringTooltip')" />
-
                 <div id='planRecurringTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
                         <?php echo $l['Tooltip']['planRecurringTooltip'] ?>
@@ -235,7 +241,14 @@
 
                 <li class='fieldset'>
                 <label for='planRecurringPeriod' class='form'><?php echo $l['all']['PlanRecurringPeriod'] ?></label>
-                <input name='planRecurringPeriod' type='text' id='planRecurringPeriod' value='<?php echo $planRecurringPeriod ?>' tabindex=101 />
+                <select class='form' name='planRecurringPeriod' id='planRecurringPeriod' tabindex=101 >
+			<option value='<?php echo $planRecurringPeriod ?>'><?php echo $planRecurringPeriod ?></option>
+			<option value=''></option>
+                        <option value='Never'>Never</option>
+                        <option value='Daily'>Daily</option>
+                        <option value='Weekly'>Weekly</option>
+                        <option value='Monthly'>Monthly</option>
+                </select>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringPeriodTooltip')" />
 
                 <div id='planRecurringPeriodTooltip'  style='display:none;visibility:visible' class='ToolTip'>
