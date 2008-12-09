@@ -191,7 +191,6 @@ CREATE TABLE `operators` (
   `bill_plans_edit` varchar(32) default NULL,
   `bill_plans_list` varchar(32) default NULL,
   `bill_history_query` varchar(32) default NULL,
-  `bill_plans_list` varchar(32) default NULL,
   `gis_editmap` varchar(32) default NULL,
   `gis_viewmap` varchar(32) default NULL,
   `graphs_alltime_logins` varchar(32) default NULL,
