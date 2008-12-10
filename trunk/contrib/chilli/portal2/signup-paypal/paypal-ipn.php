@@ -75,12 +75,15 @@
 
 			// we then search the plans to see if the user should belong to a specific
 			// usergroup or shall we just add the appropriate attribute to radcheck
-			$sql = "SELECT planTimeBank,planGroup,planTimeType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planId='$planId'";
+			$sql = "SELECT planTimeBank,planGroup,planTimeType,planRecurring,planRecurringPeriod FROM ".
+				$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planId='$planId'";
 			$res = $dbSocket->query($sql);
 			$row = $res->fetchRow();
 			$planTimeBank = $row[0];
 			$planGroup = $row[1];
 			$planTimeType = $row[2];
+			$planRecurring = $row[3];
+			$planRecurringPeriod = $row[4];
 
 			// the group is set, so we simply add the user to this group
 			if ($planGroup != "") {
@@ -107,10 +110,35 @@
 						// accumulate means that the user was given a time credit of N minutes and he can use them whenever he wants,
 						// and spreads it towards hours, days, weeks or months.
 
-						$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-							" VALUES (0,'$pin','Max-All-Session', ':=', '$planTimeBank')";
-						$res = $dbSocket->query($sql);
+						if ((isset($planRecurring)) && ($planRecurring == "Yes")) {
 
+							switch ($planRecurringPeriod) {
+
+								case "Never":
+									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
+										" VALUES (0,'$pin','Max-All-Session', ':=', '$planTimeBank')";
+									$res = $dbSocket->query($sql);
+									break;
+
+								case "Monthly":
+									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
+										" VALUES (0,'$pin','Max-Monthly-Session', ':=', '$planTimeBank')";
+									$res = $dbSocket->query($sql);
+									break;
+
+								case "Weekly":
+									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
+										" VALUES (0,'$pin','Max-Weekly-Session', ':=', '$planTimeBank')";
+									$res = $dbSocket->query($sql);
+									break;
+
+								case "Daily":
+									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
+										" VALUES (0,'$pin','Max-Daily-Session', ':=', '$planTimeBank')";
+									$res = $dbSocket->query($sql);
+									break;
+							}
+						}						
 						break;
 				}
 
