@@ -52,7 +52,16 @@
 		// TODO
 		// requires handling of un-initialized session variable incase opendb.php is called not inside
 		// a session for some reason. requires further handling, possibly a log file entry
-	        exit;
+	        //exit;
+
+		$mydbEngine = $configValues['CONFIG_DB_ENGINE'];
+		$mydbUser = $configValues['CONFIG_DB_USER'];
+		$mydbPass = $configValues['CONFIG_DB_PASS'];
+		$mydbHost = $configValues['CONFIG_DB_HOST'];
+		$mydbName = $configValues['CONFIG_DB_NAME'];
+
+		$dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
+					$mydbHost."/".$mydbName;
 	}
 
 
