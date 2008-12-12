@@ -40,36 +40,40 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
 	$username = $dbSocket->escapeSimple($username);			// sanitize variable for sql statement
 
+
+	$sql = "SELECT planName FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." WHERE UserName='$username'";
+        $res = $dbSocket->query($sql);
+        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+	
+	$planName = $row['planName'];
+
+	
+
 	/*
 	 *********************************************************************************************************
-	 * check subscription limitation (max-*-session, etc)
+	 * check which kind of subscription does the user have
 	 *********************************************************************************************************/
-        $sql = "SELECT Value AS 'Max-All-Session', ".
-		" (SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE UserName='$username' AND Attribute='Max-Monthly-Session' LIMIT 1) AS 'Max-Monthly-Session', ".
-		" (SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE UserName='$username' AND Attribute='Max-Daily-Session' LIMIT 1) AS 'Max-Daily-Session', ".
-		" (SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE UserName='$username' AND Attribute='Access-Period' LIMIT 1) AS 'Access-Period', ".
-		" (SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE UserName='$username' AND Attribute='Expiration' LIMIT 1) AS 'Expiration', ".
-		" (SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE UserName='$username' AND Attribute='Session-Timeout' LIMIT 1) AS 'Session-Timeout', ".
-		" (SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE UserName='$username' AND Attribute='Idle-Timeout' LIMIT 1) AS 'Idle-Timeout' ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE UserName='$username' AND Attribute='Max-All-Session' LIMIT 1";
-
+	$sql  = "SELECT planTimeType, planTimeBank, planBandwidthUp, planBandwidthDown, planTrafficTotal, planTrafficUp, planTrafficDown, planRecurringPeriod ".
+		" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planName='$planName'";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	(isset($row['Max-All-Session'])) ? $userLimitMaxAllSession = time2str($row['Max-All-Session']) : $userLimitMaxAllSession = "none";
-	(isset($row['Max-Monthly-Session'])) ? $userLimitMaxMonthlySession = time2str($row['Max-Monthly-Session']) : $userLimitMaxMonthlySession = "none";
-	(isset($row['Max-Daily-Session'])) ? $userLimitMaxDailySession = time2str($row['Max-Daily-Session']) : $userLimitMaxDailySession = "none";
-	(isset($row['Access-Period'])) ? $userLimitAccessPeriod = time2str($row['Access-Period']) : $userLimitAccessPeriod = "none";
-	(isset($row['Expiration'])) ? $userLimitExpiration = $row['Expiration'] : $userLimitExpiration = "none";
-	(isset($row['Session-Timeout'])) ? $userLimitSessionTimeout = time2str($row['Session-Timeout']) : $userLimitSessionTimeout = "none";
-	(isset($row['Idle-Timeout'])) ? $userLimitIdleTimeout = time2str($row['Idle-Timeout']) : $userLimitIdleTimeout = "none";
+	isset($row['planRecurringPeriod']) ? $planRecurringPeriod = $row['planRecurringPeriod'] : $planRecurringPeriod = "unset";
+	isset($row['planTimeType']) ? $planTimeType = $row['planTimeType'] : $planTimeType = "unset";
+	isset($row['planTimeBank']) ? $planTimeBank = time2str($row['planTimeBank']) : $planTimeBank = "unset";
+	$planBandwidthUp = $row['planBandwidthUp'];
+	$planBandwidthDown = $row['planBandwidthDown'];
+	$planTrafficTotal = $row['planTrafficTotal'];
+	$planTrafficUp = $row['planTrafficUp'];
+	$planTrafficDown = $row['planTrafficDown'];
+
+
+        ($planRecurringPeriod == "Never") ? $userTimeLimitGlobal = $planTimeBank : $userTimeLimitGlobal = "none";
+        ($planRecurringPeriod == "Monthly") ? $userTimeLimitMonthly = $planTimeBank : $userTimeLimitMonthly = "none";
+        ($planRecurringPeriod == "Weekly") ? $userTimeLimitWeekly = $planTimeBank : $userTimeLimitWeekly = "none";
+        ($planRecurringPeriod == "Daily") ? $userTimeLimitDaily = $planTimeBank : $userTimeLimitDaily = "none";
+
+        (isset($row['Access-Period'])) ? $userLimitAccessPeriod = time2str($row['Access-Period']) : $userLimitAccessPeriod = "none";
 
 
 	/*
@@ -118,6 +122,36 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
 
 
+
+
+
+	/*
+	 *********************************************************************************************************
+	 * Weekly Limit calculations
+	 *********************************************************************************************************/
+	$currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
+	$nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
+        $sql = "SELECT SUM(AcctSessionTime) AS 'SUM', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
+		" COUNT(RadAcctId) AS 'Logins' ".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username'";
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+	(isset($row['SUMSession'])) ? $userSumMaxWeeklySession = time2str($row['SUMSession']) : $userSumMaxWeeklySession = "unavailable";
+	(isset($row['SUMDownload'])) ? $userSumWeeklyDownload = toxbyte($row['SUMDownload']) : $userSumWeeklyDownload = "unavailable";
+	(isset($row['SUMUpload'])) ? $userSumWeeklyUpload = toxbyte($row['SUMUpload']) : $userSumWeeklyUpload = "unavailable";
+	if ( (isset($row['SUMUpload'])) && (isset($row['SUMDownload'])) )
+		$userSumWeeklyTraffic = toxbyte($row['SUMUpload']+$row['SUMDownload']);
+	else
+		$userSumWeeklyTraffic = "unavailable";
+	(isset($row['Logins'])) ? $userWeeklyLogins = $row['Logins'] : $userWeeklyLogins = "unavailable";
+
+
+
+
+
+
 	/*
 	 *********************************************************************************************************
 	 * Daily Limit calculations
@@ -144,34 +178,42 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
 	/*
 	 *********************************************************************************************************
-	 * Access-Period calculations
+	 * Expiration calculations
 	 *********************************************************************************************************/
-        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession' ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE UserName='$username'";
+        $sql = "SELECT Value AS 'Expiration' FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
+		" WHERE (UserName='$username') AND (Attribute='Expiration')";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	(isset($row['SUMSession'])) ? $userSumAccessPeriod = time2str($row['SUMSession']) : $userSumAccessPeriod = "unavailable";
-	
+	(isset($row['Expiration'])) ? $userExpiration = $row['Expiration'] : $userExpiration = "unset";
 
 
 	/*
 	 *********************************************************************************************************
-	 * Expiration calculations
+	 * Session-Timeout calculations
 	 *********************************************************************************************************/
-        $sql = "SELECT SUM(AcctSessionTime) AS 'SUM' FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE UserName='$username'";
+        $sql = "SELECT Value AS 'Session-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
+		" WHERE (UserName='$username') AND (Attribute='Session-Timeout')";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	(isset($row['SUM'])) ? $userSumExpiration = time2str($row['SUM']) : $userSumExpiration = "unavailable";
+	(isset($row['Session-Timeout'])) ? $userSessionTimeout = $row['Session-Timeout'] : $userSessionTimeout = "unset";
+
+
+	/*
+	 *********************************************************************************************************
+	 * Idle-Timeout calculations
+	 *********************************************************************************************************/
+        $sql = "SELECT Value AS 'Idle-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
+		" WHERE (UserName='$username') AND (Attribute='Idle-Timeout')";
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+	(isset($row['Idle-Timeout'])) ? $userIdleTimeout = $row['Idle-Timeout'] : $userIdleTimeout = "unset";
 
 
 
         include 'library/closedb.php';
-
-
 
 
         if ($drawTable == 1) {
@@ -197,15 +239,19 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th>
         
                         <th scope='col'>
-        		Global (Max-All-Session)
+        		Global
                         </th>
         
                         <th scope='col'>
-        		Monthly (Max-Monthly-Session)
+        		Monthly
                         </th>
         
                         <th scope='col'>
-        		Daily (Max-Daily-Session)
+        		Weekly
+                        </th>
+
+                        <th scope='col'>
+        		Daily
                         </th>
         
                         </tr> </thread>";
@@ -213,15 +259,17 @@ function userSubscriptionAnalysis($username, $drawTable) {
         	echo "
         		<tr>
         			<td>Session Limit</td>
-        			<td>$userLimitMaxAllSession</td>
-        			<td>$userLimitMaxMonthlySession</td>
-        			<td>$userLimitMaxDailySession</td>
+        			<td>$userTimeLimitGlobal</td>
+        			<td>$userTimeLimitMonthly</td>
+        			<td>$userTimeLimitWeekly</td>
+        			<td>$userTimeLimitDaily</td>
         		</tr>
         
         		<tr>
         			<td>Session Used</td>
         			<td>$userSumMaxAllSession</td>
         			<td>$userSumMaxMonthlySession</td>
+        			<td>$userSumMaxWeeklySession</td>
         			<td>$userSumMaxDailySession</td>
         		</tr>
         
@@ -229,6 +277,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
         			<td>Session Download</td>
         			<td>$userSumDownload</td>
         			<td>$userSumMonthlyDownload</td>
+        			<td>$userSumWeeklyDownload</td>
         			<td>$userSumDailyDownload</td>
         		</tr>
         
@@ -236,6 +285,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
         			<td>Session Upload</td>
         			<td>$userSumUpload</td>
         			<td>$userSumMonthlyUpload</td>
+        			<td>$userSumWeeklyUpload</td>
         			<td>$userSumDailyUpload</td>
         		</tr>
         
@@ -243,6 +293,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
         			<td>Session Traffic (Up+Down)</td>
         			<td>$userSumAllTraffic</td>
         			<td>$userSumMonthlyTraffic</td>
+        			<td>$userSumWeeklyTraffic</td>
         			<td>$userSumDailyTraffic</td>
         		</tr>
 
@@ -250,6 +301,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
         			<td>Logins</td>
         			<td>$userAllLogins</td>
         			<td>$userMonthlyLogins</td>
+        			<td>$userWeeklyLogins</td>
         			<td>$userDailyLogins</td>
         		</tr>
         
@@ -260,13 +312,14 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
                         <tr>        
                         <th scope='col' align='right'>
-                        Access-Period
+                        Plan Time Type
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userLimitAccessPeriod
+                        $planTimeType
                         </th>
                         </tr>
+
 
                         <tr>
                         <th scope='col' align='right'>
@@ -274,7 +327,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userLimitExpiration
+                        $userExpiration
                         </th>
                         </tr>
 
@@ -285,7 +338,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userLimitSessionTimeout
+                        $userSessionTimeout
                         </th>
                         </tr>
 
@@ -296,7 +349,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userLimitIdleTimeout
+                        $userIdleTimeout
                         </th>
                         </tr>
 
