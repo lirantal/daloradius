@@ -606,6 +606,54 @@ CREATE TABLE `billing_history` (
 
 <form name="update" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+        <fieldset>
+
+                <h302> PHP Extensions </h302>
+                <br/>
+
+                <ul>
+
+		Checking required PHP Modules
+
+                <li class='fieldset'>
+                <label for='name' class='form'>
+			GD Extension
+		</label>
+		<?php if (extension_loaded("gd")): ?>
+			<b>Installed</b>
+		<?php else: ?>
+			<font color="red"><b>Not-installed</b></font>
+		<?php endif; ?>
+		<br/>
+
+
+                <li class='fieldset'>
+                <label for='name' class='form'>
+			MySQL Extension
+		</label>
+		<?php if (extension_loaded("mysql")): ?>
+			<b>Installed</b>
+		<?php else: ?>
+			<font color="red"><b>Not-installed</b></font>
+		<?php endif; ?>
+		<br/>
+
+
+                <li class='fieldset'>
+                <label for='name' class='form'>
+			DB Extension
+		</label>
+		<?php if (extension_loaded("dba")): ?>
+			<b>Installed</b>
+		<?php else: ?>
+			<font color="red"><b>Not-installed</b></font>
+		<?php endif; ?>
+		<br/>
+	
+                </ul>
+        </fieldset>
+
+
 
         <fieldset>
 
