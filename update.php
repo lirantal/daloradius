@@ -22,11 +22,18 @@
  *********************************************************************************************************
  */
 
-$failureMsg = "";
-$successMsg = "";
+$failureMsg = "";							// variable initializtion
+$successMsg = "";							// variable initializtion
 
 include_once('library/config_read.php');
 
+/*
+  * updateErrorHandler()
+  * when an error is triggered, related to transactions performed on the database connection, this function will be triggered.
+  * for the purpose of the update page it is not required to display the error on the top of the page but rather it is encapulated
+  * into a variable container after each database transaction. After the update process has completed this variable provides all
+  * the errors that took place as a central piece of information.
+  */
 function updateErrorHandler($err) {
 /*
         echo("<br/><b>Database error</b><br>
@@ -34,6 +41,10 @@ function updateErrorHandler($err) {
 */
 }
 
+/* check if the configuration parameter DALORADIUS_VERSION was set. This is later on used to automatically display
+  * the user with the auto-detected daloRADIUS version. Otherwise an error message is displayed, asking the user to enter
+  * the  daloRADIUS version that is currently installed.
+  */
 if (!isset($configValues['DALORADIUS_VERSION'])) {
 	$failureMsg .= "Couldn't find the configuration variable DALORADIUS_VERSION defined in <b>daloradius.conf.php</b><br/>";
 	$missingVersion = "Failed detetion of daloRADIUS Version. Choose from the list";
@@ -43,14 +54,13 @@ if (!isset($configValues['DALORADIUS_VERSION'])) {
 
 if (isset($_POST['submit'])) {
 
-	$databaseVersion = $_POST['daloradius_version'];
-	$upgradeErrors = array();
+	$databaseVersion = $_POST['daloradius_version'];		// daloradius's version (which is essentially the database version) which is currently running
+	$upgradeErrors = array();								// variable initializtion
 
 	include('library/opendb.php');
-	$dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'updateErrorHandler');		// set our own callback for error handling
+	$dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'updateErrorHandler');			// set our own callback for error handling
 
 	if ($databaseVersion == "0.9-7") {
-
 
 		/* Begining set of SQL entries */
 	
@@ -164,19 +174,19 @@ if (isset($_POST['submit'])) {
 
 
 		$sql = " 
-CREATE TABLE billing_rates (
-  id int(11) unsigned NOT NULL auto_increment,
-  rateName varchar(128) NOT NULL default '',
-  rateType varchar(128) NOT NULL default '',
-  rateCost int(32) NOT NULL default 0,
-  creationdate datetime default '0000-00-00 00:00:00',
-  creationby varchar(128) default NULL,
-  updatedate datetime default '0000-00-00 00:00:00',
-  updateby varchar(128) default NULL,
-  PRIMARY KEY (id),
-  KEY rateName (rateName(128))
-);
-";
+					CREATE TABLE billing_rates (
+					  id int(11) unsigned NOT NULL auto_increment,
+					  rateName varchar(128) NOT NULL default '',
+					  rateType varchar(128) NOT NULL default '',
+					  rateCost int(32) NOT NULL default 0,
+					  creationdate datetime default '0000-00-00 00:00:00',
+					  creationby varchar(128) default NULL,
+					  updatedate datetime default '0000-00-00 00:00:00',
+					  updateby varchar(128) default NULL,
+					  PRIMARY KEY (id),
+					  KEY rateName (rateName(128))
+					);
+				";
 		$res = $dbSocket->query($sql);
 	
 		if (DB::isError($res)) {
@@ -245,35 +255,35 @@ CREATE TABLE billing_rates (
 
 
 		$sql = "
-CREATE TABLE billing_plans (
-	id int(8) NOT NULL auto_increment,
-	planName varchar(128) default NULL,
-	planId varchar(128) default NULL,
-	planType varchar(128) default NULL,
-	planTimeBank varchar(128) default NULL,
-	planTimeType varchar(128) default NULL,
-	planTimeRefillCost varchar(128) default NULL,
-	planBandwidthUp varchar(128) default NULL,
-	planBandwidthDown varchar(128) default NULL,
-	planTrafficTotal varchar(128) default NULL,
-	planTrafficUp varchar(128) default NULL,
-	planTrafficDown varchar(128) default NULL,
-	planTrafficRefillCost varchar(128) default NULL,
-	planRecurring varchar(128) default NULL,
-	planRecurringPeriod varchar(128) default NULL,
-	planCost varchar(128) default NULL,
-	planSetupCost varchar(128) default NULL,
-	planTax varchar(128) default NULL,
-	planCurrency varchar(128) default NULL,
-	planGroup varchar(128) default NULL,
-	creationdate datetime default '0000-00-00 00:00:00',
-	creationby varchar(128) default NULL,
-	updatedate datetime default '0000-00-00 00:00:00',
-	updateby varchar(128) default NULL,
-	PRIMARY KEY (id),
-	KEY planName (planName)
-);
-";
+					CREATE TABLE billing_plans (
+						id int(8) NOT NULL auto_increment,
+						planName varchar(128) default NULL,
+						planId varchar(128) default NULL,
+						planType varchar(128) default NULL,
+						planTimeBank varchar(128) default NULL,
+						planTimeType varchar(128) default NULL,
+						planTimeRefillCost varchar(128) default NULL,
+						planBandwidthUp varchar(128) default NULL,
+						planBandwidthDown varchar(128) default NULL,
+						planTrafficTotal varchar(128) default NULL,
+						planTrafficUp varchar(128) default NULL,
+						planTrafficDown varchar(128) default NULL,
+						planTrafficRefillCost varchar(128) default NULL,
+						planRecurring varchar(128) default NULL,
+						planRecurringPeriod varchar(128) default NULL,
+						planCost varchar(128) default NULL,
+						planSetupCost varchar(128) default NULL,
+						planTax varchar(128) default NULL,
+						planCurrency varchar(128) default NULL,
+						planGroup varchar(128) default NULL,
+						creationdate datetime default '0000-00-00 00:00:00',
+						creationby varchar(128) default NULL,
+						updatedate datetime default '0000-00-00 00:00:00',
+						updateby varchar(128) default NULL,
+						PRIMARY KEY (id),
+						KEY planName (planName)
+					);
+				";
 		$res = $dbSocket->query($sql);
 	
 		if (DB::isError($res)) {
@@ -282,40 +292,40 @@ CREATE TABLE billing_plans (
 		}
 
 		$sql = "
-CREATE TABLE `billing_paypal` (
-  `id` int(8) NOT NULL auto_increment,
-  `username` varchar(128) default NULL,
-  `password` varchar(128) default NULL,
-  `mac` varchar(128) default NULL,
-  `pin` varchar(128) default NULL,
-  `txnId` varchar(128) default NULL,
-  `planName` varchar(128) default NULL,
-  `planId` varchar(128) default NULL,
-  `quantity` varchar(128) default NULL,
-  `receiver_email` varchar(128) default NULL,
-  `business` varchar(128) default NULL,
-  `tax` varchar(128) default NULL,
-  `mc_gross` varchar(128) default NULL,
-  `mc_fee` varchar(128) default NULL,
-  `mc_currency` varchar(128) default NULL,
-  `first_name` varchar(128) default NULL,
-  `last_name` varchar(128) default NULL,
-  `payer_email` varchar(128) default NULL,
-  `address_name` varchar(128) default NULL,
-  `address_street` varchar(128) default NULL,
-  `address_country` varchar(128) default NULL,
-  `address_country_code` varchar(128) default NULL,
-  `address_city` varchar(128) default NULL,
-  `address_state` varchar(128) default NULL,
-  `address_zip` varchar(128) default NULL,
-  `payment_date` datetime default NULL,
-  `payment_status` varchar(128) default NULL,
-  `payment_address_status` varchar(128) default NULL,
-  `payer_status` varchar(128) default NULL,
-  PRIMARY KEY (`id`),
-  KEY `username` (`username`)
-);
-";
+					CREATE TABLE `billing_paypal` (
+					  `id` int(8) NOT NULL auto_increment,
+					  `username` varchar(128) default NULL,
+					  `password` varchar(128) default NULL,
+					  `mac` varchar(128) default NULL,
+					  `pin` varchar(128) default NULL,
+					  `txnId` varchar(128) default NULL,
+					  `planName` varchar(128) default NULL,
+					  `planId` varchar(128) default NULL,
+					  `quantity` varchar(128) default NULL,
+					  `receiver_email` varchar(128) default NULL,
+					  `business` varchar(128) default NULL,
+					  `tax` varchar(128) default NULL,
+					  `mc_gross` varchar(128) default NULL,
+					  `mc_fee` varchar(128) default NULL,
+					  `mc_currency` varchar(128) default NULL,
+					  `first_name` varchar(128) default NULL,
+					  `last_name` varchar(128) default NULL,
+					  `payer_email` varchar(128) default NULL,
+					  `address_name` varchar(128) default NULL,
+					  `address_street` varchar(128) default NULL,
+					  `address_country` varchar(128) default NULL,
+					  `address_country_code` varchar(128) default NULL,
+					  `address_city` varchar(128) default NULL,
+					  `address_state` varchar(128) default NULL,
+					  `address_zip` varchar(128) default NULL,
+					  `payment_date` datetime default NULL,
+					  `payment_status` varchar(128) default NULL,
+					  `payment_address_status` varchar(128) default NULL,
+					  `payer_status` varchar(128) default NULL,
+					  PRIMARY KEY (`id`),
+					  KEY `username` (`username`)
+					);
+				";
 		$res = $dbSocket->query($sql);
 	
 		if (DB::isError($res)) {
@@ -325,44 +335,44 @@ CREATE TABLE `billing_paypal` (
 
 
 		$sql = "
-CREATE TABLE `userbillinfo` (
-  `id` int(8) unsigned NOT NULL auto_increment,
-  `username` varchar(64) default NULL,
-  `planName` varchar(128) default NULL,
-  `contactperson` varchar(200) default NULL,
-  `company` varchar(200) default NULL,
-  `email` varchar(200) default NULL,
-  `phone` varchar(200) default NULL,
-  `address` varchar(200) default NULL,
-  `city` varchar(200) default NULL,
-  `state` varchar(200) default NULL,
-  `zip` varchar(200) default NULL,
-  `paymentmethod` varchar(200) default NULL,
-  `cash` varchar(200) default NULL,
-  `creditcardname` varchar(200) default NULL,
-  `creditcardnumber` varchar(200) default NULL,
-  `creditcardverification` varchar(200) default NULL,
-  `creditcardtype` varchar(200) default NULL,
-  `creditcardexp` varchar(200) default NULL,
-  `notes` varchar(200) default NULL,
-  `changeuserbillinfo` varchar(128) default NULL,
-  `lead` varchar(200) default NULL,
-  `coupon` varchar(200) default NULL,
-  `ordertaker` varchar(200) default NULL,
-  `billstatus` varchar(200) default NULL,
-  `lastbill` datetime default '0000-00-00 00:00:00',
-  `nextbill` datetime default '0000-00-00 00:00:00',
-  `postalinvoice` varchar(8) default NULL,
-  `faxinvoice` varchar(8) default NULL,
-  `emailinvoice` varchar(8) default NULL,
-  `creationdate` datetime default '0000-00-00 00:00:00',
-  `creationby` varchar(128) default NULL,
-  `updatedate` datetime default '0000-00-00 00:00:00',
-  `updateby` varchar(128) default NULL,
-  PRIMARY KEY (`id`),
-  KEY `username` (`username`)
-);
-";
+					CREATE TABLE `userbillinfo` (
+					  `id` int(8) unsigned NOT NULL auto_increment,
+					  `username` varchar(64) default NULL,
+					  `planName` varchar(128) default NULL,
+					  `contactperson` varchar(200) default NULL,
+					  `company` varchar(200) default NULL,
+					  `email` varchar(200) default NULL,
+					  `phone` varchar(200) default NULL,
+					  `address` varchar(200) default NULL,
+					  `city` varchar(200) default NULL,
+					  `state` varchar(200) default NULL,
+					  `zip` varchar(200) default NULL,
+					  `paymentmethod` varchar(200) default NULL,
+					  `cash` varchar(200) default NULL,
+					  `creditcardname` varchar(200) default NULL,
+					  `creditcardnumber` varchar(200) default NULL,
+					  `creditcardverification` varchar(200) default NULL,
+					  `creditcardtype` varchar(200) default NULL,
+					  `creditcardexp` varchar(200) default NULL,
+					  `notes` varchar(200) default NULL,
+					  `changeuserbillinfo` varchar(128) default NULL,
+					  `lead` varchar(200) default NULL,
+					  `coupon` varchar(200) default NULL,
+					  `ordertaker` varchar(200) default NULL,
+					  `billstatus` varchar(200) default NULL,
+					  `lastbill` datetime default '0000-00-00 00:00:00',
+					  `nextbill` datetime default '0000-00-00 00:00:00',
+					  `postalinvoice` varchar(8) default NULL,
+					  `faxinvoice` varchar(8) default NULL,
+					  `emailinvoice` varchar(8) default NULL,
+					  `creationdate` datetime default '0000-00-00 00:00:00',
+					  `creationby` varchar(128) default NULL,
+					  `updatedate` datetime default '0000-00-00 00:00:00',
+					  `updateby` varchar(128) default NULL,
+					  PRIMARY KEY (`id`),
+					  KEY `username` (`username`)
+					);
+				";
 
 		$res = $dbSocket->query($sql);
 	
@@ -421,32 +431,32 @@ CREATE TABLE `userbillinfo` (
 
 
 		$sql = "
-CREATE TABLE `billing_history` (
-  `id` int(8) unsigned NOT NULL auto_increment,
-  `username` varchar(128) default NULL,
-  `planName` varchar(128) default NULL,
-  `billAmount` varchar(128) default NULL,
-  `billAction` varchar(128) default NULL,
-  `billPerformer` varchar(128) default NULL,
-  `billReason` varchar(128) default NULL,
-  `paymentmethod` varchar(200) default NULL,
-  `cash` varchar(200) default NULL,
-  `creditcardname` varchar(200) default NULL,
-  `creditcardnumber` varchar(200) default NULL,
-  `creditcardverification` varchar(200) default NULL,
-  `creditcardtype` varchar(200) default NULL,
-  `creditcardexp` varchar(200) default NULL,
-  `coupon` varchar(200) default NULL,
-  `discount` varchar(200) default NULL,
-  `notes` varchar(200) default NULL,
-  `creationdate` datetime default '0000-00-00 00:00:00',
-  `creationby` varchar(128) default NULL,
-  `updatedate` datetime default '0000-00-00 00:00:00',
-  `updateby` varchar(128) default NULL,
-  PRIMARY KEY (`id`),
-  KEY `username` (`username`)
-);
-";
+					CREATE TABLE `billing_history` (
+					  `id` int(8) unsigned NOT NULL auto_increment,
+					  `username` varchar(128) default NULL,
+					  `planName` varchar(128) default NULL,
+					  `billAmount` varchar(128) default NULL,
+					  `billAction` varchar(128) default NULL,
+					  `billPerformer` varchar(128) default NULL,
+					  `billReason` varchar(128) default NULL,
+					  `paymentmethod` varchar(200) default NULL,
+					  `cash` varchar(200) default NULL,
+					  `creditcardname` varchar(200) default NULL,
+					  `creditcardnumber` varchar(200) default NULL,
+					  `creditcardverification` varchar(200) default NULL,
+					  `creditcardtype` varchar(200) default NULL,
+					  `creditcardexp` varchar(200) default NULL,
+					  `coupon` varchar(200) default NULL,
+					  `discount` varchar(200) default NULL,
+					  `notes` varchar(200) default NULL,
+					  `creationdate` datetime default '0000-00-00 00:00:00',
+					  `creationby` varchar(128) default NULL,
+					  `updatedate` datetime default '0000-00-00 00:00:00',
+					  `updateby` varchar(128) default NULL,
+					  PRIMARY KEY (`id`),
+					  KEY `username` (`username`)
+					);
+				";
 
 
 		$res = $dbSocket->query($sql);
@@ -468,7 +478,6 @@ CREATE TABLE `billing_history` (
 			$res = $dbSocket->query($sql);
 		}
 
-
 		/* Ending set of SQL entries */
 
 		$databaseVersion = "0.9-8";
@@ -477,28 +486,23 @@ CREATE TABLE `billing_history` (
 
 	include 'library/closedb.php';
 	
-	// after finishing with upgrade, update the daloRADIUS version parameter in library/daloradius.conf.php
-	
-	$configValues['DALORADIUS_VERSION'] = $databaseVersion;
-	include ("library/config_write.php");
+	$configValues['DALORADIUS_VERSION'] = $databaseVersion;		// after finishing with upgrade, update the daloRADIUS version parameter in library/daloradius.conf.php
+	include ("library/config_write.php");						// save the new database version for daloRADIUS in the config file.
 
 
 	$updateStatus = "true";
 	$successMsg .= "<br/>Finished upgrade procedure to version $databaseVersion.
 			<br/><br/><a href='index.php'>Return</a> to daloRADIUS Platform login.";
 	
+	// append to the failureMsg variable all the errors which took place during the database queries.
+	// the failureMsg variable is then echo'ed while in the div element for the action Messages
 	foreach($upgradeErrors as $error) {
 		$failureMsg .= $error."<br/>";
 	}
 
-}
-
-
-
+} // if 'submit'
 
 ?>
-
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -521,30 +525,21 @@ CREATE TABLE `billing_history` (
 	include_once("lang/main.php");
 ?>
 
-
-
 <div id="wrapper">
 <div id="innerwrapper">
 		
                 <div id="header">
 
                                 <h1><a href="index.php"> <img src="images/daloradius_small.png" border=0/></a></h1>
-
                                 <h2>
                                 	Radius Management, Reporting and Accounting by <a href="http://www.enginx.com">Enginx</a>                                
                                 </h2>
-
                                 <ul id="nav">
 				<a name='top'></a>
-
 				<li><a href="index.php"><em>H</em>ome</a></a></li>
 				<li><a href="update.php" class="active"><em>U</em>pdate</a></a></li>
-
                                 </ul>
-
-
                                 <ul id="subnav">
-
 					<div id="logindiv" style="text-align: right;">
                                                 <li>daloRADIUS Update/Upgrade</li><br/>
 					</div>
@@ -601,7 +596,6 @@ CREATE TABLE `billing_history` (
 
 <?php if ((isset($updateStatus)) && ($updateStatus == "true")): ?>
 	
-
 <?php else: ?>
 
 <form name="update" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -653,8 +647,7 @@ CREATE TABLE `billing_history` (
                 </ul>
         </fieldset>
 
-
-
+		
         <fieldset>
 
                 <h302> Update </h302>
@@ -698,11 +691,6 @@ CREATE TABLE `billing_history` (
 </form>
 
 <?php endif; ?>	
-
-
-
-
-
 
 
 </div>
