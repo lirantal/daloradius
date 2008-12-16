@@ -238,6 +238,8 @@ $l['all']['realms'] = "realms";
 $l['all']['proxys'] = "proxys";
 $l['all']['billingpaypal'] = "billing paypal";
 $l['all']['billingplans'] = "billing plans";
+$l['all']['billinghistory'] = "billing history";
+$l['all']['billinginfo'] = "billing user info";
 
 
 $l['all'][''] = "";
