@@ -805,6 +805,32 @@ if (isset($_POST['submit'])) {
 		}
 
 		/* Ending set of SQL entries */
+
+		/* We continue to also upgrade the configuration parameters for 0.9-8 */
+
+		if (!isset($configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
+
+		if (!isset($configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
+
+		if (!isset($configValues['CONFIG_DB_TBL_DALOBILLINGRATES']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
+
+		if (!isset($configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
+
+		if (!isset($configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']))
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
+
+		if (!isset($configValues['FREERADIUS_VERSION']))
+			$configValues['FREERADIUS_VERSION'] = '1';
+
+		if (!isset($configValues['DALORADIUS_VERSION']))
+			$configValues['DALORADIUS_VERSION'] = '0.9-8';
+
+		/* Ending configuration parameters upgrade */
+
 		$databaseVersion = "0.9-8";
 	} // 0.9-7
 
@@ -812,7 +838,6 @@ if (isset($_POST['submit'])) {
 	
 	$configValues['DALORADIUS_VERSION'] = $databaseVersion;		// after finishing with upgrade, update the daloRADIUS version parameter in library/daloradius.conf.php
 	include ("library/config_write.php");						// save the new database version for daloRADIUS in the config file.
-
 
 	$updateStatus = "true";
 	$successMsg .= "<br/>Finished upgrade procedure to version $databaseVersion.
