@@ -97,10 +97,6 @@
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
-							<tr>
-							<th colspan='10'>".$l['all']['Records']."</th>
-							</tr>
-
                                                         <tr>
                                                         <th colspan='12' align='left'>
                                 Select:

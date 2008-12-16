@@ -38,14 +38,13 @@
 ?>
 
 <?php
-        include_once ("library/tabber/tab-layout.php");
+	include("menu-accounting-hotspot.php");	
 ?>
 
 <?php
-	
-	include("menu-accounting-hotspot.php");
-	
+        include_once ("library/tabber/tab-layout.php");
 ?>
+
 
 		<div id="contentnorightbar">
 		
@@ -62,8 +61,6 @@
 <div class="tabber">
 
      <div class="tabbertab" title="Account Info">
-        <br/>
-
 
 <?php
 
@@ -156,7 +153,6 @@
 	</div>
 
      <div class="tabbertab" title="Graph">
-        <br/>
 
 <?php
 	echo "<br/><br/><br/><center>";

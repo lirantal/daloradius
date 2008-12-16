@@ -86,15 +86,12 @@
 ?>		
 
 <?php
-        include_once ("library/tabber/tab-layout.php");
+    include ("menu-config-maint.php");
 ?>
 
 <?php
-
-    include ("menu-config-maint.php");
-
-?>		
-		
+        include_once ("library/tabber/tab-layout.php");
+?>
 		
 		<div id="contentnorightbar">
 		
