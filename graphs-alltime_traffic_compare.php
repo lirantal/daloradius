@@ -16,18 +16,15 @@
 
 ?>
 
+<?php	
+	include ("menu-graphs.php");	
+?>
+
 <?php
         include_once ("library/tabber/tab-layout.php");
 ?>
 
-<?php
-	
-	include ("menu-graphs.php");
-	
-?>
-		
-		
-		
+
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['graphsalltimetrafficcompare.php']; ?>

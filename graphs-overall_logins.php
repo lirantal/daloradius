@@ -27,14 +27,12 @@
 
 ?>
 
-<?php
-        include_once ("library/tabber/tab-layout.php");
+<?php	
+	include ("menu-graphs.php");	
 ?>
 
 <?php
-	
-	include ("menu-graphs.php");
-	
+        include_once ("library/tabber/tab-layout.php");
 ?>
 		
 		
