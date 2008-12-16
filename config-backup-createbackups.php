@@ -259,7 +259,6 @@
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['FreeRADIUSTables']; ?>">
-        <br/>
 
         <fieldset>
 
@@ -372,7 +371,6 @@
 	</div>
 
      <div class="tabbertab" title="<?php echo $l['title']['daloRADIUSTables']; ?>">
-        <br/>
 
         <fieldset>
 
