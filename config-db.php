@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -101,8 +101,11 @@
 		if (isset($_REQUEST['config_dbtbl_billingpaypal']))
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = $_REQUEST['config_dbtbl_billingpaypal'];
 
-		if (isset($_REQUEST['config_dbtbl_billingplans']))
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = $_REQUEST['config_dbtbl_billingplans'];
+		if (isset($_REQUEST['config_dbtbl_billinghistory']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = $_REQUEST['config_dbtbl_billinghistory'];
+
+		if (isset($_REQUEST['config_dbtbl_billinginfo']))
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = $_REQUEST['config_dbtbl_billinginfo'];
 			
 			
 		// this should probably move to some other page at some point
@@ -128,7 +131,7 @@
 			
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configdb.php']?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configdb.php']; ?>
 				<h144>+</h144></a></h2>
 
                 <div id="helpPage" style="display:none;visibility:visible" >
@@ -144,8 +147,6 @@
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
-        <br/>
-
 
         <fieldset>
 
@@ -174,10 +175,9 @@
 		</select>
 		</li>
 
-
 		<li class='fieldset'>
 		<label for='config_dbhost' class='form'><?php echo $l['all']['DatabaseHostname'] ?></label>
-		<input value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost"/>
+		<input type='text' value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost" />
 		</li>
 
 		<li class='fieldset'>
@@ -208,7 +208,6 @@
 	</div>
 
      <div class="tabbertab" title="<?php echo $l['title']['DatabaseTables']; ?>">
-        <br/>
 
 		<fieldset>
 
@@ -298,6 +297,16 @@
 		</li>
 
                 <li class='fieldset'>
+                <label for='config_dbtbl_billinghistory' class='form'><?php echo $l['all']['billinghistory']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] ?>" name="config_dbtbl_billinghistory" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_billinginfo' class='form'><?php echo $l['all']['billinginfo']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] ?>" name="config_dbtbl_billinginfo" />
+		</li>
+
+                <li class='fieldset'>
                 <label for='config_dbtbl_operators' class='form'><?php echo $l['all']['operators']?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATOR'] ?>" name="config_dbtbl_operators" />
 		</li>
@@ -320,7 +329,6 @@
 </div>
 
      <div class="tabbertab" title="<?php echo $l['title']['AdvancedSettings']; ?>">
-        <br/>
 
 	<fieldset>
 
