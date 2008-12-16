@@ -117,17 +117,15 @@
 
 	
 ?>		
-
+		
+<?php
+    include ("menu-config.php");
+?>
 
 <?php
         include_once ("library/tabber/tab-layout.php");
 ?>
 		
-<?php
-
-    include ("menu-config.php");
-
-?>		
 			
 		<div id="contentnorightbar">
 		
