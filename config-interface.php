@@ -80,7 +80,7 @@
 
                 <li class='fieldset'>
                 <label for='config_iface_pass_hidden' class='form'><?php echo $l['all']['PasswordHidden']?></label>
-		<select name="config_iface_pass_hidden">
+		<select name="config_iface_pass_hidden" class='form'>
 			<option value="<?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?>"> <?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?> </option>
 			<option value="">  </option>
 			<option value="no"> no </option>
