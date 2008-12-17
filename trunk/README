@@ -97,15 +97,16 @@ HotSpots Accounting
 
 GIS - Geographical Information System
 
-daloRADIUS comes with integrated support for GIS provided by GoogleMaps and thus
-provides the ability to visually locate deployed HotSpots across a map, see their status,
-and monitor them visually.
-View Map
-Provides functionality of monitoring deployed HotSpots
+	daloRADIUS comes with integrated support for GIS provided by GoogleMaps and thus
+	provides the ability to visually locate deployed HotSpots across a map, see their status,
+	and monitor them visually.
+	
+	* View Map
+	  Provides functionality of monitoring deployed HotSpots
 
-Edit Map
-Provides functionality for adding or deleting HotSpots from within the map itself
-(i.e: no need to go to HotSpots Management page and delete or create a new one there)
+	* Edit Map
+	  Provides functionality for adding or deleting HotSpots from within the map itself
+	  (i.e: no need to go to HotSpots Management page and delete or create a new one there)
 
 
 
@@ -238,6 +239,8 @@ Support
  IRC chat available at #daloradius on freenode (irc.freenode.net)
  But most developers and users of daloRADIUS are always available on #freeradius as well.
 
+ Official daloRADIUS Website: http://www.daloradius.com
+ 
  Wiki: http://daloradius.wiki.sourceforge.net/
  The wiki is available for quite some time now, make good use of it and don't
  forget to contribute your 2 cents :)
