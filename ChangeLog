@@ -1,7 +1,4 @@
-release 0.9-8 - 1 October 2008
-	- improved reports log pages with filter and line count restrictions
-	- improved last connection attempts page to high-light rejected connections
-	- improved support for ajax auto-complete on side-bar menus (Dennis)
+release 0.9-8 - 
 	- added option to enable/disable user information updates on daloradius-users portal
 	- added support for searchable usernames in Online Users and Last Connected Users pages
 	- added duplicate profiles menu option
@@ -12,10 +9,31 @@ release 0.9-8 - 1 October 2008
 	- added user count for each group in Profiles List page
 	- added captive portal pages in different styles using open source templates, ready for deployment
 	- added paypal sign-up page with complete provisioning in daloRADIUS
+	- added to sample config files the monthly, weekly, daily sql counters for Access-Period (Time-To-Finish),
+	  and Chillispot's ChilliSpot-Max-Total-Octets as well as added these into the attributes dictionary.
+	- added support to manage multi database locations without having to deploy daloradius in different
+	  web directories. New configuration option added CONFIG_LOCATIONS allows the operator to log-in to
+	  a location of his choice, locations are managed per session.
+	- added and revamped billing pages - rates, paypal transactions and billing plans
+	- added multi select groups/profiles to add the user to on New User page
+	- added update interface for the database 
+	- added dictionary.wimax as provided with latest freeradius 2.x release
+	- improved reports log pages with filter and line count restrictions
+	- improved last connection attempts page to high-light rejected connections
+	- improved support for ajax auto-complete on side-bar menus (Dennis)
+	- improved tooltip support for html input boxes on side-bar navigation
+	- improved group handling in Edit mode, to remove a group now simply select the blank option
 	- fixed mac authentication string in hotspot example
 	- fixed password field in Test Connectivity page
 	- fixed auto complete for input boxes in several pages
 	- fixed saving of editing/removing duplicate attributes on user/profile management pages (bug 2079457)
+	- fixed possible security hole for ajax php files which did not perform a check for a valid operator session
+	- fixed bug in Edit User and the javascript routine responsible for managing group priorities (tony)
+	- fixed operator's notes textarea field to show proper value as saved in the database
+	- fixed css layout problems of tooltips and input fields
+	- fixed change user info checkbox saving when entering a new user
+	- fixed trimming of leading and ending spaces in input fields submitted to forms
+	- fixed backend control of user information changes by administrator
 
 
 release 0.9-7 - 4 June 2008
