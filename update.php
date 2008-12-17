@@ -835,6 +835,63 @@ if (isset($_POST['submit'])) {
 	} // 0.9-7
 
 	include 'library/closedb.php';
+
+
+	
+	/* if this is an upgrade from a previous version like 0.9-7 then there is no daloradius.conf.php
+	   file created and so we need to create one... */
+
+	if (!file_exists("library/daloradius.conf.php")) {
+		$configValues['DALORADIUS_VERSION'] = '0.9-8';
+		$configValues['FREERADIUS_VERSION'] = '1';
+		$configValues['CONFIG_DB_ENGINE'] = 'mysql';
+		$configValues['CONFIG_DB_HOST'] = '127.0.0.1';
+		$configValues['CONFIG_DB_USER'] = 'root';
+		$configValues['CONFIG_DB_PASS'] = '';
+		$configValues['CONFIG_DB_NAME'] = 'radius';
+		$configValues['CONFIG_DB_TBL_RADCHECK'] = 'radcheck';
+		$configValues['CONFIG_DB_TBL_RADREPLY'] = 'radreply';
+		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = 'radgroupreply';
+		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'] = 'radgroupcheck';
+		$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'usergroup';
+		$configValues['CONFIG_DB_TBL_RADNAS'] = 'nas';
+		$configValues['CONFIG_DB_TBL_RADPOSTAUTH'] = 'radpostauth';
+		$configValues['CONFIG_DB_TBL_RADACCT'] = 'radacct';
+		$configValues['CONFIG_DB_TBL_RADIPPOOL'] = 'radippool';
+		$configValues['CONFIG_DB_TBL_DALOOPERATOR'] = 'operators';
+		$configValues['CONFIG_DB_TBL_DALORATES'] = 'billing_rates';
+		$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = 'hotspots';
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'] = 'userinfo';
+		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'] = 'dictionary';
+		$configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
+		$configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
+		$configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/proxy.conf';
+		$configValues['CONFIG_PATH_RADIUS_DICT'] = '/usr/share/freeradius';
+		$configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius-svn/var';
+		$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = 'cleartext';
+		$configValues['CONFIG_LANG'] = 'en';
+		$configValues['CONFIG_LOG_PAGES'] = 'yes';
+		$configValues['CONFIG_LOG_ACTIONS'] = 'yes';
+		$configValues['CONFIG_LOG_QUERIES'] = 'yes';
+		$configValues['CONFIG_DEBUG_SQL'] = 'yes';
+		$configValues['CONFIG_DEBUG_SQL_ONPAGE'] = 'yes';
+		$configValues['CONFIG_LOG_FILE'] = '/tmp/daloradius.log';
+		$configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = 'no';
+		$configValues['CONFIG_IFACE_TABLES_LISTING'] = '25';
+		$configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = 'yes';
+		$configValues['CONFIG_IFACE_AUTO_COMPLETE'] = 'yes';
+		$configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = '127.0.0.1';
+		$configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
+		$configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
+		$configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
+		$configValues['CONFIG_LOCATIONS'] = 'Array';
+		$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
+		$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
+		$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
+		$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
+	}
+
 	
 	$configValues['DALORADIUS_VERSION'] = $databaseVersion;		// after finishing with upgrade, update the daloRADIUS version parameter in library/daloradius.conf.php
 	include ("library/config_write.php");						// save the new database version for daloRADIUS in the config file.
