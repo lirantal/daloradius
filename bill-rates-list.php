@@ -102,7 +102,7 @@
                                 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'ratename[]','listallrates')\">None</a>
 	                 <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallhotspots\",\"bill-rates-del.php\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallrates\",\"bill-rates-del.php\")' />
                                 <br/><br/>
 
         ";
