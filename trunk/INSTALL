@@ -71,7 +71,7 @@ Upgrading
 	1. daloRADIUS Configuration File changes:
 	
 		daloRADIUS configuration file has changed from the default  daloradius.conf  to   daloradius.conf.php
-		so first you will need adjust your daloradius.conf file to the daloradius.conf.php format (it's pretty much the same, HONEST!)
+		so first you will need to adjust your daloradius.conf file to the daloradius.conf.php format (it's pretty much the same, HONEST!)
 		and then rename it to daloradius.conf.php
 		
 		The best way to approach this is simply to copy over the daloradius.conf.php file from 0.9-8 and copy
