@@ -102,7 +102,7 @@
 
 		include 'library/closedb.php';
 
-		$showRemoveDiv = "block";
+		$showRemoveDiv = "none";
 	}
 
 	include_once('library/config_read.php');
