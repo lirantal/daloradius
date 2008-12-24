@@ -51,6 +51,10 @@ if (!isset($configValues['DALORADIUS_VERSION'])) {
 }
 
 
+if (!is_writable("library/daloradius.conf.php")) {
+	$failureMsg .= "Unable to write settings to the configuration file <b>daloradius.conf.php</b>,<br/>
+			Please set it writable for the webserver user and refresh the page before you continue";
+}
 
 if (isset($_POST['submit'])) {
 
