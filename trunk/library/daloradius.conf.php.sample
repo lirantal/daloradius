@@ -18,11 +18,13 @@
  *              daloRADIUS Configuration File
  *
  * Modification Date:
- *              Sun Aug 10 13:24:37 EDT 2008
+ *              Mon Dec 08 22:16:00 EDT 2008
  *********************************************************************************************************
  */
 
 
+$configValues['DALORADIUS_VERSION'] = '0.9-8';
+$configValues['FREERADIUS_VERSION'] = '1';
 $configValues['CONFIG_DB_ENGINE'] = 'mysql';
 $configValues['CONFIG_DB_HOST'] = '127.0.0.1';
 $configValues['CONFIG_DB_USER'] = 'root';
@@ -41,13 +43,18 @@ $configValues['CONFIG_DB_TBL_DALOOPERATOR'] = 'operators';
 $configValues['CONFIG_DB_TBL_DALORATES'] = 'rates';
 $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = 'hotspots';
 $configValues['CONFIG_DB_TBL_DALOUSERINFO'] = 'userinfo';
+$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
 $configValues['CONFIG_DB_TBL_DALODICTIONARY'] = 'dictionary';
 $configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
 $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
+$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
+$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
 $configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/proxy.conf';
 $configValues['CONFIG_PATH_RADIUS_DICT'] = '';
 $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
-$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = 'crypt';
+$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = 'cleartext';
 $configValues['CONFIG_LANG'] = 'en';
 $configValues['CONFIG_LOG_PAGES'] = 'no';
 $configValues['CONFIG_LOG_ACTIONS'] = 'no';
@@ -64,5 +71,29 @@ $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
 $configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
 
+
+/*
+// Locations Configuration directives
+// Locations directives are support for accessing different databases from the daloRADIUS Login console
+// adjust the locations below for databases you are running (if you are running more than one.
+$configValues['CONFIG_LOCATIONS'] =                     array(
+
+        "Location Example 1" =>                 array(
+                "Engine"   => "mysql",
+                "Username" => "root",
+                "Password" => "",
+                "Database" => "radius",
+                "Hostname" => "127.0.0.1"
+        ),
+
+        "Location Example 2" =>                 array(
+                "Engine"   => "mysql",
+                "Username" => "db_usertest",
+                "Password" => "db_passtest",
+                "Database" => "test_db1",
+                "Hostname" => "localhost"
+        )
+);
+*/
 
 ?>
