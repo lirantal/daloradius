@@ -64,6 +64,167 @@ if (isset($_POST['submit'])) {
 	include('library/opendb.php');
 	$dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'updateErrorHandler');			// set our own callback for error handling
 
+
+
+	/* perform conversion procedure to upgrade to version 0.9-4 of the database schema */
+	if ($databaseVersion == "0.9-4") {
+
+		$sql = "ALTER TABLE operators DROP COLUMN rep_username;";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+		$sql = "ALTER TABLE operators ADD acct_custom_query VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		} else {
+			$sql = "UPDATE operators SET acct_custom_query='yes' WHERE username='administrator';";
+			$res = $dbSocket->query($sql);
+		}
+	
+		$sql = "ALTER TABLE operators ADD config_maint_disconnect_user VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		} else {
+			$sql = "UPDATE operators SET config_maint_disconnect_user='yes' WHERE username='administrator';";
+			$res = $dbSocket->query($sql);
+		}
+	
+                /* Ending set of SQL entries */
+                $databaseVersion = "0.9-5";
+        } // 0.9-4
+
+
+
+	/* perform conversion procedure to upgrade to version 0.9-5 of the database schema */
+	if ($databaseVersion == "0.9-5") {
+
+		$sql = "ALTER TABLE operators ADD mng_rad_profiles_edit VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+
+		$sql = "ALTER TABLE operators ADD mng_rad_profiles_list VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+		$sql = "ALTER TABLE operators ADD mng_rad_profiles_del VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		} else {
+			$sql = "UPDATE operators SET mng_rad_profiles_new='yes',mng_rad_profiles_edit='yes',mng_rad_profiles_list='yes',mng_rad_profiles_del='yes' WHERE username='administrator';";
+			$res = $dbSocket->query($sql);
+		}
+
+		$sql = "ALTER TABLE operators ADD mng_rad_groupcheck_search VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		} else {
+			$sql = "UPDATE operators SET mng_rad_groupcheck_search='yes' WHERE username='administrator';";
+			$res = $dbSocket->query($sql);
+		}
+
+		$sql = "ALTER TABLE operators ADD mng_rad_groupreply_search VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}  else {
+                        $sql = "UPDATE operators SET mng_rad_groupreply_search='yes' WHERE username='administrator';";
+                        $res = $dbSocket->query($sql);
+                }
+
+
+		$sql = "ALTER TABLE operators CHANGE rep_stat_radius rep_stat_services VARCHAR(32);";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+
+		$sql = "ALTER TABLE userinfo ADD creationdate DATETIME;";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+
+
+		$sql = "ALTER TABLE operators CHANGE lastlogin lastlogin DATETIME;";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+
+		$sql = "ALTER TABLE operators ADD creationdate DATETIME;";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+
+		/* Begining set of SQL entries */
+		$sql = "
+				DROP TABLE IF EXISTS `dictionary`; CREATE TABLE `dictionary` (
+				  `id` int(10) NOT NULL auto_increment,
+				  `Type` varchar(30) default NULL,
+				  `Attribute` varchar(64) default NULL,
+				  `Value` varchar(64) default NULL,
+				  `Format` varchar(20) default NULL,
+				  `Vendor` varchar(32) default NULL,
+				  `RecommendedOP` varchar(32) default NULL,
+				  `RecommendedTable` varchar(32) default NULL,
+				  `RecommendedHelper` varchar(32) default NULL,
+				  `RecommendedTooltip` varchar(32) default NULL,
+				  PRIMARY KEY (`id`)
+				);
+			";
+		$res = $dbSocket->query($sql);
+	
+		if (DB::isError($res)) {
+			$errorMsg = $res->getMessage() ." ". $res->getDebugInfo();
+			array_push($upgradeErrors, $errorMsg);
+		}
+
+
+                /* Ending set of SQL entries */
+                $databaseVersion = "0.9-6";
+        } // 0.9-5
+
+
 	/* perform conversion procedure to upgrade to version 0.9-6 of the database schema */
 	if ($databaseVersion == "0.9-6") {
 
@@ -1069,6 +1230,7 @@ if (isset($_POST['submit'])) {
                 <label for='name' class='form'>
 
 	<?php 
+		/*
 		if (isset($missingVersion)) {
 			$option = "<option value=\"\">Please select</option>";
 			echo $missingVersion;
@@ -1076,6 +1238,14 @@ if (isset($_POST['submit'])) {
 			$option = "<option value=\"".$configValues['DALORADIUS_VERSION']."\">".$configValues['DALORADIUS_VERSION']."</option>";
 			echo "Successfully detected your daloRADIUS version as";
 		}
+		*/
+
+		/* I have "broken" the auto-detect function just for the 0.9-8 release, because this is the first time we introduce
+		   the DALORADIUS_VERSION parameter and it might cause confusion with the auto-detect, so for now I am specifically
+		   asking the user to choose his daloradius version (where 0.9-8 is not an option since it's the NEW version) */
+
+		$option = "<option value=\"\">Please select</option>";
+		echo "Your daloRADIUS version: ";
 	?>
 
 		</label>
@@ -1085,6 +1255,8 @@ if (isset($_POST['submit'])) {
 		<option value=""></option>
 		<option value="0.9-7">0.9-7</option>
 		<option value="0.9-6">0.9-6</option>
+		<option value="0.9-5">0.9-5</option>
+		<option value="0.9-4">0.9-4</option>
 	</select>
 
 		<br/>
