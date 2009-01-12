@@ -22,9 +22,12 @@ FAQs
 	   then restart apache2.
 
 
+	2. In List Users page I don't see all of my users even though I have at least 1.
 
-
-   
+	   Check if the usernames in RADCHECK and in USERINFO table are the same for the same user.
+	   If this is not the case then this will cause the users to not display in the List Users page. 
+	   
+	   
    
 	Config-Maintenance
 	==================
