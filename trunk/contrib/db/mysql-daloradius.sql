@@ -92,8 +92,8 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `operators`;
 CREATE TABLE `operators` (
   `id` int(11) NOT NULL auto_increment,
-  `username` varchar(32) default NULL,
-  `password` varchar(32) default NULL,
+  `username` varchar(128) default NULL,
+  `password` varchar(128) default NULL,
   `mng_search` varchar(32) default NULL,
   `mng_batch` varchar(32) default NULL,
   `mng_del` varchar(32) default NULL,
@@ -331,7 +331,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `userinfo`;
 CREATE TABLE `userinfo` (
   `id` int(11) unsigned NOT NULL auto_increment,
-  `username` varchar(30) default NULL,
+  `username` varchar(128) default NULL,
   `firstname` varchar(200) default NULL,
   `lastname` varchar(200) default NULL,
   `email` varchar(200) default NULL,
@@ -447,7 +447,7 @@ CREATE TABLE `billing_paypal` (
 DROP TABLE IF EXISTS `userbillinfo`;
 CREATE TABLE `userbillinfo` (
   `id` int(8) unsigned NOT NULL auto_increment,
-  `username` varchar(30) default NULL,
+  `username` varchar(128) default NULL,
   `planName` varchar(128) default NULL,
   `contactperson` varchar(200) default NULL,
   `company` varchar(200) default NULL,
