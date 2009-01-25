@@ -18,7 +18,7 @@ if ($fileFlag == 1) {
 
                 while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
                         if ($row['proxyname']) {
-                                fwrite($realmsFd, "proxys ".$row['proxyname']. " { \n");
+                                fwrite($realmsFd, "proxy ".$row['proxyname']. " { \n");
 
                                 if ($row['retry_delay'])
                                         fwrite($realmsFd, "\tretry_delay = " .$row['retry_delay']. "\n");
