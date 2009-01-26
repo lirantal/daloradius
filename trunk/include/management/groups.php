@@ -46,12 +46,7 @@
 	$res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0) {
-		echo "
-			<center> ".$l['messages']['nogroupdefinedforuser']." <br/>".
-					str_replace("create", "<a href='mng-rad-usergroup-new.php?username=$username'>create</a>", 
-						$l['messages']['wouldyouliketocreategroup'])."
-
-			</center>";
+		echo "<center> ".$l['messages']['nogroupdefinedforuser']." <br/></center>";
 	} else {
 
 		$counter = 0;
