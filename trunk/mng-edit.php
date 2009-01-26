@@ -325,6 +325,7 @@
 	                                case "bi_faxinvoice":
 	                                case "bi_emailinvoice":
 					case "passwordOrig":
+					case "newgroups":
 						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
 												// to skip the loop (continue) without entering it as
 												// we do not want to process this $attribute in the following
