@@ -76,8 +76,9 @@
                 <li class='fieldset'>
                 <label for='config_lan' class='form'><?php echo $l['all']['PrimaryLanguage']?></label>
 		<select name="config_lang" class='form'>
-			<option value="en"> en </option>
-			<option value="ru"> ru </option>
+			<option value="en"> English </option>
+			<option value="ru"> Russian </option>
+			<option value="hu"> Hungarian </option>
 		</select>
 		</li>
 
