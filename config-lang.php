@@ -79,6 +79,7 @@
 			<option value="en"> English </option>
 			<option value="ru"> Russian </option>
 			<option value="hu"> Hungarian </option>
+			<option value="it"> Italian </option>
 		</select>
 		</li>
 
