@@ -35,6 +35,9 @@
 		case "hu":
 			include ("lang/hu.php");
 			break;
+		case "it":
+			include ("lang/it.php");
+			break;
 		default:
 			include ("lang/en.php");
 			break;
