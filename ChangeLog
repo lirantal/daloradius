@@ -1,4 +1,4 @@
-release 0.9-8 - 26 December 2008
+release 0.9-8 - 27 January 2008 (pre 26 December 2008)
 	- added option to enable/disable user information updates on daloradius-users portal
 	- added support for searchable usernames in Online Users and Last Connected Users pages
 	- added duplicate profiles menu option
@@ -18,11 +18,14 @@ release 0.9-8 - 26 December 2008
 	- added multi select groups/profiles to add the user to on New User page
 	- added update interface for the database 
 	- added dictionary.wimax as provided with latest freeradius 2.x release
+	- added Italian language support (thanks to Alessandro Rendina)
+	- added Hungarian language support (thanks to Zsiros Attila)
 	- improved reports log pages with filter and line count restrictions
 	- improved last connection attempts page to high-light rejected connections
 	- improved support for ajax auto-complete on side-bar menus (Dennis)
 	- improved tooltip support for html input boxes on side-bar navigation
 	- improved group handling in Edit mode, to remove a group now simply select the blank option
+	- fixed bug in Edit User page where saving of new groups would cause addition of check attribute (thanks to nido009)
 	- fixed mac authentication string in hotspot example
 	- fixed password field in Test Connectivity page
 	- fixed auto complete for input boxes in several pages
