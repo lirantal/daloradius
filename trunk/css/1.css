@@ -467,7 +467,7 @@ form fieldset{
 		
 	width:95%;
 	position:relative;
-	display:block;
+	display:inline;
 }
 
 label.form {
