@@ -35,6 +35,14 @@ Prerequisites
  please attend to INSTALL.win
 
 
+ HOWTO RESOURCES
+ ===============
+ 
+ 1. CentOS 5:
+		http://howtoforge.org/authentication-authorization-and-accounting-with-freeradius-and-mysql-backend-and-webbased-management-with-daloradius
+ 2. Ubuntu 8.04:
+		http://howtoforge.org/setting-up-a-freeradius-based-aaa-server-with-mysql-and-management-with-daloradius
+ 
  
  DEBIAN USERS
  ============
