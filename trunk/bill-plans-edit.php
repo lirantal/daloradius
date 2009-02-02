@@ -313,6 +313,7 @@
                         <option value='CZK'>CZK</option>
                         <option value='ILS'>ILS</option>
                         <option value='MXN'>MXN</option>
+						<option value='KSH'>KSH</option>
                 </select>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planCurrencyTooltip')" />
 
