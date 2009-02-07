@@ -92,11 +92,12 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, ". 
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
-		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].", ".
-		$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username ".
-		" WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
-		" AND (Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) GROUP BY UserName";
+		" WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') GROUP BY UserName";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -108,11 +109,12 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, ". 
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
-		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].", ".
-		$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username ".
-		" WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
-		" AND (Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) ".
+		" WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') ".
 		" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";

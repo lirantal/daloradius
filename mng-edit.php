@@ -101,6 +101,7 @@
 				// we add these records to the userinfo table
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" (id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone,".
+					" address, city, state, zip, ".
 					" notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
 					" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
 					$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".
