@@ -182,6 +182,7 @@
 		<label for='planType' class='form'><?php echo $l['all']['PlanType'] ?></label>
                 <select class='form' tabindex=102 name='planType' >
                         <option value='PayPal'>PayPal</option>
+                        <option value='2Checkout'>2Checkout</option>
                         <option value='Prepaid'>Prepaid</option>
                         <option value='Postpaid'>Postpaid</option>
                 </select>

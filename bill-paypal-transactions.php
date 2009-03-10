@@ -34,6 +34,7 @@
 	isset($_GET['payment_address_status']) ? $payment_address_status = $_GET['payment_address_status'] : $payment_address_status = "";
 	isset($_GET['payer_status']) ? $payer_status = $_GET['payer_status'] : $payer_status = "";
 	isset($_GET['payment_status']) ? $payment_status = $_GET['payment_status'] : $payment_status = "";
+	isset($_GET['vendor_type']) ? $vendor_type = $_GET['vendor_type'] : $vendor_type = "";
 	isset($_GET['sqlfields']) ? $sqlfields = $_GET['sqlfields'] : $sqlfields = "";
 	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
 	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
@@ -49,6 +50,7 @@
 	$billing_paypal_paymentaddressstatus = $payment_address_status;
 	$billing_paypal_payerstatus = $payer_status;
 	$billing_paypal_paymentstatus = $payment_status;
+	$billing_paypal_vendor_type = $vendor_type;
 
 
 	include_once('library/config_read.php');
@@ -87,11 +89,12 @@
 		$payment_address_status = $dbSocket->escapeSimple($payment_address_status);
 		$payer_status = $dbSocket->escapeSimple($payer_status);
 		$payment_status = $dbSocket->escapeSimple($payment_status);
+		$vendor_type = $dbSocket->escapeSimple($vendor_type);
 		$startdate = $dbSocket->escapeSimple($startdate);
 		$enddate = $dbSocket->escapeSimple($enddate);
 
 	        include_once('include/management/userBilling.php');
-	        userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, 1);
+	        userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, $vendor_type, 1);
 									                         // draw the billing rates summary table
 
 
@@ -116,6 +119,7 @@
 		$getQuery .= "&payment_address_status=$payment_address_status";
 		$getQuery .= "&payer_status=$payer_status";
 		$getQuery .= "&payment_status=$payment_status";
+		$getQuery .= "&vendor_type=$vendor_type";
 		$getQuery .= "&startdate=$startdate&enddate=$enddate";
 
 
@@ -124,21 +128,23 @@
 		$select = $dbSocket->escapeSimple($select);
 
 
-		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." WHERE ".
+		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']." WHERE ".
 			" (payer_email LIKE '$payer_email') AND ".
-			" (payment_address_status = '$payment_address_status') AND ".
-			" (payer_status = '$payer_status') AND ".
-			" (payment_status = '$payment_status') AND ".
+			" (payment_address_status LIKE '$payment_address_status') AND ".
+			" (payer_status LIKE '$payer_status') AND ".
+			" (payment_status LIKE '$payment_status') AND ".
+			" (vendor_type LIKE '$vendor_type') AND ".
 			" (payment_date>'$startdate' AND payment_date<'$enddate')";
 		$res = $dbSocket->query($sql);
 		$numrows = $res->numRows();
 
 
-		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." WHERE ".
+		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']." WHERE ".
 			" (payer_email LIKE '$payer_email') AND ".
-			" (payment_address_status = '$payment_address_status') AND ".
-			" (payer_status = '$payer_status') AND ".
-			" (payment_status = '$payment_status') AND ".
+			" (payment_address_status LIKE '$payment_address_status') AND ".
+			" (payer_status LIKE '$payer_status') AND ".
+			" (payment_status LIKE '$payment_status') AND ".
+			" (vendor_type LIKE '$vendor_type') AND ".
 			" (payment_date>'$startdate' AND payment_date<'$enddate') ".
 			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 		$res = $dbSocket->query($sql);
@@ -198,22 +204,25 @@
 		case "quantity":
 			$title = $l['all']['Quantity'];
 			break;
-		case "receiver_email":
+		case "business_email":
 			$title = $l['all']['ReceiverEmail'];
 			break;
-		case "business":
+		case "business_id":
 			$title = $l['all']['Business'];
 			break;
-		case "tax":
+		case "payment_tax":
 			$title = $l['all']['Tax'];
 			break;
-		case "mc_gross":
+		case "payment_cost":
 			$title = $l['all']['Cost'];
 			break;
-		case "mc_fee":
+		case "payment_fee":
 			$title = $l['all']['TransactionFee'];
 			break;
-		case "mc_currency":
+		case "payment_total":
+			$title = $l['all']['TotalCost'];
+			break;
+		case "payment_currency":
 			$title = $l['all']['PaymentCurrency'];
 			break;
 		case "first_name":
@@ -225,25 +234,25 @@
 		case "payer_email":
 			$title = $l['all']['PayerEmail'];
 			break;
-		case "address_name":
+		case "payer_address_name":
 			$title = $l['all']['AddressRecipient'];
 			break;
-		case "address_street":
+		case "payer_address_street":
 			$title = $l['all']['Street'];
 			break;
-		case "address_country":
+		case "payer_address_country":
 			$title = $l['all']['Country'];
 			break;
-		case "address_country_code":
+		case "payer_address_country_code":
 			$title = $l['all']['CountryCode'];
 			break;
-		case "address_city":
+		case "payer_address_city":
 			$title = $l['all']['City'];
 			break;
-		case "address_state":
+		case "payer_address_state":
 			$title = $l['all']['State'];
 			break;
-		case "address_zip":
+		case "payer_address_zip":
 			$title = $l['all']['Zip'];
 			break;
 		case "payment_date":
@@ -254,6 +263,9 @@
 			break;
 		case "payer_status":
 			$title = $l['all']['PayerStatus'];
+			break;
+		case "vendor_type":
+			$title = $l['all']['VendorType'];
 			break;
 		case "payment_address_status":
 			$title = $l['all']['PaymentAddressStatus'];

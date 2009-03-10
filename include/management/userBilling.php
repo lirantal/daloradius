@@ -41,13 +41,13 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
 	include 'library/opendb.php';
 
 	$username = $dbSocket->escapeSimple($username);			// sanitize variable for sql statement
-        $startdate = $dbSocket->escapeSimple($startdate);
-        $enddate = $dbSocket->escapeSimple($enddate);
-        $ratename = $dbSocket->escapeSimple($ratename);
+    $startdate = $dbSocket->escapeSimple($startdate);
+    $enddate = $dbSocket->escapeSimple($enddate);
+    $ratename = $dbSocket->escapeSimple($ratename);
 
-        // get rate type
-        $sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename'";
-        $res = $dbSocket->query($sql);
+    // get rate type
+    $sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename'";
+    $res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0)
 		return;
@@ -215,7 +215,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
  *
  *********************************************************************************************************
  */
-function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, $drawTable) {
+function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, $vendor_type, $drawTable) {
 
 	include_once('include/management/pages_common.php');
 	include 'library/opendb.php';
@@ -227,17 +227,18 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
         $payer_status = $dbSocket->escapeSimple($payer_status);
         $payment_status = $dbSocket->escapeSimple($payment_status);
 
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'].".Username AS Username, payer_email, planName, planId, SUM(mc_gross) AS mc_gross, SUM(mc_fee) ".
-		" AS mc_fee, SUM(tax) AS tax, mc_currency, SUM(AcctSessionTime) AS AcctSessionTime, SUM(AcctInputOctets) AS AcctInputOctets, ".
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].".Username AS Username, business_email, planName, planId, SUM(payment_total) AS total, SUM(payment_fee) ".
+		" AS fee, SUM(payment_tax) AS tax, payment_currency, SUM(AcctSessionTime) AS AcctSessionTime, SUM(AcctInputOctets) AS AcctInputOctets, ".
 		" SUM(AcctOutputOctets) AS AcctOutputOctets ".
 		" FROM ".
-		$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON ".
-		$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'].".Username=".$configValues['CONFIG_DB_TBL_RADACCT'].".Username ".
+		$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON ".
+		$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].".Username=".$configValues['CONFIG_DB_TBL_RADACCT'].".Username ".
 		" WHERE ".
-	        " (payer_email LIKE '$payer_email') AND ".
-                " (payment_address_status = '$payment_address_status') AND ".
-                " (payer_status = '$payer_status') AND ".
-                " (payment_status = '$payment_status') AND ".
+	        " (business_email LIKE '$payer_email') AND ".
+                " (payment_address_status LIKE '$payment_address_status') AND ".
+                " (payer_status LIKE '$payer_status') AND ".
+                " (payment_status LIKE '$payment_status') AND ".
+                " (vendor_type LIKE '$vendor_type') AND ".
                 " (payment_date>'$startdate' AND payment_date<'$enddate')".
 		" GROUP BY Username";
         $res = $dbSocket->query($sql);
@@ -247,17 +248,17 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
 
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	$planTotalCost = $row['mc_gross'];
+	$planTotalCost = $row['total'];
 	$planTotalTax = $row['tax'];
-	$planTotalFee = $row['mc_fee'];
+	$planTotalFee = $row['fee'];
 	$userUpload = toxbyte($row['AcctInputOctets']);
 	$userDownload = toxbyte($row['AcctOutputOctets']);
 	$userOnlineTime = time2str($row['AcctSessionTime']);
 	$sessionTime = $row['AcctSessionTime'];
-	$planCurrency = $row['mc_currency'];
+	$planCurrency = $row['payment_currency'];
 	$planName = $row['planName'];
 	$planId = $row['planId'];
-	$payer_email = $row['payer_email'];
+	$payer_email = $row['business_email'];
 	$username = $row['Username'];
 
 	$grossGain = ($planTotalCost-($planTotalTax+$planTotalFee));
