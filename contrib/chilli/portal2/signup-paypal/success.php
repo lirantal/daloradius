@@ -25,7 +25,7 @@
 
         include('library/config_read.php');
 
-        $successMsg = $configValues['CONFIG_PAYPAL_SUCCESS_MSG_PRE'];
+        $successMsg = $configValues['CONFIG_MERCHANT_SUCCESS_MSG_PRE'];
 
         $refresh = true;
 
@@ -36,14 +36,14 @@
 
                 $txnId = $_GET['txnId'];
 
-                $sql = "SELECT txnId, username, payment_status FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'].
+                $sql = "SELECT txnId, username, payment_status FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
                         " WHERE txnId='".$dbSocket->escapeSimple($txnId)."'";
                 $res = $dbSocket->query($sql);
 
                 $row = $res->fetchRow();
 
                 if ( ($row[0] == $txnId) && ($row[2] == "Completed") ) {
-                        $successMsg = "Your user PIN is: <b>$row[1]</b> <br/><br/>".$configValues['CONFIG_PAYPAL_SUCCESS_MSG_POST'];
+                        $successMsg = "Your user PIN is: <b>$row[1]</b> <br/><br/>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST'];
                         $refresh = false;
                 }
 
@@ -88,7 +88,7 @@
                         <center>
 
         <?php
-                echo "<font color='blue'><b>".$configValues['CONFIG_PAYPAL_SUCCESS_MSG_HEADER']."</b></font>";
+                echo "<font color='blue'><b>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_HEADER']."</b></font>";
                 echo $successMsg;
         ?>
 

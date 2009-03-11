@@ -22,74 +22,81 @@
  *********************************************************************************************************
  */
 
-        include_once('include/common/common.php');
-        $txnId = createPassword(64);                    // to be used for setting up the return url (success.php page)
-                                                        // for later retreiving of the transaction details
+	include_once('include/common/common.php');
+	$txnId = createPassword(64);                    // to be used for setting up the return url (success.php page)
+													// for later retreiving of the transaction details
 
-        $status = "firstload";
-        $errorMissingFields = false;
-        $userPIN = "";
+	$status = "firstload";
+	$errorMissingFields = false;
+	$userPIN = "";
 
-        if (isset($_POST['submit'])) {
+	if (isset($_POST['submit'])) {
 
-                (isset($_POST['firstName'])) ? $firstName = $_POST['firstName'] : $firstName = "";
-                (isset($_POST['lastName'])) ? $lastName = $_POST['lastName'] : $lastName =  "";
-                (isset($_POST['address'])) ? $address = $_POST['address'] : $address = "";
-                (isset($_POST['city'])) ? $city = $_POST['city'] : $city = "";
-                (isset($_POST['state'])) ? $state = $_POST['state'] : $state = "";
-                (isset($_POST['planId'])) ? $planId = $_POST['planId'] : $planId = "";
+		(isset($_POST['firstName'])) ? $firstName = $_POST['firstName'] : $firstName = "";
+		(isset($_POST['lastName'])) ? $lastName = $_POST['lastName'] : $lastName =  "";
+		(isset($_POST['address'])) ? $address = $_POST['address'] : $address = "";
+		(isset($_POST['city'])) ? $city = $_POST['city'] : $city = "";
+		(isset($_POST['state'])) ? $state = $_POST['state'] : $state = "";
+		(isset($_POST['planId'])) ? $planId = $_POST['planId'] : $planId = "";
 
-                if ( ($firstName != "") && ($lastName != "") && ($address != "") && ($city != "") && ($state != "") && ($planId != "") ) {
+		if ( ($firstName != "") && ($lastName != "") && ($address != "") && ($city != "") && ($state != "") && ($planId != "") ) {
 
-                        // all paramteres have been set, save it in the database
-                        include('library/opendb.php');
+			// all paramteres have been set, save it in the database
+			include('library/opendb.php');
 
-                        $currDate = date('Y-m-d H:i:s');
-                        $currBy = "paypal-webinterface";
+			$currDate = date('Y-m-d H:i:s');
+			$currBy = "paypal-webinterface";
 
-                        $userPIN = createPassword(8);                   // lets create some random data for user pin
+			$userPIN = createPassword(8);                   // lets create some random data for user pin
 
+			$planId = $dbSocket->escapeSimple($planId);
 
-                        $planId = $dbSocket->escapeSimple($planId);
+			// grab information about a plan from the table
+			$sql = "SELECT planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+					" WHERE (planType='PayPal') AND (planId='$planId') ";
+			$res = $dbSocket->query($sql);
+			$row = $res->fetchRow();
+			$planId = $row[0];
+			$planName = $row[1];
+			$planCost = $row[2];
+			$planTax = $row[3];
+			$planCurrency = $row[4];
 
-                        // grab information about a plan from the table
-                        $sql = "SELECT planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                                " WHERE (planType='PayPal') AND (planId='$planId') ";
-                        $res = $dbSocket->query($sql);
-                        $row = $res->fetchRow();
-                        $planId = $row[0];
-                        $planName = $row[1];
-                        $planCost = $row[2];
-                        $planTax = $row[3];
-                        $planCurrency = $row[4];
+			// lets add user information to the database
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+					" (id, username, firstname, lastname, creationdate, creationby)".
+					" VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."',".
+					"'$currDate','$currBy'".
+					")";
+			$res = $dbSocket->query($sql);
+			
+			// lets add user billing information to the database
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+					" (id, username, planname, ".
+					" creationdate, creationby) ".
+					" VALUES (0, '$userPIN', '$planName', ".
+					" '$currDate', '$currBy'".
+					")";
+			$res = $dbSocket->query($sql);
+			
+			// lets add user billing information to the database
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
+					" (id, username, txnId, planName, planId, vendor_type, payment_date)".
+					" VALUES (0,'$userPIN','$txnId','$planName','$planId', 'PayPal', '$currDate'".
+					")";
+			$res = $dbSocket->query($sql);
 
-                        // lets add user information to the database
-                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-                                " (id, username, firstname, lastname, creationdate, creationby)".
-                                " VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."',".
-                                "'$currDate','$currBy'".
-                                ")";
-                        $res = $dbSocket->query($sql);
+			$status = "paypal";
 
-                        // lets add user billing information to the database
-                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'].
-                                " (id, username, txnId, planName, planId)".
-                                " VALUES (0,'$userPIN','$txnId','$planName','$planId'".
-                                ")";
-                        $res = $dbSocket->query($sql);
+			include('library/closedb.php');
 
-                        $status = "paypal";
+		} else {
 
-                        include('library/closedb.php');
+			// if the paramteres haven't been set, we alert the user that these are required
+			$errorMissingFields = true;
+		}
 
-                } else {
-
-                        // if the paramteres haven't been set, we alert the user that these are required
-                        $errorMissingFields = true;
-                }
-
-
-        }
+	}
 
 ?>
 
@@ -215,11 +222,15 @@
 
                                         <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
                                                 <input type="hidden" name="cmd" value="_xclick" />
-                                                <input type="hidden" name="business" value="liran_1217096095_biz@enginx.com" />
+                                                <input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'" />
 
-                                                <input type="hidden" name="return" value="http://84.95.241.193/paypal/success.php?txnId='.$txnId.'" />
-                                                <input type="hidden" name="cancel_return" value="http://84.95.241.193/paypal/cancelled.php" />
-                                                <input type="hidden" name="notify_url" value="http://84.95.241.193/paypal/paypal-ipn.php" />
+                                                <input type="hidden" name="return" value="'$configValues['CONFIG_MERCHANT_IPN_URL_ROOT']."/".
+																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
+																								'"?txnId='.$txnId.'" />
+                                                <input type="hidden" name="cancel_return" value="'$configValues['CONFIG_MERCHANT_IPN_URL_ROOT']."/".
+																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
+                                                <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT']."/".
+																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
 
                                                 <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
                                                 <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
