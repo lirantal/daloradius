@@ -55,94 +55,13 @@
 			saveToDb();
 
 			include('library/opendb.php');
+			require_once('include/common/provisionUser.php');
 
 			// the payment is valid, we activate the user by adding him to freeradius's set of tables (radcheck etc)
 			// get transaction id from paypal ipn POST
 			$txnId = $dbSocket->escapeSimple($_POST['option_selection1']);
-
-			// find the pin code to activate using the pin
-			$sql = "SELECT username,planId FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." WHERE txnId='$txnId'";
-			$res = $dbSocket->query($sql);
-			$row = $res->fetchRow();
-			$pin = $row[0];
-			$planId = $row[1];
-
-			// firstly, we add the user to the radcheck table and authorize him
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-				" VALUES (0,'$pin','Auth-Type', ':=', 'Accept')";
-			$res = $dbSocket->query($sql);
-
-
-			// we then search the plans to see if the user should belong to a specific
-			// usergroup or shall we just add the appropriate attribute to radcheck
-			$sql = "SELECT planTimeBank,planGroup,planTimeType,planRecurring,planRecurringPeriod FROM ".
-				$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planId='$planId'";
-			$res = $dbSocket->query($sql);
-			$row = $res->fetchRow();
-			$planTimeBank = $row[0];
-			$planGroup = $row[1];
-			$planTimeType = $row[2];
-			$planRecurring = $row[3];
-			$planRecurringPeriod = $row[4];
-
-			// the group is set, so we simply add the user to this group
-			if ($planGroup != "") {
-
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-					" VALUES ('$pin','planGroup','0')";
-				$res = $dbSocket->query($sql);
 			
-			} else {
-	
-				switch ($planTimeType) {
-
-					case "Time-To-Finish":
-						// time to finish means that the time credit for the user starts at first login and then the counter
-						// starts running, even if he disconnects, his time is running down, until it's 0 and then he used it all up
-
-						$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-							" VALUES (0,'$pin','Access-Period', ':=', '$planTimeBank')";
-						$res = $dbSocket->query($sql);
-
-						break;
-
-					case "Accumulative":
-						// accumulate means that the user was given a time credit of N minutes and he can use them whenever he wants,
-						// and spreads it towards hours, days, weeks or months.
-
-						if ((isset($planRecurring)) && ($planRecurring == "Yes")) {
-
-							switch ($planRecurringPeriod) {
-
-								case "Never":
-									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-All-Session', ':=', '$planTimeBank')";
-									$res = $dbSocket->query($sql);
-									break;
-
-								case "Monthly":
-									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-Monthly-Session', ':=', '$planTimeBank')";
-									$res = $dbSocket->query($sql);
-									break;
-
-								case "Weekly":
-									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-Weekly-Session', ':=', '$planTimeBank')";
-									$res = $dbSocket->query($sql);
-									break;
-
-								case "Daily":
-									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-Daily-Session', ':=', '$planTimeBank')";
-									$res = $dbSocket->query($sql);
-									break;
-							}
-						}						
-						break;
-				}
-
-			}
+			provisionUser($dbSocket, $txnId);
 
 			include('library/closedb.php');
 
@@ -169,7 +88,7 @@ function logToFile($customMsg) {
 
 	$myTime = date("F j, Y, g:i a");
 
-	$fh = fopen($configValues['CONFIG_LOG_PAYPAL_IPN_FILENAME'], 'a');
+	$fh = fopen($configValues['CONFIG_LOG_MERCHANT_IPN_FILENAME'], 'a');
 
 	if ($fh) {
 		fwrite($fh, $myTime ." - ". $customMsg);
@@ -209,6 +128,7 @@ function saveToDb() {
 	$tax = $dbSocket->escapeSimple($_POST['tax']);
 	$mc_gross = $dbSocket->escapeSimple($_POST['mc_gross']);
 	$mc_fee = $dbSocket->escapeSimple($_POST['mc_fee']);
+	$mc_handling = $dbSocket->escapeSimple($_POST['mc_handling ']);
 	$mc_currency = $dbSocket->escapeSimple($_POST['mc_currency']);
 	$first_name = $dbSocket->escapeSimple($_POST['first_name']);
 	$last_name = $dbSocket->escapeSimple($_POST['last_name']);
@@ -222,36 +142,38 @@ function saveToDb() {
 	$address_zip = $dbSocket->escapeSimple($_POST['address_zip']);
 	$payment_date = $dbSocket->escapeSimple($_POST['payment_date']);
 	$payment_status = $dbSocket->escapeSimple($_POST['payment_status']);
-        $payment_address_status = $dbSocket->escapeSimple($_POST['payment_address_status']);
-        $payer_status = $dbSocket->escapeSimple($_POST['payer_status']);
+	$payment_address_status = $dbSocket->escapeSimple($_POST['payment_address_status']);
+	$payer_status = $dbSocket->escapeSimple($_POST['payer_status']);
 
-        // convert paypal date (in PDT time zone) into local time, formatted for mysql
-        $payment_date = date('Y-m-d H:i:s', strtotime($payment_date));
+	// convert paypal date (in PDT time zone) into local time, formatted for mysql
+	$payment_date = date('Y-m-d H:i:s', strtotime($payment_date));
 
-	$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL']." SET ".
+	$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']." SET ".
 		" planName='$planName',".
 		" planId='$planId',".
 		" quantity='$quantity',".
-		" receiver_email='$receiver_email',".
-		" business='$business',".
-		" tax='$tax',".
-		" mc_gross='$mc_gross',".
-		" mc_fee='$mc_fee',".
-		" mc_currency='$mc_currency',".
+		" business_email='$receiver_email',".
+		" business_id='$business',".
+		" payment_tax='$tax',".
+		" payment_cost='$mc_gross',".
+		" payment_fee='$mc_fee',".
+		" payment_total='$mc_handling',".
+		" payment_currency='$mc_currency',".
 		" first_name='$first_name',".
 		" last_name='$last_name',".
 		" payer_email='$payer_email',".
-		" address_name='$address_name',".
-		" address_street='$address_street',".
-		" address_country='$address_country',".
-		" address_country_code='$address_country_code',".
-		" address_city='$address_city',".
-		" address_state='$address_state',".
-		" address_zip='$address_zip',".
+		" payer_address_name='$address_name',".
+		" payer_address_street='$address_street',".
+		" payer_address_country='$address_country',".
+		" payer_address_country_code='$address_country_code',".
+		" payer_address_city='$address_city',".
+		" payer_address_state='$address_state',".
+		" payer_address_zip='$address_zip',".
 		" payment_date='$payment_date',".
-                " payment_status='$payment_status', ".
-                " payment_address_status='$payment_address_status', ".
-                " payer_status='$payer_status' ".
+		" payment_status='$payment_status', ".
+		" payment_address_status='$payment_address_status', ".
+		" vendor_type='PayPal', ".
+		" payer_status='$payer_status' ".
 		" WHERE txnId='$txnId'";
 	$res = $dbSocket->query($sql);
 
