@@ -518,7 +518,7 @@ function checkUserOnline($username) {
 	$username = $dbSocket->escapeSimple($username);
 
         $sql = "SELECT Username FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE AcctStopTime IS NULL AND Username='$username'";
+		" WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND Username='$username'";
 	$res = $dbSocket->query($sql);
 	if ($numrows = $res->numRows() >= 1) {
 		$userStatus = "User is online";
