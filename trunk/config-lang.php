@@ -80,6 +80,7 @@
 			<option value="ru"> Russian </option>
 			<option value="hu"> Hungarian </option>
 			<option value="it"> Italian </option>
+			<option value="es_VE"> Spanish - Venezuelan </option>
 		</select>
 		</li>
 
