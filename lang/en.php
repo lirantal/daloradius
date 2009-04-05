@@ -460,7 +460,7 @@ $l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in<br/>&nbsp;&n
 $l['Tooltip']['groupTooltip'] = "The user will be added to this group.<br/>&nbsp;&nbsp;&nbsp;
 					By assigning a user to a particular group<br/>&nbsp;&nbsp;&nbsp;
 					the user is subject to the group's attributes";
-$l['Tooltip']['macaddressTooltip'] = "Example: 00-AA-BB-CC-DD-EE<br/>&nbsp;&nbsp;&nbsp;
+$l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
 					The MAC Address format should be the same<br/>&nbsp;&nbsp;&nbsp;
 					as the NAS sends it. Mostly this is without<br/>&nbsp;&nbsp;&nbsp;
 					any characters.";
