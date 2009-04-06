@@ -131,7 +131,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	 *********************************************************************************************************/
 	$currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
 	$nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
-        $sql = "SELECT SUM(AcctSessionTime) AS 'SUM', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
+        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
 		" COUNT(RadAcctId) AS 'Logins' ".
 		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username'";
@@ -158,7 +158,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	 *********************************************************************************************************/
 	$currDay = date("Y-m-d");
 	$nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
-        $sql = "SELECT SUM(AcctSessionTime) AS 'SUM', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
+        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
 		" COUNT(RadAcctId) AS 'Logins' ".
 		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username'";
