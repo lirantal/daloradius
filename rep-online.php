@@ -91,7 +91,7 @@
 
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND (UserName LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
+        $_SESSION['reportQuery'] = " WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00' AND (UserName LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
         $_SESSION['reportType'] = "reportsOnlineUsers";
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
@@ -106,7 +106,7 @@
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, UNIX_TIMESTAMP(`AcctStartTime`) ".
+	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime ".
 		" as AcctSessionTime, NASIPAddress, CalledStationId FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND (Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
@@ -181,8 +181,13 @@
 
 	while($row = $res->fetchRow()) {
 
-		$dateDiff = (time() - $row[4]);
-		$totalTime = time2str($dateDiff);
+		$totalTime = time2str($row[4]);
+	
+
+
+	
+
+
 
 		echo "<tr>
 				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$row[0]||$row[3]'>
