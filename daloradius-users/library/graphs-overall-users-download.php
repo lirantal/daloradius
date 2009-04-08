@@ -50,7 +50,7 @@ function daily($username) {
 	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT UserName, sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' GROUP BY day;";
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' AND acctstoptime>0 GROUP BY day;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
