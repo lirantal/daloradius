@@ -142,6 +142,37 @@ if (isset($_GET['reportFormat'])) {
 
 			break;
 
+                case "TopUsers":
+			include_once('../../library/opendb.php');
+
+			$outputHeader = "Username, IP Address, Start Time,Stop Time, Account Session Time, Account Input, Account Output, Total Bandwidth".
+					"\n";
+			$outputContent = "";
+
+		$sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		".AcctStopTime, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, ".
+		" sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".
+		$configValues['CONFIG_DB_TBL_RADACCT']." $reportQuery Group BY Username ASC";
+
+			if ($reportFormat == "csv") {
+				$res = $dbSocket->query($sql);
+
+			        while($row = $res->fetchRow()) {
+					$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[9]\n";
+				}
+				$output = $outputHeader . $outputContent;
+				exportCSVFile($output);	
+				include_once('../../library/closedb.php');
+			}
+
+			break;
+
 	}
 
 
