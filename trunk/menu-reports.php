@@ -57,8 +57,6 @@ include_once ("lang/main.php");
 								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>
 							</form>
 							</li>
-
-
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsTopUsers.png' border='0'>
 							<?php echo $l['button']['TopUser'] ?></a>
@@ -72,6 +70,21 @@ include_once ("lang/main.php");
 								<option value="500"> 500 </option>
 								<option value="1000"> 1000 </option>
 							</select>
+			<h4>Username Filter</h4>
+			<input name="username" type="text" id="username" 
+			value="<?php if (isset($username)) echo $username; else echo "%"; ?>">
+			<h4>Start Date</h4>
+			<input name="startdate" type="text" id="startdate" onClick='javascript:__displayTooltip();'
+                     tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+			value="<?php if (isset($startdate)) echo $startdate;
+			else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , 1, date("Y"))); ?>">
+			<h4>End Date</h4>
+			<input name="enddate" type="text" id="enddate" onClick='javascript:__displayTooltip();'
+                     tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+			value="<?php if (isset($enddate)) echo $enddate;
+			else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>">
+			<h4>Report By</h4>
+
 							<select class="generic" name="orderBy" type="text" tabindex=4>
 								<option value="Bandwidth"> bandwidth </option>
 								<option value="Time"> time </option>

@@ -32,6 +32,17 @@
 
 	if (isset($_GET['limit']))
 		$limit = $_GET['limit'];
+	if (isset($_GET['startdate']))
+		$startdate = $_GET['startdate'];
+	if (isset($_GET['enddate']))
+		$enddate = $_GET['enddate'];
+	if (isset($_GET['username']))
+		$username = $_GET['username'];
+
+
+
+
+
 
 
 	include_once('library/config_read.php');
@@ -62,7 +73,8 @@
 <?php
 
 	include 'library/opendb.php';
-	include 'include/management/pages_common.php';		
+	include 'include/management/pages_common.php';	
+	
 
 	$sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
@@ -73,7 +85,12 @@
 		$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." group by UserName order by $orderBy $orderType limit $limit";
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE AcctStopTime > '0000-00-00 00:00:01' AND AcctStartTime>'$startdate' AND AcctStartTime< '$enddate' AND (Username LIKE '$username') group by UserName order by $orderBy $orderType limit $limit";
+
+        // setup php session variables for exporting
+        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+        $_SESSION['reportQuery'] = " WHERE AcctStopTime > '0000-00-00 00:00:01' AND AcctStartTime>'$startdate' AND AcctStartTime< '$enddate' AND (Username LIKE '$username')";
+        $_SESSION['reportType'] = "TopUsers";
 
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -81,12 +98,17 @@
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
+						<input class='button' type='button' value='CSV Export'
+                                        	onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
+                                        	/>
+
 					<thead>
 							<tr>
 							<th colspan='10'>".$l['all']['Records']."</th>
 							</tr>
 					</thead>
 			";
+
 			
 	if ($orderType == "asc") {
 			$orderType = "desc";
