@@ -46,6 +46,8 @@
 		$sessiontimeout = $_POST['sessiontimeout'];
 		$idletimeout = $_POST['idletimeout'];
 		$simultaneoususe = $_POST['simultaneoususe'];
+		$framedipaddress = $_POST['framedipaddress'];
+
 
 		isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
 		isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = " ";
@@ -149,6 +151,14 @@
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
 							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Simultaneous-Use', ':=', '".
 							$dbSocket->escapeSimple($simultaneoususe)."')";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+
+				if ($framedipaddress) {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." (id,Username,Attribute,op,Value) ".
+							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Framed-IP-Address', ':=', '".
+							$dbSocket->escapeSimple($framedipaddress)."')";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
@@ -386,18 +396,23 @@
 	<fieldset>
 
 		<h302> <?php echo $l['title']['Attributes']; ?> </h302>
+	<br/>
 
 		<label for='simultaneoususe' class='form'><?php echo $l['all']['SimultaneousUse']?></label>
 		<input name='simultaneoususe' type='text' value='' tabindex=106 />
 		<br/>
 
+		<label for='framedipaddress' class='form'><?php echo $l['all']['FramedIPAddress']?></label>
+		<input name='framedipaddress' type='text' value='' tabindex=107 />
+		<br/>
+
 		<label for='expiration' class='form'><?php echo $l['all']['Expiration']?></label>		
-		<input value='' id='expiration' name='expiration'  tabindex=107 />
+		<input value='' id='expiration' name='expiration'  tabindex=108 />
 		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
 		<br/>
 
 		<label for='sessiontimeout' class='form'><?php echo $l['all']['SessionTimeout']?></label>
-		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=108 />
+		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=109 />
 		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0" class='form' >
 			<option value="1">calculate time</option>
 			<option value="1">seconds</option>
@@ -410,7 +425,7 @@
 		<br/>
 
 		<label for='idletimeout' class='form'><?php echo $l['all']['IdleTimeout']?></label>
-		<input value='' id='idletimeout' name='idletimeout'  tabindex=109 />
+		<input value='' id='idletimeout' name='idletimeout'  tabindex=110 />
 		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1" class='form' >
 			<option value="1">calculate time</option>
 			<option value="1">seconds</option>
@@ -424,7 +439,7 @@
 
 		<label for='maxallsession' class='form'><?php 
 			echo $l['all']['MaxAllSession'] ?></label>
-		<input value='' id='maxallsession' name='maxallsession'  tabindex=110 />
+		<input value='' id='maxallsession' name='maxallsession'  tabindex=111 />
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2" class='form' >
 			<option value="1">calculate time</option>
 			<option value="1">seconds</option>

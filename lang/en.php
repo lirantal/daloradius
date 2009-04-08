@@ -82,6 +82,7 @@ $l['all']['RetryDelay'] = "Retry Delay";
 $l['all']['RetryCount'] = "Retry Count";
 $l['all']['DefaultFallback'] = "Default Fallback";
 
+$l['all']['FramedIPAddress'] = "Framed-IP-Address";
 $l['all']['SimultaneousUse'] = "Simultaneous-Use";
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
