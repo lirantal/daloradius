@@ -38,7 +38,7 @@ function daily($username, $orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by day ORDER BY $orderBy $orderType;";
+		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' AND acctstoptime>0 group by day ORDER BY $orderBy $orderType;";
 
 
 	$res = $dbSocket->query($sql);
@@ -114,7 +114,7 @@ function monthly($username, $orderBy, $orderType) {
 	include 'opendb.php';
         
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month ORDER BY $orderBy $orderType;";
+		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' AND acctstoptime>0 group by month ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
 
 	$total_downloads = 0;		// initialize variables
@@ -194,7 +194,7 @@ function yearly($username, $orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year ORDER BY $orderBy $orderType;";
+			$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' AND acctstoptime>0 group by year ORDER BY $orderBy $orderType;";
 
 	$res = $dbSocket->query($sql);
 
