@@ -1,0 +1,124 @@
+--------------------------------------------------------------------------------------------------------------------
+--- freeradius-1.1.7.orig/src/modules/rlm_sqlcounter/rlm_sqlcounter.c   2008-11-13
+11:21:14.000000000 +0530
++++ freeradius-1.1.7/src/modules/rlm_sqlcounter/rlm_sqlcounter.c        2008-11-13
+14:35:58.000000000 +0530
+@@ -72,6 +72,8 @@
+
+       char *sqlmod_inst;      /* instance of SQL module to use, usually just 'sql' */
+       char *query;            /* SQL query to retrieve current session time */
+       char *reset;            /* daily, weekly, monthly, never or user defined */
++       char *counter_type; /* Type of counter (data / time) */
+
++       char *check_unit;   /* Unit of Check Value in Octets/KibiOctets/MibiOctets */
+
+       char *allowed_chars;    /* safe characters list for SQL queries */
+       time_t reset_time;
+       time_t last_reset;
+
+@@ -96,6 +98,8 @@
+  { "key", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,key_name),
+NULL, NULL },
+
+  { "sqlmod-inst", PW_TYPE_STRING_PTR,
+offsetof(rlm_sqlcounter_t,sqlmod_inst), NULL, NULL },
+  { "query", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,query),
+NULL, NULL },
+
++  { "counter-type", PW_TYPE_STRING_PTR,
+offsetof(rlm_sqlcounter_t,counter_type), NULL, NULL },
+
++  { "check-unit", PW_TYPE_STRING_PTR,
+offsetof(rlm_sqlcounter_t,check_unit), NULL, NULL },
+
+  { "reset", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,reset),
+NULL,  NULL },
+
+  { "safe-characters", PW_TYPE_STRING_PTR,
+offsetof(rlm_sqlcounter_t,allowed_chars), NULL,
+"@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_:
+/"},
+  { NULL, -1, 0, NULL, NULL }
+
+@@ -587,7 +591,7 @@
+       rlm_sqlcounter_t *data = (rlm_sqlcounter_t *) instance;
+       int ret=RLM_MODULE_NOOP;
+       int counter=0;
+-       int res=0;
++       uint32_t res=0;
+       DICT_ATTR *dattr;
+       VALUE_PAIR *key_vp, *check_vp;
+       VALUE_PAIR *reply_item;
+@@ -612,7 +616,6 @@
+               find_next_reset(data,request->timestamp);
+       }
+
+-
+       /*
+        *      Look for the key.  User-Name is special.  It means
+        *      The REAL username, after stripping.
+@@ -658,6 +661,25 @@
+       res=check_vp->lvalue - counter;
+       if (res > 0) {
+               DEBUG2("rlm_sqlcounter: (Check item - counter) is greater than zero");
++
++               if(data->check_unit) {
++                       if(strcasecmp(data->check_unit,"KibiOctets")==0) {
++                               if(res >= 4194303) {
++                                       res = 4294967295;
++                               } else {
++                                       res = res * 1024;
++                               }
++                       } else if(strcasecmp(data->check_unit,"MibiOctets")==0) {
++                               if(res >= 4095) {
++                                       res = 4294967295;
++                               } else {
++                                       res = res * 1024 * 1024;
++                               }
++                       }
++               }
++
++               DEBUG2("rlm_sqlcounter: Post processing result=%u", res);
++
+               /*
+                *      We are assuming that simultaneous-use=1. But
+                *      even if that does not happen then our user
+@@ -675,10 +697,17 @@
+                *      limit, so that the user will not need to
+
+                *      login again
+                */
+-               if (data->reset_time && (
+-                       res >= (data->reset_time - request->timestamp))) {
+-                       res = data->reset_time - request->timestamp;
+-                       res += check_vp->lvalue;
++
+
++               /*
++                * While counting data transfer, We don't have to add the next limit.
++                *
++                */
++               if((data->counter_type) && (strcmp(data->counter_type,"time")==0)) {
+
++                       if (data->reset_time && (
++                               res >= (data->reset_time - request->timestamp))) {
++                               res = data->reset_time - request->timestamp;
++                               res += check_vp->lvalue;
++                       }
+               }
+
+               if ((reply_item = pairfind(request->reply->vps, data->reply_attr)) != NULL) {
+
+@@ -695,9 +724,9 @@
+
+               ret=RLM_MODULE_OK;
+
+-               DEBUG2("rlm_sqlcounter: Authorized user %s, check_item=%d, counter=%d",
++               DEBUG2("rlm_sqlcounter: Authorized user %s, check_item=%u, counter=%d",
+                               key_vp->strvalue,check_vp->lvalue,counter);
+-               DEBUG2("rlm_sqlcounter: Sent Reply-Item for user %s, Type=%s, value=%d",
++               DEBUG2("rlm_sqlcounter: Sent Reply-Item for user %s, Type=%s, value=%u",
+                               key_vp->strvalue,data->reply_name,reply_item->lvalue);
+       }
+       else{
+---------------------------------------------------------------------------------------------
