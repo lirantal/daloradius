@@ -1,0 +1,49 @@
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:     Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
+
+The following is a description of the sqlcounter-data.diff patch.
+FreeRADIUS 1.x (and as to December 2008 even 2.x) doesn't support the data
+sql counters without modification to the sqlcounter.c module so the only
+support out of the box you get with FreeRADIUS is for timed-base sql counters
+as you already familiar with (Max-All-Session and it's friends).
+
+Venkatesh K <kaevee@gmail.com> has provided a patch to appply to the sqlcounter.c
+code to provide data-based sqlcounters and even support to customize the check-item
+value not to be octets but rather kilobytes or megabytes.
+
+A sample configuration file for an sqlcounter also provided by Venkatesh is:
+
+	sqlcounter noresetBytecounter {
+	           counter-name = Total-Max-Octets
+	           check-name = Max-Octets
+	           reply-name = ChilliSpot-Max-Total-Octets
+	           sqlmod-inst = sql
+	           key = User-Name	
+	           reset = never
+	           counter-type = data
+	           check-unit = KibiOctets
+	           query = "SELECT
+				(SUM(AcctInputOctets)+SUM(AcctOutputOctets))/1024 FROM radacct WHERE
+				UserName='%{%k}'"
+	}
+
+
+It is crucial to remember that the maximum returned value from the counter is 4Gb because of the 32bit limit.
