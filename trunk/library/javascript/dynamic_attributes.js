@@ -131,7 +131,7 @@ function addElement(enableTable, elementId) {
 
   var content = "" +
 	""+
-        "<fieldset>"+
+        "<br/><fieldset>"+
 	""+
         "       &nbsp;<b>Attribute:</b>"+
         "       <input type='text' id='dictAttributes1' name='dictValues"+dictCounter+"[]' value='"+elemVal+"' "+
