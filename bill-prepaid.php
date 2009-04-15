@@ -51,11 +51,6 @@
 		
 		<h2 id="Intro"><a href="#"><?echo $l['Intro']['billprepaid.php']; ?></a></h2>
 				
-				<p>
-					<?php echo $l['captions']['acctrecsforhotspot']." <i>".$hotspot."</i>" ?>
-				</p>
-
-					
 <?php
 
         include 'library/opendb.php';
