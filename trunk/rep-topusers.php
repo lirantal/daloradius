@@ -119,47 +119,47 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['Username']." </a>
 		</th>
 		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['IPAddress']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['StartTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['StopTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Time&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Time&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Upload&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Upload&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Download&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Download&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['Termination']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=$orderType\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
 		".$l['all']['NASIPAddress']."</a>
 		</th>
 		</tr> </thread>";
