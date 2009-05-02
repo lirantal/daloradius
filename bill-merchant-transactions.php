@@ -61,7 +61,7 @@
 
 <?php
 	
-	include("menu-bill-paypal.php");
+	include("menu-bill-merchant.php");
 	
 ?>
 
