@@ -25,9 +25,9 @@
 
 $configValues['CONFIG_DB_ENGINE'] = 'mysql';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
-$configValues['CONFIG_DB_USER'] = 'host_enginx';
-$configValues['CONFIG_DB_PASS'] = 'enginx2600';
-$configValues['CONFIG_DB_NAME'] = 'dalohosting_enginx';
+$configValues['CONFIG_DB_USER'] = 'dbuser';
+$configValues['CONFIG_DB_PASS'] = 'dbpass';
+$configValues['CONFIG_DB_NAME'] = 'enginx_db';
 $configValues['CONFIG_DB_TBL_RADCHECK'] = 'radcheck';
 $configValues['CONFIG_DB_TBL_RADREPLY'] = 'radreply';
 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = 'radgroupreply';
@@ -44,16 +44,18 @@ $configValues['CONFIG_DB_TBL_DALOUSERINFO'] = 'userinfo';
 $configValues['CONFIG_DB_TBL_DALODICTIONARY'] = 'dictionary';
 $configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
 $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
+$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
 $configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] = 'billing_merchant';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
 $configValues['CONFIG_LANG'] = 'en';
 $configValues['CONFIG_MERCHANT_IPN_SECRET'] = '';
-$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'] = 'http://checkout.domain.com/paypal';
+$configValues['CONFIG_MERCHANT_WEB_PAYMENT'] = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'] = 'https://portal.daloradius.com/signup-paypal';
 $configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'] = 'paypal-ipn.php';
 $configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'] = 'success.php';
 $configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'] = 'cancelled.php';
-$configValues['CONFIG_MERCHANT_BUSINESS_ID'] = 'merchant_account@gmail.com';
+$configValues['CONFIG_MERCHANT_BUSINESS_ID'] = 'liran@enginx.com';
 $configValues['CONFIG_LOG_MERCHANT_IPN_FILENAME'] = '/tmp/paypal-transactions.log';
 $configValues['CONFIG_MERCHANT_SUCCESS_MSG_PRE'] = "Dear customer, we thank you for completing your PayPal payment.<br/><br/>".
                         "It takes a couple of seconds until PayPal performs payment validation with our systems ".
