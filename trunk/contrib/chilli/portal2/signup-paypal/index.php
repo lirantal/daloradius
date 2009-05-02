@@ -220,16 +220,16 @@
                                         </b></td></tr></table>
                                         <br/>
 
-                                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                                        <form action="'.$configValues['CONFIG_MERCHANT_WEB_PAYMENT'].'" method="post">
                                                 <input type="hidden" name="cmd" value="_xclick" />
                                                 <input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'" />
 
-                                                <input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'"/"'.
+                                                <input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-																								'"?txnId='.$txnId.'" />
-                                                <input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'"/"'.
+																								'?txnId='.$txnId.'" />
+                                                <input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
-                                                <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'"/"'.
+                                                <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
 
                                                 <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
