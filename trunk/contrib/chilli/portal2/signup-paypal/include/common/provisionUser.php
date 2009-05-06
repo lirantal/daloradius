@@ -47,7 +47,7 @@ function provisionUser($dbSocket, $txnId) {
 	if ($planGroup != "") {
 
 		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-			" VALUES ('$pin','planGroup','0')";
+			" VALUES ('$pin','$planGroup','0')";
 		$res = $dbSocket->query($sql);
 
 	} else {
