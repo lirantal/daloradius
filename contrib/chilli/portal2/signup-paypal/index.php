@@ -60,6 +60,10 @@
 			$planName = $row[1];
 			$planCost = $row[2];
 			$planTax = $row[3];
+			
+			// the tax is a relative percentage amount of the price, thus we need to
+			// calculate the tax amount
+			$planTax = (($planTax/100)*$planCost);
 			$planCurrency = $row[4];
 
 			// lets add user information to the database
