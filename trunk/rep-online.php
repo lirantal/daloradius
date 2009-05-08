@@ -177,35 +177,50 @@
 		".$l['all']['NASIPAddress']."</a>
 		</th>
 
+		<th scope='col'>
+		<a title='Sort' class'novlist' href=\"". $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=nashortname&orderType=$orderTypeNextPage\">
+		".$l['all']['NASShortName']."</a>
+		</th>
+
 	</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
 
+		$username = $row[0];
+		$ip = $row[1];
+		$usermac = $row[2];
+		$start = $row[3];
+		$nasip = $row[5];
+		$nasmac = $row[6];
+
 		$totalTime = time2str($row[4]);
+
+
+		$query = "select shortname from ".$configValues['CONFIG_DB_TBL_RADNAS']." where nasname = '$nasip';";
+		$result = $dbSocket->query($query);
+	        $logDebugSQL .= $sql . "\n";
+		$nasshortname = $result->fetchRow();
+		$nasshortname = $nasshortname[0];
+
 	
-
-
-	
-
-
-
 		echo "<tr>
-				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$row[0]||$row[3]'>
+				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$username||$start'>
 					<a class='tablenovisit' href='javascript:return;'
 					onclick=\"javascript:__displayTooltip();\" 
 					tooltipText=\"
-						<a class='toolTip' href='mng-edit.php?username=$row[0]'>".
+						<a class='toolTip' href='mng-edit.php?username=$username'>".
 							$l['Tooltip']['UserEdit']."</a>
 						&nbsp;
-						<a class='toolTip' href='config-maint-disconnect-user.php?username=$row[0]&nasaddr=$row[5]'>".
+						<a class='toolTip' href='config-maint-disconnect-user.php?username=$username&nasaddr=$nasip'>".
 							$l['all']['Disconnect']."</a>
 						<br/>\"
-					>$row[0]</a>
+					>$username</a>
 					</td>
-				<td> IP: $row[1]<br/>MAC: $row[2]</td>
-				<td> $row[3] </td>
+				<td> IP: $ip<br/>MAC: $usermac</td>
+				<td> $start </td>
 				<td> $totalTime </td>
-				<td> IP: $row[5]<br/>MAC: $row[6]</td>
+				<td> IP: $nasip<br/>MAC: $nasmac</td>
+				<td> $nasshortname </td>
 		</tr>";
 	}
 

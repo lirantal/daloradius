@@ -67,14 +67,17 @@
         $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
-        $sql = "SELECT ".$row['postauth']['user'].", pass, reply, ".$row['postauth']['date']." FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
-		" WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+	$sql = "SELECT rp.username FROM ".$row['postauth']['user']." as rp ".
+		" WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') ".
         $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-        $sql = "SELECT ".$row['postauth']['user'].", pass, reply, ".$row['postauth']['date']." FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
-		" WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')".
-		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$sql = "SELECT rp.".$row['postauth']['user'].", rp.pass, rp.reply, rp.".$row['postauth']['date'].", n.shortname FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." as rp ".
+                " JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." AS r ON (r.username = rp.".$row['postauth']['user']." and r.acctstarttime = rp.authdate) ".
+                " JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." AS n ON (n.nasname = r.nasipaddress) ".
+                " WHERE (rp.".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') ".
+		" ORDER BY rp.$orderBy $orderType LIMIT $offset, $rowsPerPage";
+
         $res = $dbSocket->query($sql);
         $logDebugSQL = "";
         $logDebugSQL .= $sql . "\n";
@@ -87,25 +90,28 @@
         $array_pass = array();
         $array_starttime = array();
         $array_reply = array();
-        $count = 0;
+        $array_nasshortname = array();
+	$count = 0;
 
         while($row = $res->fetchRow()) {
 
                 // The table that is being procuded is in the format of:
-                // +-------------+-------------+---------------+---------------------+
-                // | user        | pass        | reply         | date                |
-                // +-------------+-------------+---------------+---------------------+
+                // +-------------+-------------+---------------+----------------------------------------+
+                // | user        | pass        | reply         | date                | nasshortname     |
+                // +-------------+-------------+---------------+----------------------------------------+
 
 
                 $user = $row[0];
                 $pass = $row[1];
                 $starttime = $row[3];
-                $reply = $row[2];		
+                $reply = $row[2];
+                $nasshortname = $row[4];	
 
                 array_push($array_users, "$user");
                 array_push($array_pass, "$pass");
                 array_push($array_starttime, "$starttime");
                 array_push($array_reply, "$reply");
+		array_push($array_nasshortname, "$nasshortname");
 
                 $count++;
 
@@ -158,6 +164,12 @@
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=reply&orderType=$orderTypeNextPage\">
 		".$l['all']['RADIUSReply']." 
 		</th>
+
+		<th scope='col'>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=reply&orderType=$orderTypeNextPage\">
+		".$l['all']['NASShortName']."
+		<th>
+
         </tr> </thread>";
 
         $i = 0;
@@ -173,6 +185,7 @@
                         <td> $array_pass[$i] </td>
                         <td> $array_starttime[$i] </td>
                         <td> $reply </td>
+			<td> $array_nasshortname[$i] </td>
                 </tr>";
                 $i++;
         }
@@ -180,7 +193,7 @@
         echo "
                                         <tfoot>
                                                         <tr>
-                                                        <th colspan='10' align='left'>
+                                                        <th colspan='5' align='left'>
         ";
         setupLinks($pageNum, $maxPage, $orderBy, $orderType, "&usernameLastConnect=$usernameLastConnect");
         echo "

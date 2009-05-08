@@ -126,6 +126,7 @@ $l['all']['Download'] = "Descarga";
 $l['all']['Rollback'] = "Roll-back";
 $l['all']['Termination'] = "Terminaci&oacute;n";
 $l['all']['NASIPAddress'] = "Direcci&oacute;n IP del NAS";
+$l['all']['NASShortName'] = "NAS Short Name";
 $l['all']['Action'] = "Acci&oacute;n";
 $l['all']['UniqueUsers'] = "Unique Users";
 $l['all']['TotalHits'] = "Hits totales";

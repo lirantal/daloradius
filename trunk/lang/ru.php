@@ -78,6 +78,7 @@ $l['all']['Upload'] = "Передано";
 $l['all']['Download'] = "Принято";
 $l['all']['Termination'] = "Завершение";
 $l['all']['NASIPAddress'] = "IP-адрес NAS'а";
+$l['all']['NASShortName'] = "NAS Short Name";
 $l['all']['Action'] = "Действие";
 $l['all']['UniqueUsers'] = "Уникальных пользователей";
 $l['all']['TotalHits'] = "Всего хитов";

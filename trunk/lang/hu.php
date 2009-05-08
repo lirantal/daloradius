@@ -129,6 +129,7 @@ $l['all']['Download'] = "Letöltés";
 $l['all']['Rollback'] = "Roll-back";
 $l['all']['Termination'] = "Megszakítás";
 $l['all']['NASIPAddress'] = "NAS IP Cím";
+$l['all']['NASShortName'] = "NAS Short Name";
 $l['all']['Action'] = "Folyamat";
 $l['all']['UniqueUsers'] = "Egyedi Felhasználók";
 $l['all']['TotalHits'] = "Minden találat";

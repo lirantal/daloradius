@@ -116,6 +116,7 @@ $l['all']['Upload'] = "Upload";
 $l['all']['Download'] = "Download";
 $l['all']['Termination'] = "Termine";
 $l['all']['NASIPAddress'] = "Indirizzo IP NAS";
+$l['all']['NASShortName'] = "NAS Short Name";
 $l['all']['Action'] = "Azione";
 $l['all']['UniqueUsers'] = "Utenti Unici";
 $l['all']['TotalHits'] = "Total Hits";
