@@ -64,6 +64,7 @@
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?>'
 				value="<?php if (isset($accounting_nasipaddress)) echo $accounting_nasipaddress; ?>">
+			<input name="only-active" value="true" type="checkbox" <? if (isset($accounting_onlyactive)){ echo 'checked';} ?>> <? echo $l['button']['NASIPAccountingOnlyActive']?>
 			</form></li>
 
 		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
@@ -86,10 +87,8 @@
 			<input name="enddate" type="text" id="enddate" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-				value="<?php if (isset($accounting_date_enddate)) echo $accounting_date_enddate;
-				else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, 
-				date("Y"))); ?>">
-				
+				value="<?php if (isset($accounting_date_enddate)){ echo $accounting_date_enddate;}
+				else { echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, date("Y")));} ?>">
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
 			<div id="chooserSpan" class="dateChooser select-free" 

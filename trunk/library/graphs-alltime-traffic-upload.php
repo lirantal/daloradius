@@ -51,12 +51,12 @@ function daily() {
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-		$uploads = floor($row[0]/1024/1024);
+		$uploads = floor($row[0]/1000/1000/1000);
 		$chart->addPoint(new Point("$row[1]", "$uploads"));
 	}
 
 
-	$chart->setTitle("Alltime Uploads based on Daily distribution");
+	$chart->setTitle("Alltime Uploads based on Daily distribution (Gbytes)");
 	$chart->render();
 
 	include 'closedb.php';

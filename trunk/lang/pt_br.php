@@ -37,7 +37,7 @@ $l['all']['PoolKey'] = "Pool Key";
 /********************************************************************************/
 /* Vendor Attributes related translation                                        */
 /********************************************************************************/
-$l['all']['Dictionary'] = "Dictionary";
+$l['all']['Dictionary'] = "Dicionario";
 $l['all']['VendorID'] = "Vendor ID";
 $l['all']['VendorName'] = "Vendor Name";
 $l['all']['VendorAttribute'] = "Vendor Attribute";
@@ -48,21 +48,21 @@ $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
 /* radius related text */
-$l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
+$l['all']['RADIUSDictionaryPath'] = "Caminho do dicionario do RADIUS";
 
 
-$l['all']['Compare'] = "Compare";
+$l['all']['Compare'] = "Comparar";
 
-$l['all']['Section'] = "Section";
+$l['all']['Section'] = "Secao";
 $l['all']['Item'] = "Item";
 
-$l['all']['RemoveRadacctRecords'] = "Remove Accounting Records";
+$l['all']['RemoveRadacctRecords'] = "Remover Registros de Accounting";
 
-$l['all']['CleanupSessions'] = "Cleanup sessions older than";
-$l['all']['DeleteSessions'] = "Delete sessions older than";
+$l['all']['CleanupSessions'] = "Limpar sessoes anteriores a";
+$l['all']['DeleteSessions'] = "Excluir sessoes anteriores a";
 
-$l['all']['StartingDate'] = "Starting Date";
-$l['all']['EndingDate'] = "Ending Date";
+$l['all']['StartingDate'] = "Data Inicial";
+$l['all']['EndingDate'] = "Data Final";
 
 $l['all']['Realm'] = "Realm";
 $l['all']['RealmName'] = "Realm Name";
@@ -97,56 +97,56 @@ $l['all']['PacketType'] = "Packet Type";
 $l['all']['HotSpot'] = "HotSpot";
 $l['all']['HotSpots'] = "HotSpots";
 $l['all']['HotSpotName'] = "Hotspot Name";
-$l['all']['Name'] = "Name";
+$l['all']['Name'] = "Nome";
 $l['all']['Username'] = "Username";
-$l['all']['Password'] = "Password";
-$l['all']['PasswordType'] = "Password Type";
-$l['all']['IPAddress'] = "IP Address";
-$l['all']['Profile'] = "Profile";
-$l['all']['Group'] = "Group";
-$l['all']['Groupname'] = "Groupname";
-$l['all']['ProfilePriority'] = "Profile Priority";
-$l['all']['GroupPriority'] = "Group Priority";
-$l['all']['CurrentGroupname'] = "Current Groupname";
-$l['all']['NewGroupname'] = "New Groupname";
-$l['all']['Priority'] = "Priority";
-$l['all']['Attribute'] = "Attribute";
-$l['all']['Operator'] = "Operator";
-$l['all']['Value'] = "Value";
-$l['all']['NewValue'] = "New Value";
-$l['all']['MaxTimeExpiration'] = "Max Time / Expiration";
+$l['all']['Password'] = "Senha";
+$l['all']['PasswordType'] = "Tipo da Senha";
+$l['all']['IPAddress'] = "Endereco IP";
+$l['all']['Profile'] = "Perfil";
+$l['all']['Group'] = "Grupo";
+$l['all']['Groupname'] = "Nome do Grupo";
+$l['all']['ProfilePriority'] = "Prioridade do Perfil";
+$l['all']['GroupPriority'] = "Prioridade do Grupo";
+$l['all']['CurrentGroupname'] = "Nome de grupo atual";
+$l['all']['NewGroupname'] = "Novo nome de Grupo";
+$l['all']['Priority'] = "Prioridade";
+$l['all']['Attribute'] = "Atributo";
+$l['all']['Operator'] = "Operador";
+$l['all']['Value'] = "Valor";
+$l['all']['NewValue'] = "Novo Valor";
+$l['all']['MaxTimeExpiration'] = "Tempo maximo / Expiration";
 $l['all']['UsedTime'] = "Used Time";
 $l['all']['Status'] = "Status";
-$l['all']['Usage'] = "Usage";
-$l['all']['StartTime'] = "Start Time";
-$l['all']['StopTime'] = "Stop Time";
-$l['all']['TotalTime'] = "Total Time";
+$l['all']['Usage'] = "Uso";
+$l['all']['StartTime'] = "Horario Inicial";
+$l['all']['StopTime'] = "Horario Final";
+$l['all']['TotalTime'] = "Tempo Total";
 $l['all']['Bytes'] = "Bytes";
 $l['all']['Upload'] = "Upload";
 $l['all']['Download'] = "Download";
 $l['all']['Rollback'] = "Roll-back";
-$l['all']['Termination'] = "Termination";
-$l['all']['NASIPAddress'] = "NAS IP Address";
-$l['all']['Action'] = "Action";
+$l['all']['Termination'] = "Terminacao";
+$l['all']['NASIPAddress'] = "NAS - Endereco IP";
+$l['all']['Action'] = "Acao";
 $l['all']['UniqueUsers'] = "Unique Users";
 $l['all']['TotalHits'] = "Total Hits";
 $l['all']['AverageTime'] = "Average Time";
-$l['all']['Records'] = "Records";
-$l['all']['Summary'] = "Summary";
-$l['all']['Statistics'] = "Statistics";
-$l['all']['Credit'] = "Credit";
-$l['all']['Used'] = "Used";
-$l['all']['LeftTime'] = "Time Remains";
-$l['all']['LeftPercent'] = "% of Time Left";
-$l['all']['TotalSessions'] = "Total Sessions";
-$l['all']['LastLoginTime'] = "Last Login Time";
-$l['all']['TotalSessionTime'] = "Total Session Time";
+$l['all']['Records'] = "Registros";
+$l['all']['Summary'] = "Sumario";
+$l['all']['Statistics'] = "Statisticas";
+$l['all']['Credit'] = "Cerdito";
+$l['all']['Used'] = "Utilizado";
+$l['all']['LeftTime'] = "Tempo Restante";
+$l['all']['LeftPercent'] = "% de tempo restante";
+$l['all']['TotalSessions'] = "Total de Sessoes";
+$l['all']['LastLoginTime'] = "Ultimo Login";
+$l['all']['TotalSessionTime'] = "Total da Sessao";
 $l['all']['RateName'] = "Rate Name";
 $l['all']['RateType'] = "Rate Type";
 $l['all']['RateCost'] = "Rate Cost";
 $l['all']['Billed'] = "Billed";
-$l['all']['TotalUsers'] = "Total Users";
-$l['all']['TotalBilled'] = "Total Billed";
+$l['all']['TotalUsers'] = "Total de Usuarios";
+$l['all']['TotalBilled'] = "Total de Cobrancas";
 $l['all']['CardBank'] = "Card Bank";
 $l['all']['Type'] = "Type";
 $l['all']['CardBank'] = "CardBank";
@@ -173,14 +173,14 @@ $l['all']['PostalInvoice'] = "Postal Invoice";
 $l['all']['FaxInvoice'] = "Fax Invoice";
 $l['all']['EmailInvoice'] = "Email Invoice";
 
-$l['all']['edit'] = "edit";
-$l['all']['del'] = "del";
+$l['all']['edit'] = "editar";
+$l['all']['del'] = "deletar";
 $l['all']['groupslist'] = "groups-list";
-$l['all']['TestUser'] = "Test User";
+$l['all']['TestUser'] = "Testar Usuario";
 $l['all']['Accounting'] = "Accounting";
 $l['all']['RADIUSReply'] = "RADIUS Reply";
 
-$l['all']['Disconnect'] = "Disconnect";
+$l['all']['Disconnect'] = "Desconectar";
 
 $l['all']['Debug'] = "Debug";
 $l['all']['Timeout'] = "Timeout";
@@ -613,7 +613,6 @@ $l['button']['UserDownloads'] = "User Downloads";
 $l['button']['UserUploads'] = "User Uploads";
 $l['button']['TotalLogins'] = "Total Logins";
 $l['button']['TotalTraffic'] = "Total Traffic";
-$l['button']['LoggedUsers'] = "Logged Users";
 
 $l['button']['ViewMAP'] = "View MAP";
 $l['button']['EditMAP'] = "Edit MAP";
@@ -710,28 +709,6 @@ $l['title']['Optional'] = "Optional";
 
 /* ********************************************************************************** */
 
-/* **********************************************************************************
- * Graphs 
- * General graphing text
- ************************************************************************************/
-$l['graphs']['Day'] = "Day";
-$l['graphs']['Month'] = "Month";
-$l['graphs']['Year'] = "Year";
-$l['graphs']['Jan'] = "January";
-$l['graphs']['Feb'] = "February";
-$l['graphs']['Mar'] = "March";
-$l['graphs']['Apr'] = "April";
-$l['graphs']['May'] = "May";
-$l['graphs']['Jun'] = "June";
-$l['graphs']['Jul'] = "July";
-$l['graphs']['Aug'] = "August";
-$l['graphs']['Sep'] = "September";
-$l['graphs']['Oct'] = "October";
-$l['graphs']['Nov'] = "November";
-$l['graphs']['Dec'] = "December";
-
-
-/* ********************************************************************************** */
 
 /* **********************************************************************************
  * Text
@@ -862,7 +839,6 @@ $l['Intro']['gisviewmap.php'] = "View MAP Mode";
 $l['Intro']['graphmain.php'] = "Usage Graphs";
 $l['Intro']['graphsalltimetrafficcompare.php'] = "Total Traffic Comparison Usage";
 $l['Intro']['graphsalltimelogins.php'] = "Total Logins";
-$l['Intro']['graphsloggedusers.php'] = "Logged Users";
 $l['Intro']['graphsoveralldownload.php'] = "User Downlads";
 $l['Intro']['graphsoveralllogins.php'] = "User Logins";
 $l['Intro']['graphsoverallupload.php'] = "User Uploads";
@@ -1219,13 +1195,10 @@ The amount of data Downloaded by the client is the value which is being calculat
 The amount of data Upload by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
 <br/>
 <h200><b>Alltime Logins/Hits</b></h200> - Plots a graphical chart of the Logins to the server for a given period of time.<br/>
-<h200><b>Alltime Traffic Comparison</b></h200> - Plots a graphical chart of the Downloaded and Uploaded statisticse.</br>
-<h200><b>Logged Users</b></h200> - Plots a graphical chart of the logged in users in the specified period.
-Filter by day, month and year to graph a hourly graph or filter only by month and year (select \"---\" on the day field) to graph the minimum and maximum logged in users over the selected month.
+<h200><b>Alltime Traffic Comparison</b></h200> - Plots a graphical chart of the Downloaded and Uploaded statisticse.
 ";
 $l['helpPage']['graphsalltimelogins'] = "An All-Time statistics of Logins to the server based on a distribution over a period of time";
 $l['helpPage']['graphsalltimetrafficcompare'] = "An All-Time statistics of Traffic through the server based on a distribution over a period of time.";
-$l['helpPage']['graphsloggedusers'] = "Plots a graphical chart of the total logged in users";
 $l['helpPage']['graphsoveralldownload'] = "Plots a graphical chart of the Downloaded bytes to the server";
 $l['helpPage']['graphsoverallupload'] = "Plots a graphical chart of the Uploaded bytes to the server";
 $l['helpPage']['graphsoveralllogins'] = "Plots a graphical chart of the Login attempts to the server";
