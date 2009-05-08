@@ -25,7 +25,7 @@
  */
  
 
-$logfile_loc1 = '/var/log/freeradius/radius.log';
+$logfile_loc1 = '/var/log/radius/radius.log';
 $logfile_loc2 = '/usr/local/var/log/radius/radius.log';
 
 if (file_exists($logfile_loc1))

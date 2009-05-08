@@ -114,6 +114,38 @@
 				<option value="yearly"> Yearly
 			</select>
 			</form></li>
+		<li><a href="javascript:document.logged_users.submit();"><b>&raquo;</b>
+			<img src='images/icons/graphsGeneral.gif' border='0'>
+			<?php echo $l['button']['LoggedUsers'] ?></a>
+			<form name="logged_users" action="graphs-logged_users.php" method="post" class="sidebar">
+			<?php echo $l['graphs']['Day']; ?>:</br>
+			<?php $d = date("j"); ?>
+			<select class="generic" name="day" type="text">
+				<!-- <option value="all"> --- -->
+				<?php for ($i=1;$i<32;$i++) { ?>
+				<option value="<?php echo $i ?>" <?php if($d == $i) echo "selected" ?>> <?php echo $i ?>
+				<?php } ?>
+			</select>
+			<?php echo $l['graphs']['Month']; ?>:</br>
+			<?php $m = date("M"); ?>
+			<select class="generic" name="month" type="text">
+				<option value="jan" <?php if ($m == 'Jan') echo "selected" ?>> <?php echo $l['graphs']['Jan']?>
+				<option value="feb" <?php if ($m == 'Feb') echo "selected" ?>> <?php echo $l['graphs']['Feb']?>
+				<option value="mar" <?php if ($m == 'Mar') echo "selected" ?>> <?php echo $l['graphs']['Mar']?>
+				<option value="apr" <?php if ($m == 'Apr') echo "selected" ?>> <?php echo $l['graphs']['Apr']?>
+				<option value="may" <?php if ($m == 'May') echo "selected" ?>> <?php echo $l['graphs']['May']?>
+				<option value="jun" <?php if ($m == 'Jun') echo "selected" ?>> <?php echo $l['graphs']['Jun']?>
+				<option value="jul" <?php if ($m == 'Jul') echo "selected" ?>> <?php echo $l['graphs']['Jul']?>
+				<option value="aug" <?php if ($m == 'Aug') echo "selected" ?>> <?php echo $l['graphs']['Aug']?>
+				<option value="sep" <?php if ($m == 'Sep') echo "selected" ?>> <?php echo $l['graphs']['Sep']?>
+				<option value="oct" <?php if ($m == 'Oct') echo "selected" ?>> <?php echo $l['graphs']['Oct']?>
+				<option value="nov" <?php if ($m == 'Nov') echo "selected" ?>> <?php echo $l['graphs']['Nov']?>
+				<option value="dec" <?php if ($m == 'Dec') echo "selected" ?>> <?php echo $l['graphs']['Dec']?>
+			</select>
+			<?php echo $l['graphs']['Year']; ?>:</br>
+			<select class="generic" name="year" type="text">
+				<option value="2009"> 2009
+			</select>
 
 	</ul>
 

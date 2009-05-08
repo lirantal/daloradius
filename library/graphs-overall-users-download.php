@@ -56,11 +56,11 @@ function daily($username) {
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-		$downloads = floor($row[1]/1024/1024);
+		$downloads = floor($row[1]/1000/1000);
 		$chart->addPoint(new Point("$row[2]", "$downloads"));
 	}
 
-	$chart->setTitle("Total Downloads based on Daily distribution");
+	$chart->setTitle("Total Downloads based on Daily distribution (MB)");
 	$chart->render();
 
 	include 'closedb.php';
