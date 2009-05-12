@@ -18,23 +18,23 @@
  *              daloRADIUS Configuration File
  *
  * Modification Date:
- *              Mon Apr 27 15:26:05 BRT 2009
+ *              Mon Dec 08 22:16:00 EDT 2008
  *********************************************************************************************************
  */
 
 
 $configValues['DALORADIUS_VERSION'] = '0.9-8';
-$configValues['FREERADIUS_VERSION'] = '2';
+$configValues['FREERADIUS_VERSION'] = '1';
 $configValues['CONFIG_DB_ENGINE'] = 'mysql';
 $configValues['CONFIG_DB_HOST'] = '127.0.0.1';
-$configValues['CONFIG_DB_USER'] = 'radius';
-$configValues['CONFIG_DB_PASS'] = 'dsfradius';
+$configValues['CONFIG_DB_USER'] = 'root';
+$configValues['CONFIG_DB_PASS'] = '';
 $configValues['CONFIG_DB_NAME'] = 'radius';
 $configValues['CONFIG_DB_TBL_RADCHECK'] = 'radcheck';
 $configValues['CONFIG_DB_TBL_RADREPLY'] = 'radreply';
 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = 'radgroupreply';
 $configValues['CONFIG_DB_TBL_RADGROUPCHECK'] = 'radgroupcheck';
-$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'radusergroup';
+$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'usergroup';
 $configValues['CONFIG_DB_TBL_RADNAS'] = 'nas';
 $configValues['CONFIG_DB_TBL_RADPOSTAUTH'] = 'radpostauth';
 $configValues['CONFIG_DB_TBL_RADACCT'] = 'radacct';
@@ -57,19 +57,43 @@ $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
 $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = 'cleartext';
 $configValues['CONFIG_LANG'] = 'en';
 $configValues['CONFIG_LOG_PAGES'] = 'no';
-$configValues['CONFIG_LOG_ACTIONS'] = 'yes';
+$configValues['CONFIG_LOG_ACTIONS'] = 'no';
 $configValues['CONFIG_LOG_QUERIES'] = 'no';
 $configValues['CONFIG_DEBUG_SQL'] = 'no';
 $configValues['CONFIG_DEBUG_SQL_ONPAGE'] = 'no';
-$configValues['CONFIG_LOG_FILE'] = '/var/log/radius/daloradius_teste.log';
+$configValues['CONFIG_LOG_FILE'] = '/tmp/daloradius.log';
 $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = 'no';
-$configValues['CONFIG_IFACE_TABLES_LISTING'] = '100';
+$configValues['CONFIG_IFACE_TABLES_LISTING'] = '25';
 $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = 'yes';
 $configValues['CONFIG_IFACE_AUTO_COMPLETE'] = 'yes';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = '127.0.0.1';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
 $configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
-$configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = '123';
+$configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
 
+
+/*
+// Locations Configuration directives
+// Locations directives are support for accessing different databases from the daloRADIUS Login console
+// adjust the locations below for databases you are running (if you are running more than one.
+$configValues['CONFIG_LOCATIONS'] =                     array(
+
+        "Location Example 1" =>                 array(
+                "Engine"   => "mysql",
+                "Username" => "root",
+                "Password" => "",
+                "Database" => "radius",
+                "Hostname" => "127.0.0.1"
+        ),
+
+        "Location Example 2" =>                 array(
+                "Engine"   => "mysql",
+                "Username" => "db_usertest",
+                "Password" => "db_passtest",
+                "Database" => "test_db1",
+                "Hostname" => "localhost"
+        )
+);
+*/
 
 ?>
