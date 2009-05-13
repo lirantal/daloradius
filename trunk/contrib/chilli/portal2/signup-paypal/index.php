@@ -66,6 +66,9 @@
 			$planTax = (($planTax/100)*$planCost);
 			$planCurrency = $row[4];
 
+            $planTax = number_format($planTax, 2, '.', '');
+            $planCost = number_format($planCost, 2, '.', '');
+
 			// lets add user information to the database
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" (id, username, firstname, lastname, creationdate, creationby)".
