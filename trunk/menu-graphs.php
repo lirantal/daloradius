@@ -121,30 +121,33 @@
 			<?php echo $l['graphs']['Day']; ?>:</br>
 			<?php $d = date("j"); ?>
 			<select class="generic" name="day" type="text">
-				<!-- <option value="all"> --- -->
-				<?php for ($i=1;$i<32;$i++) { ?>
-				<option value="<?php echo $i ?>" <?php if($d == $i) echo "selected" ?>> <?php echo $i ?>
-				<?php } ?>
+				<?php 
+					$i = 1;
+					while ($i<32):
+				?>
+					<option value="<?php echo $i ?>" <?php if($d == $i) echo "selected" ?> > <?php echo $i ?> </option>
+				<?php $i++; 	?>
+				<?php endwhile; ?>
 			</select>
 			<?php echo $l['graphs']['Month']; ?>:</br>
 			<?php $m = date("M"); ?>
 			<select class="generic" name="month" type="text">
-				<option value="jan" <?php if ($m == 'Jan') echo "selected" ?>> <?php echo $l['graphs']['Jan']?>
-				<option value="feb" <?php if ($m == 'Feb') echo "selected" ?>> <?php echo $l['graphs']['Feb']?>
-				<option value="mar" <?php if ($m == 'Mar') echo "selected" ?>> <?php echo $l['graphs']['Mar']?>
-				<option value="apr" <?php if ($m == 'Apr') echo "selected" ?>> <?php echo $l['graphs']['Apr']?>
-				<option value="may" <?php if ($m == 'May') echo "selected" ?>> <?php echo $l['graphs']['May']?>
-				<option value="jun" <?php if ($m == 'Jun') echo "selected" ?>> <?php echo $l['graphs']['Jun']?>
-				<option value="jul" <?php if ($m == 'Jul') echo "selected" ?>> <?php echo $l['graphs']['Jul']?>
-				<option value="aug" <?php if ($m == 'Aug') echo "selected" ?>> <?php echo $l['graphs']['Aug']?>
-				<option value="sep" <?php if ($m == 'Sep') echo "selected" ?>> <?php echo $l['graphs']['Sep']?>
-				<option value="oct" <?php if ($m == 'Oct') echo "selected" ?>> <?php echo $l['graphs']['Oct']?>
-				<option value="nov" <?php if ($m == 'Nov') echo "selected" ?>> <?php echo $l['graphs']['Nov']?>
-				<option value="dec" <?php if ($m == 'Dec') echo "selected" ?>> <?php echo $l['graphs']['Dec']?>
+				<option value="jan" <?php if ($m == 'Jan') echo "selected" ?>> <?php echo $l['graphs']['Jan']?> </option>
+				<option value="feb" <?php if ($m == 'Feb') echo "selected" ?>> <?php echo $l['graphs']['Feb']?> </option>
+				<option value="mar" <?php if ($m == 'Mar') echo "selected" ?>> <?php echo $l['graphs']['Mar']?> </option>
+				<option value="apr" <?php if ($m == 'Apr') echo "selected" ?>> <?php echo $l['graphs']['Apr']?> </option>
+				<option value="may" <?php if ($m == 'May') echo "selected" ?>> <?php echo $l['graphs']['May']?> </option>
+				<option value="jun" <?php if ($m == 'Jun') echo "selected" ?>> <?php echo $l['graphs']['Jun']?> </option>
+				<option value="jul" <?php if ($m == 'Jul') echo "selected" ?>> <?php echo $l['graphs']['Jul']?> </option>
+				<option value="aug" <?php if ($m == 'Aug') echo "selected" ?>> <?php echo $l['graphs']['Aug']?> </option>
+				<option value="sep" <?php if ($m == 'Sep') echo "selected" ?>> <?php echo $l['graphs']['Sep']?> </option>
+				<option value="oct" <?php if ($m == 'Oct') echo "selected" ?>> <?php echo $l['graphs']['Oct']?> </option>
+				<option value="nov" <?php if ($m == 'Nov') echo "selected" ?>> <?php echo $l['graphs']['Nov']?> </option>
+				<option value="dec" <?php if ($m == 'Dec') echo "selected" ?>> <?php echo $l['graphs']['Dec']?> </option>
 			</select>
 			<?php echo $l['graphs']['Year']; ?>:</br>
 			<select class="generic" name="year" type="text">
-				<option value="2009"> 2009
+				<option value="2009"> 2009 </option>
 			</select>
 
 	</ul>
