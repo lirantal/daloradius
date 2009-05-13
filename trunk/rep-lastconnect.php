@@ -67,7 +67,7 @@
         $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
-	$sql = "SELECT rp.username FROM ".$row['postauth']['user']." as rp ".
+	$sql = "SELECT rp.username FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." as rp ".
 		" WHERE (rp.".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') ".
         $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
