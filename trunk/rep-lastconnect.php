@@ -68,7 +68,7 @@
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
 	$sql = "SELECT rp.username FROM ".$row['postauth']['user']." as rp ".
-		" WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') ".
+		" WHERE (rp.".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') ".
         $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
