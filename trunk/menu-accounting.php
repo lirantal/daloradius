@@ -64,7 +64,6 @@
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?>'
 				value="<?php if (isset($accounting_nasipaddress)) echo $accounting_nasipaddress; ?>">
-			<input name="only-active" value="true" type="checkbox" <? if (isset($accounting_onlyactive)){ echo 'checked';} ?>> <? echo $l['button']['NASIPAccountingOnlyActive']?>
 			</form></li>
 
 		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
