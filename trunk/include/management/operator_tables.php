@@ -106,6 +106,7 @@ $arrayPagesAvailable = array(
 	 'graphs_overall_download' => 'Graphs',
 	 'graphs_overall_upload' => 'Graphs',
 	 'graphs_overall_logins' => 'Graphs',
+	 'graphs_logged_users' => 'Graphs',
 	 'config_db' => 'Configuration Core',
 	 'config_interface' => 'Configuration Core',
 	 'config_lang' => 'Configuration Core',

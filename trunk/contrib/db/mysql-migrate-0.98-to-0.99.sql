@@ -9,6 +9,9 @@ ALTER TABLE userbillinfo ADD hotspotlocation VARCHAR(32) AFTER planName;
 ALTER TABLE operators ADD bill_merchant_transactions VARCHAR(32) AFTER bill_rates_list;
 UPDATE operators SET bill_merchant_transactions='yes' WHERE username='administrator';
 
+ALTER TABLE operators ADD graphs_logged_users VARCHAR(32) AFTER graphs_overall_logins;
+UPDATE operators SET graphs_logged_users='yes' WHERE username='administrator';
+
 CREATE TABLE `billing_merchant` (
   `id` int(8) NOT NULL auto_increment,
   `username` varchar(128) NOT NULL default '',
