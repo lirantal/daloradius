@@ -67,6 +67,21 @@
         $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
+	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
+	$sql = "SELECT ".
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." 
+		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." 
+                JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON
+		( ".
+			$configValues['CONFIG_DB_TBL_RADACCT'].".username = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." 
+			AND
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".acctstarttime = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date']."
+		)
+                WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+
+	$res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
+
 	$sql = "SELECT ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user'].", ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".pass, ".
@@ -93,7 +108,6 @@
         $logDebugSQL .= $sql . "\n";
 
         /* START - Related to pages_numbering.php */
-	$numrows = $res->numRows();
         $maxPage = ceil($numrows/$rowsPerPage);
         /* END */
 
