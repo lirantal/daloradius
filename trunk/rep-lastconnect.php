@@ -67,22 +67,33 @@
         $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
-	$sql = "SELECT rp.username FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." as rp ".
-		" WHERE (rp.".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') ".
-        $res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-
-	$sql = "SELECT rp.".$row['postauth']['user'].", rp.pass, rp.reply, rp.".$row['postauth']['date'].", n.shortname FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." as rp ".
-                " JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." AS r ON (r.username = rp.".$row['postauth']['user']." and r.acctstarttime = rp.authdate) ".
-                " JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." AS n ON (n.nasname = r.nasipaddress) ".
-                " WHERE (rp.".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') ".
-		" ORDER BY rp.$orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$sql = "SELECT ".
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user'].", ".
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".pass, ".
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply, ".
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date'].", ".
+			$configValues['CONFIG_DB_TBL_RADNAS'].".shortname
+		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." 
+                JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON
+		( ".
+			$configValues['CONFIG_DB_TBL_RADACCT'].".username = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." 
+			AND
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".acctstarttime = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date']."
+		)
+                JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." ON 
+		( ".
+			$configValues['CONFIG_DB_TBL_RADNAS'].".nasname = ".$configValues['CONFIG_DB_TBL_RADACCT'].".nasipaddress
+		)
+                WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')
+		ORDER BY ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".$orderBy $orderType 
+		LIMIT $offset, $rowsPerPage";
 
         $res = $dbSocket->query($sql);
         $logDebugSQL = "";
         $logDebugSQL .= $sql . "\n";
 
         /* START - Related to pages_numbering.php */
+	$numrows = $res->numRows();
         $maxPage = ceil($numrows/$rowsPerPage);
         /* END */
 
@@ -168,7 +179,7 @@
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=reply&orderType=$orderTypeNextPage\">
 		".$l['all']['NASShortName']."
-		<th>
+		</th>
 
         </tr> </thread>";
 
