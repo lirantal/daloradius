@@ -125,10 +125,6 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<br/>
-		".$l['all']['Count']."
-		</th>
-		<th scope='col'>
-		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?nasipaddress=$nasipaddress&orderBy=radacctid&orderType=$orderTypeNextPage\">
 		".$l['all']['ID']."</a>
 		</th>
@@ -183,10 +179,8 @@
 		".$l['all']['NASIPAddress']."</a>
 		</th>
                 </tr> </thread>";
-	$cnt = 1;
 	while($row = $res->fetchRow()) {
                 printqn("<tr>
-			<td> $cnt </td>
                         <td> $row[0] </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
@@ -230,7 +224,6 @@
                         <td> $row[9] </td>
                         <td> $row[10] </td>
                 </tr>");
-		$cnt++;
         }
 
         echo "
