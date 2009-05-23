@@ -35,14 +35,18 @@
 
 	$logAction = "";
 	$logDebugSQL = "";
-
+	
 	if (isset($_POST['submit'])) {
-		$username_prefix = $_REQUEST['username_prefix'];
-		$number = $_REQUEST['number'];
-		$length_pass = $_REQUEST['length_pass'];
-		$length_user = $_REQUEST['length_user'];
-		$group = $_REQUEST['group'];
-		$group_priority = $_REQUEST['group_priority'];
+		$username_prefix = $_POST['username_prefix'];
+		$number = $_POST['number'];
+		$length_pass = $_POST['length_pass'];
+		$length_user = $_POST['length_user'];
+		$group = $_POST['group'];
+		$plan = $_POST['plan'];
+		$group_priority = $_POST['group_priority'];
+		
+		$currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
+		$currBy = $_SESSION['operator_user'];
 		
 		include 'library/opendb.php';
 
@@ -73,7 +77,7 @@
 				if ($i+1 != $number)
 					$actionMsgGoodUsernames .= ", ";
 
-				$sql = "insert into ".$configValues['CONFIG_DB_TBL_RADCHECK']." values (0, '".$dbSocket->escapeSimple($username)."',  'User-Password', ':=', '".$dbSocket->escapeSimple($password)."')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."',  'User-Password', ':=', '".$dbSocket->escapeSimple($password)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
@@ -83,7 +87,7 @@
 					if (!($group_priority))
 						$group_priority=0;		// if group priority wasn't set we
 										// initialize it to 0 by default
-					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." values ('".
+					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." VALUES ('".
 						$dbSocket->escapeSimple($username)."', '".
 						$dbSocket->escapeSimple($group)."', ".
 						$dbSocket->escapeSimple($group_priority).") ";
@@ -92,6 +96,24 @@
 				}
 
 
+				// if a plan was defined then we create a relation between user and plan via
+				// the userbillinfo table
+				if ( (isset($plan)) && ($plan != "") ) {
+
+					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] .
+						" (id, username, planName, creationdate, creationby) ".
+						" VALUES ('".
+						"0', ".
+						"'".$dbSocket->escapeSimple($username)."', ".
+						"'".$dbSocket->escapeSimple($plan)."', ".
+						"'".$dbSocket->escapeSimple($currDate)."', ".						
+						"'".$dbSocket->escapeSimple($currBy)."' ".
+						") ";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+				
+				
                                 foreach($_POST as $element=>$field) {
 
                                         // switch case to rise the flag for several $attribute which we do not
@@ -103,6 +125,7 @@
 						case "length_pass":
 						case "length_user":
 						case "number":
+						case "plan":
 						case "submit":
 						case "group":
 						case "group_priority":
@@ -147,14 +170,22 @@
                                 } // foreach
 
 				$exportCSV .= "$username,$password||";
-				
-				$successMsg = "Exported Usernames - <a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>
-				Added to database new user(s): <b> $actionMsgGoodUsernames </b><br/>";
-				$logAction .= "Successfully added to database new users [$actionMsgGoodUsernames] with prefix [$username_prefix] on page: ";
+
 			}
+			
 		
 		}
 
+		// remove the last || chars to sanitize it for proper format
+		$exportCSV = substr($exportCSV, 0, -2);
+		$successMsg = "Exported Usernames - ".
+							"<a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>".
+						"Printable Tickets - ".
+							"<a href='include/common/printTickets.php?type=batch&plan=$plan&accounts=$exportCSV'>view</a><br/>".
+						"Added to database new user(s): <b> $actionMsgGoodUsernames </b><br/>";
+						
+		$logAction .= "Successfully added to database new users [$actionMsgGoodUsernames] with prefix [$username_prefix] on page: ";
+		
 		include 'library/closedb.php';
 
 	}
@@ -282,7 +313,7 @@
 		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php
-		        include 'include/management/populate_selectbox.php';
+		        include_once('include/management/populate_selectbox.php');
 		        populate_groups("Select Groups","group");
 		?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
@@ -299,6 +330,19 @@
 		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('group_priority','decrement')"/>
 		</li>
 
+		<li class='fieldset'>
+		<label for='plan' class='form'><?php echo $l['all']['PlanName']?></label>
+		<?php
+		        include_once('include/management/populate_selectbox.php');
+		        populate_plans("Select Plan","plan");
+		?>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('plan')" />
+		<div id='planTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planTooltip'] ?>
+		</div>
+		</li>
+		
 		<li class='fieldset'>
 		<br/><br/>
 		<hr><br/>
