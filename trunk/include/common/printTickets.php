@@ -77,12 +77,33 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 	// the $accounts array contain the username,password|| first element as it's originally
 	// used to be a for CSV table header
 	array_shift($accounts);
+	
+	// we align 3 tables for each row (each line)
+	// for each 4th entry of a new ticket table we put it in a new row of it's own
+	$trCounter = 0;
 	foreach($accounts as $userpass) {
 		
 		list($user, $pass) = split(",", $userpass);
+
+		if ($trCounter > 2)
+			$trCounter = 0;
 		
-		$output .= "<table style='float:left;margin:10px 10px 10px 45px' border='2'>
-						<tr>
+		if ($trCounter == 2)
+			$trTextEnd = "</tr>";
+		else
+			$trTextEnd = "";
+
+		if ($trCounter == 0)
+			$trTextBeg = "<tr>";
+		else
+			$trTextBeg = "";
+
+		$output .= "
+			$trTextBeg
+				<td>
+					<table border='1' cellpadding='1' cellspacing='1' height='140' width='211'>
+						<tbody>
+						<tr align='center'>
 							<td colspan='2'>
 								<img src='$ticketLogoFile' alt='Logo' />
 							</td>
@@ -92,7 +113,9 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 								<b>Login</b>: 
 							</td>
 							<td>
+								<font size='2'>
 								$user
+								</font>
 							</td>
 						</tr>
 						<tr>
@@ -100,7 +123,9 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 								<b>Password</b>:
 							</td>
 							<td>
+								<font size='2'>
 								$pass
+								</font>
 							</td>
 						</tr>
 						<tr>
@@ -108,7 +133,9 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 								<b>Validity</b>:
 							</td>
 							<td>
+								<font size='2'>
 								$ticketTime
+								</font>
 							</td>
 						</tr>
 						<tr>
@@ -116,27 +143,40 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 								<b>Price</b>:
 							</td>
 							<td>
+								<font size='2'>
 								$ticketCost
+								</font>
 							</td>
 						</tr>
 						<tr>
-							<td colspan='2'>
-								<font size='2'>
+							<td colspan='2' valign='top'>
+								<font size='1'>
 								$ticketInformation
 								</font>
 							</td>
 						</tr>
+						</tbody>
 					</table>
 					
+				</td>
+			$trTextEnd
 		";
-		//$i++;
+
+		$trCounter++;
 	}
 
-	print "<html><body> 
-				<center> 
-					$output 
-				</center>
-			</body></html>
+	print "
+		 <style type='text/css'>
+			@page { size:landscape; margin-top:20cm; margin-right:0cm; margin-left:0cm; margin-bottom: 0px; marks:cross;}
+		</style>
+		<html><body> 
+			<table style='maring-top: 15px; margin-left: auto; margin-right: auto;' 
+					cellspacing='15'>
+				<tbody>
+							$output
+				</tbody>
+			</table>	
+		</body></html>
 	";
 	
 }
