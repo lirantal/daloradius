@@ -33,7 +33,10 @@
 	$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 	$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
-	$fp = fsockopen ('ssl://www.paypal.com', 443, $errno, $errstr, 30);
+	// if using paypal sandbox then change this address to:
+	// ssl://www.sandbox.paypal.com otherwise its:
+	// ssl://www.paypal.com
+	$fp = fsockopen ('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
 
 	if (!$fp) {
 		// HTTP ERROR
@@ -91,10 +94,12 @@ function logToFile($customMsg) {
 	$fh = fopen($configValues['CONFIG_LOG_MERCHANT_IPN_FILENAME'], 'a');
 
 	if ($fh) {
-		fwrite($fh, $myTime ." - ". $customMsg);
-	
-		$str = $myTime . " *** PAYPAL TRANSACTION BEGIN \n";
+		
+		$str = $myTime . " - ------------------------------------------------------------ \n";
 		fwrite($fh, $str);
+		
+		fwrite($fh, $myTime ." - ". $customMsg);	
+
 
 		//loop through the $_POST array and print all vars to the screen.
 		foreach($_POST as $key => $value){
@@ -102,7 +107,7 @@ function logToFile($customMsg) {
 		        fwrite($fh, $postdata);
 		}
 
-		$str = $myTime . " *** PAYPAL TRANSACTION END \n\n";
+		$str = $myTime . " - ------------------------------------------------------------ \n\n";
 		fwrite($fh, $str);
 	
 		fclose($fh);
@@ -128,7 +133,7 @@ function saveToDb() {
 	$tax = $dbSocket->escapeSimple($_POST['tax']);
 	$mc_gross = $dbSocket->escapeSimple($_POST['mc_gross']);
 	$mc_fee = $dbSocket->escapeSimple($_POST['mc_fee']);
-	$mc_handling = $dbSocket->escapeSimple($_POST['mc_handling ']);
+	$mc_handling = $dbSocket->escapeSimple($_POST['mc_handling']);
 	$mc_currency = $dbSocket->escapeSimple($_POST['mc_currency']);
 	$first_name = $dbSocket->escapeSimple($_POST['first_name']);
 	$last_name = $dbSocket->escapeSimple($_POST['last_name']);
