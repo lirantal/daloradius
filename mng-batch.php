@@ -45,9 +45,15 @@
 		$plan = $_POST['plan'];
 		$group_priority = $_POST['group_priority'];
 		
+		$startingIndex = $_POST['startingIndex'];
+		$createBatchUsersType = $_POST['createBatchUsersType'];
+		$createRandomUsers = $_POST['createRandomUsers'];
+		$createIncrementUsers = $_POST['createIncrementUsers'];
+
+
 		$currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
 		$currBy = $_SESSION['operator_user'];
-		
+
 		include 'library/opendb.php';
 
 		$actionMsgBadUsernames = "";
@@ -56,11 +62,20 @@
 		$exportCSV = "Username,Password||";
 		
 		for ($i=0; $i<$number; $i++) {
-			$username = createPassword($length_user);
-			$password = createPassword($length_pass);
+			switch ($createBatchUsersType) {
+				case "createRandomUsers":
+					$username = createPassword($length_user);
+					break;
+					
+				case "createIncrementUsers":
+					$username = $startingIndex + $i;
+					break;
+			}
+
 
 			// append the prefix to the username
 			$username  = $username_prefix . $username;
+			$password = createPassword($length_pass);
 
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
 				$dbSocket->escapeSimple($username)."'";
@@ -129,6 +144,8 @@
 						case "submit":
 						case "group":
 						case "group_priority":
+						case "createBatchUsersType":
+						case "startingIndex":
                                                         $skipLoopFlag = 1;      // if any of the cases above has been met weset a flag
                                                                                 // to skip the loop (continue) without entering it as
                                                                                 // we do not want to process this $attributein the following
@@ -269,20 +286,15 @@
 			<?php echo $l['Tooltip']['usernamePrefixTooltip'] ?>
 		</div>
 		</li>
+		
+		<br/>
 
 		<li class='fieldset'>
-		<label for='numberInstances' class='form'><?php echo $l['all']['NumberInstances'] ?></label>
-		<input class="integer" name='number' type='text' id='number' value='1' tabindex=101 />
-		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('number','increment')" />
-		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('number','decrement')"/>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('instancesToCreateTooltip')" />
-
-		<div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['instancesToCreateTooltip'] ?>
-		</div>
-		<li>
-
+		<input checked type='radio' value="createRandomUsers" name="createBatchUsersType" 
+			onclick="javascript:toggleRandomUsers()"/>
+		<b> <?php echo $l['all']['CreateRandomUsers'] ?> </b>
+		<br/>
+		</li>
 
 		<li class='fieldset'>
 		<label for='usernameLength' class='form'><?php echo $l['all']['UsernameLength'] ?></label>
@@ -297,6 +309,32 @@
 		</div>
 		</li>
 
+
+		
+		<br/>
+		<li class='fieldset'>
+		<input type='radio' value="createIncrementUsers" name="createBatchUsersType" 
+			onclick="javascript:toggleIncrementUsers()"/>
+		<b> <?php echo $l['all']['CreateIncrementingUsers'] ?> </b>
+		<br/>
+		</li>
+
+		<li class='fieldset'>
+		<label for='startingIndex' class='form'><?php echo $l['all']['StartingIndex'] ?></label>
+		<input class="integerLarge" name='startingIndex' type='text' id='startingIndex' value='1' disabled tabindex=104 />
+		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('startingIndex','increment')" />
+		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('startingIndex','decrement')"/>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('startingIndexTooltip')" />
+
+		<div id='startingIndexTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['startingIndexTooltip'] ?>
+		</div>
+		<li>
+
+
+		<br/>
+		
 		<li class='fieldset'>
 		<label for='passwordLength' class='form'><?php echo $l['all']['PasswordLength'] ?></label>
 		<input class="integer" name='length_pass' type='text' id='length_pass' value='8' tabindex=103 />
@@ -308,8 +346,21 @@
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
 			<?php echo $l['Tooltip']['lengthOfPasswordTooltip'] ?>
 		</div>
-		</li>
+		</li>		
 
+		<li class='fieldset'>
+		<label for='numberInstances' class='form'><?php echo $l['all']['NumberInstances'] ?></label>
+		<input class="integer" name='number' type='text' id='number' value='1' tabindex=101 />
+		<img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('number','increment')" />
+		<img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('number','decrement')"/>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('instancesToCreateTooltip')" />
+
+		<div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['instancesToCreateTooltip'] ?>
+		</div>
+		<li>
+		
 		<li class='fieldset'>
 		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
 		<?php

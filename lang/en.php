@@ -244,10 +244,10 @@ $l['all']['billinghistory'] = "billing history";
 $l['all']['billinginfo'] = "billing user info";
 
 
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
+$l['all']['CreateIncrementingUsers'] = "Create Incrementing Users";
+$l['all']['CreateRandomUsers'] = "Create Random Users";
+$l['all']['StartingIndex'] = "Starting Index";
+$l['all']['EndingIndex'] = "Ending Index";
 $l['all'][''] = "";
 $l['all'][''] = "";
 $l['all'][''] = "";
