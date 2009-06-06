@@ -31,10 +31,10 @@
 
 
 	isset($_GET['payer_email']) ? $payer_email = $_GET['payer_email'] : $payer_email = "%";
-	isset($_GET['payment_address_status']) ? $payment_address_status = $_GET['payment_address_status'] : $payment_address_status = "";
-	isset($_GET['payer_status']) ? $payer_status = $_GET['payer_status'] : $payer_status = "";
-	isset($_GET['payment_status']) ? $payment_status = $_GET['payment_status'] : $payment_status = "";
-	isset($_GET['vendor_type']) ? $vendor_type = $_GET['vendor_type'] : $vendor_type = "";
+	isset($_GET['payment_address_status']) ? $payment_address_status = $_GET['payment_address_status'] : $payment_address_status = "%";
+	isset($_GET['payer_status']) ? $payer_status = $_GET['payer_status'] : $payer_status = "%";
+	isset($_GET['payment_status']) ? $payment_status = $_GET['payment_status'] : $payment_status = "%";
+	isset($_GET['vendor_type']) ? $vendor_type = $_GET['vendor_type'] : $vendor_type = "%";
 	isset($_GET['sqlfields']) ? $sqlfields = $_GET['sqlfields'] : $sqlfields = "";
 	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
 	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
