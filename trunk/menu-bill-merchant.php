@@ -112,9 +112,9 @@
                 <input type="checkbox" name="sqlfields[]" value="business_email"  /> <h109><?php echo $l['all']['ReceiverEmail']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="business_id"  /> <h109><?php echo $l['all']['Business']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="payment_tax" /> <h109><?php echo $l['all']['Tax']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_cost"  /> <h109><?php echo $l['all']['Cost']; ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_cost" checked /> <h109><?php echo $l['all']['Cost']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="payment_fee" checked /> <h109><?php echo $l['all']['TransactionFee']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_total" checked /> <h109><?php echo $l['all']['TotalCost']; ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_total"  /> <h109><?php echo $l['all']['TotalCost']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="payment_currency" checked /> <h109><?php echo $l['all']['PaymentCurrency']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="first_name" checked /> <h109><?php echo $l['all']['FirstName']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="last_name" checked /> <h109><?php echo $l['all']['LastName']; ?> </h109> <br/>
