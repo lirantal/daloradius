@@ -20,6 +20,30 @@ function changeInteger(dstObj,action) {
 
 }
 
+
+
+function toggleRandomUsers() {
+
+	//disable field
+	document.batchuser.elements['startingIndex'].disabled=true;
+	
+	// enable required fields
+	//document.batchuser.elements['length_pass'].disabled=false;
+	document.batchuser.elements['length_user'].disabled=false;
+}
+
+
+function toggleIncrementUsers() {
+
+	//disable field
+	//document.batchuser.elements['length_pass'].disabled=true;
+	document.batchuser.elements['length_user'].disabled=true;
+
+	// enable required fields
+	document.batchuser.elements['startingIndex'].disabled=false;
+}
+
+
 function toggleUserAuth() {
 
 	//disable the mac auth
