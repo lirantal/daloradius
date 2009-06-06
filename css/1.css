@@ -559,9 +559,16 @@ input.button {
         margin-top: 5px;
 }
 
+
+input.integerLarge {
+        width:34px;
+}
+
 input.integer {
         width:19px;
 }
+
+
 
 input[type="radio"] {
         width:13px;
