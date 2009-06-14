@@ -91,7 +91,7 @@
 
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00' AND (UserName LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
+        $_SESSION['reportQuery'] = " WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND (UserName LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
         $_SESSION['reportType'] = "reportsOnlineUsers";
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
