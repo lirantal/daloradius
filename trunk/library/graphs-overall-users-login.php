@@ -52,7 +52,7 @@ function daily($username) {
 	$chart = new VerticalChart(680,500);
 
 	$sql = "SELECT UserName, count(AcctStartTime), DAY(AcctStartTime) AS Day FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' GROUP BY Day;";
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' AND acctstoptime>0 GROUP BY Day;";
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
