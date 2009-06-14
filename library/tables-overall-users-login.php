@@ -36,7 +36,7 @@ function daily($username, $orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT UserName, count(AcctStartTime) as logins, DAY(AcctStartTime) AS Day from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Day ORDER BY $orderBy $orderType;";
+			$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' AND acctstoptime>0 group by Day ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
 
 	$total_logins = 0;		// initialize variables
