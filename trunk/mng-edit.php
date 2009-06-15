@@ -57,6 +57,8 @@
 		$zip = $_REQUEST['zip'];
 		$notes = $_REQUEST['notes'];
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
+		
+		isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
 
 	        isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
 		isset($_POST['bi_planname']) ? $bi_planname = $_POST['bi_planname'] : $bi_planname = "";
@@ -87,6 +89,48 @@
 	        isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
 
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
+
+
+
+function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
+
+                global $logDebugSQL;
+                global $configValues;
+
+		$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+                	" WHERE planName='".$dbSocket->escapeSimple($oldplanName)."'";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
+
+		$row = $res->fetchRow();
+		$oldplanGroup = $row[0];
+		
+		if ( (isset($oldplanGroup)) && ($oldplanGroup != "") ) {
+
+			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE ".
+        	                " (Username='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldplanGroup)."') ";
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= $sql . "\n";			
+		}
+
+		$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+                	" WHERE planName='".$dbSocket->escapeSimple($planName)."'";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
+
+		$row = $res->fetchRow();
+		$planGroup = $row[0];
+		
+		if ( (isset($planGroup)) && ($planGroup != "") ) {
+
+	                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+        	                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($planGroup)."',0) ";
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= $sql . "\n";			
+		}
+
+	}
+
 
 		if (trim($username) != "") {
 
@@ -149,13 +193,13 @@
 			// if there were no records for this user present in the userbillinfo table
 			if ($res->numRows() == 0) {
 	                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-	                                " (id, username, contactperson, company, email, phone, ".
+	                                " (id, planname,username, contactperson, company, email, phone, ".
 	                                " address, city, state, zip, ".
 	                                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 	                                " notes, changeuserbillinfo, ".
                                         " lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
 	                                " creationdate, creationby, updatedate, updateby) ".
-	                                " VALUES (0,
+	                                " VALUES (0, '".$dbSocket->escapeSimple($planName)."',
 	                                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
 	                                $dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
 	                                $dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
@@ -178,6 +222,7 @@
 				// update user information table
 			   $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." SET contactperson='".
 					$dbSocket->escapeSimple($bi_contactperson).
+					"', planname='".$dbSocket->escapeSimple($planName).
 					"', company='".$dbSocket->escapeSimple($bi_company).
 					"', email='".$dbSocket->escapeSimple($bi_email).
 					"', phone='".$dbSocket->escapeSimple($bi_phone).
@@ -274,6 +319,7 @@
         	                }
 	                }
 
+	addPlanProfile($dbSocket, $username, $planName, $oldplanName);
 
 			foreach( $_POST as $element=>$field ) { 
 
@@ -284,6 +330,8 @@
 					case "submit":
 					case "oldgroups":
 					case "groups":
+					case "planName":
+					case "oldplanName":
 					case "groups_priority":
 					case "firstname":
 					case "lastname":
@@ -325,6 +373,7 @@
 	                                case "bi_postalinvoice":
 	                                case "bi_faxinvoice":
 	                                case "bi_emailinvoice":
+      					   case "bi_planname":
 					case "passwordOrig":
 					case "newgroups":
 						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
@@ -416,7 +465,7 @@
 				for this reason we need to check if it exists or not, if exists we update, if not we insert 
 				*/
 
-				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username).
+				$sql = "SELECT Attribute FROM radius.radreply WHERE UserName='".$dbSocket->escapeSimple($username).
 					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -473,6 +522,8 @@
 	}
 
 	$edit_username = $username; //feed the sidebar variables
+
+
 
 	/* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity
 	*/
@@ -629,6 +680,70 @@
 	<input type="hidden" value="<?php echo $username ?>" name="username" />
 
 	<div class="tabber">
+ <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
+
+	<fieldset>
+
+                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+
+                <ul>
+
+                <div id='UserContainer'>
+                <li class='fieldset'>
+                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+		<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
+                <input name='username' type='text' id='username' value='<?php if (isset($username)) echo $username ?>' disabled tabindex=100 />
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
+
+                <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['usernameTooltip'] ?>
+                </div>
+                </li>
+
+                <li class='fieldset'>
+                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
+                <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo $user_password ?>'
+                        <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> disabled tabindex=101 />
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
+
+                <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['passwordTooltip'] ?>
+                </div>
+                </li>
+                </div>
+
+
+
+		<li class='fieldset'>
+		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
+                <?php
+ 	               include 'include/management/populate_selectbox.php';
+                       populate_plans("$bi_planname","planName","form");
+                ?>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
+		
+		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planNameTooltip'] ?>
+		</div>
+		</li>
+	
+
+		<li class='fieldset'>
+		<br/>
+		<hr><br/>
+		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		</li>
+
+		</ul>
+
+	</fieldset>
+
+	</div>
+
 
 		<div class="tabbertab" title="<?php echo $l['title']['RADIUSCheck']; ?>">
 
