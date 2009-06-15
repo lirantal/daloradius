@@ -27,11 +27,14 @@
 
 $logfile_loc1 = '/var/log/radius/radius.log';
 $logfile_loc2 = '/usr/local/var/log/radius/radius.log';
+$logfile_loc3 = '/var/log/freeradius/radius.log';
 
 if (file_exists($logfile_loc1))
 	$logfile = $logfile_loc1;
 else if (file_exists($logfile_loc2))
 	$logfile = $logfile_loc2;
+else if (file_exists($logfile_loc3))
+	$logfile = $logfile_loc3;
 else {
 	echo "<br/><br/>
 		error reading log file: <br/><br/>
