@@ -465,8 +465,9 @@ function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
 				for this reason we need to check if it exists or not, if exists we update, if not we insert 
 				*/
 
-				$sql = "SELECT Attribute FROM radius.radreply WHERE UserName='".$dbSocket->escapeSimple($username).
+				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username).
 					"' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
+
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
