@@ -62,9 +62,16 @@
         include 'library/opendb.php';
         include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
+	$row['postauth']['user'] = 'username';
+	$row['postauth']['date'] = 'authdate';
+} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
+	$row['postauth']['user'] = 'user';
+	$row['postauth']['date'] = 'date';
+}
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE (User LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+        $_SESSION['reportQuery'] = " WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
