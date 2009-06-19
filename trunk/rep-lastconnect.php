@@ -84,7 +84,7 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
 			AND
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".acctstarttime = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date']."
 		)
-                WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+                WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') LIMIT 1000";
 
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
