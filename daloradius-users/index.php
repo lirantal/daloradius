@@ -31,6 +31,8 @@
 
 ?>
 
+<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+
 	<div id="contentnorightbar">
 
 		<h2 id="Intro"><a href="#"></a></h2>
@@ -38,9 +40,14 @@
 
 <?php
 	include 'library/exten-welcome_page.php';
+	include_once('include/management/userReports.php');
+	userSubscriptionAnalysis($login, 1);			// userSubscriptionAnalysis with argument set to 1 for drawing the table
+	userConnectionStatus($login, 1);			// userConnectionStatus (same as above)
 ?>
 		</p>
 	</div>
+
+
 	
 		<div id="footer">
 
