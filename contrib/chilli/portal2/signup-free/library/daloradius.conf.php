@@ -64,5 +64,7 @@ $configValues['CONFIG_GROUP_PRIORITY'] = 0;             /* an integer only! */
 $configValues['CONFIG_USERNAME_PREFIX'] = "GST_";	/* username prefix to append to the automatically generated username */
 $configValues['CONFIG_USERNAME_LENGTH'] = "4";		/* the length of the random username to generate */
 $configValues['CONFIG_PASSWORD_LENGTH'] = "4";		/* the length of the random password to generate */
+$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
 
 ?>

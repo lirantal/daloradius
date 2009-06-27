@@ -22,9 +22,11 @@
  *********************************************************************************************************
  */
 
+		include('library/opendb.php');
         include_once('include/common/common.php');
-        $txnId = createPassword(64);                    // to be used for setting up the return url (success.php page)
-                                                        // for later retreiving of the transaction details
+        $txnId = createPassword(64, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+                    // to be used for setting up the return url (success.php page)
+					// for later retreiving of the transaction details
 
 	$status = "firstload";
         $errorMissingFields = false;
@@ -42,12 +44,11 @@
                 if ( ($firstName != "") && ($lastName != "") && ($address != "") && ($city != "") && ($state != "") && ($planId != "") ) {
 
                         // all paramteres have been set, save it in the database
-                        include('library/opendb.php');
-
                         $currDate = date('Y-m-d H:i:s');
                         $currBy = "paypal-webinterface";
-
-                        $userPIN = createPassword(8);                   // lets create some random data for user pin
+						
+						// lets create some random data for user pin
+                        $userPIN = createPassword($configValues['CONFIG_PASSWORD_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
 
 
                         $planId = $dbSocket->escapeSimple($planId);
@@ -213,30 +214,34 @@
 					<br/>
 					It is recommended that you will write it down now in-case of a failure.<br/><br/>
 			
-			                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
-			                        <input type="hidden" name="cmd" value="_xclick" />
-			                        <input type="hidden" name="business" value="liran_1217096095_biz@enginx.com" />
-			
-			                        <input type="hidden" name="return" value="http://84.95.241.193/paypal/success.php?txnId='.$txnId.'" />
-			                        <input type="hidden" name="cancel_return" value="http://84.95.241.193/paypal/cancelled.php" />
-			                        <input type="hidden" name="notify_url" value="http://84.95.241.193/paypal/paypal-ipn.php" />
-			
-			                        <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
-			                        <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
-			                        <input type="hidden" name="quantity" value="1" />
-			                        <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-			                        <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
-	
-			                        <input type="hidden" name="no_note" value="1">
-			                        <input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
-			                        <input type="hidden" name="lc" value="US">
-	
-			                        <input type="hidden" name="on0" value="Transaction ID" />
-			                        <input type="hidden" name="os0" value="'.$txnId.'" />
-	
-			                        <input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit"
-			                        alt="Make payments with PayPal - its fast, free and secure!">
-			                </form>
+                                        <form action="'.$configValues['CONFIG_MERCHANT_WEB_PAYMENT'].'" method="post">
+                                                <input type="hidden" name="cmd" value="_xclick" />
+                                                <input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'" />
+
+                                                <input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
+																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
+																								'?txnId='.$txnId.'" />
+                                                <input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
+																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
+                                                <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
+																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
+
+                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
+                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
+                                                <input type="hidden" name="quantity" value="1" />
+                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
+                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
+
+                                                <input type="hidden" name="no_note" value="1">
+                                                <input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+                                                <input type="hidden" name="lc" value="US">
+
+                                                <input type="hidden" name="on0" value="Transaction ID" />
+                                                <input type="hidden" name="os0" value="'.$txnId.'" />
+
+                                                <input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit"
+                                                alt="Make payments with PayPal - its fast, free and secure!">
+                                        </form>
 		                ';
 
 				break;
