@@ -64,7 +64,7 @@
 		for ($i=0; $i<$number; $i++) {
 			switch ($createBatchUsersType) {
 				case "createRandomUsers":
-					$username = createPassword($length_user);
+					$username = createPassword($length_user, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
 					break;
 					
 				case "createIncrementUsers":
@@ -75,7 +75,7 @@
 
 			// append the prefix to the username
 			$username  = $username_prefix . $username;
-			$password = createPassword($length_pass);
+			$password = createPassword($length_pass, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
 
 			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
 				$dbSocket->escapeSimple($username)."'";
