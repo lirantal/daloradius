@@ -46,16 +46,28 @@ $configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
 $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
+$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] = 'billing_merchant';
+$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
 $configValues['CONFIG_LANG'] = 'en';
 $configValues['CONFIG_LOG_PAYPAL_IPN_FILENAME'] = '/tmp/paypal-transactions.log';
-$configValues['CONFIG_PAYPAL_SUCCESS_MSG_PRE'] = "Dear customer, we thank you for completing your PayPal payment.<br/><br/>".
+$configValues['CONFIG_MERCHANT_IPN_SECRET'] = '';
+$configValues['CONFIG_MERCHANT_WEB_PAYMENT'] = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'] = 'https://portal.daloradius.com/signup-paypal';
+$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'] = 'paypal-ipn.php';
+$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'] = 'success.php';
+$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'] = 'cancelled.php';
+$configValues['CONFIG_MERCHANT_BUSINESS_ID'] = 'liran@enginx.com';
+$configValues['CONFIG_LOG_MERCHANT_IPN_FILENAME'] = '/tmp/paypal-transactions.log';
+$configValues['CONFIG_MERCHANT_SUCCESS_MSG_PRE'] = "Dear customer, we thank you for completing your PayPal payment.<br/><br/>".
                         "It takes a couple of seconds until PayPal performs payment validation with our systems ".
                         "which upon successful validation we will <b>enable</b> your account and provide you with access.<br/><br/>".
                         "Please be patient, this web page will refresh automatically every 5 seconds to check for payment completion";
-$configValues['CONFIG_PAYPAL_SUCCESS_MSG_POST'] = "We have succesfully validated your payment.<br/>".
+$configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST'] = "We have succesfully validated your payment.<br/>".
                                         "Please enter it at the login page to start your surfing";
-$configValues['CONFIG_PAYPAL_SUCCESS_MSG_HEADER'] = "Thanks for paying!<br/>";
-
+$configValues['CONFIG_MERCHANT_SUCCESS_MSG_HEADER'] = "Thanks for paying!<br/>";
+$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+$configValues['CONFIG_USERNAME_LENGTH'] = "8";		/* the length of the random username to generate */
+$configValues['CONFIG_PASSWORD_LENGTH'] = "8";		/* the length of the random password to generate */
 
 
 ?>

@@ -64,7 +64,8 @@ $configValues['CONFIG_MERCHANT_SUCCESS_MSG_PRE'] = "Dear customer, we thank you 
 $configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST'] = "We have succesfully validated your payment.<br/>".
                                         "Please enter it at the login page to start your surfing";
 $configValues['CONFIG_MERCHANT_SUCCESS_MSG_HEADER'] = "Thanks for paying!<br/>";
-
-
+$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+$configValues['CONFIG_USERNAME_LENGTH'] = "8";		/* the length of the random username to generate */
+$configValues['CONFIG_PASSWORD_LENGTH'] = "8";		/* the length of the random password to generate */
 
 ?>

@@ -50,10 +50,10 @@ session_start();                                                // we keep a ses
 
                                 /* let's generate a random username and password
                                    of length 4 and with username prefix 'guest' */
-                                $rand = createPassword($configValues['CONFIG_USERNAME_LENGTH']);
+                                $rand = createPassword($configValues['CONFIG_USERNAME_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
                                 $username = $configValues['CONFIG_USERNAME_PREFIX'] . $rand;
 
-                                $password = createPassword($configValues['CONFIG_PASSWORD_LENGTH']);
+                                $password = createPassword($configValues['CONFIG_PASSWORD_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
 
                                 /* adding the user to the radcheck table */
                                 $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id, Username, Attribute, op, Value) ".

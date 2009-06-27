@@ -22,9 +22,11 @@
  *********************************************************************************************************
  */
 
+	include('library/opendb.php');
 	include_once('include/common/common.php');
-	$txnId = createPassword(64);                    // to be used for setting up the return url (success.php page)
-													// for later retreiving of the transaction details
+	$txnId = createPassword(64, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']); 
+                   // to be used for setting up the return url (success.php page)
+				   // for later retreiving of the transaction details
 
 	$status = "firstload";
 	$errorMissingFields = false;
@@ -42,12 +44,11 @@
 		if ( ($firstName != "") && ($lastName != "") && ($address != "") && ($city != "") && ($state != "") && ($planId != "") ) {
 
 			// all paramteres have been set, save it in the database
-			include('library/opendb.php');
-
 			$currDate = date('Y-m-d H:i:s');
 			$currBy = "paypal-webinterface";
 
-			$userPIN = createPassword(8);                   // lets create some random data for user pin
+			// lets create some random data for user pin
+			$userPIN = createPassword($configValues['CONFIG_USERNAME_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
 
 			$planId = $dbSocket->escapeSimple($planId);
 

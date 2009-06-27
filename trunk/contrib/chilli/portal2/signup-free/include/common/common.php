@@ -10,9 +10,14 @@
 
 
 /* returns a random alpha-numeric string of length $length */
-function createPassword($length) {
-
-    $chars = "abcdefghijkmnopqrstuvwxyz023456789";
+function createPassword($length, $chars) {
+	
+	if (!$chars)
+		$chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+		
+	if (!$length)
+		$length = 8;
+	
     srand((double)microtime()*1000000);
     $i = 0;
     $pass = '' ;
@@ -27,6 +32,7 @@ function createPassword($length) {
     return $pass;
 
 }
+
 
 
 // set of functions to ease the usage of escaping " chars in echo or print functions
