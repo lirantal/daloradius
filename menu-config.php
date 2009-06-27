@@ -28,6 +28,7 @@
 	
 	<ul class="subnav">
 
+		<li><a href="config-user.php"><b>&raquo;</b><?php echo $l['button']['UserSettings'] ?></a></li>
 		<li><a href="config-db.php"><b>&raquo;</b><?php echo $l['button']['DatabaseSettings'] ?></a></li>
 		<li><a href="config-lang.php"><b>&raquo;</b><?php echo $l['button']['LanguageSettings'] ?></a></li>
 		<li><a href="config-logging.php"><b>&raquo;</b><?php echo $l['button']['LoggingSettings'] ?></a></li>

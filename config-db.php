@@ -106,12 +106,9 @@
 
 		if (isset($_REQUEST['config_dbtbl_billinginfo']))
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = $_REQUEST['config_dbtbl_billinginfo'];
-			
-			
-		// this should probably move to some other page at some point
-		if (isset($_REQUEST['config_db_pass_encrypt']))
-			$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = $_REQUEST['config_db_pass_encrypt'];
-			
+
+
+
         include ("library/config_write.php");
     }	
 
@@ -322,41 +319,10 @@
 
                 </ul>
 
-</table>
-
-</div>
-
-     <div class="tabbertab" title="<?php echo $l['title']['AdvancedSettings']; ?>">
-
-	<fieldset>
-
-                <h302> <?php echo $l['title']['AdvancedSettings']; ?> </h302>
-		<br/>
-
-		<ul>
-
-                <li class='fieldset'>
-                <label for='' class='form'><?php echo $l['all']['DBPasswordEncryption']?></label>
-		<select class='form' name="config_db_pass_encrypt">
-			<option value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>"> <?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?> </option>
-			<option value=""></option>
-			<option value="cleartext"> cleartext </option>
-			<option value="crypt"> unix crypt </option>
-			<option value="md5"> md5 </option>
-		</select>
-		</li>
-
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
-                </li>
-
-                </ul>
-
-	</fieldset>
+	</table>
 
 	</div>
+
 </div>
 
 

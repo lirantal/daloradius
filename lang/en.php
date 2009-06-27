@@ -248,7 +248,7 @@ $l['all']['CreateIncrementingUsers'] = "Create Incrementing Users";
 $l['all']['CreateRandomUsers'] = "Create Random Users";
 $l['all']['StartingIndex'] = "Starting Index";
 $l['all']['EndingIndex'] = "Ending Index";
-$l['all'][''] = "";
+$l['all']['RandomChars'] = "Allowed Random Characters";
 $l['all'][''] = "";
 $l['all'][''] = "";
 $l['all'][''] = "";
@@ -620,6 +620,7 @@ $l['button']['ViewMAP'] = "View MAP";
 $l['button']['EditMAP'] = "Edit MAP";
 $l['button']['RegisterGoogleMapsAPI'] = "RegisterGoogleMaps API";
 
+$l['button']['UserSettings'] = "User Settings";
 $l['button']['DatabaseSettings'] = "Database Settings";
 $l['button']['LanguageSettings'] = "Language Settings";
 $l['button']['LoggingSettings'] = "Logging Settings";
@@ -940,6 +941,7 @@ $l['Intro']['mngradgroupcheckedit.php'] = "Edit Group Check Mapping for Group:";
 $l['Intro']['mngradgroupcheckdel.php'] = "Remove Group Check Mapping";
 $l['Intro']['mngradgroupchecksearch.php'] = "Search Group Check Mapping";
 
+$l['Intro']['configuser.php'] = "User Configuration";
 $l['Intro']['configdb.php'] = "Database Configuration";
 $l['Intro']['configlang.php'] = "Language Configuration";
 $l['Intro']['configlogging.php'] = "Logging Configuration";
@@ -1134,6 +1136,9 @@ plain text but rather have it encrypted somehow you may choose one of MD5 or Cry
 ";
 $l['helpPage']['configlang'] = "
 <h200><b>Language Settings</b></h200> - Configure interface language.<br/>
+";
+$l['helpPage']['configuser'] = "
+<h200><b>User Settings</b></h200> - Configure user management behavior.<br/>
 ";
 $l['helpPage']['configlogging'] = "
 <h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
