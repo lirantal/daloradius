@@ -53,6 +53,12 @@ if ($fp) {
 		" */\n".
 		"\n\n");
 	foreach ($configValues as $_configOption => $_configElem) {
+		if (is_array($configValues[$_configOption])) {
+			$var = "\$configValues['" . $_configOption . "'] = \t\t";
+			$var .= var_export($configValues[$_configOption], true);
+			$var .= ";\n";
+			fwrite($fp, $var);
+		} else
 	        fwrite($fp, "\$configValues['" . $_configOption . "'] = '" . $configValues[$_configOption] . "';\n");
 	}
 	fwrite($fp, "\n\n?>");
