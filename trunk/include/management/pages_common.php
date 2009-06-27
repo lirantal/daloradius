@@ -10,9 +10,11 @@
 
 
 /* returns a random alpha-numeric string of length $length */
-function createPassword($length) {
-
-    $chars = "abcdefghijkmnopqrstuvwxyz023456789";
+function createPassword($length, $chars) {
+	
+	if (!$chars)
+		$chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+		
     srand((double)microtime()*1000000);
     $i = 0;
     $pass = '' ;
@@ -27,8 +29,6 @@ function createPassword($length) {
     return $pass;
 
 }
-
-
 
 
 

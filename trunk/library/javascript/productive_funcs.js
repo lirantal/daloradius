@@ -4,17 +4,21 @@
  *
  * dstObj               - the destination object to copy the data to
  * charsLength          - length of random characters
+ * chars				- allowed chars
  ***********************************************************************/
-function randomAlphanumeric(dstObj,charsLength) {
+function randomAlphanumeric(dstObj,charsLength,chars) {
 
 	var dstElem = document.getElementById(dstObj);
 
 	var length = charsLength;
-	var chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789";
+
+	if (!chars)
+		var chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+	
 	var randomChars = "";
 
 	for(x=0; x<length; x++) {
-		var i = Math.floor(Math.random() * 62);
+		var i = Math.floor(Math.random() * chars.length);
 		randomChars += chars.charAt(i);
 	}
 
