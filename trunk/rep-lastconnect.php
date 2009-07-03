@@ -77,14 +77,8 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
 	$sql = "SELECT ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." 
-		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." 
-                JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON
-		( ".
-			$configValues['CONFIG_DB_TBL_RADACCT'].".username = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." 
-			AND
-			".$configValues['CONFIG_DB_TBL_RADACCT'].".acctstarttime = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date']."
-		)
-                WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%') LIMIT 1000";
+		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']. 
+        " WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
 
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
@@ -93,20 +87,9 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user'].", ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".pass, ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply, ".
-			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date'].", ".
-			$configValues['CONFIG_DB_TBL_RADNAS'].".shortname
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date']."
 		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." 
-                JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON
-		( ".
-			$configValues['CONFIG_DB_TBL_RADACCT'].".username = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." 
-			AND
-			".$configValues['CONFIG_DB_TBL_RADACCT'].".acctstarttime = ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date']."
-		)
-                JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." ON 
-		( ".
-			$configValues['CONFIG_DB_TBL_RADNAS'].".nasname = ".$configValues['CONFIG_DB_TBL_RADACCT'].".nasipaddress
-		)
-                WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')
+        WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')
 		ORDER BY ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".$orderBy $orderType 
 		LIMIT $offset, $rowsPerPage";
 
@@ -122,28 +105,25 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
         $array_pass = array();
         $array_starttime = array();
         $array_reply = array();
-        $array_nasshortname = array();
-	$count = 0;
+		$count = 0;
 
         while($row = $res->fetchRow()) {
 
                 // The table that is being procuded is in the format of:
-                // +-------------+-------------+---------------+----------------------------------------+
-                // | user        | pass        | reply         | date                | nasshortname     |
-                // +-------------+-------------+---------------+----------------------------------------+
+                // +-------------+-------------+---------------+---------------------+
+                // | user        | pass        | reply         | date                |   
+                // +-------------+-------------+---------------+---------------------+
 
 
                 $user = $row[0];
                 $pass = $row[1];
                 $starttime = $row[3];
                 $reply = $row[2];
-                $nasshortname = $row[4];	
 
                 array_push($array_users, "$user");
                 array_push($array_pass, "$pass");
                 array_push($array_starttime, "$starttime");
                 array_push($array_reply, "$reply");
-		array_push($array_nasshortname, "$nasshortname");
 
                 $count++;
 
@@ -197,11 +177,6 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
 		".$l['all']['RADIUSReply']." 
 		</th>
 
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=reply&orderType=$orderTypeNextPage\">
-		".$l['all']['NASShortName']."
-		</th>
-
         </tr> </thread>";
 
         $i = 0;
@@ -217,7 +192,6 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
                         <td> $array_pass[$i] </td>
                         <td> $array_starttime[$i] </td>
                         <td> $reply </td>
-			<td> $array_nasshortname[$i] </td>
                 </tr>";
                 $i++;
         }
