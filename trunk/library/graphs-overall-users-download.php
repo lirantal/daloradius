@@ -27,7 +27,18 @@ include('checklogin.php');
 
 $type = $_REQUEST['type'];
 $username = $_REQUEST['user'];
-
+$size = $_REQUEST['size'];
+switch ($size) {
+	case "gigabytes":
+		$sizeDivision = "1073741824"; 
+		break;
+	case "megabytes":
+		$sizeDivision = "1048576";
+		break;
+	default:
+		$sizeDivision = "1048576";
+		break;
+}
 
 if ($type == "daily") {
 	daily($username);
@@ -41,6 +52,8 @@ if ($type == "daily") {
 
 function daily($username) {
 
+	global $sizeDivision;
+	global $size;
 	
 	include 'opendb.php';
 	include 'libchart/libchart.php';
@@ -56,11 +69,11 @@ function daily($username) {
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-		$downloads = floor($row[1]/1000/1000);
+		$downloads = floor($row[1]/$sizeDivision);
 		$chart->addPoint(new Point("$row[2]", "$downloads"));
 	}
 
-	$chart->setTitle("Total Downloads based on Daily distribution (MB)");
+	$chart->setTitle("Total Downloads based on Daily distribution ($size)");
 	$chart->render();
 
 	include 'closedb.php';
@@ -75,6 +88,8 @@ function daily($username) {
 
 function monthly($username) {
 
+	global $sizeDivision;
+	global $size;
 	
 	include 'opendb.php';
 	include 'libchart/libchart.php';
@@ -90,11 +105,11 @@ function monthly($username) {
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-		$downloads = floor($row[1]/1024/1024);
+		$downloads = floor($row[1]/$sizeDivision);
 		$chart->addPoint(new Point("$row[2]", "$downloads"));
 	}
 
-	$chart->setTitle("Total Downloads based on Monthly distribution");
+	$chart->setTitle("Total Downloads based on Monthly distribution ($size)");
 	$chart->render();
 
 	include 'closedb.php';
@@ -109,7 +124,9 @@ function monthly($username) {
 
 function yearly($username) {
 
-
+	global $sizeDivision;
+	global $size;
+	
 	include 'opendb.php';
 	include 'libchart/libchart.php';
 
@@ -124,11 +141,11 @@ function yearly($username) {
 	$res = $dbSocket->query($sql);
 
 	while($row = $res->fetchRow()) {
-		$downloads = floor($row[1]/1024/1024);
+		$downloads = floor($row[1]/$sizeDivision);
 		$chart->addPoint(new Point("$row[2]", "$downloads"));
 	}
 
-	$chart->setTitle("Total Downloads based on Yearly distribution");
+	$chart->setTitle("Total Downloads based on Yearly distribution ($size)");
 	$chart->render();
 
 	include 'closedb.php';

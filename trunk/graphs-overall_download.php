@@ -13,6 +13,7 @@
 
 	$username = $_REQUEST['username'];
 	$type = $_REQUEST['type'];
+	$size = $_REQUEST['size'];
 
 	//feed the sidebar variables
 	$overall_download_username = $username;
@@ -52,7 +53,7 @@
 
 <?php
     echo "<center>";
-    echo "<img src=\"library/graphs-overall-users-download.php?type=$type&user=$username\" />";
+    echo "<img src=\"library/graphs-overall-users-download.php?type=$type&user=$username&size=$size\" />";
     echo "</center>";
 ?>
 
