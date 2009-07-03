@@ -14,6 +14,7 @@
 
 	$username = $_REQUEST['username'];
 	$type = $_REQUEST['type'];
+	$size = $_REQUEST['size'];
 
 
 	//feed the sidebar variables
@@ -53,7 +54,7 @@
 
 <?php
     echo "<center>";
-    echo "<img src=\"library/graphs-overall-users-upload.php?type=$type&user=$username\" />";
+    echo "<img src=\"library/graphs-overall-users-upload.php?type=$type&user=$username&size=$size\" />";
     echo "</center>";
 ?>
 	</div>

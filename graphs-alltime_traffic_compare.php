@@ -8,6 +8,7 @@
 
 
     $type = $_REQUEST['type'];
+	$size = $_REQUEST['size'];
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -42,14 +43,16 @@
         <br/>
 <?php		
         echo "<center>";
-        echo "<img src=\"library/graphs-alltime-traffic-download.php?type=$type\" />";
+        echo "<img src=\"library/graphs-alltime-traffic-download.php?type=$type&size=$size\" />";
+		echo "</center>";
 ?>
 	</div>
      <div class="tabbertab" title="Upload Graph">
         <br/>
 
 <?php
-        echo "<img src=\"library/graphs-alltime-traffic-upload.php?type=$type\" />";
+		echo "<center>";
+        echo "<img src=\"library/graphs-alltime-traffic-upload.php?type=$type&size=$size\" />";
         echo "</center>";		
 ?>
 	</div>
