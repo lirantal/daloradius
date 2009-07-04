@@ -89,15 +89,21 @@
 
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
+	$sql = "SELECT * FROM (".
+		"SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, ". 
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
-		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname,  MAX(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime) AS LastLoggedIn
+		FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." ".
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username ".
-		" WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') GROUP BY UserName";
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADACCT'].".username ".
+		" WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') 
+		GROUP BY UserName ORDER BY ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute ) AS sorted ".
+		" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -105,17 +111,20 @@
 	/* we are searching for both kind of attributes for the password, being User-Password, the more
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
-	
 	$sql = "SELECT * FROM (".
 		"SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, ". 
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
-		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname,  MAX(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime) AS LastLoggedIn
+		FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." ".
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username ".
-		" WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') order by ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute ) as sorted ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADACCT'].".username ".
+		" WHERE (Attribute LIKE '%-Password') OR (Attribute='Auth-Type') 
+		GROUP BY UserName ORDER BY ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute ) AS sorted ".
 		" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -190,6 +199,11 @@
 		".$l['title']['Groups']."</a>
 		</th>
 
+		<th scope='col'> 
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=LastLoggedIn&orderType=$orderTypeNextPage\">
+		".$l['all']['LastLoginTime']."</a>
+		</th>
+
 		</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
@@ -229,8 +243,15 @@
 		} else {
 			echo "<td>$row[1]</td>";
 		}
+		
+		if (!$row[7])
+			$lastloggedin = $l['all']['Never'];
+		else
+			$lastloggedin = $row[7];
+		
 		echo "
 			<td>$row[3]</td>
+			<td>$lastloggedin</td>
 		</tr>";
 	}
 	

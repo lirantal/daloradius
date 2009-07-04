@@ -52,9 +52,19 @@ $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
 
 
 $l['all']['Compare'] = "Compare";
+$l['all']['Never'] = "Never";
+
 
 $l['all']['Section'] = "Section";
 $l['all']['Item'] = "Item";
+
+$l['all']['Megabytes'] = "Megabytes";
+$l['all']['Gigabytes'] = "Gigabytes";
+
+$l['all']['Daily'] = "Daily";
+$l['all']['Weekly'] = "Weekly";
+$l['all']['Monthly'] = "Monthly";
+$l['all']['Yearly'] = "Yearly";
 
 $l['all']['RemoveRadacctRecords'] = "Remove Accounting Records";
 
@@ -121,6 +131,7 @@ $l['all']['Usage'] = "Usage";
 $l['all']['StartTime'] = "Start Time";
 $l['all']['StopTime'] = "Stop Time";
 $l['all']['TotalTime'] = "Total Time";
+$l['all']['TotalTraffic'] = "Total Traffic";
 $l['all']['Bytes'] = "Bytes";
 $l['all']['Upload'] = "Upload";
 $l['all']['Download'] = "Download";
@@ -335,6 +346,7 @@ $l['Tooltip']['Date'] = "Type the date <br/> example: 1982-06-04 (Y-M-D)";
 $l['Tooltip']['RateName'] = "Type the Rate name";
 $l['Tooltip']['OperatorName'] = "Type the Operator name";
 $l['Tooltip']['BillingPlanName'] = "Type the Billing Plan name";
+$l['Tooltip']['PlanName'] = "Type the plan name";
 
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";
@@ -596,6 +608,8 @@ $l['button']['DateAccounting'] = "Date Accounting";
 $l['button']['AllRecords'] = "All Records";
 $l['button']['ActiveRecords'] = "Active Records";
 
+$l['button']['PlanUsage'] = "Plan Usage";
+
 $l['button']['OnlineUsers'] = "Online Users";
 $l['button']['LastConnectionAttempts'] = "Last Connection Attempts";
 $l['button']['TopUser'] = "Top User";
@@ -824,6 +838,7 @@ $l['Intro']['accthotspot.php'] = "Hotspot Accounting";
 $l['Intro']['acctipaddress.php'] = "IP Accounting";
 $l['Intro']['accthotspotcompare.php'] = "Hotspot Comparison";
 $l['Intro']['acctmain.php'] = "Accounting Page";
+$l['Intro']['acctplans.php'] = "Plans Accounting Page";
 $l['Intro']['acctnasipaddress.php'] = "NAS IP Accounting";
 $l['Intro']['acctusername.php'] = "Users Accounting";
 $l['Intro']['acctcustom.php'] = "Custom Accountings";
@@ -870,7 +885,7 @@ $l['Intro']['graphsoveralllogins.php'] = "User Logins";
 $l['Intro']['graphsoverallupload.php'] = "User Uploads";
 
 $l['Intro']['rephistory.php'] = "Action History";
-$l['Intro']['replastconnect.php'] = "Last 50 Connection Attempts";
+$l['Intro']['replastconnect.php'] = "Last Connection Attempts";
 $l['Intro']['repstatradius.php'] = "Daemons Information";
 $l['Intro']['repstatserver.php'] = "Server Status and Information";
 $l['Intro']['reponline.php'] = "Listing Online Users";
@@ -1313,6 +1328,8 @@ $l['helpPage']['acctipaddress'] = "
 	Provides full accounting information for all sessions that originated with a particular IP Address.
 <br/>
 ";
+
+$l['helpPage']['acctplans'] = "";
 $l['helpPage']['acctmain'] = "
 <b>General Accounting</b><br/>
 <h200><b>User Accounting</b></h200> - 
