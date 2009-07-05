@@ -43,9 +43,9 @@
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username; ?>">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> Daily
-				<option value="monthly"> Monthly
-				<option value="yearly"> Yearly
+				<option value="daily"> <?php echo $l['all']['Daily'] ?>
+				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
+				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
 			</select>
 			</form>
 		</li>
@@ -60,9 +60,13 @@
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				value="<?php if (isset($overall_download_username)) echo $overall_download_username; ?>">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> Daily
-				<option value="monthly"> Monthly
-				<option value="yearly"> Yearly
+				<option value="daily"> <?php echo $l['all']['Daily'] ?>
+				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
+				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+			</select>
+			<select class="generic" name="size" type="text">
+				<option value="megabytes"> <?php echo $l['all']['Megabytes'] ?>
+				<option value="gigabytes"> <?php echo $l['all']['Gigabytes'] ?>
 			</select>
 			</form>
 		</li>
@@ -77,9 +81,13 @@
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
 				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username; ?>">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> Daily
-				<option value="monthly"> Monthly
-				<option value="yearly"> Yearly
+				<option value="daily"> <?php echo $l['all']['Daily'] ?>
+				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
+				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+			</select>
+			<select class="generic" name="size" type="text">
+				<option value="megabytes"> <?php echo $l['all']['Megabytes'] ?>
+				<option value="gigabytes"> <?php echo $l['all']['Gigabytes'] ?>
 			</select>
 			</form>
 		</li>
@@ -95,9 +103,9 @@
 			<?php echo $l['button']['TotalLogins'] ?></a>
 			<form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> Daily
-				<option value="monthly"> Monthly
-				<option value="yearly"> Yearly
+				<option value="daily"> <?php echo $l['all']['Daily'] ?>
+				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
+				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
 			</select>
 			</form></li>
 
@@ -109,11 +117,17 @@
 			<form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" 
 				class="sidebar">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> Daily
-				<option value="monthly"> Monthly
-				<option value="yearly"> Yearly
+				<option value="daily"> <?php echo $l['all']['Daily'] ?>
+				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
+				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+			</select>
+			<select class="generic" name="size" type="text">
+				<option value="megabytes"> <?php echo $l['all']['Megabytes'] ?>
+				<option value="gigabytes"> <?php echo $l['all']['Gigabytes'] ?>
 			</select>
 			</form></li>
+			
+			
 		<li><a href="javascript:document.logged_users.submit();"><b>&raquo;</b>
 			<img src='images/icons/graphsGeneral.gif' border='0'>
 			<?php echo $l['button']['LoggedUsers'] ?></a>
