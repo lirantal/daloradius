@@ -15,6 +15,10 @@ UPDATE operators SET config_user='yes' WHERE username='administrator';
 ALTER TABLE operators ADD graphs_logged_users VARCHAR(32) AFTER graphs_overall_logins;
 UPDATE operators SET graphs_logged_users='yes' WHERE username='administrator';
 
+ALTER TABLE operators ADD acct_plans_usage VARCHAR(32) AFTER acct_custom_query;
+UPDATE operators SET acct_plans_usage='yes' WHERE username='administrator';
+
+
 CREATE TABLE `billing_merchant` (
   `id` int(8) NOT NULL auto_increment,
   `username` varchar(128) NOT NULL default '',

@@ -66,7 +66,7 @@ if (isset($_GET['reportFormat'])) {
 				break;
 
 
-                case "usernameListGeneric":
+		case "usernameListGeneric":
 				include_once('../../library/opendb.php');
 
 				$outputHeader = "Id,Username,Attribute,Value".
@@ -92,86 +92,122 @@ if (isset($_GET['reportFormat'])) {
 					include_once('../../library/closedb.php');
 				}
 
-                                break;
-
-
-                case "reportsOnlineUsers":
-			include_once('../../library/opendb.php');
-
-			$outputHeader = "Username, User IP Address, User MAC Address, Start Time, Total Time, NAS IP Address, NAS MAC Address".
-					"\n";
-			$outputContent = "";
-
-		        $sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime, NASIPAddress, CalledStationId FROM ".
-					$configValues['CONFIG_DB_TBL_RADACCT']." $reportQuery ORDER BY Username ASC";
-
-			if ($reportFormat == "csv") {
-				$res = $dbSocket->query($sql);
-
-			        while($row = $res->fetchRow()) {
-					$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6]\n";
+				break;
+				
+		case "reportsOnlineUsers":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Username, User IP Address, User MAC Address, Start Time, Total Time, NAS IP Address, NAS MAC Address".
+						"\n";
+				$outputContent = "";
+	
+					$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime, NASIPAddress, CalledStationId FROM ".
+						$configValues['CONFIG_DB_TBL_RADACCT']." $reportQuery ORDER BY Username ASC";
+	
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+	
+						while($row = $res->fetchRow()) {
+						$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6]\n";
+					}
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+					include_once('../../library/closedb.php');
 				}
-				$output = $outputHeader . $outputContent;
-				exportCSVFile($output);	
-				include_once('../../library/closedb.php');
-			}
-
-			break;
+	
+				break;
 
 
-                case "reportsLastConnectionAttempts":
-			include_once('../../library/opendb.php');
-
-			$outputHeader = "Username, Password, Start Time, RADIUS Reply".
-					"\n";
-			$outputContent = "";
-
-			$sql = "SELECT UserName, pass, authdate, reply FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
-				" $reportQuery ORDER BY UserName ASC";
-
-			if ($reportFormat == "csv") {
-				$res = $dbSocket->query($sql);
-
-			        while($row = $res->fetchRow()) {
-					$outputContent .= "$row[0],$row[1],$row[2],$row[3]\n";
+		case "reportsLastConnectionAttempts":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Username, Password, Start Time, RADIUS Reply".
+						"\n";
+				$outputContent = "";
+	
+				$sql = "SELECT user, pass, reply, date FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].
+					" $reportQuery ORDER BY User ASC";
+	
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+	
+						while($row = $res->fetchRow()) {
+						$outputContent .= "$row[0],$row[1],$row[2],$row[3]\n";
+					}
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+					include_once('../../library/closedb.php');
 				}
-				$output = $outputHeader . $outputContent;
-				exportCSVFile($output);	
-				include_once('../../library/closedb.php');
-			}
+	
+				break;
 
-			break;
+		case "TopUsers":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Username, IP Address, Start Time,Stop Time, Account Session Time, Account Input, Account Output, Total Bandwidth".
+						"\n";
+				$outputContent = "";
+	
+				$sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".
+				$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
+				".AcctStopTime, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, ".
+				" sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".
+				$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".
+				$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".
+				$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".
+				$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".
+				$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".
+				$configValues['CONFIG_DB_TBL_RADACCT']." $reportQuery Group BY Username ASC";
+	
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+	
+					while($row = $res->fetchRow()) {
+						$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[9]\n";
+					}
+						
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
 
-                case "TopUsers":
-			include_once('../../library/opendb.php');
-
-			$outputHeader = "Username, IP Address, Start Time,Stop Time, Account Session Time, Account Input, Account Output, Total Bandwidth".
-					"\n";
-			$outputContent = "";
-
-		$sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".
-		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		".AcctStopTime, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as Time, ".
-		" sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) as Upload,sum(".
-		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Download, ".
-		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".
-		$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".
-		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".
-		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." $reportQuery Group BY Username ASC";
-
-			if ($reportFormat == "csv") {
-				$res = $dbSocket->query($sql);
-
-			        while($row = $res->fetchRow()) {
-					$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[9]\n";
 				}
-				$output = $outputHeader . $outputContent;
-				exportCSVFile($output);	
-				include_once('../../library/closedb.php');
-			}
+				include_once('../../library/closedb.php');	
+				break;
+				
 
-			break;
+		case "reportsPlansUsage":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Username, Planname, Used Time, Upload, Download, Plan Time, Plan Time Type".
+						"\n";
+				$outputContent = "";
+	
+				$sql = "".
+					"SELECT ".
+						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username as username,".
+						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname as planname,".
+						"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctsessiontime) as sessiontime,".
+						"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctinputoctets) as upload,".
+						"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctoutputoctets) as download,".
+						$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeBank as planTimeBank,".
+						$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeType as planTimeType".
+					" FROM ".
+						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].",".
+						$configValues['CONFIG_DB_TBL_RADACCT'].",".
+						$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+					$reportQuery;
+	
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+	
+						while($row = $res->fetchRow()) {
+						$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6]\n";
+					}
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+					include_once('../../library/closedb.php');
+				}
+	
+				break;
 
 	}
 
