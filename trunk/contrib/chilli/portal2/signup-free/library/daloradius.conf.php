@@ -50,7 +50,7 @@ $configValues['CONFIG_LANG'] = 'en';
 $configValues['CONFIG_LOG_FREE_SIGNUP_FILENAME'] = '/tmp/free-signup.log';
 $configValues['CONFIG_SIGNUP_MSG_TITLE'] = "We provide free registration service to our hotspots. <br/>".
 					"Complete the form and click the Register button to generate a username and password.";
-$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER'] = "Welcome to our Hotspot";
+$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER'] = "Welcome to our Hotspot ";
 $configValues['CONFIG_SIGNUP_SUCCESS_MSG_BODY'] = "we have created a username and password for you to use <br/>".
 					" to login to our system, and they are as follows:<br/><br/>";
 $configValues['CONFIG_SIGNUP_SUCCESS_MSG_LOGIN_LINK'] = "<br/>Click <b><a href='http://192.168.182.1:3990/prelogin'>here</a></b>".
