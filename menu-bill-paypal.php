@@ -35,7 +35,7 @@
                                 <h3>Track PayPal Transactions</h3>
 	<ul class="subnav">
 
-        <form name="billpaypaltransactions" action="bill-paypal-transactions.php" method="get" class="sidebar">
+        <form name="billpaypaltransactions" action="bill-merchant-transactions.php" method="get" class="sidebar">
 
         <input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
 	<br/><br/>
