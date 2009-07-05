@@ -22,7 +22,6 @@
  *********************************************************************************************************
  */
 
-	include('library/opendb.php');
 	include_once('include/common/common.php');
 	$txnId = createPassword(64, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']); 
                    // to be used for setting up the return url (success.php page)
@@ -44,11 +43,13 @@
 		if ( ($firstName != "") && ($lastName != "") && ($address != "") && ($city != "") && ($state != "") && ($planId != "") ) {
 
 			// all paramteres have been set, save it in the database
+			include('library/opendb.php');
+
 			$currDate = date('Y-m-d H:i:s');
 			$currBy = "paypal-webinterface";
 
 			// lets create some random data for user pin
-			$userPIN = createPassword($configValues['CONFIG_USERNAME_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+			$userPIN = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
 
 			$planId = $dbSocket->escapeSimple($planId);
 
@@ -72,17 +73,18 @@
 
 			// lets add user information to the database
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-					" (id, username, firstname, lastname, creationdate, creationby)".
-					" VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."',".
+					" (id, username, firstname, lastname, address, city, state, creationdate, creationby)".
+					" VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."', '".
+					$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($city)."','".$dbSocket->escapeSimple($state)."', ".
 					"'$currDate','$currBy'".
 					")";
 			$res = $dbSocket->query($sql);
 			
 			// lets add user billing information to the database
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-					" (id, username, planname, ".
-					" creationdate, creationby) ".
-					" VALUES (0, '$userPIN', '$planName', ".
+					" (id, username, planname, contactperson, address, city, state, creationdate, creationby) ".
+					" VALUES (0, '$userPIN', '$planName', '".$dbSocket->escapeSimple($firstName)." ".$dbSocket->escapeSimple($lastName)."', '".
+					$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($city)."','".$dbSocket->escapeSimple($state)."', ".
 					" '$currDate', '$currBy'".
 					")";
 			$res = $dbSocket->query($sql);
