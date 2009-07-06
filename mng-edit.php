@@ -59,77 +59,82 @@
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 		
 		isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
+		isset($_POST['oldplanName']) ? $oldplanName = $_POST['oldplanName'] : $oldplanName = "";
 
-	        isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
+		isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
 		isset($_POST['bi_planname']) ? $bi_planname = $_POST['bi_planname'] : $bi_planname = "";
-	        isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
-	        isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
-	        isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
-	        isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
-	        isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
-	        isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
-	        isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
-	        isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
-	        isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
-	        isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
-	        isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
-	        isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
-	        isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
-	        isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
-	        isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
-	        isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
-	        isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
-	        isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
-	        isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
-	        isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
-	        isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
-	        isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
-	        isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
-	        isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
-	        isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
+		isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
+		isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
+		isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
+		isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
+		isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
+		isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+		isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
+		isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
+		isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
+		isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
+		isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
+		isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
+		isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
+		isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
+		isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+		isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
+		isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
+		isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
+		isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
+		isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
+		isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+		isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
+		isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
+		isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
+		isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
 
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
 
 
 
-function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
-
-                global $logDebugSQL;
-                global $configValues;
-
-		$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                	" WHERE planName='".$dbSocket->escapeSimple($oldplanName)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-		$row = $res->fetchRow();
-		$oldplanGroup = $row[0];
+		function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
+	
+	
+			if ($planName == $oldplanName)
+				return;
 		
-		if ( (isset($oldplanGroup)) && ($oldplanGroup != "") ) {
-
-			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE ".
-        	                " (Username='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldplanGroup)."') ";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";			
+			global $logDebugSQL;
+			global $configValues;
+	
+			$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+						" WHERE planName='".$dbSocket->escapeSimple($oldplanName)."'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+	
+			$row = $res->fetchRow();
+			$oldplanGroup = $row[0];
+			
+			if ( (isset($oldplanGroup)) && ($oldplanGroup != "") ) {
+	
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE ".
+							" (Username='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldplanGroup)."') ";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+			}                                          
+	
+			$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+						" WHERE planName='".$dbSocket->escapeSimple($planName)."'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+	
+			$row = $res->fetchRow();
+			$planGroup = $row[0];
+			
+			if ( (isset($planGroup)) && ($planGroup != "") ) {
+	
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+							" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($planGroup)."',0) ";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";			
+			}
+	
 		}
-
-		$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                	" WHERE planName='".$dbSocket->escapeSimple($planName)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-		$row = $res->fetchRow();
-		$planGroup = $row[0];
-		
-		if ( (isset($planGroup)) && ($planGroup != "") ) {
-
-	                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-        	                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($planGroup)."',0) ";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";			
-		}
-
-	}
 
 
 		if (trim($username) != "") {
@@ -722,7 +727,7 @@ function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
 		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
                 <?php
  	               include 'include/management/populate_selectbox.php';
-                       populate_plans("$bi_planname","planName","form");
+                       populate_plans($bi_planname,"planName","form");
                 ?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
 		

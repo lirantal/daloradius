@@ -8,7 +8,7 @@
 function populate_plans($defaultOption = "Select Plan",$elementName = "", $cssClass = "form", $mode = "") {
 
 	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>
+			<option value='$defaultOption'>$defaultOption</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
