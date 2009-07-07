@@ -5,10 +5,10 @@
  * populate_plans()
  *
  */
-function populate_plans($defaultOption = "Select Plan",$elementName = "", $cssClass = "form", $mode = "") {
+function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
 	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />
-			<option value='$defaultOption'>$defaultOption</option>
+			<option value='$defaultOptionValue'>$defaultOption</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -41,11 +41,11 @@ function populate_plans($defaultOption = "Select Plan",$elementName = "", $cssCl
  * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
  *
  */
-function populate_groups($defaultOption = "Select Group",$elementName = "", $cssClass = "form", $mode = "") {
+function populate_groups($defaultOption = "Select Group", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
 	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
 			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>
+			<option value='$defaultOptionValue'>$defaultOption</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';

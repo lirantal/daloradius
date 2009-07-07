@@ -727,7 +727,7 @@
 		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
                 <?php
  	               include 'include/management/populate_selectbox.php';
-                       populate_plans($bi_planname,"planName","form");
+                       populate_plans($bi_planname,"planName","form","",$bi_planname);
                 ?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
 		
