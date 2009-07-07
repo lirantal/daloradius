@@ -329,7 +329,7 @@
                 <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
                 <?php
                         include_once 'include/management/populate_selectbox.php';
-                        populate_groups($planGroup,"planGroup");
+                        populate_groups($planGroup,"planGroup", "form","",$planGroup);
                 ?>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planGroupTooltip')" />
 
