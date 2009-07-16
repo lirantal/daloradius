@@ -178,8 +178,7 @@
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class'novlist' href=\"". $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=nashortname&orderType=$orderTypeNextPage\">
-		".$l['all']['NASShortName']."</a>
+			".$l['all']['NASShortName']."
 		</th>
 
 	</tr> </thread>";
