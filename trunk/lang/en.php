@@ -498,7 +498,7 @@ $l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
 $l['Tooltip']['hotspotNameTooltip'] = "Example: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
 					a friendly name of the hotspot<br/>";
 
-$l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00:aa:bb:cc:dd:ee<br/>&nbsp;&nbsp;&nbsp;
+$l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00-aa-bb-cc-dd-ee<br/>&nbsp;&nbsp;&nbsp;
 					The MAC address of the NAS<br/>";
 
 $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
