@@ -107,7 +107,10 @@
 	   compatibility with version 0.7        */
 	
 	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime ".
-		" as AcctSessionTime, NASIPAddress, CalledStationId FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		" as AcctSessionTime, NASIPAddress, CalledStationId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name AS hotspot
+		FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON (".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac = ".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId)".
 		" WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND (Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
@@ -178,7 +181,7 @@
 		</th>
 
 		<th scope='col'>
-			".$l['all']['NASShortName']."
+			".$l['all']['HotSpot']."
 		</th>
 
 	</tr> </thread>";
@@ -191,17 +194,10 @@
 		$start = $row[3];
 		$nasip = $row[5];
 		$nasmac = $row[6];
+		$hotspot = $row[7];
 
 		$totalTime = time2str($row[4]);
 
-
-		$query = "select shortname from ".$configValues['CONFIG_DB_TBL_RADNAS']." where nasname = '$nasip';";
-		$result = $dbSocket->query($query);
-	        $logDebugSQL .= $sql . "\n";
-		$nasshortname = $result->fetchRow();
-		$nasshortname = $nasshortname[0];
-
-	
 		echo "<tr>
 				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$username||$start'>
 					<a class='tablenovisit' href='javascript:return;'
@@ -219,7 +215,7 @@
 				<td> $start </td>
 				<td> $totalTime </td>
 				<td> IP: $nasip<br/>MAC: $nasmac</td>
-				<td> $nasshortname </td>
+				<td> $hotspot </td>
 		</tr>";
 	}
 
