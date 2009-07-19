@@ -107,10 +107,12 @@
 	   compatibility with version 0.7        */
 	
 	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime ".
-		" as AcctSessionTime, NASIPAddress, CalledStationId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name AS hotspot
-		FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+		" as AcctSessionTime, NASIPAddress, CalledStationId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name AS hotspot, 
+		".$configValues['CONFIG_DB_TBL_RADNAS'].".shortname AS NASshortname FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON (".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac = ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId)".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." ON (".$configValues['CONFIG_DB_TBL_RADNAS'].".shortname = ".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress)".
 		" WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND (Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
@@ -184,6 +186,10 @@
 			".$l['all']['HotSpot']."
 		</th>
 
+		<th scope='col'>
+			".$l['all']['NasShortname']."
+		</th>
+
 	</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
@@ -195,6 +201,7 @@
 		$nasip = $row[5];
 		$nasmac = $row[6];
 		$hotspot = $row[7];
+		$nasshortname = $row[8];
 
 		$totalTime = time2str($row[4]);
 
@@ -216,6 +223,7 @@
 				<td> $totalTime </td>
 				<td> IP: $nasip<br/>MAC: $nasmac</td>
 				<td> $hotspot </td>
+				<td> $nasshortname </td>
 		</tr>";
 	}
 
