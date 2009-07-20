@@ -59,37 +59,37 @@
 
 <?php
 
-        include 'library/opendb.php';
-        include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+	include 'library/opendb.php';
+	include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
-	$row['postauth']['user'] = 'username';
-	$row['postauth']['date'] = 'authdate';
-} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
-	$row['postauth']['user'] = 'user';
-	$row['postauth']['date'] = 'date';
-}
+	if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
+		$tableSetting['postauth']['user'] = 'username';
+		$tableSetting['postauth']['date'] = 'authdate';
+	} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
+		$tableSetting['postauth']['user'] = 'user';
+		$tableSetting['postauth']['date'] = 'date';
+	}
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE (".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+        $_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
 	$sql = "SELECT ".
-			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." 
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." 
 		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']. 
-        " WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+        " WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
 
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
 	$sql = "SELECT ".
-			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user'].", ".
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user'].", ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".pass, ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply, ".
-			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['date']."
+			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['date']."
 		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." 
-        WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$row['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')
+        WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')
 		ORDER BY ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".$orderBy $orderType 
 		LIMIT $offset, $rowsPerPage";
 
@@ -158,7 +158,7 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
 
         echo "<thread> <tr>
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=".$row['postauth']['user']."&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=".$tableSetting['postauth']['user']."&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']." 
 		</th>
 
@@ -168,7 +168,7 @@ if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VER
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=".$row['postauth']['user']."&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&orderBy=".$tableSetting['postauth']['date']."&orderType=$orderTypeNextPage\">
 		".$l['all']['StartTime']." 
 		</th>
 
