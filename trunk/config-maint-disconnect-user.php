@@ -20,6 +20,7 @@
  *********************************************************************************************************
  */
 
+
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -119,9 +120,11 @@
 		<br/>
 
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-                <br />
- 
+                <input name="username" type="text" id="usernameEdit" autocomplete="off"
+				onClick='javascript:__displayTooltip();' 
+				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				value="<?php if (isset($username)) echo $username; ?>" tabindex=100>
+		 <br />
 		<label for='packettype' class='form'><?php echo $l['all']['PacketType'] ?></label>
                 <select name='packettype' id='packettype' class='form' tabindex=101 >
 			<option value="disconnect"> PoD - Packet of Disconnect </option>
@@ -130,11 +133,30 @@
                 <br/>
 
                 <label for='nasaddr' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
-                <input name='nasaddr' type='text' id='nasaddr' value='<?php echo $nasaddr ?>' tabindex=102 />
+                <input name='nasaddr' type='hidden' id='nasaddr' value='<?php echo $nasaddr ?>' tabindex=102 />
 
 		<select onChange="javascript:setStringTextMulti(this.id,'nasaddr','nassecret')" id='naslist' tabindex=103 
 			class='form' >
 			<option value=""> Choose NAS... </option>
+
+
+
+<?php 
+	include_once("include/management/autocomplete.php");
+
+	if ($autoComplete) {
+		echo "<script type=\"text/javascript\">
+			/** Making usernameEdit interactive **/
+	              autoComEdit = new DHTMLSuite.autoComplete();
+	              autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+
+			/** Making usernameSearch interactive **/
+	              autoComSearch = new DHTMLSuite.autoComplete();
+	              autoComSearch.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+	              </script>";
+	} 
+?>
+
 <?php
 
         include 'library/opendb.php';
@@ -146,7 +168,7 @@
 
         while($row = $res->fetchRow()) {
                 echo "
-                        <option value='$row[0]||$row[2]'> $row[2] - $row[0] </option>
+                        <option value='$row[0]||$row[2]'> $row[1] - $row[0] </option>
                         ";
 
         }
@@ -156,12 +178,9 @@
 		</select>
                 <br/>
 
-                <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
-                <input name='nassecret' type='text' id='nassecret' value='' tabindex=104 />
-                <br/>
-
+                <input name='nassecret' type='hidden' type='hidden' id='nassecret' value='' tabindex=104 />
                 <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?></label>
-                <input name='nasport' type='text' id='nasport' value='3799' tabindex=106 />
+                <input name='nasport' type='hidden' id='nasport' value='3799' tabindex=106 />
 		<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=107 
 			class='form'>
 			<option value="3799"> Choose Port... </option>
