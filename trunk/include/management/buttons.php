@@ -5,6 +5,9 @@
         <input type='button' onclick="self.location='config-maint-test-user.php?username=<?php 
 		echo $username ?>&password=<?php echo $user_password ?>'" value='Test Connectivity' class='button'/>
 
+        <input type='button' onclick="self.location='config-maint-disconnect-user.php?username=<?php 
+		echo $username ?>'" value='Disconnect User' class='button'/>
+
         <input type='button' onclick="self.location='acct-username.php?username=<?php echo $username ?>'" value='Accounting' class='button'/>
 
         <input type='button' onclick="self.location='graphs-overall_logins.php?type=monthly&username=<?php
