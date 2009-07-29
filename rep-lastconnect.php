@@ -30,7 +30,9 @@
         isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
         isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
 
-        isset($_REQUEST['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
+        isset($_GET['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
+	if (isset($_GET['radiusreply']))
+		$radiusReply = $_GET['radiusreply'];
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -62,6 +64,11 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+	$radiusReply = $dbSocket->escapeSimple($radiusReply);
+	$radiusReplySQL = "";
+	if ($radiusReply)
+		$radiusReplySQL = " AND (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply = '$radiusReply') ";
+	
 	if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
 		$tableSetting['postauth']['user'] = 'username';
 		$tableSetting['postauth']['date'] = 'authdate';
@@ -71,14 +78,16 @@
 	}
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+        $_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".
+					$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
 	$sql = "SELECT ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." 
 		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']. 
-        " WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')";
+        " WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." LIKE '".
+	$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL";
 
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
@@ -89,7 +98,8 @@
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply, ".
 			$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['date']."
 		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." 
-        WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." LIKE '".$dbSocket->escapeSimple($usernameLastConnect)."%')
+        WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." LIKE '".
+	$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL 
 		ORDER BY ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".$orderBy $orderType 
 		LIMIT $offset, $rowsPerPage";
 

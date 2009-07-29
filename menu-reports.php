@@ -55,6 +55,11 @@ include_once ("lang/main.php");
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
 								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>
+								<select class="generic" name="radiusreply" tabindex=3>
+									<option value="">Any</option>
+									<option value="Access-Accept">Access-Accept</option>
+									<option value="Access-Reject">Access-Reject</option>
+								</select>
 							</form>
 							</li>
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
