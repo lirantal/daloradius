@@ -54,7 +54,7 @@
 			// into the database
 
 			// log the reponse with a custom message
-			logToFile("PayPal Tranasction VERIFIED:\n");
+			logToFile();
 			saveToDb();
 
 			include('library/opendb.php');
@@ -70,7 +70,8 @@
 
 		} else {
 			// log for manual investigation
-			logToFile("PayPal Tranasction INVALID:\n");
+			//logToFile("PayPal Tranasction INVALID:\n");
+			//logToFile($res);
 			saveToDb();
 		} 
 
@@ -89,27 +90,77 @@ function logToFile($customMsg) {
 
 	include('library/config_read.php');
 
-	$myTime = date("F j, Y, g:i a");
-
 	$fh = fopen($configValues['CONFIG_LOG_MERCHANT_IPN_FILENAME'], 'a');
-
-	if ($fh) {
-		
-		$str = $myTime . " - ------------------------------------------------------------ \n";
-		fwrite($fh, $str);
-		
-		fwrite($fh, $myTime ." - ". $customMsg);	
-
-
-		//loop through the $_POST array and print all vars to the screen.
-		foreach($_POST as $key => $value){
-			$postdata = $myTime ." - ". $key." = ". $value."\n";
-		        fwrite($fh, $postdata);
-		}
-
-		$str = $myTime . " - ------------------------------------------------------------ \n\n";
-		fwrite($fh, $str);
 	
+	if ($fh) {
+				
+		// only if the file size is 0 (meaning it's a new file) then we shuld
+		// create the titles of all the fields in csv format, otherwise we assume
+		// that it has been created before and we simply append to it
+		
+		if (!filesize($configValues['CONFIG_LOG_MERCHANT_IPN_FILENAME']) > 0) {
+			$csvFields = "test_ipn,payment_type,payment_date,payment_status,pending_reason,address_status,".
+				"payer_status,first_name,last_name,payer_email,payer_id,address_name,address_country,".
+				"address_country_code,address_zip,address_state,address_city,address_street,business,".
+				"receiver_email,receiver_id,residence_country,item_name,item_number,item_name1,item_number1,".
+				"quantity,quantity1,shipping,tax,mc_currency,mc_fee,mc_gross,mc_gross1,mc_handling,mc_handling1,".
+				"mc_shipping,mc_shipping1,txn_type,txn_id,parent_txn_id,notify_version,reason_code,receipt_ID,".
+				"custom,invoice,charset,verify_sign";
+			fwrite($fh, $csvFields . "\n");
+		}
+		
+		// get all the values of each field and write it
+		$csvDataArray['test_ipn'] = str_replace(",", " ", $_POST['test_ipn']);
+		$csvDataArray['payment_type'] = str_replace(",", " ", $_POST['payment_type']);
+		$csvDataArray['payment_date'] = date('Y-m-d H:i:s', strtotime($_POST['payment_date']));
+		$csvDataArray['payment_status'] = str_replace(",", " ", $_POST['payment_status']);
+		$csvDataArray['pending_reason'] = str_replace(",", " ", $_POST['pending_reason']);
+		$csvDataArray['address_status'] = str_replace(",", " ", $_POST['address_status']);
+		$csvDataArray['payer_status'] = str_replace(",", " ", $_POST['payer_status']);
+		$csvDataArray['first_name'] = str_replace(",", " ", $_POST['first_name']);
+		$csvDataArray['last_name'] = str_replace(",", " ", $_POST['last_name']);
+		$csvDataArray['payer_email'] = str_replace(",", " ", $_POST['payer_email']);
+		$csvDataArray['payer_id'] = str_replace(",", " ", $_POST['payer_id']);
+		$csvDataArray['address_name'] = str_replace(",", " ", $_POST['address_name']);
+		$csvDataArray['address_country'] = str_replace(",", " ", $_POST['address_country']);
+		$csvDataArray['address_country_code'] = str_replace(",", " ", $_POST['address_country_code']);
+		$csvDataArray['address_zip'] = str_replace(",", " ", $_POST['address_zip']);
+		$csvDataArray['address_state'] = str_replace(",", " ", $_POST['address_state']);
+		$csvDataArray['address_city'] = str_replace(",", " ", $_POST['address_city']);
+		$csvDataArray['address_street'] = str_replace(",", " ", $_POST['address_street']);
+		$csvDataArray['business'] = str_replace(",", " ", $_POST['business']);
+		$csvDataArray['receiver_email'] = str_replace(",", " ", $_POST['receiver_email']);
+		$csvDataArray['receiver_id'] = str_replace(",", " ", $_POST['receiver_id']);
+		$csvDataArray['residence_country'] = str_replace(",", " ", $_POST['residence_country']);
+		$csvDataArray['item_name'] = str_replace(",", " ", $_POST['item_name']);
+		$csvDataArray['item_number'] = str_replace(",", " ", $_POST['item_number']);
+		$csvDataArray['item_name1'] = str_replace(",", " ", $_POST['item_name1']);
+		$csvDataArray['item_number1'] = str_replace(",", " ", $_POST['item_number1']);
+		$csvDataArray['quantity'] = str_replace(",", " ", $_POST['quantity']);
+		$csvDataArray['quantity1'] = str_replace(",", " ", $_POST['quantity1']);
+		$csvDataArray['shipping'] = str_replace(",", " ", $_POST['shipping']);
+		$csvDataArray['tax'] = str_replace(",", " ", $_POST['tax']);
+		$csvDataArray['mc_currency'] = str_replace(",", " ", $_POST['mc_currency']);
+		$csvDataArray['mc_fee'] = str_replace(",", " ", $_POST['mc_fee']);
+		$csvDataArray['mc_gross'] = str_replace(",", " ", $_POST['mc_gross']);
+		$csvDataArray['mc_gross1'] = str_replace(",", " ", $_POST['mc_gross1']);
+		$csvDataArray['mc_handling'] = str_replace(",", " ", $_POST['mc_handling']);
+		$csvDataArray['mc_handling1'] = str_replace(",", " ", $_POST['mc_handling1']);
+		$csvDataArray['mc_shipping'] = str_replace(",", " ", $_POST['mc_shipping']);
+		$csvDataArray['mc_shipping1'] = str_replace(",", " ", $_POST['mc_shipping1']);
+		$csvDataArray['txn_type'] = str_replace(",", " ", $_POST['txn_type']);
+		$csvDataArray['txn_id'] = str_replace(",", " ", $_POST['txn_id']);
+		$csvDataArray['parent_txn_id'] = str_replace(",", " ", $_POST['parent_txn_id']);
+		$csvDataArray['notify_version'] = str_replace(",", " ", $_POST['notify_version']);
+		$csvDataArray['reason_code'] = str_replace(",", " ", $_POST['reason_code']);
+		$csvDataArray['receipt_ID'] = str_replace(",", " ", $_POST['receipt_ID']);
+		$csvDataArray['custom'] = str_replace(",", " ", $_POST['custom']);
+		$csvDataArray['invoice'] = str_replace(",", " ", $_POST['invoice']);
+		$csvDataArray['charset'] = str_replace(",", " ", $_POST['charset']);
+		$csvDataArray['verify_sign'] = str_replace(",", " ", $_POST['verify_sign']);
+		$csvData = implode(",", array_values($csvDataArray));
+		fwrite($fh, $csvData . "\n");
+		
 		fclose($fh);
 	}
 }
