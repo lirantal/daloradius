@@ -95,9 +95,13 @@
         $_SESSION['reportType'] = "reportsOnlineUsers";
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime, NASIPAddress, CalledStationId FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND ".
-		" (Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
+	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".Username, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".CallingStationId, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId FROM ".
+			$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime IS NULL OR ". 
+			$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime = '0000-00-00 00:00:00') AND ".
+			" (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -105,15 +109,25 @@
 	/* we are searching for both kind of attributes for the password, being User-Password, the more
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
-	
-	$sql = "SELECT Username, FramedIPAddress, CallingStationId, AcctStartTime, AcctSessionTime ".
-		" as AcctSessionTime, NASIPAddress, CalledStationId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name AS hotspot, 
-		".$configValues['CONFIG_DB_TBL_RADNAS'].".shortname AS NASshortname FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
+
+	   
+	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".Username, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".CallingStationId, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, 
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId,
+			".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name AS hotspot, 
+			".$configValues['CONFIG_DB_TBL_RADNAS'].".shortname AS NASshortname, 
+			".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".Firstname AS Firstname, 
+			".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".Lastname AS Lastname".
+			" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON (".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac = ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId)".
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." ON (".$configValues['CONFIG_DB_TBL_RADNAS'].".shortname = ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress)".
-		" WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND (Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username = ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".Username)".
+		" WHERE (".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime IS NULL OR ".
+		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime = '0000-00-00 00:00:00') AND (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -163,6 +177,10 @@
 		</th>
 
 		<th scope='col'>
+			".$l['all']['Name']."
+		</th>
+
+		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=framedipaddress&orderType=$orderTypeNextPage\">
 		".$l['all']['IPAddress']."</a>
 		</th>
@@ -192,18 +210,19 @@
 
 	</tr> </thread>";
 
-	while($row = $res->fetchRow()) {
+	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
 
-		$username = $row[0];
-		$ip = $row[1];
-		$usermac = $row[2];
-		$start = $row[3];
-		$nasip = $row[5];
-		$nasmac = $row[6];
-		$hotspot = $row[7];
-		$nasshortname = $row[8];
+		$username = $row['Username'];
+		$ip = $row['FramedIPAddress'];
+		$usermac = $row['CallingStationId'];
+		$start = $row['AcctStartTime'];
+		$nasip = $row['NASIPAddress'];
+		$nasmac = $row['CalledStationId'];
+		$hotspot = $row['hotspot'];
+		$nasshortname = $row['NASshortname'];
+		$name = $row['Firstname'] . " " . $row['Lastname'];
 
-		$totalTime = time2str($row[4]);
+		$totalTime = time2str($row['AcctSessionTime']);
 
 		echo "<tr>
 				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$username||$start'>
@@ -218,6 +237,7 @@
 						<br/>\"
 					>$username</a>
 					</td>
+				<td> $name</td>
 				<td> IP: $ip<br/>MAC: $usermac</td>
 				<td> $start </td>
 				<td> $totalTime </td>
