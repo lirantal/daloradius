@@ -194,6 +194,7 @@
 
 	</div>
      <div class="tabbertab" title="ACL Settings">
+	 <br/>
 
 <?php
         include_once('include/management/operator_tables.php');
