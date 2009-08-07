@@ -43,7 +43,11 @@
                 $row = $res->fetchRow();
 
                 if ( ($row[0] == $txnId) && ($row[2] == "Completed") ) {
-                        $successMsg = "Your user PIN is: <b>$row[1]</b> <br/><br/>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST'];
+						$successMsg .= "We have successfully validated your payment";
+                        $successMsg .= "Your user PIN is:<br/>";
+						$successMsg .= "<b>$row[1]</b>";
+						$successMsg .= "<br/><br/>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST']."<br/><br/>";
+						$successMsg .= "Click <a href='http://192.168.182.1:3990/prelogin'>here</a> to return to the Login page";
                         $refresh = false;
                 }
 
