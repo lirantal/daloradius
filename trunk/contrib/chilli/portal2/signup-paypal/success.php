@@ -43,7 +43,7 @@
                 $row = $res->fetchRow();
 
                 if ( ($row[0] == $txnId) && ($row[2] == "Completed") ) {
-						$successMsg .= "We have successfully validated your payment";
+						$successMsg = "We have successfully validated your payment";
                         $successMsg .= "Your user PIN is:<br/>";
 						$successMsg .= "<b>$row[1]</b>";
 						$successMsg .= "<br/><br/>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST']."<br/><br/>";
