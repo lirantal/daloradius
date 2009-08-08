@@ -49,8 +49,23 @@
 			$currBy = "paypal-webinterface";
 
 			// lets create some random data for user pin
-			$userPIN = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-
+			while (true) {
+				
+				// generate the pin for the user
+				$userPIN = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+				
+				// check if this pin, although random, may be used before
+				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
+					$dbSocket->escapeSimple($userPIN)."'";
+				$res = $dbSocket->query($sql);
+	
+				// if it wasn't used then we break out of the loop, otherwise we continue to 
+				// generate pins and check them
+				if ($res->numRows() == 0)
+					break;
+			}
+			
+			
 			$planId = $dbSocket->escapeSimple($planId);
 
 			// grab information about a plan from the table
