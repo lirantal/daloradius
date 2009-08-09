@@ -83,7 +83,7 @@ if (isset($_GET['reportFormat'])) {
 				        $res = $dbSocket->query($sql);
 
 				        while($row = $res->fetchRow()) {
-						$outputContent .= "$row[0],$row[1],$row[2]\n";
+						$outputContent .= "$row[0],$row[1],$row[2],$row[3]\n";
 					}
 
 					$output = $outputHeader . $outputContent;
