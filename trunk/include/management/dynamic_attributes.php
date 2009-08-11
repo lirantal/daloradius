@@ -17,7 +17,7 @@ if(isset($_GET['getVendorsList'])) {
 
         while($row = $res->fetchRow()) {
 		echo "objVendors.options[objVendors.options.length] = 
-			new Option('$row[0]','$row[0]');\n";
+			new Option('".trim($row[0])."','".trim($row[0])."');\n";
 	}
 
 	include '../../library/closedb.php';
@@ -44,7 +44,7 @@ if(isset($_GET['vendorAttributes'])) {
 
         while($row = $res->fetchRow()) {
 		echo "objAttributes.options[objAttributes.options.length] = 
-			new Option('$row[0]','$row[0]');\n";
+			new Option('".trim($row[0])."','".trim($row[0])."');\n";
 	}
 
 	include '../../library/closedb.php';
@@ -78,11 +78,11 @@ if(isset($_GET['getValuesForAttribute'])) {
 
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow();
-	$RecommendedOP = $row[0];
-	$RecommendedTable = $row[1];
-	$RecommendedTooltip = $row[2];
-	$type = $row[3];
-	$RecommendedHelper = $row[4];
+	$RecommendedOP = trim($row[0]);
+	$RecommendedTable = trim($row[1]);
+	$RecommendedTooltip = trim($row[2]);
+	$type = trim($row[3]);
+	$RecommendedHelper = trim($row[4]);
 
 
 
