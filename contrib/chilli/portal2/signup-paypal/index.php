@@ -8,7 +8,7 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ *currency_code
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -264,7 +264,7 @@
                                                 <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
 
                                                 <input type="hidden" name="no_note" value="1">
-                                                <input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+                                                <input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
                                                 <input type="hidden" name="lc" value="US">
 
                                                 <input type="hidden" name="on0" value="Transaction ID" />
