@@ -25,11 +25,10 @@
 echo "
 	<center>
 
-		<h2> daloRADIUS Web Management Server </h2>
-		<h3> version svn-trunk </h3>
-		<h4> <a href=\"mailto:liran.tal@gmail.com\"> Liran Tal </a> </h4>
+		<h2> GPKNet Userportal </h2>
+		<h3> Welcome to the user Portal </h3>
 		<br/><br/><br/>
-		<img src='images/daloradius_logo.jpg' border=0 />
+				
 	</center>
 ";
 
