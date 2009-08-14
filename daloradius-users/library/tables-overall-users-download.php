@@ -38,7 +38,7 @@ function daily($username, $orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' AND acctstoptime>0 group by day ORDER BY $orderBy $orderType;";
+		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' AND acctstoptime>0 AND AcctStartTime>DATE_SUB(curdate(),INTERVAL (DAY(curdate())-1) DAY) AND AcctStartTime< now() group by day ORDER BY $orderBy $orderType;";
 
 
 	$res = $dbSocket->query($sql);
