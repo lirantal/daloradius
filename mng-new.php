@@ -555,7 +555,8 @@
 		<li class='fieldset'>
 		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
 		<input name='username' type='text' id='username' value='' tabindex=100 />
-		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8)" />
+		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8,<?php
+		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" /> 
 
 		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -568,7 +569,8 @@
 		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
 		<input name='password' type='text' id='password' value='' 
 			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101 />
-		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8)" />
+		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8,<?php
+		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
 		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
