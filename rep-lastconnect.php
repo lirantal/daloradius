@@ -25,29 +25,24 @@
 
 	include('library/check_operator_perm.php');
 
+	//setting values for the order by and order type variables
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
 
-        //setting values for the order by and order type variables
-        isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-        isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
-
-        isset($_GET['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
-	if (isset($_GET['radiusreply']))
-		$radiusReply = $_GET['radiusreply'];
+	isset($_GET['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
+	isset($_GET['radiusreply']) ? $radiusReply = $_GET['radiusreply'] : $radiusreply = "";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
-
-
+	
 ?>
 
 <?php
 
     include ("menu-reports.php");
-        	
+
 ?>		
-		
-		
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replastconnect.php']; ?>
