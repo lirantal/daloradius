@@ -48,6 +48,7 @@ $configValues['CONFIG_DB_TBL_DALODICTIONARY'] = 'dictionary';
 $configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
 $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
+$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] = 'billing_merchant';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
 $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
 $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
@@ -70,7 +71,7 @@ $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = '127.0.0.1';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
 $configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
-
+$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
 /*
 // Locations Configuration directives
