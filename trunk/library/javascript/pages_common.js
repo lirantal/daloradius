@@ -468,3 +468,44 @@ function refillSessionTrafficCheckbox(formName,pageDst) {
 
         return false;
 }
+
+
+
+
+
+/***********************************************************************
+ * copyUserBillInfo
+ * copies user contact info to billing contact info input fields
+ * 
+ ***********************************************************************/
+function copyUserBillInfo(obj) {
+
+	if (obj.checked == true) {
+
+		// set contact name
+		document.getElementById('bi_contactperson').value = document.getElementById('firstname').value + " " +
+		document.getElementById('lastname').value;
+		document.getElementById('bi_email').value = document.getElementById('email').value;
+		document.getElementById('bi_company').value = document.getElementById('company').value;
+		document.getElementById('bi_phone').value = document.getElementById('workphone').value;
+		document.getElementById('bi_address').value = document.getElementById('address').value;
+		document.getElementById('bi_city').value = document.getElementById('city').value;
+		document.getElementById('bi_state').value = document.getElementById('state').value;
+		document.getElementById('bi_zip').value = document.getElementById('zip').value;
+		
+	} else {
+
+		document.getElementById('bi_contactperson').value = "";
+		document.getElementById('bi_email').value = "";
+		document.getElementById('bi_company').value = "";
+		document.getElementById('bi_phone').value = "";
+		document.getElementById('bi_address').value = "";
+		document.getElementById('bi_city').value = "";
+		document.getElementById('bi_state').value = "";
+		document.getElementById('bi_zip').value = "";
+		
+	}
+
+
+
+}

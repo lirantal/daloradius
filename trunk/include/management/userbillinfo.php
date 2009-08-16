@@ -22,35 +22,35 @@ echo "
         <br/>
 
 	<label for='contactperson' class='form'>".$l['ContactInfo']['ContactPerson']."</label>
-        <input value='"; if (isset($bi_contactperson)) echo $bi_contactperson; echo "' name='bi_contactperson' tabindex=400 />
+        <input value='"; if (isset($bi_contactperson)) echo $bi_contactperson; echo "' name='bi_contactperson' id='bi_contactperson' tabindex=400 />
 	<br/>
 
 	<label for='company' class='form'>".$l['ContactInfo']['Company']."</label>
-	<input value='"; if (isset($bi_company)) echo $bi_company; echo "' name='bi_company' tabindex=401 />
+	<input value='"; if (isset($bi_company)) echo $bi_company; echo "' name='bi_company' id='bi_company' tabindex=401 />
         <br/>
 	
 	<label for='email' class='form'>".$l['ContactInfo']['Email']."</label>
-        <input value='"; if (isset($bi_email)) echo $bi_email; echo "' name='bi_email' tabindex=402 />
+        <input value='"; if (isset($bi_email)) echo $bi_email; echo "' name='bi_email' id='bi_email' tabindex=402 />
         <br/>
 
 	<label for='phone' class='form'>".$l['ContactInfo']['Phone']."</label>
-	<input value='"; if (isset($bi_phone)) echo $bi_phone; echo "' name='bi_phone' tabindex=403 />
+	<input value='"; if (isset($bi_phone)) echo $bi_phone; echo "' name='bi_phone' id='bi_phone' tabindex=403 />
         <br/>
 
 	<label for='address' class='form'>".$l['ContactInfo']['Address']."</label>
-	<input value='"; if (isset($bi_address)) echo $bi_address; echo "' name='bi_address' tabindex=404 />
+	<input value='"; if (isset($bi_address)) echo $bi_address; echo "' name='bi_address' id='bi_address' tabindex=404 />
         <br/>
 
 	<label for='city' class='form'>".$l['ContactInfo']['City']."</label>
-	<input value='"; if (isset($bi_city)) echo $bi_city; echo "' name='bi_city' tabindex=405 />
+	<input value='"; if (isset($bi_city)) echo $bi_city; echo "' name='bi_city' id='bi_city' tabindex=405 />
         <br/>
 
 	<label for='state' class='form'>".$l['ContactInfo']['State']."</label>
-	<input value='"; if (isset($bi_state)) echo $bi_state; echo "' name='bi_state' tabindex=406 />
+	<input value='"; if (isset($bi_state)) echo $bi_state; echo "' name='bi_state' id='bi_state' tabindex=406 />
         <br/>
 
 	<label for='zip' class='form'>".$l['ContactInfo']['Zip']."</label>
-	<input value='"; if (isset($bi_zip)) echo $bi_zip; echo "' name='bi_zip' tabindex=407 />
+	<input value='"; if (isset($bi_zip)) echo $bi_zip; echo "' name='bi_zip' id='bi_zip' tabindex=407 />
         <br/>
 
 	<label for='PostalInvoice' class='form'>".$l['all']['PostalInvoice']."</label>
