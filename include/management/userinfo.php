@@ -20,17 +20,24 @@ echo "
 	<br/>
 
 	<label for='username' class='form'>".$l['ContactInfo']['FirstName']."</label>
-        <input value='"; if (isset($ui_firstname)) echo $ui_firstname; echo "' name='firstname' tabindex=300 />
+        <input value='"; if (isset($ui_firstname)) echo $ui_firstname; echo "' name='firstname' id='firstname' tabindex=300 />
 	<br/>
 	
 	<label for='lastname' class='form'>".$l['ContactInfo']['LastName']."</label>
-        <input value='"; if (isset($ui_lastname)) echo $ui_lastname; echo "' name='lastname' tabindex=301 />
+        <input value='"; if (isset($ui_lastname)) echo $ui_lastname; echo "' name='lastname' id='lastname' tabindex=301 />
 	<br/>
 
 	<label for='email' class='form'>".$l['ContactInfo']['Email']."</label>
-        <input value='"; if (isset($ui_email)) echo $ui_email; echo "' name='email' tabindex=302 />
+        <input value='"; if (isset($ui_email)) echo $ui_email; echo "' name='email' id='email' tabindex=302 />
         <br/>
 
+		<br/>
+	 
+	<label for='copycontact' class='form'> Copy contact information to billing </label>
+		<input type='checkbox' name='copycontact' id='copycontact' onClick='copyUserBillInfo(this);'/>
+		<br/>
+		<br/>
+		
 	<br/>
 	<h301> Business </h301>
 	<br/>
@@ -40,11 +47,11 @@ echo "
         <br/>
 
 	<label for='company' class='form'>".$l['ContactInfo']['Company']."</label>
-	<input value='"; if (isset($ui_company)) echo $ui_company; echo "' name='company' tabindex=304 />
+	<input value='"; if (isset($ui_company)) echo $ui_company; echo "' name='company' id='company' tabindex=304 />
         <br/>
 
 	<label for='workphone' class='form'>".$l['ContactInfo']['WorkPhone']."</label>
-	<input value='"; if (isset($ui_workphone)) echo $ui_workphone; echo "' name='workphone' tabindex=305 />
+	<input value='"; if (isset($ui_workphone)) echo $ui_workphone; echo "' name='workphone' id='workphone' tabindex=305 />
         <br/>
 
 	<label for='homephone' class='form'>".$l['ContactInfo']['HomePhone']."</label>
@@ -56,19 +63,19 @@ echo "
         <br/>
 
 	<label for='address' class='form'>".$l['ContactInfo']['Address']."</label>
-	<input value='"; if (isset($ui_address)) echo $ui_address; echo "' name='address' tabindex=308 />
+	<input value='"; if (isset($ui_address)) echo $ui_address; echo "' name='address' id='address' tabindex=308 />
         <br/>
 
 	<label for='city' class='form'>".$l['ContactInfo']['City']."</label>
-	<input value='"; if (isset($ui_city)) echo $ui_city; echo "' name='city' tabindex=309 />
+	<input value='"; if (isset($ui_city)) echo $ui_city; echo "' name='city' id='city' tabindex=309 />
         <br/>
 
 	<label for='state' class='form'>".$l['ContactInfo']['State']."</label>
-	<input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' tabindex=310 />
+	<input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' id='state' tabindex=310 />
         <br/>
 
 	<label for='zip' class='form'>".$l['ContactInfo']['Zip']."</label>
-	<input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' tabindex=311 />
+	<input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' id='zip' tabindex=311 />
         <br/>
 
 	<br/>
