@@ -122,7 +122,7 @@
 			" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON (".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac = ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId)".
-		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." ON (".$configValues['CONFIG_DB_TBL_RADNAS'].".shortname = ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADNAS']." ON (".$configValues['CONFIG_DB_TBL_RADNAS'].".nasname = ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress)".
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username = ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".Username)".
