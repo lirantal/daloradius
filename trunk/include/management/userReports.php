@@ -81,8 +81,8 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	 * Global (Max-All-Session) Limit calculations
 	 *********************************************************************************************************/
         $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(RadAcctId) AS 'Logins' ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE UserName='$username'";
+		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE UserName='$username' AND acctstoptime>0";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -105,9 +105,9 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	$nextMonth = date("Y-m-01", mktime(0, 0, 0, date("m")+ 1, date("d"), date("Y")));
 
 	$sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(RadAcctId) AS 'Logins' ".
+		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
 		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE AcctStartTime<'$nextMonth' AND AcctStartTime>='$currMonth' AND UserName='$username'";
+		" WHERE AcctStartTime<'$nextMonth' AND AcctStartTime>='$currMonth' AND UserName='$username' AND acctstoptime>0";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -132,9 +132,9 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	$currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
 	$nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
         $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(RadAcctId) AS 'Logins' ".
+		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
 		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username'";
+		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username' AND acctstoptime>0";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -159,9 +159,9 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	$currDay = date("Y-m-d");
 	$nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
         $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(RadAcctId) AS 'Logins' ".
+		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
 		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username'";
+		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username' AND acctstoptime>0";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -518,7 +518,7 @@ function checkUserOnline($username) {
 	$username = $dbSocket->escapeSimple($username);
 
         $sql = "SELECT Username FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND Username='$username'";
+		" WHERE AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00' AND Username='$username'";
 	$res = $dbSocket->query($sql);
 	if ($numrows = $res->numRows() >= 1) {
 		$userStatus = "User is online";
