@@ -288,17 +288,18 @@
 				case "bi_creditcardtype":
 				case "bi_creditcardexp":
 				case "bi_notes":
-                                case "bi_lead":
-                                case "bi_coupon":
-                                case "bi_ordertaker":
-                                case "bi_billstatus":
-                                case "bi_lastbill":
-                                case "bi_nextbill":
-                                case "bi_postalinvoice":
-                                case "bi_faxinvoice":
-                                case "bi_emailinvoice":
+				case "bi_lead":
+				case "bi_coupon":
+				case "bi_ordertaker":
+				case "bi_billstatus":
+				case "bi_lastbill":
+				case "bi_nextbill":
+				case "bi_postalinvoice":
+				case "bi_faxinvoice":
+				case "bi_emailinvoice":
 				case "changeUserBillInfo":
 				case "changeUserInfo":
+				case "copycontact":
 					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
 								// to skip the loop (continue) without entering it as
 								// we do not want to process this $attribute in the following
