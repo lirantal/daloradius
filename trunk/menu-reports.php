@@ -56,7 +56,7 @@ include_once ("lang/main.php");
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
 								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>
 								<select class="generic" name="radiusreply" tabindex=3>
-									<option value="">Any</option>
+									<option value="Any">Any</option>
 									<option value="Access-Accept">Access-Accept</option>
 									<option value="Access-Reject">Access-Reject</option>
 								</select>

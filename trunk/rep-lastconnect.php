@@ -30,7 +30,7 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
 
 	isset($_GET['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
-	isset($_GET['radiusreply']) ? $radiusReply = $_GET['radiusreply'] : $radiusreply = "";
+	isset($_GET['radiusreply']) ? $radiusReply = $_GET['radiusreply'] : $radiusReply = "Any";
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -61,8 +61,7 @@
 
 	$radiusReply = $dbSocket->escapeSimple($radiusReply);
 	$radiusReplySQL = "";
-	if ($radiusReply)
-		$radiusReplySQL = " AND (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply = '$radiusReply') ";
+	if ($radiusReply <> "Any") $radiusReplySQL = " AND (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply = '$radiusReply') ";
 	
 	if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
 		$tableSetting['postauth']['user'] = 'username';
