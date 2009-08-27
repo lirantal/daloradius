@@ -115,6 +115,8 @@
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".CallingStationId, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime,
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, 
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets AS Upload,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets AS Download,
 			".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name AS hotspot, 
 			".$configValues['CONFIG_DB_TBL_RADNAS'].".shortname AS NASshortname, 
 			".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".Firstname AS Firstname, 
@@ -208,6 +210,11 @@
 			".$l['all']['NasShortname']."
 		</th>
 
+		<th scope='col'>
+			".$l['all']['TotalTraffic']."
+		</th>		
+		
+
 	</tr> </thread>";
 
 	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
@@ -221,6 +228,10 @@
 		$hotspot = $row['hotspot'];
 		$nasshortname = $row['NASshortname'];
 		$name = $row['Firstname'] . " " . $row['Lastname'];
+		
+		$upload = toxbyte($row['Upload']);
+		$download = toxbyte($row['Download']);
+		$traffic = toxbyte($row['Upload']+$row['Download']);
 
 		$totalTime = time2str($row['AcctSessionTime']);
 
@@ -244,6 +255,7 @@
 				<td> IP: $nasip<br/>MAC: $nasmac</td>
 				<td> $hotspot </td>
 				<td> $nasshortname </td>
+				<td> ".$l['all']['Upload'].": $upload <br/> ".$l['all']['Upload'].": $download <br/> ".$l['all']['TotalTraffic'].": <b>$traffic</b> </td>
 		</tr>";
 	}
 
