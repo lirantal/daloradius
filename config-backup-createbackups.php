@@ -43,9 +43,15 @@
 	isset($_POST['operators']) ? $dalooperatorsTable = $_POST['operators'] : $dalooperatorsTable = 'yes';
 	isset($_POST['proxys']) ? $daloproxysTable = $_POST['proxys'] : $daloproxysTable = 'yes';
 	isset($_POST['realms']) ? $dalorealmsTable = $_POST['realms'] : $dalorealmsTable = 'yes';
-	isset($_POST['billingrates']) ? $dalobillingratesTable = $_POST['billingrates'] : $dalobillingratesTable = 'yes';
+	
 	isset($_POST['billingpaypal']) ? $dalobillingpyapalTable = $_POST['billingpaypal'] : $dalobillingpaypalTable = 'yes';
 	isset($_POST['userinfo']) ? $dalouserinfoTable = $_POST['userinfo'] : $dalouserinfoTable = 'yes';
+	
+	isset($_POST['billing_history']) ? $dalobillinghistoryTable = $_POST['billing_history'] : $dalobillinghistoryTable = 'yes';
+	isset($_POST['billing_plans']) ? $dalobillingplansTable = $_POST['billing_plans'] : $dalobillingplansTable = 'yes';
+	isset($_POST['billing_merchant']) ? $dalobillingmerchantTable = $_POST['billing_merchant'] : $dalobillingmerchantTable = 'yes';
+	isset($_POST['billing_rates']) ? $dalobillingratesTable = $_POST['billing_rates'] : $dalobillingratesTable = 'yes';
+	isset($_POST['userbillinfo']) ? $dalouserbillinfoTable = $_POST['userbillinfo'] : $dalouserbillinfoTable = 'yes';
 
 
 	if (isset($_POST['submit'])) {
@@ -106,7 +112,7 @@
 					if ($value == "yes")
 						$table = $configValues['CONFIG_DB_TBL_DALOOPERATOR'];
 					break;
-				case "billingrates":
+				case "billing_rates":
 					if ($value == "yes")
 						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'];
 					break;
@@ -130,6 +136,26 @@
 					if ($value == "yes")
 						$table = $configValues['CONFIG_DB_TBL_DALOPROXYS'];
 					break;
+
+				case "billing_history":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'];
+					break;
+				case "billing_plans":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'];
+					break;
+				case "billing_merchant":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'];
+					break;
+				case "userbillinfo":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'];
+					break;
+
+
+
 			}
 
 			if (isset($table)) {
@@ -423,8 +449,8 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='backup_dalobillingrates' class='form'>billing rates</label> 
-		<select class='form' name="billingrates">
+                <label for='backup_dalobilling_rates' class='form'>billing rates</label> 
+		<select class='form' name="billing_rates">
 			<option value="<?php echo $dalobillingratesTable ?>"><?php echo $dalobillingratesTable ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
@@ -453,6 +479,16 @@
 		</li>
 
                 <li class='fieldset'>
+                <label for='backup_dictionary' class='form'>userbillinfo</label> 
+		<select class='form' name="userbillinfo">
+			<option value="<?php echo $dalouserbillinfoTable ?>"><?php echo $dalouserbillinfoTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+                <li class='fieldset'>
                 <label for='backup_dictionary' class='form'>dictionary</label> 
 		<select class='form' name="dictionary">
 			<option value="<?php echo $dictionaryTable ?>"><?php echo $dictionaryTable ?></option>
@@ -461,6 +497,39 @@
 			<option value="yes">yes</option>
 		</select>
 		</li>
+
+                <li class='fieldset'>
+                <label for='backup_dictionary' class='form'>billing merchant</label> 
+		<select class='form' name="billing_merchant">
+			<option value="<?php echo $dalobillingmerchantTable ?>"><?php echo $dalobillingmerchantTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+                <li class='fieldset'>
+                <label for='backup_dictionary' class='form'>billing plans</label> 
+		<select class='form' name="billing_plans">
+			<option value="<?php echo $dalobillingplansTable ?>"><?php echo $dalobillingplansTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+                <li class='fieldset'>
+                <label for='backup_dictionary' class='form'>billing history</label> 
+		<select class='form' name="billing_history">
+			<option value="<?php echo $dalobillinghistoryTable ?>"><?php echo $dalobillinghistoryTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+
 
                 <li class='fieldset'>
                 <br/>

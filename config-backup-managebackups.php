@@ -40,18 +40,20 @@
 
 		$isError = 0;
 		
-                $filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA']."/backup/";
+		$filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA']."/backup/";
 		$fileName = $filePath.$file;
-
-                if (is_dir($filePath)) {
+		
+		if (is_dir($filePath)) {
+			
 			if (is_readable($fileName)) {
 
-			$fileDownload = file_get_contents($fileName);
+				$fileDownload = file_get_contents($fileName);
 
 		        header("Content-type: txt/html");
 		        header("Content-disposition: csv; filename=".basename($fileName)."; size=" . strlen($fileDownload) );
 		        print $fileDownload;
-			exit;
+				
+				exit;
 
 			} else
 				$isError++;
@@ -62,6 +64,7 @@
 			$failureMsg = "Failed downloading backup file <b>$fileName</b> from web server, please check file availability and permissions";
 			$logAction .= "Failed downloading backup file [$fileName] from web server on page: ";
 		}
+		
 	}
 
 
