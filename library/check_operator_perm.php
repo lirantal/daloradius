@@ -27,7 +27,7 @@
 		$dbSocket->escapeSimple($operator)."'";
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
+	
 	$currFile = basename($_SERVER['SCRIPT_NAME']);
 	$currFile = str_replace("-", "_", $currFile);
 	$currFile = str_replace(".php", "", $currFile);
@@ -42,7 +42,8 @@
 		header('Location: msg-error-permissions.php');
 		exit;
 	}
+	
+	include 'library/closedb.php';
 
-    include 'library/closedb.php';
 
 ?>
