@@ -203,10 +203,7 @@
 		</th>
 
 		<th scope='col'>
-			".$l['all']['HotSpot']."
-		</th>
-
-		<th scope='col'>
+			".$l['all']['HotSpot']." / 
 			".$l['all']['NasShortname']."
 		</th>
 
@@ -253,8 +250,7 @@
 				<td> $start </td>
 				<td> $totalTime </td>
 				<td> IP: $nasip<br/>MAC: $nasmac</td>
-				<td> $hotspot </td>
-				<td> $nasshortname </td>
+				<td> $hotspot $nasshortname </td>
 				<td> ".$l['all']['Upload'].": $upload <br/> ".$l['all']['Download'].": $download <br/> ".$l['all']['TotalTraffic'].": <b>$traffic</b> </td>
 		</tr>";
 	}
