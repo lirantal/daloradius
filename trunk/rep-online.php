@@ -255,7 +255,7 @@
 				<td> IP: $nasip<br/>MAC: $nasmac</td>
 				<td> $hotspot </td>
 				<td> $nasshortname </td>
-				<td> ".$l['all']['Upload'].": $upload <br/> ".$l['all']['Upload'].": $download <br/> ".$l['all']['TotalTraffic'].": <b>$traffic</b> </td>
+				<td> ".$l['all']['Upload'].": $upload <br/> ".$l['all']['Download'].": $download <br/> ".$l['all']['TotalTraffic'].": <b>$traffic</b> </td>
 		</tr>";
 	}
 
