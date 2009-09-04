@@ -150,7 +150,7 @@
 
 					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 						" WHERE Username='$userSessions' AND AcctStartTime='$acctStartTime' ".
-						" AND AcctStopTime='0000-00-00 00:00:00'";
+						" AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime IS NULL)";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
