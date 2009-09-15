@@ -47,6 +47,8 @@ $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
+$l['all']['CSVData'] = "CSV-formatted data";
+
 /* radius related text */
 $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
 
@@ -555,6 +557,7 @@ $l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
 $l['button']['DeleteAccountingRecords'] = "Delete Accounting Records";
 
 $l['button']['ListUsers'] = "List Users";
+$l['button']['ImportUsers'] = "Import Users";
 $l['button']['NewUser'] = "New User";
 $l['button']['NewUserQuick'] = "New User - Quick Add";
 $l['button']['BatchAddUsers'] = "Batch Add Users";
@@ -663,6 +666,8 @@ $l['button']['ProcessQuery'] = "Process Query";
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
+ $l['title']['ImportUsers'] = "Import Users";
+ 
 $l['title']['RateInfo'] = "Rate Information";
 $l['title']['PlanInfo'] = "Plan Information";
 $l['title']['TimeSettings'] = "Time Settings";
@@ -829,6 +834,7 @@ $l['Intro']['mngradattributesedit.php'] = "Edit Vendor's Attributes";
 $l['Intro']['mngradattributessearch.php'] = "Search Attributes";
 $l['Intro']['mngradattributesdel.php'] = "Remove Vendor's Attributes";
 $l['Intro']['mngradattributesimport.php'] = "Import Vendor Dictionary";
+$l['Intro']['mngimportusers.php'] = "Import Users";
 
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
@@ -1031,6 +1037,7 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
+$l['helpPage']['mngimportusers'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
 Please consult with your System Administrator. <br/>";
