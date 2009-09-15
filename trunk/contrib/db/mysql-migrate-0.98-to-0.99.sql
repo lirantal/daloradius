@@ -56,3 +56,6 @@ CREATE TABLE `billing_merchant` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE operators DROP COLUMN bill_paypal_transactions;
+
+ALTER TABLE operators ADD mng_import_users VARCHAR(32) AFTER mng_new_quick;
+UPDATE operators SET mng_import_users='yes' WHERE username='administrator';

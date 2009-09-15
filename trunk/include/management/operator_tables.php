@@ -16,6 +16,7 @@ $arrayPagesAvailable = array(
 	 'mng_edit' => 'Management Core',
 	 'mng_new' => 'Management Core',
 	 'mng_new_quick' => 'Management Core',
+	 'mng_import_users' => 'Management Core',
 	 'mng_list_all' => 'Management Core',
 	 'mng_hs_del' => 'Management HotSpot',
 	 'mng_hs_edit' => 'Management HotSpot',
