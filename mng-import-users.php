@@ -29,6 +29,9 @@
 	$logDebugSQL = "";
 
 	isset($_POST['csvdata']) ? $csvdata = $_POST['csvdata'] : $csvdata = "";
+	isset($_POST['groups']) ? $groups = $_POST['groups'] : $groups = "";
+	isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
+	isset($_POST['userType']) ? $userType = $_POST['userType'] : $userType = "";
 
 	if (isset($_POST['submit'])) {
 
@@ -62,6 +65,13 @@
 
 						$user = $dbSocket->escapeSimple($users[0]);
 						$pass = $dbSocket->escapeSimple($users[1]);
+						$planName = $dbSocket->escapeSimple($planName);
+						$userType = $dbSocket->escapeSimple($userType);
+						
+						if ($userType == "userType") {
+							$passwordType = "Auth-Type";
+							$pass = "Accept";
+						}
 						
 						// insert username/password into radcheck
 						$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK'].
@@ -77,6 +87,34 @@
 								" VALUES (0, '$user', '$currDate', '$currBy')";
 						$res = $dbSocket->query($sql);
 						$logDebugSQL .= $sql . "\n";
+						
+						// associate user with groups (profiles)
+						foreach($groups as $groupName) {
+							
+							if ( (isset($groupName)) && (!empty($groupName)) ) {
+								
+								$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+									" VALUES ('".$dbSocket->escapeSimple($user)."', '".$dbSocket->escapeSimple($groupName)."',0) ";
+								$res = $dbSocket->query($sql);
+								$logDebugSQL .= $sql . "\n";
+								
+							}
+						}
+						
+						
+						// associate user with plans
+						if ( (isset($planName)) && (!empty($planName)) ) {
+							$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+									" (id,planname,username,creationdate,creationby) ".
+									" VALUES (0, '$planName', '$user', '$currDate', '$currBy')";
+							$res = $dbSocket->query($sql);
+							$logDebugSQL .= $sql . "\n";
+						}
+
+
+
+
+
 						
 						$userCount++;
 
@@ -111,6 +149,10 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+
 <?php
 
 	include ("menu-mng-users.php");
@@ -139,16 +181,66 @@
 
 		<ul>
 
-
 		Paste a CSV-formatted data input of users, expected format is: user,password<br/>
 		Note: any CSV fields beyond the first 2 (user and password) are ignored<br/>
 		<br/>
+		
+		
+		<li class='fieldset'>
+		<label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
+		<select class='form' tabindex=102 name='passwordType' >
+			<option value='Cleartext-Password'>Cleartext-Password</option>
+			<option value='User-Password'>User-Password</option>
+			<option value='Crypt-Password'>Crypt-Password</option>
+			<option value='MD5-Password'>MD5-Password</option>
+			<option value='SHA1-Password'>SHA1-Password</option>
+			<option value='CHAP-Password'>CHAP-Password</option>
+		</select>
+		</li>
+		
+		<li class='fieldset'>
+		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
+		<?php   
+			include_once 'include/management/populate_selectbox.php';
+			populate_groups("Select Groups","groups[]");
+		?>
+
+		<a class='tablenovisit' href='#'
+			onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter')+'&elemName=groups[]');">Add</a>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+		<div id='divContainerGroups'>
+		</div>
+
+
+		<li class='fieldset'>
+		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+                <?php
+                       populate_plans("Select Plan","planName","form");
+                ?>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
+		
+		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planNameTooltip'] ?>
+		</div>
+		</li>
+
+		<li class='fieldset'>
+		<label for='userType' class='form'><?php echo $l['all']['UserType'] ?></label>
+		<input type='checkbox' name='userType' value='userType' /> If users are MAC or PIN based authentication, check this box
+		</li>
+
+
+
+
+
+		
 		<li class='fieldset'>
 		<label for='csvdata' class='form'><?php echo $l['all']['CSVData'] ?></label>
 		<textarea class='form_fileimport' name='csvdata' tabindex=101></textarea>
 		</li>
 
-	
+		
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>

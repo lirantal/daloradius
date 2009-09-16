@@ -53,6 +53,8 @@ $l['all']['CSVData'] = "CSV-formatted data";
 $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
 
 
+$l['all']['UserType'] = "User Type";
+
 $l['all']['Compare'] = "Compare";
 $l['all']['Never'] = "Never";
 
@@ -666,7 +668,7 @@ $l['button']['ProcessQuery'] = "Process Query";
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
- $l['title']['ImportUsers'] = "Import Users";
+$l['title']['ImportUsers'] = "Import Users";
  
 $l['title']['RateInfo'] = "Rate Information";
 $l['title']['PlanInfo'] = "Plan Information";
