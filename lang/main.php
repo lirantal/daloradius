@@ -41,6 +41,12 @@
 		case "es_VE":
 			include ("lang/es_VE.php");
 			break;
+		case "ro":
+			include ("lang/ro.php");
+			break;
+		case "pt_br":
+			include ("lang/pt_br.php");
+			break;
 		default:
 			include ("lang/en.php");
 			break;
