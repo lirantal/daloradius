@@ -197,12 +197,9 @@
 		".$l['all']['TotalTime']."</a>
 		</th>
 
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
-		".$l['all']['NASIPAddress']."</a>
-		</th>
 
 		<th scope='col'>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=NASshortname&orderType=$orderTypeNextPage\">
 			".$l['all']['HotSpot']." / 
 			".$l['all']['NasShortname']."
 		</th>
@@ -249,8 +246,7 @@
 				<td> IP: $ip<br/>MAC: $usermac</td>
 				<td> $start </td>
 				<td> $totalTime </td>
-				<td> IP: $nasip<br/>MAC: $nasmac</td>
-				<td> $hotspot / $nasshortname </td>
+				<td> $hotspot $nasshortname </td>
 				<td> ".$l['all']['Upload'].": $upload <br/> ".$l['all']['Download'].": $download <br/> ".$l['all']['TotalTraffic'].": <b>$traffic</b> </td>
 		</tr>";
 	}
