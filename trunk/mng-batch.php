@@ -40,15 +40,15 @@
 		$username_prefix = $_POST['username_prefix'];
 		$number = $_POST['number'];
 		$length_pass = $_POST['length_pass'];
-		$length_user = $_POST['length_user'];
+		(isset($_POST['length_user'])) ? $length_user = $_POST['length_user'] : $length_user = 0;
 		$group = $_POST['group'];
 		$plan = $_POST['plan'];
 		$group_priority = $_POST['group_priority'];
 		
-		$startingIndex = $_POST['startingIndex'];
+		(isset($_POST['startingIndex'])) ? $startingIndex = $_POST['startingIndex'] : $startingIndex = 0;
 		$createBatchUsersType = $_POST['createBatchUsersType'];
-		$createRandomUsers = $_POST['createRandomUsers'];
-		$createIncrementUsers = $_POST['createIncrementUsers'];
+		//$createRandomUsers = $_POST['createRandomUsers'];
+		//$createIncrementUsers = $_POST['createIncrementUsers'];
 
 
 		$currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
@@ -86,8 +86,8 @@
 				$actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
 				$failureMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
 			} else {
+				
 				// insert username/password
-
 				$actionMsgGoodUsernames .= $username;
 				if ($i+1 != $number)
 					$actionMsgGoodUsernames .= ", ";
@@ -96,6 +96,15 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
+
+				// insert user into userinfo table
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+						" (id,username,creationdate,creationby) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($username)."', '$currDate', '$currBy')";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+				
+				
 				// if a group was defined to add the user to in the form let's add it to the database
 				if (isset($group)) {
 
