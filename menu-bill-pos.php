@@ -23,9 +23,18 @@
 	<h3>Point of Sales Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="bill-pos-list.php"><b>&raquo;</b><?php echo $l['button']['ListUsers'] ?></a></li>
+		<li>
+		<a href="javascript:document.billposlist.submit();"><b>&raquo;</b><?php echo $l['button']['ListUsers'] ?></a>
+		<form name="billposlist" action="bill-pos-list.php" method="get" class="sidebar">
+		<br/>
+			<?php   
+				include 'include/management/populate_selectbox.php';
+				populate_plans("Select Plan","planname","generic");
+			?>
+		</form>
+		</li>
 		<li><a href="bill-pos-new.php"><b>&raquo;</b><?php echo $l['button']['NewUser'] ?></a></li>
-		<li><a href="javascript:document.billposedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditUser'] ?><a>
+		<li><a href="javascript:document.billposedit.submit();"><b>&raquo;</b><?php echo $l['button']['EditUser'] ?><a>
 			<form name="billposedit" action="bill-pos-edit.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'

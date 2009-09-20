@@ -30,6 +30,9 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 	
+	isset($_GET['planname']) ? $planname = $_GET['planname'] : $planname = "%";
+
+	
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -81,6 +84,13 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
+	$planname = $dbSocket->escapeSimple($planname);
+
+	$_where = "";
+	if (!empty($planname) && ($planname != "%") )
+		$_where = " AND (".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname LIKE '$planname') ";
+
+	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username), ".$configValues['CONFIG_DB_TBL_RADCHECK'].".id, ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".value, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".
@@ -91,7 +101,8 @@
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ".
 		" WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
-		" AND (Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) ".
+		" AND ((Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) ) ".
+		$_where.
 		" GROUP BY UserName ";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
@@ -110,7 +121,8 @@
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ".
 		" WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
-		" AND (Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) ".
+		" AND ((Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) )".
+		$_where.
 		" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
