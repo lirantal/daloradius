@@ -390,6 +390,10 @@
 
                 <ul>
 
+				<?php
+					include_once('include/management/populate_selectbox.php');
+				?>
+				
                 <div id='UserContainer'>
                 <li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
@@ -422,7 +426,6 @@
 		<li class='fieldset'>
 		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
                 <?php
- 	               include 'include/management/populate_selectbox.php';
                        populate_plans("Select Plan","planName","form");
                 ?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
@@ -437,7 +440,6 @@
                 <li class='fieldset'>
                 <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
                 <?php
-                        include_once 'include/management/populate_selectbox.php';
                         populate_groups("Select Profile","profiles[]");
                 ?>
 

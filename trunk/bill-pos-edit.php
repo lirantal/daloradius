@@ -511,11 +511,11 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billposnew.php'] ?>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billposedit.php'] ?>
 	<h144>+</h144></a></h2>
 	
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billposnew'] ?>
+		<?php echo $l['helpPage']['billposedit'] ?>
 		<br/>
 	</div>
 	<?php
@@ -530,6 +530,10 @@
 
 	<fieldset>
 
+				<?php
+					include_once('include/management/populate_selectbox.php');
+				?>
+				
                 <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
 
                 <ul>
@@ -537,7 +541,7 @@
                 <div id='UserContainer'>
                 <li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-		<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
+				<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
                 <input name='username' type='text' id='username' value='<?php if (isset($username)) echo $username ?>' disabled tabindex=100 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
@@ -566,7 +570,6 @@
 		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
 		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
                 <?php
- 	               include 'include/management/populate_selectbox.php';
                        populate_plans("$bi_planname","planName","form");
                 ?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
@@ -611,8 +614,8 @@
 
 <?php
         include 'library/opendb.php';
-	$groupTerminology = "Profile";
-	$groupTerminologyPriority = "ProfilePriority";
+		$groupTerminology = "Profile";
+		$groupTerminologyPriority = "ProfilePriority";
         include_once('include/management/groups.php');
         include 'library/closedb.php';
 ?>
@@ -629,7 +632,6 @@
                 <li class='fieldset'>
                 <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
                 <?php
-                        include_once 'include/management/populate_selectbox.php';
                         populate_groups("Select Profile","newgroups[]");
                 ?>
 
