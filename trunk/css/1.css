@@ -383,7 +383,7 @@ a.table {
 }
 
 a.toolTip {
-//	color: #000000;
+/*	color: #000000; */
 	color: #0099FF;
 }
 
@@ -541,9 +541,9 @@ input.sidebutton {
 }
 
 input:focus {
-//	background-color:#FFF8C6;
+/*	background-color:#FFF8C6; */
 	background-color:#BCE954;
-//	background-color:#CCFB5D;
+/*	background-color:#CCFB5D; */
 	background-repeat:no-repeat;
 	background-position:right;
 }
@@ -556,7 +556,7 @@ input.button {
 	padding:0px;
 	font:90% Verdana;
 	color:#000000;
-        margin-top: 5px;
+	margin-top: 5px;
 }
 
 
@@ -611,9 +611,9 @@ div.ToolTip {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	float:left;
-//	color:#E8A417;
-	color:#646729;
-//	background-color: #F4F4F4;
+/*	color:#E8A417; */
+	color:#646729; 
+/*	background-color: #F4F4F4; */
 	margin-left:190px;
 }
 
@@ -632,22 +632,22 @@ option {
 
 
 textarea.form {
-        padding:4px;
+	padding:4px;
 	margin:2px;
-        background:#ffffff;
-        color:#000000;
-        font:90% Verdana;
-        width:175px;
+	background:#ffffff;
+	color:#000000;
+	font:90% Verdana;
+	width:175px;
 	height:60px;
 }
 
 textarea.form_fileimport {
-        padding:4px;
+	padding:4px;
 	margin:2px;
-        background:#ffffff;
-        color:#000000;
-        font:90% Verdana;
-        width:575px;
+	background:#ffffff;
+	color:#000000;
+	font:90% Verdana;
+	width:575px;
 	height:400px;
 }
 
@@ -674,7 +674,7 @@ blockquote p {
 table {
 	width: 100%;
 	color: #000000;
-//	color: #617C58;
+/*	color: #617C58; */
 	font: 0.9em/1.6em "Trebuchet MS",Verdana,sans-serif;
 	border-collapse: collapse
 	margin-left: auto;
@@ -684,8 +684,8 @@ table {
 
 table,caption {
 	margin: 0 auto;
-//	border-right: 1px solid #CCC;
-//	border-left: 1px solid #CCC
+/*	border-right: 1px solid #CCC; */
+/*	border-left: 1px solid #CCC; */
 }
 
 caption,th,td {
@@ -718,12 +718,12 @@ thead th {
 thead th.info {
         background-color: #333;
         color: #FFFFFF;
-        text-align: center
+        text-align: center;
 }
 
 tbody th {
 	background-color: #e9f9ac;
-//	padding: 20px 10px
+/*	padding: 20px 10px; */
 }
 
 tbody td {
@@ -740,7 +740,7 @@ tbody a {
 	padding: 1px 2px;
 	color: #000;
 	text-decoration: none;
-//	border-bottom: 1px dotted #000
+/*	border-bottom: 1px dotted #000 */
 }
 
 tbody a:active,tbody a:hover,tbody a:focus,tbody a:visited {
@@ -749,7 +749,7 @@ tbody a:active,tbody a:hover,tbody a:focus,tbody a:visited {
 
 tbody tr:hover {
 	background-color: #FAF8CC;
-	color: #000
+	color: #000;
 }
 
 tbody tr:hover a {
@@ -757,17 +757,17 @@ tbody tr:hover a {
 }
 
 tbody td+td+td+td a {
-//	color: #003366;
-//	color: #FAF8CC;
+/*	color: #003366; */
+/*	color: #FAF8CC; */
 	color: #348017;	
 	font-weight: bold;
 	border-bottom: 0
 }
 
 body td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tbody td+td+td+td a:visited {
-//	color: #000
-//	color: #FAF8CC;
-//	color: #e9f9ac;
+/*	color: #000; */
+/*	color: #FAF8CC; */
+/*	color: #e9f9ac; */
 	color: #348017;
 }
 
@@ -778,37 +778,25 @@ tbody td a[href="http://www.rodcast.com.br/"] {
 	height: 15px;
 	background: transparent url(http://www.rodcast.com.br/csstablegallery/i/logo.gif) no-repeat;
 	text-indent: -999em;
-//	border-bottom: 0
+/*	border-bottom: 0; */
 }
 
 tbody a:visited:after {
 	font-family: Verdana,sans-serif;
-	content: "\00A0\221A"
+/*	content: "\00A0\221A" */
 }
 
 tbody a.novisit {
-//        border-bottom: 1px dotted #fff
+/*  border-bottom: 1px dotted #fff */
 	border: none;
 }
 
 tbody a.tablenovisit {
-//	color: blue;
+/*	color: blue; */
 	color: #348017;
-//	color: #7E2217;
-//        border-bottom: 1px dotted #fff;
+/*	color: #7E2217; */
+/*  border-bottom: 1px dotted #fff; */
 }
-
-tbody a.tablenovisit:visited:after {
-        font-family: Verdana,sans-serif;
-        content: "\000"
-}
-
-tbody a.novisit:visited:after {
-        font-family: Verdana,sans-serif;
-        content: "\000"
-}
-
-
 
 /* the color red used on acct-active.php to highlight overdue accounts */
 h100 {
@@ -823,7 +811,7 @@ h109 {
 h144 {
 	font-weight: bold;
 	font:35% Verdana;
-        color:#FF0000;
+	color:#FF0000;
 }
 
 /* used in language files to highlight sections */
@@ -833,17 +821,17 @@ h200 {
 
 /* header used in fieldset */
 h301 {
-        font:110% Arial;
-        font-weight:bold;
-        color:#333;
+	font:110% Arial;
+	font-weight:bold;
+	color:#333;
 }
 
 /* header used in fieldset */
 h302 {
 	float:right;
-        font:85% Arial;
+	font:85% Arial;
 	text-decoration:underline;
-        color:#333;
+	color:#333;
 }
 
 
@@ -871,7 +859,8 @@ h302 {
     width: 35%;
     background-color:#FFFFFF;
     text-align: right;
-    font-weight:    vertical-align: top;
+    /* font-weight */ 
+	vertical-align: top;
 }
 
 .sleft { float: left; }
