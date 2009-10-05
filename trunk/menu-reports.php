@@ -82,12 +82,12 @@ include_once ("lang/main.php");
 			<input name="startdate" type="text" id="startdate" onClick='javascript:__displayTooltip();'
                      tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
 			value="<?php if (isset($startdate)) echo $startdate;
-			else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , 1, date("Y"))); ?>">
+			else echo date("Y-m-01"); ?>">
 			<h4>End Date</h4>
 			<input name="enddate" type="text" id="enddate" onClick='javascript:__displayTooltip();'
                      tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
 			value="<?php if (isset($enddate)) echo $enddate;
-			else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>">
+			else echo date("Y-m-t"); ?>">
 			<h4>Report By</h4>
 
 							<select class="generic" name="orderBy" type="text" tabindex=4>
