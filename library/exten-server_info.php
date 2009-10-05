@@ -93,6 +93,44 @@ function get_datetime() {
 }
 
 
+
+// Get System Load Average
+// @return array System Load Average
+function get_system_load() {
+	$file_name = "/proc/loadavg";
+	$result = "";
+	$output = "";
+	
+	// get the /proc/loadavg information
+	if ($fopen_file = fopen($file_name, 'r')) {
+		$result = trim(fgets($fopen_file, 256));
+		fclose($fopen_file);
+	} else {
+		$result = "(none)";
+	}
+	
+	$loadavg = explode(" ", $result);
+	$output .= $loadavg[0] . " " . $loadavg[1] . " " . $loadavg[2] . "<br/>";
+	
+
+	// get information the 'top' program
+	$file_name = "top -b -n1 | grep \"Tasks:\" -A1";
+	$result = "";
+	
+	if ($popen_file = popen($file_name, 'r')) {
+		$result = trim(fread($popen_file, 2048));
+		pclose($popen_file);
+	} else {
+		$result = "(none)";
+	}
+	
+	$result = str_replace("\n", "<br/>", $result);
+	$output .= $result;
+	
+	return $output;
+}
+		
+		
 // Get Memory System MemTotal|MemFree
 // @return array Memory System MemTotal|MemFree
 function get_memory() {
@@ -213,6 +251,10 @@ function get_mask_addr($ifname) {
   <tr>
     <td class='summaryKey'> Uptime </td>
     <td class='summaryValue'><span class='sleft'><?php echo uptime(); ?></span> </td>
+  </tr>
+  <tr>
+    <td class='summaryKey'> System Load </td>
+    <td class='summaryValue'><span class='sleft'><?php echo get_system_load(); ?></span> </td>
   </tr>
   <tr>
     <td class='summaryKey'> Hostname </td>
