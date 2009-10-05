@@ -53,7 +53,7 @@
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
 				value="<?php if (isset($accounting_plan_startdate)) echo $accounting_plan_startdate;
-			else echo date("Y-m-d"); ?>">
+			else echo date("Y-m-01"); ?>">
 			
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
@@ -64,7 +64,7 @@
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
 				value="<?php if (isset($accounting_plan_enddate)){ echo $accounting_plan_enddate;}
-				else { echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, date("Y")));} ?>">
+				else { echo date("Y-m-t");} ?>">
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
 			<div id="chooserSpan" class="dateChooser select-free" 

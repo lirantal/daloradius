@@ -45,7 +45,7 @@
 			<form name="acctdate" action="acct-date.php" method="get" class="sidebar">
 			<input name="startdate" type="text" id="startdate" 
 				value="<?php if (isset($accounting_date_startdate)) echo $accounting_date_startdate;
-			else echo date("Y-m-d"); ?>">
+			else echo date("Y-m-01"); ?>">
 			
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
@@ -54,8 +54,7 @@
 
 			<input name="enddate" type="text" id="enddate" 
 				value="<?php if (isset($accounting_date_enddate)) echo $accounting_date_enddate;
-				else echo date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, 
-				date("Y"))); ?>">
+				else echo date("Y-m-t"); ?>">
 				
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
