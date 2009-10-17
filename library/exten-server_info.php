@@ -22,7 +22,7 @@
  *
  *********************************************************************************************************
  */
-
+	include_once('include/management/pages_common.php');
 
 // Display uptime system
 // @return string Return uptime system
@@ -153,6 +153,11 @@ function get_memory() {
 }
 
 
+//Get FreeDiskSpace
+function get_hdd_freespace() {
+$df = disk_free_space("/");
+return $df;
+}
 
 
 // Convert value to MB
@@ -294,6 +299,20 @@ function get_mask_addr($ifname) {
   </tr>
 </table>
 
+
+<?php
+	echo "<h3>Harddrive Information</h3>";
+	$hddfreespace = get_hdd_freespace();
+?>
+
+
+<table class='summarySection'>
+  <tr>
+    <td class='summaryKey'> Free Drive Space </td>
+    <td class='summaryValue'><span class='sleft'><?php echo toxbyte ($hddfreespace); ?></span> </td>
+  </tr>
+
+</table>
 
 <?php
 	echo "<h3>Network Interfaces</h3>";
