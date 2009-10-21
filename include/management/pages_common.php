@@ -20,7 +20,7 @@ function createPassword($length, $chars) {
     $pass = '' ;
 
     while ($i <= ($length - 1)) {
-        $num = rand() % 33;
+        $num = rand() % (strlen($chars));
         $tmp = substr($chars, $num, 1);
         $pass = $pass . $tmp;
         $i++;
