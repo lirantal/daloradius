@@ -182,7 +182,7 @@
 		</th>
 
         </tr> </thread>";
-
+		
         $i = 0;
         while ($i != $count) {
 
@@ -193,7 +193,15 @@
 
                 echo "<tr>
                         <td> $array_users[$i] </td>
-                        <td> $array_pass[$i] </td>
+					";
+					
+				if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
+					echo "<td>[Password is hidden]</td>";
+				} else {
+					echo "<td>$array_pass[$i]</td>";
+				}
+				
+				echo "
                         <td> $array_starttime[$i] </td>
                         <td> $reply </td>
                 </tr>";
