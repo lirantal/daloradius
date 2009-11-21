@@ -120,7 +120,7 @@
 	";
 
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, "&username=$username");
 
 	echo " </th></tr>
 			</thead>";
@@ -186,7 +186,7 @@
 				<th colspan='10' align='left'>
 	";
 	
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType, "&username=$username");
 	
 	echo "
 			</th>
