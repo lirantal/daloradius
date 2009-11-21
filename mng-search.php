@@ -100,7 +100,7 @@
 	$maxPage = ceil($numrows/$rowsPerPage);
 	/* END */
 
-	echo "<form name='searchusers' method='post' action='' >";
+	echo "<form name='searchusers' method='get' action='mng-del.php' >";
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
@@ -196,6 +196,7 @@
 
 
 	echo "</table>";
+	echo "</form>";
 
 	include 'library/closedb.php';
 
