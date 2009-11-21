@@ -58,6 +58,13 @@
 
 				include 'library/opendb.php';
 
+				if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
+					$tableSetting['postauth']['user'] = 'username';
+					$tableSetting['postauth']['date'] = 'authdate';
+				} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
+					$tableSetting['postauth']['user'] = 'user';
+					$tableSetting['postauth']['date'] = 'date';
+				}
 
 				// delete all attributes associated with a username
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
@@ -80,7 +87,8 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." WHERE ".
+					$tableSetting['postauth']['user']."='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
