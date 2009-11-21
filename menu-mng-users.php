@@ -36,11 +36,11 @@
 		</li>
 		<li><a href="mng-batch.php"><b>&raquo;</b>
 			<img src='images/icons/userNew.gif' border='0'>
-			<?php echo $l['button']['BatchAddUsers'] ?><a>
+			<?php echo $l['button']['BatchAddUsers'] ?></a>
 		</li>
 		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>
 			<img src='images/icons/userEdit.gif' border='0'>
-			<?php echo $l['button']['EditUser'] ?><a>
+			<?php echo $l['button']['EditUser'] ?></a>
 			<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameEdit" autocomplete="off"
 				onClick='javascript:__displayTooltip();' 
@@ -48,7 +48,8 @@
 				value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
 			</form></li>
 		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>
-			<img src='images/icons/userSearch.gif' border='0'><?php echo $l['button']['SearchUsers'] ?><a>
+			<img src='images/icons/userSearch.gif' border='0'>
+			<?php echo $l['button']['SearchUsers'] ?></a>
 			<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameSearch" autocomplete="off"
 				onClick='javascript:__displayTooltip();' 
@@ -57,7 +58,10 @@
 			</form></li>
 		
 		<li><a href="mng-del.php"><b>&raquo;</b>
-			<img src='images/icons/userRemove.gif' border='0'><?php echo $l['button']['RemoveUsers'] ?></a></li>
+			<img src='images/icons/userRemove.gif' border='0'>
+			<?php echo $l['button']['RemoveUsers'] ?>
+			</a>
+		</li>
 		
 	</ul>
 
@@ -65,9 +69,8 @@
 	<h3>Extended Capabilities</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-import-users.php">
+		<li><a href="mng-import-users.php"><b>&raquo;</b>
 			<img src='images/icons/userNew.gif' border='0'>
-			&nbsp;<b>&raquo;</b>
 			<?php echo $l['button']['ImportUsers'] ?></a>
 		</li>
 		
