@@ -91,6 +91,9 @@
 
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
 
+//Fix up errors with droping the Plan name
+if ($planName== "")
+	$planName = $oldplanName;
 
 
 		function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
@@ -338,6 +341,7 @@
 					case "planName":
 					case "oldplanName":
 					case "groups_priority":
+					case "copycontact";
 					case "firstname":
 					case "lastname":
 					case "email":
@@ -727,7 +731,7 @@
 		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
                 <?php
  	               include 'include/management/populate_selectbox.php';
-                       populate_plans($bi_planname,"planName","form","",$bi_planname);
+                       populate_plans($bi_planname,"planName","form");
                 ?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
 		
