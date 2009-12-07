@@ -46,6 +46,7 @@
         isset($_POST['planSetupCost']) ? $planSetupCost = $_POST['planSetupCost'] : $planSetupCost = "";
         isset($_POST['planTax']) ? $planTax = $_POST['planTax'] : $planTax = "";
         isset($_POST['planCurrency']) ? $planCurrency = $_POST['planCurrency'] : $planCurrency = "";
+        isset($_POST['planActive']) ? $planActive = $_POST['planActive'] : $planActive = "";
         isset($_POST['planGroup']) ? $planGroup = $_POST['planGroup'] : $planGroup = "";
 
 	$edit_planname = $planName; //feed the sidebar variables	
@@ -79,6 +80,7 @@
 			" planSetupCost='".$dbSocket->escapeSimple($planSetupCost)."', ".
 			" planTax='".$dbSocket->escapeSimple($planTax)."', ".
 			" planCurrency='".$dbSocket->escapeSimple($planCurrency)."', ".
+			" planActive='".$dbSocket->escapeSimple($planActive)."', ".
 			" planGroup='".$dbSocket->escapeSimple($planGroup)."', ".
 			" updatedate='$currDate', updateby='$currBy' ".
 			" WHERE planName='".$dbSocket->escapeSimple($planNameOld)."'";
@@ -121,6 +123,7 @@
 	$planSetupCost = $row['planSetupCost'];
 	$planTax = $row['planTax'];
 	$planCurrency = $row['planCurrency'];
+	$planActive = $row['planActive'];
 	$planGroup = $row['planGroup'];
 	$creationdate = $row['creationdate'];
 	$creationby = $row['creationby'];
@@ -326,10 +329,29 @@
 
 
                 <li class='fieldset'>
+                <label for='planActive' class='form'><?php echo $l['all']['PlanActive'] ?></label>
+                <select class='form' tabindex=103 name='planActive' >
+                        <option value='<?php echo $planActive ?>'><?php echo $planActive ?></option>
+                        <option value='yes'>Yes</option>
+                        <option value='no'>No</option>
+                </select>
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planActiveTooltip')" />
+
+                <div id='planCurrencyTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['planActiveTooltip'] ?>
+                </div>
+                </li>
+
+
+
+
+
+                <li class='fieldset'>
                 <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
                 <?php
                         include_once 'include/management/populate_selectbox.php';
-                        populate_groups($planGroup,"planGroup", "form","",$planGroup);
+                        populate_groups($planGroup,"planGroup");
                 ?>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planGroupTooltip')" />
 
