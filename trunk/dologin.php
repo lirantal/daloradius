@@ -48,24 +48,28 @@ $_SESSION['location_name'] = $location_name;					// since the whole point is to 
 
 include 'library/opendb.php';
 
-$operator_user = $_POST['operator_user'];
-$operator_pass = $_POST['operator_pass'];
+$operator_user = $dbSocket->escapeSimple($_POST['operator_user']);
+$operator_pass = $dbSocket->escapeSimple($_POST['operator_pass']);
 
 // check if the user id and password combination exist in database
-$sql = "SELECT username FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username = '".
-		$dbSocket->escapeSimple($operator_user)."' AND password = '".$dbSocket->escapeSimple($operator_pass)."'";
+$sql = "SELECT id, username FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." WHERE username = '".
+		$operator_user."' AND password = '".$operator_pass."'";
 $res = $dbSocket->query($sql);
 
 if ($res->numRows() == 1) {
 	// the user id and password match,
 	// set the session
 
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+	$operator_id = $row['id'];
+	
 	$_SESSION['daloradius_logged_in'] = true;
 	$_SESSION['operator_user'] = $operator_user;
+	$_SESSION['operator_id'] = $operator_id;
 
-	// lets update the lastlogint time for this operator
+	// lets update the lastlogin time for this operator
 	$date = date("Y-m-d H:i:s");
-	$sql = "UPDATE operators SET lastlogin='$date' WHERE username='$operator_user'";
+	$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." SET lastlogin='$date' WHERE username='$operator_user'";
 	$res = $dbSocket->query($sql);
 
 	// after login we move to the main page
