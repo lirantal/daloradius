@@ -125,7 +125,6 @@
 							<th colspan='10' align='left'> 
 				Select:
 				<a class=\"table\" href=\"javascript:SetChecked(1,'username[]','listallusers')\">All</a> 
-				
 				<a class=\"table\" href=\"javascript:SetChecked(0,'username[]','listallusers')\">None</a>
 			<br/>
 				<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
@@ -176,15 +175,10 @@
 
 	while($row = $res->fetchRow()) {
 
-
-
-
-
 		printqn("
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
 			<td> 
-");
-
+		");
 
 
 		if ( ($row[1] == "Reject") && ($row[4] == "Auth-Type") )
@@ -193,8 +187,8 @@
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 
 
-printqn("
-<a class='tablenovisit' href='javascript:return;'
+		printqn("
+				<a class='tablenovisit' href='javascript:return;'
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
 					javascript:__displayTooltip();'
                                 tooltipText='
@@ -208,7 +202,7 @@ printqn("
                                         <br/>'
 				>$row[0]</a>
 			</td>
-			");
+		");
 
 		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 			echo "<td>[Password is hidden]</td>";
