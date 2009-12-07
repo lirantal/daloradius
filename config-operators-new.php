@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
+ *
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
@@ -22,6 +22,7 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+	$operator_id = $_SESSION['operator_id'];
 
 	include('library/check_operator_perm.php');
 
@@ -29,14 +30,28 @@
 	$logDebugSQL = "";
 
 	if (isset($_POST['submit'])) {
-		(isset($_REQUEST['operator_username'])) ? $operator_username = $_REQUEST['operator_username'] : $operator_username = "";
-		(isset($_REQUEST['operator_password'])) ? $operator_password = $_REQUEST['operator_password'] : $operator_password = "";
+		(isset($_POST['operator_username'])) ? $operator_username = $_POST['operator_username'] : $operator_username = "";
+		(isset($_POST['operator_password'])) ? $operator_password = $_POST['operator_password'] : $operator_password = "";
+		
+		(isset($_POST['firstname'])) ? $firstname = $_POST['firstname'] : $firstname = "";
+		(isset($_POST['lastname'])) ? $lastname = $_POST['lastname'] : $lastname = "";
+		(isset($_POST['title'])) ? $title = $_POST['title'] : $title = "";
+		(isset($_POST['department'])) ? $department = $_POST['department'] : $department = "";
+		(isset($_POST['company'])) ? $company = $_POST['company'] : $company = "";
+		(isset($_POST['phone1'])) ? $phone1 = $_POST['phone1'] : $phone1 = "";
+		(isset($_POST['phone2'])) ? $phone2 = $_POST['phone2'] : $phone2 = "";
+		(isset($_POST['email1'])) ? $email1 = $_POST['email1'] : $email1 = "";
+		(isset($_POST['email2'])) ? $email2 = $_POST['email2'] : $email2 = "";
+		(isset($_POST['messenger1'])) ? $messenger1 = $_POST['messenger1'] : $messenger1 = "";
+		(isset($_POST['messenger2'])) ? $messenger2 = $_POST['messenger2'] : $messenger2 = "";
+		(isset($_POST['notes'])) ? $notes = $_POST['notes'] : $notes = "";
 
-	include 'library/opendb.php';
+		include 'library/opendb.php';
 
 		if ( (trim($operator_username) != "") && (trim($operator_password) != "") ) {
 
-			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." WHERE username='$operator_username'";
+			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." WHERE username='".
+					$dbSocket->escapeSimple($operator_username)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 			
@@ -47,51 +62,77 @@
 				$currBy = $_SESSION['operator_user'];
 
 				// insert username and password of operator into the database
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOOPERATOR'].
-					" (id, username, password) VALUES (0, '$operator_username', '$operator_password')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOOPERATORS'].
+					" (id, username, password, firstname, lastname, title, department, company, ".
+					" phone1, phone2, email1, email2, messenger1, messenger2, notes, ".
+					" creationdate, creationby, updatedate, updateby) VALUES (0, ".
+					"'".$dbSocket->escapeSimple($operator_username)."', ".
+					"'".$dbSocket->escapeSimple($operator_password)."', ".
+					"'".$dbSocket->escapeSimple($firstname)."', ".
+					"'".$dbSocket->escapeSimple($lastname)."', ".
+					"'".$dbSocket->escapeSimple($title)."', ".
+					"'".$dbSocket->escapeSimple($department)."', ".
+					"'".$dbSocket->escapeSimple($company)."', ".
+					"'".$dbSocket->escapeSimple($phone1)."', ".
+					"'".$dbSocket->escapeSimple($phone2)."', ".
+					"'".$dbSocket->escapeSimple($email1)."', ".
+					"'".$dbSocket->escapeSimple($email2)."', ".
+					"'".$dbSocket->escapeSimple($messenger1)."', ".
+					"'".$dbSocket->escapeSimple($messenger2)."', ".
+					"'".$dbSocket->escapeSimple($notes)."', ".
+					" '$currDate', '$currBy', '$currDate', '$currBy' ".
+					" )";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-			
-				// set creation date for this operator
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET ".
-					" creationdate='$currDate', creationby='$currBy' ".
-					" WHERE username='$operator_username' ";
+
+				
+				// lets make sure we've inserted the new operator successfully and grab his operator_id
+				$sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." WHERE username='".
+						$dbSocket->escapeSimple($operator_username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
+				
+				if ($res->numRows() == 1) {
+					
+					$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+					$new_operator_id = $row['id'];
 
-				// insert operator contact info to the database
-				foreach ($_POST as $field => $value ) { 
-					if ( ($field == "operator_username") || ($field == "operator_password") )
-						continue; // we skip these variables as we have already added the user to the database
+					// insert operators acl for this operator
+					foreach ($_POST as $field => $value ) {
+						
+						if ( preg_match('/^ACL_/', $field) ) {
+							$access = $value;
+							$file = substr($field, 4);
+							
+							$sql = "INSERT INTO  ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'].
+								" ( operator_id, file, access ) VALUES ".
+								" ( '$new_operator_id', '$file', '$access') ";
+							$res = $dbSocket->query($sql);
+							$logDebugSQL .= $sql . "\n";
+						}
+	
+					} // foreach
+				
+				} //if numrows()
+				
 
-					if ($field == "submit")
-						continue; // we skip these variables as it is of no important for us
-			
-					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." SET ".
-						" $field='$value' ".
-						" WHERE username='$operator_username' ";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-
-				} // foreach
-
-                                $successMsg = "Added to database new operator user: <b> $operator_username </b>";
-                                $logAction .= "Successfully added new operator user [$operator_username] on page: ";
+				$successMsg = "Added to database new operator user: <b> $operator_username </b>";
+				$logAction .= "Successfully added new operator user [$operator_username] on page: ";
 
 			} else {
 				// if statement returns false which means there is at least one operator
 				// in the database with the same username
 
-	                        $failureMsg = "operator user already exist in database: <b> $operator_username </b>";
-	                        $logAction .= "Failed adding new operator user already existing in database [$operator_username] on page: ";
+				$failureMsg = "operator user already exist in database: <b> $operator_username </b>";
+				$logAction .= "Failed adding new operator user already existing in database [$operator_username] on page: ";
 			}
 			
 		} else {
 			// if statement returns false which means that the user has left an empty field for
 			// either the username or password, or both
 
-						$failureMsg = "username or password are empty";
-                        $logAction .= "Failed adding (possible empty user/pass) new operator user [$operator_username] on page: ";
+			$failureMsg = "username or password are empty";
+			$logAction .= "Failed adding (possible empty user/pass) new operator user [$operator_username] on page: ";
 		}
 
 
@@ -185,17 +226,22 @@
 	include_once('include/management/operatorinfo.php');
 ?>
 
-	</div>
-
-     <div class="tabbertab" title="ACL Settings">
-
-
+	 </div>
+	 <div class="tabbertab" title="ACL Settings">
+	 <fieldset>
 <?php
-        include_once('include/management/operator_tables.php');
-        drawPagesPermissions($arrayPagesAvailable);
+        include_once('include/management/operator_acls.php');
+        drawOperatorACLs(0);
 ?>
-
+	<br/>
+	
+	<br/><br/>
+	<hr><br/>
+	
+	<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+	</fieldset>
 	</div>
+	
 
 </div>	
 				</form>

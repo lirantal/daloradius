@@ -22,6 +22,7 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+	$operator_id = $_SESSION['operator_id'];
 
 	include('library/check_operator_perm.php');
 
@@ -32,27 +33,46 @@
 
 	if ($operator_username != "") {
 
-                if (!is_array($operator_username))
-                        $operator_username = array($operator_username, NULL);
-                $allOperators = "";
+		if (!is_array($operator_username))
+				$operator_username = array($operator_username);
+		
+		$allOperators = "";
 
+		
 		include 'library/opendb.php';
 
-                foreach ($operator_username as $variable=>$value) {
-                        if (trim($value) != "") {
+		foreach ($operator_username as $variable=>$value) {
+			if (trim($value) != "") {
+				
+				$username = $dbSocket->escapeSimple($value);
+				$allOperators .= $username . ", ";
 
-                                $username = $value;
-                                $allOperators .= $username . ", ";
-
-				// delete operator from database
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." where Username='$username'";
+				$sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." WHERE username='$username'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
+				
+				if ($res->numRows() == 1) {
+					
+					$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+					$new_operator_id = $row['id'];
+
+					// delete operator from database
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." where Username='$username'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 	
-				$successMsg = "Deleted operator(s): <b> $allOperators";
-				$logAction .= "Successfully deleted operator(s) [$allOperators] on page: ";
+					// delete all operators' acl entries
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL']." where operator_id='$new_operator_id'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+					
+					$successMsg = "Deleted operator(s): <b> $allOperators </b>";
+					$logAction .= "Successfully deleted operator(s) [$allOperators] on page: ";
+					
+				}
 	
 			}  else { 
+				
 				$failureMsg = "no operator username was entered, please specify an operator username to remove from database";		
 				$logAction .= "Failed deleting operator username [$allOperators] on page: ";
 			}
@@ -107,7 +127,7 @@
                 <br/>
 
                 <label for='username' class='form'>Operator Username</label>
-                <input name='username' type='text' id='username'
+                <input name='operator_username' type='text' id='username'
                         value='<?php if (isset($username)) echo $username ?>' tabindex=100 />
                 <br/>
 

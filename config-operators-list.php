@@ -73,7 +73,7 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT id, username, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR'];
+	$sql = "SELECT id, username, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS'];
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 	
@@ -84,7 +84,8 @@
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
 	
-	$sql = "SELECT id, username, password, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATOR']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+	$sql = "SELECT id, username, password, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS'].
+			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
