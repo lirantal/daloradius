@@ -32,7 +32,7 @@ function drawOperatorACLs($operator_id = "") {
 		";
 	
 	
-	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'].".file, ".
+	$sql = "SELECT DISTINCT(".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'].".file), ".
 			$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'].".category, ".
 			$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'].".section, ".
 			$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'].".access ".
