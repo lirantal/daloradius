@@ -98,6 +98,11 @@ $l['all']['DefaultFallback'] = "Default Fallback";
 
 $l['all']['FramedIPAddress'] = "Framed-IP-Address";
 $l['all']['SimultaneousUse'] = "Simultaneous-Use";
+$l['all']['HgID'] = "HG ID";
+$l['all']['Hg'] = "HG ";
+$l['all']['HgIPHost'] = "HG IP/Host";
+$l['all']['HgGroupName'] = "HG GroupName";
+$l['all']['HgPortId'] = "HG Port Id";
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
 $l['all']['NasIPHost'] = "NAS IP/Host";
@@ -244,9 +249,12 @@ $l['all']['radgroupreply'] = "radgroupreply";
 $l['all']['usergroup'] = "usergroup";
 $l['all']['radacct'] = "radacct";
 $l['all']['operators'] = "operators";
+$l['all']['operators_acl'] = "operators_acl";
+$l['all']['operators_acl_files'] = "operators_acl_files";
 $l['all']['billingrates'] = "billing rates";
 $l['all']['hotspots'] = "hotspots";
 $l['all']['nas'] = "nas";
+$l['all']['hunt'] = "radhuntgroup";
 $l['all']['radpostauth'] = "radpostauth";
 $l['all']['radippool'] = "radippool";
 $l['all']['userinfo'] = "userinfo";
@@ -451,7 +459,10 @@ $l['Tooltip']['UserEdit'] = "Edit User";
 $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
 $l['Tooltip']['EditNAS'] = "Edit NAS";
 $l['Tooltip']['RemoveNAS'] = "Remove NAS";
-
+$l['Tooltip']['EditHG'] = "Edit HuntGroup";
+$l['Tooltip']['RemoveHG'] = "Remove HuntGroup";
+$l['Tooltip']['hgNasIpAddress'] = "Type the Host/Ip address";
+$l['Tooltip']['hgNasPortId'] = "Type the Nas Port Id";
 $l['Tooltip']['EditUserGroup'] = "Edit User Group";
 $l['Tooltip']['ListUserGroups'] = "List User Groups";
 
@@ -580,7 +591,10 @@ $l['button']['ListNAS'] = "List NAS";
 $l['button']['NewNAS'] = "New NAS";
 $l['button']['EditNAS'] = "Edit NAS";
 $l['button']['RemoveNAS'] = "Remove NAS";
-
+$l['button']['ListHG'] = "List HuntGroup";
+$l['button']['NewHG'] = "New HuntGroup";
+$l['button']['EditHG'] = "Edit HuntGroup";
+$l['button']['RemoveHG'] = "Remove HuntGroup";
 $l['button']['ListUserGroup'] = "List User-Group Mappings";
 $l['button']['ListUsersGroup'] = "List  User's Group Mappings";
 $l['button']['NewUserGroup'] = "New User-Group Mappings";
@@ -704,7 +718,7 @@ $l['title']['GroupAttributes'] = "Group Attributes";
 
 $l['title']['NASInfo'] = "NAS Info";
 $l['title']['NASAdvanced'] = "NAS Advanced";
-
+$l['title']['HGInfo'] = "HG Info";
 $l['title']['UserInfo'] = "User Info";
 $l['title']['BillingInfo'] = "Billing Info";
 
@@ -943,6 +957,12 @@ $l['Intro']['mngradnaslist.php'] = "NAS Listing in Database";
 $l['Intro']['mngradnasedit.php'] = "Edit NAS Record";
 $l['Intro']['mngradnasdel.php'] = "Remove NAS Record";
 
+$l['Intro']['mngradhunt.php'] = "HuntGroup Configuration";
+$l['Intro']['mngradhuntnew.php'] = "New HuntGroup Record";
+$l['Intro']['mngradhuntlist.php'] = "HuntGroup Listing in Database";
+$l['Intro']['mngradhuntedit.php'] = "Edit HuntGroup Record";
+$l['Intro']['mngradhuntdel.php'] = "Remove HuntGroup Record";
+
 $l['Intro']['mngradprofiles.php'] = "Profiles Configuration";
 $l['Intro']['mngradprofilesedit.php'] = "Edit Profiles";
 $l['Intro']['mngradprofilesduplicate.php'] = "Duplicate Profiles";
@@ -1142,7 +1162,24 @@ $l['helpPage']['mngradnasnew'] = "";
 $l['helpPage']['mngradnaslist'] = "";
 $l['helpPage']['mngradnasedit'] = "";
 
+$l['helpPage']['mngradhunt'] = "Before starting work with HuntGroup, please read <a href='http://wiki.freeradius.org/SQL_Huntgroup_HOWTO' target='_blank'>http://wiki.freeradius.org/SQL_Huntgroup_HOWTO</a>.
+<br/>
+In particular:
+...
+<i>Locate the authorize section in your radiusd.conf or sites-enabled/defaut configuration file and edit it. At the top of the authorize section after the preprocess module insert these lines:</i>
+<br/>
+<pre>
+update request {
+    Huntgroup-Name := \"%{sql:select groupname from radhuntgroup where nasipaddress=\\\"%{NAS-IP-Address}\\\"}\"
+}
+</pre>
+<i> What this does is perform a lookup in the radhuntgroup table using the ip-address as a key to return the huntgroup name. It then adds an attribute/value pair to the request where the name of the attribute is Huntgroup-Name and it's value is whatever was returned from the SQL query. If the query did not find anything then the value is the empty string. </i>";
 
+
++$l['helpPage']['mngradhuntdel'] = "To remove a huntgroup entry from the database you must provide the ip/host and port id of the huntgroup";
++$l['helpPage']['mngradhuntnew'] = "";
++$l['helpPage']['mngradhuntlist'] = "";
++$l['helpPage']['mngradhuntedit'] = "";
 
 $l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
 $l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
