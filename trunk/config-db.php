@@ -69,7 +69,13 @@
 			$configValues['CONFIG_DB_TBL_RADACCT'] = $_REQUEST['config_dbtbl_radacct'];
 
 		if (isset($_REQUEST['config_dbtbl_operators']))
-			$configValues['CONFIG_DB_TBL_DALOOPERATOR'] = $_REQUEST['config_dbtbl_operators'];
+			$configValues['CONFIG_DB_TBL_DALOOPERATORS'] = $_REQUEST['config_dbtbl_operators'];
+		
+		if (isset($_REQUEST['config_dbtbl_operators_acl']))
+			$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'] = $_REQUEST['config_dbtbl_operators_acl'];
+		
+		if (isset($_REQUEST['config_dbtbl_operators_acl_files']))
+			$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'] = $_REQUEST['config_dbtbl_operators_acl_files'];
 
 		if (isset($_REQUEST['config_dbtbl_rates']))
 			$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = $_REQUEST['config_dbtbl_rates'];
@@ -107,6 +113,8 @@
 		if (isset($_REQUEST['config_dbtbl_billinginfo']))
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = $_REQUEST['config_dbtbl_billinginfo'];
 
+		if (isset($_REQUEST['config_dbtbl_hunt']))
+			$configValues['CONFIG_DB_TBL_RADHG'] = $_REQUEST['config_dbtbl_hunt'];
 
 
         include ("library/config_write.php");
@@ -246,6 +254,12 @@
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADNAS'] ?>" name="config_dbtbl_nas" />
 		</li>
 
+
+				 <li class='fieldset'>
+                <label for='config_dbtbl_hunt' class='form'><?php echo $l['all']['hunt']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADHG'] ?>" name="config_dbtbl_hunt" />
+		</li>
+
                 <li class='fieldset'>
                 <label for='config_dbtbl_radpostauth' class='form'><?php echo $l['all']['radpostauth']?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADPOSTAUTH'] ?>" name="config_dbtbl_radpostauth" />
@@ -303,7 +317,17 @@
 
                 <li class='fieldset'>
                 <label for='config_dbtbl_operators' class='form'><?php echo $l['all']['operators']?></label>
-		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATOR'] ?>" name="config_dbtbl_operators" />
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATORS'] ?>" name="config_dbtbl_operators" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_operators_acl' class='form'><?php echo $l['all']['operators_acl']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'] ?>" name="config_dbtbl_operators_acl" />
+		</li>
+
+                <li class='fieldset'>
+                <label for='config_dbtbl_operators_acl_files' class='form'><?php echo $l['all']['operators_acl_files']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'] ?>" name="config_dbtbl_operators_acl_files" />
 		</li>
 
                 <li class='fieldset'>

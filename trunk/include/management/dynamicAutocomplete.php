@@ -45,6 +45,29 @@ if(isset($_GET['getAjaxAutocompleteNASHost'])) {
 }
 
 
+/* getAjaxAutocompleteHGHost */
+if(isset($_GET['getAjaxAutocompleteHGHost'])) {
+
+	$getAjaxAutocompleteHGHost = $_GET['getAjaxAutocompleteHGHost'];
+
+	if ( (isset($getAjaxAutocompleteHGHost)) && ($getAjaxAutocompleteHGHost) ) {
+
+		include '../../library/opendb.php';
+
+		$sql = "SELECT distinct(nasipaddress) as nasipaddress FROM ".$configValues['CONFIG_DB_TBL_RADHG'].
+		" WHERE nasipaddress LIKE '$getAjaxAutocompleteHGHost%' ORDER BY nasipaddress ASC";
+		$res = $dbSocket->query($sql);
+
+		while($row = $res->fetchRow()) {
+				echo "$row[0]###$row[0]|";
+		}
+
+		include '../../library/closedb.php';
+	}
+
+}
+
+
 
 /* getAjaxAutocompleteGroupName */
 if(isset($_GET['getAjaxAutocompleteGroupName'])) {
