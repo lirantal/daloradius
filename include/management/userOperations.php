@@ -147,22 +147,30 @@ function userRefillSessionTime($username, $divContainer) {
 
 	foreach ($username as $variable=>$value) {
 	
-	        $user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
+		$user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
 		$allUsers .= $user . ", ";
 
+		// we update the sessiontime value to be 0 - this will only work though
+		// for accumulative type accounts. For TTF accounts we need to completely
+		// delete the record.
+		// to handle this - as a work-around I've modified the accessperiod sql
+		// counter definition in radiusd.conf to check for records with AcctSessionTime>=1
+		
+		
 		$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADACCT'].
 			" SET AcctSessionTime=0 ".
 			" WHERE Username='$user'";
+		
 		$res = $dbSocket->query($sql);
 
 	}
 
 	// take care of recording the billing action in billing_history table
-        foreach ($username as $variable=>$value) {
+	foreach ($username as $variable=>$value) {
 
 		$user = $dbSocket->escapeSimple($value);                // clean username argument from harmful code
 
-                $sql = "SELECT ".
+		$sql = "SELECT ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username, ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planName, ".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeRefillCost, ".
@@ -180,13 +188,13 @@ function userRefillSessionTime($username, $divContainer) {
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname=".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
 			" AND ".
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username='".$user."')";
-                $res = $dbSocket->query($sql);
+		$res = $dbSocket->query($sql);
 		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
 		$refillCost = $row['planTimeRefillCost'];
 
-                $currDate = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
+		$currDate = date('Y-m-d H:i:s');
+		$currBy = $_SESSION['operator_user'];
 
 		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'].
 			" (id,username,planName,billAmount,billAction,billPerformer,billReason,".
@@ -199,10 +207,9 @@ function userRefillSessionTime($username, $divContainer) {
 				$row['creditcardnumber']."','".$row['creditcardverification']."','".$row['creditcardtype']."','".$row['creditcardexp']."',".
 				"'$currDate', '$currBy'".
 			")";
-                $res = $dbSocket->query($sql);
-	
-        }
+		$res = $dbSocket->query($sql);
 
+	}
 
 
 	$users = substr($allUsers, 0, -2);
@@ -211,7 +218,7 @@ function userRefillSessionTime($username, $divContainer) {
 	        divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> session time has been successfully refilled and billed.</div>';
 	");
 
-        include '../../library/closedb.php';
+	include '../../library/closedb.php';
 
 }
 
