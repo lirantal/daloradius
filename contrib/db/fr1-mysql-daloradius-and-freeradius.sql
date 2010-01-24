@@ -644,6 +644,7 @@ CREATE TABLE `billing_plans` (
   `planTax` varchar(128) default NULL,
   `planCurrency` varchar(128) default NULL,
   `planGroup` varchar(128) default NULL,
+  `planActive` varchar(32) DEFAULT 'yes' NOT NULL,
   `creationdate` datetime default '0000-00-00 00:00:00',
   `creationby` varchar(128) default NULL,
   `updatedate` datetime default '0000-00-00 00:00:00',
