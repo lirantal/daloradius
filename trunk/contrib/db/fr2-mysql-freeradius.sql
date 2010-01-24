@@ -213,3 +213,15 @@ CREATE TABLE `cui` (
   `lastaccounting` timestamp NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`username`,`clientipaddress`,`callingstationid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+# table contributed by Filippo Maria Del Prete
+# for defining hunt groups via daloradius interface 
+CREATE TABLE IF NOT EXISTS `radhuntgroup` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `groupname` varchar(64) NOT NULL default '',
+  `nasipaddress` varchar(15) NOT NULL default '',
+  `nasportid` varchar(15) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `nasipaddress` (`nasipaddress`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
