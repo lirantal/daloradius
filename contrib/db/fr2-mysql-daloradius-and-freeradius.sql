@@ -17,7 +17,7 @@
 
 CREATE TABLE radacct (
   radacctid bigint(21) NOT NULL auto_increment,
-  acctsessionid varchar(32) NOT NULL default '',
+  acctsessionid varchar(64) NOT NULL default '',
   acctuniqueid varchar(32) NOT NULL default '',
   username varchar(64) NOT NULL default '',
   groupname varchar(64) NOT NULL default '',
@@ -148,7 +148,7 @@ CREATE TABLE radippool (
   username              varchar(64) NOT NULL default '',
   pool_key              varchar(30) NOT NULL,
   PRIMARY KEY (id)
-);
+) ENGINE=InnoDB;
 
 #
 # Table structure for table 'nas'
@@ -167,6 +167,23 @@ CREATE TABLE nas (
   KEY nasname (nasname)
 );
 
+
+#
+# Table structure for table 'radippool'
+#
+CREATE TABLE radippool ( 
+  id                    int(11) unsigned NOT NULL auto_increment,
+  pool_name             varchar(30) NOT NULL,
+  framedipaddress       varchar(15) NOT NULL default '',
+  nasipaddress          varchar(15) NOT NULL default '',
+  calledstationid       VARCHAR(30) NOT NULL,
+  callingstationid      VARCHAR(30) NOT NULL,
+  expiry_time           DATETIME NULL default NULL,
+  username              varchar(64) NOT NULL default '',
+  pool_key              varchar(30) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
 #
 # WiMAX Table structure for table 'wimax',
 # which replaces the "radpostauth" table.
@@ -175,7 +192,7 @@ CREATE TABLE nas (
 CREATE TABLE wimax (
   id int(11) NOT NULL auto_increment,
   username varchar(64) NOT NULL default '',
-  authdate timestamp(14) NOT NULL,
+  authdate timestamp NOT NULL,
   spi varchar(16) NOT NULL default '',
   mipkey varchar(400) NOT NULL default '',
   lifetime int(12) default NULL,
@@ -183,6 +200,19 @@ CREATE TABLE wimax (
   KEY username (username),
   KEY spi (spi)
 ) ;
+
+#
+# cui table 
+#
+CREATE TABLE `cui` (
+  `clientipaddress` varchar(15) NOT NULL default '',
+  `callingstationid` varchar(50) NOT NULL default '',
+  `username` varchar(64) NOT NULL default '',
+  `cui` varchar(32) NOT NULL default '',
+  `creationdate` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `lastaccounting` timestamp NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (`username`,`clientipaddress`,`callingstationid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
 
@@ -573,6 +603,7 @@ CREATE TABLE `billing_plans` (
   `planTax` varchar(128) default NULL,
   `planCurrency` varchar(128) default NULL,
   `planGroup` varchar(128) default NULL,
+  `planActive` varchar(32) DEFAULT 'yes' NOT NULL,
   `creationdate` datetime default '0000-00-00 00:00:00',
   `creationby` varchar(128) default NULL,
   `updatedate` datetime default '0000-00-00 00:00:00',
@@ -711,6 +742,17 @@ CREATE TABLE `billing_history` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+# table contributed by Filippo Maria Del Prete
+# for defining hunt groups via daloradius interface 
+CREATE TABLE IF NOT EXISTS `radhuntgroup` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `groupname` varchar(64) NOT NULL default '',
+  `nasipaddress` varchar(15) NOT NULL default '',
+  `nasportid` varchar(15) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `nasipaddress` (`nasipaddress`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `billing_merchant` (
@@ -917,3 +959,4 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2009-12-07 18:18:18
+
