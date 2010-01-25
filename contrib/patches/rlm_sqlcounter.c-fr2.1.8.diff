@@ -1,0 +1,88 @@
+--- rlm_sqlcounter.c.orig	2010-01-24 08:51:06.000000000 +0000
++++ rlm_sqlcounter.c	2010-01-24 09:21:45.000000000 +0000
+@@ -69,6 +69,8 @@ typedef struct rlm_sqlcounter_t {
+ 	char *sqlmod_inst;	/* instance of SQL module to use, usually just 'sql' */
+ 	char *query;		/* SQL query to retrieve current session time */
+ 	char *reset;  		/* daily, weekly, monthly, never or user defined */
++        char *counter_type; /* Type of counter (data / time) */
++        char *check_unit;   /* Unit of Check Value in Octets/KibiOctets/MibiOctets */
+ 	char *allowed_chars;	/* safe characters list for SQL queries */
+ 	time_t reset_time;
+ 	time_t last_reset;
+@@ -93,6 +95,8 @@ static const CONF_PARSER module_config[]
+   { "key", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,key_name), NULL, NULL },
+   { "sqlmod-inst", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,sqlmod_inst), NULL, NULL },
+   { "query", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,query), NULL, NULL },
++  { "counter-type", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,counter_type), NULL, NULL },
++  { "check-unit", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,check_unit), NULL, NULL },
+   { "reset", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,reset), NULL,  NULL },
+   { "safe-characters", PW_TYPE_STRING_PTR, offsetof(rlm_sqlcounter_t,allowed_chars), NULL, "@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_: /"},
+   { NULL, -1, 0, NULL, NULL }
+@@ -681,6 +685,25 @@ static int sqlcounter_authorize(void *in
+ 		unsigned int res = check_vp->lvalue - counter;
+ 
+ 		DEBUG2("rlm_sqlcounter: Check item is greater than query result");
++
++               if(data->check_unit) {
++                       if(strcasecmp(data->check_unit,"KibiOctets")==0) {
++                               if(res >= 4194303) {
++                                       res = 4294967295;
++                               } else {
++                                       res = res * 1024;
++                               }
++                       } else if(strcasecmp(data->check_unit,"MibiOctets")==0) {
++                               if(res >= 4095) {
++                                       res = 4294967295;
++                               } else {
++                                       res = res * 1024 * 1024;
++                               }
++                       }
++               }
++
++               DEBUG2("rlm_sqlcounter: Post processing result=%u", res);
++
+ 		/*
+ 		 *	We are assuming that simultaneous-use=1. But
+ 		 *	even if that does not happen then our user
+@@ -698,11 +721,27 @@ static int sqlcounter_authorize(void *in
+ 		 *	limit, so that the user will not need to
+ 		 *	login again
+ 		 */
++		/*
+ 		if (data->reset_time &&
+ 		    (res >= (data->reset_time - request->timestamp))) {
+ 			res = data->reset_time - request->timestamp;
+ 			res += check_vp->vp_integer;
+ 		}
++		*/
++
++               /*
++                * While counting data transfer, We don't have to add the next limit.
++                *
++                */
++
++               if((data->counter_type) && (strcmp(data->counter_type,"time")==0)) {
++
++                       if (data->reset_time && (
++                               res >= (data->reset_time - request->timestamp))) {
++                               res = data->reset_time - request->timestamp;
++                               res += check_vp->lvalue;
++                       }
++		}
+ 
+ 		if ((reply_item = pairfind(request->reply->vps, data->reply_attr)) != NULL) {
+ 			if (reply_item->vp_integer > res)
+@@ -717,8 +756,12 @@ static int sqlcounter_authorize(void *in
+ 
+ 		ret=RLM_MODULE_OK;
+ 
+-		DEBUG2("rlm_sqlcounter: Authorized user %s, check_item=%u, counter=%u",
++/*		DEBUG2("rlm_sqlcounter: Authorized user %s, check_item=%u, counter=%u",
++*/
++		DEBUG2("rlm_sqlcounter: Authorized user %s, check_item=%u, counter=%d",
+ 				key_vp->vp_strvalue,check_vp->vp_integer,counter);
++
++/*		DEBUG2("rlm_sqlcounter: Sent Reply-Item for user %s, Type=%s, value=%u",*/
+ 		DEBUG2("rlm_sqlcounter: Sent Reply-Item for user %s, Type=%s, value=%u",
+ 				key_vp->vp_strvalue,data->reply_name,reply_item->vp_integer);
+ 	}
