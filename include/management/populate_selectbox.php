@@ -15,7 +15,7 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
 
         // Grabing the group lists from usergroup table
 
-        $sql = "SELECT distinct(planName) FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." ORDER BY planName ASC;";
+		$sql = "SELECT distinct(planName) FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planActive = 'yes' ORDER BY planName ASC;";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
@@ -25,7 +25,7 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
 
         }
 
-	echo "</select>";
+		echo "</select>";
 
         include 'library/closedb.php';
 }
@@ -274,6 +274,7 @@ function drawRecommendedHelper() {
                 <option value='authtype'>authtype</option>
                 <option value='framedprotocol'>framedprotocol</option>
                 <option value='servicetype'>servicetype</option>
+				<option value='kbitspersecond'>kbitspersecond</option>
                 <option value='bitspersecond'>bitspersecond</option>
                 <option value='volumebytes'>volumebytes</option>
         ";
