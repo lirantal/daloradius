@@ -144,7 +144,7 @@
                         <td> ".time2str($row[3])." </td>
                         <td> ".time2str($row[4])." </td>
 			<td> ".toxbyte($row[6])."</td>
-			<td> ".toxbyte($row[7])."</td>
+			<td> ".toxbyte($row[8])."</td>
                 </tr>";
         }
         echo "</table>";
