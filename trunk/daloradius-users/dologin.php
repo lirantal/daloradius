@@ -43,9 +43,10 @@ $login_user = $_POST['login_user'];
 $login_pass = $_POST['login_pass'];
 
 // check if the user id and password combination exist in database
-$sql = "SELECT UserName FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName = '".
-		$dbSocket->escapeSimple($login_user)."' AND Value = '".$dbSocket->escapeSimple($login_pass)."'".
-		" AND Attribute LIKE '%-Password'";
+$sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".UserName FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+		" WHERE UserName = '".
+		$dbSocket->escapeSimple($login_user)."' AND ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".portalloginpassword = '".
+		$dbSocket->escapeSimple($login_pass)."'"." AND ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".enableportallogin = 1";
 $res = $dbSocket->query($sql);
 
 /*
