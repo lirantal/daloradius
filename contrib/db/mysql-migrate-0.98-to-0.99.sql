@@ -4,21 +4,9 @@
 -- ------------------------------------------------------
 -- Server version	5.0.22-Debian_0ubuntu6.06-log
 
-ALTER TABLE userbillinfo ADD hotspotlocation VARCHAR(32) AFTER planName;
+ALTER TABLE userbillinfo ADD hotspotlocation int(32) AFTER planName;
 
-ALTER TABLE operators ADD bill_merchant_transactions VARCHAR(32) AFTER bill_rates_list;
-UPDATE operators SET bill_merchant_transactions='yes' WHERE username='administrator';
-
-ALTER TABLE operators ADD config_user VARCHAR(32) AFTER config_db;
-UPDATE operators SET config_user='yes' WHERE username='administrator';
-
-ALTER TABLE operators ADD graphs_logged_users VARCHAR(32) AFTER graphs_overall_logins;
-UPDATE operators SET graphs_logged_users='yes' WHERE username='administrator';
-
-ALTER TABLE operators ADD acct_plans_usage VARCHAR(32) AFTER acct_custom_query;
-UPDATE operators SET acct_plans_usage='yes' WHERE username='administrator';
-
-
+DROP TABLE IF EXISTS `billing_merchant`;
 CREATE TABLE `billing_merchant` (
   `id` int(8) NOT NULL auto_increment,
   `username` varchar(128) NOT NULL default '',
@@ -26,11 +14,13 @@ CREATE TABLE `billing_merchant` (
   `mac` varchar(200) NOT NULL default '',
   `pin` varchar(200) NOT NULL default '',
   `txnId` varchar(200) NOT NULL default '',
-  `planName` varchar(128) NOT NULL default '',
-  `planId` varchar(200) NOT NULL default '',
+  `planId` int(32) NOT NULL,
   `quantity` varchar(200) NOT NULL default '',
   `business_email` varchar(200) NOT NULL default '',
   `business_id` varchar(200) NOT NULL default '',
+  `txn_type` varchar(200) NOT NULL default '',
+  `txn_id` varchar(200) NOT NULL default '',
+  `payment_type` varchar(200) NOT NULL default '',
   `payment_tax` varchar(200) NOT NULL default '',
   `payment_cost` varchar(200) NOT NULL default '',
   `payment_fee` varchar(200) NOT NULL default '',
@@ -48,6 +38,9 @@ CREATE TABLE `billing_merchant` (
   `payer_address_zip` varchar(200) NOT NULL default '',
   `payment_date` datetime NOT NULL default '00-00-0000 00:00:00',
   `payment_status` varchar(200) NOT NULL default '',
+  `pending_reason` varchar(200) NOT NULL default '',
+  `reason_code` varchar(200) NOT NULL default '',
+  `receipt_ID` varchar(200) NOT NULL default '',
   `payment_address_status` varchar(200) NOT NULL default '',
   `vendor_type` varchar(200) NOT NULL default '',
   `payer_status` varchar(200) NOT NULL default '',
@@ -59,8 +52,6 @@ ALTER TABLE operators DROP COLUMN bill_paypal_transactions;
 
 ALTER TABLE operators ADD mng_import_users VARCHAR(32) AFTER mng_new_quick;
 UPDATE operators SET mng_import_users='yes' WHERE username='administrator';
-
-DROP TABLE operators;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -95,9 +86,9 @@ CREATE TABLE `operators` (
   `messenger2` varchar(32) NOT NULL,
   `notes` varchar(128) NOT NULL,
   `lastlogin` datetime default '0000-00-00 00:00:00',
-  `creationdate` datetime NOT NULL default '0000-00-00 00:00:00',
+  `creationdate` datetime default '0000-00-00 00:00:00',
   `creationby` varchar(128) default NULL,
-  `updatedate` datetime NOT NULL default '0000-00-00 00:00:00',
+  `updatedate` datetime default '0000-00-00 00:00:00',
   `updateby` varchar(128) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
@@ -229,3 +220,163 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2009-12-07 18:18:18
+
+
+INSERT INTO `operators_acl_files` VALUES (0,'mng_rad_hunt_del','Management','HuntGroups'),(0,'mng_rad_hunt_edit','Management','HuntGroups'),(0,'mng_rad_hunt_list','Management','HuntGroups'),(0,'mng_rad_hunt_new','Management','HuntGroups');
+INSERT INTO `operators_acl` VALUES (0,6,'mng_rad_hunt_del',1),(0,6,'mng_rad_hunt_edit',1),(0,6,'mng_rad_hunt_list',1),(0,6,'mng_rad_hunt_new',1);
+
+INSERT INTO `operators_acl_files` VALUES (0,'config_mail','Configuration','Core');
+INSERT INTO `operators_acl` VALUES (0,6,'config_mail',1);
+
+
+DROP TABLE IF EXISTS `nodes_data`;
+CREATE TABLE `nodes_data` (
+  `id` int(32) NOT NULL auto_increment,
+  `wan_iface` varchar(128) default NULL,
+  `wan_ip` varchar(128) default NULL,
+  `wan_mac` varchar(128) default NULL,
+  `wan_gateway` varchar(128) default NULL,
+  `wifi_iface` varchar(128) default NULL,
+  `wifi_ip` varchar(128) default NULL,
+  `wifi_mac` varchar(128) default NULL,
+  `wifi_ssid` varchar(128) default NULL,
+  `wifi_key` varchar(128) default NULL,
+  `wifi_channel` varchar(128) default NULL,
+  `lan_iface` varchar(128) default NULL,
+  `lan_mac` varchar(128) default NULL,
+  `lan_ip` varchar(128) default NULL,
+  `uptime` varchar(128) default NULL,
+  `memfree` varchar(128) default NULL,
+  `wan_bup` varchar(128) default NULL,
+  `wan_bdown` varchar(128) default NULL,
+  `firmware` varchar(128) default NULL,
+  `firmware_revision` varchar(128) default NULL,
+  
+  `nas_mac` varchar(128) default NULL,
+  `checkin_date` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+DROP TABLE IF EXISTS `nodes_settings`;
+CREATE TABLE `nodes_settings` (
+  `id` int(32) NOT NULL auto_increment,
+  `soft_checkin_time` varchar(128) default NULL COMMENT 'time in minutes which hotspot is considered late/down (soft limit)',
+  `hard_checkin_time` varchar(128) default NULL COMMENT 'time in minutes which hotspot is considered late/down (hard limit)',
+  `test` varchar(128) default NULL COMMENT 'comment',
+  `test` varchar(128) default NULL COMMENT 'comment',
+  `test` varchar(128) default NULL COMMENT 'comment',
+  `test` varchar(128) default NULL COMMENT 'comment',
+  `test` varchar(128) default NULL COMMENT 'comment',
+  `test` varchar(128) default NULL COMMENT 'comment',
+  `test` varchar(128) default NULL COMMENT 'comment',
+  
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `nodes_chillisettings`;
+CREATE TABLE `nodes_chillisettings` (
+  `id` int(32) NOT NULL auto_increment,
+  `dhcp_if` varchar(128) default NULL COMMENT 'chilli directive for dhcp interface',
+  `uamallowed` varchar(128) default NULL COMMENT 'chilli directive for comma separated list of allowed hosts/ips',
+  `dns1` varchar(128) default NULL COMMENT 'chilli directive for dns1', 
+  `dns2` varchar(128) default NULL COMMENT 'chilli directive for dns2',
+  `locationname` varchar(128) default NULL COMMENT 'chilli directive for setting the WISPr-LocationName attribute',
+  `uamhomepage` varchar(256) default NULL COMMENT 'chilli directive to forward to the splash homepage',
+  `uamserver` varchar(256) default NULL COMMENT 'chilli directive for the uam server hotspotlogin.php address',
+  `uamsecret` varchar(128) default NULL COMMENT 'chilli directive for setting the uam secret password',
+  `radiusserver1` varchar(128) default NULL COMMENT 'chilli directive for radius server 1 ip address',
+  `radiusserver2` varchar(128) default NULL COMMENT 'chilli directive for radius server 2 ip address',
+  `radiussecret` varchar(128) default NULL COMMENT 'radius server secret',
+  `radiusauthport` varchar(128) default NULL COMMENT 'radius server authentication port',
+  `radiusacctport` varchar(128) default NULL COMMENT 'radius server accounting port',
+  `radiusnasid` varchar(128) default NULL COMMENT 'chilli directive for the NAS id',  
+  
+  
+  
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+DROP TABLE IF EXISTS `billing_notifications_settings`;
+CREATE TABLE `billing_notifications_settings` (
+  `id` int(32) NOT NULL auto_increment,
+  `notification_name` varchar(128) default NULL COMMENT 'the notification name - an identifier to distinguish',
+  `notification_delay` varchar(128) default NULL COMMENT 'notification delay in days after-which to send a notification',
+  `notification_limittype` varchar(128) default NULL COMMENT 'percent',
+  `notification_softlimit` varchar(128) default NULL COMMENT 'a soft limit',
+  `notification_hardlimit` varchar(128) default NULL COMMENT 'a hard limit',
+  
+  
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+ALTER TABLE userbillinfo ADD batch_id int(32) AFTER emailinvoice;
+ALTER TABLE userbillinfo MODIFY nextbill date DEFAULT '0000-00-00' NOT NULL;
+ALTER TABLE userbillinfo MODIFY lastbill date DEFAULT '0000-00-00' NOT NULL;
+ALTER TABLE userbillinfo ADD nextinvoicedue varchar(32) AFTER nextbill;
+ALTER TABLE userbillinfo ADD billdue int(32) AFTER nextinvoicedue;
+
+ALTER TABLE billing_history DROP COLUMN planName;
+ALTER TABLE billing_history ADD planId int(32) AFTER username;
+ALTER TABLE billing_history MODIFY billAction varchar(128) DEFAULT 'Unavailable' NOT NULL;
+
+ALTER TABLE billing_plans ADD planActive varchar(32) DEFAULT 'yes' NOT NULL AFTER planCurrency;
+
+ALTER TABLE userinfo ADD enableportallogin int(32) DEFAULT 0 AFTER changeuserinfo;
+ALTER TABLE userinfo ADD portalloginpassword varchar(128) DEFAULT '' AFTER changeuserinfo;
+
+DROP TABLE IF EXISTS `batch_history`;
+CREATE TABLE `batch_history` (
+  `id` int(32) NOT NULL auto_increment,
+  `batch_name` varchar(64) default NULL COMMENT 'an identifier name of the batch instance',
+  `batch_description` varchar(256) default NULL COMMENT 'general description of the entry',
+  `hotspot_id` int(32) default 0 COMMENT 'the hotspot business id associated with this batch instance',
+  `batch_status` varchar(128) default 'Pending' NOT NULL COMMENT 'the batch status',
+  
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+DROP TABLE IF EXISTS `billing_plans_profiles`;
+CREATE TABLE `billing_plans_profiles` (
+  `id` int(32) NOT NULL auto_increment,
+  `plan_name` varchar(128) NOT NULL COMMENT 'the name of the plan',
+  `profile_name` varchar(256) default NULL COMMENT 'the profile/group name',
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+
