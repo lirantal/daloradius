@@ -14,42 +14,58 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		Main language file control
- *
+*
  * Authors:	Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
- 
-	include_once(dirname(__FILE__).'/../library/config_read.php');
-	
-	switch($configValues['CONFIG_LANG']) {
-	
-		case "en":
-			include (dirname(__FILE__)."/en.php");
-			break;
-		case "ru":
-			include (dirname(__FILE__)."/ru.php");
-			break;
-		case "hu":
-			include (dirname(__FILE__)."/hu.php");
-			break;
-		case "it":
-			include (dirname(__FILE__)."/it.php");
-			break;
-		case "es_VE":
-			include (dirname(__FILE__)."/es_VE.php");
-			break;
-		case "ro":
-			include (dirname(__FILE__)."/ro.php");
-			break;
-		case "pt_br":
-			include (dirname(__FILE__)."/pt_br.php");
-			break;
-		default:
-			include (dirname(__FILE__)."/en.php");
-			break;
-	}
+
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+        
+	include_once('library/config_read.php');
+    $log = "visited page: ";
+
 
 ?>
+
+<?php
+
+    include ("menu-reports-batch.php");
+
+?>
+		
+		<div id="contentnorightbar">
+		
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['repbatch.php']; ?>
+		<h144>+</h144></a></h2>
+
+		<div id="helpPage" style="display:none;visibility:visible" >
+			<?php echo $l['helpPage']['repbatch'] ?>
+			<br/>
+		</div>
+		<br/>
+
+
+
+<?php
+	include('include/config/logging.php');
+?>
+
+		</div>
+		
+		<div id="footer">
+		
+<?php
+	include('page-footer.php');
+?>
+
+		
+		</div>
+		
+</div>
+</div>
+
+
+</body>
+</html>

@@ -53,7 +53,17 @@ $l['all']['CSVData'] = "CSV-formatted data";
 $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
 
 
+$l['all']['SendWelcomeNotification'] = "Send Welcome Notification";
+$l['all']['SMTPServerAddress'] = "SMTP Server Address";
+$l['all']['SMTPServerPort'] = "SMTP Server Port";
+
+
 $l['all']['UserType'] = "User Type";
+
+$l['all']['BatchName'] = "Batch Name";
+$l['all']['BatchStatus'] = "Batch Status";
+
+$l['all']['Users'] = "Users";
 
 $l['all']['Compare'] = "Compare";
 $l['all']['Never'] = "Never";
@@ -95,6 +105,29 @@ $l['all']['DeadTime'] = "Dead Time";
 $l['all']['RetryDelay'] = "Retry Delay";
 $l['all']['RetryCount'] = "Retry Count";
 $l['all']['DefaultFallback'] = "Default Fallback";
+
+
+$l['all']['Firmware'] = "Firmware";
+$l['all']['NASMAC'] = "NAS MAC";
+
+$l['all']['WanIface'] = "Wan Iface";
+$l['all']['WanMAC'] = "Wan MAC";
+$l['all']['WanIP'] = "Wan IP";
+$l['all']['WanGateway'] = "Wan Gateway";
+
+$l['all']['LanIface'] = "Lan Iface";
+$l['all']['LanMAC'] = "Lan MAC";
+$l['all']['LanIP'] = "Lan IP";
+
+$l['all']['WifiIface'] = "Wifi Iface";
+$l['all']['WifiMAC'] = "Wifi MAC";
+$l['all']['WifiIP'] = "Wifi IP";
+
+$l['all']['WifiSSID'] = "Wifi SSID";
+$l['all']['WifiKey'] = "Wifi Key";
+$l['all']['WifiChannel'] = "Wifi Channel";
+
+$l['all']['CheckinTime'] = "Last Checked-In";
 
 $l['all']['FramedIPAddress'] = "Framed-IP-Address";
 $l['all']['SimultaneousUse'] = "Simultaneous-Use";
@@ -167,6 +200,7 @@ $l['all']['RateType'] = "Rate Type";
 $l['all']['RateCost'] = "Rate Cost";
 $l['all']['Billed'] = "Billed";
 $l['all']['TotalUsers'] = "Total Users";
+$l['all']['ActiveUsers'] = "Active Users";
 $l['all']['TotalBilled'] = "Total Billed";
 $l['all']['CardBank'] = "Card Bank";
 $l['all']['Type'] = "Type";
@@ -190,6 +224,8 @@ $l['all']['OrderTaker'] = "Order Taker";
 $l['all']['BillStatus'] = "Bill Status";
 $l['all']['LastBill'] = "Last Bill";
 $l['all']['NextBill'] = "Next Bill";
+$l['all']['BillDue'] = "Bill Due";
+$l['all']['NextInvoiceDue'] = "Next Invoice Due";
 $l['all']['PostalInvoice'] = "Postal Invoice";
 $l['all']['FaxInvoice'] = "Fax Invoice";
 $l['all']['EmailInvoice'] = "Email Invoice";
@@ -232,6 +268,10 @@ $l['all']['RadiusServer'] = "Radius Server";
 $l['all']['RadiusPort'] = "Radius Port";
 
 $l['all']['UsernamePrefix'] = "Username Prefix";
+
+$l['all']['batchName'] = "Batch Id/Name";
+$l['all']['batchDescription'] = "Batch Description";
+
 $l['all']['NumberInstances'] = "Number of instances to create";
 $l['all']['UsernameLength'] = "Length of username string";
 $l['all']['PasswordLength'] = "Length of password string";
@@ -272,19 +312,12 @@ $l['all']['CreateRandomUsers'] = "Create Random Users";
 $l['all']['StartingIndex'] = "Starting Index";
 $l['all']['EndingIndex'] = "Ending Index";
 $l['all']['RandomChars'] = "Allowed Random Characters";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
+$l['all']['Memfree'] = "Memory Free";
+$l['all']['Uptime'] = "Uptime";
+$l['all']['BandwidthUp'] = "Bandwidth Up";
+$l['all']['BandwidthDown'] = "Bandwidth Down";
+
+$l['all']['BatchCost'] = "Batch Cost";
 
 $l['all']['PaymentDate'] = "Payment Date";
 $l['all']['PaymentStatus'] = "Payment Status";
@@ -295,6 +328,7 @@ $l['all']['PayerStatus'] = "Payer Status";
 $l['all']['PaymentAddressStatus'] = "Payment Address Status";
 $l['all']['PayerEmail'] = "Payer Email";
 $l['all']['TxnId'] = "Tranasction Id";
+$l['all']['PlanActive'] = "Plan Active";
 $l['all']['PlanTimeType'] = "Plan Time Type";
 $l['all']['PlanTimeBank'] = "Plan Time Bank";
 $l['all']['PlanTimeRefillCost'] = "Plan Refill Cost";
@@ -344,7 +378,16 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
+$l['Tooltip']['batchNameTooltip'] = "Provide an identifier name for this batch creation";
+$l['Tooltip']['batchDescriptionTooltip'] = "Provide general description regarding this batch creation";
+
+$l['Tooltip']['hotspotTooltip'] = "Choose the hotspot name of which this batch instance is associated with";
+
+$l['Tooltip']['startingIndexTooltip'] = "Provide the starting index from which to create the user";
+$l['Tooltip']['planTooltip'] = "Select a plan to associate the user with";
+
 $l['Tooltip']['Username'] = "Type the Username";
+$l['Tooltip']['BatchName'] = "Type the Batch name";
 $l['Tooltip']['UsernameWildcard'] = "Hint: you may use the char * or % to specify a wildcard";
 $l['Tooltip']['HotspotName'] = "Type the Hotspot name";
 $l['Tooltip']['NasName'] = "Type the NAS name";
@@ -454,6 +497,7 @@ $l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be<b
 
 $l['Tooltip']['AttributeEdit'] = "Edit Attribute";
 
+$l['Tooltip']['BatchDetails'] = "Batch Details";
 
 $l['Tooltip']['UserEdit'] = "Edit User";
 $l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
@@ -520,6 +564,9 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
 					This is the GooleMaps location code used<br/>&nbsp;&nbsp;&nbsp;
 					to pin the Hotspot/NAS on the map (see GIS).";
 
+$l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user information <br/>
+					the Profiles listed in the Profiles tab will be ignored and <br/>
+					profiles will be re-assigned based on the Plans profile association";
 
 /* ********************************************************************************** */
 
@@ -530,6 +577,12 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
  * Links and Buttons
  ************************************************************************************/
 $l['button']['ClearSessions'] = "Clear Sessions";
+$l['button']['Dashboard'] = "Dashboard";
+$l['button']['MailSettings'] = "Mail Settings";
+
+$l['button']['Batch'] = "Batch";
+$l['button']['BatchHistory'] = "Batch History";
+$l['button']['BatchDetails'] = "Batch Details";
 
 $l['button']['ListRates'] = "List Rates";
 $l['button']['NewRate'] = "New Rate";
@@ -658,6 +711,8 @@ $l['button']['DatabaseSettings'] = "Database Settings";
 $l['button']['LanguageSettings'] = "Language Settings";
 $l['button']['LoggingSettings'] = "Logging Settings";
 $l['button']['InterfaceSettings'] = "Interface Settings";
+
+$l['button']['ReAssignPlanProfiles'] = "Re-Assign Plan Profiles";
 
 $l['button']['TestUserConnectivity'] = "Test User Connectivity";
 $l['button']['DisconnectUser'] = "Disconnect User";
@@ -797,6 +852,8 @@ $l['ContactInfo']['Phone'] = "Phone";
 $l['ContactInfo']['MobilePhone'] = "Mobile Phone";
 $l['ContactInfo']['Notes'] = "Notes";
 $l['ContactInfo']['EnableUserUpdate'] = "Enable User Update";
+$l['ContactInfo']['EnablePortalLogin'] = "Enable User Portal Login";
+$l['ContactInfo']['PortalLoginPassword'] = "User Portal Login Password";
 
 $l['ContactInfo']['OwnerName'] = "Owner Name";
 $l['ContactInfo']['OwnerEmail'] = "Owner Email";
@@ -916,11 +973,15 @@ $l['Intro']['replogsradius.php'] = "RADIUS Server Logfile";
 $l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
 $l['Intro']['replogsboot.php'] = "Boot Logfile";
 $l['Intro']['replogs.php'] = "Logs";
+$l['Intro']['rephb.php'] = "Heartbeat";
+$l['Intro']['rephbdashboard.php'] = "daloRADIUS NAS Dashboard";
+$l['Intro']['repbatch.php'] = "Batch";
+$l['Intro']['repbatchlist.php'] = "Batch Users List";
+$l['Intro']['repbatchdetails.php'] = "Batch Details";
 
 $l['Intro']['rephsall.php'] = "Hotspots Listing";
 $l['Intro']['repmain.php'] = "Reports Page";
 $l['Intro']['repstatus.php'] = "Status Page";
-$l['Intro']['replogs.php'] = "Logs Page";
 $l['Intro']['reptopusers.php'] = "Top Users";
 $l['Intro']['repusername.php'] = "Users Listing";
 
@@ -985,6 +1046,8 @@ $l['Intro']['mngradgroupcheckdel.php'] = "Remove Group Check Mapping";
 $l['Intro']['mngradgroupchecksearch.php'] = "Search Group Check Mapping";
 
 $l['Intro']['configuser.php'] = "User Configuration";
+$l['Intro']['configmail.php'] = "Mail Configuration";
+
 $l['Intro']['configdb.php'] = "Database Configuration";
 $l['Intro']['configlang.php'] = "Language Configuration";
 $l['Intro']['configlogging.php'] = "Logging Configuration";
@@ -1201,6 +1264,9 @@ $l['helpPage']['configlang'] = "
 $l['helpPage']['configuser'] = "
 <h200><b>User Settings</b></h200> - Configure user management behavior.<br/>
 ";
+$l['helpPage']['configmail'] = "
+<h200><b>User Settings</b></h200> - Configure mailing settings.<br/>
+";
 $l['helpPage']['configlogging'] = "
 <h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
 Please make sure that the filename that you specify has write permissions by the webserver<br/>";
@@ -1306,6 +1372,11 @@ $l['helpPage']['replogsboot'] = "Monitor Operating System Boot log - equivalent 
 $l['helpPage']['replogsdaloradius'] = "Monitor daloRADIUS's Logfile.";
 $l['helpPage']['replogsradius'] = "Monitor FreeRADIUS's Logfile.";
 $l['helpPage']['replogssystem'] = "Monitor Operating System Logfile.";
+$l['helpPage']['rephb'] = "";
+$l['helpPage']['rephbdashboard'] = "";
+$l['helpPage']['repbatch'] = "";
+$l['helpPage']['repbatchlist'] = "";
+$l['helpPage']['repbatchdetails'] = "Provides a list of active users of this batch instance";
 $l['helpPage']['replogs'] = "
 <b>Logs</b><br/>
 <h200><b>daloRADIUS Log</b></h200> - Monitor daloRADIUS's Logfile.<br/>
