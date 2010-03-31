@@ -25,12 +25,14 @@
 
 	include('library/check_operator_perm.php');
 
-        isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
-        isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
+    isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
+    isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
 	isset($_POST['oldplanName']) ? $oldplanName = $_POST['oldplanName'] : $oldplanName = "";
 	isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
 	isset($_POST['profiles']) ? $profiles = $_POST['profiles'] : $profiles = "";
-        isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
+    isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
+    isset($_POST['reassignplanprofiles']) ? $reassignplanprofiles = $_POST['reassignplanprofiles'] : $reassignplanprofiles = "";
+    
 
         isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
         isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
@@ -73,48 +75,98 @@
         isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
         isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
         isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
-
+		isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
+		isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
+	
 	$logAction = "";
 	$logDebugSQL = "";
 	
 	function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
 
-                global $logDebugSQL;
-                global $configValues;
+        global $logDebugSQL;
+        global $configValues;
 
-		$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                	" WHERE planName='".$dbSocket->escapeSimple($oldplanName)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-		$row = $res->fetchRow();
-		$oldplanGroup = $row[0];
+        $sql = "DELETE FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='".
+				$dbSocket->escapeSimple($username)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";        
+        
+		// search to see if the plan is associated with any profiles
+		$sql = "SELECT profile_name FROM ".
+				$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'].
+				" WHERE plan_name='$planName'";
+		// $res is an array of all profiles associated with this plan
+		$res = $dbSocket->getCol($sql);
 		
-		if ( (isset($oldplanGroup)) && ($oldplanGroup != "") ) {
-
-			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE ".
-        	                " (Username='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldplanGroup)."') ";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";			
-		}
-
-		$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                	" WHERE planName='".$dbSocket->escapeSimple($planName)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-		$row = $res->fetchRow();
-		$planGroup = $row[0];
+		// if the profile list for this plan isn't empty, we associate it with the user
+		if (count($res) != 0) {
+	
+			// if profiles are associated with this plan, loop through each and add a usergroup entry for each
+			foreach($res as $profile_name) {
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+					" VALUES ('".$dbSocket->escapeSimple($username)."','$profile_name','0')";
+				$res = $dbSocket->query($sql);
+			}
 		
-		if ( (isset($planGroup)) && ($planGroup != "") ) {
-
-	                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-        	                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($planGroup)."',0) ";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";			
 		}
-
+		
 	}
+	
+	
+	function addUserProfiles($dbSocket, $username, $planName, $oldplanName, $groups, $groups_priority, $newgroups) {
+
+        global $logDebugSQL;
+        global $configValues;
+        
+		// update usergroup mapping (existing)
+        if ($groups) {
+
+			$sql = "DELETE FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='".
+					$dbSocket->escapeSimple($username)."'";
+			$res = $dbSocket->query($sql);
+	        $logDebugSQL .= $sql . "\n";
+	
+	        $grpcnt = 0;                    // group counter
+	        foreach ($groups as $group) {
+	
+	        	if (!($groups_priority[$grpcnt]))
+	            	$group_priority = 0;
+	            else
+	            	$group_priority = $groups_priority[$grpcnt];
+	
+				if (trim($group) != "") {
+	            	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+	                			" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."', ".
+					$dbSocket->escapeSimple($group_priority).")";
+	                $res = $dbSocket->query($sql);
+	            }
+	
+				$logDebugSQL .= $sql . "\n";
+	
+				// we increment group index count so we can access the group priority array
+	           	$grpcnt++;
+	           	
+			}
+           
+        }
+           
+           
+		// insert usergroup mapping (new groups)
+        if (isset($newgroups)) {
+
+        	foreach ($newgroups as $newgroup) {
+
+            	if (trim($newgroup) != "") {
+                	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+                    		" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($newgroup)."',0) ";
+					$res = $dbSocket->query($sql);
+                    $logDebugSQL .= $sql . "\n";
+                }
+            }
+        }
+           
+	}
+	
 	
 
 	include 'library/opendb.php';
@@ -132,7 +184,7 @@
 //                global $password;
 //                global $passwordtype;
 
-		/* update user information and user billing information */
+				/* update user information and user billing information */
 
                 if (trim($username) != "") {
 
@@ -147,7 +199,7 @@
                                 // we add these records to the userinfo table
                                 $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
                                         " (id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone,".
-                                        " notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
+                                        " notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
                                         " VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
                                         $dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".
                                         $dbSocket->escapeSimple($email)."','".$dbSocket->escapeSimple($department)."', '".
@@ -155,7 +207,9 @@
 	                                $dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".
                                         $dbSocket->escapeSimple($address)."', '".$dbSocket->escapeSimple($city)."', '".
                                         $dbSocket->escapeSimple($state)."', '".$dbSocket->escapeSimple($zip)."', '".
-                                        $dbSocket->escapeSimple($notes)."', '".$dbSocket->escapeSimple($ui_changeuserinfo)."', ".
+										$dbSocket->escapeSimple($notes)."', '".$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
+										$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin)."', ".
+                                        
                                         "'$currDate', '$currBy', NULL, NULL)";
                                 $res = $dbSocket->query($sql);
                                 $logDebugSQL .= $sql . "\n";
@@ -176,6 +230,8 @@
                                         "', zip='".$dbSocket->escapeSimple($zip).
                                         "', notes='".$dbSocket->escapeSimple($notes).
                                         "', changeuserinfo='".$dbSocket->escapeSimple($ui_changeuserinfo).
+										"', portalloginpassword='".$dbSocket->escapeSimple($ui_PortalLoginPassword).
+										"', enableportallogin='".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
                                         "', updatedate='$currDate', updateby='$currBy' ".
                                         " WHERE username='".$dbSocket->escapeSimple($username)."'";
                                 $res = $dbSocket->query($sql);
@@ -254,56 +310,16 @@
                                         " WHERE username='".$dbSocket->escapeSimple($username)."'";
                                 $res = $dbSocket->query($sql);
                                 $logDebugSQL .= $sql . "\n";
-			}
+				}
 
-
-
-                         // update usergroup mapping (existing)
-                         if ($groups) {
-
-                                $sql = "DELETE FROM ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." WHERE UserName='".
-                                        $dbSocket->escapeSimple($username)."'";
-                                $res = $dbSocket->query($sql);
-                                $logDebugSQL .= $sql . "\n";
-
-                                $grpcnt = 0;                    // group counter
-                                foreach ($groups as $group) {
-
-                                        if (!($groups_priority[$grpcnt]))
-                                                $group_priority = 0;
-                                        else
-                                                $group_priority = $groups_priority[$grpcnt];
-
-                                        if (trim($group) != "") {
-                                                 $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-                                                        " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."', ".
-                                                        $dbSocket->escapeSimple($group_priority).")";
-                                                 $res = $dbSocket->query($sql);
-                                        }
-
-
-                                        $logDebugSQL .= $sql . "\n";
-
-                                        $grpcnt++;              // we increment group index count so we can access the group priority array
-                                }
-                        }
-
-
-                        // insert usergroup mapping (new groups)
-                        if (isset($newgroups)) {
-
-                                foreach ($newgroups as $newgroup) {
-
-                                 if (trim($newgroup) != "") {
-                                         $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-                                                        " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($newgroup)."',0) ";
-                                                 $res = $dbSocket->query($sql);
-                                                $logDebugSQL .= $sql . "\n";
-                                        }
-                                }
-                        }
-
-			addPlanProfile($dbSocket, $username, $planName, $oldplanName);
+            if ($reassignplanprofiles == 1) {
+   	            // if the user chose to re-assign profiles from the change of plan then we proceed with removing
+   	            // all profiles associated with the user and re-assigning them based on the plan's profiles associations
+				addPlanProfile($dbSocket, $username, $planName, $oldplanName);
+            } else {
+            	// otherwise, we remove all profiles and assign profiles as configured in the profiles tab by the user
+            	addUserProfiles($dbSocket, $username, $planName, $oldplanName, $groups, $groups_priority, $newgroups);
+            }
 
 /*
 	
@@ -398,7 +414,7 @@
 	
         /* fill-in all the user info details */
         $sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, zip, notes, ".
-                " changeuserinfo, creationdate, creationby, updatedate, updateby FROM ".
+                " changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby FROM ".
                 $configValues['CONFIG_DB_TBL_DALOUSERINFO'].
                 " WHERE UserName='".
                 $dbSocket->escapeSimple($username)."'";
@@ -421,9 +437,12 @@
         $ui_zip = $row[11];
         $ui_notes = $row[12];
         $ui_changeuserinfo = $row[13];
-        $ui_creationdate = $row[14];
-        $ui_creationby = $row[15];
-        $ui_updatedate = $row[16];
+		$ui_PortalLoginPassword = $row[14];
+		$ui_enableUserPortalLogin = $row[15];
+        $ui_creationdate = $row[16];
+        $ui_creationby = $row[17];
+        $ui_updatedate = $row[18];
+        $ui_updateby = $row[19];
 
 
         /* fill-in all the user bill info details */
@@ -566,19 +585,34 @@
 
 
 
-		<li class='fieldset'>
-		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
-		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
-                <?php
-                       populate_plans("$bi_planname","planName","form");
-                ?>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
+				<li class='fieldset'>
+				<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+				<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
+		                <?php
+		                       populate_plans("$bi_planname","planName","form", NULL, $bi_planname);
+		                ?>
+				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
+				
+				<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+					<img src='images/icons/comment.png' alt='Tip' border='0' />
+					<?php echo $l['Tooltip']['planNameTooltip'] ?>
+				</div>
+				</li>
+	
+
+                <div id='UserContainer'>
+                <li class='fieldset'>
+                <label for='reassignplanprofiles' class='form'><?php echo $l['button']['ReAssignPlanProfiles'] ?></label>
+				<input name='reassignplanprofiles' type='checkbox' value='1' />
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('reassignplanprofiles')" />
+
+                <div id='reassignplanprofiles'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['reassignplanprofiles'] ?>
+                </div>
+                </li>
 		
-		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planNameTooltip'] ?>
-		</div>
-		</li>
+	
 	
 
 		<li class='fieldset'>

@@ -95,6 +95,7 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username), ".$configValues['CONFIG_DB_TBL_RADCHECK'].".id, ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".value, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".contactperson, ".
+		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".billstatus, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname, ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".company, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname ".
 		" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].", ".$configValues['CONFIG_DB_TBL_RADCHECK'].
@@ -115,6 +116,7 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username), ".$configValues['CONFIG_DB_TBL_RADCHECK'].".id, ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".value, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".contactperson, ".
+		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".billstatus, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname, ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".company, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname ".
 		" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].", ".$configValues['CONFIG_DB_TBL_RADCHECK'].
@@ -216,11 +218,14 @@
 
 		echo "<td>";
 
-		if ( ($row['value'] == "Reject") && ($row['attribute'] == "Auth-Type") )
+		if ( (($row['value'] == "Reject") && ($row['attribute'] == "Auth-Type"))
+			|| ($row['billstatus'] == "Suspended")
+			) {
 			echo "<img title='user is disabled' src='images/icons/userStatusDisabled.gif' alt='[disabled]'>";
-		else
+		} else {
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
-
+		}
+		
 		printqn("
 			<a class='tablenovisit' href='javascript:return;'
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".$row['username']."\");
