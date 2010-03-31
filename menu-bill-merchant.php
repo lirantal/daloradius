@@ -105,7 +105,6 @@
                 <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo $l['all']['Username']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="password"  /> <h109><?php echo $l['all']['Password']; ?></h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="txnId"  /> <h109><?php echo $l['all']['TxnId']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="planName" checked /> <h109><?php echo $l['all']['PlanName']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="planId"  /> <h109><?php echo $l['all']['PlanId']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="quantity"  /> <h109><?php echo $l['all']['Quantity']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="business_email"  /> <h109><?php echo $l['all']['ReceiverEmail']; ?> </h109> <br/>

@@ -82,7 +82,7 @@
                 <h109><?php echo $l['button']['AccountingFieldsinQuery']; ?></h109><br/>
                 <input type="checkbox" name="sqlfields[]" value="id" /> <h109> <?php echo $l['all']['ID']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo $l['all']['Username']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="planName" checked /> <h109><?php echo $l['all']['PlanName']; ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="planId" checked /> <h109><?php echo $l['all']['PlanId']; ?> </h109> <br/>
 
                 <input type="checkbox" name="sqlfields[]" value="billAmount"  checked /> <h109><?php echo $l['all']['BillAmount']; ?> </h109> <br/>
                 <input type="checkbox" name="sqlfields[]" value="billAction"  checked /> <h109><?php echo $l['all']['BillAction']; ?> </h109> <br/>
