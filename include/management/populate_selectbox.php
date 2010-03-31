@@ -1,5 +1,60 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:	Liran Tal <liran@enginx.com>
+ *
+ *********************************************************************************************************
+ */
 
+
+/*
+ * populate_hotspots
+ * creates a select box and populates it with all hotspots
+ * 
+ * $defaultOption - title for the first/default option in select box
+ * $elementName   - the string used for the select element's name='' value
+ * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
+ *
+ */
+function populate_hotspots($defaultOption = "Select Hotspot", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'hotspot')\" id='hotspot' $mode
+			name='$elementName' class='$cssClass' />
+			<option value='$defaultOptionValue'>$defaultOption</option>
+			<option value=''></option>";
+
+        include 'library/opendb.php';
+
+        // Grabing the group lists from usergroup table
+
+        $sql = "(SELECT distinct(id), name FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].")";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+                echo "  
+                        <option value='".$row['id']."'>".$row['name']."</option>
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+
+	echo "</select>";
+}
 
 /*
  * populate_plans()
