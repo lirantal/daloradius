@@ -30,6 +30,8 @@
 	isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
 	isset($_POST['profiles']) ? $profiles = $_POST['profiles'] : $profiles = "";
 	isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
+	isset($_POST['notificationWelcome']) ? $notificationWelcome = $_POST['notificationWelcome'] : $notificationWelcome = "";
+	
 
 	isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
 	isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
@@ -72,105 +74,113 @@
 	isset($_POST['zip']) ? $ui_zip = $_POST['zip'] : $ui_zip = "";
 	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 	isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
-
+	isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
+	isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
+	
 	$logAction = "";
 	$logDebugSQL = "";
 
-	
+
 	function addPlanProfile($dbSocket, $username, $planName) {
 
 		global $logDebugSQL;
 		global $configValues;
 
-		$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                	" WHERE planName='".$dbSocket->escapeSimple($planName)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-		$row = $res->fetchRow();
-		$planGroup = $row[0];
+		// search to see if the plan is associated with any profiles
+		$sql = "SELECT profile_name FROM ".
+				$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'].
+				" WHERE plan_name='$planName'";
+		$res = $dbSocket->getCol($sql);
+		// $res is an array of all profiles associated with this plan
 		
-		if ( (isset($planGroup)) && ($planGroup != "") ) {
+		// if the profile list for this plan isn't empty, we associate it with the user
+		if (count($res) != 0) {
 	
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-					" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($planGroup)."',0) ";
+			// if profiles are associated with this plan, loop through each and add a usergroup entry for each
+			foreach($res as $profile_name) {
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+					" VALUES ('".$dbSocket->escapeSimple($username)."','$profile_name','0')";
 				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";			
+			}
+		
 		}
 
 	}
 	
 
-        function addGroups($dbSocket, $username, $groups) {
+	function addGroups($dbSocket, $username, $groups) {
 
-			global $logDebugSQL;
-			global $configValues;
+		global $logDebugSQL;
+		global $configValues;
 
-			// insert usergroup mapping
-			if (isset($groups)) {
+		// insert usergroup mapping
+		if (isset($groups)) {
 
-				foreach ($groups as $group) {
+			foreach ($groups as $group) {
 
-					if (trim($group) != "") {
-						$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-								" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
-						$res = $dbSocket->query($sql);
-						$logDebugSQL .= $sql . "\n";
-					}
+				if (trim($group) != "") {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
+							" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
 				}
 			}
-        }
+		}
+	}
 
 
-        function addUserInfo($dbSocket, $username) {
+	function addUserInfo($dbSocket, $username) {
 
-			global $firstname;
-			global $lastname;
-			global $email;
-			global $department;
-			global $company;
-			global $workphone;
-			global $homephone;
-			global $mobilephone;
-			global $ui_address;
-			global $ui_city;
-			global $ui_state;
-			global $ui_zip;
-			global $notes;
-			global $ui_changeuserinfo;
-			global $logDebugSQL;
-			global $configValues;
+		global $firstname;
+		global $lastname;
+		global $email;
+		global $department;
+		global $company;
+		global $workphone;
+		global $homephone;
+		global $mobilephone;
+		global $ui_address;
+		global $ui_city;
+		global $ui_state;
+		global $ui_zip;
+		global $notes;
+		global $ui_changeuserinfo;
+		global $ui_enableUserPortalLogin;
+		global $ui_PortalLoginPassword;
+		global $logDebugSQL;
+		global $configValues;
 
-			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+		$currDate = date('Y-m-d H:i:s');
+		$currBy = $_SESSION['operator_user'];
 
-			$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-							" WHERE username='".$dbSocket->escapeSimple($username)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+						" WHERE username='".$dbSocket->escapeSimple($username)."'";
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+
+		// if there were no records for this user present in the userinfo table
+		if ($res->numRows() == 0) {
+			// insert user information table
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+					" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
+					" mobilephone, address, city, state, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
+					" VALUES (0,
+					'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
+					$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
+					$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
+					$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
+					$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
+					$dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
+					$dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
+					$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
+					$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
+					"', '$currDate', '$currBy', NULL, NULL)";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
-
-			// if there were no records for this user present in the userinfo table
-			if ($res->numRows() == 0) {
-				// insert user information table
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-						" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-						" mobilephone, address, city, state, zip, notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
-						" VALUES (0,
-						'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
-						$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
-						$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
-						$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-						$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
-						$dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
-						$dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
-						$dbSocket->escapeSimple($ui_changeuserinfo).
-						"', '$currDate', '$currBy', NULL, NULL)";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-			} //FIXME:
-			  //if the user already exist in userinfo then we should somehow alert the user
-			  //that this has happened and the administrator/operator will take care of it
-        }
+		} //FIXME:
+		  //if the user already exist in userinfo then we should somehow alert the user
+		  //that this has happened and the administrator/operator will take care of it
+	}
 
 
 
@@ -319,6 +329,11 @@
 				addUserInfo($dbSocket, $username);
 				addUserBillInfo($dbSocket, $username);
 
+				if ($notificationWelcome == 1) {
+					include("include/common/notificationsWelcome.php");
+					
+				}
+				
 				$successMsg = "Added to database new user: <b> $username </b>";
 				$logAction .= "Successfully added new user [$username] on page: ";
 			} else {
@@ -459,6 +474,13 @@
                         <?php echo $l['Tooltip']['groupTooltip'] ?>
                 </div>
                 </li>
+
+		<li class='fieldset'>
+		<label for='userupdate' class='form'><?php echo $l['all']['SendWelcomeNotification']?></label>
+		<input type='checkbox' class='form' name='notificationWelcome' value='1' checked/>
+	        <br/>
+		</li>
+
 
 		<li class='fieldset'>
 		<br/>
