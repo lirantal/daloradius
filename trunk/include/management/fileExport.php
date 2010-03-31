@@ -14,7 +14,8 @@ include('../../library/checklogin.php');
 if (isset($_GET['reportFormat'])) {
 
 	$reportFormat = $_GET['reportFormat'];			// reportFormat is either CSV or PDF
-	$reportType = $_SESSION['reportType'];			// reportType defines the sql query string
+													// reportType defines the sql query string
+	$reportType = (isset($_GET['reportType'])) ? $_GET['reportType'] : $_SESSION['reportType'];	 
 	$reportQuery = $_SESSION['reportQuery'];		// reportQuery adds the WHERE fields for page-specific reports
 	$reportTable = $_SESSION['reportTable'];		// get table name (radacct/radcheck/etc)
 
@@ -209,6 +210,103 @@ if (isset($_GET['reportFormat'])) {
 	
 				break;
 
+
+
+
+		case "reportsBatchActiveUsers":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Batch Name, Username, Start Time".
+						"\n";
+				$outputContent = "";
+				
+				$sql = $reportQuery;
+						
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+	
+					while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+						$outputContent .= $row['batch_name'].",".$row['username'].",".$row['acctstarttime']."\n";
+					}
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+					include_once('../../library/closedb.php');
+				}
+	
+				break;
+
+
+		case "reportsBatchList":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Batch Name, Hotspot, Status, Total Users, Active Users, Plan Name, Plan Cost, Batch Cost, Creation Date, Creation By".
+						"\n";
+				$outputContent = "";
+				
+				$sql = $reportQuery;
+	
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+	
+						$batch_cost = 0;
+						while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+							
+							$batch_cost = ($row['active_users'] * $row['plancost']);
+							$outputContent .= $row['batch_name'].",".$row['HotspotName'].",".$row['batch_status'].",".$row['total_users'].",".$row['active_users'].
+										",".$row['planname'].",".$row['plancost'].",".$batch_cost.",".$row['creationdate'].
+										",".$row['creationby']."\n";
+					}
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+					include_once('../../library/closedb.php');
+				}
+	
+				break;
+				
+				
+		case "reportsBatchTotalUsers":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Batch Name, Username, Password".
+						"\n";
+				$outputContent = "";
+				
+				$batch_id = $_SESSION['reportParams']['batch_id'];
+				
+				$sql = "SELECT ".
+						$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id,".
+						$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name,".
+						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username,".
+						$configValues['CONFIG_DB_TBL_RADCHECK'].".Value ".
+
+						" FROM ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
+						", ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+						", ".$configValues['CONFIG_DB_TBL_RADCHECK'].
+						" WHERE ".
+						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = $batch_id".
+						" AND ".
+						$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id = $batch_id".
+						" AND ".
+						$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute LIKE '%-Password'".
+						" AND ".
+						"( ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username = ".
+						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username) ";
+						
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+	
+						$batch_cost = 0;
+						while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+							
+							$outputContent .= $row['batch_name'].",".$row['username'].",".$row['Value']."\n";
+					}
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+					include_once('../../library/closedb.php');
+				}
+	
+				break;
+
 	}
 
 
@@ -227,3 +325,11 @@ function exportCSVFile($output) {
 	
 }
 
+
+function exportPDFFile($output) {
+
+	header("Content-type: application/pdf");
+	header("Content-disposition: pdf; filename=daloradius__" . date("Ymd") . ".pdf; size=" . strlen($output));
+	print $output;
+	
+}
