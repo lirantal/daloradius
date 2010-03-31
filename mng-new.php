@@ -61,15 +61,15 @@
 	isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
 	isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
 	isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
-        isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
-        isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
-        isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
-        isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
-        isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
-        isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
-        isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
-        isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
-        isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
+    isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
+    isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
+    isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
+    isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
+    isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
+    isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+    isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
+    isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
+    isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
 	isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
 
 	isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
@@ -86,6 +86,10 @@
 	isset($_POST['zip']) ? $ui_zip = $_POST['zip'] : $ui_zip = "";
 	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 	isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
+	
+	isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
+	isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
+	
 	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
 
 
@@ -126,6 +130,9 @@
 		global $ui_zip;
 		global $notes;
 		global $ui_changeuserinfo;
+		global $ui_PortalLoginPassword;
+		global $ui_enableUserPortalLogin;
+		
 		global $logDebugSQL;
 		global $configValues;
 
@@ -142,7 +149,7 @@
 			// insert user information table
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 				" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-				" mobilephone, address, city, state, zip, notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
+				" mobilephone, address, city, state, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
 				" VALUES (0, 
 				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
 				$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
@@ -151,7 +158,8 @@
 				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
 				$dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
 				$dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
-				$dbSocket->escapeSimple($ui_changeuserinfo).
+				$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
+				$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
 				"', '$currDate', '$currBy', NULL, NULL)";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
@@ -181,15 +189,15 @@
 		global $bi_creditcardverification;
 		global $bi_creditcardtype;
 		global $bi_notes;
-                global $bi_lead;
-                global $bi_coupon;
-                global $bi_ordertaker;
-                global $bi_billstatus;
-                global $bi_lastbill;
-                global $bi_nextbill;
-                global $bi_postalinvoice;
-                global $bi_faxinvoice;
-                global $bi_emailinvoice;
+        global $bi_lead;
+        global $bi_coupon;
+        global $bi_ordertaker;
+        global $bi_billstatus;
+        global $bi_lastbill;
+        global $bi_nextbill;
+        global $bi_postalinvoice;
+        global $bi_faxinvoice;
+        global $bi_emailinvoice;
 		global $bi_changeuserbillinfo;
 		global $logDebugSQL;
 		global $configValues;
@@ -223,11 +231,11 @@
 				$dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
 				$dbSocket->escapeSimple($bi_notes)."', '".
 				$dbSocket->escapeSimple($bi_changeuserbillinfo)."', '".
-                                $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
-                                $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
-                                $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
-                                $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
-                                $dbSocket->escapeSimple($bi_emailinvoice).
+                $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
+                $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
+                $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
+                $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
+                $dbSocket->escapeSimple($bi_emailinvoice).
 				"', '$currDate', '$currBy', NULL, NULL)";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
@@ -300,6 +308,8 @@
 				case "changeUserBillInfo":
 				case "changeUserInfo":
 				case "copycontact":
+				case "portalLoginPassword":
+				case "enableUserPortalLogin":
 					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
 								// to skip the loop (continue) without entering it as
 								// we do not want to process this $attribute in the following

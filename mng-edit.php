@@ -57,6 +57,8 @@
 		$zip = $_REQUEST['zip'];
 		$notes = $_REQUEST['notes'];
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
+		isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
+		isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "1234";
 		
 		isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
 		isset($_POST['oldplanName']) ? $oldplanName = $_POST['oldplanName'] : $oldplanName = "";
@@ -88,7 +90,7 @@
 		isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
 		isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
 		isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
-
+		
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
 
 //Fix up errors with droping the Plan name
@@ -154,7 +156,7 @@ if ($planName== "")
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" (id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone,".
 					" address, city, state, zip, ".
-					" notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
+					" notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
 					" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
 					$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".
 					$dbSocket->escapeSimple($email)."','".$dbSocket->escapeSimple($department)."', '".
@@ -162,7 +164,8 @@ if ($planName== "")
 					$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".
 					$dbSocket->escapeSimple($address)."', '".$dbSocket->escapeSimple($city)."', '".
 					$dbSocket->escapeSimple($state)."', '".$dbSocket->escapeSimple($zip)."', '".
-					$dbSocket->escapeSimple($notes)."', '".$dbSocket->escapeSimple($ui_changeuserinfo)."', ".
+					$dbSocket->escapeSimple($notes)."', '".$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
+					$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin)."', ".
 					"'$currDate', '$currBy', NULL, NULL)";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -183,6 +186,8 @@ if ($planName== "")
 					"', zip='".$dbSocket->escapeSimple($zip).
 					"', notes='".$dbSocket->escapeSimple($notes).
 					"', changeuserinfo='".$dbSocket->escapeSimple($ui_changeuserinfo).
+					"', portalloginpassword='".$dbSocket->escapeSimple($ui_PortalLoginPassword).
+					"', enableportallogin='".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
 					"', updatedate='$currDate', updateby='$currBy' ".
 					" WHERE username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
@@ -356,35 +361,38 @@ if ($planName== "")
 					case "zip":
 					case "notes":
 					case "changeUserInfo":
-	                                case "bi_contactperson":
-	                                case "bi_company":
-	                                case "bi_email":
-	                                case "bi_phone":
-	                                case "bi_address":
-	                                case "bi_city":
-	                                case "bi_state":
-	                                case "bi_zip":
-	                                case "bi_paymentmethod":
-	                                case "bi_cash":
-	                                case "bi_creditcardname":
-	                                case "bi_creditcardnumber":
-	                                case "bi_creditcardverification":
-	                                case "bi_creditcardtype":
-	                                case "bi_creditcardexp":
-	                                case "bi_notes":
-	                                case "changeUserBillInfo":
-	                                case "bi_lead":
-	                                case "bi_coupon":
-	                                case "bi_ordertaker":
-	                                case "bi_billstatus":
-	                                case "bi_lastbill":
-	                                case "bi_nextbill":
-	                                case "bi_postalinvoice":
-	                                case "bi_faxinvoice":
-	                                case "bi_emailinvoice":
-      					   case "bi_planname":
+                    case "bi_contactperson":
+                    case "bi_company":
+                    case "bi_email":
+                    case "bi_phone":
+                    case "bi_address":
+                    case "bi_city":
+                    case "bi_state":
+                    case "bi_zip":
+                    case "bi_paymentmethod":
+                    case "bi_cash":
+                    case "bi_creditcardname":
+                    case "bi_creditcardnumber":
+                    case "bi_creditcardverification":
+                    case "bi_creditcardtype":
+                    case "bi_creditcardexp":
+                    case "bi_notes":
+                    case "changeUserBillInfo":
+                    case "bi_lead":
+                    case "bi_coupon":
+                    case "bi_ordertaker":
+                    case "bi_billstatus":
+                    case "bi_lastbill":
+                    case "bi_nextbill":
+                    case "bi_postalinvoice":
+                    case "bi_faxinvoice":
+                    case "bi_emailinvoice":
+      				case "bi_planname":
 					case "passwordOrig":
 					case "newgroups":
+					case "portalLoginPassword":
+					case "enableUserPortalLogin":
+						
 						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
 												// to skip the loop (continue) without entering it as
 												// we do not want to process this $attribute in the following
@@ -548,7 +556,7 @@ if ($planName== "")
 
 	/* fill-in all the user info details */
 	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, zip, notes, ".
-		" changeuserinfo, creationdate, creationby, updatedate, updateby FROM ".
+		" changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby FROM ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 		" WHERE UserName='".
 		$dbSocket->escapeSimple($username)."'";
@@ -571,12 +579,12 @@ if ($planName== "")
 	$ui_zip = $row[11];
 	$ui_notes = $row[12];
 	$ui_changeuserinfo = $row[13];
-	$ui_creationdate = $row[14];
-	$ui_creationby = $row[15];
-	$ui_updatedate = $row[16];
-	$ui_updateby = $row[17];
-
-
+	$ui_PortalLoginPassword = $row[14];
+	$ui_enableUserPortalLogin = $row[15];
+	$ui_creationdate = $row[16];
+	$ui_creationby = $row[17];
+	$ui_updatedate = $row[18];
+	$ui_updateby = $row[19];
 
 	/* fill-in all the user bill info details */
 	$sql = "SELECT ".
@@ -611,15 +619,15 @@ if ($planName== "")
 	$bi_creditcardtype = $row['creditcardtype'];
 	$bi_creditcardexp = $row['creditcardexp'];
 	$bi_notes = $row['notes'];
-        $bi_lead = $row['lead'];
-        $bi_coupon = $row['coupon'];
-        $bi_ordertaker = $row['ordertaker'];
-        $bi_billstatus = $row['billstatus'];
-        $bi_lastbill = $row['lastbill'];
-        $bi_nextbill = $row['nextbill'];
-        $bi_postalinvoice = $row['postalinvoice'];
-        $bi_faxinvoice = $row['faxinvoice'];
-        $bi_emailinvoice = $row['emailinvoice'];
+    $bi_lead = $row['lead'];
+    $bi_coupon = $row['coupon'];
+    $bi_ordertaker = $row['ordertaker'];
+    $bi_billstatus = $row['billstatus'];
+    $bi_lastbill = $row['lastbill'];
+    $bi_nextbill = $row['nextbill'];
+    $bi_postalinvoice = $row['postalinvoice'];
+    $bi_faxinvoice = $row['faxinvoice'];
+    $bi_emailinvoice = $row['emailinvoice'];
 	$bi_changeuserbillinfo = $row['changeuserbillinfo'];
 	$ui_creationdate = $row['creationdate'];
 	$ui_creationby = $row['creationby'];
