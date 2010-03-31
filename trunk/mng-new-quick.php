@@ -57,30 +57,33 @@
 		isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone =  "";
 		isset($_POST['homephone']) ? $homephone = $_POST['homephone'] : $homephone = "";
 		isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
-	        isset($_POST['address']) ? $address = $_POST['address'] : $address = "";
-	        isset($_POST['city']) ? $city = $_POST['city'] : $city = "";
-	        isset($_POST['state']) ? $state = $_POST['state'] : $state = "";
-	        isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
+	    isset($_POST['address']) ? $address = $_POST['address'] : $address = "";
+	    isset($_POST['city']) ? $city = $_POST['city'] : $city = "";
+	    isset($_POST['state']) ? $state = $_POST['state'] : $state = "";
+	    isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
 		isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 		isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
-
-	        isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
-	        isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
-	        isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
-	        isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
-	        isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
-	        isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
-	        isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
-	        isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
-	        isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
-	        isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
-	        isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
-	        isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
-	        isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
-	        isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
-	        isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
-	        isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
-	        isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
+		isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
+		isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
+		
+	    isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
+	    isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
+	    isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
+	    isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
+	    isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
+	    isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
+	    isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+	    isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
+	    isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
+	    isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
+	    isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
+	    isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
+	    isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
+	    isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
+	    isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
+	    isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+	    isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
+	    
 		include 'library/opendb.php';
 		
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
@@ -190,7 +193,7 @@
 					// insert user information table
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 							" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-							" mobilephone, address, city, state, zip, notes, changeuserinfo, creationdate, creationby, updatedate, updateby) ".
+							" mobilephone, address, city, state, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
 							" VALUES (0,
 							'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
 							$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
@@ -199,7 +202,8 @@
 							$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($address)."', '".
 							$dbSocket->escapeSimple($city)."', '".$dbSocket->escapeSimple($state)."', '".
 							$dbSocket->escapeSimple($zip)."', '".$dbSocket->escapeSimple($notes)."', '".
-							$dbSocket->escapeSimple($ui_changeuserinfo).
+							$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
+							$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
 							"', '$currDate', '$currBy', NULL, NULL)";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
