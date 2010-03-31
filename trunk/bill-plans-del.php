@@ -46,8 +46,15 @@
 				$planName = $value;
 				$allPlans .= $planName . ", ";
 
+				// remove the plan entry from the plans table
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 						" WHERE planName='".$dbSocket->escapeSimple($planName)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+				
+				// remove plan's association with profiles from the plans_profiles table
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'].
+						" WHERE plan_name='".$dbSocket->escapeSimple($planName)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				

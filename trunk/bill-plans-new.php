@@ -44,6 +44,7 @@
 	isset($_POST['planTax']) ? $planTax = $_POST['planTax'] : $planTax = "";
 	isset($_POST['planCurrency']) ? $planCurrency = $_POST['planCurrency'] : $planCurrency = "";
 	isset($_POST['planGroup']) ? $planGroup = $_POST['planGroup'] : $planGroup = "";
+	isset($_POST['groups']) ? $groups = $_POST['groups'] : $groups = "";
 
 	$logAction = "";
 	$logDebugSQL = "";
@@ -90,6 +91,10 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
+				// add the profiles associated with this billing plan to the
+				// billing_plans_profiles table for later on
+				addProfilesToBillingPlans($dbSocket, $planName, $groups);
+				
 				$successMsg = "Added to database new billing plan: <b>$planName</b>";
 				$logAction .= "Successfully added new billing plan [$planName] on page: ";
 			} else {
@@ -106,7 +111,26 @@
 	}
 
 
+	function addProfilesToBillingPlans($dbSocket, $planName, $groups) {
 
+		global $logDebugSQL;
+		global $configValues;
+
+		// insert usergroup mapping
+		if (isset($groups)) {
+
+			foreach ($groups as $group) {
+
+				if (trim($group) != "") {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES']." (id,plan_name,profile_name) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($planName)."', '".$dbSocket->escapeSimple($group)."') ";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+			}
+		}
+	}
+	
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
@@ -120,7 +144,10 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 </head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script type="text/javascript" src="library/javascript/pages_common.js"></script>
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
@@ -216,6 +243,8 @@
 			<option value='Daily'>Daily</option>
 			<option value='Weekly'>Weekly</option>
 			<option value='Monthly'>Monthly</option>
+			<option value='Quarterly'>Quarterly</option>
+			<option value='Yearly'>Yearly</option>
 		</select>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringPeriodTooltip')" /> 
 		
@@ -294,7 +323,8 @@
 		</li>
 	
 
-
+<?php
+/*
                 <li class='fieldset'>
                 <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
                 <?php
@@ -308,7 +338,8 @@
 			<?php echo $l['Tooltip']['planGroupTooltip'] ?>
 		</div>
 		</li>
-
+*/
+?>
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
@@ -464,6 +495,74 @@
 	</fieldset>
 	</div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="tabbertab" title="<?php echo $l['title']['Profiles']; ?>">
+        <fieldset>
+
+		<h302> <?php echo $l['title']['Profiles']; ?> </h302>
+		<br/>
+	
+			<ul>
+			
+					<li class='fieldset'>
+					<label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
+					<?php   
+						include_once 'include/management/populate_selectbox.php';
+						populate_groups("Select Profiles","groups[]");
+					?>
+			
+					<a class='tablenovisit' href='#'
+						onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerProfiles',genericCounter('divCounter')+'&elemName=groups[]');">Add</a>
+			
+					<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+			
+					<div id='divContainerProfiles'>
+					</div>
+			
+			
+					<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+						<img src='images/icons/comment.png' alt='Tip' border='0' /> 
+						<?php echo $l['Tooltip']['groupTooltip'] ?>
+					</div>
+					</li>
+
+
+				<li class='fieldset'>
+					<br/>
+					<hr><br/>
+					<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+				</li>
+
+			</ul>
+
+	</fieldset>
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
 </div>
 	</form>
 
