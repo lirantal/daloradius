@@ -96,10 +96,27 @@ echo "
 		$isUIChecked = "";
 	}
 
+
+	if ($ui_enableUserPortalLogin == 1) {
+		$isenableUserPortalLogin = "checked='yes'";
+		$ui_enableUserPortalLogin = 1;
+	} else {
+		$ui_enableUserPortalLogin = 1;
+		$isenableUserPortalLogin = "";
+	}
+	
 echo "
 
 	<label for='userupdate' class='form'>".$l['ContactInfo']['EnableUserUpdate']."</label>
 	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isUIChecked tabindex=313 />
+        <br/>
+        
+	<label for='userupdate' class='form'>".$l['ContactInfo']['EnablePortalLogin']."</label>
+	<input type='checkbox' class='form' name='enableUserPortalLogin' value='$ui_enableUserPortalLogin' $isenableUserPortalLogin tabindex=313 />
+        <br/>
+
+	<label for='portalLoginPassword' class='form'>".$l['ContactInfo']['PortalLoginPassword']."</label>
+	<input name='portalLoginPassword' id='portalLoginPassword' value='"; if (isset($ui_PortalLoginPassword)) echo $ui_PortalLoginPassword; echo "' tabindex=314 />
         <br/>
 
 	<br/>
