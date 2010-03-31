@@ -20,6 +20,28 @@
  *********************************************************************************************************
  */
  
+
+	function addProfilesToBillingPlans($dbSocket, $planName, $groups) {
+
+		global $logDebugSQL;
+		global $configValues;
+
+		// insert usergroup mapping
+		if (isset($groups)) {
+
+			foreach ($groups as $group) {
+
+				if (trim($group) != "") {
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES']." (id,plan_name,profile_name) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($planName)."', '".$dbSocket->escapeSimple($group)."') ";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				}
+			}
+		}
+	}
+	
+	
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -27,27 +49,28 @@
 
 	include 'library/opendb.php';
 
-        isset($_POST['planNameOld']) ? $planNameOld = $_POST['planNameOld'] : $planNameOld = "";
-        isset($_REQUEST['planName']) ? $planName = $_REQUEST['planName'] : $planName = "";
-        isset($_POST['planId']) ? $planId = $_POST['planId'] : $planId = "";
-        isset($_POST['planType']) ? $planType = $_POST['planType'] : $planType = "";
-        isset($_POST['planTimeType']) ? $planTimeType = $_POST['planTimeType'] : $planTimeType = "";
-        isset($_POST['planTimeBank']) ? $planTimeBank = $_POST['planTimeBank'] : $planTimeBank = "";
-        isset($_POST['planTimeRefillCost']) ? $planTimeRefillCost = $_POST['planTimeRefillCost'] : $planTimeRefillCost = "";
-        isset($_POST['planBandwidthUp']) ? $planBandwidthUp = $_POST['planBandwidthUp'] : $planBandwidthUp = "";
-        isset($_POST['planBandwidthDown']) ? $planBandwidthDown = $_POST['planBandwidthDown'] : $planBandwidthDown = "";
-        isset($_POST['planTrafficTotal']) ? $planTrafficTotal = $_POST['planTrafficTotal'] : $planTrafficTotal = "";
-        isset($_POST['planTrafficDown']) ? $planTrafficDown = $_POST['planTrafficDown'] : $planTrafficDown = "";
-        isset($_POST['planTrafficUp']) ? $planTrafficUp = $_POST['planTrafficUp'] : $planTrafficUp = "";
-        isset($_POST['planTrafficRefillCost']) ? $planTrafficRefillCost = $_POST['planTrafficRefillCost'] : $planTrafficRefillCost = "";
-        isset($_POST['planRecurring']) ? $planRecurring = $_POST['planRecurring'] : $planRecurring = "";
-        isset($_POST['planRecurringPeriod']) ? $planRecurringPeriod = $_POST['planRecurringPeriod'] : $planRecurringPeriod = "";
-        isset($_POST['planCost']) ? $planCost = $_POST['planCost'] : $planCost = "";
-        isset($_POST['planSetupCost']) ? $planSetupCost = $_POST['planSetupCost'] : $planSetupCost = "";
-        isset($_POST['planTax']) ? $planTax = $_POST['planTax'] : $planTax = "";
-        isset($_POST['planCurrency']) ? $planCurrency = $_POST['planCurrency'] : $planCurrency = "";
-        isset($_POST['planActive']) ? $planActive = $_POST['planActive'] : $planActive = "";
-        isset($_POST['planGroup']) ? $planGroup = $_POST['planGroup'] : $planGroup = "";
+	isset($_POST['planNameOld']) ? $planNameOld = $_POST['planNameOld'] : $planNameOld = "";
+	isset($_REQUEST['planName']) ? $planName = $_REQUEST['planName'] : $planName = "";
+	isset($_POST['planId']) ? $planId = $_POST['planId'] : $planId = "";
+	isset($_POST['planType']) ? $planType = $_POST['planType'] : $planType = "";
+	isset($_POST['planTimeType']) ? $planTimeType = $_POST['planTimeType'] : $planTimeType = "";
+	isset($_POST['planTimeBank']) ? $planTimeBank = $_POST['planTimeBank'] : $planTimeBank = "";
+	isset($_POST['planTimeRefillCost']) ? $planTimeRefillCost = $_POST['planTimeRefillCost'] : $planTimeRefillCost = "";
+	isset($_POST['planBandwidthUp']) ? $planBandwidthUp = $_POST['planBandwidthUp'] : $planBandwidthUp = "";
+	isset($_POST['planBandwidthDown']) ? $planBandwidthDown = $_POST['planBandwidthDown'] : $planBandwidthDown = "";
+	isset($_POST['planTrafficTotal']) ? $planTrafficTotal = $_POST['planTrafficTotal'] : $planTrafficTotal = "";
+	isset($_POST['planTrafficDown']) ? $planTrafficDown = $_POST['planTrafficDown'] : $planTrafficDown = "";
+	isset($_POST['planTrafficUp']) ? $planTrafficUp = $_POST['planTrafficUp'] : $planTrafficUp = "";
+	isset($_POST['planTrafficRefillCost']) ? $planTrafficRefillCost = $_POST['planTrafficRefillCost'] : $planTrafficRefillCost = "";
+	isset($_POST['planRecurring']) ? $planRecurring = $_POST['planRecurring'] : $planRecurring = "";
+	isset($_POST['planRecurringPeriod']) ? $planRecurringPeriod = $_POST['planRecurringPeriod'] : $planRecurringPeriod = "";
+	isset($_POST['planCost']) ? $planCost = $_POST['planCost'] : $planCost = "";
+	isset($_POST['planSetupCost']) ? $planSetupCost = $_POST['planSetupCost'] : $planSetupCost = "";
+	isset($_POST['planTax']) ? $planTax = $_POST['planTax'] : $planTax = "";
+	isset($_POST['planCurrency']) ? $planCurrency = $_POST['planCurrency'] : $planCurrency = "";
+	isset($_POST['planActive']) ? $planActive = $_POST['planActive'] : $planActive = "";
+	isset($_POST['planGroup']) ? $planGroup = $_POST['planGroup'] : $planGroup = "";
+	isset($_POST['groups']) ? $groups = $_POST['groups'] : $groups = "";
 
 	$edit_planname = $planName; //feed the sidebar variables	
 
@@ -88,6 +111,18 @@
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
 			
+
+			// to change a plan's association of the profiles we removed all existing
+			// association for this group and re-create it.
+			
+			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'].
+			" WHERE plan_name='".$dbSocket->escapeSimple($planNameOld)."'";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL = "";
+			$logDebugSQL .= $sql . "\n";
+			
+			addProfilesToBillingPlans($dbSocket, $planName, $groups);
+
 			$successMsg = "Updated billing plan settings for: <b> $planName </b>";
 			$logAction .= "Successfully updated billing plan settings for hotspot [$planName] on page: ";
 			
@@ -96,8 +131,30 @@
 			$logAction .= "Failed updating billing plan settings for plan [$planName] on page: ";
 		}
 		
+
+
+		
 	}
 	
+	
+	function getProfilesOfPlan($dbSocket, $plan_name) {
+		
+		global $configValues;
+		
+		$profiles = array();
+		
+		// get all profiles associated with this plan name
+		$sql = "SELECT profile_name FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'].
+			" WHERE plan_name='".$dbSocket->escapeSimple($plan_name)."'";
+		$res = $dbSocket->query($sql);
+		while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC))
+			$profiles[] = $row['profile_name'];
+		
+		return $profiles;
+		
+	}
+
+	$planProfiles = getProfilesOfPlan($dbSocket, $planName);
 
 	// fill-in username and password in the textboxes
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planName='".$dbSocket->escapeSimple($planName)."'";
@@ -139,7 +196,7 @@
 	include_once('library/config_read.php');
 	$log = "visited page: ";
 
-	
+
 ?>
 
 
@@ -151,7 +208,10 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 </head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<script type="text/javascript" src="library/javascript/pages_common.js"></script>
+<script type="text/javascript" src="library/javascript/ajax.js"></script>
+<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
+<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
@@ -251,6 +311,8 @@
                         <option value='Daily'>Daily</option>
                         <option value='Weekly'>Weekly</option>
                         <option value='Monthly'>Monthly</option>
+						<option value='Quarterly'>Quarterly</option>
+						<option value='Yearly'>Yearly</option>
                 </select>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringPeriodTooltip')" />
 
@@ -346,7 +408,8 @@
 
 
 
-
+<?php
+/*
                 <li class='fieldset'>
                 <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
                 <?php
@@ -360,7 +423,8 @@
                         <?php echo $l['Tooltip']['planGroupTooltip'] ?>
                 </div>
                 </li>
-
+*/
+?>
 
 			<li class='fieldset'>
 			<br/>
@@ -524,6 +588,83 @@
 
         </fieldset>
         </div>
+
+
+
+
+
+        <div class="tabbertab" title="<?php echo $l['title']['Profiles']; ?>">
+        <fieldset>
+
+		<h302> <?php echo $l['title']['Profiles']; ?> </h302>
+		
+		<h301> Associated Profiles </h301>
+		<br/>
+		
+			<ul>
+			
+			<?php
+				include_once('include/management/populate_selectbox.php');
+			?>
+			
+			<?php foreach($planProfiles as $profile) {
+			
+				echo "
+					<li class='fieldset'>
+					<label for='group' class='form'>".$l['all']['Profile']."</label>
+				";
+				populate_groups($profile,"groups[]", "form", "", $profile);
+			
+			}
+			?>
+			
+			</ul>
+		
+		
+		<h301> <?php echo $l['title']['Profiles']; ?> </h301>
+		<br/>
+	
+			<ul>
+			
+					<li class='fieldset'>
+					<label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
+					<?php  
+						include_once('include/management/populate_selectbox.php');
+						populate_groups("Select Profiles","groups[]");
+					?>
+			
+					<a class='tablenovisit' href='#'
+						onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerProfiles',genericCounter('divCounter')+'&elemName=groups[]');">Add</a>
+			
+					<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+			
+					<div id='divContainerProfiles'>
+					</div>
+			
+			
+					<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+						<img src='images/icons/comment.png' alt='Tip' border='0' /> 
+						<?php echo $l['Tooltip']['groupTooltip'] ?>
+					</div>
+					</li>
+
+
+				<li class='fieldset'>
+					<br/>
+					<hr><br/>
+					<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+				</li>
+
+			</ul>
+
+	</fieldset>
+	</div>
+
+
+
+
+
+
 
 	<input type=hidden value="<?php echo $planName ?>" name="planNameOld"/>
 
