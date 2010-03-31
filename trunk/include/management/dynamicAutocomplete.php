@@ -22,6 +22,30 @@
 
 include('../../library/checklogin.php');
 
+
+/* getAjaxAutocompleteBatchNames */
+if(isset($_GET['getAjaxAutocompleteBatchNames'])) {
+
+        $getAjaxAutocompleteBatchNames = $_GET['getAjaxAutocompleteBatchNames'];
+
+	if ( (isset($getAjaxAutocompleteBatchNames)) && ($getAjaxAutocompleteBatchNames) ) {
+
+	        include '../../library/opendb.php';
+
+	        $sql = "SELECT distinct(batch_name) as batchName FROM ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
+			" WHERE batch_name LIKE '$getAjaxAutocompleteBatchNames%' ORDER BY batch_name ASC";
+	        $res = $dbSocket->query($sql);
+
+	        while($row = $res->fetchRow()) {
+	                echo "$row[0]###$row[0]|";
+	        }
+
+	        include '../../library/closedb.php';
+	}
+
+}
+
+
 /* getAjaxAutocompleteNASHost */
 if(isset($_GET['getAjaxAutocompleteNASHost'])) {
 
