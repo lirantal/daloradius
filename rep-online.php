@@ -282,9 +282,29 @@
 ?>
 
 	</div>
+	
+	
+	
+    <div class="tabbertab" title="Online Nas">
+       <br/>
+
+
+<?php
+       echo "<img src=\"library/graphs-reports-online-nas.php\" />";
+?>
+
+       </div>
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </div>
-
-
 
 <?php
 	include('include/config/logging.php');
