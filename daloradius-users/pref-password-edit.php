@@ -41,21 +41,19 @@
 			if (trim($currentPassword) != "") {
 
 				include 'library/opendb.php';
-
-				$sql = "SELECT UserName,Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE ".
-					" UserName='".$dbSocket->escapeSimple($login)."' AND ".
-					" Attribute LIKE '%-Password' AND ".
-					" Value='".$dbSocket->escapeSimple($currentPassword)."'";
+				
+				$sql = "SELECT portalloginpassword FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+					" WHERE username='".$dbSocket->escapeSimple($login)."'";
 				$res = $dbSocket->query($sql);
+				$row = $res->fetchRow();
 	
 				$logDebugSQL .= $sql . "\n";
 				
-				if ($res->numRows() == 1) {
+				if ( ($res->numRows() == 1) && ($row[0] == $currentPassword) ) {
 	
-					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-						" SET Value='".$dbSocket->escapeSimple($newPassword)."'".
-						" WHERE UserName='".$dbSocket->escapeSimple($login)."' AND ".
-						" Attribute LIKE '%-Password'";
+					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
+						" SET portalloginpassword='".$dbSocket->escapeSimple($newPassword)."'".
+						" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
