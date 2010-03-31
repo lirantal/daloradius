@@ -227,12 +227,15 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
         $payer_status = $dbSocket->escapeSimple($payer_status);
         $payment_status = $dbSocket->escapeSimple($payment_status);
 
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].".Username AS Username, business_email, planName, planId, SUM(payment_total) AS total, SUM(payment_fee) ".
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].".Username AS Username, business_email, ".
+        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planName, ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].".planId, SUM(payment_total) AS total, SUM(payment_fee) ".
 		" AS fee, SUM(payment_tax) AS tax, payment_currency, SUM(AcctSessionTime) AS AcctSessionTime, SUM(AcctInputOctets) AS AcctInputOctets, ".
 		" SUM(AcctOutputOctets) AS AcctOutputOctets ".
-		" FROM ".
-		$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON ".
+		" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT']." ON ".
 		$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].".Username=".$configValues['CONFIG_DB_TBL_RADACCT'].".Username ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." ON ".
+		$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].".planId=".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".id ".
 		" WHERE ".
 	        " (business_email LIKE '$payer_email') AND ".
                 " (payment_address_status LIKE '$payment_address_status') AND ".
