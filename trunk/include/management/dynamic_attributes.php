@@ -156,7 +156,9 @@ if(isset($_GET['getValuesForAttribute'])) {
 			drawBitPerSecond($num);
 			break;
 
-
+		case "kbitspersecond":
+			drawKBitPerSecond($num);
+			break;
 
 	}
 	/*******************************************************************************************************/
@@ -312,6 +314,33 @@ EOF;
 
 }
 
+
+function drawKBitPerSecond($num) {
+
+        $inputId = "dictValues".$num;
+
+        echo <<<EOF
+        objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawKBitPerSecond$num' "+
+                                "style='width: 100px' class='form'>"+
+                                "<option value=''>Select...</option>"+
+                                "<option value='32'>32kbps</option>"+
+                                "<option value='64'>64kbps</option>"+
+                                "<option value='128'>128kbps</option>"+
+                                "<option value='256'>256kbps</option>"+
+                                "<option value='512'>512kbps</option>"+
+                                "<option value='750'>750kbps</option>"+
+                                "<option value='1000'>1mbps</option>"+
+                                "<option value='1500'>1.5mbps</option>"+
+                                "<option value='2500'>2mbps</option>"+
+                                "<option value='3000'>3mbps</option>"+
+                                "<option value='5000'>5mbps</option>"+
+                                "<option value='8000'>8mbps</option>"+
+                                "<option value='10000'>10mbps</option>"+
+                              "</select>";
+
+EOF;
+
+}
 
 
 
