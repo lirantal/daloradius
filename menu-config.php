@@ -33,6 +33,7 @@
 		<li><a href="config-lang.php"><b>&raquo;</b><?php echo $l['button']['LanguageSettings'] ?></a></li>
 		<li><a href="config-logging.php"><b>&raquo;</b><?php echo $l['button']['LoggingSettings'] ?></a></li>
 		<li><a href="config-interface.php"><b>&raquo;</b><?php echo $l['button']['InterfaceSettings'] ?></a></li>
+		<li><a href="config-mail.php"><b>&raquo;</b><?php echo $l['button']['MailSettings'] ?></a></li>
 
 	</ul>
 	
