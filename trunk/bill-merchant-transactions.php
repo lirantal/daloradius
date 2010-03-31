@@ -195,9 +195,6 @@
 		case "txnId":
 			$title = $l['all']['TxnId'];
 			break;
-		case "planName":
-			$title = $l['all']['PlanName'];
-			break;
 		case "planId":
 			$title = $l['all']['PlanId'];
 			break;

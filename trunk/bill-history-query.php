@@ -104,7 +104,7 @@
 
 		$getQuery = "";
 		$getQuery .= "&username=$username";
-		$getQuery .= "&billaction=$billaction";
+		$getQuery .= "&billAction=$billaction";
 		$getQuery .= "&startdate=$startdate&enddate=$enddate";
 
 
@@ -115,14 +115,14 @@
 
 		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY']." WHERE ".
 			" (username LIKE '$username') AND ".
-			" (billaction LIKE '$billaction') ";
+			" (billAction LIKE '$billaction') ";
 		$res = $dbSocket->query($sql);
 		$numrows = $res->numRows();
 
 
 		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY']." WHERE ".
 			" (username LIKE '$username') AND ".
-			" (billaction LIKE '$billaction') ".
+			" (billAction LIKE '$billaction') ".
 			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL = "";
@@ -166,8 +166,8 @@
 		case "username":
 			$title = $l['all']['Username'];
 			break;
-		case "planName":
-			$title = $l['all']['PlanName'];
+		case "planId":
+			$title = $l['all']['PlanId'];
 			break;
 		case "billAmount":
 			$title = $l['all']['BillAmount'];
