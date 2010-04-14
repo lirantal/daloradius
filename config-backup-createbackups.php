@@ -110,7 +110,7 @@
 					break;
 				case "operators":
 					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOOPERATOR'];
+						$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS'];
 					break;
 				case "billing_rates":
 					if ($value == "yes")
