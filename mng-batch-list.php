@@ -99,7 +99,6 @@
 			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_status,".
 			
 			"COUNT(DISTINCT(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id)) as total_users,".
-			"COUNT(DISTINCT(".$configValues['CONFIG_DB_TBL_RADACCT'].".username)) as active_users,".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname,".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".plancost,".
 			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as HotspotName,".
@@ -118,11 +117,6 @@
 			" ON ".
 			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname = ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname) ".
-
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".username = ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username) ".
 
 			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
 			" ON ".
@@ -146,7 +140,6 @@
 			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_status,".
 			
 			"COUNT(DISTINCT(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id)) as total_users,".
-			"COUNT(DISTINCT(".$configValues['CONFIG_DB_TBL_RADACCT'].".username)) as active_users,".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname,".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".plancost,".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".plancurrency,".
@@ -173,10 +166,6 @@
 			"(".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".hotspot_id = ".
 			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".id) ".
 			
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".username = ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username) ".
 			" GROUP by ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name ".
 			" ORDER BY $orderBy $orderType ".
 			" LIMIT $offset, $rowsPerPage;";
@@ -244,10 +233,6 @@
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['ActiveUsers']."
-		</th>
-
-		<th scope='col'> 
 		".$l['all']['PlanName']."
 		</th>
 
@@ -282,7 +267,6 @@
 		$batch_status = $row['batch_status'];
 		$plancost = $row['plancost'];
 		$total_users = $row['total_users'];
-		$active_users = $row['active_users'];
 		$batch_cost = ($active_users * $plancost);
 		$plan_currency = $row['plancurrency'];
 		
@@ -319,10 +303,6 @@
 				</td>
 				
 				<td>".$total_users."
-					
-				</td>
-
-				<td>".$active_users."
 					
 				</td>
 
