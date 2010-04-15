@@ -34,10 +34,6 @@
 			<img src='images/icons/userNew.gif' border='0'>
 			<?php echo $l['button']['NewUserQuick'] ?></a>
 		</li>
-		<li><a href="mng-batch.php"><b>&raquo;</b>
-			<img src='images/icons/userNew.gif' border='0'>
-			<?php echo $l['button']['BatchAddUsers'] ?></a>
-		</li>
 		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>
 			<img src='images/icons/userEdit.gif' border='0'>
 			<?php echo $l['button']['EditUser'] ?></a>
