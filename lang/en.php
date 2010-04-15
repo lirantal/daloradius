@@ -623,6 +623,8 @@ $l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
 $l['button']['DeleteAccountingRecords'] = "Delete Accounting Records";
 
 $l['button']['ListUsers'] = "List Users";
+$l['button']['ListBatches'] = "List Batches";
+$l['button']['RemoveBatch'] = "Remove Batch";
 $l['button']['ImportUsers'] = "Import Users";
 $l['button']['NewUser'] = "New User";
 $l['button']['NewUserQuick'] = "New User - Quick Add";
@@ -744,6 +746,8 @@ $l['title']['PlanInfo'] = "Plan Information";
 $l['title']['TimeSettings'] = "Time Settings";
 $l['title']['BandwidthSettings'] = "Bandwidth Settings";
 $l['title']['PlanRemoval'] = "Plan Removal";
+
+$l['title']['BatchRemoval'] = "Batch Removal";
 
 $l['title']['Backups'] = "Backups";
 $l['title']['FreeRADIUSTables'] = "FreeRADIUS Tables";
@@ -976,6 +980,7 @@ $l['Intro']['replogs.php'] = "Logs";
 $l['Intro']['rephb.php'] = "Heartbeat";
 $l['Intro']['rephbdashboard.php'] = "daloRADIUS NAS Dashboard";
 $l['Intro']['repbatch.php'] = "Batch";
+$l['Intro']['mngbatchlist.php'] = "Batch Sessions List";
 $l['Intro']['repbatchlist.php'] = "Batch Users List";
 $l['Intro']['repbatchdetails.php'] = "Batch Details";
 
@@ -986,10 +991,13 @@ $l['Intro']['reptopusers.php'] = "Top Users";
 $l['Intro']['repusername.php'] = "Users Listing";
 
 $l['Intro']['mngbatch.php'] = "Create batch users";
+$l['Intro']['mngbatchdel.php'] = "Delete batch sessions";
+
 $l['Intro']['mngdel.php'] = "Remove User";
 $l['Intro']['mngedit.php'] = "Edit User Details";
 $l['Intro']['mnglistall.php'] = "Users Listing";
 $l['Intro']['mngmain.php'] = "Users and Hotspots Management";
+$l['Intro']['mngbatch.php'] = "Batch Users Management";
 $l['Intro']['mngnew.php'] = "New User";
 $l['Intro']['mngnewquick.php'] = "Quick User Add";
 $l['Intro']['mngsearch.php'] = "User Search";
@@ -1376,6 +1384,8 @@ $l['helpPage']['rephb'] = "";
 $l['helpPage']['rephbdashboard'] = "";
 $l['helpPage']['repbatch'] = "";
 $l['helpPage']['repbatchlist'] = "";
+$l['helpPage']['mngbatchlist'] = "";
+$l['helpPage']['mngbatchdel'] = "";
 $l['helpPage']['repbatchdetails'] = "Provides a list of active users of this batch instance";
 $l['helpPage']['replogs'] = "
 <b>Logs</b><br/>
