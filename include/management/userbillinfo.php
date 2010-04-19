@@ -167,6 +167,14 @@ echo "
 	<input value='"; if (isset($bi_nextbill)) echo $bi_nextbill; echo "' name='bi_nextbill' disabled tabindex=411 />
         <br/>
 
+	<label for='BillDue' class='form'>".$l['all']['BillDue']."</label>
+	<input value='"; if (isset($bi_billdue)) echo $bi_billdue; echo "' name='bi_billdue' tabindex=411 />
+        <br/>
+        
+	<label for='NextInvoiceDue' class='form'>".$l['all']['NextInvoiceDue']."</label>
+	<input value='"; if (isset($bi_nextinvoicedue)) echo $bi_nextinvoicedue; echo "' name='bi_nextinvoicedue' tabindex=411 />
+        <br/>
+        
 	<br/>
 	<label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
 	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=414 />

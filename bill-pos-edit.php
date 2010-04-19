@@ -56,6 +56,8 @@
         isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
         isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
         isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+		isset($_POST['bi_nextinvoicedue']) ? $bi_nextinvoicedue = $_POST['bi_nextinvoicedue'] : $bi_nextinvoicedue = "";
+		isset($_POST['bi_billdue']) ? $bi_billdue = $_POST['bi_billdue'] : $bi_billdue = "";
         isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
         isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
         isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
@@ -75,9 +77,9 @@
         isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
         isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
         isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
-		isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
-		isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
-	
+	isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
+	isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
+
 	$logAction = "";
 	$logDebugSQL = "";
 	
@@ -253,7 +255,7 @@
                                         " address, city, state, zip, ".
                                         " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
                                         " notes, changeuserbillinfo, ".
-	                                " lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
+	                                " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
                                         " creationdate, creationby, updatedate, updateby) ".
                                         " VALUES (0, '".$dbSocket->escapeSimple($planName)."',
                                         '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
@@ -269,6 +271,7 @@
 	                                $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
 	                                $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
 	                                $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
+									$dbSocket->escapeSimple($bi_nextinvoicedue)."', '".$dbSocket->escapeSimple($bi_billdue)."', '".
 	                                $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
 	                                $dbSocket->escapeSimple($bi_emailinvoice).
                                         "', '$currDate', '$currBy', NULL, NULL)";
@@ -303,6 +306,9 @@
                                         "', lastbill='".$dbSocket->escapeSimple($bi_lastbill).
                                         "', nextbill='".$dbSocket->escapeSimple($bi_nextbill).
 */
+                                        "', nextinvoicedue='".$dbSocket->escapeSimple($bi_nextinvoicedue).
+                                        "', billdue='".$dbSocket->escapeSimple($bi_billdue).
+                                        
                                         "', postalinvoice='".$dbSocket->escapeSimple($bi_postalinvoice).
                                         "', faxinvoice='".$dbSocket->escapeSimple($bi_faxinvoice).
                                         "', emailinvoice='".$dbSocket->escapeSimple($bi_emailinvoice).
@@ -451,7 +457,7 @@
                " address, city, state, zip, ".
                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
                " notes, changeuserbillinfo, ".
-               " lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
+               " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
                " creationdate, creationby, updatedate, updateby FROM ".
                 $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
                 " WHERE UserName='".
@@ -484,6 +490,8 @@
         $bi_billstatus = $row['billstatus'];
         $bi_lastbill = $row['lastbill'];
         $bi_nextbill = $row['nextbill'];
+        $bi_nextinvoicedue = $row['nextinvoicedue'];
+        $bi_billdue = $row['billdue'];
         $bi_postalinvoice = $row['postalinvoice'];
         $bi_faxinvoice = $row['faxinvoice'];
         $bi_emailinvoice = $row['emailinvoice'];

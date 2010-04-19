@@ -22,6 +22,8 @@
  
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+    
+    include_once("include/management/pages_common.php");
 
 	include('library/check_operator_perm.php');
 
@@ -55,6 +57,8 @@
 	isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
 	isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
 	isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+	isset($_POST['bi_nextinvoicedue']) ? $bi_nextinvoicedue = $_POST['bi_nextinvoicedue'] : $bi_nextinvoicedue = "";
+	isset($_POST['bi_billdue']) ? $bi_billdue = $_POST['bi_billdue'] : $bi_billdue = "";
 	isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
 	isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
 	isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
@@ -129,6 +133,8 @@
 	}
 
 
+	
+	
 	function addUserInfo($dbSocket, $username) {
 
 		global $firstname;
@@ -209,6 +215,8 @@
 			global $bi_billstatus;
 			global $bi_lastbill;
 			global $bi_nextbill;
+			global $bi_nextinvoicedue;
+			global $bi_billdue;
 			global $bi_postalinvoice;
 			global $bi_faxinvoice;
 			global $bi_emailinvoice;
@@ -226,13 +234,41 @@
 	
 			// if there were no records for this user present in the userbillinfo table
 			if ($res->numRows() == 0) {
+				
+				// calculate the nextbill and other related billing information
+				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+								" WHERE planName='".$dbSocket->escapeSimple($planName)."' LIMIT 1";
+				$res = $dbSocket->query($sql);
+				$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+				$logDebugSQL .= $sql . "\n";
+								
+				$planRecurring = $row['planRecurring'];
+				$planRecurringPeriod = $row['planRecurringPeriod'];
+				$planRecurringBillingSchedule = $row['planRecurringBillingSchedule'];
+				
+				
+				// initialize next bill date string (Y-m-d style)
+				$nextBillDate = "0000-00-00";
+				
+				// get next billing date
+				if ($planRecurring == "Yes") {
+					$nextBillDate = getNextBillingDate($planRecurringBillingSchedule, $planRecurringPeriod);
+				}
+
+			
+				// if $bi_nextbill was not set to anything (empty)
+				if (empty($bi_nextbill))
+					$bi_nextbill = $nextBillDate;
+						
+				
+				
 				// insert user billing information table
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 						" (id, planname, username, contactperson, company, email, phone, ".
 						" address, city, state, zip, ".
 						" paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 						" notes, changeuserbillinfo, ".
-						" lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
+						" lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
 						" creationdate, creationby, updatedate, updateby) ".
 						" VALUES (0, '".$dbSocket->escapeSimple($planName)."', 
 						'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
@@ -248,6 +284,7 @@
 						$dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
 						$dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
 						$dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
+						$dbSocket->escapeSimple($bi_nextinvoicedue)."', '".$dbSocket->escapeSimple($bi_billdue)."', '".
 						$dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
 						$dbSocket->escapeSimple($bi_emailinvoice).
 										"', '$currDate', '$currBy', NULL, NULL)";

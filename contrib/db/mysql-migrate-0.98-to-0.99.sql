@@ -4,8 +4,6 @@
 -- ------------------------------------------------------
 -- Server version	5.0.22-Debian_0ubuntu6.06-log
 
-ALTER TABLE userbillinfo ADD hotspotlocation int(32) AFTER planName;
-
 DROP TABLE IF EXISTS `billing_merchant`;
 CREATE TABLE `billing_merchant` (
   `id` int(8) NOT NULL auto_increment,
@@ -228,7 +226,6 @@ INSERT INTO `operators_acl` VALUES (0,6,'mng_rad_hunt_del',1),(0,6,'mng_rad_hunt
 INSERT INTO `operators_acl_files` VALUES (0,'config_mail','Configuration','Core');
 INSERT INTO `operators_acl` VALUES (0,6,'config_mail',1);
 
-
 DROP TABLE IF EXISTS `nodes_data`;
 CREATE TABLE `nodes_data` (
   `id` int(32) NOT NULL auto_increment,
@@ -334,10 +331,11 @@ CREATE TABLE `billing_notifications_settings` (
 
 
 
+ALTER TABLE userbillinfo ADD hotspot_id int(32) AFTER planName;
 ALTER TABLE userbillinfo ADD batch_id int(32) AFTER emailinvoice;
 ALTER TABLE userbillinfo MODIFY nextbill date DEFAULT '0000-00-00' NOT NULL;
 ALTER TABLE userbillinfo MODIFY lastbill date DEFAULT '0000-00-00' NOT NULL;
-ALTER TABLE userbillinfo ADD nextinvoicedue varchar(32) AFTER nextbill;
+ALTER TABLE userbillinfo ADD nextinvoicedue int(32) AFTER nextbill;
 ALTER TABLE userbillinfo ADD billdue int(32) AFTER nextinvoicedue;
 
 ALTER TABLE billing_history DROP COLUMN planName;
@@ -377,6 +375,7 @@ CREATE TABLE `billing_plans_profiles` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
-
+INSERT INTO `operators_acl_files` VALUES (0,'mng_batch_add','Management','Batch'),(0,'mng_batch_list','Management','Batch'),(0,'mng_batch_del','Management','Batch')
+INSERT INTO `operators_acl` VALUES (0,6,'mng_batch_add',1),(0,6,'mng_batch_list',1),(0,6,'mng_batch_del',1)
 
 
