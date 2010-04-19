@@ -39,6 +39,8 @@
 	isset($_POST['planTrafficRefillCost']) ? $planTrafficRefillCost = $_POST['planTrafficRefillCost'] : $planTrafficRefillCost = "";
 	isset($_POST['planRecurring']) ? $planRecurring = $_POST['planRecurring'] : $planRecurring = "";
 	isset($_POST['planRecurringPeriod']) ? $planRecurringPeriod = $_POST['planRecurringPeriod'] : $planRecurringPeriod = "";
+	isset($_POST['planRecurringBillingSchedule']) ? $planRecurringBillingSchedule = $_POST['planRecurringBillingSchedule'] : $planRecurringBillingSchedule = "Fixed";
+	
 	isset($_POST['planCost']) ? $planCost = $_POST['planCost'] : $planCost = "";
 	isset($_POST['planSetupCost']) ? $planSetupCost = $_POST['planSetupCost'] : $planSetupCost = "";
 	isset($_POST['planTax']) ? $planTax = $_POST['planTax'] : $planTax = "";
@@ -66,7 +68,7 @@
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 				" (id, planName, planId, planType, planTimeBank, planTimeType, planTimeRefillCost, planBandwidthUp, planBandwidthDown, ".
 				" planTrafficTotal, planTrafficUp, planTrafficDown, planTrafficRefillCost, planRecurring, planRecurringPeriod, ".
-				" planCost, planSetupCost, planTax, planCurrency, planGroup, ".
+				" planRecurringBillingSchedule, planCost, planSetupCost, planTax, planCurrency, planGroup, ".
 				"  creationdate, creationby, updatedate, updateby) ".
 				" VALUES (0, '".$dbSocket->escapeSimple($planName)."', '".
 				$dbSocket->escapeSimple($planId)."', '".
@@ -82,6 +84,7 @@
 				$dbSocket->escapeSimple($planTrafficRefillCost)."', '".
 				$dbSocket->escapeSimple($planRecurring)."', '".
 				$dbSocket->escapeSimple($planRecurringPeriod)."', '".
+				$dbSocket->escapeSimple($planRecurringBillingSchedule)."', '".
 				$dbSocket->escapeSimple($planCost)."', '".
 				$dbSocket->escapeSimple($planSetupCost)."', '".
 				$dbSocket->escapeSimple($planTax)."', '".
@@ -244,6 +247,7 @@
 			<option value='Weekly'>Weekly</option>
 			<option value='Monthly'>Monthly</option>
 			<option value='Quarterly'>Quarterly</option>
+			<option value='Semi-Yearly'>Semi-Yearly</option>
 			<option value='Yearly'>Yearly</option>
 		</select>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringPeriodTooltip')" /> 
@@ -254,8 +258,19 @@
 		</div>
 		</li>
 
-
-
+		<li class='fieldset'>
+		<label for='planRecurringBillingSchedule' class='form'><?php echo $l['all']['planRecurringBillingSchedule'] ?></label>
+		<select class='form' name='planRecurringBillingSchedule' id='planRecurringBillingSchedule' tabindex=101 >
+			<option value='Fixed'>Fixed</option>
+			<option value='Anniversary'>Anniversary</option>
+		</select>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringBillingScheduleToolTip')" /> 
+		
+		<div id=planRecurringBillingScheduleToolTip  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo $l['Tooltip']['planRecurringBillingScheduleTooltip'] ?>
+		</div>
+		</li>
 
 
 		<li class='fieldset'>

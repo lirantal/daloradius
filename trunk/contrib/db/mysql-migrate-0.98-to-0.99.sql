@@ -343,6 +343,7 @@ ALTER TABLE billing_history ADD planId int(32) AFTER username;
 ALTER TABLE billing_history MODIFY billAction varchar(128) DEFAULT 'Unavailable' NOT NULL;
 
 ALTER TABLE billing_plans ADD planActive varchar(32) DEFAULT 'yes' NOT NULL AFTER planCurrency;
+ALTER TABLE billing_plans ADD planRecurringBillingSchedule varchar(128) DEFAULT 'Fixed' NOT NULL AFTER planRecurringPeriod;
 
 ALTER TABLE userinfo ADD enableportallogin int(32) DEFAULT 0 AFTER changeuserinfo;
 ALTER TABLE userinfo ADD portalloginpassword varchar(128) DEFAULT '' AFTER changeuserinfo;
