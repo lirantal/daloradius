@@ -340,6 +340,7 @@ $l['all']['PlanTrafficDown'] = "Plan Traffic Down";
 $l['all']['PlanTrafficUp'] = "Plan Traffic Up";
 $l['all']['PlanRecurring'] = "Plan Recurring";
 $l['all']['PlanRecurringPeriod'] = "Plan Recurring Period";
+$l['all']['planRecurringBillingSchedule'] = "Plan Recurring Billing Schedule";
 $l['all']['PlanCost'] = "Plan Cost";
 $l['all']['PlanSetupCost'] = "Plan Setup Cost";
 $l['all']['PlanTax'] = "Plan Tax";
@@ -427,6 +428,7 @@ $l['Tooltip']['planTrafficDownTooltip'] = "";
 $l['Tooltip']['planTrafficUpTooltip'] = "";
 
 $l['Tooltip']['planRecurringTooltip'] = "";
+$l['Tooltip']['planRecurringBillingScheduleTooltip'] = "";
 $l['Tooltip']['planRecurringPeriodTooltip'] = "";
 $l['Tooltip']['planCostTooltip'] = "";
 $l['Tooltip']['planSetupCostTooltip'] = "";

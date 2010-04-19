@@ -64,6 +64,7 @@
 	isset($_POST['planTrafficRefillCost']) ? $planTrafficRefillCost = $_POST['planTrafficRefillCost'] : $planTrafficRefillCost = "";
 	isset($_POST['planRecurring']) ? $planRecurring = $_POST['planRecurring'] : $planRecurring = "";
 	isset($_POST['planRecurringPeriod']) ? $planRecurringPeriod = $_POST['planRecurringPeriod'] : $planRecurringPeriod = "";
+	isset($_POST['planRecurringBillingSchedule']) ? $planRecurringBillingSchedule = $_POST['planRecurringBillingSchedule'] : $planRecurringBillingSchedule = "Fixed";
 	isset($_POST['planCost']) ? $planCost = $_POST['planCost'] : $planCost = "";
 	isset($_POST['planSetupCost']) ? $planSetupCost = $_POST['planSetupCost'] : $planSetupCost = "";
 	isset($_POST['planTax']) ? $planTax = $_POST['planTax'] : $planTax = "";
@@ -99,6 +100,7 @@
 			" planTrafficRefillCost='".$dbSocket->escapeSimple($planTrafficRefillCost)."', ".
 			" planRecurring='".$dbSocket->escapeSimple($planRecurring)."', ".
 			" planRecurringPeriod='".$dbSocket->escapeSimple($planRecurringPeriod)."', ".
+			" planRecurringBillingSchedule='".$dbSocket->escapeSimple($planRecurringBillingSchedule)."', ".
 			" planCost='".$dbSocket->escapeSimple($planCost)."', ".
 			" planSetupCost='".$dbSocket->escapeSimple($planSetupCost)."', ".
 			" planTax='".$dbSocket->escapeSimple($planTax)."', ".
@@ -176,6 +178,7 @@
 	$planTrafficRefillCost = $row['planTrafficRefillCost'];
 	$planRecurring = $row['planRecurring'];
 	$planRecurringPeriod = $row['planRecurringPeriod'];
+	$planRecurringBillingSchedule = $row['planRecurringBillingSchedule'];
 	$planCost = $row['planCost'];
 	$planSetupCost = $row['planSetupCost'];
 	$planTax = $row['planTax'];
@@ -305,13 +308,14 @@
                 <li class='fieldset'>
                 <label for='planRecurringPeriod' class='form'><?php echo $l['all']['PlanRecurringPeriod'] ?></label>
                 <select class='form' name='planRecurringPeriod' id='planRecurringPeriod' tabindex=101 >
-			<option value='<?php echo $planRecurringPeriod ?>'><?php echo $planRecurringPeriod ?></option>
-			<option value=''></option>
+						<option value='<?php echo $planRecurringPeriod ?>'><?php echo $planRecurringPeriod ?></option>
+						<option value=''></option>
                         <option value='Never'>Never</option>
                         <option value='Daily'>Daily</option>
                         <option value='Weekly'>Weekly</option>
                         <option value='Monthly'>Monthly</option>
 						<option value='Quarterly'>Quarterly</option>
+						<option value='Semi-Yearly'>Semi-Yearly</option>
 						<option value='Yearly'>Yearly</option>
                 </select>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringPeriodTooltip')" />
@@ -321,6 +325,26 @@
                         <?php echo $l['Tooltip']['planRecurringPeriodTooltip'] ?>
                 </div>
                 </li>
+
+
+                <li class='fieldset'>
+                <label for='planRecurringBillingSchedule' class='form'><?php echo $l['all']['planRecurringBillingSchedule'] ?></label>
+                <select class='form' name='planRecurringBillingSchedule' id='planRecurringBillingSchedule' tabindex=101 >
+						<option value='<?php echo $planRecurringBillingSchedule ?>'><?php echo $planRecurringBillingSchedule ?></option>
+						<option value=''></option>
+						<option value='Fixed'>Fixed</option>
+						<option value='Anniversary'>Anniversary</option>
+                </select>
+                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planRecurringBillingScheduleToolTip')" />
+
+                <div id='planRecurringBillingScheduleToolTip'  style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0' />
+                        <?php echo $l['Tooltip']['planRecurringBillingScheduleTooltip'] ?>
+                </div>
+                </li>
+                
+                
+
 
                 <li class='fieldset'>
                 <label for='planCost' class='form'><?php echo $l['all']['PlanCost'] ?></label>
