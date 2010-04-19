@@ -22,7 +22,7 @@
 
 	include ("library/checklogin.php");
 	$operator = $_SESSION['operator_user'];
-
+	
 	include('library/check_operator_perm.php');
 
 	// declaring variables
@@ -67,6 +67,8 @@
     isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
     isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
     isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+	isset($_POST['bi_nextinvoicedue']) ? $bi_nextinvoicedue = $_POST['bi_nextinvoicedue'] : $bi_nextinvoicedue = "";
+	isset($_POST['bi_billdue']) ? $bi_billdue = $_POST['bi_billdue'] : $bi_billdue = "";
     isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
     isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
     isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
@@ -195,6 +197,8 @@
         global $bi_billstatus;
         global $bi_lastbill;
         global $bi_nextbill;
+		global $bi_nextinvoicedue;
+		global $bi_billdue;
         global $bi_postalinvoice;
         global $bi_faxinvoice;
         global $bi_emailinvoice;
@@ -218,7 +222,7 @@
 				" address, city, state, zip, ".
 				" paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 				" notes, changeuserbillinfo, ".
-                                " lead, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, ".
+                                " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
 				" creationdate, creationby, updatedate, updateby) ".
 				" VALUES (0, 
 				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
@@ -234,6 +238,7 @@
                 $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
                 $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
                 $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
+                $dbSocket->escapeSimple($bi_nextinvoicedue)."', '".$dbSocket->escapeSimple($bi_billdue)."', '".
                 $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
                 $dbSocket->escapeSimple($bi_emailinvoice).
 				"', '$currDate', '$currBy', NULL, NULL)";
@@ -302,6 +307,8 @@
 				case "bi_billstatus":
 				case "bi_lastbill":
 				case "bi_nextbill":
+				case "bi_nextinvoicedue":
+				case "bi_billdue":
 				case "bi_postalinvoice":
 				case "bi_faxinvoice":
 				case "bi_emailinvoice":
