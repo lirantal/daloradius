@@ -102,9 +102,12 @@
 	   compatibility with version 0.7        */
 
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute FROM 
-		".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ,".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute, ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM  
+		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username
+ 		LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']."
+		 ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username
 		 LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']."
 		 ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username
  		WHERE (radcheck.username=userinfo.username AND (Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) GROUP by Username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
@@ -158,6 +161,10 @@
 		</th>
 
 		<th scope='col'> 
+		".$l['all']['Name']."</a>
+		</th>
+		
+		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
 		".$l['all']['Username']."</a>
 		</th>
@@ -177,6 +184,7 @@
 
 		printqn("
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
+			<td>$row[5] $row[6]</td>
 			<td> 
 		");
 
@@ -263,3 +271,4 @@
 
 </body>
 </html>
+ 
