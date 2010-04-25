@@ -763,6 +763,11 @@
 		<br/>
 		<hr><br/>
 		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		
+		<div style="float: right; text-align: right;">
+				<a href="<?= $_SESSION['PREV_LIST_PAGE']; ?>">Back to Listing Page</a>
+		</div>
+		
 		</li>
 
 		</ul>
