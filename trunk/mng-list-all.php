@@ -25,6 +25,9 @@
 
 	include('library/check_operator_perm.php');
 
+	// set session's page variable
+	$_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+	
 
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
