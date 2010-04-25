@@ -198,23 +198,18 @@
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 
 
-		printqn("
-				<a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
-					javascript:__displayTooltip();'
-                                tooltipText='
-	                                <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-						{$l['Tooltip']['UserEdit']}</a>
-					<br/><br/>
-
-					<div id=\"divContainerUserInfo\">
-						Loading...
-					</div>
-                                        <br/>'
-				>$row[0]</a>
-			</td>
-		");
-
+		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".$row[0]."');";
+		$content =  '<a class="toolTip" href="mng-edit.php?username='.$row[0].'">'.$l['Tooltip']['UserEdit'].'</a>';
+		$str = addToolTipBalloon(array(
+									'content' => $content,
+									'onClick' => $js,
+									'value' => $row[0],
+									'divId' => 'divContainerUserInfo',
+		
+							));
+							
+		echo "$str </td>";
+		
 		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 			echo "<td>[Password is hidden]</td>";
 		} else {
@@ -253,7 +248,7 @@
 		
 		<div id="footer">
 		
-								<?php
+<?php
         include 'page-footer.php';
 ?>
 
