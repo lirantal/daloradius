@@ -46,10 +46,6 @@ CREATE TABLE `billing_merchant` (
   KEY `username` (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-ALTER TABLE operators DROP COLUMN bill_paypal_transactions;
-
-ALTER TABLE operators ADD mng_import_users VARCHAR(32) AFTER mng_new_quick;
-UPDATE operators SET mng_import_users='yes' WHERE username='administrator';
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -263,12 +259,6 @@ CREATE TABLE `nodes_settings` (
   `soft_checkin_time` varchar(128) default NULL COMMENT 'time in minutes which hotspot is considered late/down (soft limit)',
   `hard_checkin_time` varchar(128) default NULL COMMENT 'time in minutes which hotspot is considered late/down (hard limit)',
   `test` varchar(128) default NULL COMMENT 'comment',
-  `test` varchar(128) default NULL COMMENT 'comment',
-  `test` varchar(128) default NULL COMMENT 'comment',
-  `test` varchar(128) default NULL COMMENT 'comment',
-  `test` varchar(128) default NULL COMMENT 'comment',
-  `test` varchar(128) default NULL COMMENT 'comment',
-  `test` varchar(128) default NULL COMMENT 'comment',
   
   `creationdate` datetime default '0000-00-00 00:00:00',
   `creationby` varchar(128) default NULL,
@@ -330,6 +320,42 @@ CREATE TABLE `billing_notifications_settings` (
 
 
 
+--
+-- Table structure for table `billing_plans`
+--
+
+DROP TABLE IF EXISTS `billing_plans`;
+CREATE TABLE `billing_plans` (
+  `id` int(8) NOT NULL auto_increment,
+  `planName` varchar(128) default NULL,
+  `planId` varchar(128) default NULL,
+  `planType` varchar(128) default NULL,
+  `planTimeBank` varchar(128) default NULL,
+  `planTimeType` varchar(128) default NULL,
+  `planTimeRefillCost` varchar(128) default NULL,
+  `planBandwidthUp` varchar(128) default NULL,
+  `planBandwidthDown` varchar(128) default NULL,
+  `planTrafficTotal` varchar(128) default NULL,
+  `planTrafficUp` varchar(128) default NULL,
+  `planTrafficDown` varchar(128) default NULL,
+  `planTrafficRefillCost` varchar(128) default NULL,
+  `planRecurring` varchar(128) default NULL,
+  `planRecurringPeriod` varchar(128) default NULL,
+  `planCost` varchar(128) default NULL,
+  `planSetupCost` varchar(128) default NULL,
+  `planTax` varchar(128) default NULL,
+  `planCurrency` varchar(128) default NULL,
+  `planGroup` varchar(128) default NULL,
+  `planActive` varchar(32) DEFAULT 'yes' NOT NULL,
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `planName` (`planName`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
 
 ALTER TABLE userbillinfo ADD hotspot_id int(32) AFTER planName;
 ALTER TABLE userbillinfo ADD batch_id int(32) AFTER emailinvoice;
@@ -342,7 +368,7 @@ ALTER TABLE billing_history DROP COLUMN planName;
 ALTER TABLE billing_history ADD planId int(32) AFTER username;
 ALTER TABLE billing_history MODIFY billAction varchar(128) DEFAULT 'Unavailable' NOT NULL;
 
-ALTER TABLE billing_plans ADD planActive varchar(32) DEFAULT 'yes' NOT NULL AFTER planCurrency;
+-- ALTER TABLE billing_plans ADD planActive varchar(32) DEFAULT 'yes' NOT NULL AFTER planCurrency;
 ALTER TABLE billing_plans ADD planRecurringBillingSchedule varchar(128) DEFAULT 'Fixed' NOT NULL AFTER planRecurringPeriod;
 
 ALTER TABLE userinfo ADD enableportallogin int(32) DEFAULT 0 AFTER changeuserinfo;
@@ -376,7 +402,7 @@ CREATE TABLE `billing_plans_profiles` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `operators_acl_files` VALUES (0,'mng_batch_add','Management','Batch'),(0,'mng_batch_list','Management','Batch'),(0,'mng_batch_del','Management','Batch')
-INSERT INTO `operators_acl` VALUES (0,6,'mng_batch_add',1),(0,6,'mng_batch_list',1),(0,6,'mng_batch_del',1)
+INSERT INTO `operators_acl_files` VALUES (0,'mng_batch_add','Management','Batch'),(0,'mng_batch_list','Management','Batch'),(0,'mng_batch_del','Management','Batch');
+INSERT INTO `operators_acl` VALUES (0,6,'mng_batch_add',1),(0,6,'mng_batch_list',1),(0,6,'mng_batch_del',1);
 
 
