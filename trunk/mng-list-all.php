@@ -111,8 +111,6 @@
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username
  		LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']."
 		 ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username
-		 LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']."
-		 ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username
  		WHERE (radcheck.username=userinfo.username AND (Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) GROUP by Username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
