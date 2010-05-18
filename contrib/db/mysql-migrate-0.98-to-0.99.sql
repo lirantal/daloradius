@@ -84,7 +84,8 @@ CREATE TABLE `operators` (
   `creationby` varchar(128) default NULL,
   `updatedate` datetime default '0000-00-00 00:00:00',
   `updateby` varchar(128) default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY username (`username`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
@@ -248,7 +249,8 @@ CREATE TABLE `nodes_data` (
   `nas_mac` varchar(128) default NULL,
   `checkin_date` varchar(128) default NULL,
   
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY nas_mac (`nas_mac`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
@@ -387,7 +389,8 @@ CREATE TABLE `batch_history` (
   `updatedate` datetime default '0000-00-00 00:00:00',
   `updateby` varchar(128) default NULL,
   
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `batch_name` (`batch_name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 

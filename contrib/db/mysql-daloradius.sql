@@ -72,7 +72,9 @@ CREATE TABLE `hotspots` (
   `creationby` varchar(128) default NULL,
   `updatedate` datetime default '0000-00-00 00:00:00',
   `updateby` varchar(128) default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY name (`name`),
+  KEY mac (`mac`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
@@ -334,7 +336,8 @@ CREATE TABLE `userbillinfo` (
   `updatedate` datetime default '0000-00-00 00:00:00',
   `updateby` varchar(128) default NULL,
   PRIMARY KEY  (`id`),
-  KEY `username` (`username`)
+  KEY `username` (`username`),
+  KEY `planname` (`planName`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
@@ -458,7 +461,8 @@ CREATE TABLE `operators` (
   `creationby` varchar(128) default NULL,
   `updatedate` datetime NOT NULL default '0000-00-00 00:00:00',
   `updateby` varchar(128) default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY username (`username`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
