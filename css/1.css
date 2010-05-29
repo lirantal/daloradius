@@ -560,6 +560,10 @@ input.button {
 }
 
 
+input.integer5len {
+        width:54px;
+}
+
 input.integerLarge {
         width:34px;
 }
