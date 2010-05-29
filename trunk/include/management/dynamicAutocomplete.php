@@ -23,6 +23,31 @@
 include('../../library/checklogin.php');
 
 
+/* getAjaxAutocompleteContactPerson */
+if(isset($_GET['getAjaxAutocompleteContactPerson'])) {
+
+        $getAjaxAutocompleteContactPerson = $_GET['getAjaxAutocompleteContactPerson'];
+
+	if ( (isset($getAjaxAutocompleteContactPerson)) && ($getAjaxAutocompleteContactPerson) ) {
+
+	        include '../../library/opendb.php';
+
+	        $sql = "SELECT distinct(contactperson), id FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+			" WHERE contactperson LIKE '$getAjaxAutocompleteContactPerson%' ORDER BY contactperson ASC";
+	        $res = $dbSocket->query($sql);
+
+	        while($row = $res->fetchRow()) {
+	                echo "$row[0]###$row[0]|";
+	        }
+
+	        include '../../library/closedb.php';
+	}
+
+}
+
+
+
+
 /* getAjaxAutocompleteBatchNames */
 if(isset($_GET['getAjaxAutocompleteBatchNames'])) {
 

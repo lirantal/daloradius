@@ -114,10 +114,17 @@ function time2str($time) {
 
 // return next billing date (Y-m-d format) based on
 // the billing recurring period and billing schedule type 
-function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurringPeriod) {
+function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurringPeriod, $billDates = null) {
 	
 	// initialize next bill date string (Y-m-d style)
-	$nextBillDate = "0000-00-00";
+	
+	if ($billDates == null) {
+		$nextBillDate = "0000-00-00";
+		$prevBillDate = "0000-00-00";
+	} else {
+		$nextBillDate = $billDates['nextBillDate'];
+		$prevBillDate = $billDates['prevBillDate'];
+	}
 	
 	switch ($planRecurringBillingSchedule) {
 	
@@ -183,8 +190,14 @@ function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
 					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, $quarterMonth, date('t', mktime(0,0,0, $quarterMonth, 1, date('Y'))), date('Y')));
 					break;
 				case "Semi-Yearly":
-					// set to the end of the half year month (end of june)
-					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, 6, (date('t', mktime(0,0,0, 6, 1, date('Y')))), date('Y')));
+					$currMonth = (int)date('n');
+					$quarterMonth = 1;
+					if ( ($currMonth >= 1) && ($currMonth <= 6) )
+						$quarterMonth = 6;
+					else if ( ($currMonth >= 7) && ($currMonth <= 12) )
+						$quarterMonth = 12;
+					
+					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, $quarterMonth, (date('t', mktime(0,0,0, $quarterMonth, 1, date('Y')))), date('Y')));
 					break;
 				case "Yearly":
 					// set to the end of the year
@@ -199,6 +212,118 @@ function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
 	return $nextBillDate;
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+// return prev/start billing date (Y-m-d format) based on
+// the billing recurring period and billing schedule type 
+function getPrevBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurringPeriod, $billDates = null) {
+	
+	// initialize next bill date string (Y-m-d style)
+	
+	if ($billDates == null) {
+		$nextBillDate = "0000-00-00";
+		$prevBillDate = "0000-00-00";
+	} else {
+		$nextBillDate = $billDates['nextBillDate'];
+		$prevBillDate = $billDates['prevBillDate'];
+	}
+	
+	switch ($planRecurringBillingSchedule) {
+	
+		case "Anniversary":
+			switch ($planRecurringPeriod) {
+				case "Daily":
+					// current day is the start of the period and it's also the end of it
+					// confused? so are we!
+					$nextBillDate = date('Y-m-d', strtotime("+1 day"));
+					break;
+				case "Weekly":
+					// add 1 week
+					$nextBillDate = date('Y-m-d', strtotime("+1 week"));
+					break;
+				case "Monthly":
+					// add 1 month of time
+					$nextBillDate = date('Y-m-d', strtotime("+1 month"));
+					break;
+				case "Quarterly":
+					// add 3 months worth of time
+					$nextBillDate = date('Y-m-d', strtotime("+3 month"));
+					break;
+				case "Semi-Yearly":
+					// add 6 months worth of time 
+					$nextBillDate = date('Y-m-d', strtotime("+6 month"));
+					break;
+				case "Yearly":
+					// add 1 year (same month/day, next year)
+					$nextBillDate = date('Y-m-d', strtotime("+1 year"));
+					break;
+			}
+			break;						
+		
+		case "Fixed":
+		default:
+			switch ($planRecurringPeriod) {
+				case "Daily":
+					// current day is the start of the period and it's also the end of it
+					// confused? so are we!
+					$nextBillDate = date("Y-m-d");
+					break;
+				case "Weekly":
+					// set to the start of this week
+					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') - date('w'), date('Y')));
+					break;
+				case "Monthly":
+					// set to the start of the current month
+					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, date('m'), 01, date('Y')));
+					break;
+				case "Quarterly":
+					// set to the start of this quarter
+					$currMonth = (int)date('n');
+					$quarterMonth = 1;
+					if ( ($currMonth >= 1) && ($currMonth <= 3) )
+						$quarterMonth = 1;
+					if ( ($currMonth >= 4) && ($currMonth <= 6) )
+						$quarterMonth = 4;
+					if ( ($currMonth >= 7) && ($currMonth <= 9) )
+						$quarterMonth = 7;
+					if ( ($currMonth >= 10) && ($currMonth <= 12) )
+						$quarterMonth = 10;
+					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, $quarterMonth, date(01, mktime(0,0,0, $quarterMonth, 1, date('Y'))), date('Y')));
+					break;
+				case "Semi-Yearly":
+					// set to the start of the occurrence of either half of the year (start of june or start of january)
+					$currMonth = (int)date('n');
+					$quarterMonth = 1;
+					if ( ($currMonth >= 1) && ($currMonth <= 6) )
+						$quarterMonth = 1;
+					else if ( ($currMonth >= 7) && ($currMonth <= 12) )
+						$quarterMonth = 6;
+					
+					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, $quarterMonth, 01, date('Y')));
+					break;
+				case "Yearly":
+					// set to the start of the year
+					$nextBillDate = date('Y-m-d', mktime(0, 0, 0, 01, 01, date('Y')));
+					break;
+			}							
+			
+			break;
+			
+	}
+	
+	return $nextBillDate;
+	
+}
+
 
 
 

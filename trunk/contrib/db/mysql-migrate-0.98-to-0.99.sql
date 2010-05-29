@@ -271,24 +271,12 @@ CREATE TABLE `nodes_settings` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
-DROP TABLE IF EXISTS `nodes_chillisettings`;
-CREATE TABLE `nodes_chillisettings` (
+
+DROP TABLE IF EXISTS `nas_chilli`;
+CREATE TABLE `nas_chilli` (
   `id` int(32) NOT NULL auto_increment,
-  `dhcp_if` varchar(128) default NULL COMMENT 'chilli directive for dhcp interface',
-  `uamallowed` varchar(128) default NULL COMMENT 'chilli directive for comma separated list of allowed hosts/ips',
-  `dns1` varchar(128) default NULL COMMENT 'chilli directive for dns1', 
-  `dns2` varchar(128) default NULL COMMENT 'chilli directive for dns2',
-  `locationname` varchar(128) default NULL COMMENT 'chilli directive for setting the WISPr-LocationName attribute',
-  `uamhomepage` varchar(256) default NULL COMMENT 'chilli directive to forward to the splash homepage',
-  `uamserver` varchar(256) default NULL COMMENT 'chilli directive for the uam server hotspotlogin.php address',
-  `uamsecret` varchar(128) default NULL COMMENT 'chilli directive for setting the uam secret password',
-  `radiusserver1` varchar(128) default NULL COMMENT 'chilli directive for radius server 1 ip address',
-  `radiusserver2` varchar(128) default NULL COMMENT 'chilli directive for radius server 2 ip address',
-  `radiussecret` varchar(128) default NULL COMMENT 'radius server secret',
-  `radiusauthport` varchar(128) default NULL COMMENT 'radius server authentication port',
-  `radiusacctport` varchar(128) default NULL COMMENT 'radius server accounting port',
-  `radiusnasid` varchar(128) default NULL COMMENT 'chilli directive for the NAS id',  
-  
+  `hotspot_id` int(32) default 0 COMMENT 'the hotspot business id associated with this chilli nas instance instance',
+  `batch_status` varchar(128) default 'Pending' NOT NULL COMMENT 'the batch status',
   
   
   `creationdate` datetime default '0000-00-00 00:00:00',
@@ -298,6 +286,38 @@ CREATE TABLE `nodes_chillisettings` (
   
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `nas_chilli_settings`;
+CREATE TABLE `nas_chilli_settings` (
+  `id` int(32) NOT NULL auto_increment,
+  `nas_chilli_id` varchar(128) default NULL COMMENT 'chilli nas id to which these settings belong',
+  
+  `key` varchar(256) default NULL COMMENT 'chilli configuration directive',
+  `value` varchar(256) default NULL COMMENT 'chilli configuration directive value',
+  
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+INSERT INTO `nas_chilli_settings` (id, nas_chilli_id, key, value) VALUES
+(0,1,'dhcp_if','VALUE'),
+(0,1,'uamallowed','VALUE'),
+(0,1,'dns1','VALUE'),
+(0,1,'dns2','VALUE'),
+(0,1,'locationname','VALUE'),
+(0,1,'uamhomepage','VALUE'),
+(0,1,'uamserver','VALUE'),
+(0,1,'uamsecret','VALUE'),
+(0,1,'radiusserver1','VALUE'),
+(0,1,'radiusserver2','VALUE'),
+(0,1,'radiusauthport','VALUE'),
+(0,1,'radiusacctport','VALUE'),
+(0,1,'radiusnasid','VALUE');
+
 
 
 
@@ -408,4 +428,150 @@ CREATE TABLE `billing_plans_profiles` (
 INSERT INTO `operators_acl_files` VALUES (0,'mng_batch_add','Management','Batch'),(0,'mng_batch_list','Management','Batch'),(0,'mng_batch_del','Management','Batch');
 INSERT INTO `operators_acl` VALUES (0,6,'mng_batch_add',1),(0,6,'mng_batch_list',1),(0,6,'mng_batch_del',1);
 
+
+
+
+
+
+-- introducing new changes, still under review
+-- very experimental  
+
+DROP TABLE IF EXISTS `invoice`;
+CREATE TABLE `invoice` (
+  `id` int(32) NOT NULL auto_increment,
+  `user_id` int(32) default NULL COMMENT 'user id of the userbillinfo table',
+  `batch_id` int(32) default NULL COMMENT 'batch id of the batch_history table',
+  `date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `status_id` int(10) NOT NULL default '1' COMMENT 'the status of the invoice from invoice_status',
+  `type_id` int(10) NOT NULL default '1' COMMENT 'the type of the invoice from invoice_type',
+  
+  `notes` varchar(128) NOT NULL COMMENT 'general notes/description',
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+
+DROP TABLE IF EXISTS `invoice_items`;
+CREATE TABLE `invoice_items` (
+  `id` int(32) NOT NULL auto_increment,
+  `invoice_id` int(32) NOT NULL COMMENT 'invoice id of the invoices table',
+  `plan_id` int(32) default NULL COMMENT 'the plan_id of the billing_plans table',
+
+
+  `amount` decimal(10,2) NOT NULL default '0.00' COMMENT 'the amount cost of an item',
+  `tax_amount` decimal(10,2) NOT NULL default '0.00' COMMENT 'the tax amount for an item',
+  `total` decimal(10,2) NOT NULL default '0.00' COMMENT 'the total amount',
+  
+  
+  `notes` varchar(128) NOT NULL COMMENT 'general notes/description',
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+DROP TABLE IF EXISTS `invoice_status`;
+CREATE TABLE `invoice_status` (
+  `id` int(10) NOT NULL auto_increment,
+  `value` varchar(32) NOT NULL default '' COMMENT 'status value',
+  
+  `notes` varchar(128) NOT NULL COMMENT 'general notes/description',
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+INSERT INTO `invoice_status` (`id`, `value`, `notes`, `creationdate`, `creationby`, `updatedate`, `updateby`) VALUES
+(1, 'open', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(2, 'disputed', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(3, 'draft', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(4, 'sent', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(5, 'paid', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(6, 'partial', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator');
+
+
+
+
+DROP TABLE IF EXISTS `invoice_type`;
+CREATE TABLE `invoice_type` (
+  `id` int(10) NOT NULL auto_increment,
+  `value` varchar(32) NOT NULL default '' COMMENT 'type value',
+  
+  `notes` varchar(128) NOT NULL COMMENT 'general notes/description',
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+INSERT INTO `invoice_type` (`id`, `value`, `notes`, `creationdate`, `creationby`, `updatedate`, `updateby`) VALUES
+(1, 'Plans', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(2, 'Services', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(3, 'Consulting', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator');
+
+
+
+DROP TABLE IF EXISTS `payment`;
+CREATE TABLE `payment` (
+  `id` int(32) NOT NULL auto_increment,
+  `invoice_id` int(32) NOT NULL COMMENT 'invoice id of the invoices table',
+  `amount` decimal(10,2) NOT NULL COMMENT 'the amount paid',
+  `date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `type_id` int(10) NOT NULL default '1' COMMENT 'the type of the payment from payment_type',
+
+  `notes` varchar(128) NOT NULL COMMENT 'general notes/description', 
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+DROP TABLE IF EXISTS `payment_type`;
+CREATE TABLE `payment_type` (
+  `id` int(10) NOT NULL auto_increment,
+  `value` varchar(32) NOT NULL default '' COMMENT 'type value',
+  
+  `notes` varchar(128) NOT NULL COMMENT 'general notes/description',
+  `creationdate` datetime default '0000-00-00 00:00:00',
+  `creationby` varchar(128) default NULL,
+  `updatedate` datetime default '0000-00-00 00:00:00',
+  `updateby` varchar(128) default NULL,
+  
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+INSERT INTO `payment_type` (`id`, `value`, `notes`, `creationdate`, `creationby`, `updatedate`, `updateby`) VALUES
+(1, 'Cash', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(2, 'Check', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator'),
+(3, 'Bank Transfer', '', '2010-05-27 00:00:00', 'operator', '2010-05-27 00:00:00', 'operator');
+
+
+
+INSERT INTO `operators_acl_files` VALUES (0,'bill_invoice_list','Billing','Invoice'),
+(0,'bill_invoice_new','Billing','Invoice'),(0,'bill_invoice_edit','Billing','Invoice'),
+(0,'bill_invoice_del','Billing','Invoice');
+INSERT INTO `operators_acl` VALUES
+(0,6,'bill_invoice_list',1),(0,6,'bill_invoice_new',1),(0,6,'bill_invoice_edit',1),(0,6,'bill_invoice_del',1);
 

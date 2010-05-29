@@ -21,6 +21,121 @@
  */
 
 
+
+
+
+
+/*
+ * populate_customer_id
+ * creates a select box and populates it with customer information from userinfo/userbillinfo tables
+ * 
+ * $defaultOption - title for the first/default option in select box
+ * $elementName   - the string used for the select element's name='' value
+ * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
+ *
+ */
+function populate_customer_id($defaultOption = "Select Customer", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'customer_id')\" id='customer_id' $mode
+			name='$elementName' class='$cssClass' />
+			<option value='$defaultOptionValue'>$defaultOption</option>
+			<option value=''></option>";
+
+        include 'library/opendb.php';
+
+        $sql = "(SELECT id, value FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'].")";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+                echo "  
+                        <option value='".$row['id']."'>".$row['value']."</option>
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+
+	echo "</select>";
+}
+
+
+
+
+/*
+ * populate_invoice_status_id
+ * creates a select box and populates it with possible invoice status_id options
+ * 
+ * $defaultOption - title for the first/default option in select box
+ * $elementName   - the string used for the select element's name='' value
+ * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
+ *
+ */
+function populate_invoice_status_id($defaultOption = "Select Status", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'invoice_status_id')\" id='invoice_status_id' $mode
+			name='$elementName' class='$cssClass' />
+			<option value='$defaultOptionValue'>$defaultOption</option>
+			<option value=''></option>";
+
+        include 'library/opendb.php';
+
+        $sql = "(SELECT id, value FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'].")";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+                echo "  
+                        <option value='".$row['id']."'>".$row['value']."</option>
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+
+	echo "</select>";
+}
+
+
+
+
+
+
+/*
+ * populate_invoice_type_id
+ * creates a select box and populates it with possible invoice type_id options
+ * 
+ * $defaultOption - title for the first/default option in select box
+ * $elementName   - the string used for the select element's name='' value
+ * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
+ *
+ */
+function populate_invoice_type_id($defaultOption = "Select Status", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
+
+	echo "<select onChange=\"javascript:setStringText(this.id,'populate_invoice_type_id')\" id='populate_invoice_type_id' $mode
+			name='$elementName' class='$cssClass' />
+			<option value='$defaultOptionValue'>$defaultOption</option>
+			<option value=''></option>";
+
+        include 'library/opendb.php';
+
+        $sql = "(SELECT id, value FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'].")";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+                echo "  
+                        <option value='".$row['id']."'>".$row['value']."</option>
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+
+	echo "</select>";
+}
+
+
+
+
+
 /*
  * populate_hotspots
  * creates a select box and populates it with all hotspots
@@ -60,7 +175,7 @@ function populate_hotspots($defaultOption = "Select Hotspot", $elementName = "",
  * populate_plans()
  *
  */
-function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
+function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "", $valueIsId = false) {
 
 	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />
 			<option value='$defaultOptionValue'>$defaultOption</option>
@@ -70,13 +185,20 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
 
         // Grabing the group lists from usergroup table
 
-		$sql = "SELECT distinct(planName) FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planActive = 'yes' ORDER BY planName ASC;";
+		$sql = "SELECT distinct(planName), id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planActive = 'yes' ORDER BY planName ASC;";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
-                echo "  
-                        <option value='$row[0]'> $row[0] </option>
-                        ";
+			
+
+        	if ($valueIsId === true)
+        		$value = $row[1];
+        	else
+        		$value = $row[0];
+        		        	
+            echo "  
+                   <option value='$value'> $row[0] </option>
+                 ";
 
         }
 

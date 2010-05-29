@@ -230,6 +230,9 @@ $l['all']['PostalInvoice'] = "Postal Invoice";
 $l['all']['FaxInvoice'] = "Fax Invoice";
 $l['all']['EmailInvoice'] = "Email Invoice";
 
+$l['all']['ClientName'] = "Client Name";
+$l['all']['Date'] = "Date";
+
 $l['all']['edit'] = "edit";
 $l['all']['del'] = "del";
 $l['all']['groupslist'] = "groups-list";
@@ -349,6 +352,18 @@ $l['all']['PlanGroup'] = "Plan Profile (Group)";
 $l['all']['PlanType'] = "Plan Type";
 $l['all']['PlanName'] = "Plan Name";
 $l['all']['PlanId'] = "Plan Id";
+
+$l['all']['UserId'] = "User Id";
+
+$l['all']['Invoice'] = "Invoice";
+$l['all']['InvoiceID'] = "Invoice ID";
+$l['all']['InvoiceItems'] = "Invoice Items";
+$l['all']['InvoiceStatus'] = "Invoice Status";
+$l['all']['InvoiceType'] = "Invoice Type";
+$l['all']['Amount'] = "Amount";
+$l['all']['Total'] = "Total";
+
+
 $l['all']['Quantity'] = "Quantity";
 $l['all']['ReceiverEmail'] = "Receiver Email";
 $l['all']['Business'] = "Business";
@@ -386,6 +401,15 @@ $l['Tooltip']['hotspotTooltip'] = "Choose the hotspot name of which this batch i
 
 $l['Tooltip']['startingIndexTooltip'] = "Provide the starting index from which to create the user";
 $l['Tooltip']['planTooltip'] = "Select a plan to associate the user with";
+
+$l['Tooltip']['InvoiceEdit'] = "Edit Invoice";
+$l['Tooltip']['invoiceTypeTooltip'] = "";
+$l['Tooltip']['invoiceStatusTooltip'] = "";
+$l['Tooltip']['invoiceID'] = "Type the invoice id";
+
+$l['Tooltip']['amountTooltip'] = "";
+$l['Tooltip']['taxTooltip'] = "";
+
 
 $l['Tooltip']['Username'] = "Type the Username";
 $l['Tooltip']['BatchName'] = "Type the Batch name";
@@ -596,6 +620,11 @@ $l['button']['NewPlan'] = "New Plan";
 $l['button']['EditPlan'] = "Edit Plan";
 $l['button']['RemovePlan'] = "Remove Plan";
 
+$l['button']['ListInvoices'] = "List Invoices";
+$l['button']['NewInvoice'] = "New Invoice";
+$l['button']['EditInvoice'] = "Edit Invoice";
+$l['button']['RemoveInvoice'] = "Remove Invoice";
+
 $l['button']['ListRealms'] = "List Realms";
 $l['button']['NewRealm'] = "New Realm";
 $l['button']['EditRealm'] = "Edit Realm";
@@ -742,6 +771,12 @@ $l['button']['ProcessQuery'] = "Process Query";
  ************************************************************************************/
 
 $l['title']['ImportUsers'] = "Import Users";
+
+
+$l['title']['Invoice'] = "Invoice";
+$l['title']['InvoiceRemoval'] = "Invoice Removal";
+$l['title']['Payments'] = "Payments";
+$l['title']['Items'] = "Items";
  
 $l['title']['RateInfo'] = "Rate Information";
 $l['title']['PlanInfo'] = "Plan Information";
@@ -945,6 +980,12 @@ $l['Intro']['billpaypaltransactions.php'] = "PayPal Transactions Page";
 
 $l['Intro']['billhistoryquery.php'] = "Billing History";
 
+$l['Intro']['billinvoice.php'] = "Billing Invoices";
+$l['Intro']['billinvoicedel.php'] = "Delete Invoices entry";
+$l['Intro']['billinvoiceedit.php'] = "Edit Invoice";
+$l['Intro']['billinvoicelist.php'] = "List Invoices";
+$l['Intro']['billinvoicenew.php'] = "New Invoice";
+
 $l['Intro']['billplans.php'] = "Billing Plans Page";
 $l['Intro']['billplansdel.php'] = "Delete Plan entry";
 $l['Intro']['billplansedit.php'] = "Edit Plan Details";
@@ -1096,6 +1137,11 @@ $l['helpPage']['login'] = "";
 
 $l['helpPage']['billpaypaltransactions'] = "List all PayPal transactions";
 $l['helpPage']['billhistoryquery'] = "List all billing history for a user(s)";
+
+$l['helpPage']['billinvoicelist'] = "";
+$l['helpPage']['billinvoicenew'] = "";
+$l['helpPage']['billinvoiceedit'] = "";
+$l['helpPage']['billinvoicedel'] = "";
 
 $l['helpPage']['billplanslist'] = "";
 $l['helpPage']['billplansnew'] = "";
