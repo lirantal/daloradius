@@ -28,17 +28,20 @@
 	// invoice details
 	isset($_POST['invoice_status_id']) ? $invoice_status_id = $_POST['invoice_status_id'] : $invoice_status_id = "";
 	isset($_POST['invoice_type_id']) ? $invoice_type_id = $_POST['invoice_type_id'] : $invoice_type_id = "";
-	isset($_POST['user_id']) ? $user_id = $_POST['user_id'] : $user_id = "";
 	isset($_POST['invoice_date']) ? $invoice_date = $_POST['invoice_date'] : $invoice_date = "";
 	isset($_POST['invoice_notes']) ? $invoice_notes = $_POST['invoice_notes'] : $invoice_notes = "";
 	
 	isset($_POST['invoice_items']) ? $invoice_items = $_POST['invoice_items'] : $invoice_items = "";
+	
+	isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
 
 
 	$logAction = "";
 	$logDebugSQL = "";
 
 	if (isset($_POST["submit"])) {
+		
+		isset($_POST['user_id']) ? $user_id = $_POST['user_id'] : $user_id = "";
 		
 		include 'library/opendb.php';
 
@@ -123,6 +126,28 @@
 		}
 	}
 	
+	
+	
+	if (isset($user_id) && (!empty($user_id))) {
+		include 'library/opendb.php';
+
+		$sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+		" WHERE id = '".$dbSocket->escapeSimple($user_id)."'";
+		$res = $dbSocket->query($sql);
+		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+		
+		$userInfo['contactperson'] = $row['contactperson'];
+		$userInfo['username'] = $row['username'];
+		$userInfo['city'] = $row['city'];
+		$userInfo['state'] = $row['state'];
+		
+		$logDebugSQL .= $sql . "\n";
+
+		include 'library/closedb.php';
+				
+	}
+	
+	
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
@@ -174,12 +199,20 @@
 <div class="tabber">
 
 	<div class="tabbertab" title="<?php echo $l['title']['Invoice']; ?>">
+		
 	<fieldset>
 
 		<h302> <?php echo $l['title']['Invoice']; ?> </h302>
-		<br/>
 
 		<ul>
+		
+		<?php
+		echo 'Customer:<b/><br/>'; 
+		echo '<a href="/bill-pos-edit.php?username='.$userInfo['username'].'">'.$userInfo['contactperson'].'</a><br/>'.
+			$userInfo['city']. (!empty($userInfo['state']) ? ', '.$userInfo['state'] : '' );
+		echo '</b>';
+		?>
+		<br/>
 
 		<li class='fieldset'>
 		<label for='invoice_status_id' class='form'><?php echo $l['all']['InvoiceStatus']?></label>
@@ -210,7 +243,7 @@
 
 		<li class='fieldset'>
 		<label for='user_id' class='form'><?php echo $l['all']['UserId'] ?></label>
-		<input name='user_id' type='text' id='user_id' value='' tabindex=101 />
+		<input name='user_id' type='text' id='user_id' value='<?php echo $user_id ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('user_idTooltip')" /> 
 		
 		<div id='user_idTooltip'  style='display:none;visibility:visible' class='ToolTip'>

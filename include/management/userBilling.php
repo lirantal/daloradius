@@ -22,6 +22,113 @@
  *********************************************************************************************************
  */
 
+
+
+
+
+
+
+
+
+/*
+ *********************************************************************************************************
+ * userInvoicesStatus
+ * $username            username to provide information of
+ * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
+ * 
+ * returns user invoices status: total invoices, partial, completed, due invoices, due amount
+ *
+ *********************************************************************************************************
+ */
+function userInvoicesStatus($user_id, $drawTable) {
+
+	include_once('include/management/pages_common.php');
+	include 'library/opendb.php';
+
+	$user_id = $dbSocket->escapeSimple($user_id);			// sanitize variable for sql statement
+
+	$sql = "SELECT COUNT(distinct(a.id)) AS TotalInvoices, a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
+			" c.value AS status, SUM(d.amount + d.tax_amount) as totalbilled ".
+			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
+			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
+			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
+			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ON (d.invoice_id = a.id)".
+			" WHERE (a.user_id = $user_id)".
+			" GROUP BY b.id ";
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+	$totalInvoices = $row['TotalInvoices'];
+	$totalBilled = $row['totalbilled'];
+	
+	
+
+	include 'library/closedb.php';
+
+	if ($drawTable == 1) {
+		echo '
+				<fieldset>
+		
+                <h302> User Invoices </h302>
+				<br/>
+						
+				<ul>
+				
+					<input class="button" type="button" value="New Invoice" 
+						onClick="javascript:window.location = \'bill-invoice-new.php?user_id='.$user_id.'\';" />
+						
+					<input class="button" type="button" value="Show Invoices" 
+						onClick="javascript:window.location = \'bill-invoice-list.php?user_id='.$user_id.'\';" />
+						
+					<br/><br/>
+										
+					<li class="fieldset">
+						<label for="totalInvoices" class="form">Total Invoices</label>
+						<input type="text" value="'.$totalInvoices.'" disabled />
+					</li>
+				
+					<li class="fieldset">
+						<label for="totalbilled" class="form">Total Billed</label>
+						<input type="text" value="'.$totalBilled.'" disabled />
+					</li>
+					
+					
+					<li class="fieldset">
+					<br/>
+					<hr><br/>
+					<input type="submit" name="submit" value="Apply" tabindex=10000 class="button" />
+					</li>
+					
+			</ul>
+	
+			</fieldset>
+
+			';
+
+	}	
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  *********************************************************************************************************
  * userBillingRatesSummary

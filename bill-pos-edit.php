@@ -453,7 +453,7 @@
 
         /* fill-in all the user bill info details */
         $sql = "SELECT ".
-               " planName, contactperson, company, email, phone, ".
+               " id, planName, contactperson, company, email, phone, ".
                " address, city, state, zip, ".
                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
                " notes, changeuserbillinfo, ".
@@ -467,6 +467,7 @@
 
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
+        $user_id = $row['id'];
         $bi_contactperson = $row['contactperson'];
         $bi_planname = $row['planName'];
         $bi_company = $row['company'];
@@ -708,6 +709,12 @@
 
 
 
+        <div class="tabbertab" title="<?php echo $l['title']['Invoices']; ?>">
+        <?php
+                include_once('include/management/userBilling.php');
+                userInvoicesStatus($user_id, 1);
+        ?>
+        </div>
 
 
 </div>
