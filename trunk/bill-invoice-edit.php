@@ -143,6 +143,22 @@
 		$edit_invoiceid = $invoice_id;
 		$invoiceDetails = $res->fetchRow(DB_FETCHMODE_ASSOC);
 		
+		if (isset($invoiceDetails['user_id']) && (!empty($invoiceDetails['user_id']))) {
+	
+			$sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+			" WHERE id = '".$dbSocket->escapeSimple($invoiceDetails['user_id'])."'";
+			$res = $dbSocket->query($sql);
+			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+			
+			$userInfo['contactperson'] = $row['contactperson'];
+			$userInfo['username'] = $row['username'];
+			$userInfo['city'] = $row['city'];
+			$userInfo['state'] = $row['state'];
+			
+			$logDebugSQL .= $sql . "\n";
+				
+		}
+
 	}
 	
 	include 'library/closedb.php';
@@ -201,10 +217,16 @@
 	<fieldset>
 
 		<h302> <?php echo $l['title']['Invoice']; ?> </h302>
-		<br/>
 
 		<ul>
 
+		<?php
+		echo 'Customer:<b/><br/>'; 
+		echo '<a href="/bill-pos-edit.php?username='.$userInfo['username'].'">'.$userInfo['contactperson'].'</a><br/>'.
+			$userInfo['city']. (!empty($userInfo['state']) ? ', '.$userInfo['state'] : '' );
+		echo '</b>';
+		?>
+		<br/>
 
 		<!--  hidden invoice_id field -->
 		<input type='hidden' name='invoice_id' value='<?php echo $invoice_id ?>' />

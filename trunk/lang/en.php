@@ -359,9 +359,12 @@ $l['all']['Invoice'] = "Invoice";
 $l['all']['InvoiceID'] = "Invoice ID";
 $l['all']['InvoiceItems'] = "Invoice Items";
 $l['all']['InvoiceStatus'] = "Invoice Status";
+
 $l['all']['InvoiceType'] = "Invoice Type";
 $l['all']['Amount'] = "Amount";
 $l['all']['Total'] = "Total";
+$l['all']['TotalInvoices'] = "Total Invoices";
+
 
 
 $l['all']['Quantity'] = "Quantity";
@@ -774,6 +777,7 @@ $l['title']['ImportUsers'] = "Import Users";
 
 
 $l['title']['Invoice'] = "Invoice";
+$l['title']['Invoices'] = "Invoices";
 $l['title']['InvoiceRemoval'] = "Invoice Removal";
 $l['title']['Payments'] = "Payments";
 $l['title']['Items'] = "Items";
