@@ -27,9 +27,10 @@
 
 
 	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
+	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "id";
+	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "desc";
 
+	isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
     
 
 
@@ -74,6 +75,11 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+	$sql_WHERE = '';
+	if (!empty($user_id))
+		$sql_WHERE = ' WHERE a.user_id = \''.$dbSocket->escapeSimple($user_id).'\'';
+	
+	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
 			" c.value AS status, SUM(d.amount + d.tax_amount) as totalbilled ".
@@ -81,6 +87,7 @@
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
 			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ON (d.invoice_id = a.id)".
+			$sql_WHERE.
 			" GROUP BY a.id ";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();		
@@ -91,6 +98,7 @@
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
 			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ON (d.invoice_id = a.id)".
+			$sql_WHERE.
 			" GROUP BY a.id ".
 			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
