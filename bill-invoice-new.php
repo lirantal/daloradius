@@ -63,8 +63,7 @@
 
 				if (!PEAR::isError($res)) {
 
-					$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" );  
-					var_dump($invoice_id);
+					$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" ); 
 					
 					// add the invoice items which the user created
 					addInvoiceItems($dbSocket, $invoice_id, $invoice_items);
@@ -100,7 +99,7 @@
 		if (isset($invoice_items)) {
 
 			foreach ($invoice_items as $item) {
-
+				
 				$planId = $item['planId'];
 				$amount = $item['amount'];
 				$tax = $item['tax'];
@@ -116,9 +115,7 @@
 						$dbSocket->escapeSimple($tax)."', '".
 						$dbSocket->escapeSimple($notes)."', ".
 						" '$currDate', '$currBy', NULL, NULL)";
-						$res = $dbSocket->query($sql);
-						$logDebugSQL .= $sql . "\n";
-						
+
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
