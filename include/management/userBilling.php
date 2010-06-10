@@ -44,24 +44,29 @@ function userInvoicesStatus($user_id, $drawTable) {
 
 	include_once('include/management/pages_common.php');
 	include 'library/opendb.php';
-
+	
 	$user_id = $dbSocket->escapeSimple($user_id);			// sanitize variable for sql statement
-
+	
 	$sql = "SELECT COUNT(distinct(a.id)) AS TotalInvoices, a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
-			" c.value AS status, SUM(d.amount + d.tax_amount) as totalbilled ".
+			" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled, ".
+			" SUM(a.status_id = 1) as openInvoices ".
 			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ON (d.invoice_id = a.id)".
+			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) as totalbilled, invoice_id FROM ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
+			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 			" WHERE (a.user_id = $user_id)".
 			" GROUP BY b.id ";
+
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
 	$totalInvoices = $row['TotalInvoices'];
 	$totalBilled = $row['totalbilled'];
-	
-	
+	$totalPayed = $row['totalpayed'];
+	$openInvoices = $row['openInvoices'];
 
 	include 'library/closedb.php';
 
@@ -80,6 +85,9 @@ function userInvoicesStatus($user_id, $drawTable) {
 					<input class="button" type="button" value="Show Invoices" 
 						onClick="javascript:window.location = \'bill-invoice-list.php?user_id='.$user_id.'\';" />
 						
+					<input class="button" type="button" value="Show Payments" 
+						onClick="javascript:window.location = \'bill-payment-list.php?user_id='.$user_id.'\';" />
+						
 					<br/><br/>
 										
 					<li class="fieldset">
@@ -88,10 +96,27 @@ function userInvoicesStatus($user_id, $drawTable) {
 					</li>
 				
 					<li class="fieldset">
+						<label for="totalbilled" class="form">Open Invoices</label>
+						<input type="text" value="'.$openInvoices.'" disabled />
+					</li>
+					
+					<br/>
+					
+					<li class="fieldset">
 						<label for="totalbilled" class="form">Total Billed</label>
 						<input type="text" value="'.$totalBilled.'" disabled />
 					</li>
 					
+					<li class="fieldset">
+						<label for="totalbilled" class="form">Total Payed</label>
+						<input type="text" value="'.$totalPayed.'" disabled />
+					</li>
+					
+					<li class="fieldset">
+						<label for="totalbilled" class="form">Balance</label>
+						<input type="text" value="'.($totalPayed - $totalBilled).'" disabled />
+					</li>
+										
 					
 					<li class="fieldset">
 					<br/>

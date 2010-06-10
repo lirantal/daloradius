@@ -23,6 +23,31 @@
 include('../../library/checklogin.php');
 
 
+
+/* getAjaxAutocompletePaymentName */
+if(isset($_GET['getAjaxAutocompletePaymentName'])) {
+
+        $getAjaxAutocompletePaymentName = $_GET['getAjaxAutocompletePaymentName'];
+
+        if ( (isset($getAjaxAutocompletePaymentName)) && ($getAjaxAutocompletePaymentName) ) {
+
+                include '../../library/opendb.php';
+
+                $sql = "SELECT distinct(value) as value FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
+                        " WHERE value LIKE '$getAjaxAutocompletePaymentName%' ORDER BY value ASC";
+                $res = $dbSocket->query($sql);
+
+                while($row = $res->fetchRow()) {
+                        echo "$row[0]###$row[0]|";
+                }
+
+                include '../../library/closedb.php';
+        }
+
+}
+
+
+
 /* getAjaxAutocompleteContactPerson */
 if(isset($_GET['getAjaxAutocompleteContactPerson'])) {
 

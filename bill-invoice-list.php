@@ -59,7 +59,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billinvoiceedit.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billinvoicelist.php'] ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
@@ -78,26 +78,31 @@
 	$sql_WHERE = '';
 	if (!empty($user_id))
 		$sql_WHERE = ' WHERE a.user_id = \''.$dbSocket->escapeSimple($user_id).'\'';
-	
-	
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
-			" c.value AS status, SUM(d.amount + d.tax_amount) as totalbilled ".
+			" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
 			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ON (d.invoice_id = a.id)".
+			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) as totalbilled, invoice_id FROM ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
+			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 			$sql_WHERE.
 			" GROUP BY a.id ";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();		
 	
 	$sql = "SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
-			" c.value AS status, SUM(d.amount + d.tax_amount) as totalbilled".
+			" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
 			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ON (d.invoice_id = a.id)".
+			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) as totalbilled, invoice_id FROM ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
+			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 			$sql_WHERE.
 			" GROUP BY a.id ".
 			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
@@ -163,6 +168,15 @@
 		</th>
 		
 		<th scope='col'> 
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalpayed&orderType=$orderTypeNextPage\">
+		".$l['all']['TotalPayed']."</a>
+		</th>
+		
+		<th scope='col'> 
+		".$l['all']['Balance']."
+		</th>
+		
+		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=status_id&orderType=$orderTypeNextPage\">
 		".$l['all']['Status']."</a>
 		</th>
@@ -177,12 +191,12 @@
 		$invoice_id = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
-									'value' => $row['id'],
+									'value' => '#'.$row['id'],
 									'divId' => '',
 		
 							));
 
-		$content =  '<a class="toolTip" href="mng-edit.php?username='.$row['username'].'">'.$l['Tooltip']['UserEdit'].'</a>';
+		$content =  '<a class="toolTip" href="bill-pos-edit.php?username='.$row['username'].'">'.$l['Tooltip']['UserEdit'].'</a>';
 		$contactperson = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -191,31 +205,16 @@
 		
 							));
 							
-		echo '<td> #'.$invoice_id.' </td>';
+		echo '<td> '.$invoice_id.' </td>';
 		echo '<td> '.$contactperson.' </td>';
 		echo '<td> '.$row['date'].' </td>';
 		echo '<td> '.$row['totalbilled'].' </td>';
+		echo '<td> '.$row['totalpayed'].' </td>';
+		echo '<td> '.($row['totalpayed'] - $row['totalbilled']).' </td>';
 		echo '<td> '.$row['status'].' </td>';
 		
 		echo '</tr>';
 		
-		
-		/*
-		printqn("<tr>
-                        <td> <input type='checkbox' name='invoice_id[]' value='$row[0]'> $row[0] </td>
-
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"bill-plans-edit.php?planName=$row[1]\">
-                                                {$l['button']['EditPlan']}</a>
-                                        <br/><br/>'
-                                >$row[1]</a>
-                        </td>
-
-				<td> $row[2] </td>
-		</tr>");
-		*/
 	}
 
         echo "
