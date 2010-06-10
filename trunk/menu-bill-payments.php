@@ -1,0 +1,59 @@
+<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
+<![endif]-->
+<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+
+<script src="library/js_date/date-functions.js" type="text/javascript"></script>
+<script src="library/js_date/datechooser.js" type="text/javascript"></script>
+<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
+<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+
+<body>
+<?php
+    include_once ("lang/main.php");
+?>
+<div id="wrapper">
+<div id="innerwrapper">
+
+<?php
+    $m_active = "Billing";
+    include_once ("include/menu/menu-items.php");
+	include_once ("include/menu/billing-subnav.php");
+	include_once("include/management/autocomplete.php");
+?>
+
+<div id="sidebar">
+
+                                <h2>Billing</h2>
+
+                                <h3>Payments Management</h3>
+                                <ul class="subnav">
+
+                                                <li><a href="bill-payments-list.php"><b>&raquo;</b><?php echo $l['button']['ListPayments'] ?></a></li>
+                                                <li><a href="bill-payments-new.php"><b>&raquo;</b><?php echo $l['button']['NewPayment'] ?></a></li>
+                                                <li><a href="javascript:document.paymentsedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditPayment'] ?></a>
+                                                        <form name="paymentsedit" action="bill-payments-edit.php" method="get" class="sidebar">
+                                                        <input name="payment_id" type="text" id="payment_id" 
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['PaymentId']; ?> <br/>'
+                                                                value="<?php if (isset($edit_payment_id)) echo $edit_payment_id; ?>" tabindex=3>
+                                                        </form></li>
+
+                                                <li><a href="bill-payments-del.php"><b>&raquo;</b><?php echo $l['button']['RemovePayment'] ?></a></li>
+                                </ul>
+
+                                <br/><br/>
+                                <h2>Search</h2>
+
+			<input name="" type="text" value="Search" tabindex=4 />
+
+                </div>
+
+<script type="text/javascript">
+        var tooltipObj = new DHTMLgoodies_formTooltip();
+        tooltipObj.setTooltipPosition('right');
+        tooltipObj.setPageBgColor('#EEEEEE');
+        tooltipObj.setTooltipCornerSize(15);
+        tooltipObj.initFormFieldTooltip();
+</script>

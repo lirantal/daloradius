@@ -116,6 +116,23 @@
 		if (isset($_REQUEST['config_dbtbl_hunt']))
 			$configValues['CONFIG_DB_TBL_RADHG'] = $_REQUEST['config_dbtbl_hunt'];
 
+        if (isset($_REQUEST['config_dbtbl_billinginvoice']))
+            $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'] = $_REQUEST['config_dbtbl_billinginvoice'];
+            
+        if (isset($_REQUEST['config_dbtbl_billinginvoice_items']))
+            $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'] = $_REQUEST['config_dbtbl_billinginvoice_items'];
+            
+        if (isset($_REQUEST['config_dbtbl_billinginvoice_status']))
+            $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'] = $_REQUEST['config_dbtbl_billinginvoice_status'];
+            
+        if (isset($_REQUEST['config_dbtbl_billinginvoice_type']))
+            $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] = $_REQUEST['config_dbtbl_billinginvoice_type'];
+            
+        if (isset($_REQUEST['config_dbtbl_payment_type']))
+            $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] = $_REQUEST['config_dbtbl_payment_type'];
+
+        if (isset($_REQUEST['config_dbtbl_payments']))
+        	$configValues['CONFIG_DB_TBL_DALOPAYMENTS'] = $_REQUEST['config_dbtbl_payments'];
 
         include ("library/config_write.php");
     }	
@@ -314,6 +331,38 @@
                 <label for='config_dbtbl_billinginfo' class='form'><?php echo $l['all']['billinginfo']?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] ?>" name="config_dbtbl_billinginfo" />
 		</li>
+
+		<li class='fieldset'>
+        <label for='config_dbtbl_billinginvoice' class='form'><?php echo $l['all']['Invoice']?></label>
+        <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'] ?>" name="config_dbtbl_billinginvoice" />
+        </li>
+
+		<li class='fieldset'>
+        <label for='config_dbtbl_billinginvoice_items' class='form'><?php echo $l['all']['InvoiceItems']?></label>
+        <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'] ?>" name="config_dbtbl_billinginvoice_items" />
+        </li>
+        
+        <li class='fieldset'>
+        <label for='config_dbtbl_billinginvoice_status' class='form'><?php echo $l['all']['InvoiceStatus']?></label>
+        <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'] ?>" name="config_dbtbl_billinginvoice_status" />
+        </li>
+        
+        <li class='fieldset'>
+        <label for='config_dbtbl_billinginvoice_type' class='form'><?php echo $l['all']['InvoiceType']?></label>
+        <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] ?>" name="config_dbtbl_billinginvoice_type" />
+        </li>
+
+		<li class='fieldset'>
+        <label for='config_dbtbl_payment_type' class='form'><?php echo $l['all']['payment_type']?></label>
+        <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] ?>" name="config_dbtbl_payment_type" />
+        </li>
+
+        <li class='fieldset'>
+        <label for='config_dbtbl_payments' class='form'><?php echo $l['all']['payments']?></label>
+        <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOPAYMENTS'] ?>" name="config_dbtbl_payments" />
+        </li>
+
+
 
                 <li class='fieldset'>
                 <label for='config_dbtbl_operators' class='form'><?php echo $l['all']['operators']?></label>

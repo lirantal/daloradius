@@ -202,6 +202,8 @@ $l['all']['Billed'] = "Billed";
 $l['all']['TotalUsers'] = "Total Users";
 $l['all']['ActiveUsers'] = "Active Users";
 $l['all']['TotalBilled'] = "Total Billed";
+$l['all']['TotalPayed'] = "Total Payed";
+$l['all']['Balance'] = "Balance";
 $l['all']['CardBank'] = "Card Bank";
 $l['all']['Type'] = "Type";
 $l['all']['CardBank'] = "CardBank";
@@ -365,6 +367,18 @@ $l['all']['Amount'] = "Amount";
 $l['all']['Total'] = "Total";
 $l['all']['TotalInvoices'] = "Total Invoices";
 
+$l['all']['PayTypeName'] = "Payment Type Name";
+$l['all']['PayTypeNotes'] = "Payment Type Description";
+$l['all']['payment_type'] = "payment types";
+$l['all']['payments'] = "payments";
+$l['all']['PaymentId'] = "Payment ID";
+$l['all']['PaymentInvoiceID'] = "Invoice ID";
+$l['all']['PaymentAmount'] = "Amount";
+$l['all']['PaymentDate'] = "Date";
+$l['all']['PaymentType'] = "Payment Type";
+$l['all']['PaymentNotes'] = "Payment Notes";
+
+
 
 
 $l['all']['Quantity'] = "Quantity";
@@ -412,6 +426,19 @@ $l['Tooltip']['invoiceID'] = "Type the invoice id";
 
 $l['Tooltip']['amountTooltip'] = "";
 $l['Tooltip']['taxTooltip'] = "";
+
+$l['Tooltip']['PayTypeName'] = "Type the Payment Type name";
+$l['Tooltip']['EditPayType'] = "Edit Payment Type";
+$l['Tooltip']['RemovePayType'] = "Remove Payment Type";
+$l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>
+                                        to describe the purpose of the payment";
+$l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>
+                                        the operation of the payment type";
+$l['Tooltip']['EditPayment'] = "Edit Payment";
+$l['Tooltip']['PaymentId'] = "The Payment Id";
+$l['Tooltip']['RemovePayment'] = "Remove Payment";
+$l['Tooltip']['paymentInvoiceTooltip'] = "The invoice related to this payment";
+
 
 
 $l['Tooltip']['Username'] = "Type the Username";
@@ -605,6 +632,16 @@ $l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user infor
 /* **********************************************************************************
  * Links and Buttons
  ************************************************************************************/
+$l['button']['ListPayTypes'] = "List Payment Types";
+$l['button']['NewPayType'] = "New Payment Type";
+$l['button']['EditPayType'] = "Edit Payment Type";
+$l['button']['RemovePayType'] = "Remove Payment Type";
+$l['button']['ListPayments'] = "List Payments";
+$l['button']['NewPayment'] = "New Payment";
+$l['button']['EditPayment'] = "Edit Payment";
+$l['button']['RemovePayment'] = "Remove Payment";
+
+
 $l['button']['ClearSessions'] = "Clear Sessions";
 $l['button']['Dashboard'] = "Dashboard";
 $l['button']['MailSettings'] = "Mail Settings";
@@ -781,6 +818,10 @@ $l['title']['Invoices'] = "Invoices";
 $l['title']['InvoiceRemoval'] = "Invoice Removal";
 $l['title']['Payments'] = "Payments";
 $l['title']['Items'] = "Items";
+
+$l['title']['PayTypeInfo'] = "Payment Type Information";
+$l['title']['PaymentInfo'] = "Payment Information";
+
  
 $l['title']['RateInfo'] = "Rate Information";
 $l['title']['PlanInfo'] = "Plan Information";
@@ -929,6 +970,17 @@ $l['ContactInfo']['CreditCardExpiration'] = "Credit Card Expiration";
 
 /* ********************************************************************************** */
 
+$l['Intro']['paymenttypesmain.php'] = "Payment Types Page";
+$l['Intro']['paymenttypesdel.php'] = "Delete Payment Type entry";
+$l['Intro']['paymenttypesedit.php'] = "Edit Payment Type Details";
+$l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
+$l['Intro']['paymenttypesnew.php'] = "New Payment Type entry";
+$l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
+$l['Intro']['paymentslist.php'] = "Payments Table";
+$l['Intro']['paymentsmain.php'] = "Payments Page";
+$l['Intro']['paymentsdel.php'] = "Delete Payment entry";
+$l['Intro']['paymentsedit.php'] = "Edit Payment Details";
+$l['Intro']['paymentsnew.php'] = "New Payment entry";
 
 $l['Intro']['billhistorymain.php'] = "Billing History";
 $l['Intro']['msgerrorpermissions.php'] = "Error";
@@ -1146,6 +1198,18 @@ $l['helpPage']['billinvoicelist'] = "";
 $l['helpPage']['billinvoicenew'] = "";
 $l['helpPage']['billinvoiceedit'] = "";
 $l['helpPage']['billinvoicedel'] = "";
+
+$l['helpPage']['paymenttypeslist'] = "";
+$l['helpPage']['paymenttypesnew'] = "";
+$l['helpPage']['paymenttypesedit'] = "";
+$l['helpPage']['paymenttypesdel'] = "";
+$l['helpPage']['paymenttypesdate'] = "";
+
+$l['helpPage']['paymentslist'] = "";
+$l['helpPage']['paymentsnew'] = "";
+$l['helpPage']['paymentsedit'] = "";
+$l['helpPage']['paymentsdel'] = "";
+$l['helpPage']['paymentsdate'] = "";
 
 $l['helpPage']['billplanslist'] = "";
 $l['helpPage']['billplansnew'] = "";

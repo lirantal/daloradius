@@ -115,9 +115,7 @@
 						$dbSocket->escapeSimple($tax)."', '".
 						$dbSocket->escapeSimple($notes)."', ".
 						" '$currDate', '$currBy', NULL, NULL)";
-						$res = $dbSocket->query($sql);
-						$logDebugSQL .= $sql . "\n";
-						
+
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
@@ -129,12 +127,17 @@
 	if (trim($invoice_id) != "") {
 		
 		// get invoice details
-		$sql = "SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, ".
-				" c.value AS status, e.value AS type, SUM(d.amount+d.tax_amount) as total ".
+		$sql = "SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, b.contactperson, b.username, ".
+				" b.city, b.state, f.value as type, ".
+				" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
 				" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
+				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']." AS e ON (a.type_id = e.id) ".
-				" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ON (d.invoice_id = a.id)".
+				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']." AS f ON (a.type_id = f.id) ".
+				" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) as totalbilled, invoice_id FROM ".
+				$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
+				" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
+				$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 				" WHERE a.id = ".$dbSocket->escapeSimple($invoice_id).
 				" GROUP BY a.id ";
 		$res = $dbSocket->query($sql);
@@ -142,6 +145,8 @@
 	
 		$edit_invoiceid = $invoice_id;
 		$invoiceDetails = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+			/*
 		
 		if (isset($invoiceDetails['user_id']) && (!empty($invoiceDetails['user_id']))) {
 	
@@ -158,6 +163,7 @@
 			$logDebugSQL .= $sql . "\n";
 				
 		}
+		*/
 
 	}
 	
@@ -222,15 +228,42 @@
 
 		<?php
 		echo 'Customer:<b/><br/>'; 
-		echo '<a href="/bill-pos-edit.php?username='.$userInfo['username'].'">'.$userInfo['contactperson'].'</a><br/>'.
-			$userInfo['city']. (!empty($userInfo['state']) ? ', '.$userInfo['state'] : '' );
+		echo '<a href="/bill-pos-edit.php?username='.$invoiceDetails['username'].'">'.$invoiceDetails['contactperson'].'</a><br/>'.
+			$invoiceDetails['city']. (!empty($invoiceDetails['state']) ? ', '.$invoiceDetails['state'] : '' );
 		echo '</b>';
 		?>
 		<br/>
 
+					<input class="button" type="button" value="New Payment" 
+						onClick="javascript:window.location = 'bill-payments-new.php?payment_invoice_id=<?php echo $invoiceDetails['id'] ?>';" />
+						
+
+					<input class="button" type="button" value="Show Payments" 
+						onClick="javascript:window.location = 'bill-payments-list.php?invoice_id=<?php echo $invoiceDetails['id'] ?>';" />
+						
+		<br/><br/>
+
 		<!--  hidden invoice_id field -->
 		<input type='hidden' name='invoice_id' value='<?php echo $invoice_id ?>' />
 		
+
+
+		<li class='fieldset'>
+		<label for='' class='form'><?php echo $l['all']['TotalBilled']?></label>
+		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalbilled']?>' tabindex=101 />
+		</li>
+		
+		<li class='fieldset'>
+		<label for='' class='form'><?php echo $l['all']['TotalPayed']?></label>
+		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalpayed']?>' tabindex=101 />
+		</li>
+		
+		<li class='fieldset'>
+		<label for='' class='form'><?php echo $l['all']['Balance']?></label>
+		<input name='' type='text' disabled id='' value='<?php echo (float) ($invoiceDetails['totalpayed'] - $invoiceDetails['totalbilled'])?>' tabindex=101 />
+		</li>
+
+		<br/>
 
 		<li class='fieldset'>
 		<label for='invoice_status_id' class='form'><?php echo $l['all']['InvoiceStatus']?></label>

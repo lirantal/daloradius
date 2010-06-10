@@ -22,6 +22,38 @@
 
 
 
+/*
+ * populate_payment_type_id
+ * creates a select box and populates it with possible payment type_id options
+ *
+ * $defaultOption - title for the first/default option in select box
+ * $elementName   - the string used for the select element's name='' value
+ * $cssClass      - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
+ *
+ */
+function populate_payment_type_id($defaultOption = "Select Payment Type", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
+
+        echo "<select onChange=\"javascript:setStringText(this.id,'populate_payment_type_id')\" id='populate_payment_type_id' $mode
+                        name='$elementName' class='$cssClass' />
+                        <option value='$defaultOptionValue'>$defaultOption</option>
+                        <option value=''></option>";
+
+        include 'library/opendb.php';
+
+        $sql = "(SELECT id, value FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].")";
+        $res = $dbSocket->query($sql);
+
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+                echo "
+                        <option value='".$row['id']."'>".$row['value']."</option>
+                        ";
+
+        }
+
+        include 'library/closedb.php';
+
+        echo "</select>";
+}
 
 
 
