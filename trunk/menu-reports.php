@@ -49,6 +49,7 @@ include_once ("lang/main.php");
 							<img src='images/icons/reportsLastConnection.png' border='0'>
 							<?php echo $l['button']['LastConnectionAttempts'] ?></a>
 
+
 							<form name="replastconnect" action="rep-lastconnect.php" method="get" class="sidebar">
 								<input name="usernameLastConnect" type="text" id="usernameLastConnect"
 				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
@@ -62,6 +63,30 @@ include_once ("lang/main.php");
 								</select>
 							</form>
 							</li>
+							
+							
+
+
+						<li><a href="javascript:document.repnewusers.submit();"><b>&raquo;</b>
+						<img src='images/icons/userList.gif' border='0'>
+						<?php echo $l['button']['NewUsers'] ?></a>
+
+						<form name="repnewusers" action="rep-newusers.php" method="get" class="sidebar">
+							<h4>Start Date</h4>
+							<input name="startdate" type="text" id="startdate" onClick='javascript:__displayTooltip();'
+								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+							value="<?php if (isset($startdate)) echo $startdate;
+							else echo date("Y-01-01"); ?>">
+							<h4>End Date</h4>
+							<input name="enddate" type="text" id="enddate" onClick='javascript:__displayTooltip();'
+								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+								value="<?php if (isset($enddate)) echo $enddate;
+							else echo date("Y-m-t"); ?>">
+ 						</form>
+                        </li>
+							
+							
+							
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsTopUsers.png' border='0'>
 							<?php echo $l['button']['TopUser'] ?></a>
