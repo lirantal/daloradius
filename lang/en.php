@@ -641,6 +641,7 @@ $l['button']['NewPayment'] = "New Payment";
 $l['button']['EditPayment'] = "Edit Payment";
 $l['button']['RemovePayment'] = "Remove Payment";
 
+$l['button']['NewUsers'] = "New Users";
 
 $l['button']['ClearSessions'] = "Clear Sessions";
 $l['button']['Dashboard'] = "Dashboard";
@@ -985,6 +986,8 @@ $l['Intro']['paymentsnew.php'] = "New Payment entry";
 $l['Intro']['billhistorymain.php'] = "Billing History";
 $l['Intro']['msgerrorpermissions.php'] = "Error";
 
+$l['Intro']['repnewusers.php'] = "Listing New Users";
+
 $l['Intro']['mngradproxys.php'] = "Proxys Management";
 $l['Intro']['mngradproxysnew.php'] = "New Proxy";
 $l['Intro']['mngradproxyslist.php'] = "List Proxy";
@@ -1188,6 +1191,7 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
  * page, basically your expanded tool-tip.
  ************************************************************************************/
 
+$l['helpPage']['repnewusers'] = "The following table lists new users created each month.";
 
 $l['helpPage']['login'] = "";
 
