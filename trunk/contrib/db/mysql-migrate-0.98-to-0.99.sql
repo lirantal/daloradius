@@ -223,9 +223,66 @@ INSERT INTO `operators_acl` VALUES (0,6,'mng_rad_hunt_del',1),(0,6,'mng_rad_hunt
 INSERT INTO `operators_acl_files` VALUES (0,'config_mail','Configuration','Core');
 INSERT INTO `operators_acl` VALUES (0,6,'config_mail',1);
 
-DROP TABLE IF EXISTS `nodes_data`;
-CREATE TABLE `nodes_data` (
-  `id` int(32) NOT NULL auto_increment,
+
+--
+-- Table structure for table `node`
+-- adopted from the meshconnect project for the sake of compatability
+
+CREATE TABLE IF NOT EXISTS `node` (
+
+-- Generic fields 
+
+`id` int(11) NOT NULL auto_increment,
+`time` varchar(20) NOT NULL COMMENT 'Time of last checkin',
+
+-- Fields used in the front end; ignored by checkin-batman
+
+`netid` int(11) NOT NULL,
+`name` varchar(100) NOT NULL,
+`description` varchar(100) NOT NULL,
+`latitude` varchar(20) NOT NULL,
+`longitude` varchar(20) NOT NULL,
+`owner_name` varchar(50) NOT NULL COMMENT 'node owner''s name',
+`owner_email` varchar(50) NOT NULL COMMENT 'node owner''s email address',
+`owner_phone` varchar(25) NOT NULL COMMENT 'node owner''s phone number',
+`owner_address` varchar(100) NOT NULL COMMENT 'node owner''s address',
+`approval_status` varchar(1) NOT NULL COMMENT 'approval status: A (accepted), R (rejected), P (pending)',
+
+
+-- Fields which directly correspond to fields in ROBIN; exactly the same names; MUST be updated/accessed by checkin-batman
+-- NOTE: The ROBIN fields 'rank', 'ssid', and 'pssid' are currently not used.
+
+`ip` varchar(20) NOT NULL COMMENT 'ROBIN',
+`mac` varchar(20) UNIQUE NOT NULL COMMENT 'ROBIN',
+`uptime` varchar(100) NOT NULL COMMENT 'ROBIN',
+`robin` varchar(20) NOT NULL COMMENT 'ROBIN: robin version',
+`batman` varchar(20) NOT NULL COMMENT 'ROBIN: batman version',
+`memfree` varchar(20) NOT NULL COMMENT 'ROBIN',
+`nbs` mediumtext NOT NULL COMMENT 'ROBIN: neighbor list',
+`gateway` varchar(20) NOT NULL COMMENT 'ROBIN: nearest gateway',
+`gw-qual` varchar(20) NOT NULL COMMENT 'ROBIN: quality of nearest gateway',
+`routes` mediumtext NOT NULL COMMENT 'ROBIN: route to nearest gateway',
+`users` char(3) NOT NULL COMMENT 'ROBIN: current number of users',
+`kbdown` varchar(20) NOT NULL COMMENT 'ROBIN: downloaded kb',
+`kbup` varchar(20) NOT NULL COMMENT 'ROBIN: uploaded kb',
+`hops` varchar(3) NOT NULL COMMENT 'ROBIN: hops to gateway',
+`rank` varchar(3) NOT NULL COMMENT 'ROBIN: ???, not currently used for anything',
+`ssid` varchar(20) NOT NULL COMMENT 'ROBIN: ssid, not currently used for anything',
+`pssid` varchar(20) NOT NULL COMMENT 'ROBIN: pssid, not currently used for anything',
+
+
+-- Fields which are computed based on fields in ROBIN; must be MUST be updated/accessed by checkin-batman
+
+`gateway_bit` tinyint(1) NOT NULL COMMENT 'ROBIN derivation: is this node a gateway?',
+`memlow` varchar(20) NOT NULL COMMENT 'ROBIN derivation: lowest reported memory on the node',
+`usershi` char(3) NOT NULL COMMENT 'ROBIN derivation: highest number of users',
+
+
+
+-- Begin daloRADIUS related node information
+-- implemented for supporting non-mesh devices (openwrt/dd-wrt, etc) with daloRADIUS's
+-- custome script for checking-in
+
   `wan_iface` varchar(128) default NULL,
   `wan_ip` varchar(128) default NULL,
   `wan_mac` varchar(128) default NULL,
@@ -239,19 +296,17 @@ CREATE TABLE `nodes_data` (
   `lan_iface` varchar(128) default NULL,
   `lan_mac` varchar(128) default NULL,
   `lan_ip` varchar(128) default NULL,
-  `uptime` varchar(128) default NULL,
-  `memfree` varchar(128) default NULL,
+  -- `uptime` varchar(128) default NULL,
+  -- `memfree` varchar(128) default NULL,
   `wan_bup` varchar(128) default NULL,
   `wan_bdown` varchar(128) default NULL,
   `firmware` varchar(128) default NULL,
   `firmware_revision` varchar(128) default NULL,
   
-  `nas_mac` varchar(128) default NULL,
-  `checkin_date` varchar(128) default NULL,
-  
-  PRIMARY KEY  (`id`),
-  KEY nas_mac (`nas_mac`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+  -- `nas_mac` varchar(128) default NULL,
+
+ PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='node database' AUTO_INCREMENT=1 ;
 
 
 
@@ -260,7 +315,6 @@ CREATE TABLE `nodes_settings` (
   `id` int(32) NOT NULL auto_increment,
   `soft_checkin_time` varchar(128) default NULL COMMENT 'time in minutes which hotspot is considered late/down (soft limit)',
   `hard_checkin_time` varchar(128) default NULL COMMENT 'time in minutes which hotspot is considered late/down (hard limit)',
-  `test` varchar(128) default NULL COMMENT 'comment',
   
   `creationdate` datetime default '0000-00-00 00:00:00',
   `creationby` varchar(128) default NULL,
@@ -275,9 +329,7 @@ CREATE TABLE `nodes_settings` (
 DROP TABLE IF EXISTS `nas_chilli`;
 CREATE TABLE `nas_chilli` (
   `id` int(32) NOT NULL auto_increment,
-  `hotspot_id` int(32) default 0 COMMENT 'the hotspot business id associated with this chilli nas instance instance',
-  `batch_status` varchar(128) default 'Pending' NOT NULL COMMENT 'the batch status',
-  
+  `hotspot_id` int(32) default 0 COMMENT 'the hotspot business id associated with this chilli nas instance instance',  
   
   `creationdate` datetime default '0000-00-00 00:00:00',
   `creationby` varchar(128) default NULL,
@@ -569,9 +621,31 @@ INSERT INTO `payment_type` (`id`, `value`, `notes`, `creationdate`, `creationby`
 
 
 
+-- Adding ACL for the new Invoice Billing pages
 INSERT INTO `operators_acl_files` VALUES (0,'bill_invoice_list','Billing','Invoice'),
 (0,'bill_invoice_new','Billing','Invoice'),(0,'bill_invoice_edit','Billing','Invoice'),
 (0,'bill_invoice_del','Billing','Invoice');
 INSERT INTO `operators_acl` VALUES
 (0,6,'bill_invoice_list',1),(0,6,'bill_invoice_new',1),(0,6,'bill_invoice_edit',1),(0,6,'bill_invoice_del',1);
 
+
+-- Adding ACL for the new Payment Billing pages
+INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
+('bill_payment_types_new', 'Billing', 'Payment Types'),
+('bill_payment_types_edit', 'Billing', 'Payment Types'),
+('bill_payment_types_list', 'Billing', 'Payment Types'),
+('bill_payment_types_del', 'Billing', 'Payment Types'),
+('bill_payments_list', 'Billing', 'Payments'),
+('bill_payments_edit', 'Billing', 'Payments'),
+('bill_payments_new', 'Billing', 'Payments'),
+('bill_payments_del', 'Billing', 'Payments');
+INSERT INTO `operators_acl` VALUES
+(0,6,'bill_payment_types_new',1),(0,6,'bill_payment_types_edit',1),(0,6,'bill_payment_types_list',1),(0,6,'bill_payment_types_del',1),
+(0,6,'bill_payments_list',1),(0,6,'bill_payments_edit',1),(0,6,'bill_payments_new',1),(0,6,'bill_payments_del',1);
+
+
+-- Adding ACL for the new New Users reports page
+INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
+('rep_newusers', 'Reporting', 'Core');
+INSERT INTO `operators_acl` VALUES
+(0,6,'rep_newusers',1);
