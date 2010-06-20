@@ -223,7 +223,7 @@
 
                 <li class='fieldset'>
                 <label for='payment_notes' class='form'><?php echo $l['all']['PaymentNotes'] ?></label>
-                <input name='payment_notes' type='text' id='payment_notes' value='<?php echo $payment_notes ?>' tabindex=101 />
+                <textarea name='payment_notes' id='payment_notes'><?php echo $payment_notes ?></textarea>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentNotesTooltip')" />
 
                 <div id='paymentNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
