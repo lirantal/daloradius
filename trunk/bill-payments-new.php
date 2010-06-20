@@ -66,8 +66,11 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new payment for invoice: <b>$payment_invoice_id</b>";
+				$successMsg = "Added to database new payment for invoice: <b>$payment_invoice_id</b> <br/>";
+				$successMsg .= "<a href='bill-invoice-edit.php?invoice_id=$payment_invoice_id'> Show Invoice $payment_invoice_id </a>";
 				$logAction .= "Successfully added new payment for invoice [$payment_invoice_id] on page: ";
+				
+				
 			} else {
 				$failureMsg = "you must provide an invoice, an amount and a date ";	
 				$logAction .= "Failed adding new payment for invoice [$payment_invoice_id] on page: ";	
