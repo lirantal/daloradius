@@ -38,10 +38,13 @@ include_once ("lang/main.php");
 		<ul class="subnav">
 		<h3>Extended Peripherals</h3>
 
+			<li><a href="rep-stat-cron.php"><b>&raquo;</b>
+				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;CRON Status</a></li>
 			<li><a href="rep-stat-ups.php"><b>&raquo;</b>
 				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;UPS Status</a></li>
 			<li><a href="rep-stat-raid.php"><b>&raquo;</b>
 				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;RAID Status</a></li>
+				
 
 		</ul>
 		
