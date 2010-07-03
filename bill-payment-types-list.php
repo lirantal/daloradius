@@ -15,7 +15,7 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com> 
+ * Authors:	Liran Tal <liran@enginx.com>
  * 			Filippo Maria Del Prete <filippo.delprete@gmail.com>
  *
  *********************************************************************************************************
@@ -29,9 +29,9 @@
 
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
-	isset($_GET['invoice_id']) ? $invoice_id = $_GET['invoice_id'] : $invoice_id = "";
+    
 
 
 	include_once('library/config_read.php');
@@ -59,11 +59,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymentslist.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymenttypeslist.php'] ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['paymentslist'] ?>
+					<?php echo $l['helpPage']['paymenttypeslist'] ?>
 					<br/>
 				</div>
 				<br/>
@@ -76,36 +76,12 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-	$sql_WHERE = '';
-	if (!empty($invoice_id))
-		$sql_WHERE = ' WHERE invoice_id = \''.$dbSocket->escapeSimple($invoice_id).'\'';
-		
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".invoice_id, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".amount, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".date, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".value, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".notes ".
-                " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
-                " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
-                " ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".id ".
-			$sql_WHERE;
+	$sql = "SELECT id, value AS paymentName, notes FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].";";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".invoice_id, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".amount, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".date, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".value, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".notes ".
-                " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
-                " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
-                " ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".
-			$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".id ".
-			$sql_WHERE.
-			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+	$sql = "SELECT id, value AS paymentName, notes FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -115,19 +91,19 @@
 	/* END */
 
     
-	echo "<form name='listallpayments' method='post' action='bill-payments-del.php'>";
+	echo "<form name='listallpaymenttypes' method='post' action='bill-payment-types-del.php'>";
 
 	echo "<table border='0' class='table1'>\n";
 	echo "
 					<thead>
                                                         <tr>
-                                                        <th colspan='12' align='left'>
+                                                        <th colspan='9' align='left'>
                                 Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'payment_id[]','listallpayments_id')\">All</a> 
+                                <a class=\"table\" href=\"javascript:SetChecked(1,'paymentname[]','listallpaymenttypes')\">All</a> 
                                 
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'payment_id[]','listallpayments_id')\">None</a>
+                                <a class=\"table\" href=\"javascript:SetChecked(0,'paymentname[]','listallpaymenttypes')\">None</a>
 	                 <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallpayments_id\",\"bill-payments-del.php\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallpaymenttypes\",\"bill-payment-types-del.php\")' />
                                 <br/><br/>
 
         ";
@@ -153,62 +129,37 @@
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=invoice_id&orderType=$orderTypeNextPage\">
-		".$l['all']['PaymentInvoiceID']."</a>
+		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=paymentname&orderType=$orderTypeNextPage\">
+		".$l['all']['PayTypeName']."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PaymentAmount']."
-		</th>
-
-		<th scope='col'> 
-		".$l['all']['PaymentDate']."
-		</th>
-
-		<th scope='col'> 
-		".$l['all']['PaymentType']."
-		</th>
-
-		<th scope='col'> 
-		".$l['all']['PaymentNotes']."
+		".$l['all']['PayTypeNotes']."
 		</th>
 
 
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		printqn("<tr>
-                        <td> <input type='checkbox' name='payment_id[]' value='$row[0]'> 
+                        <td> <input type='checkbox' name='paymentname[]' value='$row[1]'> $row[0] </td>
 
-                        	<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
-                                tooltipText=\"
-                                        <a class='toolTip' href='bill-payments-edit.php?payment_id=$row[0]'>".$l['Tooltip']['EditPayment']."</a>
-					<br/><br/>
-                                        <a class='toolTip' href='bill-payments-del.php?payment_id=$row[0]'>".$l['Tooltip']['RemovePayment']."</a>
-                                        <br/><br/>\"
-                              >#$row[0]</a>
-                        </td>
-                        
-                        
                         <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-invoice-edit.php?invoice_id=$row[1]'>".$l['Tooltip']['InvoiceEdit']."</a>
+                                        <a class='toolTip' href='bill-payment-types-edit.php?paymentname=$row[1]'>".$l['Tooltip']['EditPayType']."</a>
+					<br/>
+                                        <a class='toolTip' href='bill-payment-types-del.php?paymentname=$row[1]'>".$l['Tooltip']['RemovePayType']."</a>
                                         <br/><br/>\"
-                              >#$row[1]</a>
+                              >$row[1]</a>
                         </td>
-                       
                                 <td> $row[2] </td>
-                                <td> $row[3] </td>
-                                <td> $row[4] </td>
-                                <td> $row[5] </td>
 		</tr>");
 	}
 
         echo "
                                         <tfoot>
                                                         <tr>
-                                                        <th colspan='12' align='left'>
+                                                        <th colspan='9' align='left'>
         ";
         setupLinks($pageNum, $maxPage, $orderBy, $orderType);
         echo "
