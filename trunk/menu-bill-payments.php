@@ -43,6 +43,25 @@
                                                 <li><a href="bill-payments-del.php"><b>&raquo;</b><?php echo $l['button']['RemovePayment'] ?></a></li>
                                 </ul>
 
+
+                                <h3>Payment Types Management</h3>
+                                <ul class="subnav">
+
+                                                <li><a href="bill-payment-types-list.php"><b>&raquo;</b><?php echo $l['button']['ListPayTypes'] ?></a></li>
+                                                <li><a href="bill-payment-types-new.php"><b>&raquo;</b><?php echo $l['button']['NewPayType'] ?></a></li>
+                                                <li><a href="javascript:document.paymenttypesedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditPayType'] ?></a>
+                                                        <form name="paymenttypesedit" action="bill-payment-types-edit.php" method="get" class="sidebar">
+                                                        <input name="paymentname" type="text" id="paymentname" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['PayTypeName']; ?> <br/>'
+                                                                value="<?php if (isset($edit_paymentName)) echo $edit_paymentName; ?>" tabindex=3>
+                                                        </form></li>
+                                                <li><a href="bill-payment-types-del.php"><b>&raquo;</b><?php echo $l['button']['RemovePayType'] ?></a></li>
+                                </ul>
+
+
+
+
                                 <br/><br/>
                                 <h2>Search</h2>
 

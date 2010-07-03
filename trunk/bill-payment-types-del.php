@@ -26,39 +26,39 @@
 
 	include('library/check_operator_perm.php');
 
-	isset($_REQUEST['payment_id']) ? $payment_id = $_REQUEST['payment_id'] : $payment_id = "";
+	isset($_REQUEST['paymentname']) ? $paymentname = $_REQUEST['paymentname'] : $paymentname = "";
 	$logAction = "";
 	$logDebugSQL = "";
 
 	$showRemoveDiv = "block";
 
-	if (isset($_REQUEST['payment_id'])) {
+	if (isset($_REQUEST['paymentname'])) {
 
-		if (!is_array($payment_id))
-			$payment_id = array($payment_id);
+		if (!is_array($paymentname))
+			$paymentname = array($paymentname);
 
-		$allPayment_Ids = "";
+		$allPayments = "";
 
 		include 'library/opendb.php';
 	
-		foreach ($payment_id as $variable=>$value) {
+		foreach ($paymentname as $variable=>$value) {
 			if (trim($value) != "") {
 
-				$id = $value;
-				$allPayment_Ids .= $id . ", ";
+				$name = $value;
+				$allPayments .= $name . ", ";
 
 				// delete all payment types 
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE id=".
-						$dbSocket->escapeSimple($id)."";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']." WHERE value='".
+						$dbSocket->escapeSimple($name)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted payment(s): <b> $allPayment_Ids </b>";
-				$logAction .= "Successfully deleted payment(s) [$allPayment_Ids] on page: ";
+				$successMsg = "Deleted payment type(s): <b> $allPayments </b>";
+				$logAction .= "Successfully deleted payment type(s) [$allPayments] on page: ";
 				
 			} else { 
-				$failureMsg = "no payment id was entered, please specify a payment id to remove from database";
-				$logAction .= "Failed deleting payment(s) [$allPayment_Ids] on page: ";
+				$failureMsg = "no payment type was entered, please specify a rapayment type name to remove from database";
+				$logAction .= "Failed deleting payment type(s) [$allPayments] on page: ";
 			}
 
 		} //foreach
@@ -92,10 +92,10 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymentsdel.php'] ?>
-	:: <?php if (isset($payment_id)) { echo $payment_id; } ?><h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymenttypesdel.php'] ?>
+	:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>+</h144></a></h2>
 
-	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo $l['helpPage']['paymentsdel'] ?>
+	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo $l['helpPage']['paymenttypesdel'] ?>
 		<br/>
 	</div>
 	<?php
@@ -107,11 +107,11 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['PaymentInfo'] ?> </h302>
+		<h302> <?php echo $l['title']['PayTypeInfo'] ?> </h302>
 		<br/>
 
-		<label for='payment_id' class='form'><?php echo $l['all']['PaymentId'] ?></label>
-		<input name='payment_id[]' type='text' id='payment_id' value='<?php echo $payment_id ?>' tabindex=100 />
+		<label for='paymentname' class='form'><?php echo $l['all']['PayTypeName'] ?></label>
+		<input name='paymentname[]' type='text' id='paymentname' value='<?php echo $paymentname ?>' tabindex=100 />
 		<br/>
 
 		<br/><br/>
