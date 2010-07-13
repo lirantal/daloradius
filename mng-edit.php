@@ -340,7 +340,7 @@
 	addPlanProfile($dbSocket, $username, $planName, $oldplanName);
 
 			foreach( $_POST as $element=>$field ) { 
-
+				
 				// switch case to rise the flag for several $attribute which we do not
 				// wish to process (ie: do any sql related stuff in the db)
 				switch ($element) {
@@ -804,7 +804,9 @@
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
                 " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
-		$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName='".$dbSocket->escapeSimple($username)."'";
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName='".$dbSocket->escapeSimple($username)."' GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute";
+		
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -904,7 +906,9 @@
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
                 " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
-		$configValues['CONFIG_DB_TBL_RADREPLY'].".UserName='".$dbSocket->escapeSimple($username)."'";
+		$configValues['CONFIG_DB_TBL_RADREPLY'].".UserName='".$dbSocket->escapeSimple($username)."' GROUP BY ".
+		$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute";
+		
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
