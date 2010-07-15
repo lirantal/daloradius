@@ -158,6 +158,38 @@ authorize {
 	#  See "Authorization Queries" in sql.conf
 	sql
 
+
+	# enabling the sql counter modules (time-based)
+	dailycounter
+	monthlycounter
+	weeklycounter
+	quaterlycounter
+	yearlycounter
+	noresetcounter
+	accessperiod
+	# chillispot data/volume type counters
+	counterChilliSpotMaxTotalOctetsDaily
+	counterChilliSpotMaxTotalOctetsWeekly
+	counterChilliSpotMaxTotalOctetsMonthly
+	counterChilliSpotMaxTotalOctetsQuarterly
+	counterChilliSpotMaxTotalOctetsYearly
+	counterChilliSpotMaxTotalOctetsAll
+	# input octets limitation
+	counterChilliSpotMaxInputOctetsDaily
+	counterChilliSpotMaxInputOctetsWeekly
+	counterChilliSpotMaxInputOctetsMonthly
+	counterChilliSpotMaxInputOctetsQuarterly
+	counterChilliSpotMaxInputOctetsYearly
+	counterChilliSpotMaxInputOctetsAll
+	# output octets limitation
+	counterChilliSpotMaxOutputOctetsDaily
+	counterChilliSpotMaxOutputOctetsWeekly
+	counterChilliSpotMaxOutputOctetsMonthly
+	counterChilliSpotMaxOutputOctetsQuarterly
+	counterChilliSpotMaxOutputOctetsYearly
+	counterChilliSpotMaxOutputOctetsAll	
+
+
 	#
 	#  If you are using /etc/smbpasswd, and are also doing
 	#  mschap authentication, the un-comment this line, and
