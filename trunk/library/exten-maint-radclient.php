@@ -83,7 +83,8 @@ function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$com
 	$args = escapeshellarg("$nasaddr:$nasport")." ".escapeshellarg($command)." ".
 			escapeshellarg($nassecret);
 	$query = "User-Name=$user";
-	
+	$query .= ','.$additional;
+		
 	$radclient = "radclient"; 		// or you can change this with the full path if the binary radcilent program can not be
 						// found within your $PATH variable
 
