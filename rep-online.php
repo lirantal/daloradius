@@ -98,7 +98,7 @@
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".Username, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress,
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".CallingStationId, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime,
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress,
-			".$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId FROM ".
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionId FROM ".
 			$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime IS NULL OR ". 
 			$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime = '0000-00-00 00:00:00') AND ".
 			" (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
@@ -114,7 +114,7 @@
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".Username, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress,
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".CallingStationId, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime,
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, 
-			".$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId,
+			".$configValues['CONFIG_DB_TBL_RADACCT'].".CalledStationId, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionId, 
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets AS Upload,
 			".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets AS Download,
 			".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name AS hotspot, 
@@ -221,6 +221,7 @@
 		$nasmac = $row['CalledStationId'];
 		$hotspot = $row['hotspot'];
 		$nasshortname = $row['NASshortname'];
+		$acctsessionid = $row['AcctSessionId'];
 		$name = $row['Firstname'] . " " . $row['Lastname'];
 		
 		$upload = toxbyte($row['Upload']);
@@ -237,7 +238,7 @@
 						<a class='toolTip' href='mng-edit.php?username=$username'>".
 							$l['Tooltip']['UserEdit']."</a>
 						&nbsp;
-						<a class='toolTip' href='config-maint-disconnect-user.php?username=$username&nasaddr=$nasip'>".
+						<a class='toolTip' href='config-maint-disconnect-user.php?username=$username&nasaddr=$nasip&customattributes=Acct-Session-Id=$acctsessionid'>".
 							$l['all']['Disconnect']."</a>
 						<br/>\"
 					>$username</a>

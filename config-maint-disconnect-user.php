@@ -33,7 +33,9 @@
 	isset($_REQUEST['nasport']) ? $nasport = $_REQUEST['nasport'] : $nasport = "";
 	isset($_REQUEST['nassecret']) ? $nassecret = $_REQUEST['nassecret'] : $nassecret = "";
 	isset($_REQUEST['packettype']) ? $packettype = $_REQUEST['packettype'] : $packettype = "";
-		
+	isset($_REQUEST['customattributes']) ? $customAttributes = $_REQUEST['customattributes'] : $customAttributes = "";
+	
+
     if (isset($_REQUEST['submit'])) {
 
 	if ( ($nasaddr == "") || ($nasport == "") || ($nassecret == "") ) {
@@ -72,7 +74,7 @@
                                         "debug" => $debug,
                                         );
 
-		$successMsg = user_disconnect($options,$username,$nasaddr,$nasport,$nassecret,$packettype);
+		$successMsg = user_disconnect($options,$username,$nasaddr,$nasport,$nassecret,$packettype,$customAttributes);
 		$logAction .= "Informative action performed on user [$username] on page: ";
 
 	} 
@@ -188,6 +190,11 @@
 			<option value="1700"> 1700 </option>
 		</select>
                 <br/>
+
+		<label for='customattributes' class='form'><?php echo $l['all']['customAttributes'] ?></label>
+		<textarea class='form' name='customattributes'><?php echo $customAttributes; ?></textarea>
+
+
 
                 <br/><br/>
                 <hr><br/>

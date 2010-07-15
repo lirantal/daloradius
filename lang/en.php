@@ -57,6 +57,7 @@ $l['all']['SendWelcomeNotification'] = "Send Welcome Notification";
 $l['all']['SMTPServerAddress'] = "SMTP Server Address";
 $l['all']['SMTPServerPort'] = "SMTP Server Port";
 
+$l['all']['customAttributes'] = "Custom Attributes";
 
 $l['all']['UserType'] = "User Type";
 
