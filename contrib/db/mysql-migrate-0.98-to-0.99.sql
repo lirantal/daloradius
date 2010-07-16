@@ -355,7 +355,7 @@ CREATE TABLE `nas_chilli_settings` (
   
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-INSERT INTO `nas_chilli_settings` (id, nas_chilli_id, key, value) VALUES
+INSERT INTO `nas_chilli_settings` (`id`, `nas_chilli_id`, `key`, `value`) VALUES
 (0,1,'dhcp_if','VALUE'),
 (0,1,'uamallowed','VALUE'),
 (0,1,'dns1','VALUE'),
