@@ -1,0 +1,280 @@
+/*** Fix HTML Default Styles ***/
+
+img {
+	border: 0;
+	padding: 0px;
+}
+
+body {
+	background: #999ca1 url(media/background.jpg) repeat-x;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+div, h1, h2, h3, h4, h5, h6, p, li, ol, il, dd, dt, dl, img, blockquote, span, address, pre {
+	margin: 0px;
+	padding: 0px;
+}
+
+/*** Typography ***/
+
+p {
+	font-family: "Lucida Grande", LucidaGrande, Lucida, Helvetica, Arial, sans-serif;
+	font-size: .9em;
+	line-height: 1.7em;
+}
+#form {
+	margin: 0px;
+	padding: 0px;
+}
+.highlighted {
+	font-weight: bold;
+}
+.fineprint {
+	font-size: .7em;
+}
+.small {
+	font-size: 0.8em;
+}
+.login {
+	text-align: center;
+	display: block;
+	float: left;
+}
+
+
+h1 {
+	font-family: 'Trebuchet MS', Helvetica, sans-serif;
+	font-size: 1.6em;
+	color: #3768AE;
+	line-height: 1.2em;
+	padding-bottom: .4em;
+	}
+	
+a:link {
+	color: #000000;
+	text-decoration: underline;
+}
+a:visited {
+	text-decoration: underline;
+	color: #000000;
+}
+a:hover {
+	text-decoration: underline;
+	color: #000000;
+}
+a:active {
+	text-decoration: none;
+	color: #000000;
+}
+	
+/*** Box/Main ***/
+
+#wrapper {
+	position: relative;
+	margin: 0 auto;
+	width: 600px;
+	background: #fff;
+}
+
+.shadow_right, .shadow_left {
+	position: absolute;
+	top: 0;
+	width: 9px;
+	height: 100%;
+}
+
+.shadow_right {
+	right: -9px;
+	background: url("media/shadows/right.png");
+}
+
+.shadow_bottom_right, .shadow_bottom, .shadow_bottom_left {
+	position: absolute;
+	bottom: -9px;
+	height: 9px;
+}
+
+.shadow_bottom_right {
+	right: -9px;
+	width: 9px;
+	background: url("media/shadows/bottom_right.png");
+}
+
+.shadow_bottom {
+	left: 0;
+	width: 100%;
+	background: url("media/shadows/bottom.png");
+}
+
+.shadow_bottom_left {
+	left: -9px;
+	width: 9px;
+	background: url("media/shadows/bottom_left.png");
+}
+
+.shadow_left {
+	left: -9px;
+	background: url("media/shadows/left.png");
+}
+
+#top {
+	height: 19px;
+	background: url("media/top.png");
+}
+
+#header {
+	height: 102px;
+	background: url("media/header_portal.jpg");
+}
+
+
+#separator {
+	height: 10px;
+	background: url("media/separator.png");
+}
+
+#menu {
+	height: 30px;
+	background: url("media/menu/background.png");
+	vertical-align: middle;
+	text-align: center;
+}
+
+#sitemap {
+	height: 30px;
+	text-align: center;
+	margin: 8px;
+	font-size: .8em;
+}
+
+#menu .separator {
+	background: url("media/menu/separator.jpg");
+	padding: 4px 3px 3px 0;
+}
+
+
+#footer {
+	height: 18px;
+	background: url("media/footer.png");
+	font-size: 0.7em;
+	color: #ffffff;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	line-height: 17px;
+	clear: both;
+}
+/*** Content ***/
+
+.headline1 {
+	height: 40px;
+	background: url("media/headline1.png");
+}
+.headline2 {
+	height: 40px;
+	background: url("media/headline2.png");
+}
+.headline3 {
+	height: 40px;
+	background: url("media/headlineMinutes.png");
+}
+.headline4 {
+	height: 40px;
+	background: url("media/headlinePayPal.png");
+}
+.headline5 {
+	height: 40px;
+	background: url("media/headlineSubscribe.png");
+}
+.headline6 {
+	height: 40px;
+	background: url("media/headlineLocations.png");
+}
+.headline7 {
+	height: 40px;
+	background: url("media/headlineSupport.png");
+}
+.headlinePortal {
+	height: 40px;
+	background: url(media/headlinePortal.png);
+	margin-top: -2px;
+}
+
+.contentSplash {
+	padding: 0px;
+}
+
+.content {
+	background: #fff;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	font-size: medium;
+	text-align: center;
+	vertical-align: middle;
+	display: block;
+	margin: 0px auto;
+	padding: 40px 60px 60px;
+}
+.content img  {
+	float: right;
+	vertical-align: top;
+}
+.content iframe {
+}
+
+table {
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	font-size: medium;
+	display: block;
+	border-collapse: collapse;
+	width: 300px;
+	margin-bottom: 60px;
+	color: #000;
+}
+
+table th {
+	font-size: 1em;
+	font-weight: normal;
+	text-align: left;
+	padding-left: 10px;
+	line-height: 40px;
+	background: #3768AE;
+	color: #fff;
+	padding-right: 20px;
+	border-bottom: thin solid #FFF;
+}
+
+table td {
+	line-height: 24px;
+	border: thin solid #fff;
+	text-align: left;
+}
+table tbody th {
+	height: 40px;
+	background: #3768AE;
+	border-top: thin solid #fff;
+}
+table  #euroPrice, #bahtPrice{
+	background: #CFCFCF;
+}
+
+#terms {
+	margin: 40px;
+	text-align: justify;
+}
+.faq {
+	line-height: 20px;
+	padding-bottom: 20px;
+}
+.adverts {
+	display: inline;
+	text-align: center;
+	vertical-align: middle;
+	clear: both;
+	float: left;
+}
+.adverts img {
+	text-align: center;
+	float: none;
+	margin-left: 13px;
+	margin-bottom: 20px;
+}
