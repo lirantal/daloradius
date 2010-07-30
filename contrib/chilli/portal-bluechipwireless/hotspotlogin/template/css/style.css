@@ -1,0 +1,144 @@
+/* CSS Document */
+
+body{
+background-color:#112231;
+color: #FAFAFA;
+font-family:Arial;
+}
+#wrap{
+text-align:center;
+margin:0 auto;
+}
+.header{
+background-image:url(../images/header.jpg);
+background-repeat:no-repeat;
+width:645px;
+height:95px;
+text-align:center;
+margin:0 auto;
+}
+
+.header p {
+font-size:24px;
+width:645px;
+height:160px;
+position:relative;
+top:105px; 
+left:95px;
+text-align:left;
+}
+
+.header p span {
+color:#9bd0df;
+font-weight:bold;
+font-style:italic
+}
+
+.header p sup {
+font-size:9px;
+}
+.header a {
+text-decoration:none;
+color:#FFFFFF
+}
+
+#navigation{
+background-image:url(../images/navigation.jpg);
+width:647px;
+height:58px;
+text-align:center;
+margin:0 auto;
+}
+#body{
+background-color:#9ad1e0;
+width:643px;
+border-left:#49a5bf 2px solid;
+border-right:#49a5bf 2px solid;
+font-size:12px;
+text-align:center;
+margin:0 auto;
+text-shadow:#000000;
+}
+#body p{
+padding-left:20px;
+padding-right:20px;
+text-indent:30px;
+margin:0;
+padding-top:5px;
+text-align:left;
+}
+#body img {
+border:#FFFFFF 7px solid;
+text-align:center;
+margin-left:15px;
+}
+#body h1{
+font-family: Trebuchet MS;
+font-size:18px;
+text-align:left;
+padding-left:20px;
+margin:0;
+padding-top:5px;
+padding-bottom:5px;
+}
+#footer{
+font-family: Trebuchet MS;
+font-size:12px;
+padding-top:10px;
+background-image:url(../images/footer.jpg);
+width:647px;
+height:46px;
+text-align:center;
+margin:0 auto;
+color: #000;
+}
+  
+.glossymenu{
+	position: relative;
+	padding-right:20px;
+	padding-left:20px;
+	margin: 0 auto 0 auto;
+	background: url(../images/menur_bg.gif) repeat-x; /*tab background image path*/
+	height: 46px;
+	list-style: none;
+	padding-top:10px;
+}
+
+.glossymenu li{
+	float:left;
+}
+
+.glossymenu li a{
+	float: left;
+	display: block;
+	color:#FFFFFF;
+	text-decoration: none;
+	font-family: Trebuchet MS;
+	font-size: 12px;
+	padding:0 0 0 16px; /*Padding to accomodate left tab image. Do not change*/
+	height: 46px;
+	line-height: 46px;
+	text-align: center;
+	cursor: pointer;	
+}
+
+.glossymenu li a b{
+	float: left;
+	display: block;
+	padding: 0 20px 0 8px; /*Padding of menu items*/
+}
+
+.glossymenu li.current a, .glossymenu li a:hover{
+	color: #fff;
+	background: url(../images/menur_hover_left.gif) no-repeat; /*left tab image path*/
+	background-position: left;
+}
+
+.glossymenu li.current a b, .glossymenu li a:hover b{
+	color: #fff;
+	background: url(../images/menur_hover_right.gif) no-repeat right top; /*right tab image path*/
+}
+
+a {
+	color:#FFF;
+}
