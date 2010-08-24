@@ -35,17 +35,18 @@
                 include('library/opendb.php');
 
                 $txnId = $_GET['txnId'];
+				//$username = $_GET['username'];
+				
+				$sql = "SELECT txnId, username, payment_status FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
+                        " WHERE txnId='".$dbSocket->escapeSimple($txnId)."' AND payment_status != ''";
+				$res = $dbSocket->query($sql);
+                $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+				
 
-                $sql = "SELECT txnId, username, payment_status FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
-                        " WHERE txnId='".$dbSocket->escapeSimple($txnId)."'";
-                $res = $dbSocket->query($sql);
-
-                $row = $res->fetchRow();
-
-                if ( ($row[0] == $txnId) && ($row[2] == "Completed") ) {
-						$successMsg = "We have successfully validated your payment";
+                if ( ($row['txnId'] == $txnId) && ($row['payment_status'] == "Completed") ) {
+						$successMsg = "We have successfully validated your payment<br/>";
                         $successMsg .= "Your user PIN is:<br/>";
-						$successMsg .= "<b>$row[1]</b>";
+						$successMsg .= "<b>".$row['username']."</b>";
 						$successMsg .= "<br/><br/>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST']."<br/><br/>";
 						$successMsg .= "Click <a href='http://192.168.182.1:3990/prelogin'>here</a> to return to the Login page";
                         $refresh = false;

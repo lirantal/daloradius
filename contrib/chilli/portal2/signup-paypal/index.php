@@ -23,6 +23,7 @@
  */
 
 	include_once('include/common/common.php');
+	include_once('library/config_read.php');
 	$txnId = createPassword(64, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']); 
                    // to be used for setting up the return url (success.php page)
 				   // for later retreiving of the transaction details
@@ -52,7 +53,7 @@
 			while (true) {
 				
 				// generate the pin for the user
-				$userPIN = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+				$userPIN = createPassword($configValues['CONFIG_USERNAME_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
 				
 				// check if this pin, although random, may be used before
 				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
@@ -69,19 +70,22 @@
 			$planId = $dbSocket->escapeSimple($planId);
 
 			// grab information about a plan from the table
-			$sql = "SELECT planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-					" WHERE (planType='PayPal') AND (planId='$planId') ";
+			$sql = "SELECT id AS planId,planName,planCost,planTax,planCurrency,planRecurring,planRecurringPeriod FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+					" WHERE (planType='PayPal') AND (id=$planId) ";
 			$res = $dbSocket->query($sql);
-			$row = $res->fetchRow();
-			$planId = $row[0];
-			$planName = $row[1];
-			$planCost = $row[2];
-			$planTax = $row[3];
+			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+			$planId = $row['planId'];
+			$planName = $row['planName'];
+			$planCost = $row['planCost'];
+			$planTax = $row['planTax'];
+			$planRecurring = $row['planRecurring'];
+			$planRecurringPeriod = $row['planRecurringPeriod'];
 			
 			// the tax is a relative percentage amount of the price, thus we need to
 			// calculate the tax amount
 			$planTax = (($planTax/100)*$planCost);
-			$planCurrency = $row[4];
+
+			$planCurrency = $row['planCurrency'];
 
             $planTax = number_format($planTax, 2, '.', '');
             $planCost = number_format($planCost, 2, '.', '');
@@ -104,13 +108,15 @@
 					")";
 			$res = $dbSocket->query($sql);
 			
-			// lets add user billing information to the database
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
-					" (id, username, txnId, planName, planId, vendor_type, payment_date)".
-					" VALUES (0,'$userPIN','$txnId','$planName','$planId', 'PayPal', '$currDate'".
-					")";
-			$res = $dbSocket->query($sql);
-
+			//if ($planRecurring == "No") {
+				// lets add user billing information to the database
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
+						" (id, username, txnId, planId, vendor_type, payment_date)".
+						" VALUES (0,'$userPIN','$txnId', $planId, 'PayPal', '$currDate'".
+						")";
+				$res = $dbSocket->query($sql);
+			//}
+			
 			$status = "paypal";
 
 			include('library/closedb.php');
@@ -192,7 +198,7 @@
 
                                 include('library/opendb.php');
 
-                                $sql = "SELECT planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
+                                $sql = "SELECT id AS planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
                                         " WHERE planType='PayPal'";
                                 $res = $dbSocket->query($sql);
                                 while ($row = $res->fetchRow()) {
@@ -240,18 +246,22 @@
                                         ');
 
                                 echo $userPIN;
-
+								
                                 echo '
                                         </b></td></tr></table>
                                         <br/>
-
+										';
+										
+								if ($planRecurring == "No") {
+								
+									echo '
                                         <form action="'.$configValues['CONFIG_MERCHANT_WEB_PAYMENT'].'" method="post">
                                                 <input type="hidden" name="cmd" value="_xclick" />
                                                 <input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'" />
 
                                                 <input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-																								'?txnId='.$txnId.'" />
+																								'?txnId='.$txnId.'&username='.$userPIN.'" />
                                                 <input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
                                                 <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
@@ -265,20 +275,84 @@
 
                                                 <input type="hidden" name="no_note" value="1">
                                                 <input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+												<input type="hidden" name="no_shipping" value="1">
                                                 <input type="hidden" name="lc" value="US">
 
                                                 <input type="hidden" name="on0" value="Transaction ID" />
                                                 <input type="hidden" name="os0" value="'.$txnId.'" />
 
+                                                <input type="hidden" name="on1" value="Username" />
+                                                <input type="hidden" name="os1" value="'.$userPIN.'" />
+												
                                                 <input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit"
                                                 alt="Make payments with PayPal - its fast, free and secure!">
                                         </form>
+										';
+								
+								} else if ($planRecurring == "Yes") {
+								
+									//$t3 = billing cycle period
+									
+									$t3 = "M"; //billing cycle period
+									$p3 = "1"; //billing cycle length
+									if ($planRecurringPeriod == "Daily")
+										$t3 = "D";
+									
+									if ($planRecurringPeriod == "Weekly")
+										$t3 = "W";
+									
+									if ($planRecurringPeriod == "Monthly")
+										$t3 = "M";
+									
+									if ($planRecurringPeriod == "Yearly")
+										$t3 = "Y";
+									
+									echo '
+										<form name="_xclick" action="'.$configValues['CONFIG_MERCHANT_WEB_PAYMENT'].'" method="post">
+										<input type="hidden" name="cmd" value="_xclick-subscriptions">
+										<input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'">
+										<input type="hidden" name="no_shipping" value="1">
+										<input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
+																						$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
+																						'?txnId='.$txnId.'" />
+										<input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
+																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
+										<input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
+																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
+										<input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+										<input type="hidden" name="lc" value="US">
+										
+										<input type="hidden" name="on0" value="Transaction ID" />
+										<input type="hidden" name="os0" value="'.$txnId.'" />
+										<input type="hidden" name="on1" value="Username" />
+										<input type="hidden" name="os1" value="'.$userPIN.'" />
+										
+										<input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
+										<input type="hidden" name="quantity" value="1" />
+										<input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
+										<input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
 
-					<br/>
-                                        <b>It is recommended that you will write it down now in-case of a failure.</b><br/><br/>
+										<input type="hidden" name="no_note" value="1">
+										
+										<input type="hidden" id="a3" name="a3" value="'; if (isset($planCost)) echo $planCost; echo '" />
+										<input type="hidden" name="p3" value="'.$p3.'">
+										<input type="hidden" name="t3" value="'.$t3.'">
+										<input type="hidden" name="src" value="1">
+										<input type="hidden" name="sra" value="1">
+										
+										<input type="hidden" name="custom" value="'.$userPIN.'" />
+										
+										<input type="image" src="http://www.paypal.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="Make payments with PayPal - its fast, free and secure!">
+										</form>
+									';
+								}
 
-					<br/><br/>
-                                ';
+								echo '
+									<br/>
+									<b>It is recommended that you will write it down now in-case of a failure.</b><br/><br/>
+									<br/><br/>
+									 ';
+
 
                                 break;
 
