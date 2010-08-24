@@ -51,13 +51,15 @@
 		}
 
 
+		/* //uncomment for extended debugging 
+		
 		$fh = fopen("/tmp/paypal-log.log", "a");
 		fwrite($fh, "\nREQUEST---------------\n");
 		fwrite($fh, $req."\n\n");
 		fwrite($fh, "\nRESPONSE--------------\n");
 		fwrite($fh, $res."\n\n");
 		fclose($fh);
-
+		*/
 
 		if (preg_match("/VERIFIED/", $res)) {
 
@@ -95,7 +97,6 @@
 
 		} else {
 			// log for manual investigation
-			//logToFile("PayPal Tranasction INVALID:\n");
 			logToFile();
 			saveToDb();
 		} 
@@ -203,10 +204,7 @@ function logToFile($customMsg = "") {
 		
 		
 		$csvData = implode(",", array_values($csvDataArray));
-		//$csvData2 = implode(",", array_values($post));
 		fwrite($fh, $csvData . "\n");
-		//fwrite($fh, $keys . "\n");
-		//fwrite($fh, $csvData2 . "\n\n");		
 		
 		fclose($fh);
 	}
