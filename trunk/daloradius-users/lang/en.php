@@ -312,7 +312,8 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
  * Links and Buttons
  ************************************************************************************/
 
-$l['button']['ChangePassword'] = "Change Password";
+$l['button']['ChangePortalPassword'] = "Change Portal Password";
+$l['button']['ChangeAuthPassword'] = "Change Auth Password";
 $l['button']['EditUserInfo'] = "Edit Contact Information";
 
 $l['button']['Preferences'] = "Preferences";

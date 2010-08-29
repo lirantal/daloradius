@@ -63,7 +63,8 @@
 	<h3>Settings</h3>
 	<ul class="subnav">
 	
-	<li><a href="pref-password-edit.php"><b>&raquo;</b><?php echo $l['button']['ChangePassword'] ?></a></li>
+	<li><a href="pref-portal-password-edit.php"><b>&raquo;</b><?php echo $l['button']['ChangePortalPassword'] ?></a></li>
+	<li><a href="pref-auth-password-edit.php"><b>&raquo;</b><?php echo $l['button']['ChangeAuthPassword'] ?></a></li>
 	<li><a href="pref-userinfo-edit.php"><b>&raquo;</b><?php echo $l['button']['EditUserInfo'] ?></a></li>
 
 	</ul>
