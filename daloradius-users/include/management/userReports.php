@@ -135,10 +135,15 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	 * Plan Usage calculations
 	 *********************************************************************************************************/
 
+	
 	if ($planTrafficDown == "unavailable")
-	$planUsage = "unavailable";
-	else
-	$planUsage = ($userSumMonthlyDownload / $planTrafficDown ) * 100;
+		$planUsage = "unavailable";
+	else {
+		if ($planTrafficDown != 0)
+			$planUsage = ($userSumMonthlyDownload / $planTrafficDown ) * 100;
+		else
+			$planUsage = 0;
+	}
 
 	/*
 	 *********************************************************************************************************
