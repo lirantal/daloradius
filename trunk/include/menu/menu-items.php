@@ -1,7 +1,7 @@
                 <div id="header">
 
-                                <form action="">
-                                <input value="Search" />
+                                <form action="mng-search.php">
+                                <input name="username" value="Search" />
                                 </form>
 
                                 <h1><a href="index.php"> <img src="images/daloradius_small.png" border=0/></a></h1>
