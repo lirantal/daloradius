@@ -83,13 +83,13 @@
 	$_SESSION['reportType'] = "usernameListGeneric";
 
 	//orig: used as method to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-			" WHERE UserName like '".$dbSocket->escapeSimple($username)."%' GROUP BY UserName";
+	$sql = "SELECT distinct(username) as username, concat(coalesce(firstname,''),' ',coalesce(lastname,'')) as value, id FROM userinfo WHERE firstname like '".$dbSocket->escapeSimple($username)."%' 
+	or lastname like '".$dbSocket->escapeSimple($username)."%' or username like '".$dbSocket->escapeSimple($username)."%' or homephone  like '".$dbSocket->escapeSimple($username)."%'  or workphone  like '".$dbSocket->escapeSimple($username)."%'  or mobilephone  like '".$dbSocket->escapeSimple($username)."%'
+	GROUP BY UserName";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-	$sql = "SELECT distinct(Username) as UserName, value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-			" WHERE UserName like '".$dbSocket->escapeSimple($username)."%' ".
+	$sql = "SELECT distinct(Username) as UserName, concat(coalesce(firstname,''),' ',coalesce(lastname,'')) as value, id FROM userinfo  WHERE firstname like '".$dbSocket->escapeSimple($username)."%' or lastname like '".$dbSocket->escapeSimple($username)."%' or username like '".$dbSocket->escapeSimple($username)."%' or homephone  like '".$dbSocket->escapeSimple($username)."%' or workphone  like '".$dbSocket->escapeSimple($username)."%'  or mobilephone  like '".$dbSocket->escapeSimple($username)."%'" .
 			" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -145,7 +145,7 @@
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Value&orderType=$orderTypeNextPage\">
-		".$l['all']['Password']."</a>
+		Full name</a>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
