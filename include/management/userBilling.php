@@ -86,7 +86,7 @@ function userInvoicesStatus($user_id, $drawTable) {
 						onClick="javascript:window.location = \'bill-invoice-list.php?user_id='.$user_id.'\';" />
 						
 					<input class="button" type="button" value="Show Payments" 
-						onClick="javascript:window.location = \'bill-payment-list.php?user_id='.$user_id.'\';" />
+						onClick="javascript:window.location = \'bill-payments-list.php?user_id='.$user_id.'\';" />
 						
 					<br/><br/>
 										

@@ -39,51 +39,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	include 'library/opendb.php';
 
 	$username = $dbSocket->escapeSimple($username);			// sanitize variable for sql statement
-
-
-	$sql = "SELECT planName FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." WHERE UserName='$username'";
-        $res = $dbSocket->query($sql);
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 	
-	isset($row['planName']) ? $planName = $row['planName'] : $planName = "unset";
-
-
-	
-
-	/*
-	 *********************************************************************************************************
-	 * check which kind of subscription does the user have
-	 *********************************************************************************************************/
-	$sql  = "SELECT planTimeType, planTimeBank, planBandwidthUp, planBandwidthDown, planTrafficTotal, planTrafficUp, planTrafficDown, planRecurringPeriod ".
-		" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planName='$planName'";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-	isset($row['planRecurringPeriod']) ? $planRecurringPeriod = $row['planRecurringPeriod'] : $planRecurringPeriod = "unset";
-	isset($row['planTimeType']) ? $planTimeType = $row['planTimeType'] : $planTimeType = "unset";
-	isset($row['planTimeBank']) ? $planTimeBank = time2str($row['planTimeBank']) : $planTimeBank = "unset";
-	$planBandwidthUp = $row['planBandwidthUp'];
-	$planBandwidthDown = $row['planBandwidthDown'];
-	$planTrafficTotal = $row['planTrafficTotal'];
-
-
-/*	
-	$planTrafficDown = $row['planTrafficDown']; 
-	$planTrafficUp = $row['planTrafficUp'];
-*/
-	(isset($row['planTrafficDown'])) ? $planTrafficDown = toxbyte($row['planTrafficDown']) : $planTrafficDown = "unavailable";
-	(isset($row['planTrafficUp'])) ? $planTrafficUp = toxbyte($row['planTrafficUp']) : $planTrafficUp = "unavailable";
-
-
- 
-
-        ($planRecurringPeriod == "Never") ? $userTimeLimitGlobal = $planTimeBank : $userTimeLimitGlobal = "none";
-        ($planRecurringPeriod == "Monthly") ? $userTimeLimitMonthly = $planTimeBank : $userTimeLimitMonthly = "none";
-        ($planRecurringPeriod == "Weekly") ? $userTimeLimitWeekly = $planTimeBank : $userTimeLimitWeekly = "none";
-        ($planRecurringPeriod == "Daily") ? $userTimeLimitDaily = $planTimeBank : $userTimeLimitDaily = "none";
-
-        (isset($row['Access-Period'])) ? $userLimitAccessPeriod = time2str($row['Access-Period']) : $userLimitAccessPeriod = "none";
-
 
 	/*
 	 *********************************************************************************************************
@@ -129,21 +85,6 @@ function userSubscriptionAnalysis($username, $drawTable) {
 		$userSumMonthlyTraffic = "unavailable";
 	(isset($row['Logins'])) ? $userMonthlyLogins = $row['Logins'] : $userMonthlyLogins = "unavailable";
 
-
-	/*
-	 *********************************************************************************************************
-	 * Plan Usage calculations
-	 *********************************************************************************************************/
-
-	
-	if ($planTrafficDown == "unavailable")
-		$planUsage = "unavailable";
-	else {
-		if ($planTrafficDown != 0)
-			$planUsage = ($userSumMonthlyDownload / $planTrafficDown ) * 100;
-		else
-			$planUsage = 0;
-	}
 
 	/*
 	 *********************************************************************************************************
@@ -330,47 +271,6 @@ function userSubscriptionAnalysis($username, $drawTable) {
         		<table border='0' class='table1'>
         		<thread>
 
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan Time Type
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planTimeType
-                        </th>
-                        </tr>
-
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan 
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planName
-                        </th>
-                        </tr>
-
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan Download
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planTrafficDown
-                        </th>
-                        </tr>
-
-
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan % Used
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planUsage
-                        </th>
-                        </tr>
-
 
                         <tr>
                         <th scope='col' align='right'>
@@ -413,6 +313,203 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
 }
 
+
+
+
+
+/*
+ *********************************************************************************************************
+ * userPlanInformation
+ * $username            username to provide information of
+ * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
+ * 
+ * returns user plan information: name, cost, bandwidth, data volume cap/remaining, time cap/remaining
+ *
+ *********************************************************************************************************
+ */
+function userPlanInformation($username, $drawTable) {
+
+	include_once('include/management/pages_common.php');
+	include 'library/opendb.php';
+	
+	/*
+	 *********************************************************************************************************
+	 * check which kind of subscription does the user have
+	 *********************************************************************************************************/
+	$sql  = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeType, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planName, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeBank, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planBandwidthUp, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planBandwidthDown, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficTotal, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficUp, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficDown, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planRecurringPeriod ".
+		" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].", ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+		" WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname=".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname ".
+		" AND ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username='$username' ";
+			
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+	
+	empty($row['planName']) ? $planName = "unavailable" : $planName = $row['planName'];
+	empty($row['planRecurringPeriod']) ? $planRecurringPeriod = "unavailable" : $planRecurringPeriod = $row['planRecurringPeriod'];  
+	empty($row['planTimeType']) ? $planTimeType = "unavailable" : $planTimeType = $row['planTimeType'];
+	empty($row['planTimeBank']) ? $planTimeBank = "unavailable" : $planTimeBank = $row['planTimeBank'];
+		
+	$planBandwidthUp = $row['planBandwidthUp'];
+	$planBandwidthDown = $row['planBandwidthDown'];
+	$planTrafficTotal = $row['planTrafficTotal'];
+
+
+	(isset($row['planTrafficDown'])) ? $planTrafficDown = $row['planTrafficDown'] : $planTrafficDown = "unavailable";
+	(isset($row['planTrafficUp'])) ? $planTrafficUp = $row['planTrafficUp'] : $planTrafficUp = "unavailable";
+
+    (isset($row['Access-Period'])) ? $userLimitAccessPeriod = time2str($row['Access-Period']) : $userLimitAccessPeriod = "none";
+    
+    
+	$sql  = "SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets) ".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username'";
+	$res = $dbSocket->query($sql);
+	$row = $res->fetchRow();
+    $totalTimeUsed = $row[0];
+    $totalTrafficDown = $row[1];
+    $totalTrafficUp = $row[2];
+	
+    $timeDiff = ($planTimeBank - $totalTimeUsed);
+    ($planTrafficDown != 0) ? $trafficDownDiff = ($planTrafficDown - $totalTrafficDown) : $trafficDownDiff = 0;
+    ($planTrafficUp != 0) ? $trafficUpDiff = ($planTrafficUp - $totalTrafficUp) : $trafficUpDiff = 0;
+    
+    
+	/*
+	 *********************************************************************************************************
+	 * Plan Usage calculations
+	 *********************************************************************************************************/	
+	
+        if ($drawTable == 1) {
+
+                echo "<table border='0' class='table1'>
+                
+        		<thead>
+        			<tr>
+        	                <th colspan='10' align='left'> 
+        						<a class=\"table\" href=\"javascript:toggleShowDiv('divPlanInformation')\">Plan Information</a>
+        	                </th>
+        	                </tr>
+        		</thead>
+        		</table>
+
+        		<div id='divPlanInformation' style='visibility:visible'>
+        		<table border='0' class='table1'>
+        		<thread> <tr>
+        
+                        <th scope='col'>
+                Item
+                        </th>
+       			
+                        <th scope='col'>
+        		Allowed by plan
+                        </th>
+        
+                        <th scope='col'>
+        		Used 
+                        </th>
+        
+                        <th scope='col'>
+        		Remainning
+                        </th>
+        
+                        </tr> </thread>";
+        
+        	echo "
+        		<tr>
+        			<td>Session Time</td>
+        			<td>".time2str($planTimeBank)."</td>
+        			<td>".time2str($totalTimeUsed)."</td>
+        			<td>".time2str($timeDiff)."</td>
+        		</tr>
+
+        		<tr>
+        			<td>Session Download</td>
+        			<td>".toxbyte($planTrafficDown)."</td>
+        			<td>".toxbyte($totalTrafficDown)."</td>
+        			<td>".toxbyte($trafficDownDiff)."</td>
+        		</tr>
+        
+        		<tr>
+        			<td>Session Upload</td>
+        			<td>".toxbyte($planTrafficUp)."</td>
+        			<td>".toxbyte($totalTrafficUp)."</td>
+        			<td>".toxbyte($trafficUpDiff)."</td>
+        		</tr>
+
+        		</table>
+        		
+
+        		<table border='0' class='table1'>
+        		<thread>
+
+                        <tr>        
+                        <th scope='col' align='right'>
+                        Plan Name
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $planName
+                        </th>
+                        </tr>
+
+                        <tr>        
+                        <th scope='col' align='right'>
+                        Plan Recurring Period
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $planRecurringPeriod
+                        </th>
+                        </tr>
+                        
+                        <tr>        
+                        <th scope='col' align='right'>
+                        Plan Time Type
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $planTimeType
+                        </th>
+                        </tr>
+                        
+                        <tr>        
+                        <th scope='col' align='right'>
+                        Plan Bandwidth Up
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $planBandwidthUp
+                        </th>
+                        </tr>
+                        
+                        <tr>        
+                        <th scope='col' align='right'>
+                        Plan Bandwidth Down
+                        </th> 
+        
+                        <th scope='col' align='left'>
+                        $planBandwidthDown
+                        </th>
+                        </tr>
+                        
+                        </table>
+
+        		</div>
+        	";
+
+	}		
+}
 
 
 /*
