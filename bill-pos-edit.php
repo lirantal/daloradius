@@ -724,6 +724,7 @@
 
 <?php
         include_once('include/management/userReports.php');
+        userPlanInformation($username, 1);
         userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
         userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
 ?>
