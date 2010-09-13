@@ -41,6 +41,7 @@
 <?php
 	include 'library/exten-welcome_page.php';
 	include_once('include/management/userReports.php');
+	userPlanInformation($login, 1);
 	userSubscriptionAnalysis($login, 1);			// userSubscriptionAnalysis with argument set to 1 for drawing the table
 	userConnectionStatus($login, 1);			// userConnectionStatus (same as above)
 ?>
