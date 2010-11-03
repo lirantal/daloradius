@@ -38,7 +38,7 @@
 	$chart->addPoint(new Point("$totalUsers ($totalUsers users total)", "$totalUsers"));
 
 	// get total users online
-	$sql = "SELECT UserName FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL OR AcctStopTime = '0000-00-00 00:00:00')";
+	$sql = "SELECT DISTINCT(UserName) FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL OR AcctStopTime = '0000-00-00 00:00:00')";
 	$res = $dbSocket->query($sql);
 	$totalUsersOnline = $res->numRows();
 
