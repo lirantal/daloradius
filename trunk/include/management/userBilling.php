@@ -48,18 +48,20 @@ function userInvoicesStatus($user_id, $drawTable) {
 	$user_id = $dbSocket->escapeSimple($user_id);			// sanitize variable for sql statement
 	
 	$sql = "SELECT COUNT(distinct(a.id)) AS TotalInvoices, a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
-			" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled, ".
+			" c.value AS status, COALESCE(SUM(e2.totalpayed), 0) as totalpayed, COALESCE(SUM(d2.totalbilled), 0) as totalbilled, ".
 			" SUM(a.status_id = 1) as openInvoices ".
 			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) as totalbilled, invoice_id FROM ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
+			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount + bp.planCost + bp.planTax) ".
+					" as totalbilled, invoice_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
+					" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp ON (d.plan_id = bp.id) ".
+			" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
 			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
 			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 			" WHERE (a.user_id = $user_id)".
 			" GROUP BY b.id ";
-
+			
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -73,7 +75,7 @@ function userInvoicesStatus($user_id, $drawTable) {
 	if ($drawTable == 1) {
 		echo '
 				<fieldset>
-		
+				
                 <h302> User Invoices </h302>
 				<br/>
 						
