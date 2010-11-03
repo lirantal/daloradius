@@ -760,8 +760,14 @@
 	
 
 		<li class='fieldset'>
-		<br/>
+		<br/><br/>	
 		<hr><br/>
+		
+<?php
+	include 'include/management/buttons.php';
+?>
+			
+		<br/><br/>
 		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
 		
 		<div style="float: right; text-align: right;">
@@ -871,10 +877,6 @@
 			<br/><br/>
 			<hr><br/>
 
-<?php
-	include 'include/management/buttons.php';
-?>
-
 			<br/>
 			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
 			<br/>
@@ -969,9 +971,7 @@
 ?>
         <br/><br/>
         <hr><br/>
-<?php
-	include 'include/management/buttons.php';
-?>
+
         <br/>
         <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
         <br/>
