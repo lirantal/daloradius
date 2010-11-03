@@ -128,14 +128,18 @@
 		
 		// get invoice details
 		$sql = "SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, b.contactperson, b.username, ".
-				" b.city, b.state, f.value as type, ".
-				" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
+				" b.city, b.state, f.value as type, bp2.planName as planName, bp2.id as planId, ".
+				" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled, d2.plan_id, ".
+				" d2.amount as itemAmount, d2.tax_amount as itemTaxAmount, d2.notes as itemNotes ".
 				" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']." AS f ON (a.type_id = f.id) ".
-				" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) as totalbilled, invoice_id FROM ".
-				$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
+				" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount + bp.planCost + bp.planTax) ".
+					" as totalbilled, invoice_id, amount, tax_amount, notes, plan_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
+					" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp ON (d.plan_id = bp.id) ".
+					" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
+				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp2 ON (bp2.id = d2.plan_id) ".
 				" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
 				$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 				" WHERE a.id = ".$dbSocket->escapeSimple($invoice_id).
@@ -145,26 +149,6 @@
 	
 		$edit_invoiceid = $invoice_id;
 		$invoiceDetails = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-			/*
-		
-		if (isset($invoiceDetails['user_id']) && (!empty($invoiceDetails['user_id']))) {
-	
-			$sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-			" WHERE id = '".$dbSocket->escapeSimple($invoiceDetails['user_id'])."'";
-			$res = $dbSocket->query($sql);
-			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-			
-			$userInfo['contactperson'] = $row['contactperson'];
-			$userInfo['username'] = $row['username'];
-			$userInfo['city'] = $row['city'];
-			$userInfo['state'] = $row['state'];
-			
-			$logDebugSQL .= $sql . "\n";
-				
-		}
-		*/
-
 	}
 	
 	include 'library/closedb.php';
@@ -344,7 +328,7 @@
 		<li class='fieldset'>
 		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
                 <?php
-                       populate_plans("Select Plan","invoice_items[0][planId]","form", "", "", true);
+                       populate_plans($invoiceDetails['planName'],$invoiceDetails['planId'],"form", "", "", true);
                 ?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
 		
@@ -357,7 +341,7 @@
 
 		<li class='fieldset'>
 		<label for='amount' class='form'><?php echo $l['all']['Amount'] ?></label>
-		<input class='integer5len' name='invoice_items[0][amount]' type='text' id='invoice_items[0][amount]' value='000.00' tabindex=103 />
+		<input class='integer5len' name='invoice_items[0][amount]' type='text' id='invoice_items[0][amount]' value='<?php echo $invoiceDetails['itemAmount'] ?>' tabindex=103 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('invoice_items[0][amount]','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('invoice_items[0][amount]','decrement')"/>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" /> 
@@ -371,7 +355,7 @@
 
 		<li class='fieldset'>
 		<label for='tax' class='form'><?php echo $l['all']['Tax'] ?></label>
-		<input class='integer5len' name='invoice_items[0][tax]' type='text' id='invoice_items[0][tax]' value='000.00' tabindex=103 />
+		<input class='integer5len' name='invoice_items[0][tax]' type='text' id='invoice_items[0][tax]' value='<?php echo $invoiceDetails['itemTaxAmount']?>' tabindex=103 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('invoice_items[0][tax]','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('invoice_items[0][tax]','decrement')"/>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('taxTooltip')" /> 
@@ -384,7 +368,7 @@
 				
 
 		<label for='notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
-		<textarea class='form' name='invoice_items[0][notes]' ></textarea>
+		<textarea class='form' name='invoice_items[0][notes]' ><?php echo $invoiceDetails['itemNotes']?></textarea>
 
 
 
