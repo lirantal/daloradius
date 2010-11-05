@@ -12,6 +12,7 @@ CREATE TABLE `billing_merchant` (
   `mac` varchar(200) NOT NULL default '',
   `pin` varchar(200) NOT NULL default '',
   `txnId` varchar(200) NOT NULL default '',
+  `planName` varchar(128) NOT NULL default '',
   `planId` int(32) NOT NULL,
   `quantity` varchar(200) NOT NULL default '',
   `business_email` varchar(200) NOT NULL default '',
@@ -649,3 +650,10 @@ INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
 ('rep_newusers', 'Reporting', 'Core');
 INSERT INTO `operators_acl` VALUES
 (0,6,'rep_newusers',1);
+
+
+-- Adding ACL for the new New Users reports page
+INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
+('bill_invoice_report', 'Billing', 'Invoice');
+INSERT INTO `operators_acl` VALUES
+(0,6,'bill_invoice_report',1)

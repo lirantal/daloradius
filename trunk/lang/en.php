@@ -633,6 +633,9 @@ $l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user infor
 /* **********************************************************************************
  * Links and Buttons
  ************************************************************************************/
+
+$l['button']['GenerateReport'] = "Generate Report";
+
 $l['button']['ListPayTypes'] = "List Payment Types";
 $l['button']['NewPayType'] = "New Payment Type";
 $l['button']['EditPayType'] = "Edit Payment Type";
@@ -1044,6 +1047,7 @@ $l['Intro']['billinvoice.php'] = "Billing Invoices";
 $l['Intro']['billinvoicedel.php'] = "Delete Invoices entry";
 $l['Intro']['billinvoiceedit.php'] = "Edit Invoice";
 $l['Intro']['billinvoicelist.php'] = "List Invoices";
+$l['Intro']['billinvoicereport.php'] = "Invoices Report";
 $l['Intro']['billinvoicenew.php'] = "New Invoice";
 
 $l['Intro']['billplans.php'] = "Billing Plans Page";
@@ -1198,6 +1202,8 @@ $l['helpPage']['login'] = "";
 
 $l['helpPage']['billpaypaltransactions'] = "List all PayPal transactions";
 $l['helpPage']['billhistoryquery'] = "List all billing history for a user(s)";
+
+$l['helpPage']['billinvoicereport'] = "";
 
 $l['helpPage']['billinvoicelist'] = "";
 $l['helpPage']['billinvoicenew'] = "";
