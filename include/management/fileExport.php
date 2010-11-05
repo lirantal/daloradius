@@ -306,6 +306,34 @@ if (isset($_GET['reportFormat'])) {
 				}
 	
 				break;
+				
+				
+				
+				
+		case "reportsInvoiceList":
+				include_once('../../library/opendb.php');
+	
+				$outputHeader = "Invoice ID, Customer Name, Username, Date, Total Billed, Total Payed, Balance, Invoice Status".
+						"\n";
+				$outputContent = "";
+								
+				$sql = $_SESSION['reportQuery'];
+						
+				if ($reportFormat == "csv") {
+					$res = $dbSocket->query($sql);
+		
+						$balance = 0;
+						while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+							$balance = ($row['totalpayed'] - $row['totalbilled']);
+							$outputContent .= $row['id'].",".$row['contactperson'].",".$row['username'].",".$row['date'].",".$row['totalbilled'].",".$row['totalpayed'].",".$balance.",".$row['status']."\n";
+						}
+						
+					$output = $outputHeader . $outputContent;
+					exportCSVFile($output);	
+					include_once('../../library/closedb.php');
+				}
+	
+				break;
 
 	}
 

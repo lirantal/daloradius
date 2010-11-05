@@ -37,6 +37,54 @@
 		
 	</ul>
 	
+	
+	<br/>
+	<h3>Invoice Report</h3>
+	<ul class="subnav">
+	
+		
+			<form name="billinvoicereport" action="bill-invoice-report.php" method="get" class="sidebar">
+			
+				<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
+				
+				<input name="startdate" type="text" id="startdate" 
+			                                onClick='javascript:__displayTooltip();'
+			                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+					value="<?php if (isset($billinvoice_startdate)) echo $billinvoice_startdate;
+									else echo date("Y-m-01"); ?>">
+				<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+				<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+			
+				<input name="enddate" type="text" id="enddate" 
+			                                onClick='javascript:__displayTooltip();'
+			                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+					value="<?php if (isset($billinvoice_enddate)) echo $billinvoice_enddate;
+									else echo date("Y-m-t"); ?>">
+				<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+				<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+			
+				<br/>
+
+				<?php
+				        include_once('include/management/populate_selectbox.php');
+				        populate_invoice_status_id("All Invoice Types", "invoice_status", "form", "", "%");
+				?>
+			
+				
+				<input name="username" type="text" id="usernameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
+                                onClick='javascript:__displayTooltip();'
+                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                value="<?php if (isset($billinvoice_username) && $billinvoice_username != '%') echo $billinvoice_username; ?>" tabindex=1>
+				
+				
+					<br/>
+				<input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['GenerateReport'] ?>" tabindex=3 />
+				
+			</form></li>
+					
+	</ul>
+	
+	
 	<br/><br/>
 	<h2>Search</h2>
 	
@@ -45,15 +93,25 @@
 </div>
 
 <?php
-/*
         include_once("include/management/autocomplete.php");
-
+      
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                        /** Making usernameEdit interactive **/
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                      </script>";
+        }
+/*
         if ($autoComplete) {
                 echo "<script type=\"text/javascript\">
                       autoComEdit = new DHTMLSuite.autoComplete();
                       autoComEdit.add('planNameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteBillingPlans');
                       </script>";
         }
+*/
+
+?>
 
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();
@@ -62,5 +120,3 @@
         tooltipObj.setTooltipCornerSize(15);
         tooltipObj.initFormFieldTooltip();
 </script>
-*/
-?>
