@@ -131,7 +131,7 @@
                                 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'invoice_id[]','listbillinvoices')\">None</a>
 	                 <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listbillinvoices\",\"bill-invoices-del.php\")' />
+                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listbillinvoices\",\"bill-invoice-del.php\")' />
                                 <br/><br/>
 
         ";
@@ -209,7 +209,7 @@
 		
 							));
 							
-		echo '<td> '.$invoice_id.' </td>';
+		echo '<td> <input type="checkbox" name="invoice_id[]" value="'.$row['id'].'"> '.$invoice_id.' </td>';
 		echo '<td> '.$contactperson.' </td>';
 		echo '<td> '.$row['date'].' </td>';
 		echo '<td> '.$row['totalbilled'].' </td>';
