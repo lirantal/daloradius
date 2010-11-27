@@ -563,6 +563,7 @@ $l['Tooltip']['RemoveNAS'] = "Remove NAS";
 $l['Tooltip']['EditHG'] = "Edit HuntGroup";
 $l['Tooltip']['RemoveHG'] = "Remove HuntGroup";
 $l['Tooltip']['hgNasIpAddress'] = "Type the Host/Ip address";
+$l['Tooltip']['hgGroupName'] = "Type the Groupname for the NAS";
 $l['Tooltip']['hgNasPortId'] = "Type the Nas Port Id";
 $l['Tooltip']['EditUserGroup'] = "Edit User Group";
 $l['Tooltip']['ListUserGroups'] = "List User Groups";

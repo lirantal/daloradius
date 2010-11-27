@@ -34,14 +34,14 @@
 	$groupname = "";
 
 	isset($_REQUEST['nasipaddress']) ? $nasipaddress = $_REQUEST['nasipaddress'] : $nasipaddress = "";
-	isset($_REQUEST['nasportid']) ? $nasportid = $_REQUEST['nasportid'] : $nasportid = "";
+	isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "";
 
 	$logAction = "";
 	$logDebugSQL = "";
 
 	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG']." WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress)."' AND nasportid='".
-	$dbSocket->escapeSimple($nasportid)."'";
+	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG']." WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress).
+			"' AND groupname='".$dbSocket->escapeSimple($groupname)."'";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -51,8 +51,9 @@
 	// assignment of values from query to local variables
 	// to be later used in html to display on textboxes (input)
 	$groupname = $row[1];
-	$nasportid = $row[3];
 	$nasipaddress = $row[2];
+	$nasportid = $row[3];
+	
 
 	if (isset($_POST['submit'])) {
 	
