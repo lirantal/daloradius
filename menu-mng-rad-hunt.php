@@ -30,11 +30,11 @@
 			<input name="nasipaddress" type="text" id="nashostEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['hgNasIpAddress']; ?> <br/>'
-			tabindex=4>
-                        <input name="nasportid" type="text" value=""
+			tabindex=4 />
+                        <input name="groupname" type="text" value=""
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['hgNasPortId']; ?> <br/>'
-                                />
+                                tooltipText='<?php echo $l['Tooltip']['hgGroupName']; ?> <br/>'
+            tabindex=5 />
 
 			</form></li>
 		<li><a href="mng-rad-hunt-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveHG'] ?></a></li>
