@@ -157,13 +157,9 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
+
 </head>
-<script src="library/js_date/date-functions.js" type="text/javascript"></script>
-<script src="library/js_date/datechooser.js" type="text/javascript"></script>
+
 <script type="text/javascript" src="library/javascript/pages_common.js"></script>
 <script type="text/javascript" src="library/javascript/ajax.js"></script>
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
@@ -253,18 +249,11 @@
 
 		<label for='invoice_date' class='form'><?php echo $l['all']['Date']?></label>		
 		<input value='' id='invoice_date' name='invoice_date'  tabindex=108 />
-		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan', 1950, 2010, 'Y-m-d H:i:s', true);">
+		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan_invoicedate', 1950, 2010, 'Y-m-d H:i:s', true);">
 		<br/>
-
 
 		<label for='invoice_notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
 		<textarea class='form' name='invoice_notes' ></textarea>
-
-
-
-
-
-
 
 
 		<li class='fieldset'>
@@ -276,6 +265,7 @@
 		</ul>
 	
 	</fieldset>
+	<div id="chooserSpan_invoicedate" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 	</div>
 
 	<div class="tabbertab" title="<?php echo $l['title']['Items']; ?>">
@@ -345,8 +335,6 @@
 
 	</fieldset>
 	</div>
-
-	<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
 	
 </div>
