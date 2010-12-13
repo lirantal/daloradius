@@ -1,6 +1,12 @@
 <script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
 <script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 <link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
+<!--[if lte IE 6.5]>
+<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
+<![endif]-->
+<script src="library/js_date/date-functions.js" type="text/javascript"></script>
+<script src="library/js_date/datechooser.js" type="text/javascript"></script>
 
 <body>
 <?php
