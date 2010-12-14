@@ -191,7 +191,7 @@
         ";
 
 	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate&planname=$planname");
 
 	echo " </th></tr>
 			</thead>
@@ -206,22 +206,22 @@
         echo "<thread> <tr>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=username&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=planname&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=planname&orderType=$orderTypeNextPage\">
 		".$l['all']['PlanName']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=sessiontime&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=sessiontime&orderType=$orderTypeNextPage\">
 		".$l['all']['UsedTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=plantimebank&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=plantimebank&orderType=$orderTypeNextPage\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
@@ -269,7 +269,7 @@
                                                         <tr>
                                                         <th colspan='12' align='left'>
         ";
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
+	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate&planname=$planname");
         echo "
                                                         </th>
                                                         </tr>
