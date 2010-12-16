@@ -165,14 +165,16 @@ function userSubscriptionAnalysis($username, $drawTable) {
 	 *********************************************************************************************************
 	 * Idle-Timeout calculations
 	 *********************************************************************************************************/
-        $sql = "SELECT Value AS 'Idle-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
-		" WHERE (UserName='$username') AND (Attribute='Idle-Timeout')";
+ 	$sql = "SELECT Value AS 'Idle-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
+                " WHERE (UserName='$username') AND (Attribute='Idle-Timeout')".
+                " UNION SELECT Value AS 'Idle-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+                " WHERE (Attribute ='Idle-Timeout') AND (GroupName IN (SELECT groupname from ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'] .
+                                " WHERE username ='$username' order by priority)) LIMIT 1";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
 	(isset($row['Idle-Timeout'])) ? $userIdleTimeout = $row['Idle-Timeout'] : $userIdleTimeout = "unset";
-
-
+	
 
         include 'library/closedb.php';
 
