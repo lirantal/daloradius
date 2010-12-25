@@ -61,6 +61,16 @@ include_once ("lang/main.php");
 									<option value="Access-Accept">Access-Accept</option>
 									<option value="Access-Reject">Access-Reject</option>
 								</select>
+							<h4>Start Date</h4>
+							<input name="startdate" type="text" id="startdate_lastconnect" onClick='javascript:__displayTooltip();'
+								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+							value="<?php if (isset($startdate)) echo $startdate;
+							else echo date("Y-m-01"); ?>">
+							<h4>End Date</h4>
+							<input name="enddate" type="text" id="enddate_lastconnect" onClick='javascript:__displayTooltip();'
+								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+								value="<?php if (isset($enddate)) echo $enddate;
+							else echo date("Y-m-t"); ?>">
 							</form>
 							</li>
 							
