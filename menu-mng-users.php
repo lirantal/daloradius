@@ -87,10 +87,8 @@
 			/** Making usernameEdit interactive **/
 	              autoComEdit = new DHTMLSuite.autoComplete();
 	              autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-
 			/** Making usernameSearch interactive **/
-	              autoComSearch = new DHTMLSuite.autoComplete();
-	              autoComSearch.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+	              autoComEdit.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
 	              </script>";
 	} 
 ?>
