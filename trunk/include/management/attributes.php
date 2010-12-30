@@ -47,8 +47,7 @@
 
 				echo "
 					<script type=\"text/javascript\">
-					autoCom = new DHTMLSuite.autoComplete();
-					autoCom.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
+					autoComEdit.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
 					</script>
 				";
 			}
