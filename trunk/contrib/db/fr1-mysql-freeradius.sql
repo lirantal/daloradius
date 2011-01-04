@@ -55,7 +55,7 @@ CREATE TABLE radacct (
 CREATE TABLE radcheck (
   id int(11) unsigned NOT NULL auto_increment,
   UserName varchar(64) NOT NULL default '',
-  Attribute varchar(32)  NOT NULL default '',
+  Attribute varchar(64)  NOT NULL default '',
   op char(2) NOT NULL DEFAULT '==',
   Value varchar(253) NOT NULL default '',
   PRIMARY KEY  (id),
@@ -69,7 +69,7 @@ CREATE TABLE radcheck (
 CREATE TABLE radgroupcheck (
   id int(11) unsigned NOT NULL auto_increment,
   GroupName varchar(64) NOT NULL default '',
-  Attribute varchar(32)  NOT NULL default '',
+  Attribute varchar(64)  NOT NULL default '',
   op char(2) NOT NULL DEFAULT '==',
   Value varchar(253)  NOT NULL default '',
   PRIMARY KEY  (id),
@@ -83,7 +83,7 @@ CREATE TABLE radgroupcheck (
 CREATE TABLE radgroupreply (
   id int(11) unsigned NOT NULL auto_increment,
   GroupName varchar(64) NOT NULL default '',
-  Attribute varchar(32)  NOT NULL default '',
+  Attribute varchar(64)  NOT NULL default '',
   op char(2) NOT NULL DEFAULT '=',
   Value varchar(253)  NOT NULL default '',
   PRIMARY KEY  (id),
@@ -97,7 +97,7 @@ CREATE TABLE radgroupreply (
 CREATE TABLE radreply (
   id int(11) unsigned NOT NULL auto_increment,
   UserName varchar(64) NOT NULL default '',
-  Attribute varchar(32) NOT NULL default '',
+  Attribute varchar(64) NOT NULL default '',
   op char(2) NOT NULL DEFAULT '=',
   Value varchar(253) NOT NULL default '',
   PRIMARY KEY  (id),

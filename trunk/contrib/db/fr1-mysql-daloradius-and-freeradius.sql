@@ -204,7 +204,7 @@ DROP TABLE IF EXISTS `radcheck`;
 CREATE TABLE `radcheck` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `UserName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
+  `Attribute` varchar(64) NOT NULL default '',
   `op` char(2) NOT NULL default '==',
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
@@ -229,7 +229,7 @@ DROP TABLE IF EXISTS `radgroupcheck`;
 CREATE TABLE `radgroupcheck` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `GroupName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
+  `Attribute` varchar(64) NOT NULL default '',
   `op` char(2) NOT NULL default '==',
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
@@ -254,7 +254,7 @@ DROP TABLE IF EXISTS `radgroupreply`;
 CREATE TABLE `radgroupreply` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `GroupName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
+  `Attribute` varchar(64) NOT NULL default '',
   `op` char(2) NOT NULL default '=',
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
@@ -331,7 +331,7 @@ DROP TABLE IF EXISTS `radreply`;
 CREATE TABLE `radreply` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `UserName` varchar(64) NOT NULL default '',
-  `Attribute` varchar(32) NOT NULL default '',
+  `Attribute` varchar(64) NOT NULL default '',
   `op` char(2) NOT NULL default '=',
   `Value` varchar(253) NOT NULL default '',
   PRIMARY KEY  (`id`),
