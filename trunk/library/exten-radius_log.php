@@ -25,20 +25,23 @@
  */
  
 
-$logfile_loc1 = '/var/log/radius/radius.log';
-$logfile_loc2 = '/usr/local/var/log/radius/radius.log';
-$logfile_loc3 = '/var/log/freeradius/radius.log';
+$logfile_loc = array();
+$logfile_loc[1] = '/var/log/freeradius/radius.log';
+$logfile_loc[2] = '/usr/local/var/log/radius/radius.log';
+$logfile_loc[3] = '/var/log/radius/radius.log';
 
-if (file_exists($logfile_loc1))
-	$logfile = $logfile_loc1;
-else if (file_exists($logfile_loc2))
-	$logfile = $logfile_loc2;
-else if (file_exists($logfile_loc3))
-	$logfile = $logfile_loc3;
-else {
+foreach ($logfile_loc as $tmp) {
+	if (file_exists($tmp)) { 
+		$logfile = $tmp; 
+		break;
+	}
+}
+ 
+
+if (empty($logfile)) {
 	echo "<br/><br/>
 		error reading log file: <br/><br/>
-		looked for log file in $logfile_loc1 and $logfile_loc2 but couldn't find it.<br/>
+		looked for log file in '".implode(", ", $logfile_loc)."' but couldn't find it.<br/>
 		if you know where your freeradius log file is located, set it's location in " . $_SERVER[SCRIPT_NAME];
 	exit;
 }
