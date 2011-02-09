@@ -161,7 +161,12 @@
 			</select>
 			<?php echo $l['graphs']['Year']; ?>:</br>
 			<select class="generic" name="year" type="text">
-				<option value="2009"> 2009 </option>
+				<?php
+					for($i = 0; $i <= 10; $i++) {
+						$myDate = date('Y', mktime(0, 0, 0, 1, 1, (date('Y')-$i) ));
+						echo "<option value='$myDate'>$myDate</option>";
+					}
+				?>
 			</select>
 
 	</ul>
