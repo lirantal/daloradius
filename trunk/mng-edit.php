@@ -810,8 +810,7 @@
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
                 " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
-		$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName='".$dbSocket->escapeSimple($username)."' GROUP BY ".
-		$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute";
+		$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName='".$dbSocket->escapeSimple($username)."'";
 		
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
@@ -908,8 +907,8 @@
 		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
                 " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
-		$configValues['CONFIG_DB_TBL_RADREPLY'].".UserName='".$dbSocket->escapeSimple($username)."' GROUP BY ".
-		$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute";
+		$configValues['CONFIG_DB_TBL_RADREPLY'].".UserName='".$dbSocket->escapeSimple($username)."'";
+		
 		
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
