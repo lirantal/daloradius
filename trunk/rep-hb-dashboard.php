@@ -27,14 +27,17 @@
 
 
 	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "time";
+	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
 
 
 	include_once('library/config_read.php');
 	$log = "visited page: ";
 	$logQuery = "performed query on page: ";
 	$logDebugSQL = "";
+	
+	$softDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'];
+	$hardDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'];
 
 ?>
 
@@ -298,6 +301,30 @@
 							
 		echo "<td> $str </td>";
 	
+		
+		// calculate time delay
+		$currTime = time(); 
+		$checkinTime = strtotime($row['time']);
+		if ($currTime - $checkinTime >= (60*$hardDelay)) {
+
+			// this is hard delay
+			$delayColor = 'red';
+			
+		} elseif ( 
+			($currTime - $checkinTime >= (60*$softDelay))
+			&& ($currTime - $checkinTime < (60*$hardDelay))
+			)
+		{
+
+			// this is soft delay
+			$delayColor = 'orange';
+			
+		} else {
+			
+			// this is no delay at all, meaning not above 5 minutes delay
+			$delayColor = 'green';
+		}
+			
 		echo "
 				<td>".
 					time2str($row['uptime'])."
@@ -315,8 +342,9 @@
 					toxbyte($row['wan_bdown'])."
 				</td>
 
-				<td>".
+				<td> <font color='$delayColor'> ".
 					$row['time']."
+					</font>
 				</td>
 				
 			</tr>

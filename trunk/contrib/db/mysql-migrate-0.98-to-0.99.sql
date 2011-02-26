@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `node` (
 -- Generic fields 
 
 `id` int(11) NOT NULL auto_increment,
-`time` varchar(20) NOT NULL COMMENT 'Time of last checkin',
+`time` datetime NOT NULL default '00-00-0000 00:00:00' COMMENT 'Time of last checkin',
 
 -- Fields used in the front end; ignored by checkin-batman
 
@@ -656,4 +656,11 @@ INSERT INTO `operators_acl` VALUES
 INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
 ('bill_invoice_report', 'Billing', 'Invoice');
 INSERT INTO `operators_acl` VALUES
-(0,6,'bill_invoice_report',1)
+(0,6,'bill_invoice_report',1);
+
+-- Adding ACL for the new Configuration options
+INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
+('config_reports_dashboard', 'Configuration', 'Reporting');
+INSERT INTO `operators_acl` VALUES
+(0,6,'config_reports_dashboard',1);
+

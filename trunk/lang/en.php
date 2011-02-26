@@ -53,9 +53,17 @@ $l['all']['CSVData'] = "CSV-formatted data";
 $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
 
 
+$l['all']['DashboardSecretKey'] = "Dashboard Secret Key";
+$l['all']['DashboardDebug'] = "Debug";
+$l['all']['DashboardDelaySoft'] = "Time in minutes to consider a 'soft' delay limit";
+$l['all']['DashboardDelayHard'] = "Time in minutes to consider a 'hard' delay limit";
+
+
+
 $l['all']['SendWelcomeNotification'] = "Send Welcome Notification";
 $l['all']['SMTPServerAddress'] = "SMTP Server Address";
 $l['all']['SMTPServerPort'] = "SMTP Server Port";
+$l['all']['SMTPServerFromEmail'] = "From Email Address";
 
 $l['all']['customAttributes'] = "Custom Attributes";
 
@@ -635,6 +643,9 @@ $l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user infor
  * Links and Buttons
  ************************************************************************************/
 
+$l['button']['DashboardSettings'] = "Dashboard Settings";
+
+
 $l['button']['GenerateReport'] = "Generate Report";
 
 $l['button']['ListPayTypes'] = "List Payment Types";
@@ -819,6 +830,9 @@ $l['button']['ProcessQuery'] = "Process Query";
 $l['title']['ImportUsers'] = "Import Users";
 
 
+$l['title']['Dashboard'] = "Dashboard";
+$l['title']['DashboardAlerts'] = "Alerts";
+
 $l['title']['Invoice'] = "Invoice";
 $l['title']['Invoices'] = "Invoices";
 $l['title']['InvoiceRemoval'] = "Invoice Removal";
@@ -975,6 +989,10 @@ $l['ContactInfo']['CreditCardType'] = "Credit Card Type";
 $l['ContactInfo']['CreditCardExpiration'] = "Credit Card Expiration";
 
 /* ********************************************************************************** */
+
+$l['Intro']['configdashboard.php'] = "Dashbard Settings";
+
+
 
 $l['Intro']['paymenttypesmain.php'] = "Payment Types Page";
 $l['Intro']['paymenttypesdel.php'] = "Delete Payment Type entry";
@@ -1196,6 +1214,9 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
  * it will reveal/hide a helpPage div content which is a description of a specific
  * page, basically your expanded tool-tip.
  ************************************************************************************/
+
+$l['helpPage']['configdashboard'] = "Dashboard Settings";
+
 
 $l['helpPage']['repnewusers'] = "The following table lists new users created each month.";
 
