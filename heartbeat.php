@@ -22,15 +22,15 @@
 
 
 require_once('library/opendb.php');
+require_once('library/config_read.php');
 
-$secretKey = "sillykey";
+$secret_key = $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'];
+$debug_mode = $configValues['CONFIG_DASHBOARD_DALO_DEBUG'];
 
-isset($_GET['secret_key']) ? $secret_key = $dbSocket->escapeSimple($_GET['secret_key']) : $secret_key = "";
+isset($_GET['secret_key']) ? $secretKey = $dbSocket->escapeSimple($_GET['secret_key']) : $secretKey = "";
 if ($secretKey != $secret_key) {
-	die("get out\n");
+	die("authorization denied\n");
 }
-
-
 
 isset($_GET['wan_iface']) ? $wan_iface = $dbSocket->escapeSimple($_GET['wan_iface']) : $wan_iface = "";
 isset($_GET['wan_ip']) ? $wan_ip = $dbSocket->escapeSimple($_GET['wan_ip']) : $wan_ip = "";
@@ -62,7 +62,7 @@ $sql = "SELECT mac FROM ".$configValues['CONFIG_DB_TBL_DALONODE']." WHERE mac='$
 $res = $dbSocket->query($sql);
 if ($res->numRows() >= 1) {
 	// we update
-	$sql = "UPDATE nodes_data SET ".
+	$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALONODE']." SET ".
 			"wan_iface='".$wan_iface."',".
 			"wan_ip='".$wan_ip."',".
 			"wan_mac='".$wan_mac."',".
@@ -118,15 +118,15 @@ if ($res->numRows() >= 1) {
 			" ) ";
 }
 
-echo "\n\n$sql\n\n";
 
 $res = $dbSocket->query($sql);
-
-
-echo "things are ok\n";
-
 require_once('library/closedb.php');
 
+if (isset($debug_mode) && $debug_mode == 1) {
+	echo "Debug: \n";
+	var_dump($_GET);
+	echo "\n\n$sql\n\n";	
+}
 
+echo "success";
 
-?>
