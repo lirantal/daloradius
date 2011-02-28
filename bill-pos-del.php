@@ -25,20 +25,15 @@
 
 	include('library/check_operator_perm.php');
 
+	
 	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
-	isset($_GET['attribute']) ? $attribute = $_GET['attribute'] : $attribute = "";
-	isset($_GET['tablename']) ? $tablename = $_GET['tablename'] : $tablename = "";
-	isset($_GET['delradacct']) ? $delradacct = $_GET['delradacct'] : $delradacct = "";
-	isset($_GET['clearSessionsUsers']) ? $clearSessionsUsers = $_GET['clearSessionsUsers'] : $clearSessionsUsers = "";
-	isset($_GET['refillSessionTime']) ? $refillSessionTime = $_GET['refillSessionTime'] : $refillSessionTime = "";
-	isset($_GET['refillSessionTraffic']) ? $refillSessionTraffic = $_GET['refillSessionTraffic'] : $refillSessionTraffic = "";
 
 	$logAction = "";
 	$logDebugSQL = "";
 
 	$showRemoveDiv = "block";
 
-	if ( (isset($_GET['username'])) && (!(isset($_GET['attribute']))) && (!(isset($_GET['tablename']))) ) {
+	if ($username != '') {
 
 		$allUsernames = "";
 		$isSuccessful = 0;
@@ -51,7 +46,7 @@
 		if (!is_array($username))
 			$username = array($username, NULL);
 
-		foreach ($username as $variable=>$value) {
+		foreach ($username as $variable => $value) {
 
 			if (trim($variable) != "") {
 			
@@ -59,8 +54,15 @@
 				$allUsernames .= $username . ", ";
 
 				include 'library/opendb.php';
-
-
+				
+				// get user id from userbillinfo table 
+				$sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+				$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+				$userId = $row['id'];
+				
+				
 				// delete all attributes associated with a username
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
@@ -87,6 +89,31 @@
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 				}
+				
+				
+				// to remove all invoices and payments we need to get the invoices_id
+				$sql1 = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." WHERE user_id=".$userId;
+				$res2 = $dbSocket->query($sql1);
+				$logDebugSQL .= $sql1 . "\n";
+				while ($row = $res2->fetchRow(DB_FETCHMODE_ASSOC)) {
+
+					// delete all invoice items
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." WHERE invoice_id='".$row['id']."'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";					
+						
+					// delete all payment items
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE invoice_id='".$row['id']."'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+					
+				}
+				
+				// remove all invoices by this user
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." WHERE user_id='".$userId."'";
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
+				
 
 				$successMsg = "Deleted user(s): <b> $allUsernames </b>";
 				$logAction .= "Successfully deleted user(s) [$allUsernames] on page: ";
@@ -101,71 +128,9 @@
 
 		$showRemoveDiv = "none";
 
-		} //foreach
-
-
-	} else 	if ( (isset($_GET['username'])) && (isset($_GET['attribute'])) && (isset($_GET['tablename'])) ) {
-
-		/* this section of the deletion process only deletes the username record with the specified attribute
-		 * variable from $tablename, this is in order to support just removing a single attribute for the user
-		 */
-
-		include 'library/opendb.php';
-
-		if (isset($attribute)) {
-			if (preg_match('/__/', $attribute))
-				list($columnId, $attribute) = split("__", $attribute);
-			else
-				$attribute = $attribute;
-		}
-
-		$sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE Username='".$dbSocket->escapeSimple($username)."' ".
-				" AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-
-		$successMsg = "Deleted attribute: <b> $attribute </b> for user(s): <b> $username </b> from database";
-		$logAction .= "Successfully deleted attribute [$attribute] for user [$username] on page: ";
-
-		include 'library/closedb.php';
-
-		$showRemoveDiv = "none";
-
-	} else if ( (isset($clearSessionsUsers)) && ($clearSessionsUsers != "") ) {
+		}//foreach
 		
-		/* this is used to remove stale user sessions from the accounting table 
-		*/
-		$allUsernames = "";
-
-		if (!is_array($clearSessionsUsers))
-			$clearSessionsUsers = array($clearSessionsUsers, NULL);
-
-			foreach ($clearSessionsUsers as $variable=>$value) {
-
-				if (trim($value) != "") {
-
-					list($userSessions,$acctStartTime) = split('\|\|', $value);
-
-					$allUsernames .= $userSessions . ", ";
-
-					include 'library/opendb.php';
-
-					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-						" WHERE Username='$userSessions' AND AcctStartTime='$acctStartTime' ".
-						" AND AcctStopTime='0000-00-00 00:00:00'";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-
-					$successMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
-					$logAction .= "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
 		
-					include 'library/closedb.php';
-			} // if trim
-
-		} // foreach
-
-		$showRemoveDiv = "none";
-
 	}
 
 
