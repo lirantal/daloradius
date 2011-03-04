@@ -62,11 +62,11 @@
 
 						<br/>Filter by date
 							<input name="startdate" type="text" id="startdate" value="2006-01-01">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
 							<input name="enddate" type="text" id="enddate" value="2006-12-01">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
 
@@ -100,10 +100,10 @@
 
 						<br/>Filter by date
 							<input name="ps-startdate" type="text" id="ps-startdate" value="2006-01-01">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'ps-startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'ps-startdate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 							<input name="ps-enddate" type="text" id="ps-enddate" value="2006-12-01">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'ps-enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'ps-enddate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
 							</form></li>

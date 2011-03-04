@@ -51,7 +51,7 @@
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
 value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
 						else echo date("Y-m-01"); ?>">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
                                                         <input name="enddate" type="text" id="enddate" 
@@ -59,7 +59,7 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
 value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
 						else echo date("Y-m-t"); ?>">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
 
