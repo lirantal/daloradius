@@ -174,7 +174,7 @@
 
 		<label for='payment_date' class='form'><?php echo $l['all']['PaymentDate']?></label>
    		<input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
-   		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, 2010, 'Y-m-d H:i:s', true);">
+   		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
    		<li class='fieldset'>

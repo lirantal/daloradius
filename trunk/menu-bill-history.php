@@ -47,7 +47,7 @@
                         else echo date("Y-m-01"); ?>">
 
                         <img src="library/js_date/calendar.gif"
-                                onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+                                onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
                         <div id="chooserSpan" class="dateChooser select-free"
                                 style="display: none; visibility: hidden;       width: 160px;"></div>
 
@@ -56,7 +56,7 @@
                                 else echo date("Y-m-t"); ?>">
 
                         <img src="library/js_date/calendar.gif"
-                                onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d', false);">
+                                onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d', false);">
                         <div id="chooserSpan" class="dateChooser select-free"
                                 style="display: none; visibility: hidden; width: 160px;"></div>
 			<br/><br/>
