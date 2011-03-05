@@ -249,7 +249,7 @@
 
 		<label for='invoice_date' class='form'><?php echo $l['all']['Date']?></label>		
 		<input value='' id='invoice_date' name='invoice_date'  tabindex=108 />
-		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan_invoicedate', 1950, 2010, 'Y-m-d H:i:s', true);">
+		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan_invoicedate', 1950, <?= date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
 		<label for='invoice_notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
