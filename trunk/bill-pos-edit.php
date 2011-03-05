@@ -582,6 +582,11 @@ function refillSessionTraffic() {
 		include_once('include/management/actionMessages.php');
 	?>
 
+	<?php
+		include_once('include/management/userOperations.php');
+		checkDisabled($username);
+	?>
+
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 <div class="tabber">
