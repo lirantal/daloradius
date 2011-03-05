@@ -39,8 +39,7 @@
  */
 function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()) {
 
-	include_once('include/management/pages_common.php');
-	include 'library/opendb.php';
+	include(dirname(__FILE__).'/../../library/opendb.php');
 	
 	$user_id = false;
 	
@@ -130,8 +129,7 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 	
 	
 
-
-	include 'library/closedb.php';
+	include(dirname(__FILE__).'/../../library/closedb.php');
 
 	return true;
 	

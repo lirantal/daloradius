@@ -141,7 +141,7 @@
 				" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp2 ON (bp2.id = d2.plan_id) ".
 				" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
 				$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
-				" WHERE a.id = ".$dbSocket->escapeSimple($invoice_id).
+				" WHERE a.id = '".$dbSocket->escapeSimple($invoice_id)."'".
 				" GROUP BY a.id ";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
