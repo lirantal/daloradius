@@ -26,6 +26,117 @@
 
 
 
+/*
+ *********************************************************************************************************
+ * userInvoiceAdd
+ * general billing function to add invoices to the user based on the user_id
+ * 
+ * $userId 				   the userbillinfo user id or the username (autodetects)
+ * $invoiceInfo            array holding the invoice information
+ * $invoiceItems           array holding the invoice items information
+ * 
+ *********************************************************************************************************
+ */
+function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()) {
+
+	include_once('include/management/pages_common.php');
+	include 'library/opendb.php';
+	
+	$user_id = false;
+	
+	// if provided a numeric user id then this is the user_id that we need
+	if (is_numeric($userId)) {
+		$user_id = $dbSocket->escapeSimple($userId);			// sanitize variable for sql statement
+	} else {
+		// otherwise this is the username and we need to look up the user id from the userbillinfo table
+		
+		$username = $dbSocket->escapeSimple($userId);
+		$sql = 'SELECT id FROM '.$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+				' WHERE username="'.$username.'"';
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+		
+		$row = $res->fetchRow();
+		$user_id = $row[0];
+		
+	}
+	
+	// if something is not right with the user id (set to null, false, whatever) we abort
+	if (!$user_id)
+		return false;
+	
+	
+	$currDate = date('Y-m-d H:i:s');
+	$currBy = $_SESSION['operator_user'];
+	
+	if (!$invoiceInfo)
+		$invoiceInfo = array();
+	
+	// create default invoice information if nothing was provided
+	$myinvoiceInfo['date'] = $currDate;	
+	$myinvoiceInfo['status_id'] = 1;			 // defaults to invoice status of 'open'
+	$myinvoiceInfo['type_id'] = 1;			 // defaults to invoice type of 'Plans'
+	$myinvoiceInfo['notes'] = 'provisioned new user from daloRADIUS platform';
+	$invoiceInfo = array_merge($myinvoiceInfo, $invoiceInfo);
+	
+	
+	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
+			" (id, user_id, date, status_id, type_id, notes, creationdate, creationby, updatedate, updateby) ".
+			" VALUES (0, '".$user_id."', '".
+			$dbSocket->escapeSimple($invoiceInfo['date'])."', '".
+			$dbSocket->escapeSimple($invoiceInfo['status_id'])."', '".
+			$dbSocket->escapeSimple($invoiceInfo['type_id'])."', '".
+			$dbSocket->escapeSimple($invoiceInfo['notes'])."', ".
+			" '$currDate', '$currBy', NULL, NULL)";
+	$res = $dbSocket->query($sql);
+	$logDebugSQL .= $sql . "\n";
+	
+	// if there hasn't been any errors with inserting the invoice record
+	if (!PEAR::isError($res)) {
+		
+		// get the added invoice id from the database
+		$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" ); 
+
+		if (!$invoice_id)
+			return false;
+		
+		foreach($invoiceItems as $invoiceItem) {
+			// set default information for the invoice items
+			/*
+			$myinvoiceItems['plan_id'] = '' ;
+			$myinvoiceItems['amount'] = '' ;
+			$myinvoiceItems['tax'] = '' ;
+			$myinvoiceItems['notes'] = '' ;
+			$invoiceItems = array_merge($myinvoiceItems, $invoiceItems);
+			*/
+			
+			// now add an invoice item
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].
+				" (id, invoice_id, plan_id, amount, tax_amount, notes, ".
+				" creationdate, creationby, updatedate, updateby) ".
+				" VALUES (0, '".$invoice_id."', '".
+				$dbSocket->escapeSimple($invoiceItem['plan_id'])."', '".
+				$dbSocket->escapeSimple($invoiceItem['amount'])."', '".
+				$dbSocket->escapeSimple($invoiceItem['tax'])."', '".
+				$dbSocket->escapeSimple($invoiceItem['notes'])."', ".
+				" '$currDate', '$currBy', NULL, NULL)";
+	
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+
+		}
+	
+	}
+	
+	
+
+
+	include 'library/closedb.php';
+
+	return true;
+	
+}
+
 
 
 
@@ -53,15 +164,14 @@ function userInvoicesStatus($user_id, $drawTable) {
 			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount + bp.planCost + bp.planTax) ".
+			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) ".
 					" as totalbilled, invoice_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
-					" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp ON (d.plan_id = bp.id) ".
 			" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
 			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
 			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 			" WHERE (a.user_id = $user_id)".
 			" GROUP BY b.id ";
-			
+	
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -514,4 +624,5 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
 
 
 }
+
 
