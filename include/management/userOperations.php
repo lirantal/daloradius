@@ -134,6 +134,8 @@ function checkDisabled($username) {
 
 
 
+
+
 function userRefillSessionTime($username, $divContainer) {
 
 	include 'pages_common.php';
@@ -171,9 +173,12 @@ function userRefillSessionTime($username, $divContainer) {
 		$user = $dbSocket->escapeSimple($value);                // clean username argument from harmful code
 
 		$sql = "SELECT ".
+			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id, ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username, ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planName, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".id as PlanID, ".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeRefillCost, ".
+			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTax, ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".paymentmethod, ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".cash, ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".creditcardname, ".
@@ -209,6 +214,29 @@ function userRefillSessionTime($username, $divContainer) {
 			")";
 		$res = $dbSocket->query($sql);
 
+		
+		// if the refill cost is anything beyond the amount 0, we create an invoice for it.
+		if ($refillCost > 0) {
+			
+			// if the user id indeed set in the userbillinfo table
+			if ($row['id']) {
+				include_once("userBilling.php");
+		
+				$invoiceInfo['notes'] = 'refill user account';
+				
+				// calculate tax (planTax is the numerical percentage amount) 
+				$calcTax = (float) ($row['planTimeRefillCost'] * (float)($row['planTax'] / 100) );
+				$invoiceItems[0]['plan_id'] = $row['PlanID'];
+				$invoiceItems[0]['amount'] = $row['planTimeRefillCost'];
+				$invoiceItems[0]['tax'] = $calcTax;
+				$invoiceItems[0]['notes'] = 'refill user session time';
+									
+				userInvoiceAdd($row['id'], $invoiceInfo, $invoiceItems);
+				
+			}
+		
+		}
+		
 	}
 
 
@@ -247,14 +275,17 @@ function userRefillSessionTraffic($username, $divContainer) {
 
 	}
 
-        // take care of recording the billing action in billing_history table
-        foreach ($username as $variable=>$value) {
+	// take care of recording the billing action in billing_history table
+	foreach ($username as $variable=>$value) {
 
                 $user = $dbSocket->escapeSimple($value);                // clean username argument from harmful code
 
                 $sql = "SELECT ".
+                		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id, ".
                         $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username, ".
                         $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planName, ".
+						$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".id as PlanID, ".
+						$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTax, ".
                         $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficRefillCost, ".
                         $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".paymentmethod, ".
                         $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".cash, ".
@@ -290,9 +321,37 @@ function userRefillSessionTraffic($username, $divContainer) {
                                 "'$currDate', '$currBy'".
                         ")";
                 $res = $dbSocket->query($sql);
+                
+                
+        // if the refill cost is anything beyond the amount 0, we create an invoice for it.
+		if ($refillCost > 0) {
+			
+			// if the user id indeed set in the userbillinfo table
+			if ($row['id']) {
+				include_once("userBilling.php");
+		
+				$invoiceInfo['notes'] = 'refill user account';
+				
+				// calculate tax (planTax is the numerical percentage amount) 
+				$calcTax = (float) ($row['planTrafficRefillCost'] * (float)($row['planTax'] / 100) );
+				$invoiceItems[0]['plan_id'] = $row['PlanID'];
+				$invoiceItems[0]['amount'] = $row['planTrafficRefillCost'];
+				$invoiceItems[0]['tax'] = $calcTax;
+				$invoiceItems[0]['notes'] = 'refill user session traffic';
+									
+				userInvoiceAdd($row['id'], $invoiceInfo, $invoiceItems);
+				
+			}
+		
+		}
+                
 	}
 
 
+	
+	
+	
+	
 	$users = substr($allUsers, 0, -2);
 	printqn("
 		var divContainer = document.getElementById('{$divContainer}');

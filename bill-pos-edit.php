@@ -527,6 +527,38 @@
 <script type="text/javascript" src="library/javascript/ajax.js"></script>
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 <script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+
+<script type="text/javascript">
+
+
+function disableUser() {
+	strUsername = "username=<?php echo $username?>";
+	if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
+		ajaxGeneric("include/management/userOperations.php","userDisable","returnMessages",strUsername);
+		return true;
+	}
+}
+
+function refillSessionTime() {
+	strUsername = "username=<?php echo $username?>";
+	if (confirm("You are about to refill session time for this user account\nDo you want to continue?\n\nSuch action will also bill the user if set so in the plant the user is associated with!"))  {
+		ajaxGeneric("include/management/userOperations.php","refillSessionTime","returnMessages",strUsername);
+		return true;	
+    }
+}
+
+
+function refillSessionTraffic() {
+	strUsername = "username=<?php echo $username?>";
+	if (confirm("You are about to refill session traffic for this user account\nDo you want to continue?\n\nSuch action will also bill the user if set so in the plant the user is associated with!"))  {
+		ajaxGeneric("include/management/userOperations.php","refillSessionTraffic","returnMessages",strUsername);
+		return true;	
+    }
+}
+
+
+</script>
+
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
@@ -627,7 +659,22 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+			<br/>
+			
+	        <input class='button' type='button' value='Refill Session Time'
+				onClick='javascript:refillSessionTime()' />
+	        <input class='button' type='button' value='Refill Session Traffic'
+				onClick='javascript:refillSessionTraffic()' />
+			
+			<br/>
+			
+			<input class='button' type='button' value='Disable User'
+				onClick='javascript:disableUser()' />
+				
+			<br/>		
+			
+			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+
 		</li>
 
 		</ul>
