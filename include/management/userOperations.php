@@ -31,6 +31,12 @@ if ((isset($_GET['userDisable'])) && (isset($_GET['username']))) {
 	userDisable($_GET['username'], $_GET['divContainer']);
 }
 
+/*
+ * The following handles disabling the user
+ */
+if ((isset($_GET['userEnable'])) && (isset($_GET['username']))) {
+	userEnable($_GET['username'], $_GET['divContainer']);
+}
 
 
 /*
@@ -109,6 +115,71 @@ function userDisable($username, $divContainer) {
         include '../../library/closedb.php';
 
 }
+
+
+
+
+
+function userEnable($username, $divContainer) {
+
+	include 'pages_common.php';
+	include('../../library/checklogin.php');
+	include '../../library/opendb.php';
+
+	if (!is_array($username))
+		$username = array($username, NULL);
+
+	$allUsers = "";
+	$allUsersSuccess = array();
+	$allUsersFailure = array();
+
+	foreach ($username as $variable=>$value) {
+	
+		$user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
+		$allUsers .= $user . ", ";
+
+		if ($user) {
+	        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
+	                " WHERE username='$user' AND attribute='Auth-Type' AND value='Reject'";
+	        $res = $dbSocket->query($sql);
+	
+			array_push($allUsersSuccess, $user);
+		} else {
+			array_push($allUsersFailure, $user);
+		}
+	
+	}
+
+	if (count($allUsersSuccess) > 0) {
+		$users = "";
+		foreach($allUsersSuccess as $value)
+			$users .= $value . ", ";
+
+		$users = substr($users, 0, -2);
+	        printqn("
+	               var divContainer = document.getElementById('{$divContainer}');
+	               divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> are now disabled.</div>';
+	        ");
+	}
+
+	if (count($allUsersFailure) > 0) {
+		$users = "";
+		foreach($allUsersFailure as $value)
+			$users .= $value . ", ";
+
+		$users = substr($users, 0, -2);
+	        printqn("
+	               var divContainer = document.getElementById('{$divContainer}');
+	               divContainer.innerHTML += '<div class=\"failure\">User(s) <b>$users</b> are already disabled.</div>';
+	        ");
+	}
+
+
+        include '../../library/closedb.php';
+
+}
+
+
 
 function checkDisabled($username) {
 
