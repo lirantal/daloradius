@@ -135,11 +135,10 @@
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']." AS f ON (a.type_id = f.id) ".
-				" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount + bp.planCost + bp.planTax) ".
+				" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) ".
 					" as totalbilled, invoice_id, amount, tax_amount, notes, plan_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
-					" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp ON (d.plan_id = bp.id) ".
 					" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
-				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp2 ON (bp2.id = d2.plan_id) ".
+				" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp2 ON (bp2.id = d2.plan_id) ".
 				" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
 				$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 				" WHERE a.id = ".$dbSocket->escapeSimple($invoice_id).
@@ -291,7 +290,7 @@
 
 		<label for='invoice_date' class='form'><?php echo $l['all']['Date']?></label>		
 		<input value='<?php echo $invoiceDetails['date']?>' id='invoice_date' name='invoice_date'  tabindex=108 />
-		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan', 1950, 2010, 'Y-m-d H:i:s', true);">
+		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
 
