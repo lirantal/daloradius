@@ -31,8 +31,10 @@
 	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "desc";
 
 	isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
-    
+	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
 
+	$edit_invoiceUsername = $username;	
+	
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -75,6 +77,20 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+
+	// if provided username, we'll need to turn that into the userbillinfo user id
+	if (!empty($username)) {
+		$username = $dbSocket->escapeSimple($username);
+		$sql = 'SELECT id FROM '.$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+				' WHERE username="'.$username.'"';
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
+		
+		$row = $res->fetchRow();
+		$user_id = $row[0];	
+	}
+	
+	
 	$sql_WHERE = '';
 	if (!empty($user_id))
 		$sql_WHERE = ' WHERE a.user_id = \''.$dbSocket->escapeSimple($user_id).'\'';

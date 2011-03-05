@@ -29,7 +29,18 @@
 	<h3>Invoice Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="bill-invoice-list.php"><b>&raquo;</b><?php echo $l['button']['ListInvoices'] ?></a></li>
+		<li><a href="javascript:document.invoicelist.submit();"><b>&raquo;</b><?php echo $l['button']['ListInvoices'] ?></a>
+		
+			<form name="invoicelist" action="bill-invoice-list.php" method="get" class="sidebar">
+            	<input name="username" type="text" id="invoiceUsername" 
+                autocomplete='off'
+                onClick='javascript:__displayTooltip();'
+				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                value="<?php if (isset($edit_invoiceUsername)) echo $edit_invoiceUsername; ?>" tabindex=3>
+
+			</form>
+		
+		</li>
 		<li><a href="bill-invoice-new.php"><b>&raquo;</b><?php echo $l['button']['NewInvoice'] ?></a></li>
 		<li><a href="javascript:document.billinvoiceedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditInvoice'] ?><a>
 			<form name="billinvoiceedit" action="bill-invoice-edit.php" method="get" class="sidebar">
@@ -106,16 +117,10 @@
                         /** Making usernameEdit interactive **/
                       autoComEdit = new DHTMLSuite.autoComplete();
                       autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                      autoComEdit.add('invoiceUsername','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
                       </script>";
         }
-/*
-        if ($autoComplete) {
-                echo "<script type=\"text/javascript\">
-                      autoComEdit = new DHTMLSuite.autoComplete();
-                      autoComEdit.add('planNameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteBillingPlans');
-                      </script>";
-        }
-*/
+
 
 ?>
 
