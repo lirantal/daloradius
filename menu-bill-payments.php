@@ -30,9 +30,24 @@
                                 <h3>Payments Management</h3>
                                 <ul class="subnav">
 
-                                                <li><a href="bill-payments-list.php"><b>&raquo;</b><?php echo $l['button']['ListPayments'] ?></a></li>
+                                                <li><a href="javascript:document.paymentslist.submit();"><b>&raquo;</b><?php echo $l['button']['ListPayments'] ?></a>
+                                                
+													<form name="paymentslist" action="bill-payments-list.php" method="get" class="sidebar">
+                                                        <input name="username" type="text" id="username" 
+                                                        autocomplete='off'
+                                						onClick='javascript:__displayTooltip();'
+														tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                                    	value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=3>
+                                                    	
+                                                        <input name="invoice_id" type="text" id="invoice_id" 
+                                						onClick='javascript:__displayTooltip();'
+														tooltipText='<?php echo $l['Tooltip']['invoiceID']; ?> <br/>'
+                                                    	value="<?php if (isset($edit_invoice_id)) echo $edit_invoice_id; ?>" tabindex=3>
+													</form>
+                                                
+                                                </li>
                                                 <li><a href="bill-payments-new.php"><b>&raquo;</b><?php echo $l['button']['NewPayment'] ?></a></li>
-                                                <li><a href="javascript:document.paymentsedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditPayment'] ?></a>
+                                                <li><a href="javascript:document.paymentsedit.submit();"><b>&raquo;</b><?php echo $l['button']['EditPayment'] ?></a>
                                                         <form name="paymentsedit" action="bill-payments-edit.php" method="get" class="sidebar">
                                                         <input name="payment_id" type="text" id="payment_id" 
                                 onClick='javascript:__displayTooltip();'
@@ -68,6 +83,18 @@
 			<input name="" type="text" value="Search" tabindex=4 />
 
                 </div>
+
+<?php
+        include_once("include/management/autocomplete.php");
+
+        if ($autoComplete) {
+                echo "<script type=\"text/javascript\">
+                        /** Making usernameEdit interactive **/
+                      autoComEdit = new DHTMLSuite.autoComplete();
+                      autoComEdit.add('username','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+                      </script>";
+        }
+?>
 
 <script type="text/javascript">
         var tooltipObj = new DHTMLgoodies_formTooltip();
