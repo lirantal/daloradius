@@ -125,13 +125,13 @@
 			<label for='startdate' class='form'><?php echo $l['all']['StartingDate']?></label>
 			<input name='startdate' type='text' id='startdate' value='<?php echo $startdate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
-			"showChooser(this, 'startdate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
+			"showChooser(this, 'startdate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d h:i:s', true);" >
 			<br />
 
 			<label for='enddate' class='form'><?php echo $l['all']['EndingDate']?></label>
 			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
-			"showChooser(this, 'enddate', 'chooserSpan', 1950, 2010, 'Y-m-d h:i:s', true);" >
+			"showChooser(this, 'enddate', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d h:i:s', true);" >
 			<br />
 
 			<br/><br/>
