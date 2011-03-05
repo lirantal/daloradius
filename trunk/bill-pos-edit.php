@@ -539,6 +539,14 @@ function disableUser() {
 	}
 }
 
+function enableUser() {
+	strUsername = "username=<?php echo $username?>";
+	if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
+		ajaxGeneric("include/management/userOperations.php","userEnable","returnMessages",strUsername);
+		return true;
+	}
+}
+
 function refillSessionTime() {
 	strUsername = "username=<?php echo $username?>";
 	if (confirm("You are about to refill session time for this user account\nDo you want to continue?\n\nSuch action will also bill the user if set so in the plant the user is associated with!"))  {
@@ -673,6 +681,9 @@ function refillSessionTraffic() {
 			
 			<br/>
 			
+			<input class='button' type='button' value='Enable User'
+				onClick='javascript:enableUser()' />
+				
 			<input class='button' type='button' value='Disable User'
 				onClick='javascript:disableUser()' />
 				
