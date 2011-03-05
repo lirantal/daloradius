@@ -32,7 +32,12 @@
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
 
 	isset($_GET['invoice_id']) ? $invoice_id = $_GET['invoice_id'] : $invoice_id = "";
+	isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
+	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
 
+	
+	$edit_username = $username;
+	$edit_invoice_id = $invoice_id;
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -76,33 +81,61 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-	$sql_WHERE = '';
-	if (!empty($invoice_id))
-		$sql_WHERE = ' WHERE invoice_id = \''.$dbSocket->escapeSimple($invoice_id).'\'';
+	$sql_WHERE = ' WHERE ';
+	$sql_JOIN = '';
+	// if invoice_id then we need to lookup specific invoices
+	if (!empty($invoice_id)) {
+		$sql_WHERE .= ' invoice_id = \''.$dbSocket->escapeSimple($invoice_id).'\'';
+		$sql_WHERE .= ' AND ';
+	}
+	
+	// if provided username, we'll need to turn that into the userbillinfo user id
+	if (!empty($username)) {
+		$username = $dbSocket->escapeSimple($username);
+		$sql = 'SELECT id FROM '.$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+				' WHERE username="'.$username.'"';
+		$res = $dbSocket->query($sql);
+		$logDebugSQL .= $sql . "\n";
 		
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".invoice_id, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".amount, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".date, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".value, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".notes ".
-                " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
-                " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
-                " ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".id ".
+		$row = $res->fetchRow();
+		$user_id = $row[0];	
+	}
+	
+	// if we did get a user id let's make the sql query specific to payments by this user 
+	if ($user_id && !empty($user_id)) {
+		$sql_JOIN .= ' JOIN '.$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].' ON '.
+						$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].'.id = '.$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].'.invoice_id';
+		$sql_WHERE .= $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].'.user_id = '.$dbSocket->escapeSimple($user_id);
+		$sql_WHERE .= ' AND ';
+	}
+		
+	$sql_WHERE .= ' 1=1 ';
+	
+	//orig: used as method to get total rows - this is required for the pages_numbering.php page
+    $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id, ".
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".invoice_id, ".
+            $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".amount, ".
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".date, ".
+            $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".value, ".
+            $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".notes ".
+            " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
+            $sql_JOIN.
+            " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
+            " ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".id ".
 			$sql_WHERE;
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".invoice_id, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".amount, ".
-		$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".date, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".value, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".notes ".
-                " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
-                " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
-                " ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".
+    $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id, ".
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".invoice_id, ".
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".amount, ".
+			$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".date, ".
+    	    $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".value, ".
+    	    $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".notes ".
+    	    " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
+    	    $sql_JOIN.
+  	      	" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
+			" ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".
 			$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".id ".
 			$sql_WHERE.
 			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
