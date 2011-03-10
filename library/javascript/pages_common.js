@@ -406,7 +406,7 @@ function refillSessionTimeCheckbox(formName,pageDst) {
 	}
 
 
-        if (confirm("You are about to refill session time fora total of " + count + " users\nDo you want to continue?\n\nSuch action will also bill the user!"))  {
+        if (confirm("You are about to refill session time for a total of " + count + " users\nDo you want to continue?\n\nSuch action will also bill the user!"))  {
 
 		ajaxGeneric("include/management/userOperations.php","refillSessionTime","returnMessages",strUsernames);
 
