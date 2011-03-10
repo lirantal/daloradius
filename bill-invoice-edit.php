@@ -35,7 +35,7 @@
 	isset($_POST['invoice_date']) ? $invoice_date = $_POST['invoice_date'] : $invoice_date = "";
 	isset($_POST['invoice_notes']) ? $invoice_notes = $_POST['invoice_notes'] : $invoice_notes = "";
 	
-	isset($_POST['invoice_items']) ? $invoice_items = $_POST['invoice_items'] : $invoice_items = "";
+	//isset($_POST['invoice_items']) ? $invoice_items = $_POST['invoice_items'] : $invoice_items = "";
 
 
 	$logAction = "";
@@ -51,24 +51,26 @@
 			$currDate = date('Y-m-d H:i:s');
 			$currBy = $_SESSION['operator_user'];
 
+			$invoice_id = $dbSocket->escapeSimple($invoice_id);
+			
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." SET ".
 			" date='".$dbSocket->escapeSimple($invoice_date)."', ".
 			" status_id='".$dbSocket->escapeSimple($invoice_status_id)."', ".
 			" type_id='".$dbSocket->escapeSimple($invoice_type_id)."', ".
 			" notes='".$dbSocket->escapeSimple($invoice_notes)."', ".
 			" updatedate='$currDate', updateby='$currBy' ".
-			" WHERE id='".$dbSocket->escapeSimple($invoice_id)."'";
+			" WHERE id='".$invoice_id."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
 			if (!PEAR::isError($res)) {
-/*
-				$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" );  
-				var_dump($invoice_id);
+
+				//$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" );  
+				//var_dump($invoice_id);
 				
 				// add the invoice items which the user created
-				addInvoiceItems($dbSocket, $invoice_id, $invoice_items);
-*/				
+				addInvoiceItems($dbSocket, $invoice_id);
+
 				$successMsg = "Added to database new invoice: <b>$invoice_id</b>";
 				$logAction .= "Successfully added new invoice [$invoice_id] on page: ";
 				
@@ -87,7 +89,7 @@
 	}
 
 
-	function addInvoiceItems($dbSocket, $invoice_id, $invoice_items) {
+	function addInvoiceItems($dbSocket, $invoice_id = '') {
 
 		global $logDebugSQL;
 		global $configValues;
@@ -96,41 +98,53 @@
 		$currBy = $_SESSION['operator_user'];
 	
 		// insert invoice's items
-		if (isset($invoice_items)) {
+		if (!empty($invoice_id)) {
 
-			foreach ($invoice_items as $item) {
+			// first remove all items for this invoice
+			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].
+					" WHERE invoice_id = ".$invoice_id;
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
+			
+			foreach ($_POST as $itemName => $value) {
 
-				$planId = $item['planId'];
-				$amount = $item['amount'];
-				$tax = $item['tax'];
-				$notes = $item['notes'];
-				
-				if ($invoice_id) {
+				if (substr($itemName, 0, 4) == 'item') {
+									
+					$planId = $value['plan'];
+					$amount = $value['amount'];
+					$tax = $value['tax'];
+					$notes = $value['notes'];
+
+					// if no plan or amount is provided just break out
+					if (empty($planId) || empty($amount))
+						break;
+					
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].
-						" (id, invoice_id, plan_id, amount, tax_amount, notes, ".
-						" creationdate, creationby, updatedate, updateby) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($invoice_id)."', '".
-						$dbSocket->escapeSimple($planId)."', '".
-						$dbSocket->escapeSimple($amount)."', '".
-						$dbSocket->escapeSimple($tax)."', '".
-						$dbSocket->escapeSimple($notes)."', ".
-						" '$currDate', '$currBy', NULL, NULL)";
-
+							" (id, invoice_id, plan_id, amount, tax_amount, notes, ".
+							" creationdate, creationby, updatedate, updateby) ".
+							" VALUES (0, '".$invoice_id."', '".
+							$dbSocket->escapeSimple($planId)."', '".
+							$dbSocket->escapeSimple($amount)."', '".
+							$dbSocket->escapeSimple($tax)."', '".
+							$dbSocket->escapeSimple($notes)."', ".
+							" '$currDate', '$currBy', NULL, NULL)";
+	
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
+					
 				}
 			}
 		}
 	}
 	
 	
+	
 	if (trim($invoice_id) != "") {
 		
 		// get invoice details
 		$sql = "SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, b.contactperson, b.username, ".
-				" b.city, b.state, f.value as type, bp2.planName as planName, bp2.id as planId, ".
-				" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled, d2.plan_id, ".
-				" d2.amount as itemAmount, d2.tax_amount as itemTaxAmount, d2.notes as itemNotes ".
+				" b.city, b.state, f.value as type, ".
+				" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
 				" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
@@ -148,6 +162,7 @@
 	
 		$edit_invoiceid = $invoice_id;
 		$invoiceDetails = $res->fetchRow(DB_FETCHMODE_ASSOC);
+				
 	}
 	
 	include 'library/closedb.php';
@@ -155,6 +170,9 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
+    
+	include_once('include/management/populate_selectbox.php');
+	
 ?>
 
 
@@ -175,6 +193,59 @@
 <script type="text/javascript" src="library/javascript/ajax.js"></script>
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 <script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+
+<script type="text/javascript">
+
+var itemCounter = 1;
+
+function addTableRow() {
+
+	itemCounter++;			// incrementing elements counter
+
+  	var container = document.getElementById('container');
+  	var counter = document.getElementById('counter');
+  	var num = (document.getElementById('counter').value -1)+ 2;
+  	counter.value = num;
+  	
+	var trContainer = document.createElement('tr');
+	var trIdName = 'itemsRow'+num;
+	trContainer.setAttribute('id',trIdName);
+
+	var td1 = document.createElement('td');
+	//td1.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[plan]' /> ";
+	var plansSelect = "<?php populate_plans("","itemXXXXXXX[plan]", "form", "", "", true); ?>";
+	td1.innerHTML = plansSelect.replace('itemXXXXXXX[plan]', 'item'+itemCounter+'[plan]');
+
+	var td2 = document.createElement('td');
+	td2.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[amount]' /> ";
+
+	var td3 = document.createElement('td');
+	td3.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[tax]' /> ";
+
+	var td4 = document.createElement('td');
+	td4.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[notes]' /> ";
+
+	var td5 = document.createElement('td');
+	td5.innerHTML = "<input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow(\'"+trIdName+"\');\" class='button'>";
+
+	trContainer.appendChild(td1);
+	trContainer.appendChild(td2);
+	trContainer.appendChild(td3);
+	trContainer.appendChild(td4);
+	trContainer.appendChild(td5);
+	container.appendChild(trContainer);
+	  
+}
+
+
+function removeTableRow(rowCounter) {
+	  var container = document.getElementById('container');
+	  var trContainer = document.getElementById(rowCounter);
+	  container.removeChild(trContainer);
+	}
+
+</script>
+
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
@@ -251,7 +322,6 @@
 		<li class='fieldset'>
 		<label for='invoice_status_id' class='form'><?php echo $l['all']['InvoiceStatus']?></label>
 		<?php
-		        include_once('include/management/populate_selectbox.php');
 		        populate_invoice_status_id($invoiceDetails['status'], "invoice_status_id", "form", "", $invoiceDetails['status_id']);
 		?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('invoice_status_id')" />
@@ -264,7 +334,6 @@
 		<li class='fieldset'>
 		<label for='invoice_type_id' class='form'><?php echo $l['all']['InvoiceType']?></label>
 		<?php
-		        include_once('include/management/populate_selectbox.php');
 		        populate_invoice_type_id($invoiceDetails['type'], "invoice_type_id", "form", "", $invoiceDetails['type_id']);
 		?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('invoice_type_id')" />
@@ -315,73 +384,81 @@
 	</fieldset>
 	</div>
 
+
+			
+
+
+
+
 	<div class="tabbertab" title="<?php echo $l['title']['Items']; ?>">
 	<fieldset>
 
 		<h302> <?php echo $l['title']['Items']; ?> </h302>
+		<input type='button' name='addItem' value='Add Item'
+			onclick="javascript:addTableRow();" class='button'>
 		<br/>
 
-		<ul>
 
+		<input type="hidden" value="0" id="counter" />
 
-		<li class='fieldset'>
-		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
-                <?php
-                       populate_plans($invoiceDetails['planName'],$invoiceDetails['planId'],"form", "", "", true);
-                ?>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
+		<table BORDER="7" CELLPADDING="10">
+		<tbody id="container">
+		<tr>
+			<th>Plan</th>
+			<th>Item Amount</th>
+			<th>Item Tax</th>
+			<th>Notes</th>
+			<th>Actions</th>
+		</tr>
 		
-		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planNameTooltip'] ?>
-		</div>
-		</li>
-
-
-		<li class='fieldset'>
-		<label for='amount' class='form'><?php echo $l['all']['Amount'] ?></label>
-		<input class='integer5len' name='invoice_items[0][amount]' type='text' id='invoice_items[0][amount]' value='<?php echo $invoiceDetails['itemAmount'] ?>' tabindex=103 />
-                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('invoice_items[0][amount]','increment')" />
-                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('invoice_items[0][amount]','decrement')"/>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" /> 
+		<?php
 		
-		<div id='amountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['amountTooltip'] ?>
-		</div>
-		</li>
+			if (!empty($invoice_id)) {
 		
-
-		<li class='fieldset'>
-		<label for='tax' class='form'><?php echo $l['all']['Tax'] ?></label>
-		<input class='integer5len' name='invoice_items[0][tax]' type='text' id='invoice_items[0][tax]' value='<?php echo $invoiceDetails['itemTaxAmount']?>' tabindex=103 />
-                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('invoice_items[0][tax]','increment')" />
-                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('invoice_items[0][tax]','decrement')"/>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('taxTooltip')" /> 
+				include 'library/opendb.php';
 		
-		<div id='taxTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['taxTooltip'] ?>
-		</div>
-		</li>
+				// get all invoice items
+				$sql = 'SELECT a.id, a.plan_id, a.amount, a.tax_amount, a.notes, b.planName '.
+						' FROM '.$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].' a '.
+						' JOIN '.$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].' b ON a.plan_id = b.id '.
+						' WHERE a.invoice_id = '.$invoice_id.' ORDER BY a.id ASC';
+				$res = $dbSocket->query($sql);
+				$logDebugSQL .= $sql . "\n";
 				
-
-		<label for='notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
-		<textarea class='form' name='invoice_items[0][notes]' ><?php echo $invoiceDetails['itemNotes']?></textarea>
-
-
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
-		</li>
-	
-		</ul>
-
+				while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+					
+					$itemName = $row['id'];
+					
+					echo "<tr id='itemsRow_".$itemName."'>".
+						//"<td> <input type='text' id='_item".$itemName."' value='".$row['planName']."' name='_item".$itemName."[plan]' /> ".
+						//"	<input type='hidden' id='_item".$itemName."' value='".$row['plan_id']."' name='_item".$itemName."[plan]' /> </td>".
+						"<td> ";
+					populate_plans($row['planName'],"item_".$itemName."[plan]", "form", "", $row['plan_id'], true);
+					echo " </td>".
+						"<td> <input type='text' id='_item".$itemName."' value='".$row['amount']."'name='item_".$itemName."[amount]' /> </td>".
+						"<td> <input type='text' id='_item".$itemName."' value='".$row['tax_amount']."'name='item_".$itemName."[tax]' /> </td>".
+						//"<td> <select name=''> <option value='1'> 1 </option> </select> </td> ".
+						"<td> <input type='text' id='_item".$row['plan_id']."' value='".$row['notes']."' name='item_".$itemName."[notes]' /> </td>".
+						"<td> <input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow('itemsRow_".$itemName."');\" class='button'> </td>".
+						"</tr>";
+					
+				}
+				
+				include 'library/closedb.php';
+							
+			} 
+		?>
+		
+		
+		
+		</tbody>
+		</table>
+		
+	<br/>
 	</fieldset>
 	</div>
+	
+	
 
 	<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 

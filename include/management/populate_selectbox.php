@@ -209,9 +209,9 @@ function populate_hotspots($defaultOption = "Select Hotspot", $elementName = "",
  */
 function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "", $valueIsId = false) {
 
-	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />
-			<option value='$defaultOptionValue'>$defaultOption</option>
-			<option value=''></option>";
+	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />".
+			"<option value='$defaultOptionValue'>$defaultOption</option>".
+			"<option value=''></option>";
 
         include 'library/opendb.php';
 
@@ -228,9 +228,7 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
         	else
         		$value = $row[0];
         		        	
-            echo "  
-                   <option value='$value'> $row[0] </option>
-                 ";
+            echo "<option value='$value'> $row[0] </option> ";
 
         }
 

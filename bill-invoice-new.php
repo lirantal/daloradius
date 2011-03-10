@@ -66,7 +66,7 @@
 					$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" ); 
 					
 					// add the invoice items which the user created
-					addInvoiceItems($dbSocket, $invoice_id, $invoice_items);
+					addInvoiceItems($dbSocket, $invoice_id);
 					
 					$successMsg = "Added to database new invoice: <b>$invoice_id</b>";
 					$logAction .= "Successfully added new invoice [$invoice_id] on page: ";
@@ -87,37 +87,45 @@
 	}
 
 
-	function addInvoiceItems($dbSocket, $invoice_id, $invoice_items) {
+	function addInvoiceItems($dbSocket, $invoice_id = '') {
 
 		global $logDebugSQL;
 		global $configValues;
-
+	
 		$currDate = date('Y-m-d H:i:s');
 		$currBy = $_SESSION['operator_user'];
 	
 		// insert invoice's items
-		if (isset($invoice_items)) {
-
-			foreach ($invoice_items as $item) {
-				
-				$planId = $item['planId'];
-				$amount = $item['amount'];
-				$tax = $item['tax'];
-				$notes = $item['notes'];
-				
-				if ($invoice_id) {
+		if (!empty($invoice_id)) {
+	
+			foreach ($_POST as $itemName => $value) {
+	
+				if (substr($itemName, 0, 4) == 'item') {
+									
+					error_log('processing: '.$itemName);
+					
+					$planId = $value['plan'];
+					$amount = $value['amount'];
+					$tax = $value['tax'];
+					$notes = $value['notes'];
+	
+					// if no plan or amount is provided just break out
+					if (empty($planId) || empty($amount))
+						break;
+					
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].
-						" (id, invoice_id, plan_id, amount, tax_amount, notes, ".
-						" creationdate, creationby, updatedate, updateby) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($invoice_id)."', '".
-						$dbSocket->escapeSimple($planId)."', '".
-						$dbSocket->escapeSimple($amount)."', '".
-						$dbSocket->escapeSimple($tax)."', '".
-						$dbSocket->escapeSimple($notes)."', ".
-						" '$currDate', '$currBy', NULL, NULL)";
-
+							" (id, invoice_id, plan_id, amount, tax_amount, notes, ".
+							" creationdate, creationby, updatedate, updateby) ".
+							" VALUES (0, '".$invoice_id."', '".
+							$dbSocket->escapeSimple($planId)."', '".
+							$dbSocket->escapeSimple($amount)."', '".
+							$dbSocket->escapeSimple($tax)."', '".
+							$dbSocket->escapeSimple($notes)."', ".
+							" '$currDate', '$currBy', NULL, NULL)";
+	
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
+					
 				}
 			}
 		}
@@ -147,6 +155,8 @@
 	
 	include_once('library/config_read.php');
     $log = "visited page: ";
+    
+	include_once('include/management/populate_selectbox.php');
 
 ?>
 
@@ -164,6 +174,58 @@
 <script type="text/javascript" src="library/javascript/ajax.js"></script>
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 <script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+
+<script type="text/javascript">
+
+var itemCounter = 1;
+
+function addTableRow() {
+
+	itemCounter++;			// incrementing elements counter
+
+  	var container = document.getElementById('container');
+  	var counter = document.getElementById('counter');
+  	var num = (document.getElementById('counter').value -1)+ 2;
+  	counter.value = num;
+  	
+	var trContainer = document.createElement('tr');
+	var trIdName = 'itemsRow'+num;
+	trContainer.setAttribute('id',trIdName);
+
+	var td1 = document.createElement('td');
+	//td1.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[plan]' /> ";
+	var plansSelect = "<?php populate_plans("","itemXXXXXXX[plan]", "form", "", "", true); ?>";
+	td1.innerHTML = plansSelect.replace('itemXXXXXXX[plan]', 'item'+itemCounter+'[plan]');
+
+	var td2 = document.createElement('td');
+	td2.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[amount]' /> ";
+
+	var td3 = document.createElement('td');
+	td3.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[tax]' /> ";
+
+	var td4 = document.createElement('td');
+	td4.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[notes]' /> ";
+
+	var td5 = document.createElement('td');
+	td5.innerHTML = "<input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow(\'"+trIdName+"\');\" class='button'>";
+
+	trContainer.appendChild(td1);
+	trContainer.appendChild(td2);
+	trContainer.appendChild(td3);
+	trContainer.appendChild(td4);
+	trContainer.appendChild(td5);
+	container.appendChild(trContainer);
+	  
+}
+
+
+function removeTableRow(rowCounter) {
+	  var container = document.getElementById('container');
+	  var trContainer = document.getElementById(rowCounter);
+	  container.removeChild(trContainer);
+	}
+
+</script>
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
@@ -272,67 +334,39 @@
 	<fieldset>
 
 		<h302> <?php echo $l['title']['Items']; ?> </h302>
+		<input type='button' name='addItem' value='Add Item'
+			onclick="javascript:addTableRow();" class='button'>
 		<br/>
 
-		<ul>
 
+		<input type="hidden" value="0" id="counter" />
 
-		<li class='fieldset'>
-		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
-                <?php
-                       populate_plans("Select Plan","invoice_items[0][planId]","form", "", "", true);
-                ?>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
+		<table BORDER="7" CELLPADDING="10">
+		<tbody id="container">
+		<tr>
+			<th>Plan</th>
+			<th>Item Amount</th>
+			<th>Item Tax</th>
+			<th>Notes</th>
+			<th>Actions</th>
+		</tr>
 		
-		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planNameTooltip'] ?>
-		</div>
-		</li>
-
-
-		<li class='fieldset'>
-		<label for='amount' class='form'><?php echo $l['all']['Amount'] ?></label>
-		<input class='integer5len' name='invoice_items[0][amount]' type='text' id='invoice_items[0][amount]' value='000.00' tabindex=103 />
-                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('invoice_items[0][amount]','increment')" />
-                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('invoice_items[0][amount]','decrement')"/>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" /> 
+		<tr id="itemRowDefault">
+		<td>
+			<?php
+				populate_plans('Select Plan',"itemDefault[plan]", "form", "", '', true); 
+			?>
+		</td>
+		<td><input type="text" name="itemDefault[amount]" id="itemDefault1"> </td>
+		<td><input type="text" name="itemDefault[tax]" id="itemDefault1"> </td>
+		<td><input type="text" name="itemDefault[notes]" id="itemDefault1"> </td>
+		<td><input type="button" class="button" onclick="javascript:removeTableRow('itemRowDefault');" value="Remove" name="remove"></td>
+		</tr>
 		
-		<div id='amountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['amountTooltip'] ?>
-		</div>
-		</li>
+		</tbody>
+		</table>
 		
-
-		<li class='fieldset'>
-		<label for='tax' class='form'><?php echo $l['all']['Tax'] ?></label>
-		<input class='integer5len' name='invoice_items[0][tax]' type='text' id='invoice_items[0][tax]' value='000.00' tabindex=103 />
-                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('invoice_items[0][tax]','increment')" />
-                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('invoice_items[0][tax]','decrement')"/>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('taxTooltip')" /> 
-		
-		<div id='taxTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['taxTooltip'] ?>
-		</div>
-		</li>
-				
-
-		<label for='notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
-		<textarea class='form' name='invoice_items[0][notes]' ></textarea>
-
-
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
-		</li>
-	
-		</ul>
-
+	<br/>
 	</fieldset>
 	</div>
 
