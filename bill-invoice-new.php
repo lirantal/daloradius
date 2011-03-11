@@ -109,8 +109,8 @@
 					$tax = $value['tax'];
 					$notes = $value['notes'];
 	
-					// if no plan or amount is provided just break out
-					if (empty($planId) || empty($amount))
+					// if no amount is provided just break out
+					if (empty($amount))
 						break;
 					
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].

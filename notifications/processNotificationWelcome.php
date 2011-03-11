@@ -50,8 +50,6 @@
 		
 		$html = prepareNotificationTemplate($customerInfo);
 		$pdfDocument = createPDF($html);
-
-		file_put_contents("$base/out.pdf", $pdfDocument);
 		
 		$mime = new Mail_mime(); 
 		$mime->setTXTBody("Notification letter of service"); 
