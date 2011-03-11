@@ -372,9 +372,15 @@ function removeTableRow(rowCounter) {
 
 
 
-
 		<li class='fieldset'>
 		<br/>
+		<br/>
+		
+		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?= $invoice_id ?>&destination=download'"/>
+		<input class='button' type='button' value='Email Invoice to Customer' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?= $invoice_id ?>&destination=email'"/>
+	  	              			
+		<br/><br/>
+		
 		<hr><br/>
 		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
 		</li>
