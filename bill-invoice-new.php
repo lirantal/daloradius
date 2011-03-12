@@ -34,6 +34,7 @@
 	isset($_POST['invoice_items']) ? $invoice_items = $_POST['invoice_items'] : $invoice_items = "";
 	
 	isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
+	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
 
 
 	$logAction = "";
@@ -45,43 +46,43 @@
 		
 		include 'library/opendb.php';
 
-			if (trim($user_id) != "") {
+		if (trim($user_id) != "") {
 
-				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+			$currDate = date('Y-m-d H:i:s');
+			$currBy = $_SESSION['operator_user'];
 
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
-				" (id, user_id, date, status_id, type_id, notes, creationdate, creationby, updatedate, updateby) ".
-				" VALUES (0, '".$dbSocket->escapeSimple($user_id)."', '".
-				$dbSocket->escapeSimple($invoice_date)."', '".
-				$dbSocket->escapeSimple($invoice_status_id)."', '".
-				$dbSocket->escapeSimple($invoice_type_id)."', '".
-				$dbSocket->escapeSimple($invoice_notes)."', ".
-				" '$currDate', '$currBy', NULL, NULL)";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
+			" (id, user_id, date, status_id, type_id, notes, creationdate, creationby, updatedate, updateby) ".
+			" VALUES (0, '".$dbSocket->escapeSimple($user_id)."', '".
+			$dbSocket->escapeSimple($invoice_date)."', '".
+			$dbSocket->escapeSimple($invoice_status_id)."', '".
+			$dbSocket->escapeSimple($invoice_type_id)."', '".
+			$dbSocket->escapeSimple($invoice_notes)."', ".
+			" '$currDate', '$currBy', NULL, NULL)";
+			$res = $dbSocket->query($sql);
+			$logDebugSQL .= $sql . "\n";
 
-				if (!PEAR::isError($res)) {
+			if (!PEAR::isError($res)) {
 
-					$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" ); 
-					
-					// add the invoice items which the user created
-					addInvoiceItems($dbSocket, $invoice_id);
-					
-					$successMsg = "Added to database new invoice: <b>$invoice_id</b>";
-					$logAction .= "Successfully added new invoice [$invoice_id] on page: ";
-					
-				} else {
-					
-					$failureMsg = "Error in executing invoice INSERT statement";	
-					$logAction .= "Failed adding new invoice on page: ";
-
-				}
+				$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" ); 
+				
+				// add the invoice items which the user created
+				addInvoiceItems($dbSocket, $invoice_id);
+				
+				$successMsg = "Added to database new invoice: <b>$invoice_id</b>";
+				$logAction .= "Successfully added new invoice [$invoice_id] on page: ";
 				
 			} else {
-				$failureMsg = "you must provide a user id which matches the userbillinfo records";	
-				$logAction .= "Failed adding new invoice on page: ";	
+				
+				$failureMsg = "Error in executing invoice INSERT statement";	
+				$logAction .= "Failed adding new invoice on page: ";
+
 			}
+				
+		} else {
+			$failureMsg = "you must provide a user id which matches the userbillinfo records";	
+			$logAction .= "Failed adding new invoice on page: ";	
+		}
 	
 		include 'library/closedb.php';
 	}
@@ -132,9 +133,21 @@
 	}
 	
 	
+	include 'library/opendb.php';
+	
+	// let's try to get the user_id from the username 
+	if (empty($user_id)) {
+		$sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
+		" WHERE username = '".$dbSocket->escapeSimple($username)."'";
+		$res = $dbSocket->query($sql);
+		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+		$user_id = $row['id'];
+		$logDebugSQL .= $sql . "\n";
+	}
+	
+	$userInfo = array();
 	
 	if (isset($user_id) && (!empty($user_id))) {
-		include 'library/opendb.php';
 
 		$sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		" WHERE id = '".$dbSocket->escapeSimple($user_id)."'";
@@ -147,10 +160,11 @@
 		$userInfo['state'] = $row['state'];
 		
 		$logDebugSQL .= $sql . "\n";
-
-		include 'library/closedb.php';
-				
+						
 	}
+	
+	include 'library/closedb.php';
+	
 	
 	
 	include_once('library/config_read.php');

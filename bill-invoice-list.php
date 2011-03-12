@@ -30,9 +30,12 @@
 	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "id";
 	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "desc";
 
+	
 	isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
 	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
+	isset($_GET['invoice_status_id']) ? $invoice_status_id = $_GET['invoice_status_id'] : $invoice_status_id = "";
 
+	$edit_invoice_status_id = $invoice_status_id;
 	$edit_invoiceUsername = $username;	
 	
 
@@ -91,10 +94,13 @@
 	}
 	
 	
-	$sql_WHERE = '';
+	$sql_WHERE = ' WHERE 1=1 ';
 	if (!empty($user_id))
-		$sql_WHERE = ' WHERE a.user_id = \''.$dbSocket->escapeSimple($user_id).'\'';
+		$sql_WHERE .= ' AND a.user_id = \''.$dbSocket->escapeSimple($user_id).'\'';
 
+	if (!empty($edit_invoice_status_id))
+		$sql_WHERE .= ' AND a.status_id = '.$dbSocket->escapeSimple($edit_invoice_status_id);
+		
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
 			" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
