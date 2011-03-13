@@ -27,7 +27,7 @@
 
 
         //setting values for the order by and order type variables
-        isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "updatedate";
+        isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "updatedate,creationdate";
         isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
 
 
@@ -67,6 +67,8 @@
 		" (SELECT 'realm' as section, realmname as item, creationdate,creationby,updatedate,updateby FROM realms) UNION ".
 		" (SELECT 'userinfo' as section, username as item, creationdate,creationby,updatedate,updateby FROM userinfo) UNION ".
 		" (SELECT 'operators' as section, username as item, creationdate,creationby,updatedate,updateby FROM operators) UNION ".
+        " (SELECT 'invoice' as section, id as item, creationdate,creationby,updatedate,updateby FROM invoice) UNION ".
+        " (SELECT 'payment' as section, id as item, creationdate,creationby,updatedate,updateby FROM payment) UNION ".
 		" (SELECT 'hotspot' as section, name as item, creationdate,creationby,updatedate,updateby FROM hotspots) ";
         $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
@@ -75,6 +77,8 @@
 		" (SELECT 'realm' as section, realmname as item, creationdate,creationby,updatedate,updateby FROM realms) UNION ".
 		" (SELECT 'userinfo' as section, username as item, creationdate,creationby,updatedate,updateby FROM userinfo) UNION ".
 		" (SELECT 'operators' as section, username as item, creationdate,creationby,updatedate,updateby FROM operators) UNION ".
+        " (SELECT 'invoice' as section, id as item, creationdate,creationby,updatedate,updateby FROM invoice) UNION ".
+        " (SELECT 'payment' as section, id as item, creationdate,creationby,updatedate,updateby FROM payment) UNION ".
 		" (SELECT 'hotspot' as section, name as item, creationdate,creationby,updatedate,updateby FROM hotspots) ".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
         $res = $dbSocket->query($sql);
