@@ -81,17 +81,19 @@ function createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType,attrHe
 
 
 
-function parseAttribute(tag) {
+function parseAttribute(attrElement) {
 
-        var attributeCustom = document.getElementById('dictAttributesCustom');
+	//var enableTable = 1;
+	
+	var attributeCustom = document.getElementById('dictAttributesCustom');
 	var attributeCustomVal = attributeCustom.value;
 
-	if (attributeCustomVal == '') {
+	if (attrElement == 1) {
 	        var attributeOfDatabase = document.getElementById('dictAttributesDatabase');
 	        var attributeOfDatabaseVal = attributeOfDatabase.options[attributeOfDatabase.selectedIndex].value;
-		addElement(tag, 'dictAttributesDatabase');
+		addElement(1, 'dictAttributesDatabase');
 	} else {
-		addElement(tag, 'dictAttributesCustom');
+		addElement(1, 'dictAttributesCustom');
 	}
 
 }

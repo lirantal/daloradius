@@ -3,6 +3,12 @@
 	<h302> <?php echo $l['title']['Attributes']; ?> </h302>
 	<br/>
 
+	<input checked type='radio' value="" name="" onclick="javascript:toggleAttributeSelectbox();"/>
+	<b> Locate Attribute via Vendor/Attribute </b>
+	<br/>
+
+	<ul>
+	
 	<label for='vendor' class='form'>Vendor:</label>
 	<select id='dictVendors0' onchange="getAttributesList(this,'dictAttributesDatabase')"
 		style='width: 215px' class='form' >
@@ -21,20 +27,27 @@
 			include 'library/closedb.php';
 		?>
 		</select>
-		<input type='button' name='reloadAttributes' value='Reload Vendors'
+		<input type='button' name='reloadAttributes' id='reloadAttributes' value='Reload Vendors'
 			onclick="javascript:getVendorsList('dictVendors0');" class='button'>
 		<br/>
 
 		<label for='attribute' class='form'>Attribute:</label>
 		<select id='dictAttributesDatabase' style='width: 270px' class='form' >
 		</select>
-		<input type='button' name='addAttributes' value='Add Attribute'
+		<input type='button' name='addAttributes' value='Add Attribute' id='addAttributesVendor'
 			onclick="javascript:parseAttribute(1);" class='button'>
-		<br/>
+		<br/><br/>
 
+
+	</ul>
+	
+	<input type='radio' value="" name="" onclick="javascript:toggleAttributeCustom();"/>
+	<b> Quickly Locate attribute with autocomplete input</b>
+	<br/>
+
+		<ul>
 		<label for='attribute' class='form'>Custom Attribute:</label>
-		<input type='text' id='dictAttributesCustom' style='width: 264px' />
-		<br/>
+		<input disabled type='text' id='dictAttributesCustom' style='width: 264px' autocomplete=off />
 		
 		<?php
 
@@ -53,6 +66,10 @@
 			}
 
 		?>
+		<input disabled type='button' name='addAttributes' value='Add Attribute' id='addAttributesCustom'
+			onclick="javascript:parseAttribute(2);" class='button'>
+		<br/><br/>
+		</ul>
 
 <br/>
 <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />

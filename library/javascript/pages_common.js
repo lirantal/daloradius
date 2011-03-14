@@ -21,6 +21,45 @@ function changeInteger(dstObj,action) {
 }
 
 
+function toggleAttributeCustom() {
+
+	// disable the custom attributes
+	var elem1 = document.getElementById('dictAttributesCustom');
+	var elem2 = document.getElementById('addAttributesCustom');
+	elem1.disabled = false;
+	elem2.disabled = false;
+	
+	var elem3 = document.getElementById('dictVendors0');
+	var elem4 = document.getElementById('reloadAttributes');
+	var elem5 = document.getElementById('dictAttributesDatabase');
+	var elem6 = document.getElementById('addAttributesVendor');
+	elem3.disabled = true;
+	elem4.disabled = true;
+	elem5.disabled = true;
+	elem6.disabled = true;
+
+}
+
+
+function toggleAttributeSelectbox() {
+
+	// disable the custom attributes
+	var elem1 = document.getElementById('dictAttributesCustom');
+	var elem2 = document.getElementById('addAttributesCustom');
+	elem1.disabled = true;
+	elem2.disabled = true;
+	
+	var elem3 = document.getElementById('dictVendors0');
+	var elem4 = document.getElementById('reloadAttributes');
+	var elem5 = document.getElementById('dictAttributesDatabase');
+	var elem6 = document.getElementById('addAttributesVendor');
+	elem3.disabled = false;
+	elem4.disabled = false;
+	elem5.disabled = false;
+	elem6.disabled = false;
+}
+
+
 
 function toggleRandomUsers() {
 
