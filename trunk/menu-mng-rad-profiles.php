@@ -46,3 +46,15 @@
 	</ul>
 
 </div>
+
+
+<?php 
+	include_once("include/management/autocomplete.php");
+
+	if ($autoComplete) {
+		echo "<script type=\"text/javascript\">
+			/** Making usernameEdit interactive **/
+	              autoComEdit = new DHTMLSuite.autoComplete();
+              </script>";
+	} 
+?>
