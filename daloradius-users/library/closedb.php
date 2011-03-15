@@ -24,5 +24,4 @@
  
 	$dbSocket->disconnect();
 
-?>
 
