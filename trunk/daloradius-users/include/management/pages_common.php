@@ -113,5 +113,32 @@ function time2str($time) {
 
 
 
+/*
+ * wrapper function to add a tooltip balloon
+ * 
+ * @param		$view			array of view parameters
+ * @return		$string			returns string
+ */
+function addToolTipBalloon($view) {
+	
+	
+	if ($view['divId'])
+		$viewId = '<div id="'.$view['divId'].'">Loading...</div>';
+	else
+		$viewId = '';
+		
+	$str = "<a class='tablenovisit' href='javascript:return;'
+                onClick=\"".$view['onClick']." javascript:__displayTooltip();\"
+                tooltipText='".$view['content']."
+							<br/><br/>
+							$viewId
+							<br/>'
+			>".$view['value']."</a>";
+
+
+	return $str;
+}
+
+
 
 ?>
