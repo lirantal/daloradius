@@ -195,6 +195,8 @@ $l['all']['CurrentPassword'] = "Current Password";
 $l['all']['NewPassword'] = "New Password";
 $l['all']['VerifyPassword'] = "Verify Password";
 
+$l['all']['ClientName'] = "Client Name";
+$l['all']['Date'] = "Date";
 
 
 $l['all']['Invoice'] = "Invoice";
