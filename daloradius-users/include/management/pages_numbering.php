@@ -60,14 +60,51 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $req
 
 function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {
 
-	$numofpages = $numrows / $rowsPerPage;
-	for ($i = 1; $i <= $numofpages + 1; $i++) {
-		if($i == $pageNum) {
-			echo("&nbsp;<strong><font color='#5F5A59'>".$i."</font></strong>&nbsp;");
-		} else {
-			echo("&nbsp; <a class=\"table\" href=\"?page=$i&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">$i</a>&nbsp;");
+	$numofpages = ceil($numrows / $rowsPerPage);
+	
+	$str = '';
+	if ($numofpages <= 20) {
+		for ($i = 1; $i <= $numofpages; $i++) {
+			if ($i == $pageNum) {
+				$str .= "&nbsp;<strong><font color='#5F5A59' style='font-size: medium;'><a class=\"table\" href=\"?page=$i&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">$i</a></font></strong>&nbsp;";
+			} else {
+				$str .= "&nbsp; <a class=\"table\" href=\"?page=$i&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">$i</a>&nbsp;";
+			}
 		}
+	} else {
+		// 1st page
+		$i = 1;
+		$str .= "&nbsp; <a class=\"table\" href=\"?page=$i&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">$i</a>&nbsp;";
+		
+		if ($pageNum >= 1 && $pageNum <= 3) {
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i+1)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i+1)."</a>&nbsp;";
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i+2)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i+2)."</a>&nbsp;";
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i+3)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i+3)."</a>&nbsp;";
+			$str .= '...';
+		} else if ($pageNum <= $numofpages && $pageNum >= ($numofpages-2) ) {
+			$str .= '...';
+			$i = $numofpages;
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i-3)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i-3)."</a>&nbsp;";
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i-2)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i-2)."</a>&nbsp;";
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i-1)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i-1)."</a>&nbsp;";
+		}  else {
+			$str .= '...';
+			$i = $pageNum;
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i-2)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i-2)."</a>&nbsp;";
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i-1)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i-1)."</a>&nbsp;";
+			$str .= "&nbsp; <font color='#5F5A59' style='font-size: medium;'> <a class=\"table\" href=\"?page=".($i)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i)."</a> </font>&nbsp;";
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i+1)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i+1)."</a>&nbsp;";
+			$str .= "&nbsp; <a class=\"table\" href=\"?page=".($i+2)."&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">".($i+2)."</a>&nbsp;";
+			$str .= '...';
+		}
+		
+		// last page
+		$i = $numofpages;
+		$str .= "&nbsp; <a class=\"table\" href=\"?page=$i&orderBy=$orderBy&orderType=$orderType$request1$request2$request3\">$i</a>&nbsp;";
 	}
+	
+	echo $str;
+	
 
 }
 
