@@ -735,7 +735,7 @@ tbody td a[href="http://www.rodcast.com.br/"] {
 
 tbody a:visited:after {
 	font-family: Verdana,sans-serif;
-	content: "\00A0\221A"
+/*	content: "\00A0\221A" */
 }
 
 tbody a.novisit {
@@ -750,14 +750,10 @@ tbody a.tablenovisit {
 //        border-bottom: 1px dotted #fff;
 }
 
-tbody a.tablenovisit:visited:after {
-        font-family: Verdana,sans-serif;
-        content: "\000"
-}
 
 tbody a.novisit:visited:after {
         font-family: Verdana,sans-serif;
-        content: "\000"
+/*        content: "\000" */
 }
 
 

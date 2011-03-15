@@ -572,7 +572,7 @@ tbody a.novisit {
 
 tbody a.novisit:visited:after {
         font-family: Verdana,sans-serif;
-        content: "\000"
+/*        content: "\000" */
 }
 
 
