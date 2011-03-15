@@ -110,10 +110,6 @@
 <script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
 
 <?php
-	include_once ("library/tabber/tab-layout.php");
-?>
- 
-<?php
 	include ("menu-billing.php");	
 ?>
 
@@ -132,11 +128,10 @@
 
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-<div class="tabber">
-
 	<div class="tabbertab" title="<?php echo $l['title']['Invoice']; ?>">
 	<fieldset>
 
+		<h2> Invoice Details </h2>
 		<h302> <?php echo $l['title']['Invoice']; ?> </h302>
 
 		<ul>
@@ -190,9 +185,6 @@
 		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?= $invoice_id ?>&destination=download'"/>
 	  	              			
 		<br/><br/>
-		
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
 		</li>
 		
 		</ul>
@@ -205,6 +197,7 @@
 	<div class="tabbertab" title="<?php echo $l['title']['Items']; ?>">
 	<fieldset>
 
+		<h2> Item Listing </h2>
 		<h302> <?php echo $l['title']['Items']; ?> </h302>
 
 		<input type="hidden" value="0" id="counter" />
@@ -261,8 +254,6 @@
 
 	<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
-	
-</div>
 	</form>
 
 <?php
