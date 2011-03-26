@@ -15,7 +15,7 @@ body {
 #wrapper {
 	background:#fff;
 	border:3px solid #f1f1f1;
-	max-width:1200px;
+	max-width:100%;
 	width:expression(this.width > 320 ? "320px" : this.width);
 	min-width:760px;
 	margin:0 auto;
