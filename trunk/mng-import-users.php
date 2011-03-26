@@ -63,10 +63,10 @@
 						((isset($users[1]) && (!empty($users[1])))) )
 					{
 
-						$user = $dbSocket->escapeSimple($users[0]);
-						$pass = $dbSocket->escapeSimple($users[1]);
-						$planName = $dbSocket->escapeSimple($planName);
-						$userType = $dbSocket->escapeSimple($userType);
+						$user = trim($dbSocket->escapeSimple($users[0]));
+						$pass = trim($dbSocket->escapeSimple($users[1]));
+						$planName = trim($dbSocket->escapeSimple($planName));
+						$userType = trim($dbSocket->escapeSimple($userType));
 						
 						if ($userType == "userType") {
 							$passwordType = "Auth-Type";
