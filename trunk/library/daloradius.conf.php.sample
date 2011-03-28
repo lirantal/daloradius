@@ -18,13 +18,13 @@
  *              daloRADIUS Configuration File
  *
  * Modification Date:
- *              Mon Dec 08 22:16:00 EDT 2008
+ *              Mon Mar 28 22:55:00 EDT 2011
  *********************************************************************************************************
  */
 
 
 $configValues['DALORADIUS_VERSION'] = '0.9-8';
-$configValues['FREERADIUS_VERSION'] = '1';
+$configValues['FREERADIUS_VERSION'] = '2';
 $configValues['CONFIG_DB_ENGINE'] = 'mysql';
 $configValues['CONFIG_DB_HOST'] = '127.0.0.1';
 $configValues['CONFIG_DB_USER'] = 'root';
@@ -34,7 +34,7 @@ $configValues['CONFIG_DB_TBL_RADCHECK'] = 'radcheck';
 $configValues['CONFIG_DB_TBL_RADREPLY'] = 'radreply';
 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = 'radgroupreply';
 $configValues['CONFIG_DB_TBL_RADGROUPCHECK'] = 'radgroupcheck';
-$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'usergroup';
+$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'radusergroup';
 $configValues['CONFIG_DB_TBL_RADNAS'] = 'nas';
 $configValues['CONFIG_DB_TBL_RADHG'] = 'radhuntgroup';
 $configValues['CONFIG_DB_TBL_RADPOSTAUTH'] = 'radpostauth';
@@ -57,6 +57,13 @@ $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
 $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
 $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'] = 'batch_history';
 $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'] = 'billing_plans_profiles';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'] = 'invoice';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'] = 'invoice_items';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'] = 'invoice_status';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] = 'invoice_type';
+$configValues['CONFIG_DB_TBL_DALOPAYMENTS'] = 'payment';
+$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] = 'payment_type';
+$configValues['CONFIG_DB_TBL_DALONODE'] = 'node';
 $configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/proxy.conf';
 $configValues['CONFIG_PATH_RADIUS_DICT'] = '';
 $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
@@ -77,6 +84,15 @@ $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
 $configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
 $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+$configValues['CONFIG_MAIL_SMTPADDR'] = '127.0.0.1';
+$configValues['CONFIG_MAIL_SMTPPORT'] = '25';
+$configValues['CONFIG_MAIL_SMTPAUTH'] = '';
+$configValues['CONFIG_MAIL_SMTPFROM'] = 'root@daloradius.xdsl.by';
+$configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] = 'sillykey';
+$configValues['CONFIG_DASHBOARD_DALO_DEBUG'] = '1';
+$configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] = '5';
+$configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] = '15';
+$configValues['CONFIG_MAIL_SMTP_FROMEMAIL'] = '';
 
 /*
 // Locations Configuration directives
@@ -102,4 +118,3 @@ $configValues['CONFIG_LOCATIONS'] =                     array(
 );
 */
 
-?>
