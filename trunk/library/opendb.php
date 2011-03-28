@@ -82,4 +82,4 @@
 	include_once (dirname(__FILE__).'/errorHandling.php');		// we declare the errorHandler() function in errorHandling.php
 
 	$dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');	// setting errorHandler function for the dbSocket obj
-?>
+
