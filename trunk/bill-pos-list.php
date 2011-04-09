@@ -118,14 +118,16 @@
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".contactperson, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".billstatus, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname, ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".company, ".
-		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname ".
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, IFNULL(disabled.username,0) as disabled ".
 		" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].", ".$configValues['CONFIG_DB_TBL_RADCHECK'].
 		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ".
+		" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." disabled
+			 ON disabled.username=".$configValues['CONFIG_DB_TBL_RADCHECK'].".username AND disabled.groupname = 'daloRADIUS-Disabled-Users' ". 
 		" WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
 		" AND ((Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) )".
 		$_where.
-		" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+		" GROUP BY ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -148,8 +150,12 @@
 			<br/>
 				<input class='button' type='button' value='Delete' 
 					onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
-        	                <input class='button' type='button' value='Disable'
+        	         		<input class='button' type='button' value='Disable'
 					onClick='javascript:disableCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
+					
+							<input class='button' type='button' value='Enable'
+					onClick='javascript:enableCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
+					
 				<br/>
         	                <input class='button' type='button' value='Refill Session Time'
 					onClick='javascript:refillSessionTimeCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
@@ -209,6 +215,7 @@
 		</tr> </thread>";
 
 	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+		
 		echo "
 			<tr>
 			<td> <input type='checkbox' name='username[]' value='".$row['username']."'>".$row['id']."</td>
@@ -218,13 +225,10 @@
 
 		echo "<td>";
 
-		if ( (($row['value'] == "Reject") && ($row['attribute'] == "Auth-Type"))
-			|| ($row['billstatus'] == "Suspended")
-			) {
+		if ( ($row['disabled'] !== '0') || ($row['billstatus'] == "Suspended") )
 			echo "<img title='user is disabled' src='images/icons/userStatusDisabled.gif' alt='[disabled]'>";
-		} else {
+		else
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
-		}
 		
 		printqn("
 			<a class='tablenovisit' href='javascript:return;'
