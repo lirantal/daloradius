@@ -89,7 +89,9 @@
         $_SESSION['reportQuery'] = " WHERE UserName LIKE '%'";
         $_SESSION['reportType'] = "usernameListGeneric";
 
-	
+	$orderBy = $dbSocket->escapeSimple($orderBy);
+	$orderType = $dbSocket->escapeSimple($orderType);
+        
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute FROM 
@@ -106,12 +108,18 @@
 
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute, ".
-		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM  
+		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname
+		, IFNULL(disabled.username,0) as disabled
+		 FROM  
 		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username
  		LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']."
 		 ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username
- 		WHERE (radcheck.username=userinfo.username AND (Attribute LIKE '%-Password') OR (Attribute='Auth-Type')) GROUP by Username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+		LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." disabled
+		 ON disabled.username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username AND disabled.groupname = 'daloRADIUS-Disabled-Users' 
+ 		WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=userinfo.username) AND Attribute IN ('Cleartext-Password', 'Auth-Type','User-Password', 
+ 			'Crypt-Password', 'MD5-Password', 'SMD5-Password', 'SHA-Password', 'SSHA-Password', 'NT-Password', 'LM-Password', 
+ 			'NS-MTA-MD5-Password') GROUP by ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Username ORDER BY '$orderBy' '$orderType' LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -133,6 +141,7 @@
 			<br/>
 				<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
 				<input class='button' type='button' value='Disable' onClick='javascript:disableCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
+				<input class='button' type='button' value='Enable' onClick='javascript:enableCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
 	  	              <input class='button' type='button' value='CSV Export'onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"/>
 
 				<br/><br/>
@@ -190,7 +199,7 @@
 		");
 
 
-		if ( ($row[1] == "Reject") && ($row[4] == "Auth-Type") )
+		if ($row[7] !== '0')
 			echo "<img title='user is disabled' src='images/icons/userStatusDisabled.gif' alt='[disabled]'>";
 		else
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
