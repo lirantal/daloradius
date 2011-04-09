@@ -60,59 +60,26 @@ function userDisable($username, $divContainer) {
 	//echo "alert('{$username}');";
 
 	if (!is_array($username))
-		$username = array($username, NULL);
-
-	$allUsers = "";
-	$allUsersSuccess = array();
-	$allUsersFailure = array();
+		$username = array($username);
 
 	foreach ($username as $variable=>$value) {
 	
-	        $user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
-		$allUsers .= $user . ", ";
+		$user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
 
-		$sql = "SELECT Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-			" WHERE Attribute='Auth-Type' AND Value='Reject' AND Username='$user'";
+		$sql = "INSERT IGNORE INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (Username,Groupname,Priority) ".
+				" VALUES ('$user','daloRADIUS-Disabled-Users',0) ";		
 		$res = $dbSocket->query($sql);
-		if ($numrows = $res->numRows() <= 0) {
-	
-		        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		                " VALUES (0,'$user','Auth-Type',':=','Reject')";
-		        $res = $dbSocket->query($sql);
-	
-			array_push($allUsersSuccess, $user);
-		} else {
-			array_push($allUsersFailure, $user);
-		}
 	
 	}
 
-	if (count($allUsersSuccess) > 0) {
-		$users = "";
-		foreach($allUsersSuccess as $value)
-			$users .= $value . ", ";
+	$users = implode(',', $username);
+	
+	printqn("
+    	var divContainer = document.getElementById('{$divContainer}');
+        divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> are now disabled.</div>';
+	");
 
-		$users = substr($users, 0, -2);
-	        printqn("
-	               var divContainer = document.getElementById('{$divContainer}');
-	               divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> are now disabled.</div>';
-	        ");
-	}
-
-	if (count($allUsersFailure) > 0) {
-		$users = "";
-		foreach($allUsersFailure as $value)
-			$users .= $value . ", ";
-
-		$users = substr($users, 0, -2);
-	        printqn("
-	               var divContainer = document.getElementById('{$divContainer}');
-	               divContainer.innerHTML += '<div class=\"failure\">User(s) <b>$users</b> are already disabled.</div>';
-	        ");
-	}
-
-
-        include '../../library/closedb.php';
+	include '../../library/closedb.php';
 
 }
 
@@ -127,52 +94,24 @@ function userEnable($username, $divContainer) {
 	include '../../library/opendb.php';
 
 	if (!is_array($username))
-		$username = array($username, NULL);
-
-	$allUsers = "";
-	$allUsersSuccess = array();
-	$allUsersFailure = array();
+		$username = array($username);
 
 	foreach ($username as $variable=>$value) {
 	
 		$user = $dbSocket->escapeSimple($value);		// clean username argument from harmful code
-		$allUsers .= $user . ", ";
-
 		if ($user) {
-	        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-	                " WHERE username='$user' AND attribute='Auth-Type' AND value='Reject'";
+	        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
+	                " WHERE username='$user' AND groupname='daloRADIUS-Disabled-Users'";
 	        $res = $dbSocket->query($sql);
-	
-			array_push($allUsersSuccess, $user);
-		} else {
-			array_push($allUsersFailure, $user);
 		}
+	}
+
+	$users = implode(',', $username);
 	
-	}
-
-	if (count($allUsersSuccess) > 0) {
-		$users = "";
-		foreach($allUsersSuccess as $value)
-			$users .= $value . ", ";
-
-		$users = substr($users, 0, -2);
-	        printqn("
-	               var divContainer = document.getElementById('{$divContainer}');
-	               divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> are now disabled.</div>';
-	        ");
-	}
-
-	if (count($allUsersFailure) > 0) {
-		$users = "";
-		foreach($allUsersFailure as $value)
-			$users .= $value . ", ";
-
-		$users = substr($users, 0, -2);
-	        printqn("
-	               var divContainer = document.getElementById('{$divContainer}');
-	               divContainer.innerHTML += '<div class=\"failure\">User(s) <b>$users</b> are already disabled.</div>';
-	        ");
-	}
+	printqn("
+    	var divContainer = document.getElementById('{$divContainer}');
+        divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> are now enabled.</div>';
+	");
 
 
         include '../../library/closedb.php';
@@ -187,14 +126,14 @@ function checkDisabled($username) {
 
 	$username = $dbSocket->escapeSimple($username);
 
-        $sql = "SELECT Attribute,Value FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE Attribute='Auth-Type' AND Value='Reject' AND Username='$username'";
+        $sql = "SELECT Username FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
+			" WHERE Username='$username' AND Groupname='daloRADIUS-Disabled-Users'";
 	$res = $dbSocket->query($sql);
 	if ($numrows = $res->numRows() >= 1) {
 	
 	        echo "<div class='failure'>
 	              	Please note, the user <b>$username</b> is currently disabled.<br/>
-			To enable the user, remove the Auth-Type entry set to Reject.<br/>
+					To enable the user, remove the user from the daloRADIUS-Disabled-Users profile <br/>
 	              </div>";
 
 	}

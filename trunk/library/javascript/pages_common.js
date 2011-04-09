@@ -378,6 +378,54 @@ function disableCheckbox(formName,pageDst) {
 
 
 
+
+
+/***********************************************************************
+ * enableCheckbox
+ * submits a form using ajax to enable a user
+ * 
+ * formName	- the form name
+ * pageDst	- the page destination to be submitted 
+ *
+ ***********************************************************************/
+function enableCheckbox(formName,pageDst) {
+
+        var count = 0;
+        var form = document.getElementsByTagName('input');
+	var values = "";
+
+        for (var i=0; i < form.length; ++i) {
+                var e = form[i];
+                if (e.type == 'checkbox' && e.checked) {
+			values += "username[]=" + e.value + "&";
+	                ++count;
+		}
+        }
+
+	var strUsernames = values.substr(0,values.length-1);
+
+
+	// if no items were checked there's no reason to submit the form
+	if (count == 0) {
+		alert("No items selected");
+		return;
+	}
+
+
+        if (confirm("You are about to enable " + count + " users\nDo you want to continue?"))  {
+
+		ajaxGeneric("include/management/userOperations.php","userEnable","returnMessages",strUsernames);
+
+		return true;
+
+        }
+
+        return false;
+}
+
+
+
+
 /***********************************************************************
  * backupRollback
  * performs rollback
