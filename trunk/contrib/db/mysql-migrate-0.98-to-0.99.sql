@@ -664,3 +664,7 @@ INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
 INSERT INTO `operators_acl` VALUES
 (0,6,'config_reports_dashboard',1);
 
+
+
+-- Adding new custom daloRADIUS groups
+INSERT IGNORE INTO `radgroupcheck` (Groupname,Attribute,Op,Value) VALUES ('daloRADIUS-Disabled-Users','Auth-Type', ':=', 'Reject');
