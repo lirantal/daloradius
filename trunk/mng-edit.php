@@ -676,6 +676,30 @@
 <script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
 <script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
 
+<script type="text/javascript">
+
+
+function disableUser() {
+	strUsername = "username=<?php echo $username?>";
+	if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
+		ajaxGeneric("include/management/userOperations.php","userDisable","returnMessages",strUsername);
+		window.location.reload();
+		return true;
+	}
+}
+
+function enableUser() {
+	strUsername = "username=<?php echo $username?>";
+	if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
+		ajaxGeneric("include/management/userOperations.php","userEnable","returnMessages",strUsername);
+		window.location.reload();
+		return true;
+	}
+}
+
+
+</script>
+
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
@@ -767,6 +791,14 @@
 	include 'include/management/buttons.php';
 ?>
 			
+		<br/>
+		
+			<input class='button' type='button' value='Enable User'
+				onClick='javascript:enableUser()' />
+				
+			<input class='button' type='button' value='Disable User'
+				onClick='javascript:disableUser()' />
+				
 		<br/><br/>
 		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
 		

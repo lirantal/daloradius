@@ -535,6 +535,7 @@ function disableUser() {
 	strUsername = "username=<?php echo $username?>";
 	if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
 		ajaxGeneric("include/management/userOperations.php","userDisable","returnMessages",strUsername);
+		window.location.reload();
 		return true;
 	}
 }
@@ -543,6 +544,7 @@ function enableUser() {
 	strUsername = "username=<?php echo $username?>";
 	if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
 		ajaxGeneric("include/management/userOperations.php","userEnable","returnMessages",strUsername);
+		window.location.reload();
 		return true;
 	}
 }
@@ -551,6 +553,7 @@ function refillSessionTime() {
 	strUsername = "username=<?php echo $username?>";
 	if (confirm("You are about to refill session time for this user account\nDo you want to continue?\n\nSuch action will also bill the user if set so in the plant the user is associated with!"))  {
 		ajaxGeneric("include/management/userOperations.php","refillSessionTime","returnMessages",strUsername);
+		window.location.reload();
 		return true;	
     }
 }
@@ -560,6 +563,7 @@ function refillSessionTraffic() {
 	strUsername = "username=<?php echo $username?>";
 	if (confirm("You are about to refill session traffic for this user account\nDo you want to continue?\n\nSuch action will also bill the user if set so in the plant the user is associated with!"))  {
 		ajaxGeneric("include/management/userOperations.php","refillSessionTraffic","returnMessages",strUsername);
+		window.location.reload();
 		return true;	
     }
 }
