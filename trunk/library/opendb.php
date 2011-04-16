@@ -87,8 +87,8 @@
 
 	if (DB::isError ($dbSocket))
 		die ("<b>Database connection error</b><br/>
-			<b>Error Message</b>: " . $dbSocket->getMessage () . "<br/>" . 
-			"<b>Debug</b>: " . $dbSocket->getDebugInfo() . "<br/>");
+			<b>Error Message</b>: " . $dbSocket->getMessage () . "<br/>" 
+			);
 
 	
 	include_once (dirname(__FILE__).'/errorHandling.php');		// we declare the errorHandler() function in errorHandling.php
