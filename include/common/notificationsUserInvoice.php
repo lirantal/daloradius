@@ -108,9 +108,8 @@
 		"<b>".$l['all']['TotalPayed']."</b>: ".$invoiceDetails['totalpayed']."<br/>".
 		"<b>".$l['all']['Balance']."</b>: ".$balance."<br/>".
 		"<b>".$l['all']['Status']."</b>: ".$invoiceDetails['status']."<br/>".
-		"<b>".$l['ContactInfo']['Notes']."</b>: ".$invoiceDetails['notes']."<br/><br/><br/>".
+		"<b>".$l['ContactInfo']['Notes']."</b>: ".$invoiceDetails['notes']."<br/><br/><br/>";
 		
-		error_log($invoice_details);
 		$customerInfo['invoice_details'] = $invoice_details;
 		
 
