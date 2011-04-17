@@ -39,6 +39,9 @@
 	
 		if (isset($_REQUEST['config_dbhost']))
 			$configValues['CONFIG_DB_HOST'] = $_REQUEST['config_dbhost'];
+			
+		if (isset($_REQUEST['config_dbport']))
+			$configValues['CONFIG_DB_PORT'] = $_REQUEST['config_dbport'];
 
 		if (isset($_REQUEST['config_dbuser']))
 			$configValues['CONFIG_DB_USER'] = $_REQUEST['config_dbuser'];
@@ -198,6 +201,11 @@
 		<li class='fieldset'>
 		<label for='config_dbhost' class='form'><?php echo $l['all']['DatabaseHostname'] ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost" />
+		</li>
+		
+		<li class='fieldset'>
+		<label for='config_dbport' class='form'><?php echo $l['all']['DatabasePort'] ?></label>
+		<input type='text' value="<?php echo $configValues['CONFIG_DB_PORT'] ?>" name="config_dbport" />
 		</li>
 
 		<li class='fieldset'>
