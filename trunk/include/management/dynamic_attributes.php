@@ -169,7 +169,7 @@ if(isset($_GET['getValuesForAttribute'])) {
 	/* RecommendedTooltip
 	/* setting the tooltip 
 	/*******************************************************************************************************/
-	echo "objTooltip.innerHTML = \"<b>Description:</b> $RecommendedTooltip\";";
+	echo "objTooltip.innerHTML = \"<b>Description:</b> ".str_replace("\"", "\\\"", $RecommendedTooltip)."\";";
 	/*******************************************************************************************************/
 
 
