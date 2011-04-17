@@ -36,10 +36,10 @@
 
         $chart = new VerticalChart(680,500);
 
-        $sql = "SELECT count(*), CONCAT(MONTH(Creationdate),'-',YEAR(Creationdate)) AS Month from ".
+        $sql = "SELECT COUNT(*), CONCAT(YEAR(Creationdate),'-',MONTH(Creationdate), '-01') AS Month from ".
                         $configValues['CONFIG_DB_TBL_DALOUSERINFO'].
                         " WHERE CreationDate >='$startdate' AND CreationDate <='$enddate' ".
-                        " group by Month;";
+                        " GROUP BY Month ORDER BY Date(Month);";
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
