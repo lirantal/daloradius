@@ -437,6 +437,9 @@ accounting {
 	#  Cisco VoIP specific bulk accounting
 #	pgsql-voip
 
+	# For Exec-Program and Exec-Program-Wait
+	exec
+	
 	#  Filter attributes from the accounting response.
 	attr_filter.accounting_response
 
@@ -538,6 +541,7 @@ post-auth {
 	#  'edir_account_policy_check = yes' in the ldap module configuration
 	#
 	Post-Auth-Type REJECT {
+		sql
 		attr_filter.access_reject
 	}
 }
