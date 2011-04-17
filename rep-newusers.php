@@ -103,11 +103,11 @@
            compatibility with version 0.7        */
 
            
-        $sql = "SELECT CONCAT(MONTH(CreationDate),'-',YEAR(Creationdate)) AS Month, ".
+        $sql = "SELECT CONCAT(YEAR(CreationDate),'-',MONTH(Creationdate), '-01') AS Month, ".
                         "COUNT(*) As Users FROM ".
                         $configValues['CONFIG_DB_TBL_DALOUSERINFO'].
                         " WHERE CreationDate >='$startdate' AND CreationDate <='$enddate' ".
-                        " GROUP BY Month(Creationdate) ";
+                        " GROUP BY Month ORDER BY Date(Month);";
         $res = $dbSocket->query($sql);
         $logDebugSQL = "";
         $logDebugSQL .= $sql . "\n";
