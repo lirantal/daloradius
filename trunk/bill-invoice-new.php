@@ -51,6 +51,9 @@
 			$currDate = date('Y-m-d H:i:s');
 			$currBy = $_SESSION['operator_user'];
 
+			if (!$invoice_status_id)
+				$invoice_status_id = 1;
+			
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
 			" (id, user_id, date, status_id, type_id, notes, creationdate, creationby, updatedate, updateby) ".
 			" VALUES (0, '".$dbSocket->escapeSimple($user_id)."', '".
@@ -287,7 +290,7 @@ function removeTableRow(rowCounter) {
 		<label for='invoice_status_id' class='form'><?php echo $l['all']['InvoiceStatus']?></label>
 		<?php
 		        include_once('include/management/populate_selectbox.php');
-		        populate_invoice_status_id("Select Status", "invoice_status_id");
+		        populate_invoice_status_id("Select Status", "invoice_status_id", 'form', '', 1);
 		?>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('invoice_status_id')" />
 		<div id='invoiceStatusTooltip'  style='display:none;visibility:visible' class='ToolTip'>
