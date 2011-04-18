@@ -176,7 +176,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
                 <label for='group' class='form'><?php echo $l['all']['NewGroupname'] ?></label>
                 <?php   
 					include 'include/management/populate_selectbox.php';
-					populate_groups("Select Groups","group","long");
+					populate_groups("Select Groups","group","form");
                 ?>
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 					<img src='images/icons/comment.png' alt='Tip' border='0' />
