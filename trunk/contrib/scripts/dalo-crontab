@@ -1,0 +1,23 @@
+#/*
+# *********************************************************************************************************
+# * daloRADIUS - RADIUS Web Platform
+# * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+# *
+# *
+# * daloRADIUS Crontab script entries
+# *
+# */
+
+# -- configuration start
+
+# change to set daloRADIUS's contrib/scripts/ directory
+# by default this crontab script is in the same directory of the scripts which is
+# why this is left as `pwd`. if you move it elsewhere, change accordingly.
+
+DALO_DIR="/var/www/daloradius/contrib/scripts"
+
+# -- configuration end
+
+
+# Clean Stale Sessions, run every minute
+* * * * * /usr/bin/php $DALO_DIR/maintenance/cleanStaleSessions.php 2>&1 >/dev/null
