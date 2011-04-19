@@ -414,7 +414,7 @@
 
 		<label for='expiration' class='form'><?php echo $l['all']['Expiration']?></label>		
 		<input value='' id='expiration' name='expiration'  tabindex=108 />
-		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, 2010, 'd M Y', false);">
+		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, <?= date('Y', time());?>, 'd M Y', false);">
 		<br/>
 
 		<label for='sessiontimeout' class='form'><?php echo $l['all']['SessionTimeout']?></label>
