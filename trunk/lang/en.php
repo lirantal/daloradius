@@ -260,6 +260,7 @@ $l['all']['Count'] = "Count";
 $l['all']['Requests'] = "Requests";
 
 $l['all']['DatabaseHostname'] = "Database Hostname";
+$l['all']['DatabasePort'] = "Database Port Number";
 $l['all']['DatabaseUser'] = "Database User";
 $l['all']['DatabasePass'] = "Database Pass";
 $l['all']['DatabaseName'] = "Database Name";
@@ -575,6 +576,7 @@ $l['Tooltip']['hgGroupName'] = "Type the Groupname for the NAS";
 $l['Tooltip']['hgNasPortId'] = "Type the Nas Port Id";
 $l['Tooltip']['EditUserGroup'] = "Edit User Group";
 $l['Tooltip']['ListUserGroups'] = "List User Groups";
+$l['Tooltip']['DeleteUserGroup'] = "Delete User Group Association";
 
 $l['Tooltip']['EditProfile'] = "Edit Profile";
 
