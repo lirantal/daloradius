@@ -668,3 +668,22 @@ INSERT INTO `operators_acl` VALUES
 
 -- Adding new custom daloRADIUS groups
 INSERT IGNORE INTO `radgroupcheck` (Groupname,Attribute,Op,Value) VALUES ('daloRADIUS-Disabled-Users','Auth-Type', ':=', 'Reject');
+
+
+-- Adding ACL for Reports->Status->UPS page
+INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
+('rep_stat_ups', 'Reporting', 'Status');
+INSERT INTO `operators_acl` VALUES
+(0,6,'rep_stat_ups',1);
+
+-- Adding ACL for Reports->Status->RAID page
+INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
+('rep_stat_raid', 'Reporting', 'Status');
+INSERT INTO `operators_acl` VALUES
+(0,6,'rep_stat_raid',1);
+
+-- Adding ACL for Reports->Status->CRON page
+INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
+('rep_stat_cron', 'Reporting', 'Status');
+INSERT INTO `operators_acl` VALUES
+(0,6,'rep_stat_cron',1);
