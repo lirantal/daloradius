@@ -1,0 +1,25 @@
+# daloRADIUS - RADIUS Web Platform
+# Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+
+#
+# Grant access via Username and Password authentication
+# * create the user/pass accounts with the htpasswd tool and write them to the
+#   file specified in AuthUserFile directive
+
+#AuthName "Authentication Base"
+#AuthType Basic
+#AuthUserFile .htpasswd
+#Require valid-user
+
+
+
+#
+# Grant access to the heartbeat script only via access restrictions
+# based on IP address/ranges.
+
+#<Files "heartbeat.php">
+#        order allow,deny
+#        allow from 84.109.
+#        Satisfy Any
+#</Files>
+
