@@ -130,7 +130,7 @@ CREATE TABLE radpostauth (
   username varchar(64) NOT NULL default '',
   pass varchar(64) NOT NULL default '',
   reply varchar(32) NOT NULL default '',
-  authdate timestamp(14) NOT NULL,
+  authdate timestamp NOT NULL,
   PRIMARY KEY  (id)
 ) ;
 
@@ -148,6 +148,9 @@ CREATE TABLE radippool (
   username              varchar(64) NOT NULL default '',
   pool_key              varchar(30) NOT NULL,
   PRIMARY KEY (id)
+  KEY radippool_poolname_expire (pool_name, expiry_time),
+  KEY framedipaddress (framedipaddress),
+  KEY radippool_nasip_poolkey_ipaddress (nasipaddress, pool_key, framedipaddress)
 ) ENGINE=InnoDB;
 
 #
