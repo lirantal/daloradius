@@ -317,6 +317,7 @@ $l['all']['dictionary'] = "dictionary";
 $l['all']['realms'] = "realms";
 $l['all']['proxys'] = "proxys";
 $l['all']['billingpaypal'] = "billing paypal";
+$l['all']['billingmerchant'] = "billing merchant";
 $l['all']['billingplans'] = "billing plans";
 $l['all']['billinghistory'] = "billing history";
 $l['all']['billinginfo'] = "billing user info";

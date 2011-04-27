@@ -107,6 +107,9 @@
 		if (isset($_REQUEST['config_dbtbl_proxys']))
 			$configValues['CONFIG_DB_TBL_DALOPROXYS'] = $_REQUEST['config_dbtbl_proxys'];
 
+		if (isset($_REQUEST['config_dbtbl_billingmerchant']))
+			$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] = $_REQUEST['config_dbtbl_billingmerchant'];
+			
 		if (isset($_REQUEST['config_dbtbl_billingpaypal']))
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = $_REQUEST['config_dbtbl_billingpaypal'];
 
@@ -315,6 +318,11 @@
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOPROXYS'] ?>" name="config_dbtbl_proxys" />
 		</li>
 
+				<li class='fieldset'>
+                <label for='config_dbtbl_billingmerchant' class='form'><?php echo $l['all']['billingmerchant']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] ?>" name="config_dbtbl_billingmerchant" />
+		</li>
+		
                 <li class='fieldset'>
                 <label for='config_dbtbl_billingpaypal' class='form'><?php echo $l['all']['billingpaypal']?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] ?>" name="config_dbtbl_billingpaypal" />
