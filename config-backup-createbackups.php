@@ -28,9 +28,10 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
+	
 	isset($_POST['radacct']) ? $radacctTable = $_POST['radacct'] : $radacctTable = 'yes';
 	isset($_POST['radcheck']) ? $radcheckTable = $_POST['radcheck'] : $radcheckTable = 'yes';
- 	isset($_POST['radpostauth']) ? $radpostauth = $_POST['radpostauth'] : $radpostauth = 'yes';
+	isset($_POST['radreply']) ? $radreplyTable = $_POST['radreply'] : $radreplyTable = 'yes';
 	isset($_POST['radgroupcheck']) ? $radgroupcheckTable = $_POST['radgroupcheck'] : $radgroupcheckTable = 'yes';
 	isset($_POST['radgroupreply']) ? $radgroupreplyTable = $_POST['radgroupreply'] : $radgroupreplyTable = 'yes';
 	isset($_POST['radusergroup']) ? $radusergroupTable = $_POST['radusergroup'] : $radusergroupTable = 'yes';
@@ -38,7 +39,8 @@
 	isset($_POST['ippool']) ? $ippoolTable = $_POST['ippool'] : $ippoolTable = 'yes';
 	isset($_POST['nas']) ? $nasTable = $_POST['nas'] : $nasTable = 'yes';
 	isset($_POST['dictionary']) ? $dictionaryTable = $_POST['dictionary'] : $dictionaryTable = 'yes';
-
+	isset($_POST['radhuntgroup']) ? $radhuntgroupTable = $_POST['radhuntgroup'] : $radhuntgroupTable = 'yes';	
+	
 	isset($_POST['hotspots']) ? $dalohotspotsTable = $_POST['hotspots'] : $dalohotspotsTable = 'yes';
 	isset($_POST['operators']) ? $dalooperatorsTable = $_POST['operators'] : $dalooperatorsTable = 'yes';
 	isset($_POST['proxys']) ? $daloproxysTable = $_POST['proxys'] : $daloproxysTable = 'yes';
@@ -52,7 +54,18 @@
 	isset($_POST['billing_merchant']) ? $dalobillingmerchantTable = $_POST['billing_merchant'] : $dalobillingmerchantTable = 'yes';
 	isset($_POST['billing_rates']) ? $dalobillingratesTable = $_POST['billing_rates'] : $dalobillingratesTable = 'yes';
 	isset($_POST['userbillinfo']) ? $dalouserbillinfoTable = $_POST['userbillinfo'] : $dalouserbillinfoTable = 'yes';
-
+	
+	isset($_POST['operators_acl']) ? $dalooperatorsaclTable = $_POST['operators_acl'] : $dalooperatorsaclTable = 'yes';
+	isset($_POST['operators_acl_files']) ? $dalooperatorsaclfilesTable = $_POST['operators_acl_files'] : $dalooperatorsaclfilesTable = 'yes';
+	isset($_POST['batch_history']) ? $dalobatchhistoryTable = $_POST['batch_history'] : $dalobatchhistoryTable = 'yes';
+	isset($_POST['billing_plans_profiles']) ? $dalobillingplansprofilesTable = $_POST['billing_plans_profiles'] : $dalobillingplansprofilesTable = 'yes';
+	isset($_POST['invoice']) ? $daloinvoiceTable = $_POST['invoice'] : $daloinvoiceTable = 'yes';
+	isset($_POST['invoice_items']) ? $daloinvoiceitemsTable = $_POST['invoice_items'] : $daloinvoiceitemsTable = 'yes';
+	isset($_POST['invoice_status']) ? $daloinvoicestatusTable = $_POST['invoice_status'] : $daloinvoicestatusTable = 'yes';
+	isset($_POST['invoice_type']) ? $daloinvoicetypeTable = $_POST['invoice_type'] : $daloinvoicetypeTable = 'yes';
+	isset($_POST['payment']) ? $dalopaymentTable = $_POST['payment'] : $dalopaymentTable = 'yes';
+	isset($_POST['payment_type']) ? $dalopaymenttypeTable = $_POST['payment_type'] : $dalopaymenttypeTable = 'yes';
+	isset($_POST['node']) ? $dalonodeTable = $_POST['node'] : $dalonodeTable = 'yes';
 
 	if (isset($_POST['submit'])) {
 
@@ -99,6 +112,10 @@
 				case "ippool":
 					if ($value == "yes")
 						$table = $configValues['CONFIG_DB_TBL_RADIPPOOL'];
+					break;
+				case "radhuntgroup":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_RADHG'];
 					break;
 				case "nas":
 					if ($value == "yes")
@@ -153,7 +170,50 @@
 					if ($value == "yes")
 						$table = $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'];
 					break;
-
+				case "operators_acl":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'];
+					break;
+				case "operators_acl_files":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'];
+					break;
+				case "batch_history":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'];
+					break;
+				case "billing_plans_profiles":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'];
+					break;
+				case "invoice":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'];
+					break;
+				case "invoice_items":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'];
+					break;
+				case "invoice_status":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'];
+					break;
+				case "invoice_type":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'];
+					break;
+				case "payment":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOPAYMENTS'];
+					break;
+				case "payment_type":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'];
+					break;
+				case "node":
+					if ($value == "yes")
+						$table = $configValues['CONFIG_DB_TBL_DALONODE'];
+					break;
 
 
 			}
@@ -317,8 +377,8 @@
 
                 <li class='fieldset'>
                 <label for='backup_radreply' class='form'>radreply</label> 
-		<select class='form' name="radpostauth">
-			<option value="<?php echo $radpostauth ?>"><?php echo $radpostauth ?></option>
+		<select class='form' name="radreply">
+			<option value="<?php echo $radreplyTable ?>"><?php echo $radreplyTable ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -499,7 +559,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='backup_dictionary' class='form'>billing merchant</label> 
+                <label for='backup_billing_merchant' class='form'>billing merchant</label> 
 		<select class='form' name="billing_merchant">
 			<option value="<?php echo $dalobillingmerchantTable ?>"><?php echo $dalobillingmerchantTable ?></option>
 			<option value="">  </option>
@@ -509,7 +569,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='backup_dictionary' class='form'>billing plans</label> 
+                <label for='backup_billing_plans' class='form'>billing plans</label> 
 		<select class='form' name="billing_plans">
 			<option value="<?php echo $dalobillingplansTable ?>"><?php echo $dalobillingplansTable ?></option>
 			<option value="">  </option>
@@ -519,7 +579,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='backup_dictionary' class='form'>billing history</label> 
+                <label for='backup_billing_history' class='form'>billing history</label> 
 		<select class='form' name="billing_history">
 			<option value="<?php echo $dalobillinghistoryTable ?>"><?php echo $dalobillinghistoryTable ?></option>
 			<option value="">  </option>
@@ -527,6 +587,146 @@
 			<option value="yes">yes</option>
 		</select>
 		</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <li class='fieldset'>
+                <label for='backup_operators_acl' class='form'>operators_acl</label> 
+		<select class='form' name="operators_acl">
+			<option value="<?php echo $dalooperatorsaclTable ?>"><?php echo $dalooperatorsaclTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+                <li class='fieldset'>
+                <label for='backup_operators_acl_files' class='form'>operators_acl_files</label> 
+		<select class='form' name="operators_acl_files">
+			<option value="<?php echo $dalooperatorsaclfilesTable ?>"><?php echo $dalooperatorsaclfilesTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_batch_history' class='form'>batch_history</label> 
+		<select class='form' name="batch_history">
+			<option value="<?php echo $dalobatchhistoryTable ?>"><?php echo $dalobatchhistoryTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_billing_plans_profiles' class='form'>billing_plans_profiles</label> 
+		<select class='form' name="billing_plans_profiles">
+			<option value="<?php echo $dalobillingplansprofilesTable ?>"><?php echo $dalobillingplansprofilesTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_invoice' class='form'>invoice</label> 
+		<select class='form' name="invoice">
+			<option value="<?php echo $daloinvoiceTable ?>"><?php echo $daloinvoiceTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_invoice_items' class='form'>invoice_items</label> 
+		<select class='form' name="invoice_items">
+			<option value="<?php echo $daloinvoiceitemsTable ?>"><?php echo $daloinvoiceitemsTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_invoice_status' class='form'>invoice_status</label> 
+		<select class='form' name="invoice_status">
+			<option value="<?php echo $daloinvoicestatusTable ?>"><?php echo $daloinvoicestatusTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_invoice_type' class='form'>invoice_type</label> 
+		<select class='form' name="invoice_type">
+			<option value="<?php echo $daloinvoicetypeTable ?>"><?php echo $daloinvoicetypeTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+               <li class='fieldset'>
+                <label for='backup_payment' class='form'>payment</label> 
+		<select class='form' name="payment">
+			<option value="<?php echo $dalopaymentTable ?>"><?php echo $dalopaymentTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_payment_type' class='form'>payment_type</label> 
+		<select class='form' name="payment_type">
+			<option value="<?php echo $dalopaymenttypeTable ?>"><?php echo $dalopaymenttypeTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+               <li class='fieldset'>
+                <label for='backup_node' class='form'>node</label> 
+		<select class='form' name="node">
+			<option value="<?php echo $dalonodeTable ?>"><?php echo $dalonodeTable ?></option>
+			<option value="">  </option>
+			<option value="no">no</option>
+			<option value="yes">yes</option>
+		</select>
+		</li>
+
+
+
+
 
 
 

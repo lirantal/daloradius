@@ -308,6 +308,7 @@ $l['all']['operators_acl'] = "operators_acl";
 $l['all']['operators_acl_files'] = "operators_acl_files";
 $l['all']['billingrates'] = "billing rates";
 $l['all']['hotspots'] = "hotspots";
+$l['all']['node'] = "node";
 $l['all']['nas'] = "nas";
 $l['all']['hunt'] = "radhuntgroup";
 $l['all']['radpostauth'] = "radpostauth";
