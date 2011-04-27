@@ -40,6 +40,8 @@
                 value="<?php if (isset($edit_invoiceUsername)) echo $edit_invoiceUsername; ?>" tabindex=3>
                 
 			<?php
+				if (!isset($edit_invoice_status_id))
+					$edit_invoice_status_id = '';
 				populate_invoice_status_id("Select Invoice Status","invoice_status_id","form", '', $edit_invoice_status_id);
 			?>
                 
