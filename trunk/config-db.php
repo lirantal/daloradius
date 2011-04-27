@@ -52,6 +52,8 @@
 		if (isset($_REQUEST['config_dbname']))
 			$configValues['CONFIG_DB_NAME'] = $_REQUEST['config_dbname'];
 
+		if (isset($_REQUEST['config_dbtbl_node']))
+			$configValues['CONFIG_DB_TBL_DALONODE'] = $_REQUEST['config_dbtbl_node'];
 
 		if (isset($_REQUEST['config_dbtbl_radcheck']))
 			$configValues['CONFIG_DB_TBL_RADCHECK'] = $_REQUEST['config_dbtbl_radcheck'];
@@ -398,6 +400,11 @@
                 <li class='fieldset'>
                 <label for='config_dbtbl_hotspots' class='form'><?php echo $l['all']['hotspots']?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] ?>" name="config_dbtbl_hotspots" />
+		</li>
+		
+                <li class='fieldset'>
+                <label for='config_dbtbl_node' class='form'><?php echo $l['all']['node']?></label>
+		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALONODE'] ?>" name="config_dbtbl_node" />
 		</li>
 
                 <li class='fieldset'>
