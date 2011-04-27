@@ -109,7 +109,7 @@
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Dashboard']; ?>">
+     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
 
         <fieldset>
 
