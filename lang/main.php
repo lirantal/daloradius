@@ -41,9 +41,12 @@
 		case "es_VE":
 			include (dirname(__FILE__)."/es_VE.php");
 			break;
+		/*
+		 * file is currently broken and needs a fix...
 		case "ro":
 			include (dirname(__FILE__)."/ro.php");
 			break;
+		*/
 		case "pt_br":
 			include (dirname(__FILE__)."/pt_br.php");
 			break;
