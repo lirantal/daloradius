@@ -25,9 +25,10 @@
 
 $configValues['CONFIG_DB_ENGINE'] = 'mysql';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
+$configValues['CONFIG_DB_PORT'] = '3306';
 $configValues['CONFIG_DB_USER'] = 'dbuser';
 $configValues['CONFIG_DB_PASS'] = 'dbpass';
-$configValues['CONFIG_DB_NAME'] = 'enginx_db';
+$configValues['CONFIG_DB_NAME'] = 'radius';
 $configValues['CONFIG_DB_TBL_RADCHECK'] = 'radcheck';
 $configValues['CONFIG_DB_TBL_RADREPLY'] = 'radreply';
 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = 'radgroupreply';
@@ -60,7 +61,7 @@ $configValues['CONFIG_MERCHANT_IPN_URL_ROOT'] = 'https://portal.daloradius.com/s
 $configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'] = 'paypal-ipn.php';
 $configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'] = 'success.php';
 $configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'] = 'cancelled.php';
-$configValues['CONFIG_MERCHANT_BUSINESS_ID'] = 'liran@enginx.com';
+$configValues['CONFIG_MERCHANT_BUSINESS_ID'] = 'liran.tal@gmail.com';
 $configValues['CONFIG_LOG_MERCHANT_IPN_FILENAME'] = '/tmp/paypal-transactions.csv';
 $configValues['CONFIG_MERCHANT_SUCCESS_MSG_PRE'] = "Dear customer, we thank you for completing your PayPal payment.<br/><br/>".
                         "It takes a couple of seconds until PayPal performs payment validation with our systems ".
@@ -70,7 +71,6 @@ $configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST'] = "Please write this down care
                                         " Enter this as your username on the login page and leave the password blank";
 $configValues['CONFIG_MERCHANT_SUCCESS_MSG_HEADER'] = "Thanks for paying!<br/>";
 $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
-//$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = "123456789";
 $configValues['CONFIG_USERNAME_LENGTH'] = "8";		/* the length of the random username to generate */
 $configValues['CONFIG_PASSWORD_LENGTH'] = "8";		/* the length of the random password to generate */
 
