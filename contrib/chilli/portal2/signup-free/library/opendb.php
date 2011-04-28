@@ -28,7 +28,7 @@
 
 	include_once ('DB.php');
 
-	$dbConnectString = $configValues['CONFIG_DB_ENGINE'] . "://".$configValues['CONFIG_DB_USER'].":".$configValues['CONFIG_DB_PASS']."@".$configValues['CONFIG_DB_HOST']."/".$configValues['CONFIG_DB_NAME'];
+	$dbConnectString = $configValues['CONFIG_DB_ENGINE'] . "://".$configValues['CONFIG_DB_USER'].":".$configValues['CONFIG_DB_PASS']."@".$configValues['CONFIG_DB_HOST'].":".$configValues['CONFIG_DB_PORT']."/".$configValues['CONFIG_DB_NAME'];
 	$dbSocket = DB::connect($dbConnectString);
 
 	if (DB::isError ($dbSocket))
