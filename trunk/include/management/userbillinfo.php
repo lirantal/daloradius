@@ -48,6 +48,10 @@ echo "
 	<label for='state' class='form'>".$l['ContactInfo']['State']."</label>
 	<input value='"; if (isset($bi_state)) echo $bi_state; echo "' name='bi_state' id='bi_state' tabindex=406 />
         <br/>
+        
+	<label for='country' class='form'>".$l['ContactInfo']['Country']."</label>
+	<input value='"; if (isset($bi_country)) echo $bi_country; echo "' name='bi_country' id='bi_country' tabindex=406 />
+        <br/>
 
 	<label for='zip' class='form'>".$l['ContactInfo']['Zip']."</label>
 	<input value='"; if (isset($bi_zip)) echo $bi_zip; echo "' name='bi_zip' id='bi_zip' tabindex=407 />

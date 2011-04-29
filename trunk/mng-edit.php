@@ -54,6 +54,7 @@
 		$address = $_REQUEST['address'];
 		$city = $_REQUEST['city'];
 		$state = $_REQUEST['state'];
+		$country = $_REQUEST['country'];
 		$zip = $_REQUEST['zip'];
 		$notes = $_REQUEST['notes'];
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
@@ -71,6 +72,7 @@
 		isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
 		isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
 		isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+		isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
 		isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
 		isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
 		isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
@@ -156,7 +158,7 @@
 				// we add these records to the userinfo table
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" (id, username, firstname, lastname, email, department, company, workphone, homephone, mobilephone,".
-					" address, city, state, zip, ".
+					" address, city, state, country, zip, ".
 					" notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
 					" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
 					$dbSocket->escapeSimple($firstname)."', '".$dbSocket->escapeSimple($lastname)."', '".
@@ -164,7 +166,8 @@
 					$dbSocket->escapeSimple($company)."', '".$dbSocket->escapeSimple($workphone)."','".
 					$dbSocket->escapeSimple($homephone)."', '".$dbSocket->escapeSimple($mobilephone)."', '".
 					$dbSocket->escapeSimple($address)."', '".$dbSocket->escapeSimple($city)."', '".
-					$dbSocket->escapeSimple($state)."', '".$dbSocket->escapeSimple($zip)."', '".
+					$dbSocket->escapeSimple($state)."', '".$dbSocket->escapeSimple($country)."', '".
+					$dbSocket->escapeSimple($zip)."', '".
 					$dbSocket->escapeSimple($notes)."', '".$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
 					$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin)."', ".
 					"'$currDate', '$currBy', NULL, NULL)";
@@ -184,6 +187,7 @@
 					"', address='".$dbSocket->escapeSimple($address).
 					"', city='".$dbSocket->escapeSimple($city).
 					"', state='".$dbSocket->escapeSimple($state).
+					"', country='".$dbSocket->escapeSimple($country).
 					"', zip='".$dbSocket->escapeSimple($zip).
 					"', notes='".$dbSocket->escapeSimple($notes).
 					"', changeuserinfo='".$dbSocket->escapeSimple($ui_changeuserinfo).
@@ -208,7 +212,7 @@
 			if ($res->numRows() == 0) {
 	                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 	                                " (id, planname,username, contactperson, company, email, phone, ".
-	                                " address, city, state, zip, ".
+	                                " address, city, state, country, zip, ".
 	                                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 	                                " notes, changeuserbillinfo, ".
                                         " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
@@ -218,6 +222,7 @@
 	                                $dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
 	                                $dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
 	                                $dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
+	                                $dbSocket->escapeSimple($bi_country)."', '".
 	                                $dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
 	                                $dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
 	                                $dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
@@ -251,6 +256,7 @@
 					"', address='".$dbSocket->escapeSimple($bi_address).
 					"', city='".$dbSocket->escapeSimple($bi_city).
 					"', state='".$dbSocket->escapeSimple($bi_state).
+					"', country='".$dbSocket->escapeSimple($bi_country).
 					"', zip='".$dbSocket->escapeSimple($bi_zip).
 					"', notes='".$dbSocket->escapeSimple($bi_notes).
 					"', changeuserbillinfo='".$dbSocket->escapeSimple($bi_changeuserbillinfo).
@@ -363,6 +369,7 @@
 					case "address":
 					case "city":
 					case "state":
+					case "country":
 					case "zip":
 					case "notes":
 					case "changeUserInfo":
@@ -373,6 +380,7 @@
                     case "bi_address":
                     case "bi_city":
                     case "bi_state":
+                    case "bi_country":
                     case "bi_zip":
                     case "bi_paymentmethod":
                     case "bi_cash":
@@ -562,7 +570,7 @@
 
 
 	/* fill-in all the user info details */
-	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, zip, notes, ".
+	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, country, zip, notes, ".
 		" changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby FROM ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 		" WHERE UserName='".
@@ -583,20 +591,21 @@
 	$ui_address = $row[8];
 	$ui_city = $row[9];
 	$ui_state = $row[10];
-	$ui_zip = $row[11];
-	$ui_notes = $row[12];
-	$ui_changeuserinfo = $row[13];
-	$ui_PortalLoginPassword = $row[14];
-	$ui_enableUserPortalLogin = $row[15];
-	$ui_creationdate = $row[16];
-	$ui_creationby = $row[17];
-	$ui_updatedate = $row[18];
-	$ui_updateby = $row[19];
+	$ui_country = $row[11];
+	$ui_zip = $row[12];
+	$ui_notes = $row[13];
+	$ui_changeuserinfo = $row[14];
+	$ui_PortalLoginPassword = $row[15];
+	$ui_enableUserPortalLogin = $row[16];
+	$ui_creationdate = $row[17];
+	$ui_creationby = $row[18];
+	$ui_updatedate = $row[19];
+	$ui_updateby = $row[20];
 
 	/* fill-in all the user bill info details */
 	$sql = "SELECT ".
                " planName, contactperson, company, email, phone, ".
-               " address, city, state, zip, ".
+               " address, city, state, country, zip, ".
                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
                " notes, changeuserbillinfo, ".
                " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
@@ -617,6 +626,7 @@
 	$bi_address = $row['address'];
 	$bi_city = $row['city'];
 	$bi_state = $row['state'];
+	$bi_country = $row['country'];
 	$bi_zip = $row['zip'];
 	$bi_paymentmethod = $row['paymentmethod'];
 	$bi_cash = $row['cash'];

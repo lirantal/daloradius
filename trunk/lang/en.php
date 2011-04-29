@@ -973,6 +973,7 @@ $l['ContactInfo']['Company'] = "Company";
 $l['ContactInfo']['Address'] = "Address";
 $l['ContactInfo']['City'] = "City";
 $l['ContactInfo']['State'] = "State";
+$l['ContactInfo']['Country'] = "Country";
 $l['ContactInfo']['Zip'] = "Zip";
 $l['ContactInfo']['Phone1'] = "Phone 1";
 $l['ContactInfo']['Phone2'] = "Phone 2";
