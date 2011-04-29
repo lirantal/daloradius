@@ -687,3 +687,8 @@ INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
 ('rep_stat_cron', 'Reporting', 'Status');
 INSERT INTO `operators_acl` VALUES
 (0,6,'rep_stat_cron',1);
+
+
+ALTER TABLE userbillinfo ADD country varchar(100) AFTER state;
+ALTER TABLE userinfo ADD country varchar(100) AFTER state;
+

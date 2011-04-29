@@ -67,6 +67,10 @@ echo "
         <input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' tabindex=310 />
         <br/>
 
+        <label for='country' class='form'>".$l['ContactInfo']['Country']."</label>
+        <input value='"; if (isset($ui_country)) echo $ui_country; echo "' name='country' tabindex=310 />
+        <br/>
+        
         <label for='zip' class='form'>".$l['ContactInfo']['Zip']."</label>
         <input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' tabindex=311 />
         <br/>

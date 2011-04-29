@@ -60,6 +60,7 @@
 	    isset($_POST['address']) ? $address = $_POST['address'] : $address = "";
 	    isset($_POST['city']) ? $city = $_POST['city'] : $city = "";
 	    isset($_POST['state']) ? $state = $_POST['state'] : $state = "";
+	    isset($_POST['country']) ? $country = $_POST['country'] : $country = "";
 	    isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
 		isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 		isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
@@ -73,6 +74,7 @@
 	    isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
 	    isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
 	    isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+	    isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
 	    isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
 	    isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
 	    isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
@@ -193,7 +195,7 @@
 					// insert user information table
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 							" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-							" mobilephone, address, city, state, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
+							" mobilephone, address, city, state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
 							" VALUES (0,
 							'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
 							$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
@@ -201,6 +203,7 @@
 							$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
 							$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($address)."', '".
 							$dbSocket->escapeSimple($city)."', '".$dbSocket->escapeSimple($state)."', '".
+							$dbSocket->escapeSimple($country)."', '".
 							$dbSocket->escapeSimple($zip)."', '".$dbSocket->escapeSimple($notes)."', '".
 							$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
 							$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
@@ -221,7 +224,7 @@
 		                        // insert user billing information table
 		                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		                                " (id, username, contactperson, company, email, phone, ".
-		                                " address, city, state, zip, ".
+		                                " address, city, state, country, zip, ".
 		                                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 		                                " notes, changeuserbillinfo, ".
 		                                " creationdate, creationby, updatedate, updateby) ".
@@ -230,6 +233,7 @@
 		                                $dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
 		                                $dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
 		                                $dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
+		                                $dbSocket->escapeSimple($bi_country)."', '".
 		                                $dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
 		                                $dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
 		                                $dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".

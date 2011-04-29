@@ -52,6 +52,7 @@
 	isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
 	isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
 	isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+	isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
 	isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
 	isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
 	isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
@@ -85,6 +86,7 @@
 	isset($_POST['address']) ? $ui_address = $_POST['address'] : $ui_address = "";
 	isset($_POST['city']) ? $ui_city = $_POST['city'] : $ui_city = "";
 	isset($_POST['state']) ? $ui_state = $_POST['state'] : $ui_state = "";
+	isset($_POST['country']) ? $country = $_POST['country'] : $country = "";
 	isset($_POST['zip']) ? $ui_zip = $_POST['zip'] : $ui_zip = "";
 	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
 	isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
@@ -129,6 +131,7 @@
 		global $ui_address;
 		global $ui_city;
 		global $ui_state;
+		global $ui_country;
 		global $ui_zip;
 		global $notes;
 		global $ui_changeuserinfo;
@@ -151,7 +154,7 @@
 			// insert user information table
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 				" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-				" mobilephone, address, city, state, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
+				" mobilephone, address, city, state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
 				" VALUES (0, 
 				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
 				$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
@@ -159,6 +162,7 @@
 				$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
 				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
 				$dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
+				$dbSocket->escapeSimple($ui_country)."', '".
 				$dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
 				$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
 				$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
@@ -182,6 +186,7 @@
 		global $bi_address;
 		global $bi_city;
 		global $bi_state;
+		global $bi_country;
 		global $bi_zip;
 		global $bi_paymentmethod;
 		global $bi_cash;
@@ -219,7 +224,7 @@
 			// insert user billing information table
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 				" (id, username, contactperson, company, email, phone, ".
-				" address, city, state, zip, ".
+				" address, city, state, country, zip, ".
 				" paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 				" notes, changeuserbillinfo, ".
                                 " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
@@ -229,6 +234,7 @@
 				$dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
 				$dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
 				$dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
+				$dbSocket->escapeSimple($bi_country)."', '".
 				$dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
 				$dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
 				$dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
@@ -283,6 +289,7 @@
 				case "address":
 				case "city":
 				case "state":
+				case "country":
 				case "zip":
 				case "notes":
 				case "bi_contactperson":
@@ -292,6 +299,7 @@
 				case "bi_address":
 				case "bi_city":
 				case "bi_state":
+				case "bi_country":
 				case "bi_zip":
 				case "bi_paymentmethod":
 				case "bi_cash":
