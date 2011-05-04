@@ -29,8 +29,9 @@
 
 $configValues['CONFIG_DB_ENGINE'] = 'mysql';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
+$configValues['CONFIG_DB_PORT'] = '3306';
 $configValues['CONFIG_DB_USER'] = 'daloradius';
-$configValues['CONFIG_DB_PASS'] = 'daloP4sS30198d';
+$configValues['CONFIG_DB_PASS'] = 'daloradius';
 $configValues['CONFIG_DB_NAME'] = 'radius';
 $configValues['CONFIG_DB_TBL_RADACCT'] = 'radacct';
 
@@ -51,10 +52,11 @@ function databaseConnect() {
     $mydbUser = $configValues['CONFIG_DB_USER'];
     $mydbPass = $configValues['CONFIG_DB_PASS'];
     $mydbHost = $configValues['CONFIG_DB_HOST'];
+    $mydbPort = $configValues['CONFIG_DB_PORT'];
     $mydbName = $configValues['CONFIG_DB_NAME'];
 
     $dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
-               $mydbHost."/".$mydbName;
+               $mydbHost.":".$mydbPort."/".$mydbName;
 
     $dbSocket = DB::connect($dbConnectString);
 
