@@ -692,3 +692,4 @@ INSERT INTO `operators_acl` VALUES
 ALTER TABLE userbillinfo ADD country varchar(100) AFTER state;
 ALTER TABLE userinfo ADD country varchar(100) AFTER state;
 
+ALTER TABLE  `node` ADD  `cpu` FLOAT NOT NULL DEFAULT  '0' AFTER  `usershi` ;
