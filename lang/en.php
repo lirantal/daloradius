@@ -49,6 +49,8 @@ $l['all']['RecommendedHelper'] = "Recommended Helper";
 
 $l['all']['CSVData'] = "CSV-formatted data";
 
+$l['all']['CPU'] = "CPU";
+
 /* radius related text */
 $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
 

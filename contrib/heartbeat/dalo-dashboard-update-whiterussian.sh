@@ -15,11 +15,11 @@
 
 
 # Set to the URL of daloradius's heartbeat script location
-DALO_HEARTBEAT_ADDR="http://enginx.daloradius.com/heartbeat.php"
+DALO_HEARTBEAT_ADDR="http://daloradius.com/heartbeat.php"
 
 # Set NAS MAC to the MAC address of the chilli interface
 # MAC address format, according to how the NAS sends this information. For example: 00-aa-bb or 00:aa:bb
-NAS_MAC="00-1D-7E-4A-FD-01"
+NAS_MAC="00-1D-7E-11-22-33"
 
 
 # Set to a unique, hard-to-figure-out key across all of your NASes.
@@ -47,6 +47,9 @@ DEBUG_MODE=0
 
 
 
+# ----------------------------------------------------------------------------
+# Grab Statistics --------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 wan_iface=`nvram get wan_ifname`
 wan_ip=`nvram get wan_ipaddr`
@@ -76,7 +79,43 @@ kbup=$((bup/1024))
 
 ssid=`nvram get wl0_ssid`
 
+# Snippet to get CPU % --------------------------------------------------------------
+# adopted from Paul Colby (http://colby.id.au)
+PREV_TOTAL=0
+PREV_IDLE=0
+#repeat period
+x=5
+#counter
+i=1
+while [ $i -le $x ]; do
+  IDLE=`cat /proc/stat | grep '^cpu ' | awk '{print $5}'`       # get cpu idle time
+  TOTAL=`cat /proc/stat | grep '^cpu ' | awk '{print $1+$2+$3+$4+$5+$6+$7+$8+$9+$10+$11}'` #get total cpu time
 
+  # Calculate the CPU usage since we last checked.
+  let "DIFF_IDLE=$IDLE-$PREV_IDLE"
+  let "DIFF_TOTAL=$TOTAL-$PREV_TOTAL"
+  let "DIFF_USAGE=1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL"
+  let "DIFF_USAGE_UNITS=$DIFF_USAGE/10"
+  let "DIFF_USAGE_DECIMAL=$DIFF_USAGE%10"
+#  echo -en "\rCPU: $DIFF_USAGE_UNITS.$DIFF_USAGE_DECIMAL%    \b\b\b\b"
+
+# No decemical  
+  #let "DIFF_IDLE=$IDLE-$PREV_IDLE"
+  #let "DIFF_TOTAL=$TOTAL-$PREV_TOTAL"
+  #let "DIFF_USAGE=1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL"
+  #let "DIFF_USAGE=(1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL+5)/10"
+  #echo -en "\rCPU: $DIFF_USAGE%  \b\b"
+
+  # Remember the total and idle CPU times for the next check.
+  PREV_TOTAL="$TOTAL"
+  PREV_IDLE="$IDLE"
+
+  # Wait before checking again.
+  sleep 1
+  i=$(( $i + 1 ))
+done
+cpu=$DIFF_USAGE_UNITS.$DIFF_USAGE_DECIMAL%
+# --------------------------------------------------------------------------------------
 
 if [ "$DEBUG_MODE" -eq "1" ]
 then
@@ -96,11 +135,12 @@ then
 	echo $kbdown
 	echo $kbup
 	echo $ssid
+	echo $cpu
 	echo "-------------------------------------------------------"
 fi
 
 
-wget -O /tmp/heartbeat.txt "$DALO_HEARTBEAT_ADDR?secret_key=$SECRET_KEY&nas_mac=$NAS_MAC&firmware=$firmware&firmware_revision=$firmware_revision&wan_iface=$wan_iface&wan_ip=$wan_ip&wan_mac=$wan_mac&wifi_mac=$wifi_mac&wan_gateway=$wan_gateway&wifi_iface=$wifi_iface&wifi_ip=$wifi_ip&wifi_mac=$wifi_mac&wifi_ssid=$wifi_ssid&wifi_key=$wifi_key&wifi_channel=$wifi_channel&lan_iface=$lan_iface&lan_ip=$lan_ip&lan_mac=$lan_mac&uptime=$uptime&memfree=$memfree&wan_bup=$wan_bup&wan_bdown=$wan_bdown"
+wget -O /tmp/heartbeat.txt "$DALO_HEARTBEAT_ADDR?secret_key=$SECRET_KEY&nas_mac=$NAS_MAC&firmware=$firmware&firmware_revision=$firmware_revision&wan_iface=$wan_iface&wan_ip=$wan_ip&wan_mac=$wan_mac&wifi_mac=$wifi_mac&wan_gateway=$wan_gateway&wifi_iface=$wifi_iface&wifi_ip=$wifi_ip&wifi_mac=$wifi_mac&wifi_ssid=$wifi_ssid&wifi_key=$wifi_key&wifi_channel=$wifi_channel&lan_iface=$lan_iface&lan_ip=$lan_ip&lan_mac=$lan_mac&uptime=$uptime&memfree=$memfree&wan_bup=$wan_bup&wan_bdown=$wan_bdown&cpu=$cpu"
 
 
 if [ "$DEBUG_MODE" -eq "1" ]

@@ -52,6 +52,7 @@ isset($_GET['wan_bdown']) ? $wan_bdown = $dbSocket->escapeSimple($_GET['wan_bdow
 isset($_GET['nas_mac']) ? $nas_mac = $dbSocket->escapeSimple($_GET['nas_mac']) : $nas_mac = "";
 isset($_GET['firmware']) ? $firmware = $dbSocket->escapeSimple($_GET['firmware']) : $firmware = "";
 isset($_GET['firmware_revision']) ? $firmware_revision = $dbSocket->escapeSimple($_GET['firmware_revision']) : $firmware_revision = "";
+isset($_GET['cpu']) ? $cpu = $dbSocket->escapeSimple($_GET['cpu']) : $cpu = "";
 //isset($_GET['checkin_date']) ? $checkin_date = $dbSocket->escapeSimple($_GET['checkin_date']) : $checkin_date = "";
 
 $currDate = date('Y-m-d H:i:s');
@@ -83,7 +84,8 @@ if ($res->numRows() >= 1) {
 			"firmware='".$firmware."',".
 			"firmware_revision='".$firmware_revision."',".
 			"mac='".$nas_mac."',".
-			"time='".$currDate."'".
+			"time='".$currDate."',".
+			"cpu='".$cpu."'".
 			" WHERE mac='$nas_mac'";
 			;
 } else {
@@ -91,7 +93,7 @@ if ($res->numRows() >= 1) {
 	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALONODE']." (".
 			" id, wan_iface, wan_ip, wan_mac, wan_gateway, wifi_iface, wifi_ip, wifi_mac, wifi_ssid, wifi_key, wifi_channel, ".
 			" lan_iface, lan_mac, lan_ip, uptime, memfree, wan_bup, wan_bdown, firmware, firmware_revision, ".
-			" mac, `time` ".
+			" mac, `time`, cpu ".
 			" ) ".
 			" VALUES (0, ".
 			"'".$wan_iface."',".
@@ -114,7 +116,8 @@ if ($res->numRows() >= 1) {
 			"'".$firmware."',".
 			"'".$firmware_revision."',".
 			"'".$nas_mac."',".
-			"'".$currDate."'".
+			"'".$currDate."',".
+			"'".$cpu."'".
 			" ) ";
 }
 
