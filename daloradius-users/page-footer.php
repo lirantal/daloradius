@@ -21,7 +21,7 @@
  */
  
 echo '
-	<p><br/>© '.$l['all']['copyright2'].'
+	<p><br/> '.$l['all']['copyright2'].'
 	<br />
 	</p>
 ';

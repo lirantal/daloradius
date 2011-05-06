@@ -22,9 +22,10 @@
  *********************************************************************************************************
  */
 
-$l['all']['daloRADIUS'] = "daloRADIUS";
+$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
+$l['all']['daloRADIUSVersion'] = "version 0.9-9";
 $l['all']['copyright1'] = "Radius Reporting, Billing and Management by <a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "Copyright of <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 
