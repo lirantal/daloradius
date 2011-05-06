@@ -22,10 +22,10 @@
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "snort-spot";
-$l['all']['daloRADIUSVersion'] = "versiunie";
+$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
+$l['all']['daloRADIUSVersion'] = "version 0.9-9";
 $l['all']['copyright1'] = "RADIUS Meneger, Reportarea, Contabilitate si Facturare de <a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "Drepturile de autor <a href=\"http://www.enginx.com\">Enginx</a> and Liran Tal<br/>
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Pool Name";
@@ -58,12 +58,12 @@ $l['all']['Item'] = "Element";
 
 $l['all']['RemoveRadacctRecords'] = "Eliminati Inregistrarile contabile";
 
-$l['all']['CleanupSessions'] = "Cur??ire sesiuni în vârst? de peste
+$l['all']['CleanupSessions'] = "Cur??ire sesiuni ï¿½n vï¿½rst? de peste
 ";
-$l['all']['DeleteSessions'] = "?tergere sesiuni în vârst? de peste
+$l['all']['DeleteSessions'] = "?tergere sesiuni ï¿½n vï¿½rst? de peste
 ";
 
-$l['all']['StartingDate'] = "Începând cu data
+$l['all']['StartingDate'] = "ï¿½ncepï¿½nd cu data
 ";
 $l['all']['EndingDate'] = "Pina pe data
 ";
@@ -83,9 +83,9 @@ $l['all']['Proxy'] = "Proxy";
 $l['all']['ProxyName'] = "Proxy Nume";
 $l['all']['ProxySecret'] = "Proxy Secert";
 $l['all']['DeadTime'] = "Dead Timp";
-$l['all']['RetryDelay'] = "Reîncerca?i Întârzierea
+$l['all']['RetryDelay'] = "Reï¿½ncerca?i ï¿½ntï¿½rzierea
 ";
-$l['all']['RetryCount'] = "Reîncerca?i Count
+$l['all']['RetryCount'] = "Reï¿½ncerca?i Count
 ";
 $l['all']['DefaultFallback'] = "Implicit fallback
 ";
@@ -147,12 +147,12 @@ $l['all']['StopTime'] = "Stop Time";
 $l['all']['TotalTime'] = "Timp total
 ";
 $l['all']['Bytes'] = "Bytes";
-$l['all']['Upload'] = "Înc?rcare
+$l['all']['Upload'] = "ï¿½nc?rcare
 ";
 $l['all']['Download'] = "Desc?rca
 ";
 $l['all']['Rollback'] = "Roll-back";
-$l['all']['Termination'] = "Încetarea
+$l['all']['Termination'] = "ï¿½ncetarea
 ";
 $l['all']['NASIPAddress'] = "NAS IP Address";
 $l['all']['Action'] = "Ac?iune
@@ -170,9 +170,9 @@ $l['all']['Statistics'] = "Statistica
 $l['all']['Credit'] = "credit
 ";
 $l['all']['Used'] = "Uzad";
-$l['all']['LeftTime'] = "Timp în continuare
+$l['all']['LeftTime'] = "Timp ï¿½n continuare
 ";
-$l['all']['LeftPercent'] = "% Timp de stânga
+$l['all']['LeftPercent'] = "% Timp de stï¿½nga
 ";
 $l['all']['TotalSessions'] = "Total Sessions
 ";
@@ -226,7 +226,7 @@ $l['all']['OrderTaker'] = "Ordinul Taker
 $l['all']['BillStatus'] = "Bill Status";
 $l['all']['LastBill'] = "Ultima Bill
 ";
-$l['all']['NextBill'] = "Înainte Bill
+$l['all']['NextBill'] = "ï¿½nainte Bill
 ";
 $l['all']['PostalInvoice'] = "Factura po?tal
 ";
@@ -252,7 +252,7 @@ $l['all']['Disconnect'] = "Deconectare
 $l['all']['Debug'] = "Debug
 ";
 $l['all']['Timeout'] = "Timeout";
-$l['all']['Retries'] = "Reîncearc?
+$l['all']['Retries'] = "Reï¿½ncearc?
 ";
 $l['all']['Count'] = "Count";
 $l['all']['Requests'] = "Cereri
@@ -283,7 +283,7 @@ $l['all']['LoggingDebugInfo'] = "Logging of Debug Info";
 
 $l['all']['PasswordHidden'] = "Activa?i Parola Ascunderea (asterisc va fi afi?at) 
 ";
-$l['all']['TablesListing'] = "Rânduri / Înregistr?ri pe Tabele Afi?area paginii 
+$l['all']['TablesListing'] = "Rï¿½nduri / ï¿½nregistr?ri pe Tabele Afi?area paginii 
 ";
 $l['all']['TablesListingNum'] = "Activa?i Tabele Afi?area Numerotare
 ";
@@ -301,7 +301,7 @@ $l['all']['PasswordLength'] = "Lungimea parola string";
 $l['all']['Expiration'] = "expir?rii"; 
 $l['all']['MaxAllSession'] = "Max-Toate-session";
 $l['all']['SessionTimeout'] = "Session Timeout"; 
-$l['all']['IdleTimeout'] = "neîntemeiat Timeout";
+$l['all']['IdleTimeout'] = "neï¿½ntemeiat Timeout";
 $l['all']['DBEngine'] = "DB Motor";
 $l['all']['radcheck'] = "radcheck"; w
 $l['all']['radreply'] = "radreply"; 
@@ -411,7 +411,7 @@ $l['Tooltip']['GroupName'] = "Tip Numele de grup";
 
 $l['Tooltip']['AttributeName'] = "Tip de atribut nume";
 
-$l['Tooltip']['VendorName'] = "Tip de vânz?tor nume";
+$l['Tooltip']['VendorName'] = "Tip de vï¿½nz?tor nume";
 
 $l['Tooltip']['PoolName'] = "Tip de Biliard nume";
 
@@ -484,45 +484,45 @@ $l['Tooltip']['BusinessContactPersonTooltip'] = "";
 
 $l['Tooltip']['proxyNameTooltip'] = "Proxy numele
 ";
-$l['Tooltip']['proxyRetryDelayTooltip'] = "De timp (în secunde) pentru a a?tepta <br/>
+$l['Tooltip']['proxyRetryDelayTooltip'] = "De timp (ï¿½n secunde) pentru a a?tepta <br/>
 
 					pentru un r?spuns de la proxy, <br/> 
-					Înainte de re-trimiterea proxied
+					ï¿½nainte de re-trimiterea proxied
 request.";
-$l['Tooltip']['proxyRetryCountTooltip'] = "Num?rul de reîncearc? pentru a trimite <br/>
+$l['Tooltip']['proxyRetryCountTooltip'] = "Num?rul de reï¿½ncearc? pentru a trimite <br/>
 
-					Înainte de a în sus, ?i de a trimite un <br/> 
+					ï¿½nainte de a ï¿½n sus, ?i de a trimite un <br/> 
 					Respinge mesaj la SNC. ";
 
 $l['Tooltip']['proxyDeadTimeTooltip'] = "Dac? serverul de origine nu r?spunde <br/>
 
-					la oricare dintre multiple reîncearc?, <br/> 
+					la oricare dintre multiple reï¿½ncearc?, <br/> 
 					Apoi FreeRADIUS va opri trimiterea <br/>
 
 					proxy a cererilor, ?i marca?i-o "moarte". ";
 
 $l['Tooltip']['proxyDefaultFallbackTooltip'] = "Dac? toate exact? domenii <br/>
 
-						nu r?spunde, se poate încerca
+						nu r?spunde, se poate ï¿½ncerca
 <br/>
 						";
 $l['Tooltip']['realmNameTooltip'] = "Realm numele
 ";
 $l['Tooltip']['realmTypeTooltip'] = "Setare pentru a raz? de implicit
 ";
-$l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS împ?rt??it secrete
+$l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS ï¿½mp?rt??it secrete
 ";
 $l['Tooltip']['realmAuthhostTooltip'] = "Realm autentificare gazd?
 ";
 $l['Tooltip']['realmAccthostTooltip'] = "Realm contabile gazd?
 ";
-$l['Tooltip']['realmLdflagTooltip'] = "Permite pentru echilibrarea înc?rc?rii <br/> 
+$l['Tooltip']['realmLdflagTooltip'] = "Permite pentru echilibrarea ï¿½nc?rc?rii <br/> 
 							Valorile permise sunt "fail_over" <br/> 
 							?i "round_robin". ";
 
 $l['Tooltip']['realmNostripTooltip'] = "Fie pentru a benzii sau nu <br/>
 
-					t?râm sufix
+					t?rï¿½m sufix
 ";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
@@ -577,28 +577,28 @@ $l['Tooltip']['EditProxy'] = "Editare Proxy
 $l['Tooltip']['EditGroup'] = "Editare grup
 ";
 
-$ l [ 'FormField'] [ 'mngradgroupcheck.php'] [ 'Tooltip'] [ 'value'] = "Dac? specifica?i valoarea apoi numai unice care s? se potriveasc? atât groupname ?i specifice de valoare pe care a?i specificat va fi eliminat. Dac? omite?i valoarea apoi toate înregistr?rile pentru c? groupname special vor fi eliminate! "; 
+$ l [ 'FormField'] [ 'mngradgroupcheck.php'] [ 'Tooltip'] [ 'value'] = "Dac? specifica?i valoarea apoi numai unice care s? se potriveasc? atï¿½t groupname ?i specifice de valoare pe care a?i specificat va fi eliminat. Dac? omite?i valoarea apoi toate ï¿½nregistr?rile pentru c? groupname special vor fi eliminate! "; 
 
-$ l [ 'FormField'] [ 'mngradgroupreplydel.php'] [ 'Tooltip'] [ 'value'] = "Dac? specifica?i valoarea apoi numai unice care s? se potriveasc? atât groupname ?i specifice de valoare pe care a?i specificat va fi eliminat. Dac? omite?i valoarea apoi toate înregistr?rile pentru c? groupname special vor fi eliminate! "; 
+$ l [ 'FormField'] [ 'mngradgroupreplydel.php'] [ 'Tooltip'] [ 'value'] = "Dac? specifica?i valoarea apoi numai unice care s? se potriveasc? atï¿½t groupname ?i specifice de valoare pe care a?i specificat va fi eliminat. Dac? omite?i valoarea apoi toate ï¿½nregistr?rile pentru c? groupname special vor fi eliminate! "; 
 
 $ l [ 'FormField'] [ 'mngradnasnew.php'] [ 'Tooltip'] [ 'NasShortname'] = "(nume descriptiv)"; 
 
-$ l [ 'FormField'] [ 'mngradusergroupdel.php'] [ 'Tooltip'] [ 'Groupname'] = "Dac? specifica?i grup atunci numai unic de înregistrare care se potrive?te atât de nume de utilizator ?i de grup pe care a?i specificat vor fi eliminate . Dac? omite?i grupului apoi toate înregistr?rile pentru c? special vor fi eliminate de utilizator! "; 
+$ l [ 'FormField'] [ 'mngradusergroupdel.php'] [ 'Tooltip'] [ 'Groupname'] = "Dac? specifica?i grup atunci numai unic de ï¿½nregistrare care se potrive?te atï¿½t de nume de utilizator ?i de grup pe care a?i specificat vor fi eliminate . Dac? omite?i grupului apoi toate ï¿½nregistr?rile pentru c? special vor fi eliminate de utilizator! "; 
 
 
 $ l [ 'Tooltip'] [ 'usernameTooltip'] = "exact ca numele de utilizator a utilizatorului <br/> 
 Se va folosi pentru a se conecta la sistem "; 
-$ l [ 'Tooltip'] [ 'passwordTooltip'] = "Parolele sunt sensetive în <br/> 
+$ l [ 'Tooltip'] [ 'passwordTooltip'] = "Parolele sunt sensetive ï¿½n <br/> 
 Anumitor sisteme a?a ia extra grija "; 
 $ l [ 'Tooltip'] [ 'groupTooltip'] = "Utilizatorul va fi ad?ugat la acest grup. <br/> 
 Prin alocarea de un utilizator la un anumit grup <br/> 
-în care utilizatorul este supus atribute ale grupului "; 
+ï¿½n care utilizatorul este supus atribute ale grupului "; 
 $ l [ 'Tooltip'] [ 'macaddressTooltip'] = "Exemplu: 00-AA-BB-CC-DD-EE <br/> 
 Adresa MAC format ar trebui s? fie acela?i <br/> 
 Ca SNC trimite. De cele mai multe ori acest lucru este, f?r? <br/> 
 Orice caractere. "; 
 $ l [ 'Tooltip'] [ 'pincodeTooltip'] = "Exemplu: khrivnxufi101 <br/> 
-Acest lucru este exact pincode ca utilizatorul va intra într-o. <br/> 
+Acest lucru este exact pincode ca utilizatorul va intra ï¿½ntr-o. <br/> 
 Puteti utiliza caractere alfa numeric, cazul este sensituve "; 
 $ l [ 'Tooltip'] [ 'usernamePrefixTooltip'] = "Exemplu: TMP_ POP_ WIFI1_ <br/> 
 Acest nume de utilizator prefix vor fi ad?ugate la <br/> 
@@ -680,7 +680,7 @@ $ l [ 'butonul'] [ 'BetweenDates'] = "intre Datele
 : "; 
 $ l [ 'butonul'] [ 'Unde'] = "Unde 
 "; 
-$ l [ 'butonul'] [ 'AccountingFieldsinQuery'] = "Domenii de Contabilitate în Interogare 
+$ l [ 'butonul'] [ 'AccountingFieldsinQuery'] = "Domenii de Contabilitate ï¿½n Interogare 
 : "; 
 $ l [ 'butonul'] [ 'OrderBy'] = "Prin Ordinul 
 "; 
@@ -691,7 +691,7 @@ $ l [ 'butonul'] [ 'HotspotsComparison'] = "Compara?ie hotspots
 
 $ l [ 'butonul'] [ 'CleanupStaleSessions'] = "Cur??ire surmenat Sessions 
 "; 
-$ l [ 'butonul'] [ 'DeleteAccountingRecords'] = "Delete înregistr?ri contabile"; 
+$ l [ 'butonul'] [ 'DeleteAccountingRecords'] = "Delete ï¿½nregistr?ri contabile"; 
 
 $ l [ 'butonul'] [ 'Listusers "] =" Lista utilizatorilor "; 
 $ l [ 'butonul'] [ 'NewUser'] = "utilizator nou"; 
@@ -747,7 +747,7 @@ $ l [ 'butonul'] [ 'AllRecords'] = "Toate Records";
 $ l [ 'butonul'] [ 'ActiveRecords'] = "active Records"; 
 
 $ l [ 'butonul'] [ 'OnlineUsers'] = "Online Users"; 
-$ l [ 'butonul'] [ 'LastConnectionAttempts'] = "Ultima conexiune Încerc?rile de"; 
+$ l [ 'butonul'] [ 'LastConnectionAttempts'] = "Ultima conexiune ï¿½ncerc?rile de"; 
 $ l [ 'butonul'] [ 'TopUser'] = "Top utilizatorului"; 
 $ l [ 'butonul'] [ 'istoric'] = "Istorie";
 $ l [ 'butonul'] [ 'ServerStatus'] = "Server Status"; 
@@ -760,7 +760,7 @@ $ l [ 'butonul'] [ 'bootlog'] = "boot Jurnal";
 
 $ l [ 'butonul'] [ 'UserLogins'] = "User Conect?ri"; 
 $ l [ 'butonul'] [ 'UserDownloads'] = "utilizator Download-uri"; 
-$ l [ 'butonul'] [ 'UserUploads'] = "Utilizatorul încarc?"; 
+$ l [ 'butonul'] [ 'UserUploads'] = "Utilizatorul ï¿½ncarc?"; 
 $ l [ 'butonul'] [ 'TotalLogins'] = "Total Conect?ri"; 
 $ l [ 'butonul'] [ 'TotalTraffic'] = "Total de trafic"; 
 
@@ -793,7 +793,7 @@ $ l [ 'butonul'] [ 'ProcessQuery'] = "Procesul de Interogare";
 
 / * ************************************************ ********************************** 
 * Titlurile 
-* Textul referitor la toate titlu anteturile în legende, tabele ?i layout cu tab-text 
+* Textul referitor la toate titlu anteturile ï¿½n legende, tabele ?i layout cu tab-text 
 ************************************************** **********************************/ 
 
 $ l [ 'titlu'] [ 'RateInfo'] = "Rata de informa?ii"; 
@@ -955,7 +955,7 @@ $ l [ 'Intro'] [ 'acctcustom.php'] = "Custom Accountings";
 $ l [ 'Intro'] [ 'acctcustomquery.php'] = "Custom Interogare de contabilitate"; 
 $ l [ 'Intro'] [ 'acctmaintenance.php'] = "?inerea eviden?ei contabile"; 
 $ l [ 'Intro'] [ 'acctmaintenancecleanup.php'] = "Cur??ire st?tut-conexiuni"; 
-$ l [ 'Intro'] [ 'acctmaintenancedelete.php'] = "Delete înregistr?ri contabile"; 
+$ l [ 'Intro'] [ 'acctmaintenancedelete.php'] = "Delete ï¿½nregistr?ri contabile"; 
 
 $ l [ 'Intro'] [ 'billmain.php'] = "Page Facturare"; 
 $ l [ 'Intro'] [ 'ratesmain.php'] = "Tarife de facturare Page"; 
@@ -991,7 +991,7 @@ $ l [ 'Intro'] [ 'graphsalltimetrafficcompare.php'] = "Total de trafic de compar
 $ l [ 'Intro'] [ 'graphsalltimelogins.php'] = "Total Conect?ri"; 
 $ l [ 'Intro'] [ 'graphsoveralldownload.php'] = "User Downlads"; 
 $ l [ 'Intro'] [ 'graphsoveralllogins.php'] = "User Conect?ri"; 
-$ l [ 'Intro'] [ 'graphsoverallupload.php'] = "Utilizatorul încarc?"; 
+$ l [ 'Intro'] [ 'graphsoverallupload.php'] = "Utilizatorul ï¿½ncarc?"; 
 
 $ l [ 'Intro'] [ 'rephistory.php'] = "Ac?iunea de Istorie"; 
 $ l [ 'Intro'] [ 'replastconnect.php'] = "Ultimele 50 de conexiune Tentativele"; 
@@ -1028,8 +1028,8 @@ $ l [ 'Intro'] [ 'mnghsnew.php'] = "New Hotspot";
 $ l [ 'Intro'] [ 'mngradusergroupdel.php'] = "?terge-User Group Mapping"; 
 $ l [ 'Intro'] [ 'mngradusergroup.php'] = "User-Grupului de configurare"; 
 $ l [ 'Intro'] [ 'mngradusergroupnew.php'] = "utilizator nou-Mapare Group"; 
-$ l [ 'Intro'] [ 'mngradusergrouplist'] = "User-Group Mapare în baza de date"; 
-$ l [ 'Intro'] [ 'mngradusergrouplistuser'] = "User-Group Mapare în baza de date"; 
+$ l [ 'Intro'] [ 'mngradusergrouplist'] = "User-Group Mapare ï¿½n baza de date"; 
+$ l [ 'Intro'] [ 'mngradusergrouplistuser'] = "User-Group Mapare ï¿½n baza de date"; 
 $ l [ 'Intro'] [ 'mngradusergroupedit'] = "Edit User-Group Mapare de utilizator:"; 
 
 $ l [ 'Intro'] [ 'mngradippool.php'] = "IP-Biliard de configurare"; 
@@ -1040,7 +1040,7 @@ $ l [ 'Intro'] [ 'mngradippooldel.php'] = "?terge IP-Pool";
 
 $ l [ 'Intro'] [ 'mngradnas.php'] = "SNC Configurare"; 
 $ l [ 'Intro'] [ 'mngradnasnew.php'] = "Noua SNC Record"; 
-$ l [ 'Intro'] [ 'mngradnaslist.php'] = "SNC Afi?area în baza de date"; 
+$ l [ 'Intro'] [ 'mngradnaslist.php'] = "SNC Afi?area ï¿½n baza de date"; 
 $ l [ 'Intro'] [ 'mngradnasedit.php'] = "Editare SNC Record"; 
 $ l [ 'Intro'] [ 'mngradnasdel.php'] = "?terge SNC Record"; 
 
@@ -1054,13 +1054,13 @@ $ l [ 'Intro'] [ 'mngradprofilesnew.php'] = "Profil nou";
 $ l [ 'Intro'] [ 'mngradgroups.php'] = "Grupuri de configurare"; 
 
 $ l [ 'Intro'] [ 'mngradgroupreplynew.php'] = "New Group R?spunde?i Mapare"; 
-$ l [ 'Intro'] [ 'mngradgroupreplylist.php'] = "Grupul R?spunde?i Mapare în baza de date"; 
+$ l [ 'Intro'] [ 'mngradgroupreplylist.php'] = "Grupul R?spunde?i Mapare ï¿½n baza de date"; 
 $ l [ 'Intro'] [ 'mngradgroupreplyedit.php'] = "Edit Group R?spunde?i Mapping pentru Grupa:"; 
 $ l [ 'Intro'] [ 'mngradgroupreplydel.php'] = "?terge Grupului R?spunde?i Mapare"; 
 $ l [ 'Intro'] [ 'mngradgroupreplysearch.php'] = "Caut? Grupului R?spunde?i Mapare"; 
 
 $ l [ 'Intro'] [ 'mngradgroupchecknew.php'] = "New Group Verifica?i Mapare"; 
-$ l [ 'Intro'] [ 'mngradgroupchecklist.php'] = "Grupul Verifica?i Mapare în baza de date"; 
+$ l [ 'Intro'] [ 'mngradgroupchecklist.php'] = "Grupul Verifica?i Mapare ï¿½n baza de date"; 
 $ l [ 'Intro'] [ 'mngradgroupcheckedit.php'] = "Edit Group Verifica?i Mapping pentru Grupa:"; 
 $ l [ 'Intro'] [ 'mngradgroupcheckdel.php'] = "?terge Grupului Verifica?i Mapare"; 
 $ l [ 'Intro'] [ 'mngradgroupchecksearch.php'] = "Caut? Grupului Verifica?i Mapare"; 
@@ -1071,7 +1071,7 @@ $ l [ 'Intro'] [ 'configlogging.php'] = "Jurnalizarea Configurare";
 $ l [ 'Intro'] [ 'configinterface.php'] = "interfata web de configurare"; 
 $ l [ 'Intro'] [ 'configmainttestuser.php'] = "Test de utilizator Conectivitate"; 
 $ l [ 'Intro'] [ 'configmain.php'] = "Baza de date de configurare"; 
-$ l [ 'Intro'] [ 'configmaint.php'] = "între?inere"; 
+$ l [ 'Intro'] [ 'configmaint.php'] = "ï¿½ntre?inere"; 
 $ l [ 'Intro'] [ 'configmaintdisconnectuser.php'] = "Deconectare utilizatorului"; 
 $ l [ 'Intro'] [ 'configbusiness.php'] = "Detalii de afaceri"; 
 $ l [ 'Intro'] [ 'configbusinessinfo.php'] = "Business Information"; 
@@ -1087,13 +1087,13 @@ $ l [ 'Intro'] [ 'configoperatorslist.php'] = "Operatorii Listing";
 
 $ l [ 'Intro'] [ 'login.php'] = "Login"; 
 
-$ l [ 'legende'] [ 'providebillratetodel'] = "Furniza?i rata tip de intrare pe care dori?i s? înl?tura?i"; 
+$ l [ 'legende'] [ 'providebillratetodel'] = "Furniza?i rata tip de intrare pe care dori?i s? ï¿½nl?tura?i"; 
 $ l [ 'legende'] [ 'detailsofnewrate'] = "Este posibil s? completa?i detaliile de mai jos pentru noul curs"; 
 $ l [ 'legende'] [ 'filldetailsofnewrate'] = "Completati mai jos detaliile pentru noul curs de intrare"; 
 
 / * ************************************************ ********************************** 
 * Ajutor Pagini Info 
-* Fiecare pagin? are un antet care este Intro clasa, atunci când face?i clic pe antet 
+* Fiecare pagin? are un antet care este Intro clasa, atunci cï¿½nd face?i clic pe antet 
 * Se va revela / div Helppage ascunde un con?inut care este o descriere a unei anumite 
 * Pagina, practic v? extins instrument-tip. 
 ************************************************** **********************************/ 
@@ -1200,8 +1200,8 @@ $ l [ 'Helppage'] [ 'mngradgroupcheckedit'] = "
 "; 
 $ l [ 'Helppage'] [ 'mngradgroupchecksearch'] = " 
 <h200> <b> C?uta?i Grupului Verifica?i </ b> </ h200> - Cauta un grup Verifica?i Mapare <br/> 
-pentru a folosi un wildcard-ar putea s? fie de tip% de caractere, care este cunoscut în SQL sau puteti folosi mai multe comune * 
-pentru comoditate ?i motive daloRADIUS va traduce în% 
+pentru a folosi un wildcard-ar putea s? fie de tip% de caractere, care este cunoscut ï¿½n SQL sau puteti folosi mai multe comune * 
+pentru comoditate ?i motive daloRADIUS va traduce ï¿½n% 
 "; 
 
 $ l [ 'Helppage'] [ 'mngradgroupreplynew'] = " 
@@ -1218,8 +1218,8 @@ $ l [ 'Helppage'] [ 'mngradgroupreplyedit'] = "
 "; 
 $ l [ 'Helppage'] [ 'mngradgroupreplysearch'] = " 
 <h200> <b> C?uta?i Grupului R?spunde?i </ b> </ h200> - Cauta un grup R?spunde?i </ Mapare <br/> 
-pentru a folosi un wildcard-ar putea s? fie de tip% de caractere, care este cunoscut în SQL sau puteti folosi mai multe comune * 
-pentru comoditate ?i motive daloRADIUS va traduce în% 
+pentru a folosi un wildcard-ar putea s? fie de tip% de caractere, care este cunoscut ï¿½n SQL sau puteti folosi mai multe comune * 
+pentru comoditate ?i motive daloRADIUS va traduce ï¿½n% 
 "; 
 
 
@@ -1245,16 +1245,16 @@ $ l [ 'Helppage'] [ 'mngradnasedit'] = "";
 
 $ l [ 'Helppage'] [ 'mnghsdel'] = "Pentru a elimina un hotspot din baza de date trebuie s? furniza?i hotspot numele <br/>"; 
 $ l [ 'Helppage'] [ 'mnghsedit'] = "A?i putea edita detaliile de mai jos pentru hotspot <br/>"; 
-$ l [ 'Helppage'] [ 'mnghsnew'] = "Este posibil s? completa?i detaliile de mai jos pentru noi hotspot lâng? baza de date"; 
+$ l [ 'Helppage'] [ 'mnghsnew'] = "Este posibil s? completa?i detaliile de mai jos pentru noi hotspot lï¿½ng? baza de date"; 
 $ l [ 'Helppage'] [ 'mnghslist'] = "Lista de toate hotspots in baza de date. Pute?i utiliza rapid link-uri pentru a modifica sau ?terge un hotspot din baza de date."; 
 
 $ l [ 'Helppage'] [ 'configdb'] = " 
-Baza de date <b> Set?ri </ b> - Configura?i motorul de baze de date, set?rile conexiunii, în cazul în care numele de tabele 
-implicit nu sunt utilizate, precum ?i a parolei de criptare de tip în baza de date. <br/> 
+Baza de date <b> Set?ri </ b> - Configura?i motorul de baze de date, set?rile conexiunii, ï¿½n cazul ï¿½n care numele de tabele 
+implicit nu sunt utilizate, precum ?i a parolei de criptare de tip ï¿½n baza de date. <br/> 
 <h200> <b> Global Set?ri </ b> </ h200> - Baza de date Motor de stocare <br/> 
 <h200> <b> Tabele Set?ri </ b> </ h200> - Dac? nu utilizeaz? implicit FreeRADIUS schem? ce se pot schimba numele 
 din tabelul de nume <br/> 
-<h200> <b> Set?ri avansate </ b> </ h200> - Dac? dori?i s? v? stoca parole pentru utilizatori în baza de date nu în 
+<h200> <b> Set?ri avansate </ b> </ h200> - Dac? dori?i s? v? stoca parole pentru utilizatori ï¿½n baza de date nu ï¿½n 
 text simplu, ci mai degrab? s?-l criptate cumva s-ar putea s? aleag? una dintre MD5 sau crypt <br/> 
 "; 
 $ l [ 'Helppage'] [ 'configlang'] = " 
@@ -1268,14 +1268,14 @@ $ l [ 'Helppage'] [ 'configinterface'] = "
 "; 
 $ l [ 'Helppage'] [ 'configmain'] = " 
 <b> Global Set?ri </ b> <br/> 
-<h200> <b> Baza de date Set?ri </ b> </ h200> - Configura?i motorul de baze de date, set?rile conexiunii, în cazul în care numele de tabele 
-implicit nu sunt utilizate, precum ?i a parolei de criptare de tip în baza de date. <br/> 
+<h200> <b> Baza de date Set?ri </ b> </ h200> - Configura?i motorul de baze de date, set?rile conexiunii, ï¿½n cazul ï¿½n care numele de tabele 
+implicit nu sunt utilizate, precum ?i a parolei de criptare de tip ï¿½n baza de date. <br/> 
 <h200> <b> Limba Set?ri </ b> </ h200> - Configura?i limba interfe?ei. <br/> 
 <h200> <b> Jurnalizarea Set?ri </ b> </ h200> - Configura?i reguli ?i facilit??i de logare <br/> 
 <h200> <b> Interface Set?ri </ b> </ h200> - Configura?i set?rile de aspect ?i interfa?? behvaiour <br/> 
 
 <b> sub-categorii Configuration </ b> 
-<h200> <b> Intretinere </ b> </ h200> - Între?inere op?iuni pentru Testarea utilizatorii de conexiuni sau se termin? lor sesiuni <br/> 
+<h200> <b> Intretinere </ b> </ h200> - ï¿½ntre?inere op?iuni pentru Testarea utilizatorii de conexiuni sau se termin? lor sesiuni <br/> 
 <h200> <b> Operatorii </ b> </ h200> - Configura?i Operatorii Lista de control al accesului (ACL) <br/> 
 "; 
 $ l [ 'Helppage'] [ 'configbusiness'] = " 
@@ -1287,48 +1287,48 @@ $ l [ 'Helppage'] [ 'configmaint'] = "
 <b> Intretinere </ b> <br/> 
 <h200> <b> Test Conectivitate utilizatorului </ b> </ h200> - Trimite-o Cerere de acces la RADIUS server pentru a verifica dac? un utilizator de acreditare sunt valide <br/> 
 <h200> <b> Deconecta?i utilizatorului </ b> </ h200> - Trimite un Pod (pachete de Deconecta?i) sau CoA (Schimbarea Authority) pachetele de la server SNC 
-Pentru a deconecta un utilizator ?i încetarea lui / ei sesiune, într-un anumit SNC. <br/> 
+Pentru a deconecta un utilizator ?i ï¿½ncetarea lui / ei sesiune, ï¿½ntr-un anumit SNC. <br/> 
 "; 
 $ l [ 'Helppage'] [ 'configmainttestuser'] = " 
 <h200> <b> Test Conectivitate utilizatorului </ b> </ h200> - Trimite-o Cerere de acces la RADIUS server pentru a verifica dac? un utilizator de acreditare sunt valide. <br/> 
 daloRADIUS utilizeaz? radclient binare de utilitate pentru a efectua, de test ?i returneaz? rezultate de comanda dupa ce se termina. <br/> 
-daloRADIUS conteaz? pe radclient binar fiind disponibile în \ $ PATH variabil? de mediu, în cazul în care acesta nu este, v? rug?m s? face?i 
+daloRADIUS conteaz? pe radclient binar fiind disponibile ï¿½n \ $ PATH variabil? de mediu, ï¿½n cazul ï¿½n care acesta nu este, v? rug?m s? face?i 
 corec?ii la biblioteca / extinderea-maint-radclient.php fi?ier. <br/> <br/> 
 
-V? rug?m s? re?ine?i c? poate dura un timp pentru a testa pentru a termina (pân? la câteva secunde [10-20 secunde sau a?a]), din cauza e?ecurilor ?i 
+V? rug?m s? re?ine?i c? poate dura un timp pentru a testa pentru a termina (pï¿½n? la cï¿½teva secunde [10-20 secunde sau a?a]), din cauza e?ecurilor ?i 
 radclient va retransmite pachetele. 
 
-În fila Complex, este posibil s? se ajusteze de op?iuni pentru test: <br/> 
-Timeout - Stai "Timeout" secund? înainte de a reîncerca (poate fi un punct de flotant num?r) <br/> 
-Reîncearc? - Dac? timeout, reîncerca?i trimiterea de pachete de "reîncearc?" ori. <br/> 
+ï¿½n fila Complex, este posibil s? se ajusteze de op?iuni pentru test: <br/> 
+Timeout - Stai "Timeout" secund? ï¿½nainte de a reï¿½ncerca (poate fi un punct de flotant num?r) <br/> 
+Reï¿½ncearc? - Dac? timeout, reï¿½ncerca?i trimiterea de pachete de "reï¿½ncearc?" ori. <br/> 
 Count - Trimite fiecare pachet "Count" ori <br/> 
-Cereri - Trimite 'NUM "pachetele de la un fi?ier în paralel <br/> 
+Cereri - Trimite 'NUM "pachetele de la un fi?ier ï¿½n paralel <br/> 
 "; 
 $ l [ 'Helppage'] [ 'configmaintdisconnectuser'] = " 
-<h200> <b> Deconecta?i utilizatorului </ b> </ h200> - Trimite un Pod (pachete de Deconecta?i) sau CoA (Schimbare de Autoritatea) pentru a pachetelor de NAS server pentru a deconecta un utilizator ?i încetarea lui / ei sesiune, într-o anumit? SNC. <br/> 
-Pentru încheierea unui utilizator sesiune, este necesar ca SNC sprijini Pod sau CoA tipuri de pachete, v? rug?m s? consulta?i-v? SNC vânz?torului sau 
-documenta?ia pentru acest lucru. În plus, este necesar s? se cunoasc? SNC porturile pentru Pod sau CoA pachete, întrucât, mai nou NASs utiliza portul 3799 
-în timp ce altele sunt configurate pentru a primi pachete de pe portul 1700. 
+<h200> <b> Deconecta?i utilizatorului </ b> </ h200> - Trimite un Pod (pachete de Deconecta?i) sau CoA (Schimbare de Autoritatea) pentru a pachetelor de NAS server pentru a deconecta un utilizator ?i ï¿½ncetarea lui / ei sesiune, ï¿½ntr-o anumit? SNC. <br/> 
+Pentru ï¿½ncheierea unui utilizator sesiune, este necesar ca SNC sprijini Pod sau CoA tipuri de pachete, v? rug?m s? consulta?i-v? SNC vï¿½nz?torului sau 
+documenta?ia pentru acest lucru. ï¿½n plus, este necesar s? se cunoasc? SNC porturile pentru Pod sau CoA pachete, ï¿½ntrucï¿½t, mai nou NASs utiliza portul 3799 
+ï¿½n timp ce altele sunt configurate pentru a primi pachete de pe portul 1700. 
 
 daloRADIUS utilizeaz? radclient binare de utilitate pentru a efectua, de test ?i returneaz? rezultate de comanda dupa ce se termina. <br/> 
-daloRADIUS conteaz? pe radclient binar fiind disponibile în \ $ PATH variabil? de mediu, în cazul în care acesta nu este, v? rug?m s? face?i 
+daloRADIUS conteaz? pe radclient binar fiind disponibile ï¿½n \ $ PATH variabil? de mediu, ï¿½n cazul ï¿½n care acesta nu este, v? rug?m s? face?i 
 corec?ii la biblioteca / extinderea-maint-radclient.php fi?ier. <br/> <br/> 
 
-V? rug?m s? re?ine?i c? poate dura un timp pentru a testa pentru a termina (pân? la câteva secunde [10-20 secunde sau a?a]), din cauza e?ecurilor ?i 
+V? rug?m s? re?ine?i c? poate dura un timp pentru a testa pentru a termina (pï¿½n? la cï¿½teva secunde [10-20 secunde sau a?a]), din cauza e?ecurilor ?i 
 radclient va retransmite pachetele. 
 
-În fila Complex, este posibil s? se ajusteze de op?iuni pentru test: <br/> 
-Timeout - Stai "Timeout" secund? înainte de a reîncerca (poate fi un punct de flotant num?r) <br/> 
-Reîncearc? - Dac? timeout, reîncerca?i trimiterea de pachete de "reîncearc?" ori. <br/> 
+ï¿½n fila Complex, este posibil s? se ajusteze de op?iuni pentru test: <br/> 
+Timeout - Stai "Timeout" secund? ï¿½nainte de a reï¿½ncerca (poate fi un punct de flotant num?r) <br/> 
+Reï¿½ncearc? - Dac? timeout, reï¿½ncerca?i trimiterea de pachete de "reï¿½ncearc?" ori. <br/> 
 Count - Trimite fiecare pachet "Count" ori <br/> 
-Cereri - Trimite 'NUM "pachetele de la un fi?ier în paralel <br/> 
+Cereri - Trimite 'NUM "pachetele de la un fi?ier ï¿½n paralel <br/> 
 
 
 "; 
 $ l [ 'Helppage'] [ 'configoperatorsdel'] = "Pentru a elimina un operator de la baza de date trebuie s? furniza?i numele de utilizator."; 
 $ l [ 'Helppage'] [ 'configoperatorsedit'] = "Editare operatorul utilizator detaliile de mai jos"; 
 $ l [ 'Helppage'] [ 'configoperatorsnew'] = "Este posibil s? completa?i detaliile de mai jos pentru un nou operator de utilizator plus la baza de date"; 
-$ l [ 'Helppage'] [ 'configoperatorslist'] = "Afi?area tuturor operatorilor în baza de date"; 
+$ l [ 'Helppage'] [ 'configoperatorslist'] = "Afi?area tuturor operatorilor ï¿½n baza de date"; 
 $ l [ 'Helppage'] [ 'configoperators'] = "Operatorii de configurare"; 
 $ l [ 'Helppage'] [ 'configbackup'] = "Realiza?i backup"; 
 $ l [ 'Helppage'] [ 'configbackupcreatebackups'] = "Crea?i copii de rezerv?"; 
@@ -1338,11 +1338,11 @@ $ l [ 'Helppage'] [ 'configbackupmanagebackups'] = "Gestionare backup";
 $ l [ 'Helppage'] [ 'graphmain'] = " 
 <b> grafice </ b> <br/> 
 <h200> <b> general Conect?ri / Hits </ b> </ h200> - parcele de un grafic diagram? de utilizare pentru un anume utilizator pe o anumit? perioad? de timp. 
-Valoarea Conect?ri (sau "hit-uri" la SNC) sunt afi?ate într-un grafic, precum ?i înso?ite de un tabel. <br/> 
+Valoarea Conect?ri (sau "hit-uri" la SNC) sunt afi?ate ï¿½ntr-un grafic, precum ?i ï¿½nso?ite de un tabel. <br/> 
 <h200> <b> ansamblu Download Statistici </ b> </ h200> - parcele de un grafic diagram? de utilizare pentru un anume utilizator pe o anumit? perioad? de timp. 
-Cantitatea de date desc?rcate de c?tre client este de valoare, care este calculat. Graful este înso?it de un tabel <br/> 
-<h200> <b> general Înc?rcare Statistici </ b> </ h200> - parcele de un grafic diagram? de utilizare pentru un anume utilizator pe o anumit? perioad? de timp. 
-Cantitatea de date Înc?rca?i de client este de valoare, care este calculat. Graful este înso?it de un tabel <br/> 
+Cantitatea de date desc?rcate de c?tre client este de valoare, care este calculat. Graful este ï¿½nso?it de un tabel <br/> 
+<h200> <b> general ï¿½nc?rcare Statistici </ b> </ h200> - parcele de un grafic diagram? de utilizare pentru un anume utilizator pe o anumit? perioad? de timp. 
+Cantitatea de date ï¿½nc?rca?i de client este de valoare, care este calculat. Graful este ï¿½nso?it de un tabel <br/> 
 <br/> 
 <h200> <b> Alltime Conect?ri / Hits </ b> </ h200> - parcele de un grafic diagram? de Conect?ri la server pentru o anumit? perioad? de timp. <br/> 
 <h200> <b> Alltime Trafic de comparare </ b> </ h200> - parcele de un grafic diagram? de descarcat si Uploaded statisticse. 
@@ -1351,7 +1351,7 @@ $ l [ 'Helppage'] [ 'graphsalltimelogins'] = "O-Time Toate statisticile de Conec
 $ l [ 'Helppage'] [ 'graphsalltimetrafficcompare'] = "O-Time Toate statisticile de trafic prin intermediul server bazat pe o distribu?ie pe o perioad? de timp."; 
 $ l [ 'Helppage'] [ 'graphsoveralldownload'] = "parcele de un grafic plan de Downloaded octe?i la server"; 
 $ l [ 'Helppage'] [ 'graphsoverallupload'] = "parcele de un grafic diagram? de Uploaded octe?i la server"; 
-$ l [ 'Helppage'] [ 'graphsoveralllogins'] = "parcele de un grafic plan de încerc?ri de conectare la server"; 
+$ l [ 'Helppage'] [ 'graphsoveralllogins'] = "parcele de un grafic plan de ï¿½ncerc?ri de conectare la server"; 
 
 
 
@@ -1375,12 +1375,12 @@ $ l [ 'Helppage'] [ 'repmain'] = "
 <b> General Rapoarte </ b> <br/> 
 <h200> <b> Online Users </ b> </ h200> - Ofer? o list? a tuturor utilizatorilor, care sunt 
 dovedit a fi on-line prin intermediul contabile tabel in baza de date. A verifica care este realizat este pentru utilizatori 
-nu se încheie cu timpul (AcctStopTime) set. Este important s? observa?i c? aceste utilizatori pot fi, de asemenea, sesiuni de st?tut 
-care se întâmpl? atunci când NASs dintr-un motiv pentru a nu trimite contabilului-stop de pachete. <br/> 
-<h200> <b> Ultima conexiune Încerc?rile de </ b> </ h200> - Ofer? o list? cu toate Acces-Accept si acces-Respingere (a acceptat ?i nu a reu?it) autentific?rile 
+nu se ï¿½ncheie cu timpul (AcctStopTime) set. Este important s? observa?i c? aceste utilizatori pot fi, de asemenea, sesiuni de st?tut 
+care se ï¿½ntï¿½mpl? atunci cï¿½nd NASs dintr-un motiv pentru a nu trimite contabilului-stop de pachete. <br/> 
+<h200> <b> Ultima conexiune ï¿½ncerc?rile de </ b> </ h200> - Ofer? o list? cu toate Acces-Accept si acces-Respingere (a acceptat ?i nu a reu?it) autentific?rile 
 pentru utilizatori. <br/> Acestea sunt extrase din baza de date a postauth tabel care este necesar pentru a fi definite 
-în FreeRADIUS de fi?ier de configurare pentru a jurnalului de fapt, acestea. <br/> 
-<h200> <b> Top utilizatorului </ b> </ h200> - Ofer? o list? a început N utilizatori pentru a consumului de l??ime de band? ?i timp sesiune folosit <br/> <br/> 
+ï¿½n FreeRADIUS de fi?ier de configurare pentru a jurnalului de fapt, acestea. <br/> 
+<h200> <b> Top utilizatorului </ b> </ h200> - Ofer? o list? a ï¿½nceput N utilizatori pentru a consumului de l??ime de band? ?i timp sesiune folosit <br/> <br/> 
 <b> sub-categorii Rapoarte </ b> <br/> 
 <h200> <b> Rapoarte </ b> </ h200> - ofer? acces la daloRADIUS LogFile, FreeRADIUSs LogFile, sistem de LogFile ?i Boot LogFile <br/> 
 <h200> <b> Stare </ b> </ h200> - ofer? informa?ii cu privire la statutul ?i server RADIUS Componente statut "; 
@@ -1390,11 +1390,11 @@ $ l [ 'Helppage'] [ 'repstatserver'] = "ofer? informa?ii generale cu privire la 
 $ l [ 'Helppage'] [ 'repstatus'] = "<b> Stare </ b> <br/> 
 <h200> <b> Server Stare </ b> </ h200> - Ofer? informa?ii generale despre server sine: utilizarea procesorului, a proceselor, uptime, memorie, etc <br/> 
 <h200> <b> RADIUS Stare </ b> </ h200> - Ofer? informa?ii generale despre FreeRADIUS daemon ?i baze de date MySQL server "; 
-$ l [ 'Helppage'] [ 'reptopusers'] = "Inregistreaza top pentru utilizatori, cei care sunt enumerate mai jos au câ?tigat cel mai mare consum de sesiune 
+$ l [ 'Helppage'] [ 'reptopusers'] = "Inregistreaza top pentru utilizatori, cei care sunt enumerate mai jos au cï¿½?tigat cel mai mare consum de sesiune 
 timp sau de utilizare a l??imii de band?. Afi?area utilizatorilor din categoria: "; 
 $ l [ 'Helppage'] [ 'repusername'] = "Recorduri g?sit de utilizator:"; 
 $ l [ 'Helppage'] [ 'reponline'] = " 
-Urm?torul tabel afi?eaz? utilizatorii care în prezent sunt conectate la 
+Urm?torul tabel afi?eaz? utilizatorii care ï¿½n prezent sunt conectate la 
 sistem. Este foarte posibil ca acolo sunt surmenat de conexiuni, 
 sensul pe care utilizatorii le-am deconectat de la SNC, dar nu a trimite sau nu a fost 
 posibilitatea de a trimite o STOP contabile de pachete de RADIUS server. 
@@ -1403,27 +1403,27 @@ posibilitatea de a trimite o STOP contabile de pachete de RADIUS server.
 
 $ l [ 'Helppage'] [ 'mnglistall'] = "Lista utilizatorilor din baza de date"; 
 $ l [ 'Helppage'] [ 'mngsearch'] = "C?utare de utilizator:"; 
-$ l [ 'Helppage'] [ 'mngnew'] = "Este posibil s? completa?i detaliile de mai jos pentru utilizator nou lâng? baza de date <br/>"; 
+$ l [ 'Helppage'] [ 'mngnew'] = "Este posibil s? completa?i detaliile de mai jos pentru utilizator nou lï¿½ng? baza de date <br/>"; 
 $ l [ 'Helppage'] [ 'mngedit'] = "Editare utilizator detalii de mai jos. <br/>"; 
 $ l [ 'Helppage'] [ 'mngdel'] = "Pentru a elimina un utilizator intrare din baza de date trebuie s? furniza?i numele de utilizator al contului <br/>"; 
-$ l [ 'Helppage'] [ 'mngbatch'] = "Este posibil s? completa?i detaliile de mai jos pentru utilizator nou lâng? baza de date. <br/> 
-Re?ine?i c? aceste set?ri se aplic? pentru to?i utilizatorii care îl crea?i. <br/> "; 
+$ l [ 'Helppage'] [ 'mngbatch'] = "Este posibil s? completa?i detaliile de mai jos pentru utilizator nou lï¿½ng? baza de date. <br/> 
+Re?ine?i c? aceste set?ri se aplic? pentru to?i utilizatorii care ï¿½l crea?i. <br/> "; 
 $ l [ 'Helppage'] [ 'mngnewquick'] = "Urm?toarele utilizator / carte este de tip prepaid. <br/> 
-Durata de timp specificat? în Timpul de credit va fi utilizat ca Session-Timeout ?i Max-Toate-Session 
+Durata de timp specificat? ï¿½n Timpul de credit va fi utilizat ca Session-Timeout ?i Max-Toate-Session 
 raz? atribute "; 
 
 / / Contabilitate pct. 
 $ l [ 'Helppage'] [ 'acctactive'] = " 
-Ofer? informa?ii c? s-ar dovedi util? pentru urm?rirea active sau a expirat utilizatori în baza de date 
+Ofer? informa?ii c? s-ar dovedi util? pentru urm?rirea active sau a expirat utilizatori ï¿½n baza de date 
 din punct de vedere al utilizatorilor, care au un atribut expir?rii sau un Max-Toate-Sesiunea atribut. 
 <br/> 
 "; 
 $ l [ 'Helppage'] [ 'acctall'] = " 
-Ofer? complet de contabilitate pentru toate sesiunile de informa?ii în baza de date. 
+Ofer? complet de contabilitate pentru toate sesiunile de informa?ii ï¿½n baza de date. 
 <br/> 
 "; 
 $ l [ 'Helppage'] [ 'acctdate'] = " 
-Ofer? completa informa?iile contabile pentru toate sesiunile între 2 dat datele pentru un anumit utilizator. 
+Ofer? completa informa?iile contabile pentru toate sesiunile ï¿½ntre 2 dat datele pentru un anumit utilizator. 
 <br/> 
 "; 
 $ l [ 'Helppage'] [ 'acctipaddress'] = " 
@@ -1433,7 +1433,7 @@ Ofer? completa informa?iile contabile pentru toate sesiunile, care au provenit c
 $ l [ 'Helppage'] [ 'acctmain'] = " 
 <b> General Accounting </ b> <br/> 
 <h200> <b> utilizatorului contabilitate </ b> </ h200> -- 
-Ofer? complet de contabilitate pentru toate sesiunile de informa?ii în baza de date pentru un anumit utilizator. 
+Ofer? complet de contabilitate pentru toate sesiunile de informa?ii ï¿½n baza de date pentru un anumit utilizator. 
 <br/> 
 <h200> <b> contabilitate </ b> </ h200> -- 
 Ofer? completa informa?iile contabile pentru toate sesiunile, care au provenit cu o anumit? adres? IP. 
@@ -1442,13 +1442,13 @@ Ofer? completa informa?iile contabile pentru toate sesiunile, care au provenit c
 Ofer? completa informa?iile contabile pentru toate sesiunile specifice SNC c? adresa IP a manipulat. 
 <br/> 
 <h200> <b> Data de contabilitate </ b> </ h200> -- 
-Ofer? completa informa?iile contabile pentru toate sesiunile între 2 dat datele pentru un anumit utilizator. 
+Ofer? completa informa?iile contabile pentru toate sesiunile ï¿½ntre 2 dat datele pentru un anumit utilizator. 
 <br/> 
-<h200> <b> Toate înregistr?rile contabile </ b> </ h200> -- 
-Ofer? complet de contabilitate pentru toate sesiunile de informa?ii în baza de date. 
+<h200> <b> Toate ï¿½nregistr?rile contabile </ b> </ h200> -- 
+Ofer? complet de contabilitate pentru toate sesiunile de informa?ii ï¿½n baza de date. 
 <br/> 
 <h200> <b> active Records contabilitate </ b> </ h200> -- 
-Ofer? informa?ii c? s-ar dovedi util? pentru urm?rirea active sau a expirat utilizatori în baza de date 
+Ofer? informa?ii c? s-ar dovedi util? pentru urm?rirea active sau a expirat utilizatori ï¿½n baza de date 
 din punct de vedere al utilizatorilor, care au un atribut expir?rii sau un Max-Toate-Sesiunea atribut. 
 <br/> 
 
@@ -1466,23 +1466,23 @@ Ofer? completa informa?iile contabile pentru toate sesiunile specifice SNC c? ad
 <br/> 
 "; 
 $ l [ 'Helppage'] [ 'acctusername'] = " 
-Ofer? complet de contabilitate pentru toate sesiunile de informa?ii în baza de date pentru un anumit utilizator. 
+Ofer? complet de contabilitate pentru toate sesiunile de informa?ii ï¿½n baza de date pentru un anumit utilizator. 
 <br/> 
 "; 
 / / Contabilitate hotspot pct. 
 $ l [ 'Helppage'] [ 'accthotspotaccounting'] = " 
 Ofer? completa informa?iile contabile pentru toate sesiunile, care au provenit din acest Hotspot. 
-Aceast? list? este calculat? de c?tre cota numai acele înregistr?ri în radacct tabel cu CalledStationId 
-domeniu, care se potrivesc cu un Hotspot de adresa MAC intrarea în Hotspot de gestionare a bazelor de date. 
+Aceast? list? este calculat? de c?tre cota numai acele ï¿½nregistr?ri ï¿½n radacct tabel cu CalledStationId 
+domeniu, care se potrivesc cu un Hotspot de adresa MAC intrarea ï¿½n Hotspot de gestionare a bazelor de date. 
 <br/> 
 "; 
 $ l [ 'Helppage'] [ 'accthotspotcompare'] = " 
-Ofer? informa?ii contabile de baz? pentru compara?ie între toate activ? hotspots g?sit în baza de date. 
+Ofer? informa?ii contabile de baz? pentru compara?ie ï¿½ntre toate activ? hotspots g?sit ï¿½n baza de date. 
 Informa?iilor contabile furnizate: <br/> <br/> 
 Hotspot Nume - numele de Hotspot <br/> 
 Utilizatori unici - Utilizatorii care au logined numai prin acest hotspot <br/> 
 Total Hits - totalul autentific?rile c? s-au efectuat la acest hotspot (unic ?i nu unic) <br/> 
-Timpul mediu - Timpul mediu petrecut un utilizator în acest hotspot <br/> 
+Timpul mediu - Timpul mediu petrecut un utilizator ï¿½n acest hotspot <br/> 
 Timp total - The accumolated petrecut timp de to?i utilizatorii din acest hotspot <br/> 
 
 <br/> 
@@ -1498,7 +1498,7 @@ $ l [ 'Helppage'] [ 'accthotspot'] = "
 Ofer? completa informa?iile contabile pentru toate sesiunile, care au provenit din acest Hotspot. 
 <br/> 
 <h200> <b> Hotspot de comparare </ b> </ h200> -- 
-Ofer? informa?ii contabile de baz? pentru compara?ie între toate activ? hotspots g?sit în baza de date. 
+Ofer? informa?ii contabile de baz? pentru compara?ie ï¿½ntre toate activ? hotspots g?sit ï¿½n baza de date. 
 Ofer? un grafic de complot diferite compara?iile f?cute. 
 <br/> 
 "; 
@@ -1506,16 +1506,16 @@ Ofer? un grafic de complot diferite compara?iile f?cute.
 $ l [ 'Helppage'] [ 'acctcustom'] = " 
 <h200> <b> Custom </ b> </ h200> -- 
 Ofer? cele mai flexibile personalizat interogare pentru a se executa pe baza de date. <br/> 
-Este posibil s? se adapteze la interogare este max prin modificarea set?rilor în bara lateral? stânga. <br/> 
+Este posibil s? se adapteze la interogare este max prin modificarea set?rilor ï¿½n bara lateral? stï¿½nga. <br/> 
 <br/> 
-<b> Între datele </ b> - Seta?i care începe ?i se termin? data. 
+<b> ï¿½ntre datele </ b> - Seta?i care ï¿½ncepe ?i se termin? data. 
 <br/> 
-În cazul în care <b> </ b> - Seta?i domeniul in baza de date pe care dori?i, pentru a se potrivi (la fel ca ?i un element-cheie), ales în cazul în care valoarea 
+ï¿½n cazul ï¿½n care <b> </ b> - Seta?i domeniul in baza de date pe care dori?i, pentru a se potrivi (la fel ca ?i un element-cheie), ales ï¿½n cazul ï¿½n care valoarea 
 care s? se potriveasc? pentru a ar trebui s? fie egal (=) sau acesta con?ine o parte din valoarea de c?utare pentru tine (cum ar fi o regex). Dac? 
 alege s? utilizeze Contine operatorul nu trebuie s? ad?uga?i orice metacaractere din comuna forma "*", ci mai degrab? 
-valoarea pe care vor fi c?utate în mod automat în acest formular: * valoare * (sau în stil mysql:% valoarea%). 
+valoarea pe care vor fi c?utate ï¿½n mod automat ï¿½n acest formular: * valoare * (sau ï¿½n stil mysql:% valoarea%). 
 <br/> 
-Interogare de Contabilitate <b> Domenii </ b> - Pute?i alege domenii care v-ar pl?cea s? prezinte, în rezultate 
+Interogare de Contabilitate <b> Domenii </ b> - Pute?i alege domenii care v-ar pl?cea s? prezinte, ï¿½n rezultate 
 List?. 
 <br/> 
 Prin Ordinul <b> </ b> - Alege domeniu de care v-ar pl?cea s? ordinea rezultatelor ?i este de tip (Crescator 
@@ -1525,12 +1525,12 @@ Sau descresc?toare)
 $ l [ 'Helppage'] [ 'acctcustomquery'] = ""; 
 $ l [ 'Helppage'] [ 'acctmaintenance'] = " 
 <h200> <b> Cur??ire surmenat-sesiuni de </ b> </ h200> -- 
-St?tut-sesions mai multe ori exist? pentru c? SNC nu a fost în m?sur? s? ofere un contabil STOP record pentru <br/> 
-sesiune de utilizator, care rezult? într-o sesiune surmenat deschis în eviden?ele contabile care simuleaz? un fals autentifica?i în utilizator 
+St?tut-sesions mai multe ori exist? pentru c? SNC nu a fost ï¿½n m?sur? s? ofere un contabil STOP record pentru <br/> 
+sesiune de utilizator, care rezult? ï¿½ntr-o sesiune surmenat deschis ï¿½n eviden?ele contabile care simuleaz? un fals autentifica?i ï¿½n utilizator 
 Record (fals pozitive). 
 <br/> 
-<h200> <b> ?terge?i înregistr?rile contabile </ b> </ h200> -- 
-?tergerea de înregistr?ri contabile în baza de date. Ea nu poate fi în?elept pentru a efectua acest lucru sau pentru a permite altor utilizatori 
+<h200> <b> ?terge?i ï¿½nregistr?rile contabile </ b> </ h200> -- 
+?tergerea de ï¿½nregistr?ri contabile ï¿½n baza de date. Ea nu poate fi ï¿½n?elept pentru a efectua acest lucru sau pentru a permite altor utilizatori 
 cu excep?ia unui supravegheat de acces de administrator la aceast? pagin?. 
 <br/> 
 "; 
@@ -1540,41 +1540,41 @@ $ l [ 'Helppage'] [ 'acctmaintenancedelete'] = "";
 
 
 $ l [ 'Helppage'] [ 'giseditmap'] = " 
-Editare Harta Mode - în acest mod, pute?i ad?uga sau ?terge fie hotspots f?când clic pur ?i simplu 
+Editare Harta Mode - ï¿½n acest mod, pute?i ad?uga sau ?terge fie hotspots f?cï¿½nd clic pur ?i simplu 
 pe-o loca?ie de pe hart? sau printr-un clic pe un hotspot (respectiv). <br/> <br/> 
 Ad?ugarea <b> Hotspot </ b> - Pur ?i simplu face?i clic pe o loca?ie de pe hart?, vi se va cere s? furnizeze 
-Hotspot de numele ?i adresa de e MAC. Acestea sunt 2 crucial detalii mai târziu, utilizat pentru a identifica acest hotspot 
-În tabelul de contabilitate. Ofer? întotdeauna corect adresa MAC! 
+Hotspot de numele ?i adresa de e MAC. Acestea sunt 2 crucial detalii mai tï¿½rziu, utilizat pentru a identifica acest hotspot 
+ï¿½n tabelul de contabilitate. Ofer? ï¿½ntotdeauna corect adresa MAC! 
 <br/> <br/> 
 ?tergerea <b> Hotspot </ b> - Pur ?i simplu face?i clic pe un hotspot de pictograma ?i v? confirma?i ?tergerea de acesta de la 
 Baza de date. 
 <br/> 
 "; 
 $ l [ 'Helppage'] [ 'gisviewmap'] = " 
-Vizualiza?i harta Mode - în acest mod, ve?i putea naviga pe hotspots în care sunt prev?zute 
-în icoane peste h?r?i furnizate de GoogleMaps serviciu. <br/> <br/> 
+Vizualiza?i harta Mode - ï¿½n acest mod, ve?i putea naviga pe hotspots ï¿½n care sunt prev?zute 
+ï¿½n icoane peste h?r?i furnizate de GoogleMaps serviciu. <br/> <br/> 
 
-F?când clic pe un <b> Hotspot </ b>-v? va oferi mai multe detalii în detaliu cu privire la hotspot. 
+F?cï¿½nd clic pe un <b> Hotspot </ b>-v? va oferi mai multe detalii ï¿½n detaliu cu privire la hotspot. 
 Cum ar fi informa?ii de contact pentru a hotspot, statistici ?i detalii. 
 <br/> 
 "; 
 $ l [ 'Helppage'] [ 'gismain'] = " 
 <b> Informa?ii generale </ b> 
-GIS ofer? Mapare vizual map?rile de hotspot loca?ie din întreaga lume, harta, folosind Google Maps API. <br/> 
-În pagina de management ce au posibilitatea de a ad?uga noi hotspot, referitoare la baza de date, în cazul în care exist?, de asemenea, un domeniu 
+GIS ofer? Mapare vizual map?rile de hotspot loca?ie din ï¿½ntreaga lume, harta, folosind Google Maps API. <br/> 
+ï¿½n pagina de management ce au posibilitatea de a ad?uga noi hotspot, referitoare la baza de date, ï¿½n cazul ï¿½n care exist?, de asemenea, un domeniu 
 numita Geolocation, aceasta este valoarea numeric? c? Google Maps API folose?te pentru a PIN-punct exacta 
 Hotspot de faptul c? loca?ia pe hart?. <br/> <br/> 
 
 <h200> <b> 2 Moduri de func?ionare sunt prev?zute: </ b> </ h200> 
 Unul este <b> Vizualiza?i harta </ b> modul care permite "surf", prin harta lumii 
 ?i a vedea loca?iile curente de hotspots in baza de date ?i un altul - <b> Edita?i MAP </ b> -, care este modul de 
-pe care o pot folosi pentru a crea hotspot al vizual de la stânga, pur ?i simplu clic pe hart? sau de a scoate 
-existente hotspot intr?rile de stânga-clic pe existente hotspot steaguri. <br/> <br/> 
+pe care o pot folosi pentru a crea hotspot al vizual de la stï¿½nga, pur ?i simplu clic pe hart? sau de a scoate 
+existente hotspot intr?rile de stï¿½nga-clic pe existente hotspot steaguri. <br/> <br/> 
 
-Un alt aspect important este c? fiecare computer din re?ea necesit? un cod unic de înregistrare pe care le 
+Un alt aspect important este c? fiecare computer din re?ea necesit? un cod unic de ï¿½nregistrare pe care le 
 poate ob?ine de la Google Maps API pagin? prin furnizarea completa la adresa de web g?zduit de director 
-daloRADIUS aplicarea pe server. Odat? ce a?i ob?inut codul de la Google, pur ?i simplu s?-l insera?i în 
-De înregistrare caset? ?i face?i clic pe "Registrul de cod" buton pentru a scrie o. 
+daloRADIUS aplicarea pe server. Odat? ce a?i ob?inut codul de la Google, pur ?i simplu s?-l insera?i ï¿½n 
+De ï¿½nregistrare caset? ?i face?i clic pe "Registrul de cod" buton pentru a scrie o. 
 Apoi, s-ar putea s? fie capabil de a utiliza Google Maps servicii. <br/> <br/> "; 
 
 / * ************************************************ ********************************** * / 
@@ -1596,7 +1596,7 @@ $ l [ 'mesaje'] [ 'missingtype'] = "Eroare: lips? de tip";
 $ l [ 'mesaje'] [ 'missingcardbank'] = "Eroare: lipsesc cardbank"; 
 $ l [ 'mesaje'] [ 'missingrate'] = "Eroare: lipsesc rata"; 
 $ l [ 'mesaje'] [ 'succes'] = "de succes"; 
-$ l [ 'mesaje'] [ 'gisedit1'] = "Bine ai venit, pe care în mod Editare"; 
+$ l [ 'mesaje'] [ 'gisedit1'] = "Bine ai venit, pe care ï¿½n mod Editare"; 
 $ l [ 'mesaje'] [ 'gisedit2'] = "?terge curent marker de la harta si baza de date?"; 
 $ l [ 'mesaje'] [ 'gisedit3'] = "V? rug?m s? introduce?i numele de Hotspot"; 
 $ l [ 'mesaje'] [ 'gisedit4'] = "Adauga curent marker la baza de date?"; 
@@ -1611,7 +1611,7 @@ $ l [ 'mesaje'] [ 'gisviewwelcome'] = "Bine ati venit la Enginx Visual Maps";
 $ l [ 'mesaje'] [ 'Loginerror "] =" <br/> <br/> una din urm?toarele: <br/> 
 1. rea de utilizator / parola <br/> 
 2. un administrator este deja conectat-in (doar un exemplu, este permis) <br/> 
-3. se pare c? exist? mai mult de un "administrator" utilizator în baza de date <br/> 
+3. se pare c? exist? mai mult de un "administrator" utilizator ï¿½n baza de date <br/> 
 "; 
 
 $ l [ 'butoane'] [ 'savesettings'] = "Save Settings"; 

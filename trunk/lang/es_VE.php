@@ -22,10 +22,10 @@
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-8-SVN";
-$l['all']['daloRADIUSVersion'] = "versi&oacute;n 0.9-8-SVN";
+$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
+$l['all']['daloRADIUSVersion'] = "versi&oacute;n 0.9-9";
 $l['all']['copyright1'] = "Administraci&oacute;n RADIUS, Reportes, Conteo y Facturaci&oacute;n desarrollado por <a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "Derechos reservados de <a href=\"http://www.enginx.com\">Enginx</a> y Liran Tal<br/>
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Pool Name";
