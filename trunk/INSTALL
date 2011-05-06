@@ -1,4 +1,4 @@
-Copyright Liran Tal 2007. All rights reserved.
+daloRADIUS Copyright (C) 2007 by Liran Tal. All rights reserved.
 For release information and license, read LICENSE.
 
 
@@ -15,33 +15,38 @@ Prerequisites
  PHP 4/5
  PHP GD 
  PHP DB Abstraction Layer (may require PHP Pear)
+ PHP Mail
  MySQL 4/5
 
- daloRADIUS has been tested on Debian sid/unstable and Ubuntu 6.06 LTS
+ daloRADIUS has been tested on Debian sid/unstable and Ubuntu 10.04 LTS
  with apache2, php5 and mysql-server-5 packages but should be able to work
  on older versions of the mentioned packages (apache1, php4 or mysql4).
 
- Packages that has been tested are:
 
- apache2 	2.0.55-4ubuntu2.1
- php5 		5.1.2-1ubuntu3.6
- mysql5		5.0.22-0ubuntu6.06
-
-
+ OTHER OS/DISTRIBUTIONS
+ ======================
  
  daloRADIUS has also been deployed on Windows successfully and is under
  testing and more QA work, thanks to Gustavo Mariani.
  To see Gustavo's installation notes regarding a Microsoft Windows deployment
  please attend to INSTALL.win
+ 
+ Consult:
+ * INSTALL.win
+ * INSTALL.openSUSE
 
 
  HOWTO RESOURCES
  ===============
  
+ Unofficial guides to help you get started with daloRADIUS
+ 
  1. CentOS 5:
 		http://howtoforge.org/authentication-authorization-and-accounting-with-freeradius-and-mysql-backend-and-webbased-management-with-daloradius
  2. Ubuntu 8.04:
 		http://howtoforge.org/setting-up-a-freeradius-based-aaa-server-with-mysql-and-management-with-daloradius
+ 3. Ubuntu 9.04:
+ 		http://ubuntuforums.org/showthread.php?t=1169178
  
  
  DEBIAN USERS
@@ -52,7 +57,7 @@ Prerequisites
  are required and which are not.
 
  apt-get install apache2
- apt-get install php5-common php5-gd php-pear php-db libapache2-mod-php5
+ apt-get install php5-common php5-gd php-pear php-db libapache2-mod-php5 php-mail
  
  Now if you plan on working with mysql as the database server then you need
 	1. to install the database server, being mysql.
@@ -82,8 +87,8 @@ Upgrading
 		so first you will need to adjust your daloradius.conf file to the daloradius.conf.php format (it's pretty much the same, HONEST!)
 		and then rename it to daloradius.conf.php
 		
-		The best way to approach this is simply to copy over the daloradius.conf.php file from 0.9-8 and copy
-		it to your 0.9-7 directory and then adjust the configuration parameters accordingly in daloradius.conf.php
+		The best way to approach this is simply to copy over the daloradius.conf.php file from 0.9-9 and copy
+		it to your 0.9-8 directory and then adjust the configuration parameters accordingly in daloradius.conf.php
 	
 	2. Extract the tar-ball (daloradius-X.Y.tar.gz) to the same directory of the 
 	   previous copy, over-writing all the files. (It is ofcourse always a good practice to backup
@@ -97,15 +102,14 @@ Upgrading
 	3. To upgrade your database through command line using the mysql console simply navigate
 	   to the contrib/db directory and load up the migration files until the last one
 
-	   For example, if you currently have 0.9-6 and you're upgrading to 0.9-8
+	   For example, if you currently have 0.9-8 and you're upgrading to 0.9-9
 	   then:
 		cd /var/www/daloradius-0.9-8/contrib/db
-		mysql -u root -p radius < contrib/db/mysql-migrate-0.96-to-0.97.sql
-		mysql -u root -p radius < contrib/db/mysql-migrate-0.97-to-0.98.sql
+		mysql -u root -p radius < contrib/db/mysql-migrate-0.98-to-0.99.sql
  
  	 GUI UPGRADE
 	 ---------------
-	3. Version 0.9-8 introduces a new Graphical Upgrade page to ease up the process so simply
+	3. Version 0.9-9 introduces a new Graphical Upgrade page to ease up the process so simply
 	   fire up your browser and navigate to http://localhost/update.php
 	
 	
@@ -226,22 +230,7 @@ Support
  But most developers and users of daloRADIUS are always available on #freeradius as well.
  
  Official daloRADIUS Website: http://www.daloradius.com
- 
- Wiki: http://daloradius.wiki.sourceforge.net/
- The wiki is available for quite some time now, make good use of it and don't 
- forget to contribute your 2 cents :)
- 
- Demo: http://daloradius.xdsl.by/
- A new demo system is up and ready. 
- 
- The login details are as follows:
- Username: administrator
- Password: radius
-
- The demo system is always the last revision of the SVN so you can
- see the new features (although things may break from time to time as well :) )
-
- 
+  
  Mailing-List: daloradius-users@lists.sourceforge.net
  Register here: https://lists.sourceforge.net/lists/listinfo/daloradius-users
 
