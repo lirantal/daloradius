@@ -327,54 +327,6 @@ CREATE TABLE `nodes_settings` (
 
 
 
-DROP TABLE IF EXISTS `nas_chilli`;
-CREATE TABLE `nas_chilli` (
-  `id` int(32) NOT NULL auto_increment,
-  `hotspot_id` int(32) default 0 COMMENT 'the hotspot business id associated with this chilli nas instance instance',  
-  
-  `creationdate` datetime default '0000-00-00 00:00:00',
-  `creationby` varchar(128) default NULL,
-  `updatedate` datetime default '0000-00-00 00:00:00',
-  `updateby` varchar(128) default NULL,
-  
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `nas_chilli_settings`;
-CREATE TABLE `nas_chilli_settings` (
-  `id` int(32) NOT NULL auto_increment,
-  `nas_chilli_id` varchar(128) default NULL COMMENT 'chilli nas id to which these settings belong',
-  
-  `key` varchar(256) default NULL COMMENT 'chilli configuration directive',
-  `value` varchar(256) default NULL COMMENT 'chilli configuration directive value',
-  
-  `creationdate` datetime default '0000-00-00 00:00:00',
-  `creationby` varchar(128) default NULL,
-  `updatedate` datetime default '0000-00-00 00:00:00',
-  `updateby` varchar(128) default NULL,
-  
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-INSERT INTO `nas_chilli_settings` (`id`, `nas_chilli_id`, `key`, `value`) VALUES
-(0,1,'dhcp_if','VALUE'),
-(0,1,'uamallowed','VALUE'),
-(0,1,'dns1','VALUE'),
-(0,1,'dns2','VALUE'),
-(0,1,'locationname','VALUE'),
-(0,1,'uamhomepage','VALUE'),
-(0,1,'uamserver','VALUE'),
-(0,1,'uamsecret','VALUE'),
-(0,1,'radiusserver1','VALUE'),
-(0,1,'radiusserver2','VALUE'),
-(0,1,'radiusauthport','VALUE'),
-(0,1,'radiusacctport','VALUE'),
-(0,1,'radiusnasid','VALUE');
-
-
-
-
-
 DROP TABLE IF EXISTS `billing_notifications_settings`;
 CREATE TABLE `billing_notifications_settings` (
   `id` int(32) NOT NULL auto_increment,
