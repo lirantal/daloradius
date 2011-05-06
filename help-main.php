@@ -27,8 +27,18 @@
 		
 				<h2 id="Intro"><a href="#">Help</a></h2>
 				<p>
-				Still under construction, if you would like to help out email me at liran.tal@gmail.com <br/>
-				Otherwise you can check out the wiki at <a href="http://daloradius.wiki.sourceforge.net"> daloradius.wiki.sourceforge.net </a>
+				
+				One of several communication mediums available at your disposal:<br/><br/>
+				
+				<b>daloRADIUS website</b>: <a href="http://www.daloradius.com">daloRADIUS blog</a><br/><br/>
+				<b>daloRADIUS Project at SourceForge</b>: <a href="http://sourceforge.net/projects/daloradius/">SourceForge project</a><br/>
+				At SourceForge you may find the trackers for submitting tickets for support, bugs or features for next releases.<br/>
+				Forums and the mailing list archive to review and search for issues. The official daloRADIUS package is available at
+				SourceForge as well.<br/><br/>
+				<b>daloRADIUS Mailing List</b>: Email to daloradius-users@lists.sourceforge.net, though registration to the mailing list<br/>
+				is required first <a href="https://lists.sourceforge.net/lists/listinfo/daloradius-users">here</a><br/><br/>
+				
+				<b>daloRADIUS IRC</b>: you can find us at #daloradius on irc.freenode.net
 				</p>
 		</div>
 		

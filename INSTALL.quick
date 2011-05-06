@@ -1,4 +1,4 @@
-﻿Copyright Liran Tal 2007. All rights reserved.
+daloRADIUS Copyright (C) 2007 by Liran Tal. All rights reserved.
 For release information and license, read LICENSE.
 
 
@@ -14,6 +14,7 @@ For release information and license, read LICENSE.
  PHP 4/5
  PHP GD 
  PHP DB Abstraction Layer (may require PHP Pear)
+ PHP Mail
  MySQL 4/5
  
 
@@ -21,7 +22,7 @@ For release information and license, read LICENSE.
  ===================
 
  apt-get install apache2
- apt-get install php5-common php5-gd php-pear php-db libapache2-mod-php5 php5-mysql 
+ apt-get install php5-common php5-gd php-pear php-db libapache2-mod-php5 php5-mysql php-mail 
  apt-get install mysql-server-5.0 
 
 
@@ -43,7 +44,7 @@ For release information and license, read LICENSE.
 			(for fresh installations)
 				cd /var/www/daloradius/contrib/db
 				mysqladmin create radius
-				mysql -u root -p radius < mysql-daloradius-and-freeradius.sql
+				mysql -u root -p radius < fr2-mysql-daloradius-and-freeradius.sql
 				
 			If you already have the radius database imported (i.e: radcheck, radacct, etc...)
 			then you only need daloradius's tables added:

@@ -1,3 +1,45 @@
+release 0.9-9rc1 - 6 May 2011
+	- added heartbeat router scripts and dashboard implementation in daloradius
+	- added maintenance scripts to clean stale sessions/expire accounts and monitoring user traffic (with email alerts)
+	- added notification system for sending invoices and welcome notifications for new users
+	- added support for resetting user's session time/data in edit user management pages
+	- added support for FR2 schema by default
+	- added FR2 configuration files
+	- added support for custom attributes field to be appended to the username for disconnecting a user
+	- added ups, raid and cron information and control for the web server user
+	- added Filipp's contributed reporting page showing new users behavior in the system
+	- added batch user sessions to support creation of bulk user vouchers and associating them to a hotspot/business to track usage, invoices and other functionality 
+	- added support to change user's authentication password (in radcheck table) as well as portal's password
+	- added support for user search by searching in the site-wide Search box (patch by shuri)
+	- added support for user's plan information to main dalo admin platform
+	- added huntgroups pages
+	- added support for filtering between dates in Reports -> Last Connection Attempts
+	- added support to toggle for removing all user associations with the profile when a profile is removed
+	- added patch by Sergey Dukachev which patch a large code-base of daloradius (except for the billing part) to provide comptaibility with pgsql databases
+	- added .htaccess file for generic use
+	- added daloradius custom counters to fr2/fr1 config files
+	- fixed support for daloradius-user's login password to be different from the user's login (radcheck) password
+	- fixed bluechipwireless sponsored theme for captive portal login
+	- fixed possible online users bug
+	- fixed fixed hard-coded year in select box and popup js date
+	- fixed issue reported by Matthew Moore related to attributes of the same name not showing up several times (this is due to group by sql query)
+	- fixed bug #3245933 related to css
+	- fixed bug #2924004 which resolves an xss vul: http://seclists.org/bugtraq/2009/Dec/223
+	- fixed bug #3201571 - not properly escaping data for js code
+	- fixed bug in graph pages to show correct results
+	- fixed bug in displaying disabled users in listing pages
+	- improved billing support - invoices and payments (tied to the billing plans)
+	- improved operators management pages 
+	- improved realms/proxy logic configuration to save backup of original files
+	- improved pagination across all table listing pages
+	- improved method of disabling/enabling user to add/remove user from a radius profile/group of 'disabled' users as well as added disable/enable buttons across all management pages
+	- improved UI experience of attributes handling in management pages
+	- improved billing plans to support multiple profiles
+	- improved some sql optimization to queries and db structure 
+	- improved support for navigation between pages so that listing pages support the 'back' method to return to the same resultset page
+	- improved daloradius-users portal to support proper password changing of the user account as well as provide billing information insight, invoices and more
+	
+
 release 0.9-8 - 27 January 2008 (pre 26 December 2008)
 	- added option to enable/disable user information updates on daloradius-users portal
 	- added support for searchable usernames in Online Users and Last Connected Users pages
@@ -202,7 +244,7 @@ release 0.9 - July 2007
 	and passed away on 24th of June 2007, may he rest in peace.
 	- Major code clean-up, removing deprecated files, as well as removed jpgraph
 	and libgraph as we have moved to using a tiny footprint graph library called libgraph
-	- moved to a new graphing library called libchart, credit goes to Jean-Marc Trémeaux
+	- moved to a new graphing library called libchart, credit goes to Jean-Marc Trï¿½meaux
 	(see information at: http://naku.dohcrew.com/libchart/pages/introduction/)
 	so please take note that jpgraph and libgraph have been removed!
 	- Evgeniy Kozhuhovskiy has introduced a new feature which enables support for multiple
