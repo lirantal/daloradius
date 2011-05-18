@@ -106,7 +106,7 @@ function time2str($time) {
 	}
 	if ($time)
 		$str .= "$time seconds, ";
-	$str = ereg_replace(', $','',$str);
+	$str = preg_replace("/, $/",'',$str);
 	return $str;
 }
 
