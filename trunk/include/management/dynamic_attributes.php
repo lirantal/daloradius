@@ -155,6 +155,10 @@ if(isset($_GET['getValuesForAttribute'])) {
 		case "bitspersecond":
 			drawBitPerSecond($num);
 			break;
+			
+		case "mikrotikRateLimit":
+			mikrotikRateLimit($num);
+			break;
 
 		case "kbitspersecond":
 			drawKBitPerSecond($num);
@@ -310,6 +314,34 @@ function drawBitPerSecond($num) {
                                 "<option value='5242880'>5mbps</option>"+
                                 "<option value='8388608'>8mbps</option>"+
                                 "<option value='10485760'>10mbps</option>"+
+                              "</select>";
+
+EOF;
+
+}
+
+
+function mikrotikRateLimit($num) {
+
+        $inputId = "dictValues".$num;
+
+        echo <<<EOF
+        objHelper.innerHTML = "<select onClick=\"setStringText(this.id,'$inputId');\" id='drawBitPerSecond$num' "+
+                                "style='width: 100px' class='form'>"+
+                                "<option value=''>Select...</option>"+
+                                "<option value='128k/128k'>128k/128k</option>"+
+                                "<option value='128k/256k'>128k/256k</option>"+
+                                "<option value='128k/512k'>128k/512k</option>"+
+                                "<option value='128k/1M'>128k/1M</option>"+
+                                "<option value='256k/256k'>256k/256k</option>"+
+                                "<option value='256k/1M'>256k/1M</option>"+
+                                "<option value='512k/512k'>512k/512k</option>"+
+                                "<option value='512k/1M'>512k/1M</option>"+
+                                "<option value='512k/2M'>512k/2M</option>"+
+                                "<option value='1M/1M'>1M/1M</option>"+
+                                "<option value='1M/2M'>1M/2M</option>"+
+                                "<option value='2M/2M'>2M/2M</option>"+
+                                "<option value='1M/5M'>1M/5M</option>"+
                               "</select>";
 
 EOF;

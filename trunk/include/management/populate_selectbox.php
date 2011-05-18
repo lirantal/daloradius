@@ -484,6 +484,7 @@ function drawRecommendedHelper() {
 				<option value='kbitspersecond'>kbitspersecond</option>
                 <option value='bitspersecond'>bitspersecond</option>
                 <option value='volumebytes'>volumebytes</option>
+                <option value='mikrotikRateLimit'>mikrotikRateLimit</option>
         ";
 }
 
