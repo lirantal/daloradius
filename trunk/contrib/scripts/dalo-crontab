@@ -21,3 +21,6 @@ DALO_DIR="/var/www/daloradius/contrib/scripts"
 
 # Clean Stale Sessions, run every minute
 * * * * * /usr/bin/php $DALO_DIR/maintenance/cleanStaleSessions.php 2>&1 >/dev/null
+
+# Monitor Nodes, run every 15 minutes
+#/15 * * * * /usr/bin/php $DALO_DIR/maintenance/monitorNodes.php 2>&1 >/dev/null
