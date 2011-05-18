@@ -117,7 +117,7 @@ done
 cpu=$DIFF_USAGE_UNITS.$DIFF_USAGE_DECIMAL%
 # --------------------------------------------------------------------------------------
 
-if [ "$DEBUG_MODE" -eq "1" ]
+if [ "$DEBUG_MODE" = "1" ]
 then
 	echo "Collected the following information..."
 	echo "-------------------------------------------------------"
@@ -143,7 +143,7 @@ fi
 wget -O /tmp/heartbeat.txt "$DALO_HEARTBEAT_ADDR?secret_key=$SECRET_KEY&nas_mac=$NAS_MAC&firmware=$firmware&firmware_revision=$firmware_revision&wan_iface=$wan_iface&wan_ip=$wan_ip&wan_mac=$wan_mac&wifi_mac=$wifi_mac&wan_gateway=$wan_gateway&wifi_iface=$wifi_iface&wifi_ip=$wifi_ip&wifi_mac=$wifi_mac&wifi_ssid=$wifi_ssid&wifi_key=$wifi_key&wifi_channel=$wifi_channel&lan_iface=$lan_iface&lan_ip=$lan_ip&lan_mac=$lan_mac&uptime=$uptime&memfree=$memfree&wan_bup=$wan_bup&wan_bdown=$wan_bdown&cpu=$cpu"
 
 
-if [ "$DEBUG_MODE" -eq "1" ]
+if [ "$DEBUG_MODE" = "1" ]
 then
 	echo "-------------------------------------------------------"
 	echo "daloRADIUS server returned: \n"
