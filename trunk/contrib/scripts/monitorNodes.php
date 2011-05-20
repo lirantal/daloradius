@@ -16,10 +16,8 @@
  *********************************************************************************************************
  *
  * Package:		Monitor User Traffic
- * Description:	This script will query the accounting table for online users
- *				and check if the user exceeded a pre-defined soft or hard limit,
- *				in which case an email alert will be sent to the administrator email defined
- *				with user's accounting information
+ * Description:	This script will check the node table to see if any nodes have not reported
+ *				for the set threshold, upon which it sends an email alert to the defined destination.
  *				
  * Authors:     Liran Tal <liran@enginx.com>
  *
