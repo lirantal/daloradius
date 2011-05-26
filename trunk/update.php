@@ -1905,6 +1905,7 @@ if (isset($_POST['submit'])) {
 			<font color="red"><b>Not-installed</b></font>
 		<?php endif; ?>
 		<br/>
+		</li>
 
 
                 <li class='fieldset'>
@@ -1917,6 +1918,7 @@ if (isset($_POST['submit'])) {
 			<font color="red"><b>Not-installed</b></font>
 		<?php endif; ?>
 		<br/>
+		</li>
 
 
                 <li class='fieldset'>
@@ -1929,7 +1931,9 @@ if (isset($_POST['submit'])) {
 			<font color="red"><b>Not-installed</b></font>
 		<?php endif; ?>
 		<br/>
-	
+		</li>	
+
+
                 </ul>
         </fieldset>
 
