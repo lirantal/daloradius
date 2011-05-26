@@ -1,3 +1,11 @@
+release 0.9-9 - 27 May 2011
+	- added linux os heartbeat script
+	- added new monitoring script for heartbeat nodes with email notifications, also update default crontab script
+	- fixed dictionary table entries related to mikrotik vendor
+	- fixed missing SHA1 and CHAP password attributes in user listing
+	- fixed deprecated ereg_replace function with preg_replace
+	- improved heartbeat scripts to be more 'compatible' with other routers os
+
 release 0.9-9rc1 - 6 May 2011
 	- added heartbeat router scripts and dashboard implementation in daloradius
 	- added maintenance scripts to clean stale sessions/expire accounts and monitoring user traffic (with email alerts)
