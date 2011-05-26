@@ -93,7 +93,6 @@ $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] = 'sillykey';
 $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] = '1';
 $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] = '5';
 $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] = '15';
-$configValues['CONFIG_MAIL_SMTP_FROMEMAIL'] = '';
 
 /*
 // Locations Configuration directives
