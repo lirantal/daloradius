@@ -203,7 +203,7 @@ Installation
 		password: radius
 
     Notice: don't forget to change the default password in the Configuration -> Operators page
-
+			don't forget to also REMOVE completely or rename to some random undetected name the update.php script!
 
  
  [OPTIONAL PHP CONFIGURATION]
