@@ -71,7 +71,9 @@ authorize {
 
 	# read hunt groups based on database radhuntgroup table
 	# adopted from http://wiki.freeradius.org/SQL_Huntgroup_HOWTO
-	update request { Huntgroup-Name := "%{sql:select groupname from radhuntgroup where nasipaddress=\"%{NAS-IP-Address}\"}" }
+	update request { 
+		Huntgroup-Name := "%{sql:select groupname from radhuntgroup where nasipaddress=\"%{NAS-IP-Address}\"}"
+	}
 
 	#
 	#  If you want to have a log of authentication requests,
