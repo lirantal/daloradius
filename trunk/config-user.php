@@ -34,8 +34,11 @@
 
     if (isset($_REQUEST['submit'])) {
 
-		if (isset($_REQUEST['config_user_allowedrandomchars']))
-			$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = $_REQUEST['config_user_allowedrandomchars'];
+		if (isset($_REQUEST['config_user_allowedrandomchars'])) {
+			$config_user_allowedrandomchars = str_replace('\'', '', $_REQUEST['config_user_allowedrandomchars']);
+			$config_user_allowedrandomchars = str_replace('"', '', $config_user_allowedrandomchars);
+			$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = $config_user_allowedrandomchars;
+		}
 		
 		// this should probably move to some other page at some point
 		if (isset($_REQUEST['config_db_pass_encrypt']))
@@ -96,7 +99,7 @@
 
 		<li class='fieldset'>
 		<label for='config_user_allowedrandomchars' class='form'><?php echo $l['all']['RandomChars'] ?></label>
-		<input type='text' value="<?php echo $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] ?>" name="config_user_allowedrandomchars" />
+		<input type='text' value="<?php echo htmlentities($configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']) ?>" name="config_user_allowedrandomchars" />
 		</li>
 
 
