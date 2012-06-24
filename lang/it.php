@@ -84,6 +84,7 @@ $l['all']['NasShortname'] = "Diminutivo NAS";
 $l['all']['NasType'] = "Tipo NAS";
 $l['all']['NasPorts'] = "Porte NAS";
 $l['all']['NasSecret'] = "NAS Secret";
+$l['all']['NasVirtualServer'] = "NAS Virtual Server";
 $l['all']['NasCommunity'] = "NAS Community";
 $l['all']['NasDescription'] = "Descrizione NAS";
 $l['all']['PacketType'] = "Tipo Pacchetto";

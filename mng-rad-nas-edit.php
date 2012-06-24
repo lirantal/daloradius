@@ -36,6 +36,7 @@
 	$nastype = "";
 	$nasdescription = "";
 	$nascommunity = "";
+	$nasvirtualserver = '';
 
 	isset($_REQUEST['nashost']) ? $nashost = $_REQUEST['nashost'] : $nashost = "";
 
@@ -56,8 +57,9 @@
 	$nasname = $row[2];
 	$nasports = $row[4];
 	$nastype = $row[3];
-	$nascommunity = $row[6];
-	$nasdescription = $row[7];
+	$nasvirtualserver = $row[6];
+	$nascommunity = $row[7];
+	$nasdescription = $row[8];
 
 	if (isset($_POST['submit'])) {
 	
@@ -69,7 +71,7 @@
 		$nastype = $_REQUEST['nastype'];
 		$nasdescription = $_REQUEST['nasdescription'];
 		$nascommunity = $_REQUEST['nascommunity'];
-
+		$nasvirtualserver = $_REQUEST['nasvirtualserver'];
 			
 		include 'library/opendb.php';
 
@@ -86,6 +88,10 @@
 					$nasports = 0;
 				}
 
+				if (!$nasvirtualserver) {
+                      $nasvirtualserver = '';
+               }
+				
 				// insert nas details
 				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADNAS'].
 					" SET nasname='".$dbSocket->escapeSimple($nashost)."', ".
@@ -93,6 +99,7 @@
 					" type='".$dbSocket->escapeSimple($nastype)."', ".
 					" ports=".$dbSocket->escapeSimple($nasports).", ".
 					" secret='".$dbSocket->escapeSimple($nassecret)."', ".
+                   " server='".$dbSocket->escapeSimple($nasvirtualserver)."', ".
 					" community='".$dbSocket->escapeSimple($nascommunity)."', ".
 					" description='".$dbSocket->escapeSimple($nasdescription)."' ".
 					" WHERE nasname='".$dbSocket->escapeSimple($nashostold)."'";
@@ -237,8 +244,12 @@
                 <input name='nascommunity' type='text' id='nascommunity' value='<?php echo $nascommunity ?>' tabindex=106 />
                 <br />
 
+                <label for='nasvirtualserver' class='form'><?php echo $l['all']['NasVirtualServer'] ?></label>
+                <input name='nasvirtualserver' type= 'text' id='nasvirtualserver' value='<?php echo $nasvirtualserver ?>' tabindex=107 >
+                <br />
+
                 <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
-	        <textarea class='form' name='nasdescription' id='nasdescription' tabindex=308 ><?php echo $nasdescription ?></textarea>
+	        <textarea class='form' name='nasdescription' id='nasdescription' tabindex=108 ><?php echo $nasdescription ?></textarea>
                 <br />
 
                 <br/><br/>

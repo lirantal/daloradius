@@ -93,6 +93,7 @@ $l['all']['NasShortname'] = "NAS Rövid neve";
 $l['all']['NasType'] = "NAS Típusa";
 $l['all']['NasPorts'] = "NAS Portok";
 $l['all']['NasSecret'] = "NAS Secret";
+$l['all']['NasVirtualServer'] = "NAS Virtual Server";
 $l['all']['NasCommunity'] = "NAS Community";
 $l['all']['NasDescription'] = "NAS Description";
 $l['all']['PacketType'] = "Csomag Típusa";
