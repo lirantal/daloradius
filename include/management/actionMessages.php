@@ -13,7 +13,7 @@
 if ((isset($failureMsg)) && ($failureMsg != "")) {
 	echo "<div class='failure'>
 		$failureMsg
-	</div
+	</div>
 	";
 }
 
@@ -21,7 +21,7 @@ if ((isset($failureMsg)) && ($failureMsg != "")) {
 if ((isset($successMsg)) && ($successMsg != "")) {
 	echo "<div class='success'>
 		$successMsg
-	</div
+	</div>
 	";
 }
 
