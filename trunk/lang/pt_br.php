@@ -91,6 +91,7 @@ $l['all']['NasShortname'] = "NAS Shortname";
 $l['all']['NasType'] = "NAS Type";
 $l['all']['NasPorts'] = "NAS Ports";
 $l['all']['NasSecret'] = "NAS Secret";
+$l['all']['NasVirtualServer'] = "NAS Virtual Server";
 $l['all']['NasCommunity'] = "NAS Community";
 $l['all']['NasDescription'] = "NAS Description";
 $l['all']['PacketType'] = "Packet Type";

@@ -159,6 +159,12 @@
 		<br/>
 		</th>
 
+                <th scope='col'>
+                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
+                ".$l['all']['NasVirtualServer']."</a>
+                <br/>
+                </th>
+
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=$orderType\">
 		".$l['all']['NasCommunity']."</a>
@@ -187,6 +193,7 @@
 				<td> $row[5] </td>
 				<td> $row[6] </td>
 				<td> $row[7] </td>
+               <td> $row[8] </td>
 
 		</tr>";
 	}

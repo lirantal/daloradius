@@ -34,6 +34,7 @@
 	$nastype = "";
 	$nasdescription = "";
 	$nascommunity = "";
+	$nasvirtualserver = "";
 
 	$logAction = "";
 	$logDebugSQL = "";
@@ -47,6 +48,7 @@
 		$nastype = $_POST['nastype'];
 		$nasdescription = $_POST['nasdescription'];
 		$nascommunity = $_POST['nascommunity'];
+		$nasvirtualserver = $_POST['nasvirtualserver'];
 
 		include 'library/opendb.php';
 
@@ -63,13 +65,17 @@
 					$nasports = 0;
 				}
 				
+				if (!$nasvirtualserver) {
+                      $nasvirtualserver = '';
+               }
+
 				// insert nas details
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADNAS'].
-					" (id,nasname,shortname,type,ports,secret,community,description) ".
+					" (id,nasname,shortname,type,ports,secret,server,community,description) ".
 					" values (0, '".$dbSocket->escapeSimple($nashost)."', '".$dbSocket->escapeSimple($nasname).
-					"', '".$dbSocket->escapeSimple($nastype)."', ".$dbSocket->escapeSimple($nasports).
-					", '".$dbSocket->escapeSimple($nassecret)."', '".$dbSocket->escapeSimple($nascommunity).
-					"', '".$dbSocket->escapeSimple($nasdescription)."')";
+					"', '".$dbSocket->escapeSimple($nastype)."', '".$dbSocket->escapeSimple($nasports).
+					"', '".$dbSocket->escapeSimple($nassecret)."', '".$dbSocket->escapeSimple($nasvirtualserver).
+					"', '".$dbSocket->escapeSimple($nascommunity)."', '".$dbSocket->escapeSimple($nasdescription)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
@@ -197,8 +203,12 @@
                 <input name='nascommunity' type='text' id='nascommunity' value='' tabindex=106 />
                 <br />
 
+                <label for='nasvirtualserver' class='form'><?php echo $l['all']['NasVirtualServer'] ?></label>
+                <input name='nasvirtualserver' type= 'text' id='nasvirtualserver' value='' tabindex=107 >
+                <br />
+
                 <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
-                <textarea class='form' name='nasdescription' id='nasdescription' value='' tabindex=107 ></textarea>
+                <textarea class='form' name='nasdescription' id='nasdescription' value='' tabindex=108 ></textarea>
                 <br />
 
                 <br/><br/>
