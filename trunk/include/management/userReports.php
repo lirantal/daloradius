@@ -534,7 +534,7 @@ function userConnectionStatus($username, $drawTable) {
 
 	$username = $dbSocket->escapeSimple($username);			// sanitize variable for sql statement
 
-        $sql = "SELECT AcctStartTime,AcctSessionTime,NASIPAddress,CalledStationId,FramedIPAddress,CallingStationId".
+        $sql = "SELECT AcctStartTime,CASE WHEN AcctStopTime is NULL THEN timestampdiff(SECOND,AcctStartTime,NOW()) ELSE AcctSessionTime END AS AcctSessionTime,NASIPAddress,CalledStationId,FramedIPAddress,CallingStationId".
 		",AcctInputOctets,AcctOutputOctets FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 		" WHERE Username='$username' ORDER BY RadAcctId DESC LIMIT 1";
 	$res = $dbSocket->query($sql);
