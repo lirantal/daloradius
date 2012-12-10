@@ -57,7 +57,7 @@ Prerequisites
  are required and which are not.
 
  apt-get install apache2
- apt-get install php5-common php5-gd php-pear php-db libapache2-mod-php5 php-mail
+ apt-get install php5-common php5-gd php-pear php-db libapache2-mod-php5 php-mail php-mail-mime
  
  Now if you plan on working with mysql as the database server then you need
 	1. to install the database server, being mysql.
