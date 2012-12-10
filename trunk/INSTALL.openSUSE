@@ -47,7 +47,7 @@ Prerequisites
  packages are required and which are not.
 
 
- yast2 -i apache2 apache2-mod_php5 apache2-prefork php5 php5-gd php5-pear php5-pear-db php-mail
+ yast2 -i apache2 apache2-mod_php5 apache2-prefork php5 php5-gd php5-pear php5-pear-db php-mail php-mail-mime
 
  If you are using smart (http://en.opensuse.org/Smart) use
 
