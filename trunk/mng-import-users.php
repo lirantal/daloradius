@@ -65,6 +65,14 @@
 
 						$user = trim($dbSocket->escapeSimple($users[0]));
 						$pass = trim($dbSocket->escapeSimple($users[1]));
+
+						// perform further cleanup on $pass to make sure it doesn't contain invalid chars like \r\n
+						// whether they are literal or encoded
+						$pass = str_replace("\\r", "", $pass);
+						$pass = str_replace("\\n", "", $pass);
+						$pass = str_replace(chr(0xC2), "", $pass);
+						$pass = str_replace(chr(0xA0), "", $pass);
+						
 						$planName = trim($dbSocket->escapeSimple($planName));
 						$userType = trim($dbSocket->escapeSimple($userType));
 						
