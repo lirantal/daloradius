@@ -47,7 +47,7 @@
 			$currDate = date('Y-m-d H:i:s');
 			$currBy = $_SESSION['operator_user'];
 			
-			$passwordType = "Cleartext-Password";
+			$passwordType = $_POST['passwordType'];
 			
 			$userCount = 0;
 			
