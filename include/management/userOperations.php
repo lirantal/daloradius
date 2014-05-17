@@ -212,7 +212,7 @@ function userRefillSessionTime($username, $divContainer) {
 		$currBy = $_SESSION['operator_user'];
 
 		$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'].
-			" (id,username,planName,billAmount,billAction,billPerformer,billReason,".
+			" (id,username,planId,billAmount,billAction,billPerformer,billReason,".
 			" paymentmethod,cash,creditcardname,creditcardnumber,creditcardverification,creditcardtype,creditcardexp,".
 			" creationdate,creationby".
 			")".
@@ -320,7 +320,7 @@ function userRefillSessionTraffic($username, $divContainer) {
                 $currBy = $_SESSION['operator_user'];
 
                 $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'].
-                        " (id,username,planName,billAmount,billAction,billPerformer,billReason,".
+                        " (id,username,planId,billAmount,billAction,billPerformer,billReason,".
                         " paymentmethod,cash,creditcardname,creditcardnumber,creditcardverification,creditcardtype,creditcardexp,".
                         " creationdate,creationby".
                         ")".
