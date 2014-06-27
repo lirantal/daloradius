@@ -483,7 +483,7 @@
 							break;
 						case "crypt":
 							if ( ($value != $passwordOrig) )
-								$value = "ENCRYPT($value)";
+								$value = "ENCRYPT($value, 'SALT_DALORADIUS')";
 							break;
 						case "md5":
 							if ( ($value != $passwordOrig) )
