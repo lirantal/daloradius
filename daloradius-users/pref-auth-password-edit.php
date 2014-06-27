@@ -42,6 +42,20 @@
 
 				include 'library/opendb.php';
 				
+				global $configValues;
+
+				if ( !empty($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) && $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] === 'crypt') {
+
+					$sqlTestPassword = "SELECT ENCRYPT('".$dbSocket->escapeSimple($currentPassword)."', 'SALT_DALORADIUS') as Password";
+					$res = $dbSocket->query($sqlTestPassword);
+					$row = $res->fetchRow();
+
+					$passwordCryptEval = $row[0];
+
+					$logDebugSQL .= $sqlTestPassword . "\n";
+
+				}
+				
 				$sql = "SELECT value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
 					" WHERE username='".$dbSocket->escapeSimple($login)."' AND".
 					" attribute LIKE '%-Password'";
@@ -64,6 +78,20 @@
 					$logAction .= "Successfully update authentication password for user [$login] on page: ";
 
 					include 'library/closedb.php';
+
+				} elseif ( ($res->numRows() == 1) && ($passwordCryptEval == $row[0]) ) {
+	
+					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADCHECK'].
+						" SET value=ENCRYPT('".$dbSocket->escapeSimple($newPassword)."', 'SALT_DALORADIUS')".
+						" WHERE id='$passwordRowId'";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+
+					$successMsg = "Updated password for user: <b>$login</b>";
+					$logAction .= "Successfully update authentication password for user [$login] on page: ";
+
+					include 'library/closedb.php';
+
 
 				} else {
 
