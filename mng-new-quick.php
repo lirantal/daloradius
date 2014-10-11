@@ -103,7 +103,7 @@
                         	                $dbPassword = "'$password'";
                                                 break;
                                         case "crypt":
-                                                $dbPassword = "ENCRYPT('$password')";
+                                                $dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
                                                 break;
                                         case "md5":
                                                 $dbPassword = "MD5('$password')";

@@ -406,7 +406,7 @@
 							$dbPassword = "'$password'";
 							break;
 						case "crypt":
-							$dbPassword = "ENCRYPT('$password')";
+							$dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
 							break;
 						case "md5":
 							$dbPassword = "MD5('$password')";
@@ -426,7 +426,7 @@
 						// if we don't find the encrypt function even though we identified
 						// a Crypt-Password attribute
 						if (!(preg_match("/encrypt/i",$dbPassword))) {
-							$dbPassword = "ENCRYPT('$password')";
+							$dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
 						}
 				
 						// we now perform the same check but for an MD5-Password attribute
