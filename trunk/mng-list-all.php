@@ -205,8 +205,8 @@
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 
 
-		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".$row[0]."');";
-		$content =  '<a class="toolTip" href="mng-edit.php?username='.$row[0].'">'.$l['Tooltip']['UserEdit'].'</a>';
+		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".urlencode($row[0])."');";
+		$content =  '<a class="toolTip" href="mng-edit.php?username='.urlencode($row[0]).'">'.$l['Tooltip']['UserEdit'].'</a>';
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => $js,

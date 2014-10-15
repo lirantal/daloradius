@@ -232,10 +232,10 @@
 		
 		printqn("
 			<a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".$row['username']."\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".urlencode($row['username'])."\");
 					javascript:__displayTooltip();'
                                 tooltipText='
-	                                <a class=\"toolTip\" href=\"bill-pos-edit.php?username=".$row['username']."\">
+	                                <a class=\"toolTip\" href=\"bill-pos-edit.php?username=".urlencode($row['username'])."\">
 						{$l['Tooltip']['UserEdit']}</a>
 					<br/><br/>
 

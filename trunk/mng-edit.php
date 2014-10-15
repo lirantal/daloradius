@@ -690,7 +690,7 @@
 
 
 function disableUser() {
-	strUsername = "username=<?php echo $username?>";
+	strUsername = "username=<?php echo urlencode($username)?>";
 	if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
 		ajaxGeneric("include/management/userOperations.php","userDisable","returnMessages",strUsername);
 		window.location.reload();
@@ -699,7 +699,7 @@ function disableUser() {
 }
 
 function enableUser() {
-	strUsername = "username=<?php echo $username?>";
+	strUsername = "username=<?php echo urlencode($username)?>";
 	if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
 		ajaxGeneric("include/management/userOperations.php","userEnable","returnMessages",strUsername);
 		window.location.reload();

@@ -220,7 +220,7 @@
 		
 							));
 
-		$content =  '<a class="toolTip" href="bill-pos-edit.php?username='.$row['username'].'">'.$l['Tooltip']['UserEdit'].'</a>';
+		$content =  '<a class="toolTip" href="bill-pos-edit.php?username='.urlencode($row['username']).'">'.$l['Tooltip']['UserEdit'].'</a>';
 		$contactperson = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
