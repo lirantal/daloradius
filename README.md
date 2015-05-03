@@ -1,38 +1,26 @@
-Copyright Liran Tal 2007. All rights reserved.
-For release information and license, read LICENSE.
+#About
 
+daloRADIUS is an advanced RADIUS web management application aimed at managing hotspots and 
+general-purpose ISP deployments. It features user management, graphical reporting, accounting, 
+a billing engine and integrates with GoogleMaps for geo-locating.
 
-   daloRADIUS version 0.9 stable release
-  by Liran Tal of Enginx <liran@enginx.com>
- ===========================================
+daloRADIUS is written in PHP and JavaScript and utilizes a database abstraction
+layer which means that it supports many database systems, among them the popular
+MySQL, PostgreSQL, Sqlite, MsSQL, and many others.
 
-
-
-About
-=====
-
- daloRADIUS is an advanced RADIUS web management application aimed at managing hotspots and 
- general-purpose ISP deployments. It features user management, graphical reporting, accounting, 
- a billing engine and integrates with GoogleMaps for geo-locating.
-
- daloRADIUS is written in PHP and JavaScript and utilizes a database abstraction
- layer which means that it supports many database systems, among them the popular
- MySQL, PostgreSQL, Sqlite, MsSQL, and many others.
- 
- It is based on a FreeRADIUS deployment with a database server serving as the backend.
- Among other features it implements ACLs, GoogleMaps integration for locating 
- hotspots/access points visually and many more features.
+It is based on a FreeRADIUS deployment with a database server serving as the backend.
+Among other features it implements ACLs, GoogleMaps integration for locating 
+hotspots/access points visually and many more features.
 
 
 
 
 
 
-Features
-========
+#Features
 
-Management
-User Management
+##Management
+###User Management
 
     * List Users
     * Create New User
@@ -43,7 +31,7 @@ User Management
     * Delete User
 
 
-HotSpot Management
+##HotSpot Management
 
     * List HotSpots
     * Create New HotSpot
@@ -52,7 +40,7 @@ HotSpot Management
 
 
 
-NAS Management
+##NAS Management
 
     * List NAS
     * Create New NAS
@@ -61,7 +49,7 @@ NAS Management
 
 
 
-Groups Management
+##Groups Management
 
     * List, Create New, Edit and Delete User-Groups Mapping
       usergroup table in radius database
@@ -71,8 +59,8 @@ Groups Management
 
 
 
-Accounting
-Users Accounting By
+##Accounting
+###Users Accounting By
 
     * Username
     * IP Address
@@ -86,7 +74,7 @@ Users Accounting By
 	* Custom Accounting Query 
 
 
-HotSpots Accounting
+###HotSpots Accounting
 
     * Comparison of Accounting for different HotSpots
       provides information on hotspot's unique users, total hits, average time and total time
@@ -95,7 +83,7 @@ HotSpots Accounting
 
 
 
-GIS - Geographical Information System
+###GIS - Geographical Information System
 
 	daloRADIUS comes with integrated support for GIS provided by GoogleMaps and thus
 	provides the ability to visually locate deployed HotSpots across a map, see their status,
@@ -110,10 +98,10 @@ GIS - Geographical Information System
 
 
 
-Reporting
+##Reporting
 
 
-Basic Reporting
+###Basic Reporting
 
     * Online Users
       View Online users, users that are connected to the system from all NASes at a current
@@ -127,7 +115,7 @@ Basic Reporting
 
 
 
-Logs Reporting
+###Logs Reporting
 
     * daloRADIUS Log
       daloRADIUS keeps a log file for all the actions it performs itself (viewing pages,
@@ -142,7 +130,7 @@ Logs Reporting
 
 
 
-Status Reporting
+###Status Reporting
 
     * Server Status
       Provides detailed information on the server daloRADIUS is deployed.
@@ -154,9 +142,9 @@ Status Reporting
 
 
 
-Graphs
+##Graphs
 
-Users Graphs
+###Users Graphs
 Provides visual graphs and statistical listing per user connection's attributes, being:
 
     * Logins/Hits
@@ -164,7 +152,7 @@ Provides visual graphs and statistical listing per user connection's attributes,
     * Upload
 
 
-Server-Wide Graphs
+###Server-Wide Graphs
 Provides visual graphs and statistical listing for the entire server, all-time information on:
 
     * Logins/Hits
@@ -173,9 +161,9 @@ Provides visual graphs and statistical listing for the entire server, all-time i
 
 
 
-Configuration
+##Configuration
 
-Global Configuration
+###Global Configuration
 
     * Database Settings
       Database connection information (storage: mysql, postgresql and others),
@@ -192,7 +180,7 @@ Global Configuration
       and addition of numbers links for quick-access to different pages.
 
 
-Maintenance
+###Maintenance
 
     * Test User Connectivity
       Provides the ability to check if a user's credentials (username and password) are valid by
@@ -201,7 +189,7 @@ Maintenance
 	  Supply a username and send a PoD (Packet of Disconnect) or CoA (Change of Authority) packet
 	  to the NAS to disconnect the user.
 
-Operators
+###Operators
 
 daloRADIUS supports Operators for complete management of the entire platform.
 Different Operators can be added with their contact information and ACLs settings to
@@ -219,8 +207,7 @@ grant or revoke them of permissions to access different pages.
 
 
 
-Credits
-=======
+#Credits
 
  daloRADIUS makes use of several third-party packages and I would like to thank these
  great tools and their authors for releasing such a good software to the community.
@@ -233,8 +220,7 @@ Credits
 
 
 
-Support
-=======
+#Support
 
  IRC chat available at #daloradius on freenode (irc.freenode.net)
  But most developers and users of daloRADIUS are always available on #freeradius as well.
@@ -269,3 +255,12 @@ Support
 
 
 
+#Copyright
+
+Copyright Liran Tal 2007. All rights reserved.
+For release information and license, read LICENSE.
+
+
+   daloRADIUS version 0.9 stable release
+  by Liran Tal of Enginx <liran@enginx.com>
+ ===========================================
