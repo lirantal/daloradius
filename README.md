@@ -222,36 +222,13 @@ grant or revoke them of permissions to access different pages.
 
 #Support
 
- IRC chat available at #daloradius on freenode (irc.freenode.net)
- But most developers and users of daloRADIUS are always available on #freeradius as well.
+Helpful resources to find help and support with daloRADIUS:
 
- *Official daloRADIUS Website*: http://www.daloradius.com
- 
- Wiki: http://daloradius.wiki.sourceforge.net/
- The wiki is available for quite some time now, make good use of it and don't
- forget to contribute your 2 cents :)
+ * *Official daloRADIUS Website*: http://www.daloradius.com
+ * SourceForge hosted forums area: https://sourceforge.net/p/daloradius/discussion/
+ * *Mailing List*: daloradius-users@lists.sourceforge.net and register here to post there: https://lists.sourceforge.net/lists/listinfo/daloradius-users
+ * Facebook's daloRADIUS related group: https://www.facebook.com/groups/551404948256611/
 
- Demo: http://daloradius.xdsl.by/
- A new demo system is up and ready.
-
- The login details are as follows:
- Username: administrator
- Password: radius
-
- The demo system is always the last revision of the SVN so you can
- see the new features (although things may break from time to time as well :) )
- 
- Mailing-List: daloradius-users@lists.sourceforge.net
- Register here: https://lists.sourceforge.net/lists/listinfo/daloradius-users
-
- 
- 
- I do my best to reply quickly to emails on my spare time, so if
- all else fails you may contact me at liran@enginx.com
-
-
- Sincerely,
- Liran Tal.
 
 
 
