@@ -1,6 +1,6 @@
 #About
 
-daloRADIUS is an advanced RADIUS web management application aimed at managing hotspots and 
+[daloRADIUS](http://www.daloradius.com) is an advanced RADIUS web management application aimed at managing hotspots and 
 general-purpose ISP deployments. It features user management, graphical reporting, accounting, 
 a billing engine and integrates with GoogleMaps for geo-locating.
 
@@ -8,7 +8,7 @@ daloRADIUS is written in PHP and JavaScript and utilizes a database abstraction
 layer which means that it supports many database systems, among them the popular
 MySQL, PostgreSQL, Sqlite, MsSQL, and many others.
 
-It is based on a FreeRADIUS deployment with a database server serving as the backend.
+It is based on a [FreeRADIUS](http://www.freeradius.org) deployment with a database server serving as the backend.
 Among other features it implements ACLs, GoogleMaps integration for locating 
 hotspots/access points visually and many more features.
 
@@ -209,14 +209,14 @@ grant or revoke them of permissions to access different pages.
 
 #Credits
 
- daloRADIUS makes use of several third-party packages and I would like to thank these
+ [daloRADIUS](http://www.daloradius.com) makes use of several third-party packages and I would like to thank these
  great tools and their authors for releasing such a good software to the community.
 
- datepicker PHP class	- Stefan Gabos <ix at nivelzero dot ro>
- libchart PHP class	- Jean-Marc Trémeaux <jm dot tremeaux at gmail dot com>
- icons collection - Mark James of famfamfam.com icons <mjames at gmail dot com>
- ajax auto complete - Batur Orkun <batur@bilkent.edu.tr>
- dhtml-Suite - Magne Kalleland <post@dhtmlgoodies.com>
+ * datepicker PHP class	- Stefan Gabos <ix at nivelzero dot ro>
+ * libchart PHP class	- Jean-Marc Trémeaux <jm dot tremeaux at gmail dot com>
+ * icons collection - Mark James of famfamfam.com icons <mjames at gmail dot com>
+ * ajax auto complete - Batur Orkun <batur@bilkent.edu.tr>
+ * dhtml-Suite - Magne Kalleland <post@dhtmlgoodies.com>
 
 
 
@@ -225,7 +225,7 @@ grant or revoke them of permissions to access different pages.
  IRC chat available at #daloradius on freenode (irc.freenode.net)
  But most developers and users of daloRADIUS are always available on #freeradius as well.
 
- Official daloRADIUS Website: http://www.daloradius.com
+ *Official daloRADIUS Website*: http://www.daloradius.com
  
  Wiki: http://daloradius.wiki.sourceforge.net/
  The wiki is available for quite some time now, make good use of it and don't
@@ -260,7 +260,5 @@ grant or revoke them of permissions to access different pages.
 Copyright Liran Tal 2007. All rights reserved.
 For release information and license, read LICENSE.
 
-
-   daloRADIUS version 0.9 stable release
-  by Liran Tal of Enginx <liran@enginx.com>
- ===========================================
+[daloRADIUS](http://www.daloradius.com) version 0.9 stable release
+by Liran Tal of Enginx <liran@enginx.com>
