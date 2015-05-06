@@ -1,5 +1,7 @@
 #About
 
+![daloradius_logo][daloRADIUS_Logo]
+
 [daloRADIUS](http://www.daloradius.com) is an advanced RADIUS web management application aimed at managing hotspots and 
 general-purpose ISP deployments. It features user management, graphical reporting, accounting, 
 a billing engine and integrates with GoogleMaps for geo-locating.
@@ -30,6 +32,7 @@ hotspots/access points visually and many more features.
     * Search User
     * Delete User
 
+![daloradius_logo][daloRADIUS_Feature_Management]
 
 ##HotSpot Management
 
@@ -79,7 +82,7 @@ hotspots/access points visually and many more features.
     * Comparison of Accounting for different HotSpots
       provides information on hotspot's unique users, total hits, average time and total time
 
-
+![daloradius_logo][daloRADIUS_Feature_Accounting]
 
 
 
@@ -239,3 +242,8 @@ For release information and license, read LICENSE.
 
 [daloRADIUS](http://www.daloradius.com) version 0.9 stable release
 by Liran Tal of Enginx <liran@enginx.com>
+
+
+[daloRADIUS_Logo]: https://cloud.githubusercontent.com/assets/316371/7488472/87a11c08-f3d3-11e4-9a8e-96deafaf4d2f.png
+[daloRADIUS_Feature_Management]: https://cloud.githubusercontent.com/assets/316371/7444436/48d887e4-f18b-11e4-855d-264dc6d881e1.jpg
+[daloRADIUS_Feature_Accounting]: https://cloud.githubusercontent.com/assets/316371/7488564/9338bf0c-f3d4-11e4-977b-48227eb5c2b5.jpg
