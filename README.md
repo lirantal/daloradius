@@ -1,5 +1,7 @@
 #About
 
+![daloradius_logo][daloRADIUS_Logo]
+
 [daloRADIUS](http://www.daloradius.com) is an advanced RADIUS web management application aimed at managing hotspots and 
 general-purpose ISP deployments. It features user management, graphical reporting, accounting, 
 a billing engine and integrates with GoogleMaps for geo-locating.
@@ -213,7 +215,7 @@ grant or revoke them of permissions to access different pages.
  great tools and their authors for releasing such a good software to the community.
 
  * datepicker PHP class	- Stefan Gabos <ix at nivelzero dot ro>
- * libchart PHP class	- Jean-Marc Trémeaux <jm dot tremeaux at gmail dot com>
+ * libchart PHP class	- Jean-Marc TrÃ©meaux <jm dot tremeaux at gmail dot com>
  * icons collection - Mark James of famfamfam.com icons <mjames at gmail dot com>
  * ajax auto complete - Batur Orkun <batur@bilkent.edu.tr>
  * dhtml-Suite - Magne Kalleland <post@dhtmlgoodies.com>
@@ -239,3 +241,6 @@ For release information and license, read LICENSE.
 
 [daloRADIUS](http://www.daloradius.com) version 0.9 stable release
 by Liran Tal of Enginx <liran@enginx.com>
+
+
+[daloRADIUS_Logo]: https://cloud.githubusercontent.com/assets/316371/7488472/87a11c08-f3d3-11e4-9a8e-96deafaf4d2f.png
