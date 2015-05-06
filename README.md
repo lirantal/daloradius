@@ -212,9 +212,9 @@ grant or revoke them of permissions to access different pages.
  [daloRADIUS](http://www.daloradius.com) makes use of several third-party packages and I would like to thank these
  great tools and their authors for releasing such a good software to the community.
 
- * datepicker PHP class	- Stefan Gabos <ix at nivelzero dot ro>
- * libchart PHP class	- Jean-Marc Trémeaux <jm dot tremeaux at gmail dot com>
- * icons collection - Mark James of famfamfam.com icons <mjames at gmail dot com>
+ * datepicker PHP class	- Stefan Gabos <ix@nivelzero.ro>
+ * libchart PHP class	- Jean-Marc Trémeaux <jm.tremeaux@gmail.com>
+ * icons collection - Mark James of famfamfam.com icons <mjames@gmail.com>
  * ajax auto complete - Batur Orkun <batur@bilkent.edu.tr>
  * dhtml-Suite - Magne Kalleland <post@dhtmlgoodies.com>
 
