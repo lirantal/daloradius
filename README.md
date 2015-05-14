@@ -14,6 +14,16 @@ It is based on a [FreeRADIUS](http://www.freeradius.org) deployment with a datab
 Among other features it implements ACLs, GoogleMaps integration for locating 
 hotspots/access points visually and many more features.
 
+#daloRADIUS Book
+
+Liran Tal authored a book about working with daloRADIUS covering most aspects through the UI, including setting up a captive portal system.
+##Amazon Paperback Book
+The paperback book version is available through Amazon at http://www.amazon.com/daloRADIUS-User-Guide-Volume-1/dp/1463752199
+
+![daloradius_book][daloRADIUS_Book]
+##PDF Digital Book
+There is also a digital version of the book via PDF, available at: https://lirantal.selz.com/
+
 
 
 
@@ -216,7 +226,7 @@ grant or revoke them of permissions to access different pages.
  great tools and their authors for releasing such a good software to the community.
 
  * datepicker PHP class	- Stefan Gabos <ix@nivelzero.ro>
- * libchart PHP class	- Jean-Marc Trémeaux <jm.tremeaux@gmail.com>
+ * libchart PHP class	- Jean-Marc TrÃ©meaux <jm.tremeaux@gmail.com>
  * icons collection - Mark James of famfamfam.com icons <mjames@gmail.com>
  * ajax auto complete - Batur Orkun <batur@bilkent.edu.tr>
  * dhtml-Suite - Magne Kalleland <post@dhtmlgoodies.com>
@@ -247,3 +257,4 @@ by Liran Tal of Enginx <liran@enginx.com>
 [daloRADIUS_Logo]: https://cloud.githubusercontent.com/assets/316371/7488472/87a11c08-f3d3-11e4-9a8e-96deafaf4d2f.png
 [daloRADIUS_Feature_Management]: https://cloud.githubusercontent.com/assets/316371/7444436/48d887e4-f18b-11e4-855d-264dc6d881e1.jpg
 [daloRADIUS_Feature_Accounting]: https://cloud.githubusercontent.com/assets/316371/7488564/9338bf0c-f3d4-11e4-977b-48227eb5c2b5.jpg
+[daloRADIUS_Book]: https://cloud.githubusercontent.com/assets/316371/7488439/e3c9bd4c-f3d2-11e4-9d88-9f57098752e0.jpg
