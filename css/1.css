@@ -81,6 +81,7 @@ body {
 }
 
 #header h2 {
+	margin: 0 0 20px;
 	font:150% Arial;
 	color:#666;
 	padding:16px 0 0 0;
@@ -136,7 +137,7 @@ body {
 
 #header #subnav {
 	background:#4F9EC9;
-	padding:5px 7px 7px 7px;
+	padding: 5px 7px 10px 7px;
 	font:90% Verdana;
 	color:#DEEDF5;
 	border-bottom:2px solid #388CBA;
