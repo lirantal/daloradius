@@ -53,9 +53,7 @@
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['replogsradius'] ?>
-			<br/>
 		</div>
-		<br/>
 
 <?php
 	include 'library/exten-radius_log.php';

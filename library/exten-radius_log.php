@@ -36,21 +36,20 @@ foreach ($logfile_loc as $tmp) {
 		break;
 	}
 }
- 
 
 if (empty($logfile)) {
-	echo "<br/><br/>
-		error reading log file: <br/><br/>
-		looked for log file in '".implode(", ", $logfile_loc)."' but couldn't find it.<br/>
-		if you know where your freeradius log file is located, set it's location in " . $_SERVER[SCRIPT_NAME];
+	$failureMsg = "<div class=\"failure\">error reading log file <br/>".
+		"looked for log file in <b>'".implode("</b>, <b>", $logfile_loc)."'</b> but couldn't find it. <br/>".
+		"if you know where your freeradius log file is located, set it's location in  '". $_SERVER['SCRIPT_NAME'] ."' </div>" ;
+	print($failureMsg);
 	exit;
 }
 	
 
 if (is_readable($logfile) == false) {
-	echo "<br/><br/>
-		error reading log file: <u>$logfile</u> <br/><br/>
-		possible cause is file premissions or file doesn't exist.<br/>";
+	$failureMsg = "<div class=\"failure\">error reading log file: <u>$logfile</u> <br/>".
+		"possible cause is file premissions or file doesn't exist.</div>";
+	print($failureMsg);
 } else {
                 if (file_get_contents($logfile)) {
                         $fileReversed = array_reverse(file($logfile));
