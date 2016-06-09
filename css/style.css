@@ -1,0 +1,25 @@
+body {
+    background: url(/images/login_bg.jpg) no-repeat center center;
+}
+
+.dalo_login_panel_left {
+    padding-top: 20px;
+    text-align: center;
+    background: #999;
+    height: 310px;
+    background: rgba(64, 83, 153, 0.5);
+}
+
+.dalo_login_panel_right {
+    background: rgba(153, 153, 153, 0.6);
+    height: 310px;
+    padding: 0 30px 20px 30px;
+}
+
+.dalo_login_panel {
+    margin-top: 10%;
+}
+
+.dalo_login_panel_right>form>.input-group {
+    margin-bottom: 10px;
+}
