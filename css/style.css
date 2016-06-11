@@ -2,6 +2,18 @@ body {
     background: url(/images/login_bg.jpg) no-repeat center center;
 }
 
+.dalo_login_error {
+    margin-top: 4%;
+}
+
+.dalo_login_panel_error {
+    margin-top: 4%;
+}
+
+.dalo_login_panel {
+    margin-top: 10%;
+}
+
 .dalo_login_panel_left {
     padding-top: 20px;
     text-align: center;
@@ -16,10 +28,6 @@ body {
     padding: 0 30px 20px 30px;
 }
 
-.dalo_login_panel {
-    margin-top: 10%;
-}
-
-.dalo_login_panel_right>form>.input-group {
+.dalo_login_panel_right > form > .input-group {
     margin-bottom: 10px;
 }
