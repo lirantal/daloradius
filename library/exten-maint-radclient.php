@@ -50,8 +50,8 @@ function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command
 				" -t ".escapeshellarg($options['timeout']).
 				" ".$options['debug'];
 
-	if ($options['dictionary'])
-		$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
+	//if ($options['dictionary'])
+	//	$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
 
 	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
 	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";
@@ -94,8 +94,8 @@ function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$com
 				" -t ".escapeshellarg($options['timeout']).
 				" ".$options['debug'];
 
-	if ($options['dictionary'])
-		$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
+	//if ($options['dictionary'])
+	//	$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
 
 	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
 	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";

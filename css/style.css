@@ -1,5 +1,5 @@
 body {
-    background: url(/images/login_bg.jpg) no-repeat center center;
+    background: url(../images/login_bg.jpg) no-repeat center center;
 }
 
 .dalo_login_error {

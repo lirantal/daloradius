@@ -23,7 +23,7 @@ bind_textdomain_codeset("daloRADIUS", 'UTF-8');
 
 include "page_head.php";
 ?>
-<body onload="document.login.operator_user.focus()">
+<body>
 <div class="container">
 
     <?php if ($error) {
@@ -55,17 +55,16 @@ include "page_head.php";
                 <?php echo _('Template design by TerenceChuen.'); ?> </h5>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-5 dalo_login_panel_right">
-            <form action="dologin.php" class="form-signin" method="post" name="login">
-                <h2 class="form-signin-heading"> <?php echo _('Please sign in'); ?> </h2>
-                <label class="sr-only" for="inputusername"> <?php echo _('User Name'); ?> </label>
+            <form action="dologin.php" method="post" name="login">
+                <h2> <?php echo _('Please sign in'); ?> </h2>
                 <div class="input-group">
                     <div class="input-group-addon"><?php echo _('Username'); ?></div>
-                    <input autofocus class="form-control" id="inputusername" placeholder="<?php echo _('User Name'); ?>"
+                    <input autofocus class="form-control" placeholder="<?php echo _('User Name'); ?>"
                            required name="operator_user" tabindex="1" type="text"/>
                 </div>
                 <div class="input-group">
                     <div class="input-group-addon"><?php echo _('Password'); ?></div>
-                    <input class="form-control" id="inputPassword" placeholder="Password" required type="password"
+                    <input class="form-control" placeholder="<?php echo _('Password'); ?>" required type="password"
                            name="operator_pass" tabindex="2" value=""/>
                 </div>
                 <script type="text/javascript">
@@ -76,7 +75,7 @@ include "page_head.php";
                 </script>
                 <div class="input-group">
                     <div class="input-group-addon"><?php echo _('Language'); ?></div>
-                    <select class="form-control" id="locale" name="locale" onChange="gotolocale()">
+                    <select class="form-control" id="locale" name="locale" tabindex="3" onChange="gotolocale()">
                         <option value="en_US" <?php if ($locale == 'en_US') {
                             echo "selected=\"selected\"";
                         } ?> > <?php echo _('English (United States)'); ?> </option>
@@ -87,7 +86,7 @@ include "page_head.php";
                 </div>
                 <div class="input-group">
                     <div class="input-group-addon"><?php echo _('Locations'); ?></div>
-                    <select class="form-control" name="location" tabindex="3">
+                    <select class="form-control" name="location" tabindex="4">
                         <option value="default"> Default</option>
                         <?php
                         if (isset($configValues['CONFIG_LOCATIONS']) && is_array($configValues['CONFIG_LOCATIONS'])) {
@@ -102,7 +101,7 @@ include "page_head.php";
                         ?>
                     </select>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block" tabindex="3" type="submit"
+                <button class="btn btn-lg btn-primary btn-block" tabindex="5" type="submit"
                         value="Login"> <?php echo _('Sign in'); ?> </button>
             </form>
         </div>
