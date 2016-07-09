@@ -25,7 +25,7 @@
 
 $configValues['DALORADIUS_VERSION'] = '0.9-9';
 $configValues['FREERADIUS_VERSION'] = '2';
-$configValues['CONFIG_DB_ENGINE'] = 'mysql';
+$configValues['CONFIG_DB_ENGINE'] = 'mysqli';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
 $configValues['CONFIG_DB_PORT'] = '3306';
 $configValues['CONFIG_DB_USER'] = 'root';
@@ -117,4 +117,3 @@ $configValues['CONFIG_LOCATIONS'] =                     array(
         )
 );
 */
-
