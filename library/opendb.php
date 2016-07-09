@@ -19,13 +19,13 @@
  *
  *********************************************************************************************************
  */
- 
+
 	include (dirname(__FILE__).'/config_read.php');
 	include (dirname(__FILE__).'/tableConventions.php');
 
 	// setup database connectio information according to the session's location name which is held in $SESSION['location_name'].
 	// this is introduced in order to provide daloRADIUS to authenticate and manage several database backends without having to
-	// install several web directories of daloradius 
+	// install several web directories of daloradius
 
 	if ((isset($_SESSION['location_name'])) && ($_SESSION['location_name'] == "default")) {
 
@@ -38,7 +38,7 @@
 
 		if (!$mydbPort)
 			$mydbPort = '3306';
-		
+
 		$dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
 					$mydbHost.":".$mydbPort."/".$mydbName;
 
@@ -53,9 +53,9 @@
 
 		if (!$mydbPort)
 			$mydbPort = '3306';
-		
+
 		$dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
-					$mydbHost.":".$mydbPort."/".$mydbName;	
+					$mydbHost.":".$mydbPort."/".$mydbName;
 	} else {
 		// TODO
 		// requires handling of un-initialized session variable incase opendb.php is called not inside
@@ -71,7 +71,7 @@
 
 		if (!$mydbPort)
 			$mydbPort = '3306';
-		
+
 		$dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
 					$mydbHost.":".$mydbPort."/".$mydbName;
 	}
@@ -87,11 +87,12 @@
 
 	if (DB::isError ($dbSocket))
 		die ("<b>Database connection error</b><br/>
-			<b>Error Message</b>: " . $dbSocket->getMessage () . "<br/>" 
+			<b>Error Message</b>: " . $dbSocket->getMessage () . "<br/>"
 			);
 
-	
+
 	include_once (dirname(__FILE__).'/errorHandling.php');		// we declare the errorHandler() function in errorHandling.php
 
 	$dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');	// setting errorHandler function for the dbSocket obj
 
+  $dbSocket->query("SET GLOBAL sql_mode = '';");
