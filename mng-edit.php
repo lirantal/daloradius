@@ -422,7 +422,7 @@
 
 				if (isset($field[0])) {
 					if (preg_match('/__/', $field[0]))
-						list($columnId, $attribute) = split("__", $field[0]);
+						list($columnId, $attribute) = explode("__", $field[0]);
 					else {
 						$columnId = 0;				// we need to set a non-existent column id so that the attribute would
 											// not match in the database (as it is added from the Attributes tab)

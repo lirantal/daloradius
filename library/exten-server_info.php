@@ -30,7 +30,7 @@ function uptime() {
 	$file_name = "/proc/uptime";
 
 	$fopen_file = fopen($file_name, 'r');
-	$buffer = split(' ', fgets($fopen_file, 4096));
+	$buffer = explode(' ', fgets($fopen_file, 4096));
 	fclose($fopen_file);
 
 	$sys_ticks = trim($buffer[0]);

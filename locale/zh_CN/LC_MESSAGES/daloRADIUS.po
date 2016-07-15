@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: daloRADIUS\n"
+"POT-Creation-Date: 2016-06-11 22:50+0800\n"
+"PO-Revision-Date: 2016-06-11 22:57+0800\n"
+"Last-Translator: \n"
+"Language-Team: Terence Chuen <https://proj.org.cn>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.8\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: login.php\n"
+
+#: login.php:34
+msgid ""
+"an error occured <br />either of the following:<br/>\n"
+"1. bad username/password<br/>\n"
+"2. an administrator is already logged-in (only one instance is allowed) <br/"
+">\n"
+"3. there appears to be more than one 'administrator' user in the database "
+"<br/>"
+msgstr ""
+"出现错误 <br />原因可能是以下之一：<br/>\n"
+"1. 错误的用户名或密码；<br/>\n"
+"2. 相同用户名的用户已经登入（不允许同时登入！）；<br/>\n"
+"3. 似乎有多个“administrator”用户在数据库中。 <br/>"
+
+#: login.php:51
+msgid "RADIUS Management"
+msgstr "RADIUS 管理软件"
+
+#: login.php:52
+msgid "Reporting | Accounting | Billing"
+msgstr "报告 | 统计 | 财务"
+
+#: login.php:54
+msgid "daloRADIUS &#169; 2007 by Liran Tal"
+msgstr "daloRADIUS 由 Liran Tal 于 2007年首次开发"
+
+#: login.php:55
+msgid "Template design by TerenceChuen."
+msgstr "此界面由 Terence Chuen 开发"
+
+#: login.php:59
+msgid "Please sign in"
+msgstr "请登入"
+
+#: login.php:60 login.php:63
+msgid "User Name"
+msgstr "用户名"
+
+#: login.php:62
+msgid "Username"
+msgstr "用户名"
+
+#: login.php:67
+msgid "Password"
+msgstr "密码"
+
+#: login.php:78
+msgid "Language"
+msgstr "语言"
+
+#: login.php:82
+msgid "English (United States)"
+msgstr "英语（美国）"
+
+#: login.php:85
+msgid "Chinese (PRC)"
+msgstr "中文（简体）"
+
+#: login.php:89
+msgid "Locations"
+msgstr "数据中心"
+
+#: login.php:106
+msgid "Sign in"
+msgstr "登入"

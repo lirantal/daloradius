@@ -8,7 +8,7 @@
 
                                 <h2>
                                 
-                                <? echo $l['all']['copyright1']; ?>
+                                <?php echo $l['all']['copyright1']; ?>
                                 
 				                                </h2>
 

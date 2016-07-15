@@ -124,7 +124,7 @@
 
 		if (isset($attribute)) {
 			if (preg_match('/__/', $attribute))
-				list($columnId, $attribute) = split("__", $attribute);
+				list($columnId, $attribute) = explode("__", $attribute);
 			else
 				$attribute = $attribute;
 		}
