@@ -19,7 +19,7 @@
  *
  *********************************************************************************************************
  */
- 
+
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -33,7 +33,7 @@
         isset($_REQUEST['ratetypenum']) ? $ratetypenum = $_REQUEST['ratetypenum'] : $ratetypenum = "";
         isset($_REQUEST['ratetypetime']) ? $ratetypetime = $_REQUEST['ratetypetime'] : $ratetypetime = "";
 
-	$edit_ratename = $ratename; //feed the sidebar variables	
+	$edit_ratename = $ratename; //feed the sidebar variables
 
 	$logAction = "";
 	$logDebugSQL = "";
@@ -61,17 +61,17 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
-			
+
 			$successMsg = "Updated rate: <b> $ratename </b>";
 			$logAction .= "Successfully updated rate [$ratename] on page: ";
-			
+
 		} else {
 			$failureMsg = "no rate name was entered, please specify a rate name to edit.";
 			$logAction .= "Failed updating rate [$ratename] on page: ";
 		}
-		
+
 	}
-	
+
 
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
 	$res = $dbSocket->query($sql);
@@ -79,7 +79,7 @@
 
 	$row = $res->fetchRow();
 	$ratename = $row[1];
-	list($ratetypenum, $ratetypetime) = split("/",$row[2]);
+	list($ratetypenum, $ratetypetime) = explode("/",$row[2]);
 	$ratecost = $row[3];
 	$creationdate = $row[4];
 	$creationby = $row[5];
@@ -97,7 +97,7 @@
 	include_once('library/config_read.php');
 	$log = "visited page: ";
 
-	
+
 ?>
 
 
@@ -113,12 +113,12 @@
 <?php
 	include_once ("library/tabber/tab-layout.php");
 ?>
- 
+
 <?php
 	include ("menu-bill-rates.php");
-?>		
+?>
 	<div id="contentnorightbar">
-		
+
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesedit.php'] ?>
 		:: <?php if (isset($ratename)) { echo $ratename; } ?><h144>+</h144></a></h2>
 
@@ -166,8 +166,8 @@
 	                        <option value='week'>week</option>
 	                        <option value='month'>month</option>
 	                </select>
-			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateTypeTooltip')" /> 
-			
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateTypeTooltip')" />
+
 			<div id='rateTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 				<img src='images/icons/comment.png' alt='Tip' border='0' />
 				<?php echo $l['Tooltip']['rateTypeTooltip'] ?>
@@ -179,8 +179,8 @@
 			<input class='integer' name='ratecost' type='text' id='ratecost' value='<?php echo $ratecost ?>' tabindex=103 />
         	        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratecost','increment')" />
 	                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratecost','decrement')"/>
-			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateCostTooltip')" /> 
-			
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateCostTooltip')" />
+
 			<div id='rateCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 				<img src='images/icons/comment.png' alt='Tip' border='0' />
 				<?php echo $l['Tooltip']['rateCostTooltip'] ?>
@@ -267,8 +267,3 @@
 
 </body>
 </html>
-
-
-
-
-

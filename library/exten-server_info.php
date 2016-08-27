@@ -30,7 +30,7 @@ function uptime() {
 	$file_name = "/proc/uptime";
 
 	$fopen_file = fopen($file_name, 'r');
-	$buffer = split(' ', fgets($fopen_file, 4096));
+	$buffer = explode(' ', fgets($fopen_file, 4096));
 	fclose($fopen_file);
 
 	$sys_ticks = trim($buffer[0]);
@@ -40,21 +40,21 @@ function uptime() {
 	$hours = floor($hours - ($days * 24));
 	$min = floor($min - ($days * 60 * 24) - ($hours * 60));
 	$result = "";
-	
+
 	if ($days != 0) {
 		if ($days > 1)
 			$result = "$days " . " days ";
 		else
 			$result = "$days " . " day ";
 	}
-	
+
 	if ($hours != 0) {
 		if ($hours > 1)
 			$result .= "$hours " . " hours ";
 		else
 			$result .= "$hours " . " hour ";
 	}
-	
+
 	if ($min > 1 || $min == 0)
 		$result .= "$min " . " minutes ";
 	elseif ($min == 1)
@@ -75,7 +75,7 @@ function get_hostname() {
 	} else {
 		$result = "(none)";
 	}
-	
+
 	return $result;
 }
 
@@ -88,7 +88,7 @@ function get_datetime() {
 	} else {
 		$result = "(none)";
 	}
-	
+
 	return $result;
 }
 
@@ -100,7 +100,7 @@ function get_system_load() {
 	$file_name = "/proc/loadavg";
 	$result = "";
 	$output = "";
-	
+
 	// get the /proc/loadavg information
 	if ($fopen_file = fopen($file_name, 'r')) {
 		$result = trim(fgets($fopen_file, 256));
@@ -108,29 +108,29 @@ function get_system_load() {
 	} else {
 		$result = "(none)";
 	}
-	
+
 	$loadavg = explode(" ", $result);
 	$output .= $loadavg[0] . " " . $loadavg[1] . " " . $loadavg[2] . "<br/>";
-	
+
 
 	// get information the 'top' program
 	$file_name = "top -b -n1 | grep \"Tasks:\" -A1";
 	$result = "";
-	
+
 	if ($popen_file = popen($file_name, 'r')) {
 		$result = trim(fread($popen_file, 2048));
 		pclose($popen_file);
 	} else {
 		$result = "(none)";
 	}
-	
+
 	$result = str_replace("\n", "<br/>", $result);
 	$output .= $result;
-	
+
 	return $output;
 }
-		
-		
+
+
 // Get Memory System MemTotal|MemFree
 // @return array Memory System MemTotal|MemFree
 function get_memory() {
@@ -148,7 +148,7 @@ function get_memory() {
 			}
 		}
 	}
-	
+
 	return $mem_array;
 }
 
@@ -201,7 +201,7 @@ function get_ip_addr($ifname) {
 
 	$ifip = implode($command_result, "\n");
 	if (preg_match("/inet addr:[0-9\.]*/i", $ifip, $match)) {
-		$match = split(":", $match[0]);
+		$match = explode(":", $match[0]);
 		return $match[1];
 	} else {
 		return "(none)";
@@ -219,7 +219,7 @@ function get_mac_addr($ifname) {
 
 	$ifmac = implode($command_result, "\n");
 	if (preg_match("/hwaddr [0-9A-F:]*/i", $ifmac, $match)) {
-		$match = split(" ", $match[0]);
+		$match = explode(" ", $match[0]);
 		return $match[1];
 	} else {
 		return "(none)";
@@ -238,7 +238,7 @@ function get_mask_addr($ifname) {
 
 	$ifmask = implode($command_result, "\n");
 	if (preg_match("/mask:[0-9\.]*/i", $ifmask, $match)) {
-		$match = split(":", $match[0]);
+		$match = explode(":", $match[0]);
 		return $match[1];
 	} else {
 		return "(none)";
@@ -291,9 +291,9 @@ function get_mask_addr($ifname) {
     <td class='summaryKey'> Mem. Used </td>
     <td class='summaryValue'>
 		<span class='sleft'>
-			<?php 
-				$memused = ($meminfo['MemTotal'] - $meminfo['MemFree']); 
-				echo convert_ToMB ($memused);  
+			<?php
+				$memused = ($meminfo['MemTotal'] - $meminfo['MemFree']);
+				echo convert_ToMB ($memused);
 			?>
 		</span> </td>
   </tr>
@@ -351,6 +351,6 @@ function get_mask_addr($ifname) {
 			echo "\t\t</td>\n";
 			echo "\t</tr>\n";
 		}
-		
+
 	echo "\t</table>\n";
 ?>

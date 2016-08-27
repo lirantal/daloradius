@@ -52,7 +52,7 @@
 
 		foreach ($itemsArray as $value) {
 
-			list($poolname, $ipaddress) = split('\|\|', $value);
+			list($poolname, $ipaddress) = preg_split('\|\|', $value);
 
 			if ( (trim($poolname) != "") && (trim($ipaddress) != "") ) {
 
@@ -69,9 +69,9 @@
 
 				$successMsg = "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolname</b> from database";
 				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolname] on page: ";
-					
+
 				include 'library/closedb.php';
-		
+
 			}  else {
 				$failureMsg = "No IPAddress/Pool Name was entered, please specify an IPAddress/Pool Name to remove from database";
 				$logAction .= "Failed deleting empty IP Address/Pool Name on page: ";
@@ -80,12 +80,12 @@
 		} //foreach
 
 		$showRemoveDiv = "none";
-	} 
+	}
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
-	
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -98,8 +98,8 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
- 
+
+
 <?php
 	include ("menu-mng-rad-ippool.php");
 ?>
@@ -108,7 +108,7 @@
 
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradippooldel.php'] ?>
 		:: <?php if (isset($poolname)) { echo $poolname; } ?><h144>+</h144></a></h2>
-		
+
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradippooldel'] ?>
 			<br/>

@@ -43,7 +43,7 @@
 
 		foreach ($vendor_array as $vendor_attribute) {
 
-	                list($vendor, $attribute) = split('\|\|', $vendor_attribute);
+	                list($vendor, $attribute) = preg_split('\|\|', $vendor_attribute);
 
 	                if ( (trim($vendor) != "") && (trim($attribute) != "") ) {
 
@@ -69,17 +69,17 @@
 						$successMsg = "Removed from database vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
 						$logAction .= "Successfully removed vendor [$vendor] and attribute [$attribute] from database on page: ";
 					} else {
-						$failureMsg = "you must provide atleast a vendor name and attribute";	
+						$failureMsg = "you must provide atleast a vendor name and attribute";
 						$logAction .= "Failed removing vendor [$vendor] and attribute [$attribute] from database on page: ";
 					}
-				} else { 
+				} else {
 					$failureMsg = "You have tried to remove a vendor's attribute that either is not present in the database or there
 							may be more than 1 entry for this vendor attribute in database (attribute :$attribute)";
-					$logAction .= "Failed removing vendor attribute already in database [$attribute] on page: ";		
+					$logAction .= "Failed removing vendor attribute already in database [$attribute] on page: ";
 				} //if ($res->numRows() == 1)
-			
+
 				include 'library/closedb.php';
-		
+
 			} // if (trim...
 
 		} //foreach
@@ -106,14 +106,14 @@
 <?php
 
 	include ("menu-mng-rad-attributes.php");
-	
+
 ?>
 
 	<div id="contentnorightbar">
-	
+
 			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesdel.php'] ?>
 			<h144>+</h144></a></h2>
-			
+
 			<div id="helpPage" style="display:none;visibility:visible" >
 				<?php echo $l['helpPage']['mngradattributesdel'] ?>
 				<br/>
@@ -136,7 +136,7 @@
 		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
 		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
-		
+
 		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
 			<?php echo $l['Tooltip']['vendorNameTooltip'] ?>
@@ -147,14 +147,14 @@
 		<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
 		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('attributeTooltip')" />
-		
+
 		<div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
 			<?php echo $l['Tooltip']['attributeTooltip'] ?>
 		</div>
 		</li>
 
-	
+
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
@@ -188,8 +188,3 @@
 
 </body>
 </html>
-
-
-
-
-

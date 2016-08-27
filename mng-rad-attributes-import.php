@@ -35,7 +35,7 @@
 
 		include 'library/opendb.php';
 
-		$myDictionary = split("\n", $dictionary);				// we break the POST variable (continous string) into an array
+		$myDictionary = preg_split("\n", $dictionary);				// we break the POST variable (continous string) into an array
 
 
 		$myVendor = $vendor;							// by default we set the vendor name to be the file name
@@ -56,23 +56,23 @@
 				continue;						// if a line starts with VALUE we have no use for it, we skip it
 
 			if (preg_match('/^BEGIN-VENDOR/', $line))
-				continue;						// if a line starts with BEGIN-VENDOR we have no use for it, 
+				continue;						// if a line starts with BEGIN-VENDOR we have no use for it,
 											// we skip it
 
 			if (preg_match('/^END-VENDOR/', $line))
-				continue;						// if a line starts with END-VENDOR we have no use for it, 
+				continue;						// if a line starts with END-VENDOR we have no use for it,
 											// we skip it
 
-		
+
 			if (preg_match('/^VENDOR/', $line)) {				// extract vendor name
-	
+
 				if (preg_match('/\t/', $line))
 					list($junk, $vendorTmp) = preg_split('/\t+/', $line);		// check if line is splitted by a sequence of tabs
 				else if (preg_match('/ /', $line))
 					list($junk, $vendorTmp) = preg_split('/[ ]+/', $line);		// check if line is splitted by a sequence of
 													// whitespaces
 
-				if ($vendorTmp != "") 
+				if ($vendorTmp != "")
 					$myVendor = "'".trim($vendorTmp)."'";
 
 				continue;
@@ -80,18 +80,18 @@
 
 
 			if (preg_match('/^ATTRIBUTE/', $line)) {				// extract attribute name
-	
+
 				if (preg_match('/\t/', $line))
-					list($junk, $attribute, $junk2, $type) = preg_split('/\t+/', $line);		// check if line is splitted by 
+					list($junk, $attribute, $junk2, $type) = preg_split('/\t+/', $line);		// check if line is splitted by
 															// a sequence of tabs
 				else if (preg_match('/ /', $line))
-					list($junk, $attribute, $junk2, $type) = preg_split('/[ ]+/', $line);		// check if line is splitted by 
+					list($junk, $attribute, $junk2, $type) = preg_split('/[ ]+/', $line);		// check if line is splitted by
 															//a sequence of whitespaces
 				if ($attribute != "")
 					$myAttribute = "'".trim($attribute)."'";
 				else
 					$myAttribute = "NULL";
-	
+
 				if ($type != "")
 					$myType = "'".trim($type)."'";
 				else
@@ -121,9 +121,9 @@
 		                                " VALUES (0, $myType, $myAttribute, $myVendor)";
 		                $res = $dbSocket->query($sql);
 		                $logDebugSQL .= $sql . "\n";
-	
+
 			}
-			
+
 		} //foreach
 
 		if ($vendorUnique == 0) {
@@ -157,14 +157,14 @@
 <?php
 
 	include ("menu-mng-rad-attributes.php");
-	
+
 ?>
 
 	<div id="contentnorightbar">
-	
+
 			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesimport.php'] ?>
 			<h144>+</h144></a></h2>
-			
+
 			<div id="helpPage" style="display:none;visibility:visible" >
 				<?php echo $l['helpPage']['mngradattributesimport'] ?>
 				<br/>
@@ -186,7 +186,7 @@
 		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
 		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
-		
+
 		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
 			<?php echo $l['Tooltip']['vendorNameTooltip'] ?>
@@ -198,7 +198,7 @@
 		<textarea class='form_fileimport' name='dictionary' tabindex=102></textarea>
 		</li>
 
-	
+
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
@@ -231,8 +231,3 @@
 
 </body>
 </html>
-
-
-
-
-

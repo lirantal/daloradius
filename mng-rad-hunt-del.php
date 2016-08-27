@@ -47,7 +47,7 @@
 
                 foreach ($hgroup_array as $hgroup) {
 
-                        list($nasipaddress, $nasportid) = split('\|\|', $hgroup);
+                        list($nasipaddress, $nasportid) = preg_split('\|\|', $hgroup);
 
                         if (trim($nasipaddress) != "") {
 
@@ -103,7 +103,7 @@
 
 
 
-	
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -116,17 +116,17 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
- 
+
+
 <?php
 	include ("menu-mng-rad-hunt.php");
 ?>
 
 	<div id="contentnorightbar">
-	
+
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradhuntdel.php'] ?>
 		:: <?php if (isset($nasipaddress)) { echo $nasipaddress; } ?><h144>+</h144></a></h2>
-		
+
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradhuntdel'] ?>
 			<br/>

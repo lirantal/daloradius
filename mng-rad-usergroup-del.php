@@ -36,7 +36,7 @@
 		if (isset($_POST['username']))
 			$usergroup_array = array($_REQUEST['username']."||".$_REQUEST['group']);
 	}
-	
+
 	$logAction = "";
 	$logDebugSQL = "";
 
@@ -44,12 +44,12 @@
 
 		foreach ($usergroup_array as $usergroup) {
 
-		list($username, $group) = split('\|\|', $usergroup);
+		list($username, $group) = preg_split('\|\|', $usergroup);
 
 		if (trim($username) != "") {
-	
+
 			$allGroups =  "";
-			$allUsernames = "";			
+			$allUsernames = "";
 			include 'library/opendb.php';
 
 			if (trim($group) != "") {
@@ -66,7 +66,7 @@
 				$logAction .= "Successfully deleted all users [$allUsernames] and their groups [$allGroups] on page: ";
 
 				include 'library/closedb.php';
-							
+
 			} else {
 				// delete all attributes associated with a username
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
@@ -89,13 +89,13 @@
 
 		} //foreach
 	}
-	
+
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
 
-	
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -108,26 +108,26 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
- 
+
+
 <?php
 	include ("menu-mng-rad-usergroup.php");
 ?>
 
 
 	<div id="contentnorightbar">
-	
+
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupdel.php'] ?>
 		<h144>+</h144></a></h2>
 
-		<div id="helpPage" style="display:none;visibility:visible" >				
+		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradusergroupdel'] ?>
 			<br/>
 		</div>
 		<?php
 			include_once('include/management/actionMessages.php');
 		?>
-		
+
 		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
@@ -148,7 +148,7 @@
                 <li class='fieldset'>
                 <label for='group' class='form'><?php echo $l['all']['Groupname'] ?></label>
                 <input name='group' type='text' id='group' value='<?php echo $group ?>' tabindex=101 />
-                <?php   
+                <?php
                         include 'include/management/populate_selectbox.php';
                         populate_groups("Select Groups","long");
                 ?>
@@ -176,9 +176,9 @@
 ?>
 
 		</div>
-	
+
 		<div id="footer">
-	
+
 <?php
 	include 'page-footer.php';
 ?>

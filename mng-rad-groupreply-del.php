@@ -22,7 +22,7 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
 	include('library/check_operator_perm.php');
 
 	$groupname = "";
@@ -38,9 +38,9 @@
 	} else {
 		if (isset($_GET['groupname']))
 		$group_array = array($_GET['groupname']."||".$_GET['attribute']."||".$_GET['value']);
-	}			
+	}
 
- 	
+
 	if (isset($group_array)) {
 
                 $allGroups =  "";
@@ -49,7 +49,7 @@
 
                 foreach ($group_array as $group) {
 
-	                list($groupname, $attribute, $value) = split('\|\|', $group);
+	                list($groupname, $attribute, $value) = preg_split('\|\|', $group);
 
                         if (trim($groupname) != "") {
 
@@ -98,13 +98,13 @@
 
 		$showRemoveDiv = "none";
 
-	} 
-	
+	}
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
 
-	
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -115,14 +115,14 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
- 
+
+
 <?php
 	include ("menu-mng-rad-groups.php");
 ?>
 
 	<div id="contentnorightbar">
-	
+
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplydel.php'] ?>
 		<h144>+</h144></a></h2>
 
@@ -169,7 +169,7 @@
 
 <?php
 	include('include/config/logging.php');
-?>	
+?>
 		</div>
 
 		<div id="footer">

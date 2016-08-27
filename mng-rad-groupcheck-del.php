@@ -49,7 +49,7 @@
 
                 foreach ($group_array as $group) {
 
-                        list($groupname, $attribute, $value) = split('\|\|', $group);
+                        list($groupname, $attribute, $value) = preg_split('\|\|', $group);
 
                         if (trim($groupname) != "") {
 
@@ -96,15 +96,15 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 
 		$showRemoveDiv = "none";
 
-        } // if 
+        } // if
 
 
 
-        
+
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
-	
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -119,8 +119,8 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
- 
+
+
 <?php
 	include ("menu-mng-rad-groups.php");
 ?>

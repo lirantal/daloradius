@@ -33,10 +33,10 @@
         isset($_GET['username']) ? $username = $_GET['username'] : $username = "%";
         isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
         isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
-	
+
 	//feed the sidebar variables
         $billing_date_ratename = $ratename;
-        $billing_date_username = $username;	
+        $billing_date_username = $username;
         $billing_date_startdate = $startdate;
         $billing_date_enddate = $enddate;
 
@@ -56,13 +56,13 @@
 </head>
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
 <?php
-	
+
 	include("menu-bill-rates.php");
-	
+
 ?>
 
 	<div id="contentnorightbar">
-		
+
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['billratesdate.php']; ?>
 		<h144>+</h144></a></h2>
 		<div id="helpPage" style="display:none;visibility:visible" >
@@ -78,7 +78,7 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
+	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
 	$username = $dbSocket->escapeSimple($username);
 	$startdate = $dbSocket->escapeSimple($startdate);
 	$enddate = $dbSocket->escapeSimple($enddate);
@@ -89,7 +89,7 @@
 
         include 'library/opendb.php';
 
-	// get rate type 
+	// get rate type
 	$sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename'";
 	$res = $dbSocket->query($sql);
 
@@ -98,7 +98,7 @@
 	else {
 
 		$row = $res->fetchRow();
-		list($ratetypenum, $ratetypetime) = split("/",$row[0]);
+		list($ratetypenum, $ratetypetime) = explode("/",$row[0]);
 
 		switch ($ratetypetime) {					// we need to translate any kind of time into seconds, so a minute is 60 seconds, an hour is 3600,
 			case "second":						// and so on...
@@ -121,9 +121,9 @@
 				break;
 			default:
 				$multiplicate = 0;
-				break;			
-		}			
-		
+				break;
+		}
+
 		// then the rate cost would be the amount of seconds times the prefix multiplicator thus:
 		$rateDivisor = ($ratetypenum * $multiplicate);
 	}
@@ -136,7 +136,7 @@
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
-	
+
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".
 		$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateCost ".
@@ -157,7 +157,7 @@
 		echo "<br/>";
 	}
 
-	
+
 	echo "<table border='0' class='table1'>\n";
         echo "
                 <thead>
@@ -180,24 +180,24 @@
 	} else  if ($orderType == "desc") {
 			$orderTypeNextPage = "asc";
 	}
-	
+
         echo "<thread> <tr>
-		<th scope='col'> 
+		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=$orderTypeNextPage\">
 		".$l['all']['Username']."</a>
 		</th>
-		<th scope='col'> 
+		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
 		".$l['all']['NASIPAddress']."</a>
 		</th>
-		<th scope='col'> 
+		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
 		".$l['all']['LastLoginTime']."</a>
 		</th>
-		<th scope='col'> 
+		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
 		".$l['all']['TotalTime']."</a>
@@ -212,7 +212,7 @@
 	$sumSession = 0;
 
 	while($row = $res->fetchRow()) {
-		
+
 		$sessionTime = $row[3];
 		$rateCost = $row[4];
 		$billed = (($sessionTime/$rateDivisor)*$rateCost);
@@ -245,7 +245,7 @@
 
 	include 'library/closedb.php';
 ?>
-			
+
 		</div>
 
 
@@ -254,14 +254,14 @@
 ?>
 
 		<div id="footer">
-		
+
 								<?php
         include 'page-footer.php';
 ?>
 
-		
+
 		</div>
-		
+
 </div>
 </div>
 

@@ -60,7 +60,7 @@
 		isset ($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 		isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
 		isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "1234";
-		
+
 		isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
 		isset($_POST['oldplanName']) ? $oldplanName = $_POST['oldplanName'] : $oldplanName = "";
 
@@ -94,7 +94,7 @@
 		isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
 		isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
 		isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
-		
+
 		isset($_POST['passwordOrig']) ? $passwordOrig = $_POST['passwordOrig'] : $passwordOrig = "";
 
 		//Fix up errors with droping the Plan name
@@ -102,46 +102,46 @@
 			$planName = $oldplanName;
 
 		function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
-	
-	
+
+
 			if ($planName == $oldplanName)
 				return;
-		
+
 			global $logDebugSQL;
 			global $configValues;
-	
+
 			$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 						" WHERE planName='".$dbSocket->escapeSimple($oldplanName)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
-	
+
 			$row = $res->fetchRow();
 			$oldplanGroup = $row[0];
-			
+
 			if ( (isset($oldplanGroup)) && ($oldplanGroup != "") ) {
-	
+
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE ".
 							" (Username='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($oldplanGroup)."') ";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-			}                                          
-	
+			}
+
 			$sql = "SELECT planGroup FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 						" WHERE planName='".$dbSocket->escapeSimple($planName)."'";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
-	
+
 			$row = $res->fetchRow();
 			$planGroup = $row[0];
-			
+
 			if ( (isset($planGroup)) && ($planGroup != "") ) {
-	
+
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
 							" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($planGroup)."',0) ";
 				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";			
+				$logDebugSQL .= $sql . "\n";
 			}
-	
+
 		}
 
 
@@ -270,7 +270,7 @@
 */
                                         "', nextinvoicedue='".$dbSocket->escapeSimple($bi_nextinvoicedue).
                                         "', billdue='".$dbSocket->escapeSimple($bi_billdue).
-					
+
                                         "', postalinvoice='".$dbSocket->escapeSimple($bi_postalinvoice).
                                         "', faxinvoice='".$dbSocket->escapeSimple($bi_faxinvoice).
                                         "', emailinvoice='".$dbSocket->escapeSimple($bi_emailinvoice).
@@ -279,7 +279,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			}
-			
+
 			 // update usergroup mapping (existing)
 			 if ($groups) {
 
@@ -291,7 +291,7 @@
 				$grpcnt = 0;			// group counter
 				foreach ($groups as $group) {
 
-//					$oldgroup = $oldgroups[$grpcnt];			
+//					$oldgroup = $oldgroups[$grpcnt];
 
 					if (!($groups_priority[$grpcnt]))
 						$group_priority = 0;
@@ -323,7 +323,7 @@
 */
 						$logDebugSQL .= $sql . "\n";
 //					}
-	
+
 					$grpcnt++;		// we increment group index count so we can access the group priority array
 				}
 			}
@@ -345,8 +345,8 @@
 
 	addPlanProfile($dbSocket, $username, $planName, $oldplanName);
 
-			foreach( $_POST as $element=>$field ) { 
-				
+			foreach( $_POST as $element=>$field ) {
+
 				// switch case to rise the flag for several $attribute which we do not
 				// wish to process (ie: do any sql related stuff in the db)
 				switch ($element) {
@@ -407,7 +407,7 @@
 					case "newgroups":
 					case "portalLoginPassword":
 					case "enableUserPortalLogin":
-						
+
 						$skipLoopFlag = 1;      // if any of the cases above has been met we set a flag
 												// to skip the loop (continue) without entering it as
 												// we do not want to process this $attribute in the following
@@ -422,7 +422,7 @@
 
 				if (isset($field[0])) {
 					if (preg_match('/__/', $field[0]))
-						list($columnId, $attribute) = split("__", $field[0]);
+						list($columnId, $attribute) = explode("__", $field[0]);
 					else {
 						$columnId = 0;				// we need to set a non-existent column id so that the attribute would
 											// not match in the database (as it is added from the Attributes tab)
@@ -454,7 +454,7 @@
 				// at an early point in the script.
 				$value = $dbSocket->escapeSimple($value);
 
-				// we set the $password variable to the attribute value only if that attribute is actually a password attribute indeed 
+				// we set the $password variable to the attribute value only if that attribute is actually a password attribute indeed
 				// and this has to be done because we're looping on all attributes that were submitted with the form
 				switch($attribute) {
 					case "User-Password":
@@ -464,7 +464,7 @@
 					case "MD5-Password":
 					case "SHA1-Password":
 						$value = "'$value'";
-						$passwordAttribute = 1;	// if this is a password 
+						$passwordAttribute = 1;	// if this is a password
 						break;					// attribute then we tag it
 												// as true
 					default:
@@ -493,8 +493,8 @@
 				}
 
 				/* we can't simply UPDATE because it might be that the attribute
-				doesn't exist at all and we need to insert it. 
-				for this reason we need to check if it exists or not, if exists we update, if not we insert 
+				doesn't exist at all and we need to insert it.
+				for this reason we need to check if it exists or not, if exists we update, if not we insert
 				*/
 
 				$sql = "SELECT Attribute FROM $table WHERE UserName='".$dbSocket->escapeSimple($username).
@@ -502,7 +502,7 @@
 
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-				
+
 				if ($res->numRows() == 0) {
 					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
 					$sql = "INSERT INTO $table (id,Username,Attribute,op,Value) ".
@@ -535,9 +535,9 @@
 
 			$successMsg = "Updated attributes for: <b> $username </b>";
 			$logAction .= "Successfully updates attributes for user [$username] on page: ";
-			
+
 		} else { // if username != ""
-			$failureMsg = "no user was entered, please specify a username to edit";		
+			$failureMsg = "no user was entered, please specify a username to edit";
 			$logAction .= "Failed updating attributes for user [$username] on page: ";
 		}
 	} // if isset post submit
@@ -715,7 +715,7 @@ function enableUser() {
 ?>
 
 <?php
-	include ("menu-mng-users.php");	
+	include ("menu-mng-users.php");
 ?>
 
 <div id="contentnorightbar">
@@ -784,38 +784,38 @@ function enableUser() {
  	               include 'include/management/populate_selectbox.php';
                        populate_plans($bi_planname,"planName","form");
                 ?>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
-		
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" />
+
 		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
 			<?php echo $l['Tooltip']['planNameTooltip'] ?>
 		</div>
 		</li>
-	
+
 
 		<li class='fieldset'>
-		<br/><br/>	
+		<br/><br/>
 		<hr><br/>
-		
+
 <?php
 	include 'include/management/buttons.php';
 ?>
-			
+
 		<br/>
-		
+
 			<input class='button' type='button' value='Enable User'
 				onClick='javascript:enableUser()' />
-				
+
 			<input class='button' type='button' value='Disable User'
 				onClick='javascript:disableUser()' />
-				
+
 		<br/><br/>
 		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
-		
+
 		<div style="float: right; text-align: right;">
 				<a href="<?= $_SESSION['PREV_LIST_PAGE']; ?>">Back to Listing Page</a>
 		</div>
-		
+
 		</li>
 
 		</ul>
@@ -849,11 +849,11 @@ function enableUser() {
 		" FROM ".
 		$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute=".
-		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
                 " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
 		$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName='".$dbSocket->escapeSimple($username)."'";
-		
+
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -946,12 +946,12 @@ function enableUser() {
 		" FROM ".
 		$configValues['CONFIG_DB_TBL_RADREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
 		" ON ".$configValues['CONFIG_DB_TBL_RADREPLY'].".Attribute=".
-		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ". 
+		$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
                 " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
 		$configValues['CONFIG_DB_TBL_RADREPLY'].".UserName='".$dbSocket->escapeSimple($username)."'";
-		
-		
+
+
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
 
@@ -960,9 +960,9 @@ function enableUser() {
 		echo $l['messages']['noReplyAttributesForUser'];
 		echo "</center>";
 	}
-	
+
 	while($row = $res->fetchRow()) {
-		
+
 		echo "<label class='attributes'>";
 		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[5]__$row[0]&tablename=radreply'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
@@ -1019,8 +1019,8 @@ function enableUser() {
 
 	</ul>
 
-        </fieldset>  
-    </div>  
+        </fieldset>
+    </div>
 
 <?php
     include 'library/closedb.php';
@@ -1052,7 +1052,7 @@ function enableUser() {
 <?php
         include 'library/opendb.php';
         include_once('include/management/groups.php');
-        include 'library/closedb.php';	
+        include 'library/closedb.php';
 ?>
 
 	</ul>
@@ -1117,9 +1117,9 @@ function enableUser() {
 <?php
 	include('include/config/logging.php');
 ?>
-		
+
 	</div>
-	
+
 	<div id="footer">
 
 <?php
@@ -1134,4 +1134,3 @@ function enableUser() {
 
 </body>
 </html>
-
