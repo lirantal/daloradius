@@ -31,18 +31,18 @@ include('../../library/checklogin.php');
 $ticketInformation = "Information: To use this card, please connect <br/>".
 						"your device to the nearest ssid. Open your web <br/>".
 						"browser and enter each needed field.";
-$ticketLogoFile = "/images/daloradius_small.png";			
+$ticketLogoFile = "/images/daloradius_small.png";
 
 
 if (isset($_REQUEST['type']) && $_REQUEST['type'] == "batch") {
-	
+
 	$format = $_REQUEST['format'];
 	$plan = $_REQUEST['plan'];
 
 	// accounts is a string with the format of "username1,password1||username2,password2||..."
 	$accounts_temp = $_REQUEST['accounts'];
 	$accounts = explode("||", $accounts_temp);
-	
+
 	include_once('../../library/opendb.php');
 	include_once('../management/pages_common.php');
 
@@ -53,41 +53,41 @@ if (isset($_REQUEST['type']) && $_REQUEST['type'] == "batch") {
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 				" WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planName=".
 				" '$plan' ";
-				
+
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-	
+
 	$ticketCurrency = $row['planCurrency'];
 	$ticketCost = $row['planCost'] ." " . $ticketCurrency;
 	$ticketTime = time2str($row['planTimeBank']);
-	
+
 	printTicketsHTMLTable($accounts, $ticketCost, $ticketTime);
 
-	
+
 }
 
 
 function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 
 	$output = "";
-	
+
 	global $ticketInformation;
 	global $ticketLogoFile;
-	
+
 	// the $accounts array contain the username,password|| first element as it's originally
 	// used to be a for CSV table header
 	array_shift($accounts);
-	
+
 	// we align 3 tables for each row (each line)
 	// for each 4th entry of a new ticket table we put it in a new row of it's own
 	$trCounter = 0;
 	foreach($accounts as $userpass) {
-		
-		list($user, $pass) = split(",", $userpass);
+
+		list($user, $pass) = explode(",", $userpass);
 
 		if ($trCounter > 2)
 			$trCounter = 0;
-		
+
 		if ($trCounter == 2)
 			$trTextEnd = "</tr>";
 		else
@@ -110,7 +110,7 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 						</tr>
 						<tr>
 							<td>
-								<b>Login</b>: 
+								<b>Login</b>:
 							</td>
 							<td>
 								<font size='2'>
@@ -157,7 +157,7 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 						</tr>
 						</tbody>
 					</table>
-					
+
 				</td>
 			$trTextEnd
 		";
@@ -169,16 +169,16 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 		 <style type='text/css'>
 			@page { size:landscape; margin-top:20cm; margin-right:0cm; margin-left:0cm; margin-bottom: 0px; marks:cross;}
 		</style>
-		<html><body> 
-			<table style='maring-top: 15px; margin-left: auto; margin-right: auto;' 
+		<html><body>
+			<table style='maring-top: 15px; margin-left: auto; margin-right: auto;'
 					cellspacing='15'>
 				<tbody>
 							$output
 				</tbody>
-			</table>	
+			</table>
 		</body></html>
 	";
-	
+
 }
 
 

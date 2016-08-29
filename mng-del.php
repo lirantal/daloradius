@@ -19,7 +19,7 @@
  *
  *********************************************************************************************************
  */
- 
+
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
@@ -52,7 +52,7 @@
 		foreach ($username as $variable=>$value) {
 
 			if (trim($variable) != "") {
-			
+
 				$username = $value;
 				$allUsernames .= $username . ", ";
 
@@ -86,7 +86,7 @@
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
-				
+
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." WHERE ".
 					$tableSetting['postauth']['user']."='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
@@ -103,8 +103,8 @@
 
 				include 'library/closedb.php';
 
-			}  else { 
-				$failureMsg = "no user was entered, please specify a username to remove from database";		
+			}  else {
+				$failureMsg = "no user was entered, please specify a username to remove from database";
 				$logAction .= "Failed deleting user(s) [$allUsernames] on page: ";
 			}
 
@@ -124,7 +124,7 @@
 
 		if (isset($attribute)) {
 			if (preg_match('/__/', $attribute))
-				list($columnId, $attribute) = split("__", $attribute);
+				list($columnId, $attribute) = explode("__", $attribute);
 			else
 				$attribute = $attribute;
 		}
@@ -142,8 +142,8 @@
 		$showRemoveDiv = "none";
 
 	} else if ( (isset($clearSessionsUsers)) && ($clearSessionsUsers != "") ) {
-		
-		/* this is used to remove stale user sessions from the accounting table 
+
+		/* this is used to remove stale user sessions from the accounting table
 		*/
 		$allUsernames = "";
 
@@ -154,7 +154,7 @@
 
 				if (trim($value) != "") {
 
-					list($userSessions,$acctStartTime) = split('\|\|', $value);
+					list($userSessions,$acctStartTime) = preg_split('\|\|', $value);
 
 					$allUsernames .= $userSessions . ", ";
 
@@ -168,7 +168,7 @@
 
 					$successMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
 					$logAction .= "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
-		
+
 					include 'library/closedb.php';
 			} // if trim
 
@@ -195,16 +195,16 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 
 </head>
- 
+
 <?php
 
 	include ("menu-mng-users.php");
-	
+
 ?>
 
 
 <div id="contentnorightbar">
-	
+
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngdel.php'] ?>
 	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
 
@@ -218,7 +218,7 @@
 
 	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-	
+
 	<fieldset>
 
 		<h302> <?php echo $l['title']['AccountRemoval'] ?> </h302>
@@ -237,11 +237,11 @@
 
 		<br/><br/>
 		<hr><br/>
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 
+		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000
 			class='button' />
 
 	</fieldset>
-	
+
 	</form>
 	</div>
 
@@ -261,11 +261,11 @@
 <?php
 	include('include/config/logging.php');
 ?>
-	
+
 		</div>
-	
+
 		<div id="footer">
-	
+
 <?php
 	include 'page-footer.php';
 ?>
@@ -279,5 +279,3 @@
 
 </body>
 </html>
-
-

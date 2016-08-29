@@ -19,7 +19,7 @@
  *
  *********************************************************************************************************
  */
- 
+
 // Include the 2checkout library
 include_once ('include/merchant/TwoCo.php');
 include_once ('include/common/common.php');
@@ -92,16 +92,16 @@ function saveToDb($postData, $status) {
 
 	$vendor = "2Checkout";
 	$payer_name = $dbSocket->escapeSimple($postData['card_holder_name']);
-	list($first_name, $last_name) = split("  ", $payer_name);
-	
+	list($first_name, $last_name) = explode("  ", $payer_name);
+
     // convert date (in PDT time zone) into local time, formatted for mysql
     $payment_date = date('Y-m-d H:i:s');
-	
+
 	$sql = "SELECT username FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']." WHERE txnId = '$txnId'";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow();
 	$username = $row[0];
-	
+
     $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']." SET ".
         " planId='$planId',".
         " business_id='$business_id',".
@@ -119,7 +119,7 @@ function saveToDb($postData, $status) {
 		" payment_status='$payment_status' ".
         " WHERE txnId='$txnId'";
     $res = $dbSocket->query($sql);
-	
+
     $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." SET ".
 		" email='$payer_email',".
 		" phone='$payer_phone',".
@@ -158,7 +158,7 @@ function saveToDb($postData, $status) {
 		//-->
 		</script>
 
-	';	
+	';
 
 ?>
 

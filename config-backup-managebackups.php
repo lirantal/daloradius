@@ -28,10 +28,10 @@
 	$logAction = "";
 	$logDebugSQL = "";
 
-	if (isset($_GET['file'])) 
+	if (isset($_GET['file']))
 		$file = $_GET['file'];
 
-	if (isset($_GET['action'])) 
+	if (isset($_GET['action']))
 		$action = $_GET['action'];
 
 	if ( (isset($_GET['file'])) && (isset($_GET['action'])) && ($_GET['action'] == "download") ) {
@@ -39,12 +39,12 @@
 		include_once('library/config_read.php');
 
 		$isError = 0;
-		
+
 		$filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA']."/backup/";
 		$fileName = $filePath.$file;
-		
+
 		if (is_dir($filePath)) {
-			
+
 			if (is_readable($fileName)) {
 
 				$fileDownload = file_get_contents($fileName);
@@ -52,7 +52,7 @@
 		        header("Content-type: txt/html");
 		        header("Content-disposition: csv; filename=".basename($fileName)."; size=" . strlen($fileDownload) );
 		        print $fileDownload;
-				
+
 				exit;
 
 			} else
@@ -64,7 +64,7 @@
 			$failureMsg = "Failed downloading backup file <b>$fileName</b> from web server, please check file availability and permissions";
 			$logAction .= "Failed downloading backup file [$fileName] from web server on page: ";
 		}
-		
+
 	}
 
 
@@ -77,7 +77,7 @@
 		include_once('library/config_read.php');
 
 		$isError = 0;
-		
+
                 $filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA']."/backup/";
 		$fileName = $filePath.$file;
 		$baseFile = basename($fileName);
@@ -87,10 +87,10 @@
 
 			$tableNames = "";
 			$fileRollback = file_get_contents($fileName);
-			
+
 			include 'library/opendb.php';
 
-			$rollBackQuery = split("\n\n\n", $fileRollback);	// when we created the backup file we splitted every table INSERT INTO 
+			$rollBackQuery = preg_split("\n\n\n", $fileRollback);	// when we created the backup file we splitted every table INSERT INTO
 										// entry with a tripple newline (\n\n\n) 3 bytes characteres and so to insert
 										// these again we split into an array each INSERT query because Pear DB
 										// can't handle multiple INSERTs in a concatenated string
@@ -108,12 +108,12 @@
 
 					$sql = "DELETE FROM $tableName";
 					$res = $dbSocket->query($sql);
-	
+
 					if (DB::isError ($res)) {
 						$isError++;
 						break;
 					}
-	
+
 					$sql = $query;					// this is a large SQL query, hopefully database can handle it without
 											// overflowing
 					$res = $dbSocket->query($sql);
@@ -144,16 +144,16 @@
 		}
 
 
-			
+
 	}
-	
+
 
 	include_once('library/config_read.php');
     $log = "visited page: ";
-	
-?>		
 
-<?php   
+?>
+
+<?php
         include_once ("library/tabber/tab-layout.php");
 ?>
 
@@ -161,11 +161,11 @@
 
     include ("menu-config-backup.php");
 
-?>		
-		
-		
+?>
+
+
 		<div id="contentnorightbar">
-		
+
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configbackupmanagebackups.php'] ?>
 				<h144>+</h144></a></h2>
                 <div id="helpPage" style="display:none;visibility:visible" >
@@ -183,7 +183,7 @@
 
 
         <table border='0' class='table1'>
-        
+
                 <thead>
                         <tr>
 				<th colspan='10' align='left'>
@@ -201,15 +201,15 @@
 	<?php
 
 		include_once('library/config_read.php');
-		
+
 		$filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA']."/backup";
 
 		if (is_dir($filePath)) {
 			$dirHandler = opendir($filePath);
 			while ($file = readdir($dirHandler)) {
 				if ( ($file != '.') && ($file != '..') && ($file != '.svn') ) {
-					
-				list($junk, $date, $time) = split("-", $file);
+
+				list($junk, $date, $time) = explode("-", $file);
 
 				$fileDate = substr($date, 0, 4) . "-" . substr($date, 4, 2) . "-" . substr($date, 6, 2);
 				$fileTime = substr($time, 0, 2) . ":" . substr($time, 2, 2) . ":" . substr($time, 4, 2);
@@ -258,21 +258,18 @@
 ?>
 
 		</div>
-		
+
 		<div id="footer">
-		
+
 								<?php
         include 'page-footer.php';
 ?>
-		
+
 		</div>
-		
+
 </div>
 </div>
 
 
 </body>
 </html>
-
-
-

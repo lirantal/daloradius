@@ -33,24 +33,24 @@
 		$profile = $_REQUEST['profile'];
 
 		include 'library/opendb.php';
-	
+
 		if ($profile != "") {
-			foreach( $_POST as $element=>$field ) { 
+			foreach( $_POST as $element=>$field ) {
 				switch ($element) {
 					case "submit":
 					case "profile":
-							$skipLoopFlag = 1; 
+							$skipLoopFlag = 1;
 							break;
 				}
-		
+
 				if ($skipLoopFlag == 1) {
-					$skipLoopFlag = 0;             
+					$skipLoopFlag = 0;
 					continue;
 				}
 
                                 if (isset($field[0])) {
                                         if (preg_match('/__/', $field[0]))
-                                                list($columnId, $attribute) = split("__", $field[0]);
+                                                list($columnId, $attribute) = explode("__", $field[0]);
                                         else {
                                                 $columnId = 0;                          // we need to set a non-existent column id so that the attribute would
                                                                                         // not match in the database (as it is added from the Attributes tab)
@@ -123,7 +123,7 @@
 		}
 
 
-	} 
+	}
 
 
 	include_once('library/config_read.php');
@@ -146,11 +146,11 @@
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 <link rel="stylesheet" href="css/auto-complete.css" media="screen" type="text/css">
 </head>
- 
-<?php   
+
+<?php
         include_once ("library/tabber/tab-layout.php");
 ?>
- 
+
 <?php
 	include ("menu-mng-rad-profiles.php");
 ?>
@@ -159,7 +159,7 @@
 
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofilesedit.php'] ?>
 		:: <?php if (isset($profile)) { echo $profile; } ?><h144>+</h144></a></h2>
-		
+
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradprofilesedit'] ?>
@@ -168,7 +168,7 @@
 		<?php
 			include_once('include/management/actionMessages.php');
 		?>
-		
+
 		<form name="mngradprofiles" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
 			<input type="hidden" value="<?php echo $profile ?>" name="profile" />
@@ -207,7 +207,7 @@
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
 
-        if ($numrows = $res->numRows() == 0) {  
+        if ($numrows = $res->numRows() == 0) {
 			echo "<center>";
 			echo $l['messages']['noCheckAttributesForGroup'];
 			echo "</center>";
@@ -240,7 +240,7 @@
                                 echo "</select>";
                         }
 
-                echo "  
+                echo "
                         <input type='hidden' name='editValues".$editCounter."[]' value='radgroupcheck' style='width: 90px'>
                 ";
 
@@ -335,7 +335,7 @@
                         echo "</select>";
                 }
 
-                echo "       
+                echo "
                         <input type='hidden' name='editValues".$editCounter."[]' value='radgroupreply' style='width: 90px'>
                 ";
 
@@ -374,9 +374,9 @@
         </fieldset>
 	</div>
 
-<?php   
+<?php
 	include 'library/closedb.php';
-?>  
+?>
 
 
 

@@ -30,55 +30,55 @@
  *********************************************************************************************************
  * userInvoiceAdd
  * general billing function to add invoices to the user based on the user_id
- * 
+ *
  * $userId 				   the userbillinfo user id or the username (autodetects)
  * $invoiceInfo            array holding the invoice information
  * $invoiceItems           array holding the invoice items information
- * 
+ *
  *********************************************************************************************************
  */
 function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()) {
 
 	include(dirname(__FILE__).'/../../library/opendb.php');
-	
+
 	$user_id = false;
-	
+
 	// if provided a numeric user id then this is the user_id that we need
 	if (is_numeric($userId)) {
 		$user_id = $dbSocket->escapeSimple($userId);			// sanitize variable for sql statement
 	} else {
 		// otherwise this is the username and we need to look up the user id from the userbillinfo table
-		
+
 		$username = $dbSocket->escapeSimple($userId);
 		$sql = 'SELECT id FROM '.$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 				' WHERE username="'.$username.'"';
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
-		
+
 		$row = $res->fetchRow();
 		$user_id = $row[0];
-		
+
 	}
-	
+
 	// if something is not right with the user id (set to null, false, whatever) we abort
 	if (!$user_id)
 		return false;
-	
-	
+
+
 	$currDate = date('Y-m-d H:i:s');
 	$currBy = $_SESSION['operator_user'];
-	
+
 	if (!$invoiceInfo)
 		$invoiceInfo = array();
-	
+
 	// create default invoice information if nothing was provided
-	$myinvoiceInfo['date'] = $currDate;	
+	$myinvoiceInfo['date'] = $currDate;
 	$myinvoiceInfo['status_id'] = 1;			 // defaults to invoice status of 'open'
 	$myinvoiceInfo['type_id'] = 1;			 // defaults to invoice type of 'Plans'
 	$myinvoiceInfo['notes'] = 'provisioned new user from daloRADIUS platform';
 	$invoiceInfo = array_merge($myinvoiceInfo, $invoiceInfo);
-	
-	
+
+
 	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
 			" (id, user_id, date, status_id, type_id, notes, creationdate, creationby, updatedate, updateby) ".
 			" VALUES (0, '".$user_id."', '".
@@ -89,16 +89,16 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 			" '$currDate', '$currBy', NULL, NULL)";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
-	
+
 	// if there hasn't been any errors with inserting the invoice record
 	if (!PEAR::isError($res)) {
-		
+
 		// get the added invoice id from the database
-		$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" ); 
+		$invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" );
 
 		if (!$invoice_id)
 			return false;
-		
+
 		foreach($invoiceItems as $invoiceItem) {
 			// set default information for the invoice items
 			/*
@@ -108,7 +108,7 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 			$myinvoiceItems['notes'] = '' ;
 			$invoiceItems = array_merge($myinvoiceItems, $invoiceItems);
 			*/
-			
+
 			// now add an invoice item
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].
 				" (id, invoice_id, plan_id, amount, tax_amount, notes, ".
@@ -119,20 +119,20 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 				$dbSocket->escapeSimple($invoiceItem['tax'])."', '".
 				$dbSocket->escapeSimple($invoiceItem['notes'])."', ".
 				" '$currDate', '$currBy', NULL, NULL)";
-	
+
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
 		}
-	
+
 	}
-	
-	
+
+
 
 	include(dirname(__FILE__).'/../../library/closedb.php');
 
 	return true;
-	
+
 }
 
 
@@ -144,7 +144,7 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
  * userInvoicesStatus
  * $username            username to provide information of
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
- * 
+ *
  * returns user invoices status: total invoices, partial, completed, due invoices, due amount
  *
  *********************************************************************************************************
@@ -153,9 +153,9 @@ function userInvoicesStatus($user_id, $drawTable) {
 
 	include_once('include/management/pages_common.php');
 	include 'library/opendb.php';
-	
+
 	$user_id = $dbSocket->escapeSimple($user_id);			// sanitize variable for sql statement
-	
+
 	$sql = "SELECT COUNT(distinct(a.id)) AS TotalInvoices, a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
 			" c.value AS status, COALESCE(SUM(e2.totalpayed), 0) as totalpayed, COALESCE(SUM(d2.totalbilled), 0) as totalbilled, ".
 			" SUM(a.status_id = 1) as openInvoices ".
@@ -165,11 +165,11 @@ function userInvoicesStatus($user_id, $drawTable) {
 			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) ".
 					" as totalbilled, invoice_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
 			" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
-			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
+			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ".
 			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
 			" WHERE (a.user_id = $user_id)".
 			" GROUP BY b.id ";
-	
+
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -183,64 +183,64 @@ function userInvoicesStatus($user_id, $drawTable) {
 	if ($drawTable == 1) {
 		echo '
 				<fieldset>
-				
+
                 <h302> User Invoices </h302>
 				<br/>
-						
+
 				<ul>
-				
-					<input class="button" type="button" value="New Invoice" 
+
+					<input class="button" type="button" value="New Invoice"
 						onClick="javascript:window.location = \'bill-invoice-new.php?user_id='.$user_id.'\';" />
-						
-					<input class="button" type="button" value="Show Invoices" 
+
+					<input class="button" type="button" value="Show Invoices"
 						onClick="javascript:window.location = \'bill-invoice-list.php?user_id='.$user_id.'\';" />
-						
-					<input class="button" type="button" value="Show Payments" 
+
+					<input class="button" type="button" value="Show Payments"
 						onClick="javascript:window.location = \'bill-payments-list.php?user_id='.$user_id.'\';" />
-						
+
 					<br/><br/>
-										
+
 					<li class="fieldset">
 						<label for="totalInvoices" class="form">Total Invoices</label>
 						<input type="text" value="'.$totalInvoices.'" disabled />
 					</li>
-				
+
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Open Invoices</label>
 						<input type="text" value="'.$openInvoices.'" disabled />
 					</li>
-					
+
 					<br/>
-					
+
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Total Billed</label>
 						<input type="text" value="'.$totalBilled.'" disabled />
 					</li>
-					
+
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Total Payed</label>
 						<input type="text" value="'.$totalPayed.'" disabled />
 					</li>
-					
+
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Balance</label>
 						<input type="text" value="'.($totalPayed - $totalBilled).'" disabled />
 					</li>
-										
-					
+
+
 					<li class="fieldset">
 					<br/>
 					<hr><br/>
 					<input type="submit" name="submit" value="Apply" tabindex=10000 class="button" />
 					</li>
-					
+
 			</ul>
-	
+
 			</fieldset>
 
 			';
 
-	}	
+	}
 
 
 }
@@ -272,7 +272,7 @@ function userInvoicesStatus($user_id, $drawTable) {
  * $enddate		ending date, last accounting session
  * $ratename		the rate to use for calculations
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
- * 
+ *
  * returns user connection information: uploads, download, session time, total billed, etc...
  *
  *********************************************************************************************************
@@ -295,7 +295,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
 		return;
 
         $row = $res->fetchRow();
-        list($ratetypenum, $ratetypetime) = split("/",$row[0]);
+        list($ratetypenum, $ratetypetime) = explode("/",$row[0]);
 
         switch ($ratetypetime) {                                        // we need to translate any kind of time into seconds, so a minute is 60 seconds, an hour is 3600,
                 case "second":                                          // and so on...
@@ -348,24 +348,24 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                 echo "
         		<thead>
         			<tr>
-        	                <th colspan='10' align='left'> 
+        	                <th colspan='10' align='left'>
         				<a class=\"table\" href=\"javascript:toggleShowDiv('divBillingRatesSummary')\">Billing Summary</a>
         	                </th>
         	                </tr>
         		</thead>
         		</table>
         	";
-        
+
                 echo "
                         <div id='divBillingRatesSummary' style='display:none;visibility:visible'>
                		<table border='0' class='table1'>
         		<thread>
 
-                        <tr>        
+                        <tr>
                         <th scope='col' align='right'>
                         Username
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $username
                         </th>
@@ -374,8 +374,8 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         <tr>
                         <th scope='col' align='right'>
                         Billing for period of
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $startdate until $enddate (inclusive)
                         </th>
@@ -384,8 +384,8 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         <tr>
                         <th scope='col' align='right'>
                         Online Time
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $userOnlineTime
                         </th>
@@ -394,8 +394,8 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         <tr>
                         <th scope='col' align='right'>
                         User Upload
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $userUpload
                         </th>
@@ -405,8 +405,8 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         <tr>
                         <th scope='col' align='right'>
                         User Download
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $userDownload
                         </th>
@@ -416,8 +416,8 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         <tr>
                         <th scope='col' align='right'>
                         Rate Name
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $ratename
                         </th>
@@ -427,8 +427,8 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         <tr>
                         <th scope='col' align='right'>
                         Total Billed
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $sumBilled
                         </th>
@@ -439,7 +439,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
         		</div>
         	";
 
-	}		
+	}
 
 
 }
@@ -452,7 +452,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
  * $startdate		starting date, first accounting session
  * $enddate		ending date, last accounting session
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
- * 
+ *
  * returns user connection information: uploads, download, session time, total billed, etc...
  *
  *********************************************************************************************************
@@ -516,24 +516,24 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                 echo "
         		<thead>
         			<tr>
-        	                <th colspan='10' align='left'> 
+        	                <th colspan='10' align='left'>
         				<a class=\"table\" href=\"javascript:toggleShowDiv('divBillingPayPalSummary')\">Billing Summary</a>
         	                </th>
         	                </tr>
         		</thead>
         		</table>
         	";
-        
+
                 echo "
                         <div id='divBillingPayPalSummary' style='display:none;visibility:visible'>
                		<table border='0' class='table1'>
         		<thread>
 
-                        <tr>        
+                        <tr>
                         <th scope='col' align='right'>
                         Username
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $username (email: $payer_email)
                         </th>
@@ -542,8 +542,8 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         <tr>
                         <th scope='col' align='right'>
                         Billing for period of
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $startdate until $enddate (inclusive)
                         </th>
@@ -552,8 +552,8 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         <tr>
                         <th scope='col' align='right'>
                         Online Time
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $userOnlineTime
                         </th>
@@ -562,8 +562,8 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         <tr>
                         <th scope='col' align='right'>
                         User Upload
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $userUpload
                         </th>
@@ -573,8 +573,8 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         <tr>
                         <th scope='col' align='right'>
                         User Download
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $userDownload
                         </th>
@@ -584,8 +584,8 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         <tr>
                         <th scope='col' align='right'>
                         Plan name
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $planName (planId: $planId)
                         </th>
@@ -595,8 +595,8 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         <tr>
                         <th scope='col' align='right'>
                         Total Plans Cost <br/> Total Transaction Fees <br/> Total Transaction Taxs
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $planTotalCost <br/> $planTotalFee <br/> $planTotalTax
                         </th>
@@ -606,8 +606,8 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         <tr>
                         <th scope='col' align='right'>
                         Gross Gain
-                        </th> 
-        
+                        </th>
+
                         <th scope='col' align='left'>
                         $grossGain $planCurrency
                         </th>
@@ -618,9 +618,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
         		</div>
         	";
 
-	}		
+	}
 
 
 }
-
-
