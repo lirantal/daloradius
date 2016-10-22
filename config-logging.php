@@ -125,7 +125,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_debugpageslogging' class='form'><? echo $l['all']['LoggingDebugOnPages'] ?></label>
+                <label for='config_debugpageslogging' class='form'><?php echo $l['all']['LoggingDebugOnPages'] ?></label>
 		<select class='form' name="config_debugpageslogging">
 			<option value="<?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?> </option>
 			<option value="">  </option>

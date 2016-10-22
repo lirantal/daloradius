@@ -43,7 +43,7 @@
 ?>	
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogsboot.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogsboot.php']; ?>
                 :: <?php if (isset($bootLineCount)) { echo $bootLineCount . " Lines Count "; } ?>
                    <?php if (isset($bootFilter)) { echo " with filter set to " . $bootFilter; } ?>
 		<h144>+</h144></a></h2>

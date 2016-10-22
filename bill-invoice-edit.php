@@ -359,7 +359,7 @@ function removeTableRow(rowCounter) {
 
 		<label for='invoice_date' class='form'><?php echo $l['all']['Date']?></label>		
 		<input value='<?php echo $invoiceDetails['date']?>' id='invoice_date' name='invoice_date'  tabindex=108 />
-		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d H:i:s', true);">
+		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
 
@@ -376,8 +376,8 @@ function removeTableRow(rowCounter) {
 		<br/>
 		<br/>
 		
-		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?= $invoice_id ?>&destination=download'"/>
-		<input class='button' type='button' value='Email Invoice to Customer' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?= $invoice_id ?>&destination=email'"/>
+		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=download'"/>
+		<input class='button' type='button' value='Email Invoice to Customer' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=email'"/>
 	  	              			
 		<br/><br/>
 		

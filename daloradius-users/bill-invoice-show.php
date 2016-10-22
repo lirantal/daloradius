@@ -182,7 +182,7 @@
 		<br/>
 		<br/>
 		
-		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?= $invoice_id ?>&destination=download'"/>
+		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=download'"/>
 	  	              			
 		<br/><br/>
 		</li>

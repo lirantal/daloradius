@@ -61,7 +61,7 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['giseditmap.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['giseditmap.php']; ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
@@ -106,14 +106,14 @@ function load() {
 		}
 
 
-		map.openInfoWindow(map.getCenter(), document.createTextNode("<?echo $l['messages']['gisedit1']; ?>"));
+		map.openInfoWindow(map.getCenter(), document.createTextNode("<?php echo $l['messages']['gisedit1']; ?>"));
 
 		GEvent.addListener(map, "click", function(marker, point) {
 		var geopoint = point;
 		if (marker) {
-			var remove_val=confirm("<? echo $l['messages']['gisedit2']; ?>")
+			var remove_val=confirm("<?php echo $l['messages']['gisedit2']; ?>")
 			if (remove_val==true) {
-			var hotspot_name=prompt("<? echo $l['messages']['gisedit3']; ?>","")
+			var hotspot_name=prompt("<?php echo $l['messages']['gisedit3']; ?>","")
 				if (hotspot_name!=null && hotspot_name!="") {
 					map.removeOverlay(marker);
 					document.editmaps.type.value = "del";
@@ -122,11 +122,11 @@ function load() {
 				}
 			}
 		  } else {
-			var add_val=confirm("<? echo $l['messages']['gisedit4']; ?>" + " Geocode: " + geopoint)
+			var add_val=confirm("<?php echo $l['messages']['gisedit4']; ?>" + " Geocode: " + geopoint)
 			if (add_val==true) {
-				var hotspot_name=prompt("<? echo $l['messages']['gisedit5']; ?>","")
+				var hotspot_name=prompt("<?php echo $l['messages']['gisedit5']; ?>","")
 				if (hotspot_name!=null && hotspot_name!="") {
-					var hotspot_mac=prompt("<? echo $l['messages']['gisedit6'] ; ?>","")
+					var hotspot_mac=prompt("<?php echo $l['messages']['gisedit6'] ; ?>","")
 					if (hotspot_mac!=null && hotspot_mac!="") {
 						map.addOverlay(new GMarker(point));
 						document.editmaps.type.value = "add";
