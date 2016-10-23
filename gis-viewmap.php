@@ -59,8 +59,8 @@ map.openInfoWindow(map.getCenter(),
 
 // Create our "tiny" marker icon
 var iconRed = new GIcon();
-iconRed.image = "http://labs.google.com/ridefinder/images/mm_20_red.png";
-iconRed.shadow = "http://labs.google.com/ridefinder/images/mm_20_shadow.png";
+iconRed.image = "//labs.google.com/ridefinder/images/mm_20_red.png";
+iconRed.shadow = "//labs.google.com/ridefinder/images/mm_20_shadow.png";
 iconRed.iconSize = new GSize(12, 20);
 iconRed.shadowSize = new GSize(22, 20);
 iconRed.iconAnchor = new GPoint(6, 20);
@@ -68,8 +68,8 @@ iconRed.infoWindowAnchor = new GPoint(5, 1);
 
 
 var iconBlue = new GIcon();
-iconBlue.image = "http://labs.google.com/ridefinder/images/mm_20_blue.png";
-iconBlue.shadow = "http://labs.google.com/ridefinder/images/mm_20_shadow.png";
+iconBlue.image = "//labs.google.com/ridefinder/images/mm_20_blue.png";
+iconBlue.shadow = "//labs.google.com/ridefinder/images/mm_20_shadow.png";
 iconBlue.iconSize = new GSize(12, 20);
 iconBlue.shadowSize = new GSize(22, 20);
 iconBlue.iconAnchor = new GPoint(6, 20);
