@@ -14,7 +14,7 @@
     function writeGoogleMapsCode($googleMapsCode) {
 		$myfile = "library/googlemaps.php";
 		if ($fh = fopen($myfile, 'w') ) {
-			$strCode = "<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=" . $googleMapsCode . 
+			$strCode = "<script src='//maps.google.com/maps?file=api&amp;v=3&amp;key=" . $googleMapsCode . 
 						"' type='text/javascript'></script>";
 			fwrite($fh, $strCode);
 			fclose($fh);
