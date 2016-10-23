@@ -49,7 +49,7 @@ if (isset($configValues['CONFIG_LOG_FILE'])) {
 					if (preg_match("/$daloradiusFilter/i", $line)) {
 						if ($counter == 0)
 							break;
-						$ret = eregi_replace("\n", "<br>", $line);
+						$ret = preg_replace("/\n/i", "<br>", $line);
 						echo $ret;
 						$counter--;
 					}
