@@ -46,7 +46,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['replogsradius.php']; ?>
+		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogsradius.php']; ?>
                 :: <?php if (isset($radiusLineCount)) { echo $radiusLineCount . " Lines Count "; } ?>
                    <?php if (isset($radiusFilter)) { echo " with radiusFilter set to " . $radiusFilter; } ?>
 		<h144>+</h144></a></h2>

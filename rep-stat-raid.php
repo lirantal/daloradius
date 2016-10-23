@@ -79,7 +79,7 @@
 		foreach($mdstat as $mddevice):
 	?>
 
-			<div class="tabbertab" title="<?= $mddevice ?>">
+			<div class="tabbertab" title="<?php echo $mddevice ?>">
 
 				<?php
 					$output = "";

@@ -42,7 +42,7 @@ if (empty($logfile)) {
 	echo "<br/><br/>
 		error reading log file: <br/><br/>
 		looked for log file in '".implode(", ", $logfile_loc)."' but couldn't find it.<br/>
-		if you know where your freeradius log file is located, set it's location in " . $_SERVER[SCRIPT_NAME];
+		if you know where your freeradius log file is located, set it's location in " . $_SERVER['SCRIPT_NAME'];
 	exit;
 }
 	

@@ -21,7 +21,7 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><? echo $l['Intro']['gisviewmap.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['gisviewmap.php']; ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
@@ -53,7 +53,7 @@ map.enableContinuousZoom();
 map.setCenter(new GLatLng(0, 0), 1, G_HYBRID_MAP);
 
 map.openInfoWindow(map.getCenter(),
-	document.createTextNode("<? echo $l['messages']['gisviewwelcome']; ?>"));
+	document.createTextNode("<?php echo $l['messages']['gisviewwelcome']; ?>"));
 
 
 

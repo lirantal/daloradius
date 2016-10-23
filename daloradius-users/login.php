@@ -62,22 +62,22 @@ body {
 		
 		<h2>
 		
-		<?echo $l['all']['copyright1']; ?>	
+		<?php echo $l['all']['copyright1']; ?>	
 		</h2>
 		<br/>
 		
 		<ul id="subnav">
 		
-		<li><? echo $l['all']['daloRADIUS'] ?></li>
+		<li><?php echo $l['all']['daloRADIUS'] ?></li>
 		
 		</ul>
 	</div>
 	
 	<div id="sidebar">
 	
-	<h2><? echo $l['text']['LoginRequired'] ?></h2>
+	<h2><?php echo $l['text']['LoginRequired'] ?></h2>
 
-	<h3><? echo $l['text']['LoginPlease'] ?></h3>
+	<h3><?php echo $l['text']['LoginPlease'] ?></h3>
 
 		<form name="login" action="dologin.php" class="sidebar" method="post" >
 			<ul class="subnav">
