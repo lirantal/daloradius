@@ -77,13 +77,15 @@ function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command
 // $nasport	- NAS Port address (depends on the configuration on the NAS, this may be a different port for either CoA or Disconnect packets).
 function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$command="disconnect",$additional="") {
 
-
 	$user = escapeshellarg($user);
 
 	$args = escapeshellarg("$nasaddr:$nasport")." ".escapeshellarg($command)." ".
 			escapeshellarg($nassecret);
 	$query = "User-Name=$user";
-	$query .= ','.escapeshellarg($additional);
+
+	if (!empty($additional)) {
+		$query .= ','.$additional;
+	}
 
 	$radclient = "radclient"; 		// or you can change this with the full path if the binary radcilent program can not be
 						// found within your $PATH variable
@@ -97,7 +99,7 @@ function user_disconnect($options,$user,$nasaddr,$nasport="3779",$nassecret,$com
 	if ($options['dictionary'])
 		$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
 
-	$cmd = "echo \'$query\' | $radclient $radclient_options $args 2>&1";
+	$cmd = "echo ".escapeshellcmd($query)." | $radclient $radclient_options $args 2>&1";
 	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";
 	$res = shell_exec($cmd);
 
