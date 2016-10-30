@@ -53,7 +53,8 @@ function user_auth($options,$user,$pass,$radiusaddr,$radiusport,$secret,$command
 	if ($options['dictionary'])
 		$radclient_options .= " -d ".escapeshellarg($options['dictionary']);
 
-	$cmd = "echo \"$query\" | $radclient $radclient_options $args 2>&1";
+	$cmd = "echo ".escapeshellcmd($query)." | $radclient $radclient_options $args 2>&1";
+
 	$print_cmd = "<b>Executed:</b><br/>$cmd<br/><br/><b>Results:</b><br/>";
 	$res = shell_exec($cmd);
 
