@@ -201,7 +201,7 @@
                 $configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
                 " ON ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute=".
                 $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
-		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value=NULL ".
+		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
                 $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
@@ -296,7 +296,7 @@
                 $configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
                 " ON ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute=".
                 $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
-		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value=NULL ".
+		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
 		" WHERE ".
                 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);

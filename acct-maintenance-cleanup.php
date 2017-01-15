@@ -38,7 +38,7 @@
 			// delete all stale sessions in the database that occur until $enddate
 			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 					" WHERE AcctStartTime<'".$dbSocket->escapeSimple($enddate)."'".
-					" AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime=NULL)";
+					" AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime IS NULL)";
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
@@ -103,7 +103,7 @@
 			<label for='enddate' class='form'><?php echo $l['all']['CleanupSessions']?></label>
 			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
-			"showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d h:i:s', true);" >
+			"showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
 			<br />
 
 			<br/><br/>
