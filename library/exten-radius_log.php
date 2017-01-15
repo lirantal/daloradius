@@ -52,19 +52,28 @@ if (is_readable($logfile) == false) {
 		error reading log file: <u>$logfile</u> <br/><br/>
 		possible cause is file premissions or file doesn't exist.<br/>";
 } else {
-                if (file_get_contents($logfile)) {
-                        $fileReversed = array_reverse(file($logfile));
-                        $counter = $radiusLineCount;
-                        foreach ($fileReversed as $line) {
-                                if (preg_match("/$radiusFilter/i", $line)) {
-                                        if ($counter == 0)
-                                                break;
-                                        $ret = preg_replace("/\n/i", "<br>", $line);
-                                        echo $ret;
-                                        $counter--;
-                                }
-                        }
-                }
+    if (file_get_contents($logfile)) {
+
+     $counter = $radiusLineCount;
+     $fileReversed = array_reverse(file($logfile));
+     foreach ($fileReversed as $line) {
+        if($counter == 0) {
+          break;
+        }
+        echo $line . "<br>";
+        $counter--;
+      }
+      // $counter = $radiusLineCount;
+      // foreach ($fileReversed as $line) {
+      //         if (preg_match("/$radiusFilter/i", $line)) {
+      //                 if ($counter == 0)
+      //                         break;
+      //                 $ret = eregi_replace("\n", "<br>", $line);
+      //                 echo $ret;
+      //                 $counter--;
+      //         }
+      // }
+    }
 }
 
 ?>
