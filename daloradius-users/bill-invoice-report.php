@@ -79,6 +79,11 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+        $orderBy = $dbSocket->escapeSimple($orderBy);
+        $orderType = $dbSocket->escapeSimple($orderType);
+
+
 	if (!empty($invoice_status) && $invoice_status != '%')
 		$sql_WHERE .= ' AND (a.status_id = "'.$dbSocket->escapeSimple($invoice_status).'") ';
 

@@ -59,20 +59,20 @@
 
 			if (!(file_exists($filenameRealmsProxys))) {
 				$logAction .= "Failed non-existed realms configuration file [$filenameRealmsProxys] on page: ";
-				$failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save realms information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " doesn't exist, I can't save realms information to the file";
 				$fileFlag = 0;
 			}
 	
 			if (!(is_writable($filenameRealmsProxys))) {
 				$logAction .= "Failed writing realms configuration to file [$filenameRealmsProxys] on page: ";	
-				$failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save realms information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " isn't writable, I can't save realms information to the file";
 				$fileFlag = 0;
 			}	
 
 			if (trim($realmname) != "") {
 
 				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+				$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 				// insert realm to database
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOREALMS'].
@@ -88,7 +88,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new realm: <b>$realmname</b>";
+				$successMsg = "Added to database new realm: <b>" . htmlspecialchars($realmname, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new realm [$realmname] on page: ";
 
 				/*******************************************************************/
@@ -102,7 +102,7 @@
 			}
 
 		} else { 
-			$failureMsg = "You have tried to add a realm that already exist in the database: $realmname";
+			$failureMsg = "You have tried to add a realm that already exist in the database: " . htmlspecialchars($realmname, ENT_QUOTES) . "";
 			$logAction .= "Failed adding new realm already in database [$realmname] on page: ";
 		}
 
@@ -148,7 +148,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 		
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 

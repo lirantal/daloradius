@@ -45,7 +45,7 @@
 		if (trim($paymentname) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']." SET ".
 			" value='".$dbSocket->escapeSimple($paymentname)."', ".
@@ -56,7 +56,7 @@
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
 			
-			$successMsg = "Updated payment type: <b> $paymentname </b>";
+			$successMsg = "Updated payment type: <b>" . htmlspecialchars($paymentname, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully updated payment type [$paymentname] on page: ";
 			
 		} else {
@@ -113,7 +113,7 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymenttypesedit.php'] ?>
-		:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($paymentname)) { echo htmlspecialchars($paymentname, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['paymenttypesedit'] ?>
@@ -123,7 +123,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -139,13 +139,13 @@
 
 			<li class='fieldset'>
 			<label for='paymentname' class='form'><?php echo $l['all']['PayTypeName'] ?></label>
-			<input disabled name='paymentname' type='text' id='paymentname' value='<?php echo $paymentname ?>' tabindex=100 />
+			<input disabled name='paymentname' type='text' id='paymentname' value='<?php echo htmlspecialchars($paymentname, ENT_QUOTES) ?>' tabindex=100 />
 			</li>
 
 			<li class='fieldset'>
 			<label for='paymentnotes' class='form'><?php echo $l['all']['PayTypeNotes'] ?></label>
 
-	                <input class='text' name='paymentnotes' type='text' id='paymentnotes' value='<?php echo $paymentnotes ?>' tabindex=101 />
+	                <input class='text' name='paymentnotes' type='text' id='paymentnotes' value='<?php echo htmlspecialchars($paymentnotes, ENT_QUOTES) ?>' tabindex=101 />
 
 			</li>
 
@@ -160,7 +160,7 @@
 
 	</fieldset>
 
-	<input type=hidden value="<?php echo $paymentname ?>" name="paymentname"/>
+	<input type=hidden value="<?php echo htmlspecialchars($paymentname, ENT_QUOTES) ?>" name="paymentname"/>
 
 </div>
 
@@ -177,19 +177,19 @@
 
         <br/>
         <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
-        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <input disabled value='<?php if (isset($creationdate)) echo htmlspecialchars($creationdate, ENT_QUOTES) ?>' tabindex=313 />
         <br/>
 
         <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
-        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <input disabled value='<?php if (isset($creationby)) echo htmlspecialchars($creationby, ENT_QUOTES) ?>' tabindex=314 />
         <br/>
 
         <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
-        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <input disabled value='<?php if (isset($updatedate)) echo htmlspecialchars($updatedate, ENT_QUOTES) ?>' tabindex=315 />
         <br/>
 
         <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
-        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <input disabled value='<?php if (isset($updateby)) echo htmlspecialchars($updateby, ENT_QUOTES) ?>' tabindex=316 />
         <br/>
 
 

@@ -32,7 +32,7 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
-		$successMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspot_name </b>";
+		$successMsg = "Added new Hotspot's Geo-Location information for hotspot: <b>" . htmlspecialchars($hotspot_name, ENT_QUOTES) . "</b>";
 	}
 
 	if ($type == "del") {
@@ -43,7 +43,7 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
-		$successMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b> $hotspot_name </b>";
+		$successMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b>" . htmlspecialchars($hotspot_name, ENT_QUOTES) . "</b>";
 
 	}		
 
@@ -148,9 +148,9 @@ function load() {
 
 	while($row = $res->fetchRow()) {
 		echo "
-			var point_$row[0] = new GLatLng($row[3]);
-			var marker_$row[0] = createMarker(point_$row[0], '$row[1]');
-			map.addOverlay(marker_$row[0]);
+			var point_" . htmlspecialchars($row[0], ENT_QUOTES) . " = new GLatLng(" . htmlspecialchars($row[3], ENT_QUOTES) . ");
+			var marker_" . htmlspecialchars($row[0], ENT_QUOTES) . " = createMarker(point_" . htmlspecialchars($row[0], ENT_QUOTES) . ", '" . htmlspecialchars($row[1], ENT_QUOTES) . "');
+			map.addOverlay(marker_" . htmlspecialchars($row[0], ENT_QUOTES) . ");
 		";
 	}
 ?>
@@ -168,7 +168,7 @@ function load() {
 ?>
 
 
-<form name="editmaps" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+<form name="editmaps" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>">
 <input type="hidden" name="type" value="">
 <input type="hidden" name="hotspotname" value="">
 <input type="hidden" name="hotspotmac" value="">

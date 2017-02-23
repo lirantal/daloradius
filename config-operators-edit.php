@@ -36,7 +36,7 @@
 		if (trim($operator_username) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 			
 			(isset($_POST['password'])) ? $operator_password = $_POST['password'] : $operator_password = "";
 			(isset($_POST['firstname'])) ? $firstname = $_POST['firstname'] : $firstname = "";
@@ -116,7 +116,7 @@
 			
 			} //if numrows()
 			
-			$successMsg = "Updated settings for: <b> $operator_username </b>";
+			$successMsg = "Updated settings for: <b>" . htmlspecialchars($operator_username, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully updated settings for operator user [$operator_username] on page: ";
 
 		} else { // if username != ""
@@ -132,7 +132,7 @@
 		$operator_username = "";
 
 	if (trim($operator_username) != "") {
-		$operator_username = $_REQUEST['operator_username'];
+		$operator_username = $dbSocket->escapeSimple($_REQUEST['operator_username']);
 	} else {
 		$failureMsg = "no operator user was entered, please specify an operator username to edit";
 	}
@@ -208,8 +208,8 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-				<input type="hidden" value="<?php echo $operator_username ?>" name="operator_username" />
+				<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
+				<input type="hidden" value="<?php echo htmlspecialchars($operator_username, ENT_QUOTES) ?>" name="operator_username" />
 
 <div class="tabber">
 
@@ -228,7 +228,7 @@
 			else 
 				echo "type='text'";
 		?>
-			value='<?php if (isset($operator_password)) echo $operator_password ?>' tabindex=101 />
+			value='<?php if (isset($operator_password)) echo htmlspecialchars($operator_password, ENT_QUOTES) ?>' tabindex=101 />
                 <br/>
 
                 <br/><br/>

@@ -77,6 +77,8 @@
 	$username = $dbSocket->escapeSimple($username);
 	$startdate = $dbSocket->escapeSimple($startdate);
 	$enddate = $dbSocket->escapeSimple($enddate);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 	// setup php session variables for exporting
 	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
@@ -145,70 +147,70 @@
         echo "<thread> <tr>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=radacctid&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=radacctid&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['ID']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=hotspot&orderType=$orderTypeNextPage\">
-		".$l['all']['HotSpot']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=hotspot&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['HotSpot']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=username&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Username']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=framedipaddress&orderType=$orderTypeNextPage\">
-		".$l['all']['IPAddress']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=framedipaddress&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['IPAddress']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
-		".$l['all']['StartTime']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctstarttime&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['StartTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstoptime&orderType=$orderTypeNextPage\">
-		".$l['all']['StopTime']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctstoptime&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['StopTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalTime']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctsessiontime&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=$orderTypeNextPage\">
-		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctinputoctets&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=$orderTypeNextPage\">
-		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctoutputoctets&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctterminatecause&orderType=$orderTypeNextPage\">
-		 ".$l['all']['Termination']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctterminatecause&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Termination']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
-		".$l['all']['NASIPAddress']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=nasipaddress&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['NASIPAddress']."</a>
 		</th>
                 </tr> </thread>";
 
 	while($row = $res->fetchRow()) {
 		printqn("<tr>
-				<td> $row[0] </td>
+				<td>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=" . htmlspecialchars($row[1], ENT_QUOTES) . "\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
+                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=" . urlencode($row[1]) . "\">
                                                 {$l['Tooltip']['HotspotEdit']}</a>
                                         &nbsp;
                                         <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
@@ -219,14 +221,14 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[1]</a>
+                                >" . htmlspecialchars($row[1], ENT_QUOTES) . "</a>
                         </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=" . htmlspecialchars($row[2], ENT_QUOTES) . "\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
+                                        <a class=\"toolTip\" href=\"mng-edit.php?username=" . urlencode($row[2]) . "\">
 	                                        {$l['Tooltip']['UserEdit']}</a>
                                         <br/><br/>
 
@@ -234,16 +236,16 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[2]</a>
+                                >" . htmlspecialchars($row[2], ENT_QUOTES) . "</a>
                         </td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
-				<td> $row[5] </td>
-				<td> ".time2str($row[6])." </td>
-				<td> ".toxbyte($row[7])."</td>
-				<td> ".toxbyte($row[8])."</td>
-				<td> $row[9] </td>
-				<td> $row[10] </td>
+				<td>" . htmlspecialchars($row[3], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars($row[4], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars($row[5], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars(time2str($row[6], ENT_QUOTES)) . " </td>
+				<td>" . htmlspecialchars(toxbyte($row[7], ENT_QUOTES)) . "</td>
+				<td>" . htmlspecialchars(toxbyte($row[8], ENT_QUOTES)) . "</td>
+				<td>" . htmlspecialchars($row[9], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars($row[10], ENT_QUOTES) . "</td>
 		</tr>");
 
 	}

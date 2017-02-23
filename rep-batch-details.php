@@ -71,6 +71,8 @@
 	if ($batch_name) {
 
 		$batch_name = $dbSocket->escapeSimple($batch_name);
+		$orderBy = $dbSocket->escapeSimple($orderBy);
+		$orderType = $dbSocket->escapeSimple($orderType);
 		
 		$sql = "SELECT ".
 				$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id ".
@@ -146,8 +148,8 @@
 								<tr>
 								<th colspan='10' align='left'> 
 								
-	  	              			<input class='button' type='button' value='Download Invoice'onClick=\"javascript:window.location.href='include/common/notificationsBatchDetails.php?batch_name=$batch_name&destination=download'\"/>
-	  	              			<input class='button' type='button' value='Email Invoice to Business/Hotspot'onClick=\"javascript:window.location.href='include/common/notificationsBatchDetails.php?batch_name=$batch_name&destination=email'\"/>
+	  	              			<input class='button' type='button' value='Download Invoice'onClick=\"javascript:window.location.href='include/common/notificationsBatchDetails.php?batch_name=" . urlencode($batch_name) . "&destination=download'\"/>
+	  	              			<input class='button' type='button' value='Email Invoice to Business/Hotspot'onClick=\"javascript:window.location.href='include/common/notificationsBatchDetails.php?batch_name=" . urlencode($batch_name) . "&destination=email'\"/>
 	  	              			<br/>
 								<input class='button' type='button' value='Total Users CSV Export'
 									onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv&reportType=reportsBatchTotalUsers'\"
@@ -217,6 +219,7 @@
 			$active_users = $row['active_users'];
 			$batch_cost = ($active_users * $plancost);
 			$plan_currency = $row['plancurrency'];
+            $row['batch_name'] = htmlspecialchars($row['batch_name'], ENT_QUOTES);
 			
 			echo "
 				<tr>
@@ -228,7 +231,7 @@
 						tooltipText='
 									<div id=\"divContainerUserInfo\">
 										<b>{$l['all']['batchDescription']}</b>:<br/><br/>
-										{$row['batch_description']}
+										".htmlspecialchars($row['batch_description'], ENT_QUOTES)."
 									</div>
 									<br/>
 									'
@@ -238,38 +241,40 @@
 			
 			echo "
 			
-					<td>".$hotspot_name."
+					<td>" . htmlspecialchars($hotspot_name, ENT_QUOTES) . "
 						
 					</td>
 			
-					<td>".$batch_status."
+					<td>" . htmlspecialchars($batch_status, ENT_QUOTES) . "
 						
 					</td>
 					
-					<td>".$total_users."
+					<td>" . htmlspecialchars($total_users, ENT_QUOTES) . "
 						
 					</td>
 	
-					<td>".$active_users."
+					<td>" . htmlspecialchars($active_users, ENT_QUOTES) . "
 						
 					</td>
 	
-					<td>".
-						$row['planname']."
+					<td>" . htmlspecialchars($row['planname'], ENT_QUOTES) . "
+
 					</td>
 	
-					<td>".$plancost."
+					<td>" . htmlspecialchars($plancost, ENT_QUOTES) . "
+
 					</td>
 	
-					<td>".$batch_cost."
+					<td>" . htmlspecialchars($batch_cost, ENT_QUOTES) . "
+
 					</td>
 					
-					<td>".
-						$row['creationdate']."
+					<td>" . htmlspecialchars($row['creationdate'], ENT_QUOTES) . "
+
 					</td>
 	
-					<td>".
-						$row['creationby']."
+					<td>" . htmlspecialchars($row['creationby'], ENT_QUOTES) . "
+
 					</td>
 	
 	
@@ -338,7 +343,7 @@
 			$configValues['CONFIG_DB_TBL_RADACCT'].".username".
 
 			" GROUP by ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ".
-			" ORDER BY $orderBy $orderType ,".$configValues['CONFIG_DB_TBL_RADACCT'].".radacctid ASC ";
+			" ORDER BY " . $dbSocket->escapeSimple($orderBy) . " " . $dbSocket->escapeSimple($orderType) . " ,".$configValues['CONFIG_DB_TBL_RADACCT'].".radacctid ASC ";
 
 	// assigning the session reportQuery
 	$_SESSION['reportQuery'] = $sql;
@@ -347,6 +352,9 @@
 	$numrows = $res->numRows();
 	$logDebugSQL .= $sql . "\n";
 
+	$batch_id = $dbSocket->escapeSimple($batch_id);
+	$orderBy = $dbSocket->escapeSimple($orderBy);
+	$orderType = $dbSocket->escapeSimple($orderType);
 
 	$sql = "SELECT ".
 			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id,".
@@ -411,7 +419,7 @@
 	
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['BatchName']."</a>
 		</th>
 
@@ -437,13 +445,16 @@
 		$batch_name = $row['batch_name'];
 		
 		echo "
-				<td>".$batch_name."
+				<td>" . htmlspecialchars($batch_name, ENT_QUOTES) . "
+
 				</td>
 
-				<td>".$username."
+				<td>" . htmlspecialchars($username, ENT_QUOTES) . "
+
 				</td>
 
-				<td>".$acctstarttime."
+				<td>" . htmlspecialchars($acctstarttime, ENT_QUOTES) . "
+
 				</td>
 
 			</tr>

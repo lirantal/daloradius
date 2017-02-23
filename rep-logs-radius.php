@@ -47,8 +47,8 @@
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogsradius.php']; ?>
-                :: <?php if (isset($radiusLineCount)) { echo $radiusLineCount . " Lines Count "; } ?>
-                   <?php if (isset($radiusFilter)) { echo " with radiusFilter set to " . $radiusFilter; } ?>
+                :: <?php if (isset($radiusLineCount)) { echo htmlspecialchars($radiusLineCount, ENT_QUOTES) . " Lines Count "; } ?>
+                   <?php if (isset($radiusFilter)) { echo " with radiusFilter set to " . htmlspecialchars($radiusFilter, ENT_QUOTES); } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >

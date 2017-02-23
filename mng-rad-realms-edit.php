@@ -61,18 +61,18 @@
 
 			if (!(file_exists($filenameRealmsProxys))) {
 				$logAction .= "Failed non-existed realms configuration file [$filenameRealmsProxys] on page: ";
-				$failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save realms information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " doesn't exist, I can't save realms information to the file";
 				$fileFlag = 0;
 			}
 
 			if (!(is_writable($filenameRealmsProxys))) {
 				$logAction .= "Failed writing realms configuration to file [$filenameRealmsProxys] on page: ";
-				$failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save realms information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " isn't writable, I can't save realms information to the file";
 				$fileFlag = 0;
 			}
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			// update realm entry in database
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOREALMS']." SET ".
@@ -89,7 +89,7 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$successMsg = "Updated database with realm: <b>$realmname</b>";
+			$successMsg = "Updated database with realm: <b>" . htmlspecialchars($realmname, ENT_QUOTES) . "</b>";
 			$logAction .= "Updated realm [$realmname] on page: ";
 
 			/*******************************************************************/
@@ -164,7 +164,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -177,12 +177,12 @@
 
 		<ul>
 
-		<input type='hidden' name='realmname' id='realmname' value='<?php if (isset($realmname)) echo $realmname; ?>' />
+		<input type='hidden' name='realmname' id='realmname' value='<?php if (isset($realmname)) echo htmlspecialchars($realmname, ENT_QUOTES); ?>' />
 
 		<li class='fieldset'>
 		<label for='realmname' class='form'><?php echo $l['all']['RealmName'] ?></label>
 		<input disabled name='realmname' type='text' id='realmname' 
-			value='<?php if (isset($realmname)) echo $realmname; ?>' tabindex=100 />
+			value='<?php if (isset($realmname)) echo htmlspecialchars($realmname, ENT_QUOTES); ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNameTooltip')" />
 		
 		<div id='realmNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -193,7 +193,7 @@
 
 		<li class='fieldset'>
 		<label for='type' class='form'><?php echo $l['all']['Type'] ?></label>
-		<input name='type' type='text' id='type' value='<?php if (isset($type)) echo $type; ?>' tabindex=101 />
+		<input name='type' type='text' id='type' value='<?php if (isset($type)) echo htmlspecialchars($type, ENT_QUOTES); ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmTypeTooltip')"/>
 		
 		<div id='realmTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -204,7 +204,7 @@
 
 		<li class='fieldset'>
 		<label for='authhost' class='form'><?php echo $l['all']['AuthHost'] ?></label>
-		<input name='authhost' type='text' id='authhost' value='<?php if (isset($authhost)) echo $authhost; ?>' tabindex=102 />
+		<input name='authhost' type='text' id='authhost' value='<?php if (isset($authhost)) echo htmlspecialchars($authhost, ENT_QUOTES); ?>' tabindex=102 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmAuthhostTooltip')"/>
 		
 		<div id='realmAuthhostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -215,7 +215,7 @@
 
 		<li class='fieldset'>
 		<label for='accthost' class='form'><?php echo $l['all']['AcctHost'] ?></label>
-		<input name='accthost' type='text' id='accthost' value='<?php if (isset($accthost)) echo $accthost; ?>' tabindex=103 />
+		<input name='accthost' type='text' id='accthost' value='<?php if (isset($accthost)) echo htmlspecialchars($accthost, ENT_QUOTES); ?>' tabindex=103 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmAccthostTooltip')"/>
 		
 		<div id='realmAccthostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -226,7 +226,7 @@
 
 		<li class='fieldset'>
 		<label for='secret' class='form'><?php echo $l['all']['RealmSecret'] ?></label>
-		<input name='secret' type='text' id='secret' value='<?php if (isset($secret)) echo $secret; ?>' tabindex=104 />
+		<input name='secret' type='text' id='secret' value='<?php if (isset($secret)) echo htmlspecialchars($secret, ENT_QUOTES); ?>' tabindex=104 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmSecretTooltip')"/>
 		
 		<div id='realmSecretTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -257,7 +257,7 @@
 
 		<li class='fieldset'>
 		<label for='ldflag' class='form'><?php echo $l['all']['Ldflag'] ?></label>
-		<input name='ldflag' type='text' id='ldflag' value='<?php if (isset($ldflag)) echo $ldflag; ?>' tabindex=105 />
+		<input name='ldflag' type='text' id='ldflag' value='<?php if (isset($ldflag)) echo htmlspecialchars($ldflag, ENT_QUOTES); ?>' tabindex=105 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmLdflagTooltip')"/>
 		
 		<div id='realmLdflagTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -268,7 +268,7 @@
 
 		<li class='fieldset'>
 		<label for='nostrip' class='form'><?php echo $l['all']['Nostrip'] ?></label>
-		<input name='nostrip' type='text' id='nostrip' value='<?php if (isset($nostrip)) echo $nostrip; ?>' tabindex=106 />
+		<input name='nostrip' type='text' id='nostrip' value='<?php if (isset($nostrip)) echo htmlspecialchars($nostrip, ENT_QUOTES); ?>' tabindex=106 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNostripTooltip')"/>
 		
 		<div id='realmNostripTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -279,7 +279,7 @@
 
 		<li class='fieldset'>
 		<label for='hints' class='form'><?php echo $l['all']['Hints'] ?></label>
-		<input name='hints' type='text' id='hints' value='<?php if (isset($hints)) echo $hints; ?>' tabindex=107 />
+		<input name='hints' type='text' id='hints' value='<?php if (isset($hints)) echo htmlspecialchars($hints, ENT_QUOTES); ?>' tabindex=107 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmHintsTooltip')"/>
 		
 		<div id='realmHintsTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -290,7 +290,7 @@
 
                 <li class='fieldset'>
 		<label for='notrealm' class='form'><?php echo $l['all']['Notrealm'] ?></label>
-		<input name='notrealm' type='text' id='notrealm' value='<?php if (isset($notrealm)) echo $notrealm; ?>' tabindex=108 />
+		<input name='notrealm' type='text' id='notrealm' value='<?php if (isset($notrealm)) echo htmlspecialchars($notrealm, ENT_QUOTES); ?>' tabindex=108 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNotrealmTooltip')"/>
 		
 		<div id='realmNotrealmTooltip'  style='display:none;visibility:visible' class='ToolTip'>

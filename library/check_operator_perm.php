@@ -34,7 +34,7 @@
     include 'library/opendb.php';
 	
     $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'].
-		" WHERE operator_id='".$_SESSION['operator_id']."' AND file='".$currFile."'";
+		" WHERE operator_id='" . $dbSocket->escapeSimple($_SESSION['operator_id']) . "' AND file='" . $dbSocket->escapeSimple($currFile) . "'";
 		
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);

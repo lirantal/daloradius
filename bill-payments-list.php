@@ -81,6 +81,10 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    //escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	$sql_WHERE = ' WHERE ';
 	$sql_JOIN = '';
 	// if invoice_id then we need to lookup specific invoices
@@ -181,12 +185,12 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['ID']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=invoice_id&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=invoice_id&orderType=" .  urlencode($orderTypeNextPage) . "\">
 		".$l['all']['PaymentInvoiceID']."</a>
 		</th>
 
@@ -210,31 +214,31 @@
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		printqn("<tr>
-                        <td> <input type='checkbox' name='payment_id[]' value='$row[0]'> 
+                        <td> <input type='checkbox' name='payment_id[]' value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'> 
 
                         	<a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-payments-edit.php?payment_id=$row[0]'>".$l['Tooltip']['EditPayment']."</a>
+                                        <a class='toolTip' href='bill-payments-edit.php?payment_id=" . urlencode($row[0]) . "'>".$l['Tooltip']['EditPayment']."</a>
 					<br/><br/>
-                                        <a class='toolTip' href='bill-payments-del.php?payment_id=$row[0]'>".$l['Tooltip']['RemovePayment']."</a>
+                                        <a class='toolTip' href='bill-payments-del.php?payment_id=" . urlencode($row[0]) . "'>".$l['Tooltip']['RemovePayment']."</a>
                                         <br/><br/>\"
-                              >#$row[0]</a>
+                              >#" . htmlspecialchars($row[0], ENT_QUOTES) . "</a>
                         </td>
                         
                         
                         <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-invoice-edit.php?invoice_id=$row[1]'>".$l['Tooltip']['InvoiceEdit']."</a>
+                                        <a class='toolTip' href='bill-invoice-edit.php?invoice_id=" . urlencode($row[1]) . "'>".$l['Tooltip']['InvoiceEdit']."</a>
                                         <br/><br/>\"
-                              >#$row[1]</a>
+                              >#" . htmlspecialchars($row[1], ENT_QUOTES) . "</a>
                         </td>
                        
-                                <td> $row[2] </td>
-                                <td> $row[3] </td>
-                                <td> $row[4] </td>
-                                <td> $row[5] </td>
+                                <td>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>
+                                <td>" . htmlspecialchars($row[3], ENT_QUOTES) . "</td>
+                                <td>" . htmlspecialchars($row[4], ENT_QUOTES) . "</td>
+                                <td>" . htmlspecialchars($row[5], ENT_QUOTES) . "</td>
 		</tr>");
 	}
 

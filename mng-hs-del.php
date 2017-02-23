@@ -52,7 +52,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted hotspot(s): <b> $allHotspots </b>";
+				$successMsg = "Deleted hotspot(s): <b>" . htmlspecialchars($allHotspots, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted hotspot(s) [$allHotspots] on page: ";
 				
 			} else { 
@@ -92,7 +92,7 @@
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsdel.php'] ?>
-	:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($name)) { echo htmlspecialchars($name, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
 		<?php echo $l['helpPage']['mnghsdel'] ?>
@@ -102,8 +102,8 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -111,7 +111,7 @@
 		<br/>
 
 		<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
-		<input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 autocomplete="off" />
+		<input name='name[]' type='text' id='name' value='<?php echo htmlspecialchars($name, ENT_QUOTES) ?>' tabindex=100 autocomplete="off" />
 		<br/>
 
 		<br/><br/>

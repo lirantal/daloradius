@@ -49,7 +49,7 @@
 		if (trim($user_id) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			if (!$invoice_status_id)
 				$invoice_status_id = 1;
@@ -72,7 +72,7 @@
 				// add the invoice items which the user created
 				addInvoiceItems($dbSocket, $invoice_id);
 				
-				$successMsg = "Added to database new invoice: <b>$invoice_id</b>";
+				$successMsg = "Added to database new invoice: <b>" . htmlspecialchars($invoice_id, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new invoice [$invoice_id] on page: ";
 				
 			} else {
@@ -97,7 +97,7 @@
 		global $configValues;
 	
 		$currDate = date('Y-m-d H:i:s');
-		$currBy = $_SESSION['operator_user'];
+		$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 	
 		// insert invoice's items
 		if (!empty($invoice_id)) {
@@ -266,7 +266,7 @@ function removeTableRow(rowCounter) {
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -280,8 +280,8 @@ function removeTableRow(rowCounter) {
 		
 		<?php
 		echo 'Customer:<b/><br/>'; 
-		echo '<a href="/bill-pos-edit.php?username='.$userInfo['username'].'">'.$userInfo['contactperson'].'</a><br/>'.
-			$userInfo['city']. (!empty($userInfo['state']) ? ', '.$userInfo['state'] : '' );
+		echo '<a href="/bill-pos-edit.php?username=' . urlencode($userInfo['username']) . '">' . htmlspecialchars($userInfo['contactperson'], ENT_QUOTES) . '</a><br/>' .
+			htmlspecialchars($userInfo['city'], ENT_QUOTES) . (!empty($userInfo['state']) ? ', '. htmlspecialchars($userInfo['state'], ENT_QUOTES) : '' );
 		echo '</b>';
 		?>
 		<br/>
@@ -315,7 +315,7 @@ function removeTableRow(rowCounter) {
 
 		<li class='fieldset'>
 		<label for='user_id' class='form'><?php echo $l['all']['UserId'] ?></label>
-		<input name='user_id' type='text' id='user_id' value='<?php echo $user_id ?>' tabindex=101 />
+		<input name='user_id' type='text' id='user_id' value='<?php echo htmlspecialchars($user_id, ENT_QUOTES) ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('user_idTooltip')" /> 
 		
 		<div id='user_idTooltip'  style='display:none;visibility:visible' class='ToolTip'>

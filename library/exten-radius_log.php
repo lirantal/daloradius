@@ -42,14 +42,14 @@ if (empty($logfile)) {
 	echo "<br/><br/>
 		error reading log file: <br/><br/>
 		looked for log file in '".implode(", ", $logfile_loc)."' but couldn't find it.<br/>
-		if you know where your freeradius log file is located, set it's location in " . $_SERVER['SCRIPT_NAME'];
+		if you know where your freeradius log file is located, set it's location in " . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_QUOTES);
 	exit;
 }
 	
 
 if (is_readable($logfile) == false) {
 	echo "<br/><br/>
-		error reading log file: <u>$logfile</u> <br/><br/>
+		error reading log file: <u>" . htmlspecialchars($logfile, ENT_QUOTES) . "</u> <br/><br/>
 		possible cause is file premissions or file doesn't exist.<br/>";
 } else {
     if (file_get_contents($logfile)) {
@@ -60,7 +60,7 @@ if (is_readable($logfile) == false) {
         if($counter == 0) {
           break;
         }
-        echo $line . "<br>";
+        echo htmlspecialchars($line, ENT_QUOTES) . "<br>";
         $counter--;
       }
       // $counter = $radiusLineCount;

@@ -66,7 +66,7 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 
 
 	$currDate = date('Y-m-d H:i:s');
-	$currBy = $_SESSION['operator_user'];
+	$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 	if (!$invoiceInfo)
 		$invoiceInfo = array();
@@ -190,41 +190,41 @@ function userInvoicesStatus($user_id, $drawTable) {
 				<ul>
 
 					<input class="button" type="button" value="New Invoice"
-						onClick="javascript:window.location = \'bill-invoice-new.php?user_id='.$user_id.'\';" />
+						onClick="javascript:window.location = \'bill-invoice-new.php?user_id='.htmlspecialchars($user_id, ENT_QUOTES).'\';" />
 
 					<input class="button" type="button" value="Show Invoices"
-						onClick="javascript:window.location = \'bill-invoice-list.php?user_id='.$user_id.'\';" />
+						onClick="javascript:window.location = \'bill-invoice-list.php?user_id='.htmlspecialchars($user_id, ENT_QUOTES).'\';" />
 
 					<input class="button" type="button" value="Show Payments"
-						onClick="javascript:window.location = \'bill-payments-list.php?user_id='.$user_id.'\';" />
+						onClick="javascript:window.location = \'bill-payments-list.php?user_id='.htmlspecialchars($user_id, ENT_QUOTES).'\';" />
 
 					<br/><br/>
 
 					<li class="fieldset">
 						<label for="totalInvoices" class="form">Total Invoices</label>
-						<input type="text" value="'.$totalInvoices.'" disabled />
+						<input type="text" value="'.htmlspecialchars($totalInvoices, ENT_QUOTES).'" disabled />
 					</li>
 
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Open Invoices</label>
-						<input type="text" value="'.$openInvoices.'" disabled />
+						<input type="text" value="'.htmlspecialchars($openInvoices, ENT_QUOTES).'" disabled />
 					</li>
 
 					<br/>
 
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Total Billed</label>
-						<input type="text" value="'.$totalBilled.'" disabled />
+						<input type="text" value="'.htmlspecialchars($totalBilled, ENT_QUOTES).'" disabled />
 					</li>
 
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Total Payed</label>
-						<input type="text" value="'.$totalPayed.'" disabled />
+						<input type="text" value="'.htmlspecialchars($totalPayed, ENT_QUOTES).'" disabled />
 					</li>
 
 					<li class="fieldset">
 						<label for="totalbilled" class="form">Balance</label>
-						<input type="text" value="'.($totalPayed - $totalBilled).'" disabled />
+						<input type="text" value="'.htmlspecialchars(($totalPayed - $totalBilled), ENT_QUOTES).'" disabled />
 					</li>
 
 
@@ -367,7 +367,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         </th>
 
                         <th scope='col' align='left'>
-                        $username
+                        " . htmlspecialchars($username, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -377,7 +377,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         </th>
 
                         <th scope='col' align='left'>
-                        $startdate until $enddate (inclusive)
+                        " . htmlspecialchars($startdate, ENT_QUOTES) . " until " . htmlspecialchars($enddate, ENT_QUOTES) . " (inclusive)
                         </th>
                         </tr>
 
@@ -387,7 +387,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         </th>
 
                         <th scope='col' align='left'>
-                        $userOnlineTime
+                        " . htmlspecialchars($userOnlineTime, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -397,7 +397,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         </th>
 
                         <th scope='col' align='left'>
-                        $userUpload
+                        " . htmlspecialchars($userUpload, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -408,7 +408,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         </th>
 
                         <th scope='col' align='left'>
-                        $userDownload
+                        " . htmlspecialchars($userDownload, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -419,7 +419,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         </th>
 
                         <th scope='col' align='left'>
-                        $ratename
+                        " . htmlspecialchars($ratename, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -430,7 +430,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                         </th>
 
                         <th scope='col' align='left'>
-                        $sumBilled
+                        " . htmlspecialchars($sumBilled, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -535,7 +535,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $username (email: $payer_email)
+                        " . htmlspecialchars($username, ENT_QUOTES) . " (email: " . htmlspecialchars($payer_email, ENT_QUOTES) . ")
                         </th>
                         </tr>
 
@@ -545,7 +545,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $startdate until $enddate (inclusive)
+                        " . htmlspecialchars($startdate, ENT_QUOTES) . " until " . htmlspecialchars($enddate, ENT_QUOTES) . " (inclusive)
                         </th>
                         </tr>
 
@@ -555,7 +555,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $userOnlineTime
+                        " . htmlspecialchars($userOnlineTime, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -565,7 +565,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $userUpload
+                        " . htmlspecialchars($userUpload, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -576,7 +576,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $userDownload
+                        " . htmlspecialchars($userDownload, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -587,7 +587,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $planName (planId: $planId)
+                        " . htmlspecialchars($planName, ENT_QUOTES) . " (planId: " . htmlspecialchars($planId, ENT_QUOTES) . ")
                         </th>
                         </tr>
 
@@ -598,7 +598,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $planTotalCost <br/> $planTotalFee <br/> $planTotalTax
+                        " . htmlspecialchars($planTotalCost, ENT_QUOTES) . " <br/> " . htmlspecialchars($planTotalFee, ENT_QUOTES) . " <br/> " . htmlspecialchars($planTotalTax, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -609,7 +609,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                         </th>
 
                         <th scope='col' align='left'>
-                        $grossGain $planCurrency
+                        " . htmlspecialchars($grossGain, ENT_QUOTES) . " " . htmlspecialchars($planCurrency, ENT_QUOTES) . "
                         </th>
                         </tr>
 

@@ -83,10 +83,10 @@
 			}
 
 			if ($attrCount == 0) {
-				$failureMsg = "Failed adding profile name [$profile] - no attributes where provided by user";
+				$failureMsg = "Failed adding profile name [" . htmlspecialchars($profile, ENT_QUOTES) . "] - no attributes where provided by user";
 				$logAction .= "Failed adding profile name [$profile] - no attributes where provided by user on page: ";
 			} else {
-				$successMsg = "Added to database new profile: <b> $profile </b>";
+				$successMsg = "Added to database new profile: <b>" . htmlspecialchars($profile, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new profile [$profile] on page: ";
 			}
 
@@ -137,7 +137,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 				
-				<form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="newusergroup" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 

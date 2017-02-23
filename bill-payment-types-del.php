@@ -53,7 +53,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted payment type(s): <b> $allPayments </b>";
+				$successMsg = "Deleted payment type(s): <b>" . htmlspecialchars($allPayments, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted payment type(s) [$allPayments] on page: ";
 				
 			} else { 
@@ -93,7 +93,7 @@
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymenttypesdel.php'] ?>
-	:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($paymentname)) { echo htmlspecialchars($paymentname, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo $l['helpPage']['paymenttypesdel'] ?>
 		<br/>
@@ -102,8 +102,8 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -111,7 +111,7 @@
 		<br/>
 
 		<label for='paymentname' class='form'><?php echo $l['all']['PayTypeName'] ?></label>
-		<input name='paymentname[]' type='text' id='paymentname' value='<?php echo $paymentname ?>' tabindex=100 />
+		<input name='paymentname[]' type='text' id='paymentname' value='<?php echo htmlspecialchars($paymentname, ENT_QUOTES) ?>' tabindex=100 />
 		<br/>
 
 		<br/><br/>

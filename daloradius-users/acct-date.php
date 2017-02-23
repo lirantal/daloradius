@@ -74,6 +74,8 @@
 	$username = $dbSocket->escapeSimple($username);
 	$startdate = $dbSocket->escapeSimple($startdate);
 	$enddate = $dbSocket->escapeSimple($enddate);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 
         // setup php session variables for exporting

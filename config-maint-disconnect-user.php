@@ -109,7 +109,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form name="maintdisconnectuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="maintdisconnectuser" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -125,7 +125,7 @@
                 <input name="username" type="text" id="usernameEdit" autocomplete="off"
 				onClick='javascript:__displayTooltip();' 
 				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
-				value="<?php if (isset($username)) echo $username; ?>" tabindex=100>
+				value="<?php if (isset($username)) echo htmlspecialchars($username, ENT_QUOTES); ?>" tabindex=100>
 		 <br />
 		<label for='packettype' class='form'><?php echo $l['all']['PacketType'] ?></label>
                 <select name='packettype' id='packettype' class='form' tabindex=101 >
@@ -135,7 +135,7 @@
                 <br/>
 
                 <label for='nasaddr' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
-                <input name='nasaddr' type='hidden' id='nasaddr' value='<?php echo $nasaddr ?>' tabindex=102 />
+                <input name='nasaddr' type='hidden' id='nasaddr' value='<?php echo htmlspecialchars($nasaddr, ENT_QUOTES) ?>' tabindex=102 />
 
 		<select onChange="javascript:setStringTextMulti(this.id,'nasaddr','nassecret')" id='naslist' tabindex=103 
 			class='form' >
@@ -170,7 +170,7 @@
 
         while($row = $res->fetchRow()) {
                 echo "
-                        <option value='$row[0]||$row[2]'> $row[1] - $row[0] </option>
+                        <option value='" . htmlspecialchars($row[0], ENT_QUOTES) . "||" . htmlspecialchars($row[2], ENT_QUOTES) . "'>" . htmlspecialchars($row[1] - $row[0], ENT_QUOTES) . "</option>
                         ";
 
         }
@@ -192,7 +192,7 @@
                 <br/>
 
 		<label for='customattributes' class='form'><?php echo $l['all']['customAttributes'] ?></label>
-		<textarea class='form' name='customattributes'><?php echo $customAttributes; ?></textarea>
+		<textarea class='form' name='customattributes'><?php echo htmlspecialchars($customAttributes, ENT_QUOTES); ?></textarea>
 
 
 

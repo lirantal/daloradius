@@ -138,7 +138,7 @@ function getHTMLMessage($table) {
 	$result .= "<body><table>";
 	
 	foreach ($table as $field => $value) {
-		$result .= "<tr><td>$field</td><td>$value</td></tr>";
+		$result .= "<tr><td>" . htmlspecialchars($field, ENT_QUOTES) . "</td><td>" . htmlspecialchars($value, ENT_QUOTES) . "</td></tr>";
 	}
 	
 	$result .= "</table></body></html>";

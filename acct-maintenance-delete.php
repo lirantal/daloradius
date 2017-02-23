@@ -40,7 +40,7 @@
 
 			$deleteUsername = "";
 			if (trim($username) != "")
-				$deleteUsername = " AND Username='$username'";
+				$deleteUsername = " AND Username='".$dbSocket->escapeSimple($username)."'";
 
 			$deleteEnddate = "";
 			if (trim($enddate) != "")
@@ -59,7 +59,7 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$successMsg = "Deleted records between <b>$startdate</b> to <b>$enddate</b> for user <b>$username</b>";
+			$successMsg = "Deleted records between <b>" . htmlspecialchars($startdate, ENT_QUOTES) . "</b> to <b>" . htmlspecialchars($enddate, ENT_QUOTES) . "</b> for user <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully deleted records between [$startdate] and [$enddate] for user [$username] on page: ";
 
 			include 'library/closedb.php';
@@ -112,24 +112,24 @@
 			include_once('include/management/actionMessages.php');
 		?>
 		
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
         <fieldset>
 
 			<h302> <?php echo $l['title']['DeleteRecords'] ?> </h302>
 			<br/>
 
 			<label for='username' class='form'><?php echo $l['all']['Username']?></label>
-			<input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+			<input name='username' type='text' id='username' value='<?php echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
 			<br />
 
 			<label for='startdate' class='form'><?php echo $l['all']['StartingDate']?></label>
-			<input name='startdate' type='text' id='startdate' value='<?php echo $startdate ?>' tabindex=100 />
+			<input name='startdate' type='text' id='startdate' value='<?php echo htmlspecialchars($startdate, ENT_QUOTES) ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
 			"showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
 			<br />
 
 			<label for='enddate' class='form'><?php echo $l['all']['EndingDate']?></label>
-			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
+			<input name='enddate' type='text' id='enddate' value='<?php echo htmlspecialchars($enddate, ENT_QUOTES) ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
 			"showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
 			<br />

@@ -149,7 +149,7 @@
 					Complete the form and click the Apply button to register in our database, shortly after you will see
 					a Buy Now button, click it to redirect to your PayPal homepage and confirm the transaction.<br/><br/>
 
-					<form name='newuser' action='".$_SERVER['PHP_SELF']."' method='post'>
+					<form name='newuser' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
 
 					Select your plan:
 					<br/>
@@ -162,7 +162,7 @@
 					" WHERE planType='PayPal'";
 		                $res = $dbSocket->query($sql);
 			        while ($row = $res->fetchRow()) {
-					echo "<option value=\"$row[0]\">$row[1] - Cost $row[2] $row[4] </option>";
+					echo "<option value=\"" . htmlspecialchars($row[0], ENT_QUOTES) . "\">" . htmlspecialchars($row[1], ENT_QUOTES) . " - Cost " . htmlspecialchars($row[2], ENT_QUOTES) . " " . htmlspecialchars($row[4], ENT_QUOTES) . " </option>";
 			        }
 
 			        include('library/closedb.php');
@@ -174,15 +174,15 @@
 					<ul>
 
 				        First name:
-					    <li> <input name='firstName' value='"; if (isset($firstName)) echo $firstName; echo "' /> </li>
+					    <li> <input name='firstName' value='"; if (isset($firstName)) echo htmlspecialchars($firstName, ENT_QUOTES); echo "' /> </li>
 				        Last name:
-					    <li> <input name='lastName' value='"; if (isset($lastName)) echo $lastName; echo "' /> </li>
+					    <li> <input name='lastName' value='"; if (isset($lastName)) echo htmlspecialchars($lastName, ENT_QUOTES); echo "' /> </li>
 				        Address:
-					    <li> <input name='address' value='"; if (isset($address)) echo $address; echo "' /> </li>
+					    <li> <input name='address' value='"; if (isset($address)) echo htmlspecialchars($address, ENT_QUOTES); echo "' /> </li>
 				        City:
-					    <li> <input name='city' value='"; if (isset($city)) echo $city; echo "' /> </li>
+					    <li> <input name='city' value='"; if (isset($city)) echo htmlspecialchars($city, ENT_QUOTES); echo "' /> </li>
 				        State:
-					    <li> <input name='state' value='"; if (isset($state)) echo $state; echo "' /> </li>
+					    <li> <input name='state' value='"; if (isset($state)) echo htmlspecialchars($state, ENT_QUOTES); echo "' /> </li>
 
 					<br/>
 					    <input type='submit' value='Submit' name='submit'>
@@ -207,7 +207,7 @@
 					<ul><li>PIN Code: <b> 
 		                        ');
 			
-			        echo $userPIN;
+			        echo htmlspecialchars($userPIN, ENT_QUOTES);
 	
 			        echo'
 					</b></li></ul>
@@ -220,24 +220,24 @@
 
                                                 <input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-																								'?txnId='.$txnId.'" />
+																								'?txnId=' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
                                                 <input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
                                                 <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
 
-                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
-                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
+                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo htmlspecialchars($planCost, ENT_QUOTES); echo '" />
+                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo htmlspecialchars($planName, ENT_QUOTES); echo '" />
                                                 <input type="hidden" name="quantity" value="1" />
-                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
+                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo htmlspecialchars($planTax, ENT_QUOTES); echo '" />
+                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo htmlspecialchars($planId, ENT_QUOTES); echo '" />
 
                                                 <input type="hidden" name="no_note" value="1">
-                                                <input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+                                                <input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo htmlspecialchars($planCurrency, ENT_QUOTES); echo '">
                                                 <input type="hidden" name="lc" value="US">
 
                                                 <input type="hidden" name="on0" value="Transaction ID" />
-                                                <input type="hidden" name="os0" value="'.$txnId.'" />
+                                                <input type="hidden" name="os0" value="' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
 
                                                 <input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit"
                                                 alt="Make payments with PayPal - its fast, free and secure!">

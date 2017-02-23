@@ -88,7 +88,7 @@
 	    
 		include 'library/opendb.php';
 		
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='" . $dbSocket->escapeSimple($username) . "'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -183,7 +183,7 @@
 
 				//insert userinfo
 				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+				$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 						" WHERE username='".$dbSocket->escapeSimple($username)."'";
@@ -245,14 +245,14 @@
 		                        $logDebugSQL .= $sql . "\n";
 		                }
 
-				$successMsg = "Added to database new user: <b> $username </b>";
+				$successMsg = "Added to database new user: <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new user [$username] on page: ";
 			} else {
 				$failureMsg = "username or password are empty";
 				$logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
 			}
 		} else { 
-			$failureMsg = "user already exist in database: <b> $username </b>";
+			$failureMsg = "user already exist in database: <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b>";
 			$logAction .= "Failed adding new user already existing in database [$username] on page: ";
 		}
 		
@@ -345,7 +345,7 @@
 		<li class='fieldset'>
 		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
 		<input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword)) 
-			echo $hiddenPassword ?> tabindex=101 />
+			echo htmlspecialchars($hiddenPassword, ENT_QUOTES) ?> tabindex=101 />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8,<?php
 		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />

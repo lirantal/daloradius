@@ -54,7 +54,7 @@
 		<h144>+</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['repusername']." ".$username ?>
+			<?php echo $l['helpPage']['repusername']." " . htmlspecialchars($username, ENT_QUOTES) ?>
 			<br/>
 		</div>
 		<br/>
@@ -67,6 +67,12 @@
         include 'library/opendb.php';
 
 	// table to display the radcheck information per the $username
+
+        $orderBy = $dbSocket->escapeSimple($orderBy);
+        $orderType = $dbSocket->escapeSimple($orderType);
+
+        $orderBy = $dbSocket->escapeSimple($orderBy);
+        $orderType = $dbSocket->escapeSimple($orderType);
 
         $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'  ORDER BY $orderBy $orderType;";
 	$res = $dbSocket->query($sql);
@@ -86,34 +92,34 @@
         echo "<thread> <tr>
                         <th scope='col'> ".$l['all']['ID']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=id&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=id&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Username']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=username&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=username&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Attribute']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=attribute&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=attribute&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Value']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=value&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=value&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Action']." </th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $row[0] </td>
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l['all']['edit']." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".$l['all']['del']." </a>
+                        <td> " . htmlspecialchars($row[0], ENT_QUOTES) . " </td>
+                        <td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
+                        <td> " . htmlspecialchars($row[2], ENT_QUOTES) . " </td>
+                        <td> " . htmlspecialchars($row[4], ENT_QUOTES) . " </td>
+                        <td> <a href='mng-edit.php?username=" . urlencode($row[1]) . "'> ".$l['all']['edit']." </a> 
+	                     <a href='mng-del.php?username=" . urlencode($row[1]) . "'> ".$l['all']['del']." </a>
 			     </td>
                 </tr>";
         }
@@ -140,33 +146,33 @@
         echo "<thread> <tr>                        
                         <th scope='col'> ".$l['all']['ID']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=id&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=id&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Username']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=username&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=username&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Attribute']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=attribute&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=attribute&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Value']."
 						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=value&orderType=asc\"> > </a>
+						<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=value&orderType=desc\"> < </a>
 						</th>
                         <th scope='col'> ".$l['all']['Action']." </th>                </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $row[0] </td>
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l['all']['edit']." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".$l['all']['del']." </a>
+                        <td> " . htmlspecialchars($row[0], ENT_QUOTES) . " </td>
+                        <td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
+                        <td> " . htmlspecialchars($row[2], ENT_QUOTES) . " </td>
+                        <td> " . htmlspecialchars($row[4], ENT_QUOTES) . " </td>
+                        <td> <a href='mng-edit.php?username=" . urlencode($row[1]) . "'> ".$l['all']['edit']." </a> 
+	                     <a href='mng-del.php?username=" . urlencode($row[1]) . "'> ".$l['all']['del']." </a>
 			     </td>
                 </tr>";
         }

@@ -24,6 +24,13 @@ $self = $_SERVER['PHP_SELF'];
 
 function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $request2="", $request3="") {
 
+    // escape HTML
+    $orderBy = htmlspecialchars($orderBy, ENT_QUOTES);
+    $orderType = htmlspecialchars($orderType, ENT_QUOTES);
+    $request1 = htmlspecialchars($request1, ENT_QUOTES);
+    $request2 = htmlspecialchars($request2, ENT_QUOTES);
+    $request3 = htmlspecialchars($request3, ENT_QUOTES);
+
 	// print 'previous' link only if we're not
 	// on page one
 	if ($pageNum > 1)       {
@@ -61,6 +68,13 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $req
 function setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {
 
 	$numofpages = ceil($numrows / $rowsPerPage);
+
+    // escape HTML
+    $orderBy = htmlspecialchars($orderBy, ENT_QUOTES);
+    $orderType = htmlspecialchars($orderType, ENT_QUOTES);
+    $request1 = htmlspecialchars($request1, ENT_QUOTES);
+    $request2 = htmlspecialchars($request2, ENT_QUOTES);
+    $request3 = htmlspecialchars($request3, ENT_QUOTES);
 	
 	$str = '';
 	if ($numofpages <= 20) {

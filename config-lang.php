@@ -63,7 +63,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="langsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="langsettings" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -82,7 +82,7 @@
 			<option value="it"> Italian </option>
 			<option value="es_VE"> Spanish - Venezuelan </option>
 			<option value="pt_br"> Portuguese - Brazilian </option>
-			<option value="ja"> Japanese </option>
+            <option value="ja"> Japanese </option>
 		</select>
 		</li>
 

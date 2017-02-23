@@ -68,6 +68,10 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_common.php';
 
+    //escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
 		".name AS hotspot, count(distinct(UserName)) AS uniqueusers, count(radacctid) AS totalhits, ".
 		" avg(AcctSessionTime) AS avgsessiontime, sum(AcctSessionTime) AS totaltime, ".
@@ -102,50 +106,50 @@
 	echo "<thread> <tr>
                 <th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=$orderType\">
-			".$l['all']['HotSpot']."</a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=hotspot&orderType=" . urlencode($orderType) . "\">"
+            .$l['all']['HotSpot']."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=$orderType\">
-			".$l['all']['UniqueUsers']."</a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=uniqueusers&orderType=" . urlencode($orderType) . "\">"
+            .$l['all']['UniqueUsers']."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=$orderType\">
-			".$l['all']['TotalHits']."</a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=totalhits&orderType=" . urlencode($orderType) . "\">"
+            .$l['all']['TotalHits']."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=$orderType\">
-			".$l['all']['AverageTime']."</a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=avgsessiontime&orderType=" . urlencode($orderType) . "\">"
+            .$l['all']['AverageTime']."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=$orderType\">
-			".$l['all']['TotalTime']."</a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=totaltime&orderType=" . urlencode($orderType) . "\">"
+            .$l['all']['TotalTime']."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=sumInputOctets&orderType=$orderType\">
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=sumInputOctets&orderType=" . urlencode($orderType) . "\">
 			Total Uploads</a>
 			</th>
 			<th scope='col'> 
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=sumOutputOctets&orderType=$orderType\">
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=sumOutputOctets&orderType=" . urlencode($orderType) . "\">
 			Total Downloads</a>
 			</th>
         </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
-                        <td> $row[0] </td>
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td> ".time2str($row[3])." </td>
-                        <td> ".time2str($row[4])." </td>
-			<td> ".toxbyte($row[6])."</td>
-			<td> ".toxbyte($row[8])."</td>
-                </tr>";
+                        <td>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($row[1], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars(time2str($row[3]), ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars(time2str($row[4]), ENT_QUOTES) . "</td>
+            			<td>" . htmlspecialchars(toxbyte($row[6]), ENT_QUOTES) . "</td>
+            			<td>" . htmlspecialchars(toxbyte($row[8]), ENT_QUOTES) . "</td>
+                    </tr>";
         }
         echo "</table>";
 

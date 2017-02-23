@@ -21,7 +21,7 @@
 			$res = $dbSocket->query($sql);
 
 			while($row = $res->fetchRow()) {
-				echo "<option value=$row[0]>$row[0]</option>";
+				echo "<option value=" . htmlspecialchars($row[0], ENT_QUOTES) . ">" . htmlspecialchars($row[0], ENT_QUOTES) . "</option>";
 			}
 
 			include 'library/closedb.php';

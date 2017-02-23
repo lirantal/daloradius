@@ -61,7 +61,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted proxy(s): <b> $allProxys </b>";
+				$successMsg = "Deleted proxy(s): <b>" . htmlspecialchars($allProxys, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted proxy(s) [$allProxys] on page: ";
 				
 			} else { 
@@ -114,8 +114,8 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -123,7 +123,7 @@
 		<br/>
 
 			<label for='proxyname' class='form'><?php echo $l['all']['ProxyName'] ?></label>
-			<input name='proxyname[]' type='text' id='proxyname' value='<?php echo $proxyname ?>' tabindex=100 />
+			<input name='proxyname[]' type='text' id='proxyname' value='<?php echo htmlspecialchars($proxyname, ENT_QUOTES) ?>' tabindex=100 />
 			<br/>
 
 			<br/><br/>

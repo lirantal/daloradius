@@ -80,25 +80,27 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
-	$username = $dbSocket->escapeSimple($username);
-	$planname = $dbSocket->escapeSimple($planname);
-	$startdate = $dbSocket->escapeSimple($startdate);
-	$enddate = $dbSocket->escapeSimple($enddate);
+	//$username = $dbSocket->escapeSimple($username);
+	//$planname = $dbSocket->escapeSimple($planname);
+	//$startdate = $dbSocket->escapeSimple($startdate);
+	//$enddate = $dbSocket->escapeSimple($enddate);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 	// setup php session variables for exporting
 	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
 	$_SESSION['reportQuery'] = 	" WHERE ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '$username')".
+			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '".$dbSocket->escapeSimple($username)."')".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '$planname')".
+			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '".$dbSocket->escapeSimple($planname)."')".
 			" AND ".
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".$configValues['CONFIG_DB_TBL_RADACCT'].".username)".
 			" AND ".
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname = ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '$startdate' )".
+			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '".$dbSocket->escapeSimple($startdate)."' )".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '$enddate' )".
+			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '".$dbSocket->escapeSimple($enddate)."' )".
 			" GROUP BY ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username";
 	$_SESSION['reportType'] = "reportsPlansUsage";
 
@@ -126,17 +128,17 @@
 			$configValues['CONFIG_DB_TBL_RADACCT'].",".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 		" WHERE ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '$username')".
+			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '".$dbSocket->escapeSimple($username)."')".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '$planname')".
+			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '".$dbSocket->escapeSimple($planname)."')".
 			" AND ".
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".$configValues['CONFIG_DB_TBL_RADACCT'].".username)".
 			" AND ".
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname = ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '$startdate' )".
+			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '".$dbSocket->escapeSimple($startdate)."' )".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '$enddate' )".
+			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '".$dbSocket->escapeSimple($enddate)."' )".
 			" GROUP BY ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
@@ -156,17 +158,17 @@
 			$configValues['CONFIG_DB_TBL_RADACCT'].",".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 		" WHERE ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '$username')".
+			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '".$dbSocket->escapeSimple($username)."')".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '$planname')".
+			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '".$dbSocket->escapeSimple($planname)."')".
 			" AND ".
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".$configValues['CONFIG_DB_TBL_RADACCT'].".username)".
 			" AND ".
 			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname = ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '$startdate' )".
+			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '".$dbSocket->escapeSimple($startdate)."' )".
 			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '$enddate' )".
+			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '".$dbSocket->escapeSimple($enddate)."' )".
 			" GROUP BY ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -206,27 +208,27 @@
         echo "<thread> <tr>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&planname=" . urlencode($planname) . "&orderBy=username&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Username']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=planname&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanName']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&planname=" . urlencode($planname) . "&orderBy=planname&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['PlanName']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=sessiontime&orderType=$orderTypeNextPage\">
-		".$l['all']['UsedTime']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&planname=" . urlencode($planname) . "&orderBy=sessiontime&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['UsedTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=plantimebank&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalTime']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&planname=" . urlencode($planname) . "&orderBy=plantimebank&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
-		<br/>
-		".$l['all']['TotalTraffic']." (".$l['all']['Bytes'].")</a>
+		<br/>"
+        .$l['all']['TotalTraffic']." (".$l['all']['Bytes'].")</a>
 		</th>
                 </tr> </thread>";
 
@@ -240,10 +242,10 @@
 			
 		printqn("<tr>
                         <td> <a class='tablenovisit' href='javascript:return;'
-						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");
+						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=" . htmlspecialchars($row['username'], ENT_QUOTES) . "\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-								<a class=\"toolTip\" href=\"bill-pos-edit.php?username={$row['username']}\">
+								<a class=\"toolTip\" href=\"bill-pos-edit.php?username=" . urlencode($row['username']) . "\">
 	                                        {$l['Tooltip']['UserEdit']}</a>
                                         <br/><br/>
 
@@ -251,15 +253,15 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-									>{$row['username']}</a>
+									>" . htmlspecialchars($row['username'], ENT_QUOTES) . "</a>
                         </td>
-				<td> {$row['planname']} </td>
+				<td>" . htmlspecialchars($row['planname'], ENT_QUOTES) . "</td>
 				<td> 
-					".time2str($row['sessiontime'])."
-					<b>($percFormatted)%</b>
+					" . htmlspecialchars(time2str($row['sessiontime']), ENT_QUOTES) . "
+					<b>(" . htmlspecialchars($percFormatted, ENT_QUOTES) . ")%</b>
 					</td>
-				<td> ".time2str($row['planTimeBank'])." </td>
-				<td> ".toxbyte($row['upload'] + $row['download'])."</td>
+				<td> " . htmlspecialchars(time2str($row['planTimeBank']), ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars(toxbyte($row['upload'] + $row['download']), ENT_QUOTES) . "</td>
 		</tr>");
 
 	}

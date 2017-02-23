@@ -30,9 +30,6 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
-    
-
-
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -76,6 +73,14 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT id, name, owner, company, type FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].";";
@@ -125,40 +130,40 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['ID']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=name&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['HotSpot']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=mac&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['ContactInfo']['OwnerName']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=geocode&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['ContactInfo']['Company']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=geocode&orderType=" . urlencode($orderTypeNextPage) . "\">
 		 ".$l['ContactInfo']['HotspotType']."</a>
 		</th>
 
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		printqn("<tr>
-                                <td> <input type='checkbox' name='name[]' value='$row[1]'> $row[0] </td>
+                                <td> <input type='checkbox' name='name[]' value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=".htmlspecialchars($row[1], ENT_QUOTES)."\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
+                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=" . urlencode($row[1]) . "\">
                                                 {$l['Tooltip']['HotspotEdit']}</a>
                                         &nbsp;
                                         <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
@@ -169,12 +174,12 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[1]</a>
+                                >" . htmlspecialchars($row[1], ENT_QUOTES) . "</a>
                         </td>
 
-				<td> $row[2] </td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
+				<td>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars($row[3], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars($row[4], ENT_QUOTES) . "</td>
 		</tr>");
 	}
 

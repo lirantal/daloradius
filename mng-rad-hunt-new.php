@@ -63,14 +63,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-				$successMsg = "Added new HG to database: <b> $nasipaddress </b>  ";
+				$successMsg = "Added new HG to database: <b>" . htmlspecialchars($nasipaddress, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added hg [$nasipaddress] on page: ";
 			} else {
 				$failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both HG Host and HG GroupName";
 				$logAction .= "Failed adding (missing ip/groupname) hg [$nasipaddress] on page: ";
 			}
 		} else {
-			$failureMsg = "The HG IP/Host $nasipaddress already exists in the database";	
+			$failureMsg = "The HG IP/Host " . htmlspecialchars($nasipaddress, ENT_QUOTES) . " already exists in the database";	
 			$logAction .= "Failed adding already existing hg [$nasipaddress] on page: ";
 		}
 
@@ -119,7 +119,7 @@
 		?>
 				
 
-                <form name="newhg" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                <form name="newhg" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['HGInfo']; ?>">

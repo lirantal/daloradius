@@ -266,7 +266,7 @@
 
 
 		$sql = "SELECT id, name, owner, address, companyphone, companyemail, companywebsite FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-					" WHERE name='".$hotspot_name."'";
+					" WHERE name='" . $dbSocket->escapeSimple($hotspot_name) . "'";
 		$res = $dbSocket->query($sql);
 		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -299,7 +299,7 @@
 				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = ".
 				$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id".
 				" AND ".
-				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = '$batch_id' ".
+				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = '" . $dbSocket->escapeSimple($batch_id) . "' ".
 				" AND ".
 				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".
 				$configValues['CONFIG_DB_TBL_RADACCT'].".username".
@@ -338,7 +338,7 @@
 			$batch_active_users .= "
 					<tr>
 
-					<td>".$batch_name."
+					<td>".htmlspecialchars($batch_name, ENT_QUOTES)."
 					</td>
 
 					<td>".$username."

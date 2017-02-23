@@ -31,9 +31,6 @@
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
 
-    
-
-
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -75,6 +72,10 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT id, value AS paymentName, notes FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].";";
@@ -124,12 +125,12 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['ID']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=paymentname&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=paymentname&orderType=" . urlencode($orderTypeNextPage, ENT_QUOTES) . "\">
 		".$l['all']['PayTypeName']."</a>
 		</th>
 
@@ -141,18 +142,18 @@
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		printqn("<tr>
-                        <td> <input type='checkbox' name='paymentname[]' value='$row[1]'> $row[0] </td>
+                        <td> <input type='checkbox' name='paymentname[]' value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-payment-types-edit.php?paymentname=$row[1]'>".$l['Tooltip']['EditPayType']."</a>
+                                        <a class='toolTip' href='bill-payment-types-edit.php?paymentname=" . urlencode($row[1]) . "'>".$l['Tooltip']['EditPayType']."</a>
 					<br/>
-                                        <a class='toolTip' href='bill-payment-types-del.php?paymentname=$row[1]'>".$l['Tooltip']['RemovePayType']."</a>
+                                        <a class='toolTip' href='bill-payment-types-del.php?paymentname=" . urlencode($row[1]) . "'>".$l['Tooltip']['RemovePayType']."</a>
                                         <br/><br/>\"
-                              >$row[1]</a>
+                              >" . htmlspecialchars($row[1], ENT_QUOTES) . "</a>
                         </td>
-                                <td> $row[2] </td>
+                                <td>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>
 		</tr>");
 	}
 

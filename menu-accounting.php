@@ -47,7 +47,7 @@
 			<input name="username" type="text" id="usernameAcct" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?>'
-				value="<?php if (isset($accounting_username)) echo $accounting_username; ?>">
+				value="<?php if (isset($accounting_username)) echo htmlspecialchars($accounting_username, ENT_QUOTES); ?>">
 			</form></li>
 
 		<li><a href="javascript:document.acctipaddress.submit();"><b>&raquo;</b><?php echo $l['button']['IPAccounting'] ?></a>
@@ -55,7 +55,7 @@
 			<input name="ipaddress" type="text" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?>'
-				value="<?php if (isset($accounting_ipaddress)) echo $accounting_ipaddress; ?>">
+				value="<?php if (isset($accounting_ipaddress)) echo htmlspecialchars($accounting_ipaddress, ENT_QUOTES); ?>">
 			</form></li>
 
 		<li><a href="javascript:document.acctnasipaddress.submit();"><b>&raquo;</b><?php echo $l['button']['NASIPAccounting'] ?></a>
@@ -63,7 +63,7 @@
 			<input name="nasipaddress" type="text" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?>'
-				value="<?php if (isset($accounting_nasipaddress)) echo $accounting_nasipaddress; ?>">
+				value="<?php if (isset($accounting_nasipaddress)) echo htmlspecialchars($accounting_nasipaddress, ENT_QUOTES); ?>">
 			</form></li>
 
 		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
@@ -71,11 +71,11 @@
 			<input name="username" type="text" id="usernameDate" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?>'
-				value="<?php if (isset($accounting_date_username)) echo $accounting_date_username;  ?>">
+				value="<?php if (isset($accounting_date_username)) echo htmlspecialchars($accounting_date_username, ENT_QUOTES);  ?>">
 			<input name="startdate" type="text" id="startdate" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-				value="<?php if (isset($accounting_date_startdate)) echo $accounting_date_startdate;
+				value="<?php if (isset($accounting_date_startdate)) echo htmlspecialchars($accounting_date_startdate, ENT_QUOTES);
 			else echo date("Y-m-01"); ?>">
 			
 			<img src="library/js_date/calendar.gif" 
@@ -86,7 +86,7 @@
 			<input name="enddate" type="text" id="enddate" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-				value="<?php if (isset($accounting_date_enddate)){ echo $accounting_date_enddate;}
+				value="<?php if (isset($accounting_date_enddate)){ echo htmlspecialchars($accounting_date_enddate, ENT_QUOTES);}
 				else { echo date("Y-m-t");} ?>">
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">

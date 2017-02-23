@@ -85,6 +85,8 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	$planname = $dbSocket->escapeSimple($planname);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 	$_where = "";
 	if (!empty($planname) && ($planname != "%") )
@@ -184,22 +186,22 @@
 	echo "<thread> <tr>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['ID']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=contactperson&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=contactperson&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['ContactInfo']['ContactPerson']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=company&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=company&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['ContactInfo']['Company']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=username&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Username']."</a>
 		</th>
 
@@ -208,7 +210,7 @@
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planname&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=planname&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['ContactInfo']['PlanName']."</a>
 		</th>
 
@@ -218,9 +220,9 @@
 		
 		echo "
 			<tr>
-			<td> <input type='checkbox' name='username[]' value='".$row['username']."'>".$row['id']."</td>
-			<td>".$row['contactperson']."</td>
-			<td>".$row['company']."</td>
+			<td> <input type='checkbox' name='username[]' value='" . htmlspecialchars($row['username'], ENT_QUOTES) . "'>" . htmlspecialchars($row['id'], ENT_QUOTES) . "</td>
+			<td>" . htmlspecialchars($row['contactperson'], ENT_QUOTES) . "</td>
+			<td>" . htmlspecialchars($row['company'], ENT_QUOTES) . "</td>
 		";
 
 		echo "<td>";
@@ -243,17 +245,17 @@
 						Loading...
 					</div>
                                         <br/>'
-				>".$row['username']."</a>
+				>" . htmlspecialchars($row['username'], ENT_QUOTES) . "</a>
 			</td>
 			");
 
 		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 			echo "<td>[Password is hidden]</td>";
 		} else {
-			echo "<td>".$row['value']."</td>";
+			echo "<td>" . htmlspecialchars($row['value'], ENT_QUOTES) . "</td>";
 		}
 		echo "
-			<td>".$row['planname']."</td>
+			<td>" . htmlspecialchars($row['planname'], ENT_QUOTES) . "</td>
 			</tr>
 		";
 	}

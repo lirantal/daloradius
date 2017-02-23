@@ -33,7 +33,7 @@
 			<input name="groupname" type="text" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
-				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
+				value="<?php if (isset($search_groupname)) echo htmlspecialchars($search_groupname, ENT_QUOTES); ?>" tabindex=2>
 			</form></li>
 
 		<li><a href="mng-rad-groupreply-new.php"><b>&raquo;</b>
@@ -72,7 +72,7 @@
 			<input name="groupname" type="text" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
-				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
+				value="<?php if (isset($search_groupname)) echo htmlspecialchars($search_groupname, ENT_QUOTES); ?>" tabindex=2>
 			</form></li>
 
 		<li><a href="mng-rad-groupcheck-new.php"><b>&raquo;</b>

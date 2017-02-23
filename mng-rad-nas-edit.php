@@ -97,7 +97,7 @@
 					" SET nasname='".$dbSocket->escapeSimple($nashost)."', ".
 					" shortname='".$dbSocket->escapeSimple($nasname)."', ".
 					" type='".$dbSocket->escapeSimple($nastype)."', ".
-					" ports=".$dbSocket->escapeSimple($nasports).", ".
+					" ports='".$dbSocket->escapeSimple($nasports)."', ".
 					" secret='".$dbSocket->escapeSimple($nassecret)."', ".
                    " server='".$dbSocket->escapeSimple($nasvirtualserver)."', ".
 					" community='".$dbSocket->escapeSimple($nascommunity)."', ".
@@ -106,7 +106,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Updated NAS settings in database: <b> $nashost </b>  ";
+				$successMsg = "Updated NAS settings in database: <b>" . htmlspecialchars($nashost, ENT_QUOTES) . "</b>  ";
 				$logAction .= "Successfully updated attributes for nas [$nashost] on page: ";
 			} else {
 				$failureMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
@@ -114,11 +114,11 @@
 			}
 			
 		} elseif ($res->numRows() > 1) {
-			$failureMsg = "The NAS IP/Host <b> $nashost </b> already exists in the database
+			$failureMsg = "The NAS IP/Host <b>" . htmlspecialchars($nashost, ENT_QUOTES) . "</b> already exists in the database
 			<br/> Please check that there are no duplicate entries in the database";
 			$logAction .= "Failed updating attributes for already existing nas [$nashost] on page: ";
 		} else {
-			$failureMsg = "The NAS IP/Host <b> $nashost </b> doesn't exist at all in the database.
+			$failureMsg = "The NAS IP/Host <b>" . htmlspecialchars($nashost, ENT_QUOTES) . "</b> doesn't exist at all in the database.
 			<br/>Please re-check the nashost ou specified.";
 			$logAction .= "Failed updating empty nas on page: ";
 		}
@@ -165,7 +165,7 @@
 	<div id="contentnorightbar">
 
 			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasedit.php'] ?>
-			:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>+</h144></a></h2>
+			:: <?php if (isset($nashost)) { echo htmlspecialchars($nashost, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 			<div id="helpPage" style="display:none;visibility:visible" >
 				<?php echo $l['helpPage']['mngradnasedit'] ?>
@@ -175,12 +175,12 @@
 				include_once('include/management/actionMessages.php');
 			?>
 
-			<form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<form name="newnas" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 			
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['NASInfo']; ?>">
-		<input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
+		<input type="hidden" value="<?php echo htmlspecialchars($nashost, ENT_QUOTES) ?>" name="nashostold" />
 
 
         <fieldset>
@@ -189,15 +189,15 @@
                 <br/>
 
                 <label for='nashost' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
-                <input name='nashost' type='text' id='nashost' value='<?php echo $nashost ?>' tabindex=100 />
+                <input name='nashost' type='text' id='nashost' value='<?php echo htmlspecialchars($nashost, ENT_QUOTES) ?>' tabindex=100 />
                 <br />
 
                 <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
-                <input name='nassecret' type='text' id='nassecret' value='<?php echo $nassecret ?>' tabindex=101 />
+                <input name='nassecret' type='text' id='nassecret' value='<?php echo htmlspecialchars($nassecret, ENT_QUOTES) ?>' tabindex=101 />
                 <br />
 
                 <label for='nastype' class='form'><?php echo $l['all']['NasType'] ?></label>
-                <input name='nastype' type='text' id='nastype' value='<?php echo $nastype ?>' tabindex=102 />
+                <input name='nastype' type='text' id='nastype' value='<?php echo htmlspecialchars($nastype, ENT_QUOTES) ?>' tabindex=102 />
                 <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
                         <option value="">Select Type...</option>
                         <option value="other">other</option>
@@ -217,7 +217,7 @@
 
 
                 <label for='nasname' class='form'><?php echo $l['all']['NasShortname'] ?></label>
-                <input name='nasname' type='text' id='nasname' value='<?php echo $nasname ?>' tabindex=104 />
+                <input name='nasname' type='text' id='nasname' value='<?php echo htmlspecialchars($nasname, ENT_QUOTES) ?>' tabindex=104 />
                 <br />
 
 
@@ -237,19 +237,19 @@
                 <br/>
 
                 <label for='nasports' class='form'><?php echo $l['all']['NasPorts'] ?></label>
-                <input name='nasports' type='text' id='nasports' value='<?php echo $nasports ?>' tabindex=105 />
+                <input name='nasports' type='text' id='nasports' value='<?php echo htmlspecialchars($nasports, ENT_QUOTES) ?>' tabindex=105 />
                 <br />
 
                 <label for='nascommunity' class='form'><?php echo $l['all']['NasCommunity'] ?></label>
-                <input name='nascommunity' type='text' id='nascommunity' value='<?php echo $nascommunity ?>' tabindex=106 />
+                <input name='nascommunity' type='text' id='nascommunity' value='<?php echo htmlspecialchars($nascommunity, ENT_QUOTES) ?>' tabindex=106 />
                 <br />
 
                 <label for='nasvirtualserver' class='form'><?php echo $l['all']['NasVirtualServer'] ?></label>
-                <input name='nasvirtualserver' type= 'text' id='nasvirtualserver' value='<?php echo $nasvirtualserver ?>' tabindex=107 >
+                <input name='nasvirtualserver' type= 'text' id='nasvirtualserver' value='<?php echo htmlspecialchars($nasvirtualserver, ENT_QUOTES) ?>' tabindex=107 >
                 <br />
 
                 <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
-	        <textarea class='form' name='nasdescription' id='nasdescription' tabindex=108 ><?php echo $nasdescription ?></textarea>
+	        <textarea class='form' name='nasdescription' id='nasdescription' tabindex=108 ><?php echo htmlspecialchars($nasdescription, ENT_QUOTES) ?></textarea>
                 <br />
 
                 <br/><br/>

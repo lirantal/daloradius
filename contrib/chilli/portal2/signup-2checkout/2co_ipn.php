@@ -154,7 +154,7 @@ function saveToDb($postData, $status) {
 		<!--
 		window.location = "'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT']."/".
 								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-								'?txnId='.$my2CO->ipnData['custom'].'"
+								'?txnId=' . htmlspecialchars($my2CO->ipnData['custom'], ENT_QUOTES) . '"
 		//-->
 		</script>
 

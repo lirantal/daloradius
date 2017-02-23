@@ -66,7 +66,7 @@
 						$res = $dbSocket->query($sql);
 						$logDebugSQL .= $sql . "\n";
 
-						$successMsg = "Removed from database vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
+						$successMsg = "Removed from database vendor attribute: <b>" . htmlspecialchars($attribute, ENT_QUOTES) . "</b> of vendor: <b>" . htmlspecialchars($vendor, ENT_QUOTES) . "</b>";
 						$logAction .= "Successfully removed vendor [$vendor] and attribute [$attribute] from database on page: ";
 					} else {
 						$failureMsg = "you must provide atleast a vendor name and attribute";
@@ -74,7 +74,7 @@
 					}
 				} else {
 					$failureMsg = "You have tried to remove a vendor's attribute that either is not present in the database or there
-							may be more than 1 entry for this vendor attribute in database (attribute :$attribute)";
+							may be more than 1 entry for this vendor attribute in database (attribute :" . htmlspecialchars($attribute, ENT_QUOTES) . ")";
 					$logAction .= "Failed removing vendor attribute already in database [$attribute] on page: ";
 				} //if ($res->numRows() == 1)
 
@@ -122,8 +122,8 @@
 				include_once('include/management/actionMessages.php');
 			?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+			<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -134,7 +134,7 @@
 
 		<li class='fieldset'>
 		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
-		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
+		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo htmlspecialchars($vendor, ENT_QUOTES) ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
 
 		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -145,7 +145,7 @@
 
 		<li class='fieldset'>
 		<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
-		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101 />
+		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo htmlspecialchars($attribute, ENT_QUOTES) ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('attributeTooltip')" />
 
 		<div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>

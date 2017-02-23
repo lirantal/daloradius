@@ -580,7 +580,7 @@ class Frame {
     $str .= "Class: " .get_class($this) . "<br/>";
     
     if ( $this->_node->nodeName == "#text" ) {
-      $tmp = htmlspecialchars($this->_node->nodeValue);
+      $tmp = htmlspecialchars($this->_node->nodeValue, ENT_QUOTES);
       $str .= "<pre>'" .  mb_substr($tmp,0,70) .
         (mb_strlen($tmp) > 70 ? "..." : "") . "'</pre>";
     }
@@ -618,7 +618,7 @@ class Frame {
         foreach ($line["frames"] as $frame) {
           if ($frame instanceof Text_Frame_Decorator) {
             $str .= "\ntext: ";          
-            $str .= htmlspecialchars($frame->get_text());
+            $str .= htmlspecialchars($frame->get_text(), ENT_QUOTES);
           } else {
             $str .= "\nBlock: " . $frame->get_node()->nodeName . " (" . (string)$frame->get_node() . ")";
           }

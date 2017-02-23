@@ -69,7 +69,7 @@
 
 function dompdf_usage() {
   echo
-    "\nUsage: {$_SERVER["argv"][0]} [options] html_file\n\n".
+    "\nUsage: {" . htmlspecialchars($_SERVER["argv"][0], ENT_QUOTES) . "} [options] html_file\n\n".
     "html_file can be a filename, a url if fopen_wrappers are enabled, or the '-' \n".
     "character to read from standard input.\n\n".
     "Options:\n".
@@ -276,7 +276,7 @@ $dompdf->render();
 
 if ( $_dompdf_show_warnings ) {
   foreach ($_dompdf_warnings as $msg)
-    echo $msg . "\n";
+    echo htmlspecialchars($msg, ENT_QUOTES) . "\n";
   flush();
 }
      

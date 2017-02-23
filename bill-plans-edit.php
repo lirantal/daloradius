@@ -83,7 +83,7 @@
 		if (trim($planName) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." SET ".
 			" planName='".$dbSocket->escapeSimple($planName)."', ".
@@ -125,7 +125,7 @@
 			
 			addProfilesToBillingPlans($dbSocket, $planName, $groups);
 
-			$successMsg = "Updated billing plan settings for: <b> $planName </b>";
+			$successMsg = "Updated billing plan settings for: <b>" . htmlspecialchars($planName, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully updated billing plan settings for hotspot [$planName] on page: ";
 			
 		} else {
@@ -225,7 +225,7 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billplansedit.php'] ?>
-		:: <?php if (isset($planName)) { echo $planName; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($planName)) { echo htmlspecialchars($planName, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['billplansedit'] ?>
@@ -235,7 +235,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -251,7 +251,7 @@
 
                 <li class='fieldset'>
                 <label for='name' class='form'><?php echo $l['all']['PlanName'] ?></label>
-                <input name='planName' type='text' id='planName' value='<?php echo $planName ?>' tabindex=100 />
+                <input name='planName' type='text' id='planName' value='<?php echo htmlspecialchars($planName, ENT_QUOTES) ?>' tabindex=100 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" />
 
                 <div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -262,7 +262,7 @@
 
                 <li class='fieldset'>
                 <label for='planId' class='form'><?php echo $l['all']['PlanId'] ?></label>
-                <input name='planId' type='text' id='planId' value='<?php echo $planId ?>' tabindex=101 />
+                <input name='planId' type='text' id='planId' value='<?php echo htmlspecialchars($planId, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planIdTooltip')" />
 
                 <div id='planIdTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -274,7 +274,7 @@
                 <li class='fieldset'>
                 <label for='planType' class='form'><?php echo $l['all']['PlanType'] ?></label>
                 <select class='form' tabindex=102 name='planType' >
-			<option value='<?php echo $planType ?>'><?php echo $planType ?></option>
+			<option value='<?php echo htmlspecialchars($planType, ENT_QUOTES) ?>'><?php echo htmlspecialchars($planType, ENT_QUOTES) ?></option>
 			<option value=''></option>
                         <option value='PayPal'>PayPal</option>
                         <option value='Prepaid'>Prepaid</option>
@@ -293,7 +293,7 @@
                 <li class='fieldset'>
                 <label for='planRecurring' class='form'><?php echo $l['all']['PlanRecurring'] ?></label>
                 <select class='form' name='planRecurring' id='planRecurring' tabindex=101>
-			<option value='<?php echo $planRecurring ?>'><?php echo $planRecurring ?></option>
+			<option value='<?php echo htmlspecialchars($planRecurring, ENT_QUOTES) ?>'><?php echo htmlspecialchars($planRecurring, ENT_QUOTES) ?></option>
 			<option value=''></option>
                         <option value='No'>No</option>
                         <option value='Yes'>Yes</option>
@@ -308,7 +308,7 @@
                 <li class='fieldset'>
                 <label for='planRecurringPeriod' class='form'><?php echo $l['all']['PlanRecurringPeriod'] ?></label>
                 <select class='form' name='planRecurringPeriod' id='planRecurringPeriod' tabindex=101 >
-						<option value='<?php echo $planRecurringPeriod ?>'><?php echo $planRecurringPeriod ?></option>
+						<option value='<?php echo htmlspecialchars($planRecurringPeriod, ENT_QUOTES) ?>'><?php echo htmlspecialchars($planRecurringPeriod, ENT_QUOTES) ?></option>
 						<option value=''></option>
                         <option value='Never'>Never</option>
                         <option value='Daily'>Daily</option>
@@ -330,7 +330,7 @@
                 <li class='fieldset'>
                 <label for='planRecurringBillingSchedule' class='form'><?php echo $l['all']['planRecurringBillingSchedule'] ?></label>
                 <select class='form' name='planRecurringBillingSchedule' id='planRecurringBillingSchedule' tabindex=101 >
-						<option value='<?php echo $planRecurringBillingSchedule ?>'><?php echo $planRecurringBillingSchedule ?></option>
+						<option value='<?php echo htmlspecialchars($planRecurringBillingSchedule, ENT_QUOTES) ?>'><?php echo htmlspecialchars($planRecurringBillingSchedule, ENT_QUOTES) ?></option>
 						<option value=''></option>
 						<option value='Fixed'>Fixed</option>
 						<option value='Anniversary'>Anniversary</option>
@@ -348,7 +348,7 @@
 
                 <li class='fieldset'>
                 <label for='planCost' class='form'><?php echo $l['all']['PlanCost'] ?></label>
-                <input name='planCost' type='text' id='planCost' value='<?php echo $planCost ?>' tabindex=101 />
+                <input name='planCost' type='text' id='planCost' value='<?php echo htmlspecialchars($planCost, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planCostTooltip')" />
 
                 <div id='planCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -359,7 +359,7 @@
 
                 <li class='fieldset'>
                 <label for='planSetupCost' class='form'><?php echo $l['all']['PlanSetupCost'] ?></label>
-                <input name='planSetupCost' type='text' id='planSetupCost' value='<?php echo $planSetupCost ?>' tabindex=101 />
+                <input name='planSetupCost' type='text' id='planSetupCost' value='<?php echo htmlspecialchars($planSetupCost, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planSetupCostTooltip')" />
 
                 <div id='planSetupCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -370,7 +370,7 @@
 
                 <li class='fieldset'>
                 <label for='planTax' class='form'><?php echo $l['all']['PlanTax'] ?></label>
-                <input name='planTax' type='text' id='planTax' value='<?php echo $planTax ?>' tabindex=101 />
+                <input name='planTax' type='text' id='planTax' value='<?php echo htmlspecialchars($planTax, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTaxTooltip')" />
 
                 <div id='planTaxTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -382,7 +382,7 @@
                 <li class='fieldset'>
                 <label for='planCurrency' class='form'><?php echo $l['all']['PlanCurrency'] ?></label>
                 <select class='form' tabindex=102 name='planCurrency' >
-                        <option value='<?php echo $planCurrency ?>'><?php echo $planCurrency ?></option>
+                        <option value='<?php echo htmlspecialchars($planCurrency, ENT_QUOTES) ?>'><?php echo htmlspecialchars($planCurrency, ENT_QUOTES) ?></option>
                         <option value=''></option>
                         <option value='USD'>USD</option>
                         <option value='EUR'>EUR</option>
@@ -417,7 +417,7 @@
                 <li class='fieldset'>
                 <label for='planActive' class='form'><?php echo $l['all']['PlanActive'] ?></label>
                 <select class='form' tabindex=103 name='planActive' >
-                        <option value='<?php echo $planActive ?>'><?php echo $planActive ?></option>
+                        <option value='<?php echo htmlspecialchars($planActive, ENT_QUOTES) ?>'><?php echo htmlspecialchars($planActive, ENT_QUOTES) ?></option>
                         <option value='yes'>Yes</option>
                         <option value='no'>No</option>
                 </select>
@@ -473,7 +473,7 @@
                 <li class='fieldset'>
                 <label for='planTimeType' class='form'><?php echo $l['all']['PlanTimeType'] ?></label>
                 <select class='form' tabindex=102 name='planTimeType' >
-			<option value='<?php echo $planTimeType ?>'><?php echo $planTimeType ?></option>
+			<option value='<?php echo htmlspecialchars($planTimeType, ENT_QUOTES) ?>'><?php echo htmlspecialchars($planTimeType, ENT_QUOTES) ?></option>
 			<option value=''></option>
                         <option value='Accumulative'>Accumulative</option>
                         <option value='Time-To-Finish'>Time-To-Finish</option>
@@ -489,7 +489,7 @@
 
                 <li class='fieldset'>
                 <label for='planTimeBank' class='form'><?php echo $l['all']['PlanTimeBank'] ?></label>
-                <input name='planTimeBank' type='text' id='planTimeBank' value='<?php echo $planTimeBank ?>' tabindex=101 />
+                <input name='planTimeBank' type='text' id='planTimeBank' value='<?php echo htmlspecialchars($planTimeBank, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeBankTooltip')" />
 
                 <div id='planTimeBankTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -501,7 +501,7 @@
 
                 <li class='fieldset'>
                 <label for='planTimeRefillCost' class='form'><?php echo $l['all']['PlanTimeRefillCost'] ?></label>
-                <input name='planTimeRefillCost' type='text' id='planTimeRefillCost' value='<?php echo $planTimeRefillCost ?>' tabindex=101 />
+                <input name='planTimeRefillCost' type='text' id='planTimeRefillCost' value='<?php echo htmlspecialchars($planTimeRefillCost, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTimeRefillCostTooltip')" />
 
                 <div id='planTimeRefillCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -532,7 +532,7 @@
 
                 <li class='fieldset'>
                 <label for='planBandwidthUp' class='form'><?php echo $l['all']['PlanBandwidthUp'] ?></label>
-                <input name='planBandwidthUp' type='text' id='planBandwidthUp' value='<?php echo $planBandwidthUp ?>' tabindex=101 />
+                <input name='planBandwidthUp' type='text' id='planBandwidthUp' value='<?php echo htmlspecialchars($planBandwidthUp, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planBandwidthUpTooltip')" />
 
                 <div id='planBandwidthUpTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -543,7 +543,7 @@
 
                 <li class='fieldset'>
                 <label for='planBandwidthDown' class='form'><?php echo $l['all']['PlanBandwidthDown'] ?></label>
-                <input name='planBandwidthDown' type='text' id='planBandwidthDown' value='<?php echo $planBandwidthDown ?>' tabindex=101 />
+                <input name='planBandwidthDown' type='text' id='planBandwidthDown' value='<?php echo htmlspecialchars($planBandwidthDown, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planBandwidthDownTooltip')" />
 
                 <div id='planBandwidthDownTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -556,7 +556,7 @@
 
                 <li class='fieldset'>
                 <label for='planTrafficTotal' class='form'><?php echo $l['all']['PlanTrafficTotal'] ?></label>
-                <input name='planTrafficTotal' type='text' id='planTrafficTotal' value='<?php echo $planTrafficTotal ?>' tabindex=101 />
+                <input name='planTrafficTotal' type='text' id='planTrafficTotal' value='<?php echo htmlspecialchars($planTrafficTotal, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficTotalTooltip')" />
 
                 <div id='planTrafficTotalTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -567,7 +567,7 @@
 
                 <li class='fieldset'>
                 <label for='planTrafficDown' class='form'><?php echo $l['all']['PlanTrafficDown'] ?></label>
-                <input name='planTrafficDown' type='text' id='planTrafficDown' value='<?php echo $planTrafficDown ?>' tabindex=101 />
+                <input name='planTrafficDown' type='text' id='planTrafficDown' value='<?php echo htmlspecialchars($planTrafficDown, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficDownTooltip')" />
 
                 <div id='planTrafficDownTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -580,7 +580,7 @@
 
                 <li class='fieldset'>
                 <label for='planTrafficUp' class='form'><?php echo $l['all']['PlanTrafficUp'] ?></label>
-                <input name='planTrafficUp' type='text' id='planTrafficUp' value='<?php echo $planTrafficUp ?>' tabindex=101 />
+                <input name='planTrafficUp' type='text' id='planTrafficUp' value='<?php echo htmlspecialchars($planTrafficUp, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficUpTooltip')" />
 
                 <div id='planTrafficUpTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -593,7 +593,7 @@
 
                 <li class='fieldset'>
                 <label for='planTrafficRefillCost' class='form'><?php echo $l['all']['PlanTrafficRefillCost'] ?></label>
-                <input name='planTrafficRefillCost' type='text' id='planTrafficRefillCost' value='<?php echo $planTrafficRefillCost ?>' tabindex=101 />
+                <input name='planTrafficRefillCost' type='text' id='planTrafficRefillCost' value='<?php echo htmlspecialchars($planTrafficRefillCost, ENT_QUOTES) ?>' tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planTrafficRefillCostTooltip')" />
 
                 <div id='planTrafficRefillCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -690,7 +690,7 @@
 
 
 
-	<input type=hidden value="<?php echo $planName ?>" name="planNameOld"/>
+	<input type=hidden value="<?php echo htmlspecialchars($planName, ENT_QUOTES) ?>" name="planNameOld"/>
 
 </div>
 

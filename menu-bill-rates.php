@@ -33,8 +33,8 @@
                 <li><a href="javascript:document.billrates.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
                         <form name="billrates" action="bill-rates-date.php" method="get" class="sidebar">
 			<select name="ratename" size="1">
-				<option value="<?php if (isset($billing_date_ratename)) echo $billing_date_ratename; else echo ""; ?>">
-					<?php if (isset($billing_date_ratename)) echo $billing_date_ratename; else echo "Choose Rate"; ?>
+				<option value="<?php if (isset($billing_date_ratename)) echo htmlspecialchars($billing_date_ratename, ENT_QUOTES); else echo ""; ?>">
+					<?php if (isset($billing_date_ratename)) echo htmlspecialchars($billing_date_ratename, ENT_QUOTES); else echo "Choose Rate"; ?>
 				</option>
 			<?php
 				include 'library/opendb.php';
@@ -43,7 +43,7 @@
 				$res = $dbSocket->query($sql);
 
 				while ($row = $res->fetchRow()) {
-					echo "<option value='$row[0]'>$row[0]</option>";
+					echo "<option value='".htmlspecialchars($row[0], ENT_QUOTES)."'>".htmlspecialchars($row[0], ENT_QUOTES)."</option>";
 				}
 			?>			
 			</select>
@@ -51,11 +51,11 @@
                         <input name="username" type="text" id="username" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
-                                value="<?php if (isset($billing_date_username)) echo $billing_date_username; ?>">
+                                value="<?php if (isset($billing_date_username)) echo htmlspecialchars($billing_date_username, ENT_QUOTES); ?>">
                         <input name="startdate" type="text" id="startdate"
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
-                                value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
+                                value="<?php if (isset($billing_date_startdate)) echo htmlspecialchars($billing_date_startdate, ENT_QUOTES);
                         else echo date("Y-m-01"); ?>">
 
                         <img src="library/js_date/calendar.gif"
@@ -66,7 +66,7 @@
                         <input name="enddate" type="text" id="enddate"
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
-                                value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
+                                value="<?php if (isset($billing_date_enddate)) echo htmlspecialchars($billing_date_enddate, ENT_QUOTES);
                                 else echo date("Y-m-t"); ?>">
 
                         <img src="library/js_date/calendar.gif"

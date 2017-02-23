@@ -68,14 +68,14 @@ if (!($_ENV['HTTPS'] == 'on')) {
 echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 <html>
 <head>
-  <title>$title</title>
+  <title>" . htmlspecialchars($title, ENT_QUOTES) . "</title>
   <meta http-equiv=\"Cache-control\" content=\"no-cache\">
   <meta http-equiv=\"Pragma\" content=\"no-cache\">
 </head>
 <body bgColor = '#c0d8f4'>
-  <h1 style=\"text-align: center;\">$h1Failed</h1>
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Failed, ENT_QUOTES) . "</h1>
   <center>
-    $centerencrypted
+    " . htmlspecialchars($centerencrypted, ENT_QUOTES) . "
   </center>
 </body>
 <!--
@@ -155,15 +155,15 @@ if ($button == 'Login') {
   <meta http-equiv=\"Cache-control\" content=\"no-cache\">
   <meta http-equiv=\"Pragma\" content=\"no-cache\">";
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&password=$pappassword\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&password=" . htmlspecialchars($pappassword, ENT_QUOTES) . "\">";
   } else {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&response=" . htmlspecialchars($response, ENT_QUOTES) . "&userurl=" . htmlspecialchars($userurl, ENT_QUOTES) . "\">";
   }
   echo "</head>
 <body bgColor = '#c0d8f4'>
-<h1 style=\"text-align: center;\">$h1Loggingin</h1>
+<h1 style=\"text-align: center;\">" . htmlspecialchars($h1Loggingin, ENT_QUOTES) . "</h1>
   <center>
-    $centerPleasewait
+    " . htmlspecialchars($centerPleasewait, ENT_QUOTES) . "
   </center>
 </body>
 <!--
@@ -176,9 +176,9 @@ if ($button == 'Login') {
 <ResponseCode>201</ResponseCode>
 ";
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&password=$pappassword</LoginResultsURL>";
+    echo "<LoginResultsURL>http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&password=" . htmlspecialchars($pappassword, ENT_QUOTES) . "</LoginResultsURL>";
   } else {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl</LoginResultsURL>";
+    echo "<LoginResultsURL>http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&response=" . htmlspecialchars($response, ENT_QUOTES) . "&userurl=" . htmlspecialchars($userurl, ENT_QUOTES) . "</LoginResultsURL>";
   }
   echo "</AuthenticationReply> 
 </WISPAccessGatewayParam>
@@ -208,14 +208,14 @@ if ($result == 0) {
     echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 <html>
 <head>
-  <title>$title</title>
+  <title>" . htmlspecialchars($title, ENT_QUOTES) . "</title>
   <meta http-equiv=\"Cache-control\" content=\"no-cache\">
   <meta http-equiv=\"Pragma\" content=\"no-cache\">
 </head>
 <body bgColor = '#c0d8f4'>
-  <h1 style=\"text-align: center;\">$h1Failed</h1>
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Failed, ENT_QUOTES) . "</h1>
   <center>
-    $centerdaemon
+    " . htmlspecialchars($centerdaemon, ENT_QUOTES) . "
   </center>
 </body>
 </html>
@@ -244,7 +244,7 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
       if (mytimeleft) {
         time = mytimeleft - time;
         if (time <= 0) {
-          window.location = \"$loginpath?res=popup3&uamip=$uamip&uamport=$uamport\";
+          window.location = \"" . htmlspecialchars($loginpath, ENT_QUOTES) . "?res=popup3&uamip=" . htmlspecialchars($uamip, ENT_QUOTES) . "&uamport=" . htmlspecialchars($uamport, ENT_QUOTES) . "\";
         }
       }
       if (time < 0) time = 0;
@@ -332,15 +332,15 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 */
 if ($result == 2) {
     echo "
-  <h1 style=\"text-align: center;\">$h1Failed</h1>";
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Failed, ENT_QUOTES) . "</h1>";
     if ($reply) {
-    echo "<center> $reply </BR></BR></center>";
+    echo "<center> " . htmlspecialchars($reply, ENT_QUOTES) . " </BR></BR></center>";
     }
 }
 
 if ($result == 5) {
     echo "
-  <h1 style=\"text-align: center;\">$h1Login</h1>";
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Login, ENT_QUOTES) . "</h1>";
 }
 
 if ($result == 2 || $result == 5) {
@@ -354,15 +354,15 @@ if ($result == 2 || $result == 5) {
   <table border=\"0\" cellpadding=\"5\" cellspacing=\"0\" style=\"width: 217px;\">
     <tbody>
       <tr>
-        <td align=\"right\">$centerUsername:</td>
+        <td align=\"right\">" . htmlspecialchars($centerUsername, ENT_QUOTES) . ":</td>
         <td><input style=\"font-family: Arial\" type=\"text\" name=\"UserName\" size=\"20\" maxlength=\"128\"></td>
       </tr>
       <tr>
-        <td align=\"right\">$centerPassword:</td>
+        <td align=\"right\">" . htmlspecialchars($centerPassword, ENT_QUOTES) . ":</td>
         <td><input style=\"font-family: Arial\" type=\"password\" name=\"Password\" size=\"20\" maxlength=\"128\"></td>
       </tr>
       <tr>
-        <td align=\"center\" colspan=\"2\" height=\"23\"><input type=\"submit\" name=\"button\" value=\"Login\" onClick=\"javascript:popUp('$loginpath?res=popup1&uamip=$uamip&uamport=$uamport')\"></td> 
+        <td align=\"center\" colspan=\"2\" height=\"23\"><input type=\"submit\" name=\"button\" value=\"Login\" onClick=\"javascript:popUp('" . htmlspecialchars($loginpath, ENT_QUOTES) . "?res=popup1&uamip=" . htmlspecialchars($uamip, ENT_QUOTES) . "&uamport=" . htmlspecialchars($uamport, ENT_QUOTES) . "')\"></td> 
       </tr>
     </tbody>
   </table>
@@ -374,7 +374,7 @@ if ($result == 2 || $result == 5) {
 
 if ($result == 1) {
   echo "
-  <h1 style=\"text-align: center;\">$h1Loggedin</h1>";
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Loggedin, ENT_QUOTES) . "</h1>";
 
   if ($reply) { 
       echo "<center> $reply </br></br></center>";
@@ -382,7 +382,7 @@ if ($result == 1) {
 
   echo "
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">Logout</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logoff\">Logout</a>
   </center>
 </body>
 </html>";
@@ -392,7 +392,7 @@ if (($result == 4) || ($result == 12)) {
   echo "
   <h1 style=\"text-align: center;\">$h1Loggedin</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">$centerLogout</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logoff\">" . htmlspecialchars($centerLogout, ENT_QUOTES) . "</a>
   </center>
 </body>
 </html>";
@@ -401,7 +401,7 @@ if (($result == 4) || ($result == 12)) {
 
 if ($result == 11) {
   echo "
-  <h1 style=\"text-align: center;\">$h1Loggingin</h1>
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Loggingin, ENT_QUOTES) . "</h1>
   <center>
     $centerPleasewait
   </center>
@@ -412,9 +412,9 @@ if ($result == 11) {
 
 if (($result == 3) || ($result == 13)) {
   echo "
-  <h1 style=\"text-align: center;\">$h1Loggedout</h1>
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Loggedout, ENT_QUOTES) . "</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/prelogin\">$centerLogin</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/prelogin\">" . htmlspecialchars($centerLogin, ENT_QUOTES) . "</a>
   </center>
 </body>
 </html>";

@@ -21,7 +21,7 @@
 
 			$successMsg = "Successfully updated GoogleMaps API Registration code";
 		} else {
-			$failureMsg = "Error: could not open the file for writing: <b> $myfile </b>
+			$failureMsg = "Error: could not open the file for writing: <b>" . htmlspecialchars($myfile, ENT_QUOTES) . "</b>
 			<br/> Check file permissions. The file should be writable by the webserver's user/group";
 		}
     }

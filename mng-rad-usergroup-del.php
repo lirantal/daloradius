@@ -62,7 +62,7 @@
 
 				$allUsernames .= $username . ", ";
 				$allGroups .= $group . ", ";
-				$successMsg = "Deleted all Usernames: <b> $allUsernames </b> and all their Groupnames: <b> $allGroups </b>";
+				$successMsg = "Deleted all Usernames: <b>" . htmlspecialchars($allUsernames, ENT_QUOTES) . "</b> and all their Groupnames: <b>" . htmlspecialchars($allGroups, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted all users [$allUsernames] and their groups [$allGroups] on page: ";
 
 				include 'library/closedb.php';
@@ -74,7 +74,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Deleted all instances for Username: <b> $allUsernames </b>";
+				$successMsg = "Deleted all instances for Username: <b>" . htmlspecialchars($allUsernames, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted all group instances for users [$allUsernames] on page: ";
 
 				include 'library/closedb.php';
@@ -128,26 +128,26 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
                 <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
                 <br/>
 
-                <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
+                <input type="hidden" value="<?php echo htmlspecialchars($group, ENT_QUOTES) ?>" name="group"/><br/>
 
                 <ul>
 
                 <li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username'] ?></label>
-                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <input name='username' type='text' id='username' value='<?php echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
                 </li>
 
                 <li class='fieldset'>
                 <label for='group' class='form'><?php echo $l['all']['Groupname'] ?></label>
-                <input name='group' type='text' id='group' value='<?php echo $group ?>' tabindex=101 />
+                <input name='group' type='text' id='group' value='<?php echo htmlspecialchars($group, ENT_QUOTES) ?>' tabindex=101 />
                 <?php
                         include 'include/management/populate_selectbox.php';
                         populate_groups("Select Groups","long");

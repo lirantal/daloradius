@@ -29,11 +29,11 @@
 			<input name="poolname" type="text" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['PoolName']; ?> <br/>'
-				value="<?php if (isset($poolname)) echo $poolname ?>" tabindex=4>
+				value="<?php if (isset($poolname)) echo htmlspecialchars($poolname, ENT_QUOTES) ?>" tabindex=4>
 			<input name="ipaddressold" type="text" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?> <br/>'
-				value="<?php if (isset($ipaddressold)) echo $ipaddressold  ?>" tabindex=4>
+				value="<?php if (isset($ipaddressold)) echo htmlspecialchars($ipaddressold, ENT_QUOTES) ?>" tabindex=4>
 			</form></li>
 		<li><a href="mng-rad-ippool-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveIPPool'] ?></a></li>
 		

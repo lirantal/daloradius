@@ -63,6 +63,8 @@
 	include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	$radiusReply = $dbSocket->escapeSimple($radiusReply);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 	$radiusReplySQL = "";
 	if ($radiusReply <> "Any") $radiusReplySQL = " AND (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply = '$radiusReply') ";
 	
@@ -77,7 +79,7 @@
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
         $_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".
 					$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL ".
-					" AND (".$tableSetting['postauth']['date']." >='$startdate' AND ".$tableSetting['postauth']['date']." <='$enddate') ";
+					" AND (".$tableSetting['postauth']['date']." >='" . $dbSocket->escapeSimple($startdate) . "' AND ".$tableSetting['postauth']['date']." <='" . $dbSocket->escapeSimple($enddate) . "') ";
         $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
@@ -99,7 +101,7 @@
 		FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." 
         WHERE (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".".$tableSetting['postauth']['user']." LIKE '".
 	$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL ". 
-		" AND (".$tableSetting['postauth']['date']." >='$startdate' AND ".$tableSetting['postauth']['date']." <='$enddate') 
+		" AND (".$tableSetting['postauth']['date']." >='" . $dbSocket->escapeSimple($startdate) . "' AND ".$tableSetting['postauth']['date']." <='" . $dbSocket->escapeSimple($enddate) . "') 
 		ORDER BY ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".$orderBy $orderType 
 		LIMIT $offset, $rowsPerPage";
 
@@ -168,22 +170,22 @@
 
         echo "<thread> <tr>
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=".$tableSetting['postauth']['user']."&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameLastConnect=" . urlencode($usernameLastConnect) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=".urlencode($tableSetting['postauth']['user'])."&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['Username']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=pass&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameLastConnect=".urlencode($usernameLastConnect)."&startdate=".urlencode($startdate)."&enddate=".urlencode($enddate)."&orderBy=pass&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['Password']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=".$tableSetting['postauth']['date']."&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameLastConnect=".urlencode($usernameLastConnect)."&startdate=".urlencode($startdate)."&enddate=".urlencode($enddate)."&orderBy=".urlencode($tableSetting['postauth']['date'])."&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['StartTime']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=reply&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameLastConnect=".urlencode($usernameLastConnect)."&startdate=".urlencode($startdate)."&enddate=".urlencode($enddate)."&orderBy=reply&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['RADIUSReply']." 
 		</th>
 
@@ -193,23 +195,23 @@
         while ($i != $count) {
 
 		if ($array_reply[$i] == "Access-Reject")
-			$reply = "<font color='red'> $array_reply[$i] </font>";
+			$reply = "<font color='red'> " . htmlspecialchars($array_reply[$i], ENT_QUOTES) . " </font>";
 		else
 			$reply = $array_reply[$i];
 
                 echo "<tr>
-                        <td> $array_users[$i] </td>
+                        <td> " . htmlspecialchars($array_users[$i], ENT_QUOTES) . " </td>
 					";
 					
 				if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 					echo "<td>[Password is hidden]</td>";
 				} else {
-					echo "<td>$array_pass[$i]</td>";
+					echo "<td>" . htmlspecialchars($array_pass[$i], ENT_QUOTES) . "</td>";
 				}
 				
 				echo "
-                        <td> $array_starttime[$i] </td>
-                        <td> $reply </td>
+                        <td> " . htmlspecialchars($array_starttime[$i], ENT_QUOTES) . " </td>
+                        <td> " . htmlspecialchars($reply, ENT_QUOTES) . " </td>
                 </tr>";
                 $i++;
         }

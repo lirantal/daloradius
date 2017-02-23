@@ -189,7 +189,7 @@
                                         Complete the form and click the Apply button to register in our database, shortly after you will see<br/>
                                         a Buy Now button, click it to redirect to your PayPal homepage and confirm the transaction.
 
-                                        <form name='newuser' action='".$_SERVER['PHP_SELF']."' method='post'>
+                                        <form name='newuser' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
 
 					<table>
                                         <tr><td>Select your plan:</td>
@@ -202,7 +202,7 @@
                                         " WHERE planType='PayPal'";
                                 $res = $dbSocket->query($sql);
                                 while ($row = $res->fetchRow()) {
-                                        echo "<option value=\"$row[0]\">$row[1] - Cost $row[2] $row[4] </option>";
+                                        echo "<option value=\"" . htmlspecialchars($row[0], ENT_QUOTES) . "\">" . htmlspecialchars($row[1], ENT_QUOTES) . " - Cost " . htmlspecialchars($row[2], ENT_QUOTES) . " " . htmlspecialchars($row[4], ENT_QUOTES) . " </option>";
                                 }
 
                                 include('library/closedb.php');
@@ -213,15 +213,15 @@
                                         <br/><br/>
 
                                         <tr><td>First name:</td>
-                                            <td> <input name='firstName' value='"; if (isset($firstName)) echo $firstName; echo "' /> </td></tr>
+                                            <td> <input name='firstName' value='"; if (isset($firstName)) echo htmlspecialchars($firstName, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>Last name:</td>
-                                            <td> <input name='lastName' value='"; if (isset($lastName)) echo $lastName; echo "' /> </td></tr>
+                                            <td> <input name='lastName' value='"; if (isset($lastName)) echo htmlspecialchars($lastName, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>Address:</td>
-                                            <td> <input name='address' value='"; if (isset($address)) echo $address; echo "' /> </td></tr>
+                                            <td> <input name='address' value='"; if (isset($address)) echo htmlspecialchars($address, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>City:</td>
-                                            <td> <input name='city' value='"; if (isset($city)) echo $city; echo "' /> </td></tr>
+                                            <td> <input name='city' value='"; if (isset($city)) echo htmlspecialchars($city, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>State:</td>
-                                            <td> <input name='state' value='"; if (isset($state)) echo $state; echo "' /> </td></tr>
+                                            <td> <input name='state' value='"; if (isset($state)) echo htmlspecialchars($state, ENT_QUOTES); echo "' /> </td></tr>
 
 					</table><br/><br/>
                                             <input type='submit' value='Submit' name='submit'>
@@ -245,7 +245,7 @@
                                         <table><tr><td>PIN Code:</td><td> <b>
                                         ');
 
-                                echo $userPIN;
+                                echo htmlspecialchars($userPIN, ENT_QUOTES);
 								
                                 echo '
                                         </b></td></tr></table>
@@ -261,28 +261,28 @@
 
                                                 <input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-																								'?txnId='.$txnId.'&username='.$userPIN.'" />
+																								'?txnId=' . htmlspecialchars($txnId, ENT_QUOTES) . '&username=' . htmlspecialchars($userPIN, ENT_QUOTES) . '" />
                                                 <input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
                                                 <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
 
-                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
-                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
+                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo htmlspecialchars($planCost, ENT_QUOTES); echo '" />
+                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo htmlspecialchars($planName, ENT_QUOTES); echo '" />
                                                 <input type="hidden" name="quantity" value="1" />
-                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
+                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo htmlspecialchars($planTax, ENT_QUOTES); echo '" />
+                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo htmlspecialchars($planId, ENT_QUOTES); echo '" />
 
                                                 <input type="hidden" name="no_note" value="1">
-                                                <input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+                                                <input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo htmlspecialchars($planCurrency, ENT_QUOTES); echo '">
 												<input type="hidden" name="no_shipping" value="1">
                                                 <input type="hidden" name="lc" value="US">
 
                                                 <input type="hidden" name="on0" value="Transaction ID" />
-                                                <input type="hidden" name="os0" value="'.$txnId.'" />
+                                                <input type="hidden" name="os0" value="' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
 
                                                 <input type="hidden" name="on1" value="Username" />
-                                                <input type="hidden" name="os1" value="'.$userPIN.'" />
+                                                <input type="hidden" name="os1" value="' . htmlspecialchars($userPIN, ENT_QUOTES) . '" />
 												
                                                 <input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit"
                                                 alt="Make payments with PayPal - its fast, free and secure!">
@@ -314,33 +314,33 @@
 										<input type="hidden" name="no_shipping" value="1">
 										<input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																						$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-																						'?txnId='.$txnId.'" />
+																						'?txnId=' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
 										<input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
 										<input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
 																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
-										<input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+										<input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo htmlspecialchars($planCurrency, ENT_QUOTES); echo '">
 										<input type="hidden" name="lc" value="US">
 										
 										<input type="hidden" name="on0" value="Transaction ID" />
-										<input type="hidden" name="os0" value="'.$txnId.'" />
+										<input type="hidden" name="os0" value="' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
 										<input type="hidden" name="on1" value="Username" />
-										<input type="hidden" name="os1" value="'.$userPIN.'" />
+										<input type="hidden" name="os1" value="' . htmlspecialchars($userPIN, ENT_QUOTES) . '" />
 										
-										<input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
+										<input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo htmlspecialchars($planName, ENT_QUOTES); echo '" />
 										<input type="hidden" name="quantity" value="1" />
-										<input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-										<input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
+										<input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo htmlspecialchars($planTax, ENT_QUOTES); echo '" />
+										<input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo htmlspecialchars($planId, ENT_QUOTES); echo '" />
 
 										<input type="hidden" name="no_note" value="1">
 										
-										<input type="hidden" id="a3" name="a3" value="'; if (isset($planCost)) echo $planCost; echo '" />
-										<input type="hidden" name="p3" value="'.$p3.'">
-										<input type="hidden" name="t3" value="'.$t3.'">
+										<input type="hidden" id="a3" name="a3" value="'; if (isset($planCost)) echo htmlspecialchars($planCost, ENT_QUOTES); echo '" />
+										<input type="hidden" name="p3" value="' . htmlspecialchars($p3, ENT_QUOTES) . '">
+										<input type="hidden" name="t3" value="' . htmlspecialchars($t3, ENT_QUOTES) . '">
 										<input type="hidden" name="src" value="1">
 										<input type="hidden" name="sra" value="1">
 										
-										<input type="hidden" name="custom" value="'.$userPIN.'" />
+										<input type="hidden" name="custom" value="' . htmlspecialchars($userPIN, ENT_QUOTES) . '" />
 										
 										<input type="image" src="http://www.paypal.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="Make payments with PayPal - its fast, free and secure!">
 										</form>

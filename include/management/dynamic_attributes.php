@@ -17,7 +17,7 @@ if(isset($_GET['getVendorsList'])) {
 
         while($row = $res->fetchRow()) {
 		echo "objVendors.options[objVendors.options.length] = 
-			new Option('".trim($row[0])."','".trim($row[0])."');\n";
+			new Option('" . htmlspecialchars(trim($row[0]), ENT_QUOTES) . "','" . htmlspecialchars(trim($row[0]), ENT_QUOTES) . "');\n";
 	}
 
 	include '../../library/closedb.php';
@@ -44,7 +44,7 @@ if(isset($_GET['vendorAttributes'])) {
 
         while($row = $res->fetchRow()) {
 		echo "objAttributes.options[objAttributes.options.length] = 
-			new Option('".trim($row[0])."','".trim($row[0])."');\n";
+			new Option('" . htmlspecialchars(trim($row[0]), ENT_QUOTES) . "','" . htmlspecialchars(trim($row[0]), ENT_QUOTES) . "');\n";
 	}
 
 	include '../../library/closedb.php';
@@ -93,8 +93,8 @@ if(isset($_GET['getValuesForAttribute'])) {
 	/* dictionary table
 	/*******************************************************************************************************/
 	if (isset($RecommendedOP)) {
-		echo "objOP.options[objOP.options.length] = new Option('$RecommendedOP',
-		'$RecommendedOP');\n";
+		echo "objOP.options[objOP.options.length] = new Option('" . htmlspecialchars($RecommendedOP, ENT_QUOTES) . "',
+		'" . htmlspecialchars($RecommendedOP, ENT_QUOTES) . "');\n";
 	}
 	populateOPs(); 	//then we populate the dictOP select box with the normal possible values for it:
 	/*******************************************************************************************************/
@@ -106,7 +106,7 @@ if(isset($_GET['getValuesForAttribute'])) {
 	/* next up we set as the first option of the select box the default target table for this attribute
 	/*******************************************************************************************************/
 	if (isset($RecommendedTable)) {
-		echo "objTable.options[objTable.options.length] = new Option('$RecommendedTable','$RecommendedTable');\n";
+		echo "objTable.options[objTable.options.length] = new Option('" . htmlspecialchars($RecommendedTable, ENT_QUOTES) . "','" . htmlspecialchars($RecommendedTable, ENT_QUOTES) . "');\n";
 	}
 	populateTables();		//and ofcourse populate it also with the possible tables
 	/*******************************************************************************************************/
@@ -173,7 +173,7 @@ if(isset($_GET['getValuesForAttribute'])) {
 	/* RecommendedTooltip
 	/* setting the tooltip 
 	/*******************************************************************************************************/
-	echo "objTooltip.innerHTML = \"<b>Description:</b> ".str_replace("\"", "\\\"", $RecommendedTooltip)."\";";
+	echo "objTooltip.innerHTML = \"<b>Description:</b> ".str_replace("\"", "\\\"", htmlspecialchars($RecommendedTooltip, ENT_QUOTES))."\";";
 	/*******************************************************************************************************/
 
 
@@ -182,7 +182,7 @@ if(isset($_GET['getValuesForAttribute'])) {
 	/* Format type
 	/* setting the format
 	/*******************************************************************************************************/
-	echo "objType.innerHTML = \"<b>Type:</b> $type\";";
+	echo "objType.innerHTML = \"<b>Type:</b> " . htmlspecialchars($type, ENT_QUOTES) . "\";";
 	/*******************************************************************************************************/
 
 

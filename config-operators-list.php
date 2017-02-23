@@ -72,6 +72,10 @@
     include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT id, username, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS'];
 	$res = $dbSocket->query($sql);
@@ -120,38 +124,38 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
 		".$l['all']['ID']. " 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=Username&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
 		".$l['all']['Username']." 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=Username&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=Value&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
 		".$l['all']['Password']." 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=Value&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=lastname&orderType=asc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=lastname&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
 		Full name
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=lastname&orderType=desc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=lastname&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=title&orderType=asc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=title&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
 		Title
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=title&orderType=desc\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=title&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 
@@ -165,18 +169,18 @@
 			$fullname = "$row[4], $row[3]";
 
 		echo "<tr>
-			<td> <input type='checkbox' name='operator_username[]' value='$row[1]'>$row[0]</td>
-			<td> <a class='tablenovisit' href='config-operators-edit.php?operator_username=$row[1]' title='".
-			$l['Tooltip']['UserEdit']."'>$row[1]</a> </td>
+			<td> <input type='checkbox' name='operator_username[]' value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
+			<td> <a class='tablenovisit' href='config-operators-edit.php?operator_username=" . urlencode($row[1]) . "' title='".
+			$l['Tooltip']['UserEdit']."'>" . htmlspecialchars($row[1], ENT_QUOTES) . "</a> </td>
 			";
                 if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
                         echo "<td>[Password is hidden]</td>";
                 } else {
-                        echo "<td>$row[2]</td>";
+                        echo "<td>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>";
                 }
                 echo "
-			<td>$fullname</td>
-			<td>$row[5]</td>
+			<td>" . htmlspecialchars($fullname, ENT_QUOTES) . "</td>
+			<td>" . htmlspecialchars($row[5], ENT_QUOTES) . "</td>
 
 		</tr>";
 	}

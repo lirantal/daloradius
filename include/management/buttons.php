@@ -3,19 +3,19 @@
 ?>
 
         <input type='button' onclick="self.location='config-maint-test-user.php?username=<?php 
-		echo $username ?>&password=<?php echo $user_password ?>'" value='Test Connectivity' class='button'/>
+		echo htmlspecialchars($username, ENT_QUOTES) ?>&password=<?php echo htmlspecialchars($user_password, ENT_QUOTES) ?>'" value='Test Connectivity' class='button'/>
 
         <input type='button' onclick="self.location='config-maint-disconnect-user.php?username=<?php 
-		echo $username ?>'" value='Disconnect User' class='button'/>
+		echo htmlspecialchars($username, ENT_QUOTES) ?>'" value='Disconnect User' class='button'/>
 
-        <input type='button' onclick="self.location='acct-username.php?username=<?php echo $username ?>'" value='Accounting' class='button'/>
+        <input type='button' onclick="self.location='acct-username.php?username=<?php echo htmlspecialchars($username, ENT_QUOTES) ?>'" value='Accounting' class='button'/>
 
         <input type='button' onclick="self.location='graphs-overall_logins.php?type=monthly&username=<?php
-                echo $username ?>'" value='Graphs - Logins' class='button'/>
+                echo htmlspecialchars($username, ENT_QUOTES) ?>'" value='Graphs - Logins' class='button'/>
 
         <input type='button' onclick="self.location='graphs-overall_download.php?type=monthly&username=<?php
-                echo $username ?>'" value='Graphs - Downloads' class='button'/>
+                echo htmlspecialchars($username, ENT_QUOTES) ?>'" value='Graphs - Downloads' class='button'/>
 
         <input type='button' onclick="self.location='graphs-overall_upload.php?type=monthly&username=<?php
-                echo $username ?>'" value='Graphs - Uploads' class='button'/>
+                echo htmlspecialchars($username, ENT_QUOTES) ?>'" value='Graphs - Uploads' class='button'/>
 

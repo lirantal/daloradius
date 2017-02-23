@@ -55,7 +55,7 @@
 
 	while($row = $res->fetchRow()) {
 			echo "
-					<option value='$row[0]'> $row[0]
+					<option value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . "
 		";
 
 	}

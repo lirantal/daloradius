@@ -52,7 +52,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted rate(s): <b> $allRates </b>";
+				$successMsg = "Deleted rate(s): <b>" . htmlspecialchars($allRates, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted rates(s) [$allRates] on page: ";
 				
 			} else { 
@@ -92,7 +92,7 @@
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesdel.php'] ?>
-	:: <?php if (isset($ratename)) { echo $ratename; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($ratename)) { echo htmlspecialchars($ratename, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo $l['helpPage']['billhsdel'] ?>
 		<br/>
@@ -101,8 +101,8 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -110,7 +110,7 @@
 		<br/>
 
 		<label for='ratename' class='form'><?php echo $l['all']['RateName'] ?></label>
-		<input name='ratename[]' type='text' id='ratename' value='<?php echo $ratename ?>' tabindex=100 />
+		<input name='ratename[]' type='text' id='ratename' value='<?php echo htmlspecialchars($ratename, ENT_QUOTES) ?>' tabindex=100 />
 		<br/>
 
 		<br/><br/>

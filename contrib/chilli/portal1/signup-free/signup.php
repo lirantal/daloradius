@@ -86,7 +86,7 @@ function randomAlphanumeric($length) {
 
 	                        echo "<br/><br/>
 	                                Welcome ". $_POST['firstname']  . ",<br/>"
-	                                ."Your username is: $username <br/>and your password is: $password <br/>";
+	                                ."Your username is: " . htmlspecialchars($username, ENT_QUOTES) . " <br/>and your password is: " . htmlspecialchars($password, ENT_QUOTES) . " <br/>";
 
 	                        $dbSocket->disconnect();
 
@@ -128,7 +128,7 @@ function setFocus() {
 
 <h2>Contact Details </h2>
 
-<form name="signup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form name="signup" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	First name <input type="text" value="" name="firstname" /> <br/>
 	Last name <input type="text" value="" name="lastname" /> <br/>

@@ -33,7 +33,7 @@
 	if (isset($_REQUEST['submit'])) {
 
 		$currDate = date('Y-m-d H:i:s');			// current date and time to enter as creationdate field
-		$currBy = $_SESSION['operator_user'];
+		$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 		$username = trim($_REQUEST['username']);
 		$password = "";						// we initialize the $password variable to contain nothing
@@ -533,7 +533,7 @@
 
 	        } //foreach $_POST
 
-			$successMsg = "Updated attributes for: <b> $username </b>";
+			$successMsg = "Updated attributes for: <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully updates attributes for user [$username] on page: ";
 
 		} else { // if username != ""
@@ -721,7 +721,7 @@ function enableUser() {
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?>
-	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($username)) { echo htmlspecialchars($username, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
 		<?php echo $l['helpPage']['mngedit'] ?>
@@ -736,9 +736,9 @@ function enableUser() {
 		checkDisabled($username);
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
-	<input type="hidden" value="<?php echo $username ?>" name="username" />
+	<input type="hidden" value="<?php echo htmlspecialchars($username, ENT_QUOTES) ?>" name="username" />
 
 	<div class="tabber">
  <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
@@ -752,8 +752,8 @@ function enableUser() {
                 <div id='UserContainer'>
                 <li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-		<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
-                <input name='username' type='text' id='username' value='<?php if (isset($username)) echo $username ?>' disabled tabindex=100 />
+		<input name='username' type='hidden' value='<?php if (isset($username)) echo htmlspecialchars($username, ENT_QUOTES) ?>' />
+                <input name='username' type='text' id='username' value='<?php if (isset($username)) echo htmlspecialchars($username, ENT_QUOTES) ?>' disabled tabindex=100 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
                 <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -764,8 +764,8 @@ function enableUser() {
 
                 <li class='fieldset'>
                 <label for='password' class='form'><?php echo $l['all']['Password']?></label>
-                <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo $user_password ?>'
-                        <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> disabled tabindex=101 />
+                <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo htmlspecialchars($user_password, ENT_QUOTES) ?>'
+                        <?php if (isset($hiddenPassword)) echo htmlspecialchars($hiddenPassword, ENT_QUOTES) ?> disabled tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
                 <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -779,7 +779,7 @@ function enableUser() {
 
 		<li class='fieldset'>
 		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
-		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
+		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo htmlspecialchars($bi_planname, ENT_QUOTES) ?>' />
                 <?php
  	               include 'include/management/populate_selectbox.php';
                        populate_plans($bi_planname,"planName","form");
@@ -866,31 +866,31 @@ function enableUser() {
 	while($row = $res->fetchRow()) {
 
 		echo "<label class='attributes'>";
-		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[5]__$row[0]&tablename=radcheck'>
+		echo "<a class='tablenovisit' href='mng-del.php?username=" . urlencode($username) . "&attribute=" . urlencode($row[5]) . "__" . urlencode($row[0]) . "&tablename=radcheck'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
-		echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
+		echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;" . htmlspecialchars($row[0], ENT_QUOTES) . "</label>";
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
+		echo "<input type='hidden' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' value='" . htmlspecialchars($row[5], ENT_QUOTES) . "__" . htmlspecialchars($row[0], ENT_QUOTES) . "' />";
 
 		if (preg_match("/.*-Password/", $row[0])) {
 			if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
-				echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
-				echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
+				echo "<input type='password' value='" . htmlspecialchars($row[2], ENT_QUOTES) . "' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]'  style='width: 115px' />";
+				echo "<input type='hidden' value='" . htmlspecialchars($row[2], ENT_QUOTES) . "' name='passwordOrig' />";
 			} else {
-				echo "<input type='text' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
-				echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
+				echo "<input type='text' value='" . htmlspecialchars($row[2], ENT_QUOTES) . "' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]'  style='width: 115px' />";
+				echo "<input type='hidden' value='" . htmlspecialchars($row[2], ENT_QUOTES) . "' name='passwordOrig' />";
 			}
 		} else {
-			echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
+			echo "<input value='" . htmlspecialchars($row[2], ENT_QUOTES) . "' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' style='width: 115px' />";
 		}
 		echo "&nbsp;";
-		echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-		echo "<option value='$row[1]'>$row[1]</option>";
+		echo "<select name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' style='width: 45px' class='form'>";
+		echo "<option value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>" . htmlspecialchars($row[1], ENT_QUOTES) . "</option>";
 		drawOptions();
 		echo "</select>";
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radcheck' style='width: 90px'>";
+		echo "<input type='hidden' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' value='radcheck' style='width: 90px'>";
 
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
 
@@ -901,13 +901,13 @@ function enableUser() {
 			$row[4] = "unavailable";
 
 		printq("
-			<img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('" . htmlspecialchars($row[0], ENT_QUOTES) . "Tooltip')\" />
 			<br/>
-	                <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
+	                <div id='" . htmlspecialchars($row[0], ENT_QUOTES) . "Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
 	                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<i><b>Type:</b> $row[3]</i><br/>
+					<i><b>Type:</b>" . htmlspecialchars($row[3], ENT_QUOTES) . "</i><br/>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<i><b>Tooltip Description:</b> $row[4]</i><br/>
+					<i><b>Tooltip Description:</b>" . htmlspecialchars($row[4], ENT_QUOTES) . "</i><br/>
 				<br/>
 	                </div>
 		");
@@ -964,30 +964,30 @@ function enableUser() {
 	while($row = $res->fetchRow()) {
 
 		echo "<label class='attributes'>";
-		echo "<a class='tablenovisit' href='mng-del.php?username=$username&attribute=$row[5]__$row[0]&tablename=radreply'>
+		echo "<a class='tablenovisit' href='mng-del.php?username=" . urlencode($username) . "&attribute=" . urlencode($row[5]) . "__" . urlencode($row[0]) . "&tablename=radreply'>
 				<img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
 		echo "</label>";
-                echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
+                echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;" . htmlspecialchars($row[0], ENT_QUOTES) . "</label>";
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
+		echo "<input type='hidden' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' value='" . htmlspecialchars($row[5], ENT_QUOTES) . "__" . htmlspecialchars($row[0], ENT_QUOTES) . "' />";
 
 		if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
-			echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
+			echo "<input type='password' value='" . htmlspecialchars($row[2], ENT_QUOTES) . "' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]'  style='width: 115px' />";
 			echo "&nbsp;";
-			echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-			echo "<option value='$row[1]'>$row[1]</option>";
+			echo "<select name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' style='width: 45px' class='form'>";
+			echo "<option value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>" . htmlspecialchars($row[1], ENT_QUOTES) . "</option>";
 			drawOptions();
 			echo "</select>";
 		} else {
-			echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
+			echo "<input value='" . htmlspecialchars($row[2], ENT_QUOTES) . "' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' style='width: 115px' />";
 			echo "&nbsp;";
-			echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-			echo "<option value='$row[1]'>$row[1]</option>";
+			echo "<select name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' style='width: 45px' class='form'>";
+			echo "<option value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>" . htmlspecialchars($row[1], ENT_QUOTES) . "</option>";
 			drawOptions();
 			echo "</select>";
 		}
 
-		echo "<input type='hidden' name='editValues".$editCounter."[]' value='radreply' style='width: 90px'>";
+		echo "<input type='hidden' name='editValues" . htmlspecialchars($editCounter, ENT_QUOTES) . "[]' value='radreply' style='width: 90px'>";
 		$editCounter++;			// we increment the counter for the html elements of the edit attributes
 
 		if (!$row[3])
@@ -996,13 +996,13 @@ function enableUser() {
 			$row[4] = "unavailable";
 
 		printq("
-			<img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
+			<img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('" . htmlspecialchars($row[0], ENT_QUOTES) . "Tooltip')\" />
 			<br/>
-	                <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
+	                <div id='" . htmlspecialchars($row[0], ENT_QUOTES) . "Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
 	                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<i><b>Type:</b> $row[3]</i><br/>
+					<i><b>Type:</b>" . htmlspecialchars($row[3], ENT_QUOTES) . "</i><br/>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<i><b>Tooltip Description:</b> $row[4]</i><br/>
+					<i><b>Tooltip Description:</b>" . htmlspecialchars($row[4], ENT_QUOTES) . "</i><br/>
 				<br/>
 	                </div>
 		");

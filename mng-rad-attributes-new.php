@@ -55,14 +55,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
+				$successMsg = "Added to database new vendor attribute: <b>" . htmlspecialchars($attribute, ENT_QUOTES) . "</b> of vendor: <b>" . htmlspecialchars($vendor, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new vendor [$vendor] and attribute [$attribute] on page: ";
 			} else {
 				$failureMsg = "You must provide atleast a vendor name and attribute";	
 				$logAction .= "Failed adding new vendor [$vendor] and attribute [$attribute] on page: ";
 			}
 		} else { 
-			$failureMsg = "You have tried to add a vendor's attribute that already exist in the database: $attribute";
+			$failureMsg = "You have tried to add a vendor's attribute that already exist in the database: " . htmlspecialchars($attribute, ENT_QUOTES) . "";
 			$logAction .= "Failed adding new vendor attribute already in database [$attribute] on page: ";		
 		}
 	
@@ -105,7 +105,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 	
 	<fieldset>
 

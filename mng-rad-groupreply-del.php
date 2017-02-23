@@ -61,6 +61,14 @@
 
 					include 'library/opendb.php';
 
+                    // escape SQL
+                    $value = $dbSocket->escapeSimple($value);
+                    $attribute = $dbSocket->escapeSimple($attribute);
+
+                    // escape SQL
+                    $value = $dbSocket->escapeSimple($value);
+                    $attribute = $dbSocket->escapeSimple($attribute);
+
 				        // delete only a specific groupname and it's attribute
 					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
 							" WHERE GroupName='".$dbSocket->escapeSimple($groupname).
@@ -68,7 +76,7 @@
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
-					$successMsg = "Deleted Group(s): <b> $allGroups </b> with Attribute(s): <b> $allAttributes </b> and it's Value: <b> $allValues </b>";
+					$successMsg = "Deleted Group(s): <b>" . htmlspecialchars($allGroups, ENT_QUOTES) . "</b> with Attribute(s): <b>" . htmlspecialchars($allAttributes, ENT_QUOTES) . "</b> and it's Value: <b>" . htmlspecialchars($allValues, ENT_QUOTES) . "</b>";
 					$logAction .= "Successfully deleted group(s) [$allGroups] with attribute [$allAttributes] and it's value [$allValues] on page: ";
 
 					include 'library/closedb.php';
@@ -81,7 +89,7 @@
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
-					$successMsg = "Deleted all instances for Group(s): <b> $allGroups </b>";
+					$successMsg = "Deleted all instances for Group(s): <b>" . htmlspecialchars($allGroups, ENT_QUOTES) . "</b>";
 					$logAction .= "Successfully deleted all instances for group(s) [$allGroups] on page: ";
 
 					include 'library/closedb.php';
@@ -134,8 +142,8 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="get">
 
 
         <fieldset>
@@ -144,15 +152,15 @@
 			<br/>
 
 			<label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
-			<input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
+			<input name='groupname' type='text' id='groupname' value='<?php echo htmlspecialchars($groupname, ENT_QUOTES) ?>' tabindex=100 />
 			<br/>
 
 			<label for='value' class='form'><?php echo $l['all']['Value'] ?></label>
-			<input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=101 />
+			<input name='value' type='text' id='value' value='<?php echo htmlspecialchars($value, ENT_QUOTES) ?>' tabindex=101 />
 			<br/>
 
 			<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
-			<input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=102 />
+			<input name='attribute' type='text' id='attribute' value='<?php echo htmlspecialchars($attribute, ENT_QUOTES) ?>' tabindex=102 />
 			<br/>
 
 			<br/><br/>

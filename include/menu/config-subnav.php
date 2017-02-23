@@ -8,8 +8,8 @@
 					<li><a href="config-backup.php"><em>B</em>ackup</a></li>
 					
 					<div id="logindiv" style="text-align: right;">
-                                                <li>Location: <b><?php echo $_SESSION['location_name'] ?></b></li><br/>
-                                                <li>Welcome, <?php echo $operator; ?></li>
+                                                <li>Location: <b><?php echo htmlspecialchars($_SESSION['location_name'], ENT_QUOTES) ?></b></li><br/>
+                                                <li>Welcome, <?php echo htmlspecialchars($operator, ENT_QUOTES); ?></li>
                                                 <li><a href="logout.php">[logout]</a></li>
 
                                 </ul>

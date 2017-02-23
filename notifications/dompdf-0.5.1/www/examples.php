@@ -54,7 +54,7 @@ foreach ( $test_files as $file ) {
 <p>Enter your html snippet in the text box below to see it rendered as a
 PDF: (Note by default, remote stylesheets, images &amp; are disabled.)</p>
 
-<form action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"], ENT_QUOTES);?>" method="post">
 <div>
 <p>Paper size and orientaion:
 <select name="paper">

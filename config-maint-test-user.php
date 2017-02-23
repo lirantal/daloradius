@@ -94,7 +94,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="mainttestuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="mainttestuser" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -106,32 +106,32 @@
                 <br/>
 
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <input name='username' type='text' id='username' value='<?php echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
                 <br />
 
 
                 <label for='password' class='form'><?php echo $l['all']['Password']?></label>
-                <input name='password' type='text' id='password' value='<?php echo $password ?>' tabindex=101 />
+                <input name='password' type='text' id='password' value='<?php echo htmlspecialchars($password, ENT_QUOTES) ?>' tabindex=101 />
                 <br />
 
                 <label for='radius' class='form'><?php echo $l['all']['RadiusServer'] ?>
 			</label>
-                <input name='radius' type='text' id='radius' value='<?php echo $radius ?>' tabindex=102 />
+                <input name='radius' type='text' id='radius' value='<?php echo htmlspecialchars($radius, ENT_QUOTES) ?>' tabindex=102 />
                 <br />
 
                 <label for='radiusport' class='form'><?php echo $l['all']['RadiusPort'] ?>
 			</label>
-                <input name='radiusport' type='text' id='radiusport' value='<?php echo $radiusport ?>' tabindex=103 />
+                <input name='radiusport' type='text' id='radiusport' value='<?php echo htmlspecialchars($radiusport, ENT_QUOTES) ?>' tabindex=103 />
                 <br />
 
                 <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?>
 			</label>
-                <input name='nasport' type='text' id='nasport' value='<?php echo $nasport ?>' tabindex=104 />
+                <input name='nasport' type='text' id='nasport' value='<?php echo htmlspecialchars($nasport, ENT_QUOTES) ?>' tabindex=104 />
                 <br />
 
                 <label for='secret' class='form'><?php echo $l['all']['NasSecret'] ?>
 			</label>
-                <input name='secret' type='text' id='secret' value='<?php echo $secret ?>' tabindex=105 />
+                <input name='secret' type='text' id='secret' value='<?php echo htmlspecialchars($secret, ENT_QUOTES) ?>' tabindex=105 />
                 <br />
 
                 <br/><br/>
@@ -183,7 +183,7 @@
                 <br/>
 
                 <label for='dictionaryPath' class='form'><?php echo $l['all']['RADIUSDictionaryPath'] ?></label>
-                <input name='dictionaryPath' type='text' id='dictionaryPath' value='<?php echo $dictionaryPath ?>' tabindex=111 />
+                <input name='dictionaryPath' type='text' id='dictionaryPath' value='<?php echo htmlspecialchars($dictionaryPath, ENT_QUOTES) ?>' tabindex=111 />
                 <br />
 
                 <br/><br/>

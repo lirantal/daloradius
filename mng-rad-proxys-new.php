@@ -55,13 +55,13 @@
 
 			if (!(file_exists($filenameRealmsProxys))) {
 				$logAction .= "Failed non-existed proxys configuration file [$filenameRealmsProxys] on page: ";
-				$failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save proxys information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " doesn't exist, I can't save proxys information to the file";
 				$fileFlag = 0;
 			}
 
 			if (!(is_writable($filenameRealmsProxys))) {
 				$logAction .= "Failed writing proxys configuration to file [$filenameRealmsProxys] on page: ";
-				$failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save proxys information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " isn't writable, I can't save proxys information to the file";
 						$fileFlag = 0;
 			}
 
@@ -83,7 +83,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new proxy: <b>$proxyname</b>";
+				$successMsg = "Added to database new proxy: <b>" . htmlspecialchars($proxyname, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new proxy [$proxyname] on page: ";
 
 				/*******************************************************************/
@@ -96,7 +96,7 @@
 				$logAction .= "Failed adding new proxy [$proxyname] on page: ";	
 			}
 		} else { 
-			$failureMsg = "You have tried to add a proxy that already exist in the database: $proxyname";
+			$failureMsg = "You have tried to add a proxy that already exist in the database: " . htmlspecialchars($proxyname, ENT_QUOTES) . "";
 			$logAction .= "Failed adding new proxy already in database [$proxyname] on page: ";
 		}
 	
@@ -143,7 +143,7 @@
 		?>
 
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 

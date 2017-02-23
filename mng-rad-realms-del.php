@@ -61,7 +61,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted realm(s): <b> $allRealms </b>";
+				$successMsg = "Deleted realm(s): <b>" . htmlspecialchars($allRealms, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted realm(s) [$allRealms] on page: ";
 				
 			} else { 
@@ -117,8 +117,8 @@
 		?>
 
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -126,7 +126,7 @@
 		<br/>
 
 			<label for='realmname' class='form'><?php echo $l['all']['RealmName'] ?></label>
-			<input name='realmname[]' type='text' id='realmname' value='<?php echo $realmname ?>' tabindex=100 />
+			<input name='realmname[]' type='text' id='realmname' value='<?php echo htmlspecialchars($realmname, ENT_QUOTES) ?>' tabindex=100 />
 			<br/>
 
 			<br/><br/>

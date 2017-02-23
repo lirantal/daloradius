@@ -85,6 +85,14 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy); 
+    $orderType = $dbSocket->escapeSimple($orderType); 
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy); 
+    $orderType = $dbSocket->escapeSimple($orderType); 
+
 	// setup php session variables for exporting
 	$_SESSION['reportTable'] = "";
 	//reportQuery is assigned below to the SQL statement  in $sql
@@ -216,7 +224,7 @@
 	
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['BatchName']."</a>
 		</th>
 
@@ -245,12 +253,12 @@
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationdate&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=creationdate&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['CreationDate']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationby&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=creationby&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['CreationBy']."</a>
 		</th>
 
@@ -269,59 +277,56 @@
 		$total_users = $row['total_users'];
 		$batch_cost = ($active_users * $plancost);
 		$plan_currency = $row['plancurrency'];
-		
+        //$row['batch_name'] = htmlspecialchars($row['batch_name'], ENT_QUOTES);
 		
 		printqn("
 				<tr>
 				
 				<td>
-				<input type='checkbox' name='batch_id[]' value='{$row['id']}'>
+				<input type='checkbox' name='batch_id[]' value='" . htmlspecialchars($row['id'], ENT_QUOTES) . "'>
 				<a class='tablenovisit' href='javascript:return;'
 					onClick='javascript:__displayTooltip();'
 					tooltipText='
-					<a class=\"toolTip\" href=\"rep-batch-details.php?batch_name={$row['batch_name']}\">
+					<a class=\"toolTip\" href=\"rep-batch-details.php?batch_name=" . urlencode($row['batch_name']) . "\">
 						{$l['Tooltip']['BatchDetails']}</a>
 						<br/><br/>
 								<div id=\"divContainerUserInfo\">
 									<b>{$l['all']['batchDescription']}</b>:<br/><br/>
-									{$row['batch_description']}
+									" . htmlspecialchars($row['batch_description'], ENT_QUOTES) . "
 								</div>
 								<br/>
 								'
-			>{$row['batch_name']}</a>
+			>" . htmlspecialchars($row['batch_name'], ENT_QUOTES) . "</a>
 			</td>
 		");
 		
 		echo "
 		
-				<td>".$hotspot_name."
+				<td>" . htmlspecialchars($hotspot_name, ENT_QUOTES) . "
 					
 				</td>
 		
-				<td>".$batch_status."
+				<td>" . htmlspecialchars($batch_status, ENT_QUOTES) . "
 					
 				</td>
 				
-				<td>".$total_users."
+				<td>" . htmlspecialchars($total_users, ENT_QUOTES) . "
 					
 				</td>
 
-				<td>".
-					$row['planname']."
+				<td>" . htmlspecialchars($row['planname'], ENT_QUOTES) . "
 				</td>
 
-				<td>".$plancost."
+				<td>" . htmlspecialchars($plancost, ENT_QUOTES) . "
 				</td>
 
-				<td>".$batch_cost."
+				<td>" . htmlspecialchars($batch_cost, ENT_QUOTES) . "
 				</td>
 				
-				<td>".
-					$row['creationdate']."
+				<td>" . htmlspecialchars($row['creationdate'], ENT_QUOTES) . "
 				</td>
 
-				<td>".
-					$row['creationby']."
+				<td>" . htmlspecialchars($row['creationby'], ENT_QUOTES) . "
 				</td>
 
 

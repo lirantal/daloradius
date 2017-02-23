@@ -41,6 +41,9 @@
 		case "es_VE":
 			include (dirname(__FILE__)."/es_VE.php");
 			break;
+        case "ja":
+            include (dirname(__FILE__)."/ja.php");
+            break;
 		/*
 		 * file is currently broken and needs a fix...
 		case "ro":
@@ -49,9 +52,6 @@
 		*/
 		case "pt_br":
 			include (dirname(__FILE__)."/pt_br.php");
-			break;
-		case "ja":
-			include (dirname(__FILE__)."/ja.php");
 			break;
 		default:
 			include (dirname(__FILE__)."/en.php");

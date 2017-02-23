@@ -43,7 +43,7 @@
 		<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
 
                         <input name="startdate" type="text" id="startdate"
-                                value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
+                                value="<?php if (isset($billing_date_startdate)) echo htmlspecialchars($billing_date_startdate, ENT_QUOTES);
                         else echo date("Y-m-01"); ?>">
 
                         <img src="library/js_date/calendar.gif"
@@ -52,7 +52,7 @@
                                 style="display: none; visibility: hidden;       width: 160px;"></div>
 
                         <input name="enddate" type="text" id="enddate"
-                                value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
+                                value="<?php if (isset($billing_date_enddate)) echo htmlspecialchars($billing_date_enddate, ENT_QUOTES);
                                 else echo date("Y-m-t"); ?>">
 
                         <img src="library/js_date/calendar.gif"
@@ -63,8 +63,8 @@
 
 		<h109><?php echo $l['all']['VendorType']; ?></h109> <br/>
                         <select name="vendor_type" size="1">
-                                <option value="<?php if (isset($billing_paypal_vendor_type)) echo $billing_paypal_vendor_type; else echo "%"; ?>">
-                                        <?php if (isset($billing_paypal_vendor_type)) echo $billing_paypal_vendor_type; else echo "Any"; ?>
+                                <option value="<?php if (isset($billing_paypal_vendor_type)) echo htmlspecialchars($billing_paypal_vendor_type, ENT_QUOTES); else echo "%"; ?>">
+                                        <?php if (isset($billing_paypal_vendor_type)) echo htmlspecialchars($billing_paypal_vendor_type, ENT_QUOTES); else echo "Any"; ?>
                                 </option>
 				<option value=""></option>
 				<option value="%">Any</option>
@@ -75,13 +75,13 @@
 
 		<h109><?php echo $l['all']['PayerEmail']; ?></h109> <br/>
                         <input name="payer_email" type="text"
-                                value="<?php if (isset($billing_paypal_payeremail)) echo $billing_paypal_payeremail; else echo "*"; ?>">
+                                value="<?php if (isset($billing_paypal_payeremail)) echo htmlspecialchars($billing_paypal_payeremail, ENT_QUOTES); else echo "*"; ?>">
 			<br/>
 
 		<h109><?php echo $l['all']['PaymentStatus']; ?></h109> <br/>
                         <select name="payment_status" size="1">
-                                <option value="<?php if (isset($billing_paypal_paymentstatus)) echo $billing_paypal_paymentstatus; else echo "%"; ?>">
-                                        <?php if (isset($billing_paypal_paymentstatus)) echo $billing_paypal_paymentstatus; else echo "Any"; ?>
+                                <option value="<?php if (isset($billing_paypal_paymentstatus)) echo htmlspecialchars($billing_paypal_paymentstatus, ENT_QUOTES); else echo "%"; ?>">
+                                        <?php if (isset($billing_paypal_paymentstatus)) echo htmlspecialchars($billing_paypal_paymentstatus, ENT_QUOTES); else echo "Any"; ?>
                                 </option>
 				<option value=""></option>
 				<option value="Completed">Completed</option>

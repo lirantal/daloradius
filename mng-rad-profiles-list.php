@@ -71,6 +71,10 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
 		" AS Users FROM ".
@@ -135,26 +139,26 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=groupname&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Groupname']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=users&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=users&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['TotalUsers']."</a>
 		</th>
 
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-			<td> <input type='checkbox' name='profile[]' value='$row[0]'>
+			<td> <input type='checkbox' name='profile[]' value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'>
 				<a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-profiles-edit.php?profile=$row[0]'>".$l['Tooltip']['EditProfile']."</a>
+                                        <a class='toolTip' href='mng-rad-profiles-edit.php?profile=" . urlencode($row[0]) . "'>".$l['Tooltip']['EditProfile']."</a>
                                         <br/>\"
-				>$row[0]</a></td>
-			<td>$row[1]</td>
+				>" . htmlspecialchars($row[0], ENT_QUOTES) . "</a></td>
+			<td>" . htmlspecialchars($row[1], ENT_QUOTES) . "</td>
 		</tr>";
 	}
 

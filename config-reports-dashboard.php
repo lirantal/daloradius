@@ -68,7 +68,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="dashboardsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="dashboardsettings" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 

@@ -41,9 +41,9 @@ if (isset($_GET['retHotspotGeneralStat'])) {
 
 	printqn("
 		var divContainer = document.getElementById('{$divContainer}');
-		divContainer.innerHTML = '<span style=\"font-weight:normal;\">Total Uploads:</span> $sumUpload <br/> ".
-					" <span style=\"font-weight:normal;\">Total Downloads:</span> $sumDownload <br/> ".
-					" <span style=\"font-weight:normal;\">Total Hits:</span> $sumHits'
+		divContainer.innerHTML = '<span style=\"font-weight:normal;\">Total Uploads:</span> " . htmlspecialchars($sumUpload, ENT_QUOTES) . " <br/> ".
+					" <span style=\"font-weight:normal;\">Total Downloads:</span> " . htmlspecialchars($sumDownload, ENT_QUOTES) . " <br/> ".
+					" <span style=\"font-weight:normal;\">Total Hits:</span> " . htmlspecialchars($sumHits, ENT_QUOTES) . "'
 	");
 
 }

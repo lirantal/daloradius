@@ -44,10 +44,11 @@
 		foreach ($operator_username as $variable=>$value) {
 			if (trim($value) != "") {
 				
-				$username = $dbSocket->escapeSimple($value);
+				//$username = $dbSocket->escapeSimple($value);
+				$username = $value;
 				$allOperators .= $username . ", ";
 
-				$sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." WHERE username='$username'";
+				$sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." WHERE username='".$dbSocket->escapeSimple($username)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
@@ -57,16 +58,16 @@
 					$new_operator_id = $row['id'];
 
 					// delete operator from database
-					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." where Username='$username'";
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." where Username='".$dbSocket->escapeSimple($username)."'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 	
 					// delete all operators' acl entries
-					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL']." where operator_id='$new_operator_id'";
+					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL']." where operator_id='$dbSocket->query($new_operator_id)'";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 					
-					$successMsg = "Deleted operator(s): <b> $allOperators </b>";
+					$successMsg = "Deleted operator(s): <b>" . htmlspecialchars($allOperators, ENT_QUOTES) . "</b>";
 					$logAction .= "Successfully deleted operator(s) [$allOperators] on page: ";
 					
 				}
@@ -118,7 +119,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 
         <fieldset>
@@ -128,7 +129,7 @@
 
                 <label for='username' class='form'>Operator Username</label>
                 <input name='operator_username' type='text' id='username'
-                        value='<?php if (isset($username)) echo $username ?>' tabindex=100 />
+                        value='<?php if (isset($username)) echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
                 <br/>
 
                 <br/><br/>

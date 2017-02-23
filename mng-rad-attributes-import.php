@@ -117,6 +117,16 @@
 
 				$myVendor = "'".$vendor."'";
 
+                //escape SQL
+                $myType = $dbSocket->escapeSimple($myType);
+                $myAttribute = $dbSocket->escapeSimple($myAttribute);
+                $myVendor = $dbSocket->escapeSimple($myVendor);
+
+                //escape SQL
+                $myType = $dbSocket->escapeSimple($myType);
+                $myAttribute = $dbSocket->escapeSimple($myAttribute);
+                $myVendor = $dbSocket->escapeSimple($myVendor);
+
 		                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." (Id, Type, Attribute, Vendor)".
 		                                " VALUES (0, $myType, $myAttribute, $myVendor)";
 		                $res = $dbSocket->query($sql);
@@ -130,7 +140,7 @@
  	               $failureMsg = "The vendor name specified already exist in the database";
                        $logAction .= "Failed adding duplicate vendor dictionary for vendor [$myVendor] on page: ";
 		} else {
-        	       $successMsg = "Successfully added vendor dictionary <b>$myVendor</b> to database";
+        	       $successMsg = "Successfully added vendor dictionary <b>" . htmlspecialchars($myVendor, ENT_QUOTES) . "</b> to database";
 	               $logAction .= "Successfully added vendor dictionary [$myVendor] to database on page: ";
 		}
 
@@ -173,7 +183,7 @@
 				include_once('include/management/actionMessages.php');
 			?>
 
-			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -184,7 +194,7 @@
 
 		<li class='fieldset'>
 		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
-		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
+		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo htmlspecialchars($vendor, ENT_QUOTES) ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
 
 		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>

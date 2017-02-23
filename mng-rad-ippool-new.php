@@ -57,14 +57,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-				$successMsg = "Added to database new IP Address: <b>$ipaddress</b> for Pool Name: <b>$poolname</b>";
+				$successMsg = "Added to database new IP Address: <b>" . htmlspecialchars($ipaddress, ENT_QUOTES) . "</b> for Pool Name: <b>" . htmlspecialchars($poolname, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
 			} else {
 				$failureMsg = "No IP Address or Pool Name was entered, it is required that you specify both";
 				$logAction .= "Failed adding (missing ipaddress/poolname) IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
 			}
 		} else {
-			$failureMsg = "The IP Address <b>$ipaddress</b> for Pool Name <b>$poolname</b> already exists in the database";
+			$failureMsg = "The IP Address <b>" . htmlspecialchars($ipaddress, ENT_QUOTES) . "</b> for Pool Name <b>" . htmlspecialchars($poolname, ENT_QUOTES) . "</b> already exists in the database";
 			$logAction .= "Failed adding already existing IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
 		}
 
@@ -113,7 +113,7 @@
 	include_once('include/management/actionMessages.php');
 ?>
 
-		<form name="newippool" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newippool" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 	<div class="tabbertab" title="<?php echo $l['title']['IPPoolInfo']; ?>">
@@ -123,12 +123,12 @@
 		<br/>
 
 			<label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
-			<input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
+			<input name='poolname' type='text' id='poolname' value='<?php echo htmlspecialchars($poolname, ENT_QUOTES) ?>' tabindex=100 />
 			<br />
 
 
 			<label for='ipaddress' class='form'><?php echo $l['all']['IPAddress'] ?></label>
-			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
+			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo htmlspecialchars($ipaddress, ENT_QUOTES) ?>' tabindex=101 />
 			<br />
 
 			<br/><br/>

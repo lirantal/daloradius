@@ -79,14 +79,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-				$successMsg = "Added new NAS to database: <b> $nashost </b>  ";
+				$successMsg = "Added new NAS to database: <b>" . htmlspecialchars($nashost, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added nas [$nashost] on page: ";
 			} else {
 				$failureMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
 				$logAction .= "Failed adding (missing nas/secret) nas [$nashost] on page: ";
 			}
 		} else {
-			$failureMsg = "The NAS IP/Host $nashost already exists in the database";	
+			$failureMsg = "The NAS IP/Host " . htmlspecialchars($nashost, ENT_QUOTES) . " already exists in the database";	
 			$logAction .= "Failed adding already existing nas [$nashost] on page: ";
 		}
 
@@ -135,7 +135,7 @@
 		?>
 				
 
-                <form name="newnas" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                <form name="newnas" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['NASInfo']; ?>">

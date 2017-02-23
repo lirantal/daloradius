@@ -88,6 +88,9 @@
         include 'include/management/pages_common.php';
         include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+        $enddate = $dbSocket->escapeSimple($enddate);
+        $startdate = $dbSocket->escapeSimple($startdate);
+
         //orig: used as maethod to get total rows - this is required for the pages_numbering.php page
         $sql = "SELECT CONCAT(MONTH(CreationDate),'-',YEAR(Creationdate)) AS Month, ".
                         "COUNT(*) As Users FROM ".
@@ -142,8 +145,8 @@
 
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
 
-                $Month = $row['Month'];
-                $Users = $row['Users'];
+                $Month = htmlspecialchars($row['Month'], ENT_QUOTES);
+                $Users = htmlspecialchars($row['Users'], ENT_QUOTES);
 
                 echo "<tr>
                                 <td> $Month </td>
@@ -176,7 +179,7 @@
 
 <?php
         echo "<center>";
-        echo "<img src=\"library/graphs-reports-new-users.php?startdate=$startdate&enddate=$enddate\" />";
+        echo "<img src=\"library/graphs-reports-new-users.php?startdate=" . htmlspecialchars($startdate, ENT_QUOTES) . "&enddate=" . htmlspecialchars($enddate, ENT_QUOTES) . "\" />";
         echo "</center>";
 ?>
 

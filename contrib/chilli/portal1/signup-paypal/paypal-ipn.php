@@ -69,7 +69,7 @@
 
 			// firstly, we add the user to the radcheck table and authorize him
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-				" VALUES (0,'$pin','Auth-Type', ':=', 'Accept')";
+				" VALUES (0,'" . $dbSocket->escapeSimple($pin) . "','Auth-Type', ':=', 'Accept')";
 			$res = $dbSocket->query($sql);
 
 
@@ -89,7 +89,7 @@
 			if ($planGroup != "") {
 
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-					" VALUES ('$pin','planGroup','0')";
+					" VALUES ('" . $dbSocket->escapeSimple($pin) . "','planGroup','0')";
 				$res = $dbSocket->query($sql);
 			
 			} else {
@@ -101,7 +101,7 @@
 						// starts running, even if he disconnects, his time is running down, until it's 0 and then he used it all up
 
 						$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-							" VALUES (0,'$pin','Access-Period', ':=', '$planTimeBank')";
+							" VALUES (0,'" . $dbSocket->escapeSimple($pin) . "','Access-Period', ':=', '" . $dbSocket->escapeSimple($planTimeBank) . "')";
 						$res = $dbSocket->query($sql);
 
 						break;
@@ -116,25 +116,25 @@
 
 								case "Never":
 									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-All-Session', ':=', '$planTimeBank')";
+										" VALUES (0,'" . $dbSocket->escapeSimple($pin) . "','Max-All-Session', ':=', '" . $dbSocket->escapeSimple($planTimeBank) . "')";
 									$res = $dbSocket->query($sql);
 									break;
 
 								case "Monthly":
 									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-Monthly-Session', ':=', '$planTimeBank')";
+										" VALUES (0,'" . $dbSocket->escapeSimple($pin) . "','Max-Monthly-Session', ':=', '" . $dbSocket->escapeSimple($planTimeBank) . "')";
 									$res = $dbSocket->query($sql);
 									break;
 
 								case "Weekly":
 									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-Weekly-Session', ':=', '$planTimeBank')";
+										" VALUES (0,'" . $dbSocket->escapeSimple($pin) . "','Max-Weekly-Session', ':=', '" . $dbSocket->escapeSimple($planTimeBank) . "')";
 									$res = $dbSocket->query($sql);
 									break;
 
 								case "Daily":
 									$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,UserName,Attribute,op,Value) ".
-										" VALUES (0,'$pin','Max-Daily-Session', ':=', '$planTimeBank')";
+										" VALUES (0,'" . $dbSocket->escapeSimple($pin) . "','Max-Daily-Session', ':=', '" . $dbSocket->escapeSimple($planTimeBank) . "')";
 									$res = $dbSocket->query($sql);
 									break;
 							}

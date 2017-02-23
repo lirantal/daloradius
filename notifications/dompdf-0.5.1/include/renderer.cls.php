@@ -73,7 +73,7 @@ class Renderer extends Abstract_Renderer {
     global $_dompdf_debug;
 
     if ( $_dompdf_debug ) {
-      echo $frame;
+      echo htmlspecialchars($frame, ENT_QUOTES);
       flush();
     }                      
 

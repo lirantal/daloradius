@@ -170,7 +170,7 @@
 	
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['HotSpot']."</a>
 		</th>
 
@@ -221,12 +221,12 @@
 		
 		
 		//$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".$row[0]."');";
-		$content =  '<a class="toolTip" href="mng-hs-edit.php?name='.$row['hotspotname'].'">'.$l['Tooltip']['HotspotEdit'].'</a>';
-		$content .= '<br/><br/><b>'.$l['all']['NASMAC'].':</b> '.$row['mac'];
+		$content =  '<a class="toolTip" href="mng-hs-edit.php?name=' . urlencode($row['hotspotname']) . '">'.$l['Tooltip']['HotspotEdit'].'</a>';
+		$content .= '<br/><br/><b>'.$l['all']['NASMAC'].':</b> ' . htmlspecialchars($row['mac'], ENT_QUOTES);
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
-									'value' => '<b>'.$row['hotspotname'].'</b>',
+									'value' => '<b>' . htmlspecialchars($row['hotspotname'], ENT_QUOTES) . '</b>',
 									'divId' => '',
 		
 							));
@@ -237,22 +237,22 @@
 					$str
 				</td>
 			
-				<td>".
-					$row['firmware']."
-					<br/>".
-					$row['firmware_revision']."
+				<td>" .
+					htmlspecialchars($row['firmware'], ENT_QUOTES) . "
+					<br/>" .
+					htmlspecialchars($row['firmware_revision'], ENT_QUOTES) . "
 				</td>
 			";
 					
 					
-		$content = '<b>'.$l['all']['WanIface'].":</b> ".$row['wan_iface'].
+		$content = '<b>'.$l['all']['WanIface'].":</b> " . htmlspecialchars($row['wan_iface'], ENT_QUOTES) .
 					"<br/>".
-					'<b>'.$l['all']['WanMAC'].":</b> ".$row['wan_mac'].
+					'<b>'.$l['all']['WanMAC'].":</b> " . htmlspecialchars($row['wan_mac'], ENT_QUOTES) . 
 					"<br/>".
-					'<b>'.$l['all']['WanIP'].":</b> ".$row['wan_ip'].
+					'<b>'.$l['all']['WanIP'].":</b> " . htmlspecialchars($row['wan_ip'], ENT_QUOTES) . 
 					"<br/>".
-					'<b>'.$l['all']['WanGateway'].":</b> ".$row['wan_ip'];
-		$value = '<b>'.$l['all']['WanIP'].":</b> ".$row['wan_ip'];
+					'<b>'.$l['all']['WanGateway'].":</b> " . htmlspecialchars($row['wan_ip'], ENT_QUOTES);
+		$value = '<b>'.$l['all']['WanIP'].":</b> " . htmlspecialchars($row['wan_ip'], ENT_QUOTES);
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -265,12 +265,12 @@
 				
 		
 		
-		$content = $l['all']['LanIface'].":</b> ".$row['lan_iface'].
+		$content = $l['all']['LanIface'].":</b> " . htmlspecialchars($row['lan_iface'], ENT_QUOTES) . 
 						"<br/><b>".
-					$l['all']['LanMAC'].":</b> ".$row['lan_mac'].
+					$l['all']['LanMAC'].":</b> " . htmlspecialchars($row['lan_mac'], ENT_QUOTES) . 
 						"<br/><b>".
-					$l['all']['LanIP'].":</b> ".$row['lan_ip'];
-		$value = '<b>'.$l['all']['LanIP'].":</b> ".$row['lan_ip'];
+					$l['all']['LanIP'].":</b> " . htmlspecialchars($row['lan_ip'], ENT_QUOTES);
+		$value = '<b>'.$l['all']['LanIP'].":</b> " . htmlspecialchars($row['lan_ip'], ENT_QUOTES);
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -283,20 +283,20 @@
 				
 		
 
-		$content = $l['all']['WifiIface'].":</b> ".$row['wifi_iface'].
+		$content = $l['all']['WifiIface'].":</b> " . htmlspecialchars($row['wifi_iface'], ENT_QUOTES) .
 						"<br/><b>".
-					$l['all']['WifiMAC'].":</b> ".$row['wifi_mac'].
+					$l['all']['WifiMAC'].":</b> " . htmlspecialchars($row['wifi_mac'], ENT_QUOTES) . 
 						"<br/><b>".
-					$l['all']['WifiIP'].":</b> ".$row['wifi_ip'].
+					$l['all']['WifiIP'].":</b> " . htmlspecialchars($row['wifi_ip'], ENT_QUOTES) . 
 						"<br/><b>".
-					$l['all']['WifiSSID'].":</b> ".$row['wifi_ssid'].
+					$l['all']['WifiSSID'].":</b> " . htmlspecialchars($row['wifi_ssid'], ENT_QUOTES) . 
 						"<br/><b>".
-					$l['all']['WifiKey'].":</b> ".$row['wifi_key'].
+					$l['all']['WifiKey'].":</b> " . htmlspecialchars($row['wifi_key'], ENT_QUOTES) .
 						"<br/><b>".
-					$l['all']['WifiChannel'].":</b> ".$row['wifi_channel'];
-		$value = '<b>'.$l['all']['WifiSSID'].":</b> ".$row['wifi_ssid'].
+					$l['all']['WifiChannel'].":</b> " . htmlspecialchars($row['wifi_channel'], ENT_QUOTES);
+		$value = '<b>'.$l['all']['WifiSSID'].":</b> " . htmlspecialchars($row['wifi_ssid'], ENT_QUOTES) .
 					"<br/><b>".
-					$l['all']['WifiKey'].":</b> ".$row['wifi_key'];
+					$l['all']['WifiKey'].":</b> " . htmlspecialchars($row['wifi_key'], ENT_QUOTES);
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -332,28 +332,28 @@
 		}
 			
 		echo "
-				<td>".
-					time2str($row['uptime'])."
+				<td>" .
+					htmlspecialchars(time2str($row['uptime']), ENT_QUOTES) . "
 				</td>
 
-				<td>".
-					$row['cpu']."
+				<td>" .
+					htmlspecialchars($row['cpu'], ENT_QUOTES) . "
 				</td>
 				
 				<td>".
-					$row['memfree']."
+					htmlspecialchars($row['memfree'], ENT_QUOTES) . "
 				</td>
 
 				<td>".
-					toxbyte($row['wan_bup'])."
+					htmlspecialchars(toxbyte($row['wan_bup']), ENT_QUOTES) . "
 				</td>
 
 				<td>".
-					toxbyte($row['wan_bdown'])."
+					htmlspecialchars(toxbyte($row['wan_bdown']), ENT_QUOTES) . "
 				</td>
 
-				<td> <font color='$delayColor'> ".
-					$row['time']."
+				<td> <font color='" . htmlspecialchars($delayColor, ENT_QUOTES) . "'> " .
+					htmlspecialchars($row['time'], ENT_QUOTES) . "
 					</font>
 				</td>
 				

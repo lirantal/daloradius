@@ -58,7 +58,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-				$successMsg = "Updated database with new IP Address: <b>$ipaddress</b> for Pool Name: <b>$poolname</b>";
+				$successMsg = "Updated database with new IP Address: <b>" . htmlspecialchars($ipaddress, ENT_QUOTES) . "</b> for Pool Name: <b>" . htmlspecialchars($poolname, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully updated IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
 			} else {
 				$failureMsg = "IP Address left unchanged";
@@ -67,7 +67,7 @@
 				//$logAction .= "Failed updating (missing ipaddress/poolname) IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
 			}
 		} else {
-			$failureMsg = "The IP Address <b>$ipaddress</b> for Pool Name <b>$poolname</b> doesn't exist in database";
+			$failureMsg = "The IP Address <b>" . htmlspecialchars($ipaddress, ENT_QUOTES) . "</b> for Pool Name <b>" . htmlspecialchars($poolname, ENT_QUOTES) . "</b> doesn't exist in database";
 			$logAction .= "Failed updating non-existing IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
 		}
 
@@ -115,7 +115,7 @@
 	include_once('include/management/actionMessages.php');
 ?>
 
-		<form name="newippool" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newippool" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 <div class="tabber">
 	<div class="tabbertab" title="<?php echo $l['title']['IPPoolInfo']; ?>">
 	<fieldset>
@@ -124,16 +124,16 @@
 		<br/>
 
 			<label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
-			<input name='poolname' type='hidden' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
-			<input disabled name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
+			<input name='poolname' type='hidden' id='poolname' value='<?php echo htmlspecialchars($poolname, ENT_QUOTES) ?>' tabindex=100 />
+			<input disabled name='poolname' type='text' id='poolname' value='<?php echo htmlspecialchars($poolname, ENT_QUOTES) ?>' tabindex=100 />
 			<br />
 
 			<label for='ipaddressold' class='form'><?php echo $l['all']['IPAddress'] ?></label>
-			<input name='ipaddressold' type='text' id='ipaddressold' value='<?php echo $ipaddressold ?>' tabindex=101 />
+			<input name='ipaddressold' type='text' id='ipaddressold' value='<?php echo htmlspecialchars($ipaddressold, ENT_QUOTES) ?>' tabindex=101 />
 			<br />
 
 			<label for='ipaddress' class='form'>New <?php echo $l['all']['IPAddress'] ?></label>
-			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=102 />
+			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo htmlspecialchars($ipaddress, ENT_QUOTES) ?>' tabindex=102 />
 			<br />
 
 			<br/><br/>

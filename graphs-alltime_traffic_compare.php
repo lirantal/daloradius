@@ -43,7 +43,7 @@
         <br/>
 <?php		
         echo "<center>";
-        echo "<img src=\"library/graphs-alltime-traffic-download.php?type=$type&size=$size\" />";
+        echo "<img src=\"library/graphs-alltime-traffic-download.php?type=" . htmlspecialchars($type, ENT_QUOTES) . "&size=" . htmlspecialchars($size, ENT_QUOTES) . "\" />";
 		echo "</center>";
 ?>
 	</div>
@@ -52,7 +52,7 @@
 
 <?php
 		echo "<center>";
-        echo "<img src=\"library/graphs-alltime-traffic-upload.php?type=$type&size=$size\" />";
+        echo "<img src=\"library/graphs-alltime-traffic-upload.php?type=" . htmlspecialchars($type, ENT_QUOTES) . "&size=" . htmlspecialchars($size, ENT_QUOTES) . "\" />";
         echo "</center>";		
 ?>
 	</div>

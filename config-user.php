@@ -72,7 +72,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="usersettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="usersettings" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 

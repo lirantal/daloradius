@@ -113,7 +113,7 @@
 <br/>
 
 
-	<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form name="newuser" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 Select your plan:
 <br/>
@@ -124,7 +124,7 @@ Select your plan:
 		$sql = "SELECT planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planType='PayPal'";
 		$res = $dbSocket->query($sql);
 		while ($row = $res->fetchRow()) {
-			echo "<option value=\"$row[0]\">$row[1] - Cost $row[2] $row[4] </option>";
+			echo "<option value=\"" . htmlspecialchars($row[0], ENT_QUOTES) . "\">" . htmlspecialchars($row[1], ENT_QUOTES) . " - Cost " . htmlspecialchars($row[2], ENT_QUOTES) . " " . htmlspecialchars($row[4], ENT_QUOTES) . " </option>";
 		}
 
 	include('library/closedb.php');
@@ -139,19 +139,19 @@ Select your plan:
 <br/><br/>
 
 	First Name <br/>
-    <input name="firstName" value="<?php if (isset($firstName)) echo $firstName ?>" />
+    <input name="firstName" value="<?php if (isset($firstName)) echo htmlspecialchars($firstName, ENT_QUOTES) ?>" />
 	<br/>
 	Last Name <br/>
-    <input name="lastName" value="<?php if (isset($lastName)) echo $lastName ?>" />
+    <input name="lastName" value="<?php if (isset($lastName)) echo htmlspecialchars($lastName, ENT_QUOTES) ?>" />
 	<br/>
 	Address <br/>
-    <input name="address" value="<?php if (isset($address)) echo $address ?>" />
+    <input name="address" value="<?php if (isset($address)) echo htmlspecialchars($address, ENT_QUOTES) ?>" />
 	<br/>
 	City <br/>
-    <input name="city" value="<?php if (isset($city)) echo $city ?>" />
+    <input name="city" value="<?php if (isset($city)) echo htmlspecialchars($city, ENT_QUOTES) ?>" />
 	<br/>
 	State <br/>
-    <input name="state" value="<?php if (isset($state)) echo $state ?>" />
+    <input name="state" value="<?php if (isset($state)) echo htmlspecialchars($state, ENT_QUOTES) ?>" />
 
 	<br/><br/>
     <input type="submit" value="submit" name="submit">
@@ -183,7 +183,7 @@ if ( (isset($stage2)) && ($stage2 == true) ) {
 
 		<br/>
 			Thank you... this is your user PIN: <b>');
-	echo $userPIN;
+	echo htmlspecialchars($userPIN, ENT_QUOTES);
 
 	echo'</b>
 		<br/>
@@ -200,22 +200,22 @@ if ( (isset($stage2)) && ($stage2 == true) ) {
 			<input type="hidden" name="cmd" value="_xclick" />
 			<input type="hidden" name="business" value="liran_1217096095_biz@enginx.com" />
 	
-			<input type="hidden" name="return" value="http://84.95.241.193/paypal/success.php?txnId='.$txnId.'" />
+			<input type="hidden" name="return" value="http://84.95.241.193/paypal/success.php?txnId=' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
 			<input type="hidden" name="cancel_return" value="http://84.95.241.193/paypal/cancelled.php" />
 			<input type="hidden" name="notify_url" value="http://84.95.241.193/paypal/paypal-ipn.php" />
 		
-			<input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
-			<input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
+			<input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo htmlspecialchars($planCost, ENT_QUOTES); echo '" />
+			<input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo htmlspecialchars($planName, ENT_QUOTES); echo '" />
 			<input type="hidden" name="quantity" value="1" />
-			<input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-			<input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
+			<input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo htmlspecialchars($planTax, ENT_QUOTES); echo '" />
+			<input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo htmlspecialchars($planId, ENT_QUOTES); echo '" />
 	
 			<input type="hidden" name="no_note" value="1">
-			<input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
+			<input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo htmlspecialchars($planCurrency, ENT_QUOTES); echo '">
 			<input type="hidden" name="lc" value="US">
 
 			<input type="hidden" name="on0" value="Transaction ID" />
-			<input type="hidden" name="os0" value="'.$txnId.'" />
+			<input type="hidden" name="os0" value="' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
 
 			<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit" 
 			alt="Make payments with PayPal - its fast, free and secure!">

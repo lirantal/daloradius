@@ -114,7 +114,7 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 							</td>
 							<td>
 								<font size='2'>
-								$user
+								" . htmlspecialchars($user, ENT_QUOTES) . "
 								</font>
 							</td>
 						</tr>
@@ -124,7 +124,7 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 							</td>
 							<td>
 								<font size='2'>
-								$pass
+								" . htmlspecialchars($pass, ENT_QUOTES) . "
 								</font>
 							</td>
 						</tr>
@@ -134,7 +134,7 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 							</td>
 							<td>
 								<font size='2'>
-								$ticketTime
+								" . htmlspecialchars($ticketTime, ENT_QUOTES) . "
 								</font>
 							</td>
 						</tr>
@@ -144,14 +144,14 @@ function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
 							</td>
 							<td>
 								<font size='2'>
-								$ticketCost
+								" . htmlspecialchars($ticketCost, ENT_QUOTES) . "
 								</font>
 							</td>
 						</tr>
 						<tr>
 							<td colspan='2' valign='top'>
 								<font size='1'>
-								$ticketInformation
+								" . htmlspecialchars($ticketInformation, ENT_QUOTES) . "
 								</font>
 							</td>
 						</tr>

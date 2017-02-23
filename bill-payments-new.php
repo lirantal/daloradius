@@ -44,7 +44,7 @@
 		
 		include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE invoice_id=".$dbSocket->escapeSimple($payment_invoice_id)." AND amount=".$dbSocket->escapeSimple($payment_amount)." AND date='".$dbSocket->escapeSimple($payment_date)."'";
+		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE invoice_id=\"".$dbSocket->escapeSimple($payment_invoice_id)."\" AND amount=".$dbSocket->escapeSimple($payment_amount)." AND date='".$dbSocket->escapeSimple($payment_date)."'";
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
@@ -52,13 +52,13 @@
 			if (trim($payment_invoice_id) != "" and trim($payment_amount)!="" and trim($payment_date)!="") {
 
 				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+				$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 				
 				// insert apyment type info
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
 					" (id, invoice_id, amount,date,type_id, notes, ".
 					"  creationdate, creationby, updatedate, updateby) ".
-					" VALUES (0, ".$dbSocket->escapeSimple($payment_invoice_id).", ".
+					" VALUES (0, \"".$dbSocket->escapeSimple($payment_invoice_id)."\", ".
 					"".$dbSocket->escapeSimple($payment_amount).", ".
 					"'".$dbSocket->escapeSimple($payment_date)."', ".
 					"'".$dbSocket->escapeSimple($payment_type_id)."', ".
@@ -67,8 +67,8 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new payment for invoice: <b>$payment_invoice_id</b> <br/>";
-				$successMsg .= "<a href='bill-invoice-edit.php?invoice_id=$payment_invoice_id'> Show Invoice $payment_invoice_id </a>";
+				$successMsg = "Added to database new payment for invoice: <b>" . htmlspecialchars($payment_invoice_id, ENT_QUOTES) . "</b> <br/>";
+				$successMsg .= "<a href='bill-invoice-edit.php?invoice_id=" . urlencode($payment_invoice_id) . "'> Show Invoice " . htmlspecialchars($payment_invoice_id, ENT_QUOTES) . " </a>";
 				$logAction .= "Successfully added new payment for invoice [$payment_invoice_id] on page: ";
 				
 				
@@ -77,7 +77,7 @@
 				$logAction .= "Failed adding new payment for invoice [$payment_invoice_id] on page: ";	
 			}
 		} else { 
-			$failureMsg = "You have tried to add a paymente that already exist in the database for the invoice: $payment_invoice_id";
+			$failureMsg = "You have tried to add a paymente that already exist in the database for the invoice: " . htmlspecialchars($payment_invoice_id, ENT_QUOTES);
 			$logAction .= "Failed adding new payment already in database for invoice [$payment_invoice_id] on page: ";		
 		}
 	
@@ -135,7 +135,7 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -150,7 +150,7 @@
 
 		<li class='fieldset'>
 		<label for='name' class='form'><?php echo $l['all']['PaymentInvoiceID'] ?></label>
-		<input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 />
+		<input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo htmlspecialchars($invoice_id, ENT_QUOTES) ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentInvoiceTooltip')" /> 
 		
 		<div id='paymentInvoiceTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -173,8 +173,8 @@
    		</li>
 
 		<label for='payment_date' class='form'><?php echo $l['all']['PaymentDate']?></label>
-   		<input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
-   		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
+   		<input value='<?php echo htmlspecialchars($payment_date, ENT_QUOTES) ?>' id='payment_date' name='payment_date'  tabindex=108 />
+   		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?= date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
    		<li class='fieldset'>
@@ -226,19 +226,19 @@
 
         <br/>
         <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
-        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <input disabled value='<?php if (isset($creationdate)) echo htmlspecialchars($creationdate, ENT_QUOTES) ?>' tabindex=313 />
         <br/>
 
         <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
-        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <input disabled value='<?php if (isset($creationby)) echo htmlspecialchars($creationby, ENT_QUOTES) ?>' tabindex=314 />
         <br/>
 
         <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
-        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <input disabled value='<?php if (isset($updatedate)) echo htmlspecialchars($updatedate, ENT_QUOTES) ?>' tabindex=315 />
         <br/>
 
         <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
-        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <input disabled value='<?php if (isset($updateby)) echo htmlspecialchars($updateby, ENT_QUOTES) ?>' tabindex=316 />
         <br/>
 
 

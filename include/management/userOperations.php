@@ -110,7 +110,7 @@ function userEnable($username, $divContainer) {
 	
 	printqn("
     	var divContainer = document.getElementById('{$divContainer}');
-        divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> are now enabled.</div>';
+        divContainer.innerHTML += '<div class=\"success\">User(s) <b>" . htmlspecialchars($users, ENT_QUOTES) . "</b> are now enabled.</div>';
 	");
 
 
@@ -132,7 +132,7 @@ function checkDisabled($username) {
 	if ($numrows = $res->numRows() >= 1) {
 	
 	        echo "<div class='failure'>
-	              	Please note, the user <b>$username</b> is currently disabled.<br/>
+	              	Please note, the user <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b> is currently disabled.<br/>
 					To enable the user, remove the user from the daloRADIUS-Disabled-Users profile <br/>
 	              </div>";
 
@@ -325,9 +325,9 @@ function userRefillSessionTraffic($username, $divContainer) {
                         " creationdate,creationby".
                         ")".
                         " VALUES ".
-                        " (0,'$user','".$row['planName']."','".$row['planTrafficRefillCost']."','Refill Session Traffic','daloRADIUS Web Interface','Refill Session Traffic','".
-                                $row['paymentmethod']."','".$row['cash']."','".$row['creditcardname']."','".
-                                $row['creditcardnumber']."','".$row['creditcardverification']."','".$row['creditcardtype']."','".$row['creditcardexp']."',".
+                        " (0,'$user','" . htmlspecialchars($row['planName'], ENT_QUOTES) . "','" . htmlspecialchars($row['planTrafficRefillCost'], ENT_QUOTES) . "','Refill Session Traffic','daloRADIUS Web Interface','Refill Session Traffic','".
+                                htmlspecialchars($row['paymentmethod'], ENT_QUOTES)."','".htmlspecialchars($row['cash'], ENT_QUOTES)."','".htmlspecialchars($row['creditcardname'], ENT_QUOTES)."','".
+                                htmlspecialchars($row['creditcardnumber'], ENT_QUOTES)."','".htmlspecialchars($row['creditcardverification'], ENT_QUOTES)."','".htmlspecialchars($row['creditcardtype'], ENT_QUOTES)."','".htmlspecialchars($row['creditcardexp'], ENT_QUOTES)."',".
                                 "'$currDate', '$currBy'".
                         ")";
                 $res = $dbSocket->query($sql);
@@ -364,8 +364,8 @@ function userRefillSessionTraffic($username, $divContainer) {
 	
 	$users = substr($allUsers, 0, -2);
 	printqn("
-		var divContainer = document.getElementById('{$divContainer}');
-	        divContainer.innerHTML += '<div class=\"success\">User(s) <b>$users</b> session traffic has been successfully refilled and billed.</div>';
+		var divContainer = document.getElementById('{" . htmlspecialchars($divContainer, ENT_QUOTES) . "}');
+	        divContainer.innerHTML += '<div class=\"success\">User(s) <b>" . htmlspecialchars($users, ENT_QUOTES) . "</b> session traffic has been successfully refilled and billed.</div>';
 	");
 
         include '../../library/closedb.php';

@@ -79,10 +79,13 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
-	$username = $dbSocket->escapeSimple($username);
-	$startdate = $dbSocket->escapeSimple($startdate);
-	$enddate = $dbSocket->escapeSimple($enddate);
-	$ratename = $dbSocket->escapeSimple($ratename);
+	//$username = $dbSocket->escapeSimple($username);
+	//$startdate = $dbSocket->escapeSimple($startdate);
+	//$enddate = $dbSocket->escapeSimple($enddate);
+	//$ratename = $dbSocket->escapeSimple($ratename);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 
         include_once('include/management/userBilling.php');
         userBillingRatesSummary($username, $startdate, $enddate, $ratename, 1);				// draw the billing rates summary table
@@ -90,7 +93,7 @@
         include 'library/opendb.php';
 
 	// get rate type
-	$sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename'";
+	$sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '".$dbSocket->escapeSimple($ratename)."'";
 	$res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0)
@@ -132,7 +135,7 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".
 		$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateCost ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename')";
+		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '".$dbSocket->escapeSimple($startdate)."') and (AcctStartTime <= '".$dbSocket->escapeSimple($enddate)."') and (UserName = '".$dbSocket->escapeSimple($username)."') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '".$dbSocket->escapeSimple($ratename)."')";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 
@@ -140,7 +143,7 @@
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".
 		$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateCost ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename')".
+		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '".$dbSocket->escapeSimple($startdate)."') and (AcctStartTime <= '".$dbSocket->escapeSimple($enddate)."') and (UserName = '".$dbSocket->escapeSimple($username)."') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '".$dbSocket->escapeSimple($ratename)."')".
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -184,22 +187,22 @@
         echo "<thread> <tr>
 		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&ratename=" . urlencode($ratename) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=username&orderType=" . urlencode($orderTypeNextPage). "\">
 		".$l['all']['Username']."</a>
 		</th>
 		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&ratename=" . urlencode($ratename) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=nasipaddress&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['NASIPAddress']."</a>
 		</th>
 		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&ratename=" . urlencode($ratename) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctstarttime&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['LastLoginTime']."</a>
 		</th>
 		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&ratename=" . urlencode($ratename) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "&orderBy=acctsessiontime&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'>
@@ -220,11 +223,11 @@
 		$sumSession += $sessionTime;
 
 		echo "<tr>
-				<td> $row[0] </td>
-				<td> $row[1] </td>
-				<td> $row[2] </td>
-				<td> ".time2str($row[3])." </td>
-				<td> ".number_format($billed,2)." </td>
+				<td>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars($row[1], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars(time2str($row[3]), ENT_QUOTES) . "</td>
+				<td>" . htmlspecialchars(number_format($billed,2), ENT_QUOTES) . "</td>
 		</tr>";
 
 	}

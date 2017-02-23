@@ -80,6 +80,8 @@
 		$billaction = $dbSocket->escapeSimple($billaction);
 		$startdate = $dbSocket->escapeSimple($startdate);
 		$enddate = $dbSocket->escapeSimple($enddate);
+        $orderBy = $dbSocket->escapeSimple($orderBy);
+        $orderType = $dbSocket->escapeSimple($orderType);
 
 //	        include_once('include/management/userBilling.php');
 //	        userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, 1);
@@ -112,13 +114,11 @@
 		// sanitizing the array passed to us in the get request
 		$select = $dbSocket->escapeSimple($select);
 
-
 		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY']." WHERE ".
 			" (username LIKE '$username') AND ".
 			" (billAction LIKE '$billaction') ";
 		$res = $dbSocket->query($sql);
 		$numrows = $res->numRows();
-
 
 		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY']." WHERE ".
 			" (username LIKE '$username') AND ".
@@ -224,7 +224,7 @@
 			$title = $l['all']['UpdateBy'];
 			break;
 		default:
-			$title = $value;
+			$title = htmlspecialchars($value, ENT_QUOTES);
 			break;
 		}
 
@@ -237,7 +237,7 @@
 	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
 		echo "<tr>";
 		foreach ($sqlfields as $value) {
-			echo "<td> " . $row[$value] . "</td>";
+			echo "<td> " . htmlspecialchars($row[$value], ENT_QUOTES) . "</td>";
 		}
 		echo "</tr>";
 	}

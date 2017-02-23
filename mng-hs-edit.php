@@ -59,7 +59,7 @@
 		if (trim($name) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET ".
 			" mac='".$dbSocket->escapeSimple($macaddress)."', ".
@@ -83,7 +83,7 @@
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
 			
-			$successMsg = "Updated attributes for: <b> $name </b>";
+			$successMsg = "Updated attributes for: <b>" . htmlspecialchars($name, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully updated attributes for hotspot [$name] on page: ";
 			
 		} else {
@@ -154,7 +154,7 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsedit.php'] ?>
-		:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($name)) { echo htmlspecialchars($name, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mnghsedit'] ?>
@@ -164,7 +164,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -180,12 +180,12 @@
 
 			<li class='fieldset'>
 			<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
-			<input disabled name='name' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
+			<input disabled name='name' type='text' id='name' value='<?php echo htmlspecialchars($name, ENT_QUOTES) ?>' tabindex=100 />
 			</li>
 
 			<li class='fieldset'>
 			<label for='macaddress' class='form'><?php echo $l['all']['MACAddress'] ?></label>
-			<input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
+			<input name='macaddress' type='text' id='macaddress' value='<?php echo htmlspecialchars($macaddress, ENT_QUOTES) ?>' tabindex=101 />
 			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotMacaddressTooltip')" /> 
 			
 			<div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -196,7 +196,7 @@
 
 			<li class='fieldset'>
 			<label for='geocode' class='form'><?php echo $l['all']['Geocode'] ?></label>
-			<input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
+			<input name='geocode' type='text' id='geocode' value='<?php echo htmlspecialchars($geocode, ENT_QUOTES) ?>' tabindex=102 />
 			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('geocodeTooltip')" /> 
 			
 			<div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -216,7 +216,7 @@
 
 	</fieldset>
 
-	<input type=hidden value="<?php echo $name ?>" name="name"/>
+	<input type=hidden value="<?php echo htmlspecialchars($name, ENT_QUOTES) ?>" name="name"/>
 
 </div>
 

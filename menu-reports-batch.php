@@ -47,7 +47,7 @@ include_once ("lang/main.php");
 				<input name="batch_name" type="text" id="batchNameDetails" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
 									onClick='javascript:__displayTooltip();'
 									tooltipText='<?php echo $l['Tooltip']['BatchName']; ?>'
-					value="<?php if (isset($batch_name_details)) echo $batch_name_details; ?>">
+					value="<?php if (isset($batch_name_details)) echo htmlspecialchars($batch_name_details, ENT_QUOTES); ?>">
 				</form>
 			</li>
 

@@ -221,7 +221,7 @@
 				$sql = 'SELECT a.id, a.plan_id, a.amount, a.tax_amount, a.notes, b.planName '.
 						' FROM '.$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].' a '.
 						' LEFT JOIN '.$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].' b ON a.plan_id = b.id '.
-						' WHERE a.invoice_id = '.$invoice_id.' ORDER BY a.id ASC';
+						' WHERE a.invoice_id = '.$dbSocket->escapeSimple($invoice_id).' ORDER BY a.id ASC';
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				

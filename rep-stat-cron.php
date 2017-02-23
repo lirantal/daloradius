@@ -98,7 +98,7 @@
 	$i = 0;
 		foreach($output as $text) {
 			$i++;
-			echo "<b>#$i:</b> " . $text . '<br/>';
+			echo "<b>#$i:</b> " . htmlspecialchars($text, ENT_QUOTES) . '<br/>';
 		}
 		
 	endif;

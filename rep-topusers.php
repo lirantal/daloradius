@@ -65,7 +65,7 @@
 				
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['reptopusers']." ".$orderBy ?>
+			<?php echo $l['helpPage']['reptopusers'] . " " . htmlspecialchars($orderBy, ENT_QUOTES) ?>
 			<br/>
 		</div>
 		<br/>
@@ -74,7 +74,9 @@
 
 	include 'library/opendb.php';
 	include 'include/management/pages_common.php';	
-	
+
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);	
 
 	$sql = "SELECT distinct(radacct.UserName), ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime,max( ".$configValues['CONFIG_DB_TBL_RADACCT'].
@@ -85,7 +87,7 @@
 		$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, sum(".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets+".
 		$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) as Bandwidth FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE AcctStopTime > '0000-00-00 00:00:01' AND AcctStartTime>'$startdate' AND AcctStartTime< '$enddate' AND (Username LIKE '$username') group by UserName order by $orderBy $orderType limit $limit";
+		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE AcctStopTime > '0000-00-00 00:00:01' AND AcctStartTime>'".$dbSocket->escapeSimple($startdate)."' AND AcctStartTime< '".$dbSocket->escapeSimple($enddate)."' AND (Username LIKE '".$dbSocket->escapeSimple($username)."') group by UserName order by $orderBy $orderType limit $limit";
 
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
@@ -119,62 +121,62 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=username&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['Username']." </a>
 		</th>
 		<th scope='col'>
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=framedipaddress&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['IPAddress']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=acctstarttime&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['StartTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=acctstoptime&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['StopTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Time&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=Time&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Upload&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=Upload&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Download&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=Download&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=acctterminatecause&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['Termination']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?limit=" . urlencode($limit) . "&orderBy=nasipaddress&orderType=" . urlencode($orderType) . "&username=" . urlencode($username) . "&startdate=" . urlencode($startdate) . "&enddate=" . urlencode($enddate) . "\">
 		".$l['all']['NASIPAddress']."</a>
 		</th>
 		</tr> </thread>";
 		
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-				<td> $row[0] </td>
-				<td> $row[1] </td>
-				<td> $row[2] </td>
-				<td> $row[3] </td>
-				<td> ".time2str($row[4])."</td>
-				<td> ".toxbyte($row[5])."</td>
-				<td> ".toxbyte($row[6])."</td>
-				<td> $row[7] </td>
-				<td> $row[8] </td>
+				<td> " . htmlspecialchars($row[0], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[2], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[3], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars(time2str($row[4]), ENT_QUOTES) . "</td>
+				<td> " . htmlspecialchars(toxbyte($row[5]), ENT_QUOTES) . "</td>
+				<td> " . htmlspecialchars(toxbyte($row[6]), ENT_QUOTES) . "</td>
+				<td> " . htmlspecialchars($row[7], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[8], ENT_QUOTES) . " </td>
 		</tr>";
 	}
 	echo "</table>";

@@ -47,7 +47,7 @@
         <br/>
 <?php
         echo "<center>";
-        echo "<img src=\"library/graphs-logged_users.php?day=$day&month=$month&year=$year\" />";
+        echo "<img src=\"library/graphs-logged_users.php?day=" . htmlspecialchars($day, ENT_QUOTES) . "&month=" . htmlspecialchars($month, ENT_QUOTES) . "&year=" . htmlspecialchars($year, ENT_QUOTES) . "\" />";
         echo "</center>";
 ?>
 	</div>

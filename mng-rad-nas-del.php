@@ -63,7 +63,7 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$successMsg = "Deleted all NASs from database: <b> $allNASs </b>";
+			$successMsg = "Deleted all NASs from database: <b>" . htmlspecialchars($allNASs, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully deleted nas(s) [$allNASs] on page: ";
 				
 			include 'library/closedb.php';
@@ -103,7 +103,7 @@
 	<div id="contentnorightbar">
 	
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasdel.php'] ?>
-		:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($nashost)) { echo htmlspecialchars($nashost, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradnasdel'] ?>
@@ -113,8 +113,8 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 

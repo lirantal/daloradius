@@ -120,7 +120,7 @@
 				// 0 may be returned in the case of failure in adding the batch_history record due
 				// to SQL related issues or in case where there is a duplicate record of the batch_history,
 				// meaning, the same batch_name is used to identify the batch entry
-				$failureMsg = "Failure creating batch users due to an error or possible duplicate entry: <b> $batch_name </b>";
+				$failureMsg = "Failure creating batch users due to an error or possible duplicate entry: <b> " . htmlspecialchars($batch_name, ENT_QUOTES) . " </b>";
 				$logAction .= "Failure creating a batch_history entry on page: ";
 			}
 			
@@ -167,7 +167,7 @@
 
 			if ($res->numRows() > 0) {
 				$actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
-				$failureMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
+				$failureMsg = "skipping matching entry: <b> " . htmlspecialchars($actionMsgBadUsernames, ENT_QUOTES). " </b>";
 			} else {
 				
 				// insert username/password
@@ -315,10 +315,10 @@
 			// remove the last || chars to sanitize it for proper format
 			$exportCSV = substr($exportCSV, 0, -2);
 			$successMsg = "Exported Usernames - ".
-								"<a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>".
+								"<a href='include/common/fileExportCSV.php?csv_output=".urlencode($exportCSV)."'>download</a><br/>".
 							"Printable Tickets - ".
-								"<a href='include/common/printTickets.php?type=batch&plan=$plan&accounts=$exportCSV'>view</a><br/>".
-							"Added to database new user(s): <b> $actionMsgGoodUsernames </b><br/>";
+								"<a href='include/common/printTickets.php?type=batch&plan=".urlencode($plan)."&accounts=".urlencode($exportCSV)."'>view</a><br/>".
+							"Added to database new user(s): <b> " . htmlspecialchars($actionMsgGoodUsernames, ENT_QUOTES) . " </b><br/>";
 							
 			$logAction .= "Successfully added to database new users [$actionMsgGoodUsernames] with prefix [$username_prefix] on page: ";
 		}
@@ -563,7 +563,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="batchuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="batchuser" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 

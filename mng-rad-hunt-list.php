@@ -72,6 +72,16 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG'];
 	$res = $dbSocket->query($sql);
@@ -124,25 +134,25 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['HgID']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=nasipaddress&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['HgIPHost']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=groupname&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['HgGroupName']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasportid&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=nasportid&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['HgPortId']."</a>
 		<br/>
 		</th>
@@ -150,16 +160,16 @@
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-                                <td> <input type='checkbox' name='nashost[]' value='$row[2]||$row[3]'> $row[0] </td>
+                                <td> <input type='checkbox' name='nashost[]' value='" . htmlspecialchars($row[2], ENT_QUOTES) . "||" . htmlspecialchars($row[3], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </td>
                                 <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-hunt-edit.php?nasipaddress=$row[2]&nasportid=$row[3]'>".$l['Tooltip']['EditHG']."</a>
-                                        <a class='toolTip' href='mng-rad-hunt-del.php?nasipaddress=$row[2]&nasportid=$row[3]'>".$l['Tooltip']['RemoveHG']."</a>
+                                        <a class='toolTip' href='mng-rad-hunt-edit.php?nasipaddress=" . urlencode($row[2]) . "&nasportid=" . urlencode($row[3]) . "'>".$l['Tooltip']['EditHG']."</a>
+                                        <a class='toolTip' href='mng-rad-hunt-del.php?nasipaddress=" . urlencode($row[2]) . "&nasportid=" . urlencode($row[3]) . "'>".$l['Tooltip']['RemoveHG']."</a>
                                         <br/>\"
-                                        >$row[2]</a></td>
-				<td> $row[1] </td>
-				<td> $row[3] </td>
+                                        >" . htmlspecialchars($row[2], ENT_QUOTES) . "</a></td>
+				<td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[3], ENT_QUOTES) . " </td>
 
 		</tr>";
 	}

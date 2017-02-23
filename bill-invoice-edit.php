@@ -49,7 +49,7 @@
 		if (trim($invoice_id) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			$invoice_id = $dbSocket->escapeSimple($invoice_id);
 			
@@ -71,7 +71,7 @@
 				// add the invoice items which the user created
 				addInvoiceItems($dbSocket, $invoice_id);
 
-				$successMsg = "Added to database new invoice: <b>$invoice_id</b>";
+				$successMsg = "Added to database new invoice: <b>" . htmlspecialchars($invoice_id, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new invoice [$invoice_id] on page: ";
 				
 			} else {
@@ -95,7 +95,7 @@
 		global $configValues;
 
 		$currDate = date('Y-m-d H:i:s');
-		$currBy = $_SESSION['operator_user'];
+		$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 	
 		// insert invoice's items
 		if (!empty($invoice_id)) {
@@ -269,7 +269,7 @@ function removeTableRow(rowCounter) {
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -282,23 +282,23 @@ function removeTableRow(rowCounter) {
 
 		<?php
 		echo 'Customer:<b/><br/>'; 
-		echo '<a href="/bill-pos-edit.php?username='.$invoiceDetails['username'].'">'.$invoiceDetails['contactperson'].'</a><br/>'.
-			$invoiceDetails['city']. (!empty($invoiceDetails['state']) ? ', '.$invoiceDetails['state'] : '' );
+		echo '<a href="/bill-pos-edit.php?username='. urlencode($invoiceDetails['username']) .'">' . htmlspecialchars($invoiceDetails['contactperson'], ENT_QUOTES) . '</a><br/>'.
+			htmlspecialchars($invoiceDetails['city'], ENT_QUOTES). (!empty($invoiceDetails['state']) ? ', '.htmlspecialchars($invoiceDetails['state'], ENT_QUOTES) : '' );
 		echo '</b>';
 		?>
 		<br/>
 
 					<input class="button" type="button" value="New Payment" 
-						onClick="javascript:window.location = 'bill-payments-new.php?payment_invoice_id=<?php echo $invoiceDetails['id'] ?>';" />
+						onClick="javascript:window.location = 'bill-payments-new.php?payment_invoice_id=<?php echo htmlspecialchars($invoiceDetails['id'], ENT_QUOTES) ?>';" />
 						
 
 					<input class="button" type="button" value="Show Payments" 
-						onClick="javascript:window.location = 'bill-payments-list.php?invoice_id=<?php echo $invoiceDetails['id'] ?>';" />
+						onClick="javascript:window.location = 'bill-payments-list.php?invoice_id=<?php echo htmlspecialchars($invoiceDetails['id'], ENT_QUOTES) ?>';" />
 						
 		<br/><br/>
 
 		<!--  hidden invoice_id field -->
-		<input type='hidden' name='invoice_id' value='<?php echo $invoice_id ?>' />
+		<input type='hidden' name='invoice_id' value='<?php echo htmlspecialchars($invoice_id, ENT_QUOTES) ?>' />
 		
 
 
@@ -346,7 +346,7 @@ function removeTableRow(rowCounter) {
 
 		<li class='fieldset'>
 		<label for='user_id' class='form'><?php echo $l['all']['UserId'] ?></label>
-		<input name='user_id' type='text' id='user_id' value='<?php echo $invoiceDetails['user_id']?>' tabindex=101 />
+		<input name='user_id' type='text' id='user_id' value='<?php echo htmlspecialchars($invoiceDetails['user_id'], ENT_QUOTES) ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('user_idTooltip')" /> 
 		
 		<div id='user_idTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -358,13 +358,13 @@ function removeTableRow(rowCounter) {
 
 
 		<label for='invoice_date' class='form'><?php echo $l['all']['Date']?></label>		
-		<input value='<?php echo $invoiceDetails['date']?>' id='invoice_date' name='invoice_date'  tabindex=108 />
+		<input value='<?php echo htmlspecialchars($invoiceDetails['date'], ENT_QUOTES)?>' id='invoice_date' name='invoice_date'  tabindex=108 />
 		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
 
 		<label for='invoice_notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
-		<textarea class='form' name='invoice_notes' ><?php echo $invoiceDetails['notes']?></textarea>
+		<textarea class='form' name='invoice_notes' ><?php echo htmlspecialchars($invoiceDetails['notes'], ENT_QUOTES)?></textarea>
 
 
 
@@ -435,17 +435,17 @@ function removeTableRow(rowCounter) {
 					
 					$itemName = $row['id'];
 					
-					echo "<tr id='itemsRow_".$itemName."'>".
+					echo "<tr id='itemsRow_". htmlspecialchars($itemName, ENT_QUOTES) ."'>".
 						//"<td> <input type='text' id='_item".$itemName."' value='".$row['planName']."' name='_item".$itemName."[plan]' /> ".
 						//"	<input type='hidden' id='_item".$itemName."' value='".$row['plan_id']."' name='_item".$itemName."[plan]' /> </td>".
 						"<td> ";
 					populate_plans($row['planName'],"item_".$itemName."[plan]", "form", "", $row['plan_id'], true);
 					echo " </td>".
-						"<td> <input type='text' id='_item".$itemName."' value='".$row['amount']."'name='item_".$itemName."[amount]' /> </td>".
-						"<td> <input type='text' id='_item".$itemName."' value='".$row['tax_amount']."'name='item_".$itemName."[tax]' /> </td>".
+						"<td> <input type='text' id='_item". htmlspecialchars($itemName, ENT_QUOTES) ."' value='". htmlspecialchars($row['amount'], ENT_QUOTES) ."'name='item_". htmlspecialchars($itemName, ENT_QUOTES) . "[amount]' /> </td>".
+						"<td> <input type='text' id='_item". htmlspecialchars($itemName, ENT_QUOTES) ."' value='". htmlspecialchars($row['tax_amount'], ENT_QUOTES) ."'name='item_". htmlspecialchars($itemName, ENT_QUOTES) . "[tax]' /> </td>".
 						//"<td> <select name=''> <option value='1'> 1 </option> </select> </td> ".
-						"<td> <input type='text' id='_item".$row['plan_id']."' value='".$row['notes']."' name='item_".$itemName."[notes]' /> </td>".
-						"<td> <input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow('itemsRow_".$itemName."');\" class='button'> </td>".
+						"<td> <input type='text' id='_item" . htmlspecialchars($row['plan_id'], ENT_QUOTES) . "' value='" . htmlspecialchars($row['notes'], ENT_QUOTES) . "' name='item_" . htmlspecialchars($itemName, ENT_QUOTES) . "[notes]' /> </td>".
+						"<td> <input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow('itemsRow_" . htmlspecialchars($itemName, ENT_QUOTES) . "');\" class='button'> </td>".
 						"</tr>";
 					
 				}
