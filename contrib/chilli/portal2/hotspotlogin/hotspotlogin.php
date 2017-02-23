@@ -177,9 +177,9 @@ if ($button == 'Login') {
   <link href=\"template/css/style.css\" rel=\"stylesheet\" type=\"text/css\" />
   ";
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&password=$pappassword\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&password=$pappassword\">";
   } else {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&response=$response&userurl=" . htmlspecialchars($userurl, ENT_QUOTES) . "\">";
   }
 
 	include('template/loggingin.php');
@@ -195,9 +195,9 @@ echo "
 <ResponseCode>201</ResponseCode>
 ";
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&password=$pappassword</LoginResultsURL>";
+    echo "<LoginResultsURL>http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&password=$pappassword</LoginResultsURL>";
   } else {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl</LoginResultsURL>";
+    echo "<LoginResultsURL>http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . htmlspecialchars($username, ENT_QUOTES) . "&response=$response&userurl=" . htmlspecialchars($userurl, ENT_QUOTES) . "</LoginResultsURL>";
   }
   echo "</AuthenticationReply> 
 </WISPAccessGatewayParam>
@@ -275,7 +275,7 @@ if ($result == 1) {
 
   echo "
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">Logout</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logoff\">Logout</a>
   </center>
 </body>
 </html>";
@@ -285,7 +285,7 @@ if (($result == 4) || ($result == 12)) {
   echo "
   <h1 style=\"text-align: center;\">$h1Loggedin</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">$centerLogout</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logoff\">$centerLogout</a>
   </center>
   </body>
 </html>";
@@ -301,7 +301,7 @@ if (($result == 3) || ($result == 13)) {
   echo "
   <h1 style=\"text-align: center;\">$h1Loggedout</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/prelogin\">$centerLogin</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/prelogin\">$centerLogin</a>
   </center>
 </body>
 </html>";

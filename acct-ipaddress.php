@@ -69,20 +69,22 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 	
 	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
-	$ipaddress = $dbSocket->escapeSimple($ipaddress);
+	//$ipaddress = $dbSocket->escapeSimple($ipaddress);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE FramedIPAddress='$ipaddress'";
+        $_SESSION['reportQuery'] = " WHERE FramedIPAddress='".$dbSocket->escapeSimple($ipaddress)."'";
         $_SESSION['reportType'] = "accountingGeneric";
 
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, radacct.FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, radacct.AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE FramedIPAddress='$ipaddress';";
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, radacct.FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, radacct.AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE FramedIPAddress='".$dbSocket->escapeSimple($ipaddress)."';";
 	$res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
 	
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, radacct.FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, radacct.AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE FramedIPAddress='$ipaddress'  ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, radacct.FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, radacct.AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE FramedIPAddress='".$dbSocket->escapeSimple($ipaddress)."'  ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
@@ -121,69 +123,69 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=radacctid&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=radacctid&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['ID']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=hotspot&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=hotspot&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['HotSpot']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=username&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=username&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['Username']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=framedipaddress&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=framedipaddress&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['IPAddress']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=acctstarttime&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['StartTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctstoptime&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=acctstoptime&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['StopTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=acctsessiontime&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctinputoctets&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=acctinputoctets&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctoutputoctets&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=acctoutputoctets&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=acctterminatecause&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=acctterminatecause&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['Termination']."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?ipaddress=$ipaddress&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?ipaddress=".urlencode($ipaddress)."&orderBy=nasipaddress&orderType=".urlencode($orderTypeNextPage)."\">
 		".$l['all']['NASIPAddress']."</a>
 		</th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 printqn("<tr>
-                        <td> $row[0] </td>
+                        <td>" .htmlspecialchars($row[0], ENT_QUOTES). "</td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=". htmlspecialchars($row[1], ENT_QUOTES)."\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
+                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=".urlencode($row[1])."\">
                                                 {$l['Tooltip']['HotspotEdit']}</a>
                                         &nbsp;
                                         <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
@@ -194,14 +196,14 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[1]</a>
+                                >" . htmlspecialchars($row[1], ENT_QUOTES) . "</a>
                         </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".htmlspecialchars($row[2], ENT_QUOTES)."\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
+                                        <a class=\"toolTip\" href=\"mng-edit.php?username=".urlencode($row[2])."\">
 	                                        {$l['Tooltip']['UserEdit']}</a>
                                         <br/><br/>
 
@@ -209,16 +211,16 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[2]</a>
+                                >" . htmlspecialchars($row[2], ENT_QUOTES) . "</a>
                         </td>
-                        <td> $row[3] </td>
-                        <td> $row[4] </td>
-                        <td> $row[5] </td>
-                        <td> ".time2str($row[6])." </td>
-                        <td> ".toxbyte($row[7])."</td>
-                        <td> ".toxbyte($row[8])."</td>
-                        <td> $row[9] </td>
-                        <td> $row[10] </td>
+                        <td>" . htmlspecialchars($row[3], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($row[4], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($row[5], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars(time2str($row[6]), ENT_QUOTES) . " </td>
+                        <td>" . htmlspecialchars(toxbyte($row[7]), ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars(toxbyte($row[8]), ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($row[9], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($row[10], ENT_QUOTES) . "</td>
                 </tr>");
         }
 

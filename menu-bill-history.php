@@ -43,7 +43,7 @@
 		<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
 
                         <input name="startdate" type="text" id="startdate"
-                                value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
+                                value="<?php if (isset($billing_date_startdate)) echo htmlspecialchars($billing_date_startdate, ENT_QUOTES);
                         else echo date("Y-m-01"); ?>">
 
                         <img src="library/js_date/calendar.gif"
@@ -52,7 +52,7 @@
                                 style="display: none; visibility: hidden;       width: 160px;"></div>
 
                         <input name="enddate" type="text" id="enddate"
-                                value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
+                                value="<?php if (isset($billing_date_enddate)) echo htmlspecialchars($billing_date_enddate, ENT_QUOTES);
                                 else echo date("Y-m-t"); ?>">
 
                         <img src="library/js_date/calendar.gif"
@@ -64,12 +64,12 @@
 
 		<h109><?php echo $l['all']['Username']; ?></h109> <br/>
                         <input name="username" type="text"
-                                value="<?php if (isset($billing_history_username)) echo $billing_history_username; else echo "*"; ?>">
+                                value="<?php if (isset($billing_history_username)) echo htmlspecialchars($billing_history_username, ENT_QUOTES); else echo "*"; ?>">
 
 		<h109><?php echo $l['all']['BillAction']; ?></h109> <br/>
                         <select name="billaction" size="1">
-                                <option value="<?php if (isset($billing_history_billaction)) echo $billing_history_billaction; else echo "%"; ?>">
-                                        <?php if (isset($billing_history_billaction)) echo $billing_history_billaction; else echo "Any"; ?>
+                                <option value="<?php if (isset($billing_history_billaction)) echo htmlspecialchars($billing_history_billaction, ENT_QUOTES); else echo "%"; ?>">
+                                        <?php if (isset($billing_history_billaction)) echo htmlspecialchars($billing_history_billaction, ENT_QUOTES); else echo "Any"; ?>
                                 </option>
 				<option value=""></option>
 				<option value="Refill Session Time">Refill Session Time</option>

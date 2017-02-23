@@ -73,7 +73,7 @@ if ($configValues['CONFIG_DEBUG_SQL_ONPAGE'] == "yes") {
 	if (isset($logDebugSQL)) {
 			echo "<br/><br/>";
 			echo "Debugging SQL Queries: <br/>";
-			echo $logDebugSQL;
+			echo htmlspecialchars($logDebugSQL, ENT_QUOTES);
 			echo "<br/><br/>";
 		}
 }
@@ -98,7 +98,7 @@ function logMessage($type, $msg, $logFile, $currPage) {
                 fclose($fp);
         } else {
 
-                echo "<font color='#FF0000'>error: could not open the file for writing:<b> $logFile </b><br/></font>";
+                echo "<font color='#FF0000'>error: could not open the file for writing:<b> " . htmlspecialchars($logFile, ENT_QUOTES) . " </b><br/></font>";
                         echo "Check file permissions. The file should be writable by the webserver's user/group<br/>";
         }
 

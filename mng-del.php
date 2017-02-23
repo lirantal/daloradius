@@ -98,7 +98,7 @@
 					$logDebugSQL .= $sql . "\n";
 				}
 
-				$successMsg = "Deleted user(s): <b> $allUsernames </b>";
+				$successMsg = "Deleted user(s): <b>" . htmlspecialchars($allUsernames, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted user(s) [$allUsernames] on page: ";
 
 				include 'library/closedb.php';
@@ -134,7 +134,7 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
-		$successMsg = "Deleted attribute: <b> $attribute </b> for user(s): <b> $username </b> from database";
+		$successMsg = "Deleted attribute: <b>" . htmlspecialchars($attribute, ENT_QUOTES) . "</b> for user(s): <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b> from database";
 		$logAction .= "Successfully deleted attribute [$attribute] for user [$username] on page: ";
 
 		include 'library/closedb.php';
@@ -160,13 +160,15 @@
 
 					include 'library/opendb.php';
 
+                    $acctStartTime = $dbSocket->escapeSimple($acctStartTime);
+
 					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
 						" WHERE Username='$userSessions' AND AcctStartTime='$acctStartTime' ".
 						" AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime IS NULL)";
 					$res = $dbSocket->query($sql);
 					$logDebugSQL .= $sql . "\n";
 
-					$successMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
+					$successMsg = "Deleted stale accounting sessions for user: <b>" . htmlspecialchars($allUsernames, ENT_QUOTES) . "</b> from database";
 					$logAction .= "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
 
 					include 'library/closedb.php';
@@ -206,7 +208,7 @@
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngdel.php'] ?>
-	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($username)) { echo htmlspecialchars($username, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
 		<?php echo $l['helpPage']['mngdel'] ?>
@@ -216,8 +218,8 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="get">
 
 	<fieldset>
 
@@ -225,7 +227,7 @@
 		<br/>
 
 		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
-		<input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+		<input name='username[]' type='text' id='username' value='<?php echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
 		<br />
 
 		<label for='delradacct' class='form'><?php echo $l['all']['RemoveRadacctRecords']?></label>

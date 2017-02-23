@@ -49,7 +49,7 @@
 			if (trim($ratename) != "" and trim($ratetypenum) != "" and trim($ratetypetime) != "" and trim($ratecost) != "") {
 
 				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+				$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 				
 				$ratetype = "$ratetypenum/$ratetypetime";
 
@@ -63,14 +63,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new rate: <b>$ratename</b>";
+				$successMsg = "Added to database new rate: <b>" . htmlspecialchars($ratename, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new rate [$ratename] on page: ";
 			} else {
 				$failureMsg = "you must provide a rate name, type and cost";	
 				$logAction .= "Failed adding new rate [$ratename] on page: ";	
 			}
 		} else { 
-			$failureMsg = "You have tried to add a rate that already exist in the database: $ratename";
+			$failureMsg = "You have tried to add a rate that already exist in the database: " . htmlspecialchars($ratename, ENT_QUOTES) . "";
 			$logAction .= "Failed adding new rate already in database [$ratename] on page: ";		
 		}
 	
@@ -117,7 +117,7 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -202,19 +202,19 @@
 
         <br/>
         <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
-        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <input disabled value='<?php if (isset($creationdate)) echo htmlspecialchars($creationdate, ENT_QUOTES) ?>' tabindex=313 />
         <br/>
 
         <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
-        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <input disabled value='<?php if (isset($creationby)) echo htmlspecialchars($creationby, ENT_QUOTES) ?>' tabindex=314 />
         <br/>
 
         <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
-        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <input disabled value='<?php if (isset($updatedate)) echo htmlspecialchars($updatedate, ENT_QUOTES) ?>' tabindex=315 />
         <br/>
 
         <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
-        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <input disabled value='<?php if (isset($updateby)) echo htmlspecialchars($updateby, ENT_QUOTES) ?>' tabindex=316 />
         <br/>
 
 

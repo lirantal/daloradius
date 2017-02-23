@@ -75,20 +75,20 @@ function drawOperatorACLs($operator_id = "") {
 		
 		echo "<tr>
 				<td>
-					".$category."
+					" . htmlspecialchars($category, ENT_QUOTES) . "
 				</td>
 				<td>
-					".$section."
+					" . htmlspecialchars($section, ENT_QUOTES) . "
 				</td>
 				<td>
-					".$file."
+					" . htmlspecialchars($file, ENT_QUOTES) . "
 				</td>
 			";
 
 		echo "<td>
-			  <select name='ACL_$file'>
-			  <option value='1' $selectedYes > Enabled
-			  <option value='0' $selectedNo > Disabled
+			  <select name='ACL_" . htmlspecialchars($file, ENT_QUOTES) . "'>
+			  <option value='1' " . htmlspecialchars($selectedYes, ENT_QUOTES) . " > Enabled
+			  <option value='0' " . htmlspecialchars($selectedNo, ENT_QUOTES) . " > Disabled
 			  </select>
 			  </td>
 		";

@@ -63,10 +63,10 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngsearch.php']; ?>
-		:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($username)) { echo htmlspecialchars($username, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo "searched for user $username" ?><br/>
+			<?php echo "searched for user " . htmlspecialchars($username, ENT_QUOTES) . "" ?><br/>
 		</div>
 
 <br/>
@@ -76,6 +76,12 @@
 	include 'include/management/pages_common.php';
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 	// setup php session variables for exporting
 	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
@@ -140,17 +146,17 @@
 
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=id&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['ID']. "</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Username&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=Username&orderType=" . urlencode($orderTypeNextPage) . "\">
 	 	".$l['all']['Username']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Value&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&orderBy=Value&orderType=" . urlencode($orderTypeNextPage) . "\">
 		Full name</a>
 		</th>
 	</tr> </thread>";
@@ -162,20 +168,20 @@
 			$img = "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 		
 		printqn("<tr>
-			<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
+			<td> <input type='checkbox' name='username[]' value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'> " . htmlspecialchars($row[2], ENT_QUOTES) . " </td>
                         <td> $img <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=" . htmlspecialchars($row[0], ENT_QUOTES) . "\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
+                                        <a class=\"toolTip\" href=\"mng-edit.php?username=" . urlencode($row[0]) . "\">
 	                                        {$l['Tooltip']['UserEdit']}</a>
                                         &nbsp
 					<br/>
-					<a class=\"toolTip\" href=\"config-maint-test-user.php?username=$row[0]&password=$row[1]\">
+					<a class=\"toolTip\" href=\"config-maint-test-user.php?username=" . urlencode($row[0]) . "&password=" . urlencode($row[1]) . "\">
 						{$l['all']['TestUser']}</a>
 					&nbsp
 					<br/>
-					 <a class=\"toolTip\" href=\"acct-username.php?username=$row[0]\">
+					 <a class=\"toolTip\" href=\"acct-username.php?username=" . urlencode($row[0]) . "\">
 						{$l['all']['Accounting']}</a>
                                         <br/><br/>
 
@@ -183,10 +189,10 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[0]</a>
+                                >" . htmlspecialchars($row[0], ENT_QUOTES) . "</a>
                         </td>
 
-			<td> $row[1] </td>
+			<td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
 
 			</tr>");
 

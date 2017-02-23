@@ -59,7 +59,7 @@
 			if ($res->numRows() == 0) {
 
 				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+				$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 				// insert username and password of operator into the database
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOOPERATORS'].
@@ -106,7 +106,7 @@
 							
 							$sql = "INSERT INTO  ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'].
 								" ( operator_id, file, access ) VALUES ".
-								" ( '$new_operator_id', '$file', '$access') ";
+								" ( '" . $dbSocket->escapeSimple($new_operator_id) . "', '" . $dbSocket->escapeSimple($file) . "', '" . $dbSocket->escapeSimple($access) . "') ";
 							$res = $dbSocket->query($sql);
 							$logDebugSQL .= $sql . "\n";
 						}
@@ -116,14 +116,14 @@
 				} //if numrows()
 				
 
-				$successMsg = "Added to database new operator user: <b> $operator_username </b>";
+				$successMsg = "Added to database new operator user: <b>" . htmlspecialchars($operator_username, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new operator user [$operator_username] on page: ";
 
 			} else {
 				// if statement returns false which means there is at least one operator
 				// in the database with the same username
 
-				$failureMsg = "operator user already exist in database: <b> $operator_username </b>";
+				$failureMsg = "operator user already exist in database: <b>" . htmlspecialchars($operator_username, ENT_QUOTES) . "</b>";
 				$logAction .= "Failed adding new operator user already existing in database [$operator_username] on page: ";
 			}
 			
@@ -188,7 +188,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="newoperator" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="newoperator" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -201,13 +201,13 @@
 
                 <label for='operator_username' class='form'>Operator Username</label>
                 <input name='operator_username' type='text' id='operator_username' 
-			value='<?php if (isset($operator_username)) echo $operator_username ?>' tabindex=100 />
+			value='<?php if (isset($operator_username)) echo htmlspecialchars($operator_username, ENT_QUOTES) ?>' tabindex=100 />
                 <br/>
 
                 <label for='operator_password' class='form'>Operator Password</label>
                 <input name='operator_password' id='operator_password' 
-			value='<?php if (isset($operator_password)) echo $operator_password ?>' 
-			type='<?php if (isset($operator_hiddenPassword)) echo $hiddenPassword; else echo "text"; ?>'
+			value='<?php if (isset($operator_password)) echo htmlspecialchars($operator_password, ENT_QUOTES) ?>' 
+			type='<?php if (isset($operator_hiddenPassword)) echo htmlspecialchars($hiddenPassword, ENT_QUOTES); else echo "text"; ?>'
 			tabindex=101 />
                 <br/>
 

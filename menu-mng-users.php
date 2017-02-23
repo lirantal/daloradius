@@ -41,7 +41,7 @@
 			<input name="username" type="text" id="usernameEdit" autocomplete="off"
 				onClick='javascript:__displayTooltip();' 
 				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
-				value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
+				value="<?php if (isset($edit_username)) echo htmlspecialchars($edit_username, ENT_QUOTES); ?>" tabindex=1>
 			</form></li>
 		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>
 			<img src='images/icons/userSearch.gif' border='0'>
@@ -50,7 +50,7 @@
 			<input name="username" type="text" id="usernameSearch" autocomplete="off"
 				onClick='javascript:__displayTooltip();' 
 				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard']; ?>'
-				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
+				value="<?php if (isset($search_username)) echo htmlspecialchars($search_username, ENT_QUOTES); ?>" tabindex=2>
 			</form></li>
 		
 		<li><a href="mng-del.php"><b>&raquo;</b>

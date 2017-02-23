@@ -127,8 +127,8 @@ require_once('library/closedb.php');
 
 if (isset($debug_mode) && $debug_mode == 1) {
 	echo "Debug: \n";
-	var_dump($_GET);
-	echo "\n\n$sql\n\n";	
+	var_dump(htmlspecialchars($_GET, ENT_QUOTES));
+	echo "\n\n" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n";	
 }
 
 echo "success";

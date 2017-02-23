@@ -71,6 +71,10 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".UserName), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName, ".
 		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".priority, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
@@ -129,39 +133,39 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=username&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Username']."</a>
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=firstname&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=firstname&orderType=" . urlencode($orderTypeNextPage) . "\">
                 ".$l['all']['Name']."</a>
                 </th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=groupname&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Groupname']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=priority&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Priority']."</a>
 		</th>
 
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-			<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
-			<td> $row[3] $row[4] </td>
+			<td> <input type='checkbox' name='usergroup[]' value='" . htmlspecialchars($row[0], ENT_QUOTES) . "||" . htmlspecialchars($row[1], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </td>
+			<td> " . htmlspecialchars($row[3], ENT_QUOTES) . " " . htmlspecialchars($row[4], ENT_QUOTES) . " </td>
 			<td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['EditUserGroup']."</a>
+                                        <a class='toolTip' href='mng-rad-usergroup-edit.php?username=" . urlencode($row[0]) . "&group=" . urlencode($row[1]) . "'>".$l['Tooltip']['EditUserGroup']."</a>
 					<br/>
-                                        <a class='toolTip' href='mng-rad-usergroup-list-user.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['ListUserGroups']."</a>
+                                        <a class='toolTip' href='mng-rad-usergroup-list-user.php?username=" . urlencode($row[0]) . "&group=" . urlencode($row[1]) . "'>".$l['Tooltip']['ListUserGroups']."</a>
                                         <br/>\"
-					>$row[1]</a></td>
-				<td> $row[2] </td>
+					>" . htmlspecialchars($row[1], ENT_QUOTES) . "</a></td>
+				<td> " . htmlspecialchars($row[2], ENT_QUOTES) . " </td>
 		</tr>";
 	}
 

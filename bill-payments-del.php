@@ -48,12 +48,12 @@
 				$allPayment_Ids .= $id . ", ";
 
 				// delete all payment types 
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE id=".
-						$dbSocket->escapeSimple($id)."";
+				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE id='".
+						$dbSocket->escapeSimple($id)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted payment(s): <b> $allPayment_Ids </b>";
+				$successMsg = "Deleted payment(s): <b>" . htmlspecialchars($allPayment_Ids, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted payment(s) [$allPayment_Ids] on page: ";
 				
 			} else { 
@@ -93,7 +93,7 @@
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymentsdel.php'] ?>
-	:: <?php if (isset($payment_id)) { echo $payment_id; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($payment_id)) { echo htmlspecialchars($payment_id, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo $l['helpPage']['paymentsdel'] ?>
 		<br/>
@@ -102,8 +102,8 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -111,7 +111,7 @@
 		<br/>
 
 		<label for='payment_id' class='form'><?php echo $l['all']['PaymentId'] ?></label>
-		<input name='payment_id[]' type='text' id='payment_id' value='<?php echo $payment_id ?>' tabindex=100 />
+		<input name='payment_id[]' type='text' id='payment_id' value='<?php echo htmlspecialchars($payment_id, ENT_QUOTES) ?>' tabindex=100 />
 		<br/>
 
 		<br/><br/>

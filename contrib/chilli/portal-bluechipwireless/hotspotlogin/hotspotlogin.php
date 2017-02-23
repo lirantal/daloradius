@@ -175,9 +175,9 @@ if ($button == 'Login') {
   	include('template/loginform-metatags.php');
 
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&password=$pappassword\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . urlencode($username) . "&password=" . urlencode($pappassword) . "\">";
   } else {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . urlencode($username) . "&response=" . urlencode($response) . "&userurl=" . urlencode($userurl) . "\">";
   }
 
 	include('template/loggingin.php');
@@ -193,9 +193,9 @@ echo "
 <ResponseCode>201</ResponseCode>
 ";
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&password=$pappassword</LoginResultsURL>";
+    echo "<LoginResultsURL>http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . urlencode($username) . "&password=" . urlencode($pappassword) . "</LoginResultsURL>";
   } else {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl</LoginResultsURL>";
+    echo "<LoginResultsURL>http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logon?username=" . urlencode($username) . "&response=" . urlencode($response) . "&userurl=" . urlencode($userurl) . "</LoginResultsURL>";
   }
   echo "</AuthenticationReply> 
 </WISPAccessGatewayParam>
@@ -231,7 +231,7 @@ if ($result == 0) {
 echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 <html>
 <head>
-  <title>$title</title>
+  <title>" . htmlspecialchars($title, ENT_QUOTES) . "</title>
   ";  
   include('template/loginform-metatags.php');
   echo "
@@ -241,13 +241,13 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 echo "
   </script>
 </head>
-<body onLoad=\"javascript:doOnLoad($result, '$loginpath?res=popup2&uamip=$uamip&uamport=$uamport&userurl=$userurl&redirurl=$redirurl&timeleft=$timeleft','$userurldecode', '$redirurldecode', '$timeleft')\" onBlur = 'javascript:doOnBlur($result)' bgColor = '#c0d8f4'>";
+<body onLoad=\"javascript:doOnLoad(" . htmlspecialchars($result, ENT_QUOTES) . ", '" . htmlspecialchars($loginpath, ENT_QUOTES) . "?res=popup2&uamip=" . htmlspecialchars($uamip, ENT_QUOTES) . "&uamport=" . htmlspecialchars($uamport, ENT_QUOTES) . "&userurl=" . htmlspecialchars($userurl, ENT_QUOTES) . "&redirurl=" . htmlspecialchars($redirurl, ENT_QUOTES) . "&timeleft=" . htmlspecialchars($timeleft, ENT_QUOTES) . "','" . htmlspecialchars($userurldecode, ENT_QUOTES) . "', '" . htmlspecialchars($redirurldecode, ENT_QUOTES) . "', '" . htmlspecialchars($timeleft, ENT_QUOTES) . "')\" onBlur = 'javascript:doOnBlur(" . htmlspecialchars($result, ENT_QUOTES) . ")' bgColor = '#c0d8f4'>";
 
 if ($result == 2) {
     echo "
-  <h1 style=\"text-align: center;\">$h1Failed</h1>";
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Failed, ENT_QUOTES) . "</h1>";
     if ($reply) {
-    echo "<center> $reply </BR></BR></center>";
+    echo "<center> " . htmlspecialchars($reply, ENT_QUOTES) . " </BR></BR></center>";
     }
 }
 
@@ -264,15 +264,15 @@ if ($result == 2 || $result == 5) {
 
 if ($result == 1) {
   echo "
-  <h1 style=\"text-align: center;\">$h1Loggedin</h1>";
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Loggedin, ENT_QUOTES) . "</h1>";
 
   if ($reply) { 
-      echo "<center> $reply </br></br></center>";
+      echo "<center> " . htmlspecialchars($reply, ENT_QUOTES) . " </br></br></center>";
   }
 
   echo "
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">Logout</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logoff\">Logout</a>
   </center>
 </body>
 </html>";
@@ -280,9 +280,9 @@ if ($result == 1) {
 
 if (($result == 4) || ($result == 12)) {
   echo "
-  <h1 style=\"text-align: center;\">$h1Loggedin</h1>
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Loggedin, ENT_QUOTES) . "</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">$centerLogout</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/logoff\">" . htmlspecialchars($centerLogou, ENT_QUOTES) . "t</a>
   </center>
   </body>
 </html>";
@@ -296,9 +296,9 @@ if ($result == 11) {
 
 if (($result == 3) || ($result == 13)) {
   echo "
-  <h1 style=\"text-align: center;\">$h1Loggedout</h1>
+  <h1 style=\"text-align: center;\">" . htmlspecialchars($h1Loggedout, ENT_QUOTES) . "</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/prelogin\">$centerLogin</a>
+    <a href=\"http://" . htmlspecialchars($uamip, ENT_QUOTES) . ":" . htmlspecialchars($uamport, ENT_QUOTES) . "/prelogin\">" . htmlspecialchars($centerLogin, ENT_QUOTES) . "</a>
   </center>
 </body>
 </html>";

@@ -94,10 +94,10 @@
 						$logDebugSQL .= $sql . "\n";
 						$counter++;
 						
-						$successMsg = "Added to database new group: <b> $groupname </b> with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b>";
+						$successMsg = "Added to database new group: <b>" . htmlspecialchars($groupname, ENT_QUOTES) . "</b> with attribute(s): <b>" . htmlspecialchars($allAttributes, ENT_QUOTES) . "</b> and value(s): <b>" . htmlspecialchars($allValues, ENT_QUOTES) . "</b>";
 						$logAction .= "Successfully added group [$groupname] with attribute(s): <b> $allAttributes </b> and value(s): <b> $allValues </b> on page: ";
 					} else { 
-						$failureMsg = "The group <b> $groupname </b> already exist in the database with attribute(s) <b> $allAttributes </b>";
+						$failureMsg = "The group <b>" . htmlspecialchars($groupname, ENT_QUOTES) . "</b> already exist in the database with attribute(s) <b>" . htmlspecialchars($allAttributes, ENT_QUOTES) . "</b>";
 						$logAction .= "Failed adding already existing group [$groupname] with attribute(s) [$allAttributes] on page: ";
 					} // end else if mysql
 
@@ -161,7 +161,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 		
-		<form name="newgroupcheck" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newgroupcheck" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -169,7 +169,7 @@
 			<br/>
 
 			<label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
-			<input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
+			<input name='groupname' type='text' id='groupname' value='<?php echo htmlspecialchars($groupname, ENT_QUOTES) ?>' tabindex=100 />
 			<br />
 
 			<br/><br/>

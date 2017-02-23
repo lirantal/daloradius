@@ -67,7 +67,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolname</b> from database";
+				$successMsg = "Deleted IP Address <b>" . htmlspecialchars($ipaddress, ENT_QUOTES) . "</b> for Pool Name <b>" . htmlspecialchars($poolname, ENT_QUOTES) . "</b> from database";
 				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolname] on page: ";
 
 				include 'library/closedb.php';
@@ -107,7 +107,7 @@
 	<div id="contentnorightbar">
 
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradippooldel.php'] ?>
-		:: <?php if (isset($poolname)) { echo $poolname; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($poolname)) { echo htmlspecialchars($poolname, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradippooldel'] ?>
@@ -117,8 +117,8 @@
 	include_once('include/management/actionMessages.php');
 ?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -126,11 +126,11 @@
 			<br/>
 
 			<label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
-			<input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
+			<input name='poolname' type='text' id='poolname' value='<?php echo htmlspecialchars($poolname, ENT_QUOTES) ?>' tabindex=100 />
 			<br />
 
 			<label for='ipaddress' class='form'><?php echo $l['all']['IPAddress'] ?></label>
-			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
+			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo htmlspecialchars($ipaddress, ENT_QUOTES) ?>' tabindex=101 />
 			<br />
 
 			<br/><br/>

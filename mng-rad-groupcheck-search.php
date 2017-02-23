@@ -75,6 +75,10 @@
 	
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 	
 	//orig: used as method to get total rows - this is required for the pages_numbering.php page
 	$sql = "SELECT GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
@@ -124,33 +128,33 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=groupname&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Groupname']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=attribute&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Attribute']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=op&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Operator']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=value&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Value']."</a>
 		</th>
 
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-                                <td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
-                                        <a class='tablenovisit' href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]'> $row[0] </td>
-                                <td> $row[1] </td>
-                                <td> $row[2] </td>                                              
-                                <td> $row[3] </td>      
+                                <td> <input type='checkbox' name='group[]' value='" . htmlspecialchars($row[0], ENT_QUOTES) . "||" . htmlspecialchars($row[1], ENT_QUOTES) . "||" . htmlspecialchars($row[3], ENT_QUOTES) . "'> 
+                                        <a class='tablenovisit' href='mng-rad-groupcheck-edit.php?groupname=".urlencode($row[0])."&value=".urlencode($row[3])."'> ".htmlspecialchars($row[0], ENT_QUOTES)." </td>
+                                <td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
+                                <td> " . htmlspecialchars($row[2], ENT_QUOTES) . " </td>                                              
+                                <td> " . htmlspecialchars($row[3], ENT_QUOTES) . " </td>      
 		</tr>";
 	}
 

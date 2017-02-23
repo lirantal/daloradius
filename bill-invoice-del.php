@@ -58,7 +58,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Deleted invoice id(s): <b> $allInvoices </b>";
+				$successMsg = "Deleted invoice id(s): <b>" . htmlspecialchars($allInvoices, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted invoice id(s) [$allInvoices] on page: ";
 				
 			} else { 
@@ -97,7 +97,7 @@
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billinvoicedel.php'] ?>
-	:: <?php if (isset($invoice_id)) { echo $invoice_id; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($invoice_id)) { echo htmlspecialchars($invoice_id, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
 		<?php echo $l['helpPage']['billinvoicedel'] ?>
@@ -107,8 +107,8 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -116,7 +116,7 @@
 		<br/>
 
 		<label for='invoice_id' class='form'><?php echo $l['all']['InvoiceID'] ?></label>
-		<input name='invoice_id[]' type='text' id='invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 autocomplete="off" />
+		<input name='invoice_id[]' type='text' id='invoice_id' value='<?php echo htmlspecialchars($invoice_id, ENT_QUOTES); ?>' tabindex=100 autocomplete="off" />
 		<br/>
 
 		<br/><br/>

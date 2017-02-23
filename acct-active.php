@@ -72,6 +72,8 @@
 	$username = $dbSocket->escapeSimple($username);
 	$enddate = $dbSocket->escapeSimple($enddate);
 	$startdate = $dbSocket->escapeSimple($startdate);
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 	
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
 
@@ -112,20 +114,20 @@
 	
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=username&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Username']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
-		".$l['all']['Attribute']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=attribute&orderType=".urlencode($orderTypeNextPage)."\">"
+        .$l['all']['Attribute']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=$orderTypeNextPage\">
-		".$l['all']['MaxTimeExpiration']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=maxtimeexpiration&orderType=".urlencode($orderTypeNextPage)."\">"
+        .$l['all']['MaxTimeExpiration']."</a>
 		</th>
 		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=$orderTypeNextPage\">
-		".$l['all']['UsedTime']."</a>
+		<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=usedtime&orderType=".urlencode($orderTypeNextPage)."\">"
+        .$l['all']['UsedTime']."</a>
 		</th>
 		<th scope='col'> ".$l['all']['Status']." </th>
 		<th scope='col'> ".$l['all']['Usage']." </th>
@@ -149,10 +151,10 @@
 
                 printqn("<tr>
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=" . htmlspecialchars($row[0], ENT_QUOTES) . "\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
+                                        <a class=\"toolTip\" href=\"mng-edit.php?username=". urlencode($row[0]) . "\">
                                                 {$l['Tooltip']['UserEdit']}</a>
                                         <br/><br/>
 
@@ -160,28 +162,28 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[0]</a>
+                                >" . htmlspecialchars($row[0], ENT_QUOTES) . "</a>
                         </td>
 
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td>".time2str($row[3])."</td>
-                        <td> $status </td>
+                        <td>" . htmlspecialchars($row[1], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars(time2str($row[3]), ENT_QUOTES) . "</td>
+                        <td>" . htmlspecialchars($status, ENT_QUOTES) . "</td>
 			<td> ");
 
 		if ($row[1] == "Expiration") {		
 			$difference = datediff('d', $row[2], "$currdate", false);
 			if ($difference > 0)
-				echo "<h100> " . " $difference days since expired" . "</h100> ";
+				echo "<h100> " . htmlspecialchars($difference, ENT_QUOTES) . "days since expired" . "</h100> ";
 			else 
-				echo substr($difference, 1) . " days until expiration";
+				echo htmlspecialchars(substr($difference, 1), ENT_QUOTES) . " days until expiration";
 		} 
 
 		if ($row[1] == "Max-All-Session") {		
 			if ($status == "End") {
-				echo "<h100> " . abs($row[2] - $row[3]) . " seconds overdue credit" . "</h100>";
+				echo "<h100> " . htmlspecialchars(abs($row[2] - $row[3]), ENT_QUOTES) . " seconds overdue credit" . "</h100>";
 			} else {
-				echo $row[2] - $row[3];
+				echo htmlspecialchars($row[2] - $row[3], ENT_QUOTES);
 				echo " left on credit";
 			}
 		} 

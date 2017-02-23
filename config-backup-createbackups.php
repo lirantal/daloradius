@@ -298,7 +298,7 @@
 				$logAction .= "Successfully created backup file [$fileName] on page: ";
 			} else {
 				$failureMsg = "Failed creating backup due to directory/file permissions, check that the webserver user has access ".
-						"to create the following file: <b>$fileName</b>";
+						"to create the following file: <b>" . htmlspecialchars($fileName, ENT_QUOTES) . "</b>";
 				$logAction .= "Failed creating backup due to directory/file permissions on page: ";
 			}
 		}
@@ -340,7 +340,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="createbackups" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="createbackups" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -358,7 +358,7 @@
                 <li class='fieldset'>
                 <label for='backup_radacct' class='form'>radacct</label> 
 		<select class='form' name="radacct">
-			<option value="<?php echo $radacctTable ?>"><?php echo $radacctTable ?></option>
+			<option value="<?php echo htmlspecialchars($radacctTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($radacctTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -368,7 +368,7 @@
                 <li class='fieldset'>
                 <label for='backup_radcheck' class='form'>radcheck</label> 
 		<select class='form' name="radcheck">
-			<option value="<?php echo $radcheckTable ?>"><?php echo $radcheckTable ?></option>
+			<option value="<?php echo htmlspecialchars($radcheckTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($radcheckTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -378,7 +378,7 @@
                 <li class='fieldset'>
                 <label for='backup_radreply' class='form'>radreply</label> 
 		<select class='form' name="radreply">
-			<option value="<?php echo $radreplyTable ?>"><?php echo $radreplyTable ?></option>
+			<option value="<?php echo htmlspecialchars($radreplyTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($radreplyTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -388,7 +388,7 @@
                 <li class='fieldset'>
                 <label for='backup_radgroupcheck' class='form'>radgroupcheck</label> 
 		<select class='form' name="radgroupcheck">
-			<option value="<?php echo $radgroupcheckTable ?>"><?php echo $radgroupcheckTable ?></option>
+			<option value="<?php echo htmlspecialchars($radgroupcheckTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($radgroupcheckTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -398,7 +398,7 @@
                 <li class='fieldset'>
                 <label for='backup_radgroupreply' class='form'>radgroupreply</label> 
 		<select class='form' name="radgroupreply">
-			<option value="<?php echo $radgroupreplyTable ?>"><?php echo $radgroupreplyTable ?></option>
+			<option value="<?php echo htmlspecialchars($radgroupreplyTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($radgroupreplyTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -408,7 +408,7 @@
                 <li class='fieldset'>
                 <label for='backup_radusergroup' class='form'>radusergroup</label> 
 		<select class='form' name="radusergroup">
-			<option value="<?php echo $radusergroupTable ?>"><?php echo $radusergroupTable ?></option>
+			<option value="<?php echo htmlspecialchars($radusergroupTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($radusergroupTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -418,7 +418,7 @@
                 <li class='fieldset'>
                 <label for='backup_radpostauth' class='form'>radpostauth</label> 
 		<select class='form' name="radpostauth">
-			<option value="<?php echo $radpostauthTable ?>"><?php echo $radpostauthTable ?></option>
+			<option value="<?php echo htmlspecialchars($radpostauthTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($radpostauthTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -428,7 +428,7 @@
                 <li class='fieldset'>
                 <label for='backup_ippool' class='form'>ippool</label> 
 		<select class='form' name="ippool">
-			<option value="<?php echo $ippoolTable ?>"><?php echo $ippoolTable ?></option>
+			<option value="<?php echo htmlspecialchars($ippoolTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($ippoolTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -438,7 +438,7 @@
                 <li class='fieldset'>
                 <label for='backup_nas' class='form'>nas</label> 
 		<select class='form' name="nas">
-			<option value="<?php echo $nasTable ?>"><?php echo $nasTable ?></option>
+			<option value="<?php echo htmlspecialchars($nasTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($nasTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -471,7 +471,7 @@
                 <li class='fieldset'>
                 <label for='backup_dalooperators' class='form'>operators</label> 
 		<select class='form' name="operators">
-			<option value="<?php echo $dalooperatorsTable ?>"><?php echo $dalooperatorsTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalooperatorsTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalooperatorsTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -481,7 +481,7 @@
                 <li class='fieldset'>
                 <label for='backup_dalohotspots' class='form'>hotspots</label> 
 		<select class='form' name="hotspots">
-			<option value="<?php echo $dalohotspotsTable ?>"><?php echo $dalohotspotsTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalohotspotsTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalohotspotsTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -491,7 +491,7 @@
                 <li class='fieldset'>
                 <label for='backup_daloproxys' class='form'>proxys</label> 
 		<select class='form' name="proxys">
-			<option value="<?php echo $daloproxysTable ?>"><?php echo $daloproxysTable ?></option>
+			<option value="<?php echo htmlspecialchars($daloproxysTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($daloproxysTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -501,7 +501,7 @@
                 <li class='fieldset'>
                 <label for='backup_dalorealms' class='form'>realms</label> 
 		<select class='form' name="realms">
-			<option value="<?php echo $dalorealmsTable ?>"><?php echo $dalorealmsTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalorealmsTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalorealmsTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -511,7 +511,7 @@
                 <li class='fieldset'>
                 <label for='backup_dalobilling_rates' class='form'>billing rates</label> 
 		<select class='form' name="billing_rates">
-			<option value="<?php echo $dalobillingratesTable ?>"><?php echo $dalobillingratesTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalobillingratesTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalobillingratesTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -521,7 +521,7 @@
                 <li class='fieldset'>
                 <label for='backup_dalobillingpaypal' class='form'>billing paypal</label> 
 		<select class='form' name="billingpaypal">
-			<option value="<?php echo $dalobillingpaypalTable ?>"><?php echo $dalobillingpaypalTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalobillingpaypalTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalobillingpaypalTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -531,7 +531,7 @@
                 <li class='fieldset'>
                 <label for='backup_dalouserinfo' class='form'>userinfo</label> 
 		<select class='form' name="userinfo">
-			<option value="<?php echo $dalouserinfoTable ?>"><?php echo $dalouserinfoTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalouserinfoTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalouserinfoTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -541,7 +541,7 @@
                 <li class='fieldset'>
                 <label for='backup_dictionary' class='form'>userbillinfo</label> 
 		<select class='form' name="userbillinfo">
-			<option value="<?php echo $dalouserbillinfoTable ?>"><?php echo $dalouserbillinfoTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalouserbillinfoTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalouserbillinfoTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -551,7 +551,7 @@
                 <li class='fieldset'>
                 <label for='backup_dictionary' class='form'>dictionary</label> 
 		<select class='form' name="dictionary">
-			<option value="<?php echo $dictionaryTable ?>"><?php echo $dictionaryTable ?></option>
+			<option value="<?php echo htmlspecialchars($dictionaryTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dictionaryTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -561,7 +561,7 @@
                 <li class='fieldset'>
                 <label for='backup_billing_merchant' class='form'>billing merchant</label> 
 		<select class='form' name="billing_merchant">
-			<option value="<?php echo $dalobillingmerchantTable ?>"><?php echo $dalobillingmerchantTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalobillingmerchantTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalobillingmerchantTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -571,7 +571,7 @@
                 <li class='fieldset'>
                 <label for='backup_billing_plans' class='form'>billing plans</label> 
 		<select class='form' name="billing_plans">
-			<option value="<?php echo $dalobillingplansTable ?>"><?php echo $dalobillingplansTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalobillingplansTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalobillingplansTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -581,7 +581,7 @@
                 <li class='fieldset'>
                 <label for='backup_billing_history' class='form'>billing history</label> 
 		<select class='form' name="billing_history">
-			<option value="<?php echo $dalobillinghistoryTable ?>"><?php echo $dalobillinghistoryTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalobillinghistoryTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalobillinghistoryTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -609,7 +609,7 @@
                 <li class='fieldset'>
                 <label for='backup_operators_acl' class='form'>operators_acl</label> 
 		<select class='form' name="operators_acl">
-			<option value="<?php echo $dalooperatorsaclTable ?>"><?php echo $dalooperatorsaclTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalooperatorsaclTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalooperatorsaclTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -619,7 +619,7 @@
                 <li class='fieldset'>
                 <label for='backup_operators_acl_files' class='form'>operators_acl_files</label> 
 		<select class='form' name="operators_acl_files">
-			<option value="<?php echo $dalooperatorsaclfilesTable ?>"><?php echo $dalooperatorsaclfilesTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalooperatorsaclfilesTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalooperatorsaclfilesTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -630,7 +630,7 @@
                <li class='fieldset'>
                 <label for='backup_batch_history' class='form'>batch_history</label> 
 		<select class='form' name="batch_history">
-			<option value="<?php echo $dalobatchhistoryTable ?>"><?php echo $dalobatchhistoryTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalobatchhistoryTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalobatchhistoryTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -641,7 +641,7 @@
                <li class='fieldset'>
                 <label for='backup_billing_plans_profiles' class='form'>billing_plans_profiles</label> 
 		<select class='form' name="billing_plans_profiles">
-			<option value="<?php echo $dalobillingplansprofilesTable ?>"><?php echo $dalobillingplansprofilesTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalobillingplansprofilesTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalobillingplansprofilesTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -652,7 +652,7 @@
                <li class='fieldset'>
                 <label for='backup_invoice' class='form'>invoice</label> 
 		<select class='form' name="invoice">
-			<option value="<?php echo $daloinvoiceTable ?>"><?php echo $daloinvoiceTable ?></option>
+			<option value="<?php echo htmlspecialchars($daloinvoiceTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($daloinvoiceTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -663,7 +663,7 @@
                <li class='fieldset'>
                 <label for='backup_invoice_items' class='form'>invoice_items</label> 
 		<select class='form' name="invoice_items">
-			<option value="<?php echo $daloinvoiceitemsTable ?>"><?php echo $daloinvoiceitemsTable ?></option>
+			<option value="<?php echo htmlspecialchars($daloinvoiceitemsTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($daloinvoiceitemsTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -674,7 +674,7 @@
                <li class='fieldset'>
                 <label for='backup_invoice_status' class='form'>invoice_status</label> 
 		<select class='form' name="invoice_status">
-			<option value="<?php echo $daloinvoicestatusTable ?>"><?php echo $daloinvoicestatusTable ?></option>
+			<option value="<?php echo htmlspecialchars($daloinvoicestatusTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($daloinvoicestatusTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -685,7 +685,7 @@
                <li class='fieldset'>
                 <label for='backup_invoice_type' class='form'>invoice_type</label> 
 		<select class='form' name="invoice_type">
-			<option value="<?php echo $daloinvoicetypeTable ?>"><?php echo $daloinvoicetypeTable ?></option>
+			<option value="<?php echo htmlspecialchars($daloinvoicetypeTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($daloinvoicetypeTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -695,7 +695,7 @@
                <li class='fieldset'>
                 <label for='backup_payment' class='form'>payment</label> 
 		<select class='form' name="payment">
-			<option value="<?php echo $dalopaymentTable ?>"><?php echo $dalopaymentTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalopaymentTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalopaymentTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -706,7 +706,7 @@
                <li class='fieldset'>
                 <label for='backup_payment_type' class='form'>payment_type</label> 
 		<select class='form' name="payment_type">
-			<option value="<?php echo $dalopaymenttypeTable ?>"><?php echo $dalopaymenttypeTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalopaymenttypeTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalopaymenttypeTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>
@@ -717,7 +717,7 @@
                <li class='fieldset'>
                 <label for='backup_node' class='form'>node</label> 
 		<select class='form' name="node">
-			<option value="<?php echo $dalonodeTable ?>"><?php echo $dalonodeTable ?></option>
+			<option value="<?php echo htmlspecialchars($dalonodeTable, ENT_QUOTES) ?>"><?php echo htmlspecialchars($dalonodeTable, ENT_QUOTES) ?></option>
 			<option value="">  </option>
 			<option value="no">no</option>
 			<option value="yes">yes</option>

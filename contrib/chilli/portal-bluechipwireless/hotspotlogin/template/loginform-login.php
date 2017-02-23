@@ -65,11 +65,11 @@ echo "
 
 <?php
 	echo "
-	<form name='form1' method='post' action='$loginpath'>
-		<input type='hidden' name='challenge' value='$challenge'>
-		<input type='hidden' name='uamip' value='$uamip'>
-		<input type='hidden' name='uamport' value='$uamport'>
-		<input type='hidden' name='userurl' value='$userurl'>
+	<form name='form1' method='post' action='" . htmlspecialchars($loginpath, ENT_QUOTES) . "'>
+		<input type='hidden' name='challenge' value='" . htmlspecialchars($challenge, ENT_QUOTES) . "'>
+		<input type='hidden' name='uamip' value='" . htmlspecialchars($uamip, ENT_QUOTES) . "'>
+		<input type='hidden' name='uamport' value='" . htmlspecialchars($uamport, ENT_QUOTES) . "'>
+		<input type='hidden' name='userurl' value='" . htmlspecialchars($userurl, ENT_QUOTES) . "'>
 	";
 ?>
 
@@ -93,7 +93,7 @@ echo "
     <td colspan="2" align="right">
 	<input type='hidden' name='button' value='Login'>
       <input class="login_submit" type="button" name="button" value="Login" 
-	  	<?php echo "onClick=\"javascript:popUp('$loginpath?res=popup1&uamip=$uamip&uamport=$uamport')\"" ?> />
+	  	<?php echo "onClick=\"javascript:popUp('" . htmlspecialchars($loginpath, ENT_QUOTES) . "?res=popup1&uamip=" . htmlspecialchars($uami, ENT_QUOTES) . "&uamport=" . htmlspecialchars($uamport, ENT_QUOTES) . "')\"" ?> />
 	
 		<input type="checkbox" name="tos" id="toscheckbox"> 
 			<font size='1'>I agree to the <a href="http://www.bluechipwireless.com/samui_internet_service_terms.html">Terms & Conditions </a> </font>

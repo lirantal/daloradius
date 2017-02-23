@@ -60,7 +60,7 @@
 	<div id="contentnorightbar">
 	
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributessearch.php'] ?>
-		:: <?php if (isset($attribute)) { echo $attribute; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($attribute)) { echo htmlspecialchars($attribute, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradattributessearch'] ?>
@@ -75,8 +75,12 @@
         include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType); 
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Attribute like '%$attribute%' AND Type <> ''".
+	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Attribute like '%" . $dbSocket->escapeSimple($attribute) . "%' AND Type <> ''".
 		" GROUP BY Attribute;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
@@ -84,7 +88,7 @@
 
 	$numrows = $res->numRows();
 
-	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Attribute like '%$attribute%' AND Type <> '' ".
+	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Attribute like '%" . $dbSocket->escapeSimple($attribute) . "%' AND Type <> '' ".
 		" GROUP BY Attribute ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL .= $sql . "\n";
@@ -125,30 +129,30 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage&attribute=$attribute\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderTypeNextPage) . "&attribute=" . urlencode($attribute) . "\">
 		".$l['all']['VendorID']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=$orderTypeNextPage&attribute=$attribute\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=vendor&orderType=" . urlencode($orderTypeNextPage) . "&attribute=" . urlencode($attribute) . "\">
 		".$l['all']['VendorName']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage&attribute=$attribute\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=attribute&orderType=" . urlencode($orderTypeNextPage) . "&attribute=" . urlencode($attribute) . "\">
 		".$l['all']['VendorAttribute']."</a>
 		</th>
 
 		</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		printqn ("<tr>
-                                <td> <input type='checkbox' name='vendor[]' value='$row[1]||$row[2]'> $row[0] </td>
-				<td> <a class='tablenovisit' href='mng-rad-attributes-list.php?vendor=$row[1]'>$row[1]</a></td>
+                                <td> <input type='checkbox' name='vendor[]' value='" . htmlspecialchars($row[1], ENT_QUOTES) . "||" . htmlspecialchars($row[2], ENT_QUOTES) . "'>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
+				<td> <a class='tablenovisit' href='mng-rad-attributes-list.php?vendor=" . urlencode($row[1]) . "'>" . htmlspecialchars($row[1], ENT_QUOTES) . "</a></td>
                                 <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=$row[2]\");
+                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=" . htmlspecialchars($row[2], ENT_QUOTES) . "\");
                                         javascript:__displayTooltip();'
                                 tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]\">
+                                        <a class=\"toolTip\" href=\"mng-rad-attributes-edit.php?vendor=" . urlencode($row[1]) . "&attribute=" . urlencode($row[2]) . "\">
                                                 {$l['Tooltip']['AttributeEdit']}</a>
                                         <br/><br/>
 
@@ -156,7 +160,7 @@
                                                 Loading...
                                         </div>
                                         <br/>'
-                                >$row[2]</a>
+                                >" . htmlspecialchars($row[2], ENT_QUOTES) . "</a>
                                 </td>
                         </tr>
                         ");

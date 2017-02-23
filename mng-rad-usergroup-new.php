@@ -61,14 +61,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				$successMsg = "Added new User-Group mapping to database: User<b> $username </b> and Group: <b> $group </b> ";
+				$successMsg = "Added new User-Group mapping to database: User<b>" . htmlspecialchars($username, ENT_QUOTES) . "</b> and Group: <b>" . htmlspecialchars($group, ENT_QUOTES) . "</b> ";
 				$logAction .= "Successfully added user-group mapping of user [$username] with group [$group] on page: ";
 			} else {
 				$failureMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
 				$logAction .= "Failed adding (missing attributes) for user or group on page: ";
 			}
 		} else {
-			$failureMsg = "The user $username already exists in the user-group mapping database";
+			$failureMsg = "The user " . htmlspecialchars($username, ENT_QUOTES) . " already exists in the user-group mapping database";
 			$logAction .= "Failed adding already existing user-group mapping for user [$username] with group [$group] on page: ";
 		}
 
@@ -114,7 +114,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 		
-		<form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newusergroup" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -125,7 +125,7 @@
 
 			<li class='fieldset'>
 			<label for='username' class='form'><?php echo $l['all']['Username'] ?></label>
-			<input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+			<input name='username' type='text' id='username' value='<?php echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
 			</li>
 
 			<li class='fieldset'>

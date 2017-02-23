@@ -48,9 +48,9 @@
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
 					" (GroupName,Attribute,Op,Value) VALUES (".
 					"'".$dbSocket->escapeSimple($targetProfile)."',".
-					"'".$row[0]."',".
-					"'".$row[1]."',".
-					"'".$row[2]."'".
+					"'".$dbSocket->escapeSimple($row[0])."',".
+					"'".$dbSocket->escapeSimple($row[1])."',".
+					"'".$dbSocket->escapeSimple($row[2])."'".
 					")";
 				$dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -69,9 +69,9 @@
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
 					" (GroupName,Attribute,Op,Value) VALUES (".
 					"'".$dbSocket->escapeSimple($targetProfile)."',".
-					"'".$row[0]."',".
-					"'".$row[1]."',".
-					"'".$row[2]."'".
+					"'".$dbSocket->escapeSimple($row[0])."',".
+					"'".$dbSocket->escapeSimple($row[1])."',".
+					"'".$dbSocket->escapeSimple($row[2])."'".
 					")";
 				$dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -80,7 +80,7 @@
 
 			include 'library/closedb.php';
 
-			$successMsg = "Duplicated profile: <b>$sourceProfile</b> to new profile name: <b>$targetProfile</b>";
+			$successMsg = "Duplicated profile: <b>" . htmlspecialchars($sourceProfile, ENT_QUOTES) . "</b> to new profile name: <b>" . htmlspecialchars($targetProfile, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully duplicated profile [$sourceProfile] to new profile name [$targetProfile] on page: ";
 
 		} else {
@@ -114,7 +114,7 @@
 		<div id="contentnorightbar">
 		
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofilesduplicate.php'] ?>
-				:: <?php if (isset($profile)) { echo $profile; } ?><h144>+</h144></a></h2>
+				:: <?php if (isset($profile)) { echo htmlspecialchars($profile, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mngradprofilesduplicate'] ?>
@@ -124,7 +124,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 				
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -139,7 +139,7 @@
                 <br/>
 
                 <label for='profile' class='form'>New Profile Name</label>
-                <input name='targetProfile' type='text' id='profile' value='<?php echo $targetProfile ?>' tabindex=101 />
+                <input name='targetProfile' type='text' id='profile' value='<?php echo htmlspecialchars($targetProfile, ENT_QUOTES) ?>' tabindex=101 />
                 <br/>
 
                 <br/><br/>

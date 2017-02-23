@@ -81,14 +81,14 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 						
-				$successMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
+				$successMsg = "Updated User-Group mapping in database: User<b>" . htmlspecialchars($username, ENT_QUOTES) . "</b> and Group: <b>" . htmlspecialchars($group, ENT_QUOTES) . "</b> ";
 				$logAction .= "Successfully updated attributes for user-group mapping of user [$username] with group [$group] on page: ";
 			} else {
 				$failureMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
 				$logAction .= "Failed updating (missing attributes) attributes on page: ";
 			}
 		} else {
-			$failureMsg = "The user $username already exists in the user-group mapping database
+			$failureMsg = "The user " . htmlspecialchars($username, ENT_QUOTES) . " already exists in the user-group mapping database
 			<br/> It seems that you have duplicate entries for User-Group mapping. Check your database";
 			$logAction .= "Failed updating already existing user [$username] with group [$group] on page: ";
 		} 
@@ -137,7 +137,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 	<div id="contentnorightbar">
 	
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupedit'] ?> 
-		<?php echo $username ?><h144>+</h144></a></h2>
+		<?php echo htmlspecialchars($username, ENT_QUOTES) ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >				
 			<?php echo $l['helpPage']['mngradusergroupedit'] ?>
@@ -147,9 +147,9 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 			include_once('include/management/actionMessages.php');
 		?>
 				
-		<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newuser" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
-			<input type="hidden" value="<?php echo $username ?>" name="username" />
+			<input type="hidden" value="<?php echo htmlspecialchars($username, ENT_QUOTES) ?>" name="username" />
 
         <fieldset>
 
@@ -160,15 +160,15 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
                 <li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username'] ?></label>
-                <input type='hidden' name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-                <input disabled type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
+                <input type='hidden' name='username' type='text' id='username' value='<?php echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
+                <input disabled type='text' id='username' value='<?php echo htmlspecialchars($username, ENT_QUOTES) ?>' tabindex=100 />
                 </li>
 
 
                 <li class='fieldset'>
                 <label for='groupOld' class='form'><?php echo $l['all']['CurrentGroupname'] ?></label>
-                <input type='hidden' name='groupOld' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
-                <input disabled type='text' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
+                <input type='hidden' name='groupOld' id='groupOld' value='<?php echo htmlspecialchars($groupOld, ENT_QUOTES) ?>' tabindex=101 />
+                <input disabled type='text' id='groupOld' value='<?php echo htmlspecialchars($groupOld, ENT_QUOTES) ?>' tabindex=101 />
 				Old Group Name
                 </li>
 
@@ -187,7 +187,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
                 <li class='fieldset'>
                 <label for='priority' class='form'><?php echo $l['all']['Priority'] ?></label>
-                <input class='integer' name='priority' type='text' id='priority' value='<?php echo $priority ?>' tabindex=103 />
+                <input class='integer' name='priority' type='text' id='priority' value='<?php echo htmlspecialchars($priority, ENT_QUOTES) ?>' tabindex=103 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('priority','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('priority','decrement')"/>
                 </li>

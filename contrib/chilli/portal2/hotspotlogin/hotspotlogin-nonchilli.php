@@ -29,15 +29,15 @@ echo "
 <!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 <html>
 <head>
-	<title>$title</title>
+	<title>" . htmlspecialchars($title, ENT_QUOTES) . "</title>
 	<meta http-equiv=\"Cache-control\" content=\"no-cache\">
 	<meta http-equiv=\"Pragma\" content=\"no-cache\">
 </head>
 
 <body bgColor = '#c0d8f4'>
-	<h1 style=\"text-align: center;\">$h1Failed</h1>
+	<h1 style=\"text-align: center;\">" . htmlspecialchars($h1Failed, ENT_QUOTES) . "</h1>
 	<center>
-		$centerdaemon
+		" . htmlspecialchars($centerdaemon, ENT_QUOTES) . "
 	</center>
 </body>
 </html>

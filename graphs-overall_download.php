@@ -53,7 +53,7 @@
 
 <?php
     echo "<center>";
-    echo "<img src=\"library/graphs-overall-users-download.php?type=$type&user=$username&size=$size\" />";
+    echo "<img src=\"library/graphs-overall-users-download.php?type=" . htmlspecialchars($type, ENT_QUOTES) . "&user=" . htmlspecialchars($username, ENT_QUOTES) . "&size=" . htmlspecialchars($size, ENT_QUOTES) . "\" />";
     echo "</center>";
 ?>
 

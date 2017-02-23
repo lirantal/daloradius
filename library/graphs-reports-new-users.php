@@ -38,7 +38,7 @@
 
         $sql = "SELECT COUNT(*), CONCAT(YEAR(Creationdate),'-',MONTH(Creationdate), '-01') AS Month from ".
                         $configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-                        " WHERE CreationDate >='$startdate' AND CreationDate <='$enddate' ".
+                        " WHERE CreationDate >='" . $dbSocket->escapeSimple($startdate) . "' AND CreationDate <='" . $dbSocket->escapeSimple($enddate) . "' ".
                         " GROUP BY Month ORDER BY Date(Month);";
         $res = $dbSocket->query($sql);
 

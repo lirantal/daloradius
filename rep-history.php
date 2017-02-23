@@ -63,6 +63,10 @@
         include 'library/opendb.php';
         include 'include/management/pages_numbering.php';               // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+        // escape SQL
+        $orderBy = $dbSocket->escapeSimple($orderBy);
+        $orderType = $dbSocket->escapeSimple($orderType);
+
         $sql = "(SELECT 'proxy' as section, proxyname as item, creationdate,creationby,updatedate,updateby FROM proxys) UNION ".
 		" (SELECT 'realm' as section, realmname as item, creationdate,creationby,updatedate,updateby FROM realms) UNION ".
 		" (SELECT 'userinfo' as section, username as item, creationdate,creationby,updatedate,updateby FROM userinfo) UNION ".
@@ -115,32 +119,32 @@
 
         echo "<thread> <tr>
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=section&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=section&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Section']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=item&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=item&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Item']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationdate&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=creationdate&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['CreationDate']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationby&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=creationby&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['CreationBy']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updatedate&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=updatedate&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['UpdateDate']." 
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updateby&orderType=$orderTypeNextPage\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=updateby&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['UpdateBy']." 
 		</th>
         </tr> </thread>";
@@ -149,12 +153,12 @@
         while($row = $res->fetchRow()) {
 
 	        printqn("<tr>
-                                <td> $row[0] </td>
-                                <td> $row[1] </td>
-                                <td> $row[2] </td>
-                                <td> $row[3] </td>
-                                <td> $row[4] </td>
-                                <td> $row[5] </td>
+                                <td> " . htmlspecialchars($row[0], ENT_QUOTES) . " </td>
+                                <td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
+                                <td> " . htmlspecialchars($row[2], ENT_QUOTES) . " </td>
+                                <td> " . htmlspecialchars($row[3], ENT_QUOTES) . " </td>
+                                <td> " . htmlspecialchars($row[4], ENT_QUOTES) . " </td>
+                                <td> " . htmlspecialchars($row[5], ENT_QUOTES) . " </td>
                 </tr>");
 
         }

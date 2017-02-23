@@ -48,7 +48,7 @@
 		if (trim($payment_id) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." SET ".
 			" invoice_id=".$dbSocket->escapeSimple($payment_invoice_id).", ".
@@ -62,7 +62,7 @@
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
 			
-			$successMsg = "Updated payment type: <b> $payment_id </b>";
+			$successMsg = "Updated payment type: <b>" . htmlspecialchars($payment_id, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully updated payment type [$payment_id] on page: ";
 			
 		} else {
@@ -87,7 +87,7 @@
                 " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
                 " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
                 " ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".id ".
-		" WHERE ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id=".$dbSocket->escapeSimple($payment_id)."";
+		" WHERE ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id='".$dbSocket->escapeSimple($payment_id)."'";
 
 
 
@@ -151,7 +151,7 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymentsedit.php'] ?>
-		:: <?php if (isset($payment_id)) { echo $payment_id; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($payment_id)) { echo htmlspecialchars($payment_id, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['paymentsedit'] ?>
@@ -161,7 +161,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -177,12 +177,12 @@
 
 			<li class='fieldset'>
 			<label for='payment_id' class='form'><?php echo $l['all']['PaymentId'] ?></label>
-			<input disabled name='payment_id' type='text' id='payment_id' value='<?php echo $payment_id ?>' tabindex=100 />
+			<input disabled name='payment_id' type='text' id='payment_id' value='<?php echo htmlspecialchars($payment_id, ENT_QUOTES) ?>' tabindex=100 />
 			</li>
 
                 <li class='fieldset'>
                 <label for='name' class='form'><?php echo $l['all']['PaymentInvoiceID'] ?></label>
-                <input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo $payment_invoice_id ?>' tabindex=102 />
+                <input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo htmlspecialchars($payment_invoice_id, ENT_QUOTES) ?>' tabindex=102 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentInvoiceTooltip')" />
 
                 <div id='paymentInvoiceTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -193,7 +193,7 @@
 
                 <li class='fieldset'>
                 <label for='payment_amount' class='form'><?php echo $l['all']['PaymentAmount'] ?></label>
-                <input class='integer5len' name='payment_amount' type='text' id='payment_amount' value='<?php echo $payment_amount ?>' tabindex=103 />
+                <input class='integer5len' name='payment_amount' type='text' id='payment_amount' value='<?php echo htmlspecialchars($payment_amount, ENT_QUOTES) ?>' tabindex=103 />
                    <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('payment_amount','increment')" />
                    <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('payment_amount','decrement')"/>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" />
@@ -205,7 +205,7 @@
                 </li>
 
                 <label for='payment_date' class='form'><?php echo $l['all']['PaymentDate']?></label>
-                <input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
+                <input value='<?php echo htmlspecialchars($payment_date, ENT_QUOTES) ?>' id='payment_date' name='payment_date'  tabindex=108 />
                 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
                 <br/>
 
@@ -224,7 +224,7 @@
 
                 <li class='fieldset'>
                 <label for='payment_notes' class='form'><?php echo $l['all']['PaymentNotes'] ?></label>
-                <textarea name='payment_notes' id='payment_notes'><?php echo $payment_notes ?></textarea>
+                <textarea name='payment_notes' id='payment_notes'><?php echo htmlspecialchars($payment_notes, ENT_QUOTES) ?></textarea>
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentNotesTooltip')" />
 
                 <div id='paymentNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -245,7 +245,7 @@
 
 	</fieldset>
 
-	<input type=hidden value="<?php echo $payment_id ?>" name="payment_id"/>
+	<input type=hidden value="<?php echo htmlspecialchars($payment_id, ENT_QUOTES) ?>" name="payment_id"/>
 
 </div>
 
@@ -262,19 +262,19 @@
 
         <br/>
         <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
-        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <input disabled value='<?php if (isset($creationdate)) echo htmlspecialchars($creationdate, ENT_QUOTES) ?>' tabindex=313 />
         <br/>
 
         <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
-        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <input disabled value='<?php if (isset($creationby)) echo htmlspecialchars($creationby, ENT_QUOTES) ?>' tabindex=314 />
         <br/>
 
         <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
-        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <input disabled value='<?php if (isset($updatedate)) echo htmlspecialchars($updatedate, ENT_QUOTES) ?>' tabindex=315 />
         <br/>
 
         <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
-        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <input disabled value='<?php if (isset($updateby)) echo htmlspecialchars($updateby, ENT_QUOTES) ?>' tabindex=316 />
         <br/>
 
 

@@ -90,7 +90,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Updated HG settings in database: <b> $nasipaddress - $nasportid</b>  ";
+				$successMsg = "Updated HG settings in database: <b>" . htmlspecialchars($nasipaddress, ENT_QUOTES) . " - " . htmlspecialchars($nasportid, ENT_QUOTES) . "</b>  ";
 				$logAction .= "Successfully updated attributes for hg [$nasipaddress - $nasportid] on page: ";
 			} else {
 				$failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both hg Host and HG GroupName ";
@@ -98,11 +98,11 @@
 			}
 			
 		} elseif ($res->numRows() > 1) {
-			$failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> already exists in the database
+			$failureMsg = "The HG IP/Host - Port <b>" . htmlspecialchars($nasipaddress, ENT_QUOTES) . " - " . htmlspecialchars($nasportid, ENT_QUOTES) . "</b> already exists in the database
 			<br/> Please check that there are no duplicate entries in the database";
 			$logAction .= "Failed updating attributes for already existing hg [$nasipaddress - $nasportid] on page: ";
 		} else {
-			$failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> doesn't exist at all in the database.
+			$failureMsg = "The HG IP/Host - Port <b>" . htmlspecialchars($nasipaddress, ENT_QUOTES) . " - " . htmlspecialchars($nasportid, ENT_QUOTES) . "</b> doesn't exist at all in the database.
 			<br/>Please re-check the nashost ou specified.";
 			$logAction .= "Failed updating empty nas on page: ";
 		}
@@ -149,7 +149,7 @@
 	<div id="contentnorightbar">
 
 			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradhuntedit.php'] ?>
-			:: <?php if (isset($nasipaddress)) { echo $nasipaddress; } ?><h144>+</h144></a></h2>
+			:: <?php if (isset($nasipaddress)) { echo htmlspecialchars($nasipaddress, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 			<div id="helpPage" style="display:none;visibility:visible" >
 				<?php echo $l['helpPage']['mngradhuntedit'] ?>
@@ -159,13 +159,13 @@
 				include_once('include/management/actionMessages.php');
 			?>
 
-			<form name="newhg" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<form name="newhg" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 			
 <div class="tabber">
 
      <div class="tabbertab" title="<?php echo $l['title']['HGInfo']; ?>">
-		<input type="hidden" value="<?php echo $nasipaddress ?>" name="nasipaddressold" />
-		<input type="hidden" value="<?php echo $nasportid ?>" name="nasportidold" />
+		<input type="hidden" value="<?php echo htmlspecialchars($nasipaddress, ENT_QUOTES) ?>" name="nasipaddressold" />
+		<input type="hidden" value="<?php echo htmlspecialchars($nasportid, ENT_QUOTES) ?>" name="nasportidold" />
 
 
         <fieldset>
@@ -174,16 +174,16 @@
                 <br/>
 
                 <label for='nasipaddress' class='form'><?php echo $l['all']['HgIPHost'] ?></label>
-                <input name='nasipaddress' type='text' id='nasipaddress' value='<?php echo $nasipaddress ?>' tabindex=100 />
+                <input name='nasipaddress' type='text' id='nasipaddress' value='<?php echo htmlspecialchars($nasipaddress, ENT_QUOTES) ?>' tabindex=100 />
                 <br />
 
                 <label for='groupname' class='form'><?php echo $l['all']['HgGroupName'] ?></label>
-                <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=101 />
+                <input name='groupname' type='text' id='groupname' value='<?php echo htmlspecialchars($groupname, ENT_QUOTES) ?>' tabindex=101 />
                 <br />
 
 
                 <label for='nasportid' class='form'><?php echo $l['all']['HgPortId'] ?></label>
-                <input name='nasportid' type='text' id='nasportid' value='<?php echo $nasportid ?>' tabindex=104 />
+                <input name='nasportid' type='text' id='nasportid' value='<?php echo htmlspecialchars($nasportid, ENT_QUOTES) ?>' tabindex=104 />
                 <br />
 
 

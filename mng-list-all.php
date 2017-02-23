@@ -32,7 +32,6 @@
 	//setting values for the order by and order type variables
 	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
 	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-	
 	include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -166,7 +165,7 @@
 	
 	echo "<thread> <tr>
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['ID']."</a>
 		</th>
 
@@ -175,17 +174,17 @@
 		</th>
 		
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=Username&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['Username']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=Value&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['Password']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=Groupname&orderType=" . urlencode($orderType) . "\">
 		".$l['title']['Groups']."</a>
 		</th>
 		</tr> </thread>";
@@ -193,8 +192,8 @@
 	while($row = $res->fetchRow()) {
 
 		printqn("
-			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
-			<td>$row[5] $row[6]</td>
+			<td> <input type='checkbox' name='username[]' value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'>" . htmlspecialchars($row[2], ENT_QUOTES) . "</td>
+			<td>" . htmlspecialchars($row[5], ENT_QUOTES) . " " . htmlspecialchars($row[6], ENT_QUOTES) . "</td>
 			<td> 
 		");
 
@@ -210,7 +209,7 @@
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => $js,
-									'value' => $row[0],
+									'value' => htmlspecialchars($row[0], ENT_QUOTES),
 									'divId' => 'divContainerUserInfo',
 		
 							));
@@ -220,10 +219,10 @@
 		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
 			echo "<td>[Password is hidden]</td>";
 		} else {
-			echo "<td>$row[1]</td>";
+			echo "<td>" . htmlspecialchars($row[1], ENT_QUOTES) . "</td>";
 		}
 		echo "
-			<td>$row[3]</td>
+			<td>" . htmlspecialchars($row[3], ENT_QUOTES) . "</td>
 		</tr>";
 	}
 	

@@ -81,7 +81,7 @@ if (file_exists($dictionaryFile) && is_readable($dictionaryFile)) {
 			else
 				$myType = "NULL";
 
-			echo "vendor: $myVendor\tattribute: $myAttribute\ttype: $myType\n";
+			echo "vendor: " . htmlspecialchars($myVendor, ENT_QUOTES) . "\tattribute: " . htmlspecialchars($myAttribute, ENT_QUOTES) . "\ttype: " . htmlspecialchars($myType, ENT_QUOTES) . "\n";
 
 		}
 		

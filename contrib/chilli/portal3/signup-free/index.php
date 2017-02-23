@@ -134,7 +134,7 @@ session_start();                                                // we keep a ses
 
 			echo "<b>".$configValues['CONFIG_SIGNUP_MSG_TITLE']."</b>
 				<br/><br/>
-				<form name='signup' action='".$_SERVER['PHP_SELF']."' method='post'>
+				<form name='signup' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
 
 				<ul>
 				        First name:<li> <input type='text' value='' name='firstname' /> <br/></li>
@@ -160,9 +160,9 @@ session_start();                                                // we keep a ses
 
 			case "success":
 				echo "<font color='blue'>Success</font><br/><br/>".
-					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER']."<b>".$_POST['firstname']."</b>,<br/><br/>".
+					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER']."<b>" . htmlspecialchars($_POST['firstname'], ENT_QUOTES) . "</b>,<br/><br/>".
 					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_BODY'].
-					"<ul><li>Username: <b>$username</b></li><li>Password: <b>$password</b><br/></li></ul>".
+					"<ul><li>Username: <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b></li><li>Password: <b>" . htmlspecialchars($password, ENT_QUOTES) . "</b><br/></li></ul>".
 					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_LOGIN_LINK'];
 				break;
 

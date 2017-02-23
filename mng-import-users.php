@@ -45,7 +45,7 @@
 			// initialize some required variables
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 			
 			$passwordType = $_POST['passwordType'];
 			
@@ -131,7 +131,7 @@
 			
 			include 'library/closedb.php';
 
-		   $successMsg = "Successfully imported a total of <b>$userCount</b> users to database";
+		   $successMsg = "Successfully imported a total of <b>" . htmlspecialchars($userCount, ENT_QUOTES) . "</b> users to database";
 		   $logAction .= "Successfully imported a total of <b>$userCount</b> users to database on page: ";
 	   
 		} else {
@@ -180,7 +180,7 @@
 				include_once('include/management/actionMessages.php');
 			?>
 
-			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 

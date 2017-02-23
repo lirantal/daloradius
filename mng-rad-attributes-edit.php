@@ -44,6 +44,14 @@
 
 		include 'library/opendb.php';
 
+        // escape SQL
+        $vendor = $dbSocket->escapeSimple($vendor);
+        $attributeOld = $dbSocket->escapeSimple($attributeOld);
+
+        // escape SQL
+        $vendor = $dbSocket->escapeSimple($vendor);
+        $attributeOld = $dbSocket->escapeSimple($attributeOld);
+
 		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE vendor='".$dbSocket->escapeSimple($vendor).
 			"' AND attribute='".$dbSocket->escapeSimple($attribute)."'";
 		$res = $dbSocket->query($sql);
@@ -63,7 +71,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Updated database with vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
+				$successMsg = "Updated database with vendor attribute: <b>" . htmlspecialchars($attribute, ENT_QUOTES) . "</b> of vendor: <b>" . htmlspecialchars($vendor, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully update vendor [$vendor] and attribute [$attribute] on page: ";
 			} else {
 				$failureMsg = "you must provide atleast a vendor name and attribute";	
@@ -123,7 +131,7 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesedit.php'] ?>
-		:: <?php if (isset($vendor)) { echo $vendor; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($vendor)) { echo htmlspecialchars($vendor, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradattributesedit'] ?>
@@ -133,7 +141,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 	<fieldset>
 
@@ -142,11 +150,11 @@
 
 		<ul>
 
-		<input type='hidden' name='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' />
+		<input type='hidden' name='vendor' value='<?php if (isset($vendor)) echo htmlspecialchars($vendor, ENT_QUOTES) ?>' />
 
 		<li class='fieldset'>
 		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
-		<input disabled name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
+		<input disabled name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo htmlspecialchars($vendor, ENT_QUOTES) ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
 		
 		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -155,11 +163,11 @@
 		</div>
 		</li>
 
-		<input type='hidden' name='attributeOld' value='<?php if (isset($attribute)) echo $attribute ?>' />
+		<input type='hidden' name='attributeOld' value='<?php if (isset($attribute)) echo htmlspecialchars($attribute, ENT_QUOTES) ?>' />
 
 		<li class='fieldset'>
 		<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
-		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101 />
+		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo htmlspecialchars($attribute, ENT_QUOTES) ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('attributeTooltip')" />
 		
 		<div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -171,7 +179,7 @@
 		<li class='fieldset'>
 		<label for='type' class='form'><?php echo $l['all']['Type'] ?></label>
 		<select name='type' type='text' id='type' class='form' tabindex=102 />
-		<option value='<?php echo $type; ?>'><?php echo $type; ?></option>
+		<option value='<?php echo htmlspecialchars($type, ENT_QUOTES); ?>'><?php echo htmlspecialchars($type, ENT_QUOTES); ?></option>
 		<?php
 			include_once('include/management/populate_selectbox.php');
 			drawTypes();
@@ -188,7 +196,7 @@
 		<li class='fieldset'>
 		<label for='RecommendedOP' class='form'><?php echo $l['all']['RecommendedOP'] ?></label>
 		<select name='RecommendedOP' type='text' id='RecommendedOP' class='form' tabindex=103 />
-		<option value='<?php echo $RecommendedOP; ?>'><?php echo $RecommendedOP; ?></option>
+		<option value='<?php echo htmlspecialchars($RecommendedOP, ENT_QUOTES); ?>'><?php echo htmlspecialchars($RecommendedOP, ENT_QUOTES); ?></option>
 		<?php
 			include_once('include/management/populate_selectbox.php');
 			drawOptions();
@@ -205,7 +213,7 @@
 		<li class='fieldset'>
 		<label for='RecommendedTable' class='form'><?php echo $l['all']['RecommendedTable'] ?></label>
 		<select name='RecommendedTable' type='text' id='RecommendedTable' class='form' tabindex=104 />
-		<option value='<?php echo $RecommendedTable; ?>'><?php echo $RecommendedTable; ?></option>
+		<option value='<?php echo htmlspecialchars($RecommendedTable, ENT_QUOTES); ?>'><?php echo htmlspecialchars($RecommendedTable, ENT_QUOTES); ?></option>
 		<?php
 			include_once('include/management/populate_selectbox.php');
 			drawTables();
@@ -221,7 +229,7 @@
 
 		<li class='fieldset'>
 		<label for='RecommendedTooltip' class='form'><?php echo $l['all']['RecommendedTooltip'] ?></label>
-		<textarea class='form' name='RecommendedTooltip' type='text' id='RecommendedTooltip' tabindex=105 /><?php if (isset($RecommendedTooltip)) echo $RecommendedTooltip ?></textarea>
+		<textarea class='form' name='RecommendedTooltip' type='text' id='RecommendedTooltip' tabindex=105 /><?php if (isset($RecommendedTooltip)) echo htmlspecialchars($RecommendedTooltip, ENT_QUOTES) ?></textarea>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('RecommendedTooltipTooltip')" />
 		
 		<div id='RecommendedTooltipTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -234,7 +242,7 @@
 		<li class='fieldset'>
 		<label for='RecommendedHelper' class='form'><?php echo $l['all']['RecommendedHelper'] ?></label>
 		<select name='RecommendedHelper' type='text' id='RecommendedHelper' class='form' tabindex=104 />
-		<option value='<?php echo $RecommendedHelper; ?>'><?php echo $RecommendedHelper; ?></option>
+		<option value='<?php echo htmlspecialchars($RecommendedHelper, ENT_QUOTES); ?>'><?php echo htmlspecialchars($RecommendedHelper, ENT_QUOTES); ?></option>
 		<?php
 			include_once('include/management/populate_selectbox.php');
 			drawRecommendedHelper();

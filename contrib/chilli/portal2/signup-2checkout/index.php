@@ -161,7 +161,7 @@
                                         need to confirm the transaction with a Buy button, redirecting you to the merchant account to complete <br/>
 										the payment
 
-                                        <form name='newuser' action='".$_SERVER['PHP_SELF']."' method='post'>
+                                        <form name='newuser' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
 
 					<table>
                                         <tr><td>Select your plan:</td>
@@ -174,7 +174,7 @@
                                         " WHERE planType='2Checkout'";
                                 $res = $dbSocket->query($sql);
                                 while ($row = $res->fetchRow()) {
-                                        echo "<option value=\"$row[0]\">$row[1] - Cost $row[2] $row[4] </option>";
+                                        echo "<option value=\"" . htmlspecialchars($row[0], ENT_QUOTES) . "\">" . htmlspecialchars($row[1], ENT_QUOTES) . " - Cost " . htmlspecialchars($row[2], ENT_QUOTES) . " " . htmlspecialchars($row[4], ENT_QUOTES) . " </option>";
                                 }
 
                                 include('library/closedb.php');
@@ -185,15 +185,15 @@
                                         <br/><br/>
 
                                         <tr><td>First name:</td>
-                                            <td> <input name='firstName' value='"; if (isset($firstName)) echo $firstName; echo "' /> </td></tr>
+                                            <td> <input name='firstName' value='"; if (isset($firstName)) echo htmlspecialchars($firstName, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>Last name:</td>
-                                            <td> <input name='lastName' value='"; if (isset($lastName)) echo $lastName; echo "' /> </td></tr>
+                                            <td> <input name='lastName' value='"; if (isset($lastName)) echo htmlspecialchars($lastName, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>Address:</td>
-                                            <td> <input name='address' value='"; if (isset($address)) echo $address; echo "' /> </td></tr>
+                                            <td> <input name='address' value='"; if (isset($address)) echo htmlspecialchars($address, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>City:</td>
-                                            <td> <input name='city' value='"; if (isset($city)) echo $city; echo "' /> </td></tr>
+                                            <td> <input name='city' value='"; if (isset($city)) echo htmlspecialchars($city, ENT_QUOTES); echo "' /> </td></tr>
                                         <tr><td>State:</td>
-                                            <td> <input name='state' value='"; if (isset($state)) echo $state; echo "' /> </td></tr>
+                                            <td> <input name='state' value='"; if (isset($state)) echo htmlspecialchars($state, ENT_QUOTES); echo "' /> </td></tr>
 
 					</table><br/><br/>
                                             <input type='submit' value='Submit' name='submit'>
@@ -217,7 +217,7 @@
                                         <table><tr><td>PIN Code:</td><td> <b>
                                         ');
 
-                                echo $userPIN;
+                                echo htmlspecialchars($userPIN, ENT_QUOTES);
 
                                 echo'
                                         </b></td></tr></table>
@@ -226,13 +226,13 @@
                                         <form action="2co_start.php" method="post">
                                                 <input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'" />
 
-                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
-                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
+                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo htmlspecialchars($planCost, ENT_QUOTES); echo '" />
+                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo htmlspecialchars($planName, ENT_QUOTES); echo '" />
                                                 <input type="hidden" name="quantity" value="1" />
-                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
-                                                <input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
-                                                <input type="hidden" name="custom" value="'.$txnId.'" />
+                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo htmlspecialchars($planTax, ENT_QUOTES); echo '" />
+                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo htmlspecialchars($planId, ENT_QUOTES); echo '" />
+                                                <input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo htmlspecialchars($planCurrency, ENT_QUOTES); echo '">
+                                                <input type="hidden" name="custom" value="' . htmlspecialchars($txnId, ENT_QUOTES) . '" />
 
 												<input type="submit" name="submit" value="Buy" />
                                         </form>

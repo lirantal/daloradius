@@ -61,11 +61,11 @@
                                         // delete only a specific groupname and it's attribute
                                         $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADHG'].
                                                         " WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress).
-                                                        "' AND nasportid='$nasportid' ";
+                                                        "' AND nasportid='$dbSocket->escapeSimple($nasportid)' ";
                                         $res = $dbSocket->query($sql);
                                         $logDebugSQL .= $sql . "\n";
 
-                                        $successMsg = "Deleted HuntGroup(s): <b> $allNasipaddresses </b> with Port ID(s): <b> $allNasportid </b> ";
+                                        $successMsg = "Deleted HuntGroup(s): <b>" . htmlspecialchars($allNasipaddresses, ENT_QUOTES) . "</b> with Port ID(s): <b>" . htmlspecialchars($allNasportid, ENT_QUOTES) . "</b> ";
                                         $logAction .= "Successfully deleted hunt group(s) [$allNasipaddresses] with port id [$allNasportid] on page: ";
 
                                         include 'library/closedb.php';
@@ -78,7 +78,7 @@
                                         $res = $dbSocket->query($sql);
                                         $logDebugSQL .= $sql . "\n";
 
-                                        $successMsg = "Deleted all instances for HuntGroup(s): <b> $allNasipaddresses </b>";
+                                        $successMsg = "Deleted all instances for HuntGroup(s): <b>" . htmlspecialchars($allNasipaddresses, ENT_QUOTES) . "</b>";
                                         $logAction .= "Successfully deleted all instances for huntgroup(s) [$allNasipaddresses] on page: ";
 
                                         include 'library/closedb.php';
@@ -125,7 +125,7 @@
 	<div id="contentnorightbar">
 
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradhuntdel.php'] ?>
-		:: <?php if (isset($nasipaddress)) { echo $nasipaddress; } ?><h144>+</h144></a></h2>
+        :: <?php if (isset($nasipaddress)) { echo htmlspecialchars($nasipaddress, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradhuntdel'] ?>
@@ -135,8 +135,8 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+		<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="get">
 
         <fieldset>
 
@@ -148,7 +148,7 @@
 			<br />
 
                         <label for='nasportid' class='form'><?php echo $l['all']['HgPortId'] ?></label>
-                        <input name='nasportid' type='text' id='nasportid' value='<?php echo $nasportid ?>' tabindex=101 />
+                        <input name='nasportid' type='text' id='nasportid' value='<?php echo htmlspecialchars($nasportid, ENT_QUOTES) ?>' tabindex=101 />
                         <br/>
 
 			<br/><br/>

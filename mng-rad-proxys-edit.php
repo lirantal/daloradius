@@ -40,6 +40,8 @@
 		
 		include 'library/opendb.php';
 
+
+
 		if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
 			$filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
 			$fileFlag = 1;
@@ -57,18 +59,18 @@
 
 			if (!(file_exists($filenameRealmsProxys))) {
 				$logAction .= "Failed non-existed proxys configuration file [$filenameRealmsProxys] on page: ";
-				$failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save proxys information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " doesn't exist, I can't save proxys information to the file";
 				$fileFlag = 0;
 			}
 
 			if (!(is_writable($filenameRealmsProxys))) {
 				$logAction .= "Failed writing proxys configuration to file [$filenameRealmsProxys] on page: ";
-				$failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save proxys information to the file";
+				$failureMsg = "the file " . htmlspecialchars($filenameRealmsProxys, ENT_QUOTES) . " isn't writable, I can't save proxys information to the file";
 				$fileFlag = 0;
 			}
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			// update proxy entry in database
 			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." SET ".
@@ -81,7 +83,7 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$successMsg = "Updated database proxy: <b>$proxyname</b>";
+			$successMsg = "Updated database proxy: <b>" . htmlspecialchars($proxyname, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully updated proxy [$proxyname] on page: ";
 
 			/*******************************************************************/
@@ -153,7 +155,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -166,12 +168,12 @@
 
 		<ul>
 
-		<input type='hidden' name='proxyname'  id='proxyname' value='<?php if (isset($proxyname)) echo $proxyname; ?>' />
+		<input type='hidden' name='proxyname'  id='proxyname' value='<?php if (isset($proxyname)) echo htmlspecialchars($proxyname, ENT_QUOTES); ?>' />
 
                 <li class='fieldset'>
                 <label for='proxyname' class='form'><?php echo $l['all']['ProxyName'] ?></label>
                 <input disabled name='proxyname' type='text' id='proxyname' 
-					value='<?php if (isset($proxyname)) echo $proxyname; ?>' tabindex=100
+					value='<?php if (isset($proxyname)) echo htmlspecialchars($proxyname, ENT_QUOTES); ?>' tabindex=100
 				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyNameTooltip')" />
 			
                 <div id='proxyNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -183,7 +185,7 @@
                 <li class='fieldset'>
                 <label for='retry_delay' class='form'><?php echo $l['all']['RetryDelay'] ?></label>
                 <input name='retry_delay' type='text' id='retry_delay' 
-						value='<?php if (isset($retry_delay)) echo $retry_delay; ?>' tabindex=102
+						value='<?php if (isset($retry_delay)) echo htmlspecialchars($retry_delay, ENT_QUOTES); ?>' tabindex=102
 				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyRetryDelayTooltip')" />
 				
                 <div id='proxyRetryDelayTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -194,7 +196,7 @@
                 <li class='fieldset'>
                 <label for='retry_count' class='form'><?php echo $l['all']['RetryCount'] ?></label>
                 <input name='retry_count' type='text' id='retry_count' 
-					value='<?php if (isset($retry_count)) echo $retry_count; ?>' tabindex=103
+					value='<?php if (isset($retry_count)) echo htmlspecialchars($retry_count, ENT_QUOTES); ?>' tabindex=103
 				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyRetryCountTooltip')" />
 				
                 <div id='proxyRetryCountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -206,7 +208,7 @@
                 <li class='fieldset'>
                 <label for='dead_time' class='form'><?php echo $l['all']['DeadTime'] ?></label>
                 <input name='dead_time' type='text' id='dead_time' 
-					value='<?php if (isset($dead_time)) echo $dead_time; ?>' tabindex=104
+					value='<?php if (isset($dead_time)) echo htmlspecialchars($dead_time, ENT_QUOTES); ?>' tabindex=104
 				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyDeadTimeTooltip')" />
 				
                 <div id='proxyDeadTimeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -218,7 +220,7 @@
                 <li class='fieldset'>
                 <label for='default_fallback' class='form'><?php echo $l['all']['DefaultFallback'] ?></label>
                 <input name='default_fallback' type='text' id='default_fallback' 
-					value='<?php if (isset($default_fallback)) echo $default_fallback; ?>' tabindex=104
+					value='<?php if (isset($default_fallback)) echo htmlspecialchars($default_fallback, ENT_QUOTES); ?>' tabindex=104
 				<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyDefaultFallbackTooltip')" />
 				
                 <div id='proxyDefaultFallbackTooltip'  style='display:none;visibility:visible' class='ToolTip'>

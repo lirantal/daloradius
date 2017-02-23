@@ -75,7 +75,6 @@
 		include 'include/management/pages_common.php';	
 		include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-
 		if ($op == "LIKE") {						// if the op is LIKE then the SQL syntax uses % for pattern matching
 			$value = "%$value%";					// and we sorround the $value with % as a wildcard
 		}
@@ -86,6 +85,9 @@
 		$value = $dbSocket->escapeSimple($value);
 		$startdate = $dbSocket->escapeSimple($startdate);
 		$enddate = $dbSocket->escapeSimple($enddate);
+        $op = $dbSocket->escapeSimple($op);
+        $orderBy = $dbSocket->escapeSimple($orderBy);
+        $orderType = $dbSocket->escapeSimple($orderType);
 
 		// since we need to span through pages, which we do using GET queries I can't rely on this page
 		// to be processed through POST but rather using GET only (with the current design anyway).
@@ -155,7 +157,7 @@
 	// building the dybamic table list fields
 	echo "<thread> <tr>";
 	foreach ($sqlfields as $value) {
-		echo "<th scope='col'> $value   </th>";
+		echo "<th scope='col'>" . htmlspecialchars($value, ENT_QUOTES) . "</th>";
 	} //foreach $sqlfields
 	echo "</tr> </thread>";
 
@@ -164,7 +166,7 @@
 	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
 		echo "<tr>";
 		foreach ($sqlfields as $value) {
-			echo "<td> " . $row[$value] . "</td>";
+			echo "<td> " . htmlspecialchars($row[$value], ENT_QUOTES) . "</td>";
 		}
 		echo "</tr>";
 	}

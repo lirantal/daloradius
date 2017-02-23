@@ -40,7 +40,7 @@
 		$row = $res->fetchRow();
 
 		if ( ($row[0] == $txnId) && ($row[2] == "Completed") ) {
-			$successMsg = "Your user PIN is: <b>$row[1]</b> <br/>".$configValues['CONFIG_PAYPAL_SUCCESS_MSG_POST'];
+			$successMsg = "Your user PIN is: <b>" . htmlspecialchars($row[1], ENT_QUOTES) . "</b> <br/>".$configValues['CONFIG_PAYPAL_SUCCESS_MSG_POST'];
 			$refresh = false;
 		}
 

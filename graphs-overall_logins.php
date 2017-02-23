@@ -54,7 +54,7 @@
 
 <?php
 	echo "<center>";
-	echo "<img src=\"library/graphs-overall-users-login.php?type=$type&user=$username\" />";
+	echo "<img src=\"library/graphs-overall-users-login.php?type=" . htmlspecialchars($type, ENT_QUOTES) . "&user=" . htmlspecialchars($username, ENT_QUOTES) . "\" />";
 	echo "</center>";
 ?>
 	</div>

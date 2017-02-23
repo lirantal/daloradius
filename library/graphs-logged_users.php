@@ -88,7 +88,7 @@ function graph_day($day,$month,$year) {
 	$month = month_alpha_to_number($month);
 
 	for ($i=0;$i < 24;$i++) { //24 hours a day
-		$date = "$year-$month-$day $i:00:00";
+		$date = htmlspecialchars($year, ENT_QUOTES) . "-" . htmlspecialchars($month, ENT_QUOTES) . "-" . htmlspecialchars($day, ENT_QUOTES) . " $i:00:00";
 		$sql = "select count(radacctid) from radacct where (acctstarttime <= '$date' and acctstoptime >= '$date') or (acctstarttime <= '$date' and acctsessiontime = 0 and acctinputoctets = 0 and acctoutputoctets = 0);";
 		$result = $dbSocket->query($sql);
 		$row = $result->fetchRow();
@@ -119,7 +119,7 @@ function graph_month($month,$year) {
 		$measure[$i]['min'] = 100000;
 		$measure[$i]['max'] = 0;
 		for ($j=0;$j < 24;$j++) { //24 hours a day
-			$date = "$year-$month-$i $j:00:00";
+			$date = htmlspecialchars($year, ENT_QUOTES) . "-" . htmlspecialchars($month, ENT_QUOTES) . "-" . "$i $j:00:00";
 			$sql = "select count(radacctid) from radacct where (acctstarttime <= '$date' and acctstoptime >= '$date') or (acctstarttime <= '$date' and acctsessiontime = 0 and acctinputoctets = 0 and acctoutputoctets = 0);";
 			$result = $dbSocket->query($sql);
 			$row = $result->fetchRow();

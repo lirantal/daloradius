@@ -63,7 +63,7 @@
 			if (trim($planName) != "") {
 
 				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+				$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
 				" (id, planName, planId, planType, planTimeBank, planTimeType, planTimeRefillCost, planBandwidthUp, planBandwidthDown, ".
@@ -98,14 +98,14 @@
 				// billing_plans_profiles table for later on
 				addProfilesToBillingPlans($dbSocket, $planName, $groups);
 				
-				$successMsg = "Added to database new billing plan: <b>$planName</b>";
+				$successMsg = "Added to database new billing plan: <b>" . htmlspecialchars($planName, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new billing plan [$planName] on page: ";
 			} else {
 				$failureMsg = "you must provide a plan name";	
 				$logAction .= "Failed adding new billing plan [$planName] on page: ";	
 			}
 		} else { 
-			$failureMsg = "You have tried to add a billing plan that already exist in the database: $planName";	
+			$failureMsg = "You have tried to add a billing plan that already exist in the database: " . htmlspecialchars($planName, ENT_QUOTES) . "";
 			$logAction .= "Failed adding new billing plan already in database [$planName] on page: ";		
 		}
 	
@@ -174,7 +174,7 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 

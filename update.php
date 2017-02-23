@@ -1776,7 +1776,7 @@ if (isset($_POST['submit'])) {
 	include ("library/config_write.php");						// save the new database version for daloRADIUS in the config file.
 
 	$updateStatus = "true";
-	$successMsg .= "<br/>Finished upgrade procedure to version $databaseVersion.
+	$successMsg .= "<br/>Finished upgrade procedure to version " . htmlspecialchars($databaseVersion, ENT_QUOTES) . "
 			<br/><br/><a href='index.php'>Return</a> to daloRADIUS Platform login.";
 	
 	// append to the failureMsg variable all the errors which took place during the database queries.
@@ -1883,7 +1883,7 @@ if (isset($_POST['submit'])) {
 	
 <?php else: ?>
 
-<form name="update" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form name="update" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -1969,7 +1969,7 @@ if (isset($_POST['submit'])) {
 		</label>
 
 	<select name="daloradius_version" class='form'>
-		<?php echo $option; ?>
+		<?php echo htmlspecialchars($option, ENT_QUOTES); ?>
 		<option value=""></option>
 		<option value="0.9-8">0.9-8</option>
 		<option value="0.9-7">0.9-7</option>

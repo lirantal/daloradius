@@ -45,7 +45,7 @@
         <br/>
 <?php
         echo "<center>";
-        echo "<img src=\"library/graphs-alltime-users-login.php?type=$type\" />";
+        echo "<img src=\"library/graphs-alltime-users-login.php?type=" . htmlspecialchars($type, ENT_QUOTES) . "\" />";
         echo "</center>";
 ?>
 	</div>

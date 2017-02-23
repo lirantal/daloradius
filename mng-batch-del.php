@@ -52,7 +52,7 @@
 					" FROM ".
 					$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY']." ".
 					" WHERE ".
-					$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name = '$batch_name'";
+					$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name = '".$dbSocket->escapeSimple($batch_name)."'";
 					
 			$res_q_batch = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
@@ -90,7 +90,7 @@
 						" FROM ".
 						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." ".
 						" WHERE ".
-						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = $batch ";
+						$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = '".$dbSocket->escapeSimple($batch)."'";
 						
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
@@ -108,7 +108,8 @@
 				while($row = $res->fetchRow()) {
 	
 					$username = $row[1];
-					
+                    $username = $dbSocket->escapeSimple($username);
+
 					// delete all attributes associated with a username
 					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE Username='$username'";
 					$res_q = $dbSocket->query($sql);
@@ -142,7 +143,7 @@
 				}
 				
 
-				$successMsg = "Deleted batch(s): <b> $allBatches </b>";
+				$successMsg = "Deleted batch(s): <b>" . htmlspecialchars($allBatches, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully deleted batch(s) [$allBatches] on page: ";
 
 			}  else { 
@@ -185,7 +186,7 @@
 <div id="contentnorightbar">
 	
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngbatchdel.php'] ?>
-	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($username)) { echo htmlspecialchars($username, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
 		<?php echo $l['helpPage']['mngbatchdel'] ?>
@@ -195,8 +196,8 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="get">
 	
 	<fieldset>
 

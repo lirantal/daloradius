@@ -78,7 +78,7 @@
 				}
 
 
-				$successMsg = "Deleted profile(s): <b> $allProfiles </b>";
+				$successMsg = "Deleted profile(s): <b> " . htmlspecialchars($allProfiles, ENT_QUOTES) . " </b>";
 				$logAction .= "Successfully deleted profile(s) [$allProfiles] on page: ";
 
 				include 'library/closedb.php';
@@ -112,7 +112,7 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 
-		$successMsg = "Deleted attribute: <b> $attribute </b> for profile(s): <b> $profile </b> from database";
+		$successMsg = "Deleted attribute: <b>" . htmlspecialchars($attribute, ENT_QUOTES) . "</b> for profile(s): <b>" . htmlspecialchars($profile, ENT_QUOTES) . "</b> from database";
 		$logAction .= "Successfully deleted attribute [$attribute] for profile [$profile] on page: ";
 
 		include 'library/closedb.php';
@@ -144,7 +144,7 @@
 		<div id="contentnorightbar">
 
 				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofilesdel.php'] ?>
-				:: <?php if (isset($profile)) { echo $profile; } ?><h144>+</h144></a></h2>
+				:: <?php if (isset($profile)) { echo htmlspecialchars($profile, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 				<div id="helpPage" style="display:none;visibility:visible" >
 					<?php echo $l['helpPage']['mngradprofilesdel'] ?>
@@ -154,8 +154,8 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<div id="removeDiv" style="display:<?php echo htmlspecialchars($showRemoveDiv, ENT_QUOTES) ?>;visibility:visible" >
+				<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
         <fieldset>
 
@@ -163,7 +163,7 @@
                 <br/>
 
                 <label for='profile' class='form'>Profile Name</label>
-                <input name='profile[]' type='text' id='profile' value='<?php echo $profile ?>' tabindex=100 />
+                <input name='profile[]' type='text' id='profile' value='<?php echo htmlspecialchars($profile, ENT_QUOTES) ?>' tabindex=100 />
                 <br/>
 
                 <label for='profile' class='form'>Remove all user associations with this profile(s)</label>

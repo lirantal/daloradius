@@ -89,6 +89,9 @@
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
         // setup php session variables for exporting
         $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
         $_SESSION['reportQuery'] = " WHERE (AcctStopTime IS NULL OR AcctStopTime = '0000-00-00 00:00:00') AND (UserName LIKE '".$dbSocket->escapeSimple($usernameOnline)."%')";
@@ -174,7 +177,7 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=username&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameOnline=" . urlencode($usernameOnline) . "&orderBy=username&orderType=" .  urlencode($orderTypeNextPage) . "\">
 		".$l['all']['Username']. "</a>
 		</th>
 
@@ -183,23 +186,23 @@
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=framedipaddress&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameOnline=" . urlencode($usernameOnline) . "&orderBy=framedipaddress&orderType=" .  urlencode($orderTypeNextPage) . "\">
 		".$l['all']['IPAddress']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameOnline=" . urlencode($usernameOnline) . "&orderBy=acctstarttime&orderType=" .  urlencode($orderTypeNextPage) . "\">
 		".$l['all']['StartTime']."</a>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameOnline=" . urlencode($usernameOnline) . "&orderBy=acctsessiontime&orderType=" . urlencode($orderTypeNextPage) . "\">
 		".$l['all']['TotalTime']."</a>
 		</th>
 
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=NASshortname&orderType=$orderTypeNextPage\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?usernameOnline=" . urlencode($usernameOnline) . "&orderBy=NASshortname&orderType=" . urlencode($orderTypeNextPage) . "\">
 			".$l['all']['HotSpot']." / 
 			".$l['all']['NasShortname']."
 		</th>
@@ -231,24 +234,24 @@
 		$totalTime = time2str($row['AcctSessionTime']);
 
 		echo "<tr>
-				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$username||$start'>
+				<td> <input type='checkbox' name='clearSessionsUsers[]' value='" . htmlspecialchars($username, ENT_QUOTES) . "||" . htmlspecialchars($start, ENT_QUOTES) . "'>
 					<a class='tablenovisit' href='javascript:return;'
 					onclick=\"javascript:__displayTooltip();\" 
 					tooltipText=\"
-						<a class='toolTip' href='mng-edit.php?username=$username'>".
+						<a class='toolTip' href='mng-edit.php?username=" . urlencode($username) . "'>".
 							$l['Tooltip']['UserEdit']."</a>
 						&nbsp;
-						<a class='toolTip' href='config-maint-disconnect-user.php?username=$username&nasaddr=$nasip&customattributes=Acct-Session-Id=$acctsessionid'>".
+						<a class='toolTip' href='config-maint-disconnect-user.php?username=" . urlencode($username) . "&nasaddr=" . urlencode($nasip) . "&customattributes=Acct-Session-Id=" . urlencode($acctsessionid) . "'>".
 							$l['all']['Disconnect']."</a>
 						<br/>\"
-					>$username</a>
+					>" . htmlspecialchars($username, ENT_QUOTES) . "</a>
 					</td>
-				<td> $name</td>
-				<td> IP: $ip<br/>MAC: $usermac</td>
-				<td> $start </td>
-				<td> $totalTime </td>
-				<td> $hotspot $nasshortname </td>
-				<td> ".$l['all']['Upload'].": $upload <br/> ".$l['all']['Download'].": $download <br/> ".$l['all']['TotalTraffic'].": <b>$traffic</b> </td>
+				<td> " . htmlspecialchars($name, ENT_QUOTES) . "</td>
+				<td> IP: " . htmlspecialchars($ip, ENT_QUOTES) . "<br/>MAC: " . htmlspecialchars($usermac, ENT_QUOTES) . "</td>
+				<td> " . htmlspecialchars($start, ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($totalTime, ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($hotspot, ENT_QUOTES) . " " . htmlspecialchars($nasshortname, ENT_QUOTES) . " </td>
+				<td> ".$l['all']['Upload'].": " . htmlspecialchars($upload, ENT_QUOTES) . " <br/> ".$l['all']['Download'].": " . htmlspecialchars($download, ENT_QUOTES) . " <br/> ".$l['all']['TotalTraffic'].": <b>" . htmlspecialchars($traffic, ENT_QUOTES) . "</b> </td>
 		</tr>";
 	}
 

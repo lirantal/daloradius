@@ -450,7 +450,7 @@
 					addUserBillInfo($dbSocket, $username);
 					addAttributes($dbSocket, $username);
 
-					$successMsg = "Added to database new user: <b> $username </b>";
+					$successMsg = "Added to database new user: <b>" . htmlspecialchars($username, ENT_QUOTES , ENT_QUOTES) . "</b>";
 					$logAction .= "Successfully added new user [$username] on page: ";
 
 				} else {
@@ -472,7 +472,7 @@
                                 addUserBillInfo($dbSocket, $username);
 				addAttributes($dbSocket, $macaddress);
 
-				$successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
+				$successMsg = "Added to database new mac auth user: <b>" . htmlspecialchars($macaddress, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new mac auth user [$macaddress] on page: ";
 
 		   } elseif ($authType == "pincodeAuth") {
@@ -488,7 +488,7 @@
                                 addUserBillInfo($dbSocket, $username);
 				addAttributes($dbSocket, $pincode);
 
-				$successMsg = "Added to database new pincode: <b> $pincode </b>";
+				$successMsg = "Added to database new pincode: <b>" . htmlspecialchars($pincode, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new pincode [$pincode] on page: ";
 
 		   } else {
@@ -496,7 +496,7 @@
 		   }
 
 		} else { 
-			$failureMsg = "user already exist in database: <b> $username </b>";
+			$failureMsg = "user already exist in database: <b>" . htmlspecialchars($username, ENT_QUOTES) . "</b>";
 			$logAction .= "Failed adding new user already existing in database [$username] on page: ";
 		}
 		
@@ -561,7 +561,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 		
-		<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newuser" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -594,7 +594,7 @@
 		<li class='fieldset'>
 		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
 		<input name='password' type='text' id='password' value='' 
-			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101 />
+			<?php if (isset($hiddenPassword)) echo htmlspecialchars($hiddenPassword, ENT_QUOTES) ?> tabindex=101 />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8,<?php
 		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />

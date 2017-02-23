@@ -60,7 +60,7 @@
 			if (trim($name) != "" and trim($macaddress) != "") {
 
 				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
+				$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 				// insert hotspot info
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
@@ -82,14 +82,14 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new hotspot: <b>$name</b>";
+				$successMsg = "Added to database new hotspot: <b>" . htmlspecialchars($name, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully added new hotspot [$name] on page: ";
 			} else {
 				$failureMsg = "you must provide atleast a hotspot name and mac-address";	
 				$logAction .= "Failed adding new hotspot [$name] on page: ";	
 			}
 		} else { 
-			$failureMsg = "You have tried to add a hotspot that already exist in the database: $name";	
+			$failureMsg = "You have tried to add a hotspot that already exist in the database: " . htmlspecialchars($name, ENT_QUOTES) . "";	
 			$logAction .= "Failed adding new hotspot already in database [$name] on page: ";		
 		}
 	
@@ -136,7 +136,7 @@
 		include_once('include/management/actionMessages.php');
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 

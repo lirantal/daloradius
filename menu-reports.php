@@ -44,7 +44,7 @@ include_once ("lang/main.php");
 				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
-								value="<?php if (isset($usernameOnline)) echo $usernameOnline ?>" tabindex=1>
+								value="<?php if (isset($usernameOnline)) echo htmlspecialchars($usernameOnline, ENT_QUOTES) ?>" tabindex=1>
 							</form>
 							</li>							
 
@@ -58,7 +58,7 @@ include_once ("lang/main.php");
 				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
-								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>
+								value="<?php if (isset($usernameLastConnect)) echo htmlspecialchars($usernameLastConnect, ENT_QUOTES) ?>" tabindex=2>
 								<select class="generic" name="radiusreply" tabindex=3>
 									<option value="Any">Any</option>
 									<option value="Access-Accept">Access-Accept</option>
@@ -69,7 +69,7 @@ include_once ("lang/main.php");
 								onclick="showChooser(this, 'startdate_lastconnect', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="startdate" type="text" id="startdate_lastconnect" onClick='javascript:__displayTooltip();'
 								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-							value="<?php if (isset($startdate)) echo $startdate;
+							value="<?php if (isset($startdate)) echo htmlspecialchars($startdate, ENT_QUOTES);
 							else echo date("Y-m-01"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
 								style="display: none; visibility: hidden; 	width: 160px;">
@@ -80,7 +80,7 @@ include_once ("lang/main.php");
 								onclick="showChooser(this, 'enddate_lastconnect', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="enddate" type="text" id="enddate_lastconnect" onClick='javascript:__displayTooltip();'
 								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-								value="<?php if (isset($enddate)) echo $enddate;
+								value="<?php if (isset($enddate)) echo htmlspecialchars($enddate, ENT_QUOTES);
 							else echo date("Y-m-t"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
 								style="display: none; visibility: hidden; 	width: 160px;">
@@ -101,7 +101,7 @@ include_once ("lang/main.php");
 								onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="startdate" type="text" id="startdate" onClick='javascript:__displayTooltip();'
 								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-							value="<?php if (isset($startdate)) echo $startdate;
+							value="<?php if (isset($startdate)) echo htmlspecialchars($startdate, ENT_QUOTES);
 							else echo date("Y-01-01"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
 								style="display: none; visibility: hidden; 	width: 160px;">
@@ -111,7 +111,7 @@ include_once ("lang/main.php");
 								onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="enddate" type="text" id="enddate" onClick='javascript:__displayTooltip();'
 								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-								value="<?php if (isset($enddate)) echo $enddate;
+								value="<?php if (isset($enddate)) echo htmlspecialchars($enddate, ENT_QUOTES);
 							else echo date("Y-m-t"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
 								style="display: none; visibility: hidden; 	width: 160px;">
@@ -136,13 +136,13 @@ include_once ("lang/main.php");
 							</select>
 			<h4>Username Filter</h4>
 			<input name="username" type="text" id="username" 
-			value="<?php if (isset($username)) echo $username; else echo "%"; ?>">
+			value="<?php if (isset($username)) echo htmlspecialchars($username, ENT_QUOTES); else echo "%"; ?>">
 			<h4>Start Date</h4>
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'startdate_topuser', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 			<input name="startdate" type="text" id="startdate_topuser" onClick='javascript:__displayTooltip();'
                      tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-			value="<?php if (isset($startdate)) echo $startdate;
+			value="<?php if (isset($startdate)) echo htmlspecialchars($startdate, ENT_QUOTES);
 			else echo date("Y-m-01"); ?>">
 			<div id="chooserSpan" class="dateChooser select-free" 
 				style="display: none; visibility: hidden; 	width: 160px;">
@@ -153,7 +153,7 @@ include_once ("lang/main.php");
 				onclick="showChooser(this, 'enddate_topuser', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 			<input name="enddate" type="text" id="enddate_topuser" onClick='javascript:__displayTooltip();'
                      tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
-			value="<?php if (isset($enddate)) echo $enddate;
+			value="<?php if (isset($enddate)) echo htmlspecialchars($enddate, ENT_QUOTES);
 			else echo date("Y-m-t"); ?>">
 			<div id="chooserSpan" class="dateChooser select-free" 
 				style="display: none; visibility: hidden; 	width: 160px;">

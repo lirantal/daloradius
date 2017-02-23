@@ -78,7 +78,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 			
-				$successMsg = "Updated group attributes for: <b> $groupname </b>";
+				$successMsg = "Updated group attributes for: <b>" . htmlspecialchars($groupname, ENT_QUOTES) . "</b>";
 				$logAction .= "Successfully updated attributes for group [$groupname] on page: ";
 
 			} else { // if groupname  != ""
@@ -87,7 +87,7 @@
 			}
 
 		} else {
-			$failureMsg = "The group <b> $groupname </b> already exists in the database with value <b> $value </b>
+			$failureMsg = "The group <b>" . htmlspecialchars($groupname, ENT_QUOTES) . "</b> already exists in the database with value <b>" . htmlspecialchars($value, ENT_QUOTES) . "</b>
 			<br/> Please check that there are no duplicate entries in the database";
 			$logAction .= "Failed updating already existing group [$groupname] with value [$value] on page: ";
 		} 
@@ -134,7 +134,7 @@
 	<div id="contentnorightbar">
 	
 		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplyedit.php'] ?> 
-		<?php echo $groupname ?><h144>+</h144></a></h2>
+		<?php echo htmlspecialchars($groupname, ENT_QUOTES) ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['mngradgroupreplyedit'] ?>
@@ -144,10 +144,10 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form name="newuser" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
-			<input type="hidden" value="<?php echo $groupname ?>" name="groupname" />
-			<input type="hidden" value="<?php echo $valueOld ?>" name="valueOld" />
+			<input type="hidden" value="<?php echo htmlspecialchars($groupname, ENT_QUOTES) ?>" name="groupname" />
+			<input type="hidden" value="<?php echo htmlspecialchars($valueOld, ENT_QUOTES) ?>" name="valueOld" />
 			
         <fieldset>
 
@@ -155,12 +155,12 @@
 			<br/>
 
 			<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
-			<input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=100 />
+			<input name='attribute' type='text' id='attribute' value='<?php echo htmlspecialchars($attribute, ENT_QUOTES) ?>' tabindex=100 />
 			<br/>
 
 			<label for='op' class='form'><?php echo $l['all']['Operator'] ?></label>
 			<select name='op' id='op' class='form' tabindex=101 />
-				<option value='<?php echo $op ?>'><?php echo $op ?></option>
+				<option value='<?php echo htmlspecialchars($op, ENT_QUOTES) ?>'><?php echo htmlspecialchars($op, ENT_QUOTES) ?></option>
 					<?php
 						include 'include/management/populate_selectbox.php';
 						drawOptions();
@@ -170,7 +170,7 @@
 
 
 			<label for='newvalue' class='form'><?php echo $l['all']['NewValue'] ?></label>
-			<input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=102 />
+			<input name='value' type='text' id='value' value='<?php echo htmlspecialchars($value, ENT_QUOTES) ?>' tabindex=102 />
 			<br/>
 
 			<br/><br/>

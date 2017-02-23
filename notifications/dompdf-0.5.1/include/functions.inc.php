@@ -348,7 +348,7 @@ function record_warnings($errno, $errstr, $errfile, $errline) {
   global $_dompdf_show_warnings;
 
   if ( $_dompdf_show_warnings )
-    echo $errstr . "\n";
+    echo htmlspecialchars($errstr, ENT_QUOTES) . "\n";
 
   $_dompdf_warnings[] = $errstr;
 }
@@ -361,12 +361,12 @@ function print_memusage() {
   echo ("Memory Usage\n");
   $prev = 0;
   $initial = reset($memusage);
-  echo (str_pad("Initial:", 40) . $initial . "\n\n");
+  echo (str_pad("Initial:", 40) . htmlspecialchars($initial, ENT_QUOTES) . "\n\n");
 
   foreach ($memusage as $key=>$mem) {
     $mem -= $initial;
-    echo (str_pad("$key:" , 40));
-    echo (str_pad("$mem", 12) . "(diff: " . ($mem - $prev) . ")\n");
+    echo (str_pad("" . htmlspecialchars($key, ENT_QUOTES) . ":" , 40));
+    echo (str_pad("" . htmlspecialchars($mem, ENT_QUOTES) . "", 12) . "(diff: " . ($mem - $prev) . ")\n");
     $prev = $mem;
   }
 

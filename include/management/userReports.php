@@ -222,50 +222,50 @@ function userSubscriptionAnalysis($username, $drawTable) {
         	echo "
         		<tr>
         			<td>Session Limit</td>
-        			<td>$userTimeLimitGlobal</td>
-        			<td>$userTimeLimitMonthly</td>
-        			<td>$userTimeLimitWeekly</td>
-        			<td>$userTimeLimitDaily</td>
+        			<td>" . htmlspecialchars($userTimeLimitGlobal, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userTimeLimitMonthly, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userTimeLimitWeekly, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userTimeLimitDaily, ENT_QUOTES) . "</td>
         		</tr>
         
         		<tr>
         			<td>Session Used</td>
-        			<td>$userSumMaxAllSession</td>
-        			<td>$userSumMaxMonthlySession</td>
-        			<td>$userSumMaxWeeklySession</td>
-        			<td>$userSumMaxDailySession</td>
+        			<td>" . htmlspecialchars($userSumMaxAllSession, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumMaxMonthlySession, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumMaxWeeklySession, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumMaxDailySession, ENT_QUOTES) . "</td>
         		</tr>
         
         		<tr>
         			<td>Session Download</td>
-        			<td>$userSumDownload</td>
-        			<td>$userSumMonthlyDownload</td>
-        			<td>$userSumWeeklyDownload</td>
-        			<td>$userSumDailyDownload</td>
+        			<td>" . htmlspecialchars($userSumDownload, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumMonthlyDownload, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumWeeklyDownload, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumDailyDownload, ENT_QUOTES) . "</td>
         		</tr>
         
         		<tr>
         			<td>Session Upload</td>
-        			<td>$userSumUpload</td>
-        			<td>$userSumMonthlyUpload</td>
-        			<td>$userSumWeeklyUpload</td>
-        			<td>$userSumDailyUpload</td>
+        			<td>" . htmlspecialchars($userSumUpload, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumMonthlyUpload, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumWeeklyUpload, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumDailyUpload, ENT_QUOTES) . "</td>
         		</tr>
         
         		<tr>
         			<td>Session Traffic (Up+Down)</td>
-        			<td>$userSumAllTraffic</td>
-        			<td>$userSumMonthlyTraffic</td>
-        			<td>$userSumWeeklyTraffic</td>
-        			<td>$userSumDailyTraffic</td>
+        			<td>" . htmlspecialchars($userSumAllTraffic, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumMonthlyTraffic, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumWeeklyTraffic, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userSumDailyTraffic, ENT_QUOTES) . "</td>
         		</tr>
 
         		<tr>
         			<td>Logins</td>
-        			<td>$userAllLogins</td>
-        			<td>$userMonthlyLogins</td>
-        			<td>$userWeeklyLogins</td>
-        			<td>$userDailyLogins</td>
+        			<td>" . htmlspecialchars($userAllLogins, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userMonthlyLogins, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userWeeklyLogins, ENT_QUOTES) . "</td>
+        			<td>" . htmlspecialchars($userDailyLogins, ENT_QUOTES) . "</td>
         		</tr>
         
         		</table>
@@ -280,7 +280,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userExpiration
+                        " . htmlspecialchars($userExpiration, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -291,7 +291,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userSessionTimeout
+                        " . htmlspecialchars($userSessionTimeout, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -302,7 +302,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userIdleTimeout
+                        " . htmlspecialchars($userIdleTimeout, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -338,6 +338,7 @@ function userPlanInformation($username, $drawTable) {
 	 *********************************************************************************************************
 	 * check which kind of subscription does the user have
 	 *********************************************************************************************************/
+	$username = $dbSocket->escapeSimple($username);			// sanitize variable for sql statement
 	$sql  = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeType, ".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planName, ".
 			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeBank, ".
@@ -430,23 +431,23 @@ function userPlanInformation($username, $drawTable) {
         	echo "
         		<tr>
         			<td>Session Time</td>
-        			<td>".time2str($planTimeBank)."</td>
-        			<td>".time2str($totalTimeUsed)."</td>
-        			<td>".time2str($timeDiff)."</td>
+        			<td>".htmlspecialchars(time2str($planTimeBank), ENT_QUOTES)."</td>
+        			<td>".htmlspecialchars(time2str($totalTimeUsed), ENT_QUOTES)."</td>
+        			<td>".htmlspecialchars(time2str($timeDiff), ENT_QUOTES)."</td>
         		</tr>
 
         		<tr>
         			<td>Session Download</td>
-        			<td>".toxbyte($planTrafficDown)."</td>
-        			<td>".toxbyte($totalTrafficDown)."</td>
-        			<td>".toxbyte($trafficDownDiff)."</td>
+        			<td>".htmlspecialchars(toxbyte($planTrafficDown), ENT_QUOTES)."</td>
+        			<td>".htmlspecialchars(toxbyte($totalTrafficDown), ENT_QUOTES)."</td>
+        			<td>".htmlspecialchars(toxbyte($trafficDownDiff), ENT_QUOTES)."</td>
         		</tr>
         
         		<tr>
         			<td>Session Upload</td>
-        			<td>".toxbyte($planTrafficUp)."</td>
-        			<td>".toxbyte($totalTrafficUp)."</td>
-        			<td>".toxbyte($trafficUpDiff)."</td>
+        			<td>".htmlspecialchars(toxbyte($planTrafficUp), ENT_QUOTES)."</td>
+        			<td>".htmlspecialchars(toxbyte($totalTrafficUp), ENT_QUOTES)."</td>
+        			<td>".htmlspecialchars(toxbyte($trafficUpDiff), ENT_QUOTES)."</td>
         		</tr>
 
         		</table>
@@ -461,7 +462,7 @@ function userPlanInformation($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $planName
+                        " . htmlspecialchars($planName, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -471,7 +472,7 @@ function userPlanInformation($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $planRecurringPeriod
+                        " . htmlspecialchars($planRecurringPeriod, ENT_QUOTES) . "
                         </th>
                         </tr>
                         
@@ -481,7 +482,7 @@ function userPlanInformation($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $planTimeType
+                        " . htmlspecialchars($planTimeType, ENT_QUOTES) . "
                         </th>
                         </tr>
                         
@@ -491,7 +492,7 @@ function userPlanInformation($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $planBandwidthUp
+                        " . htmlspecialchars($planBandwidthUp, ENT_QUOTES) . "
                         </th>
                         </tr>
                         
@@ -501,7 +502,7 @@ function userPlanInformation($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $planBandwidthDown
+                        " . htmlspecialchars($planBandwidthDown, ENT_QUOTES) . "
                         </th>
                         </tr>
                         
@@ -577,7 +578,7 @@ function userConnectionStatus($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userStatus
+                        " . htmlspecialchars($userStatus, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -587,7 +588,7 @@ function userConnectionStatus($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userLastConnected
+                        " . htmlspecialchars($userLastConnected, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -597,7 +598,7 @@ function userConnectionStatus($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userOnlineTime
+                        " . htmlspecialchars($userOnlineTime, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -607,7 +608,7 @@ function userConnectionStatus($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $nasIPAddress (MAC: $nasMacAddress)
+                        " . htmlspecialchars($nasIPAddress, ENT_QUOTES) . " (MAC: " . htmlspecialchars($nasMacAddress, ENT_QUOTES) . ")
                         </th>
                         </tr>
 
@@ -617,7 +618,7 @@ function userConnectionStatus($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userIPAddress (MAC: $userMacAddress)
+                        " . htmlspecialchars($userIPAddress, ENT_QUOTES) . " (MAC: " . htmlspecialchars($userMacAddress, ENT_QUOTES) . ")
                         </th>
                         </tr>
 
@@ -627,7 +628,7 @@ function userConnectionStatus($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userUpload
+                        " . htmlspecialchars($userUpload, ENT_QUOTES) . "
                         </th>
                         </tr>
 
@@ -638,7 +639,7 @@ function userConnectionStatus($username, $drawTable) {
                         </th> 
         
                         <th scope='col' align='left'>
-                        $userDownload
+                        " . htmlspecialchars($userDownload, ENT_QUOTES) . "
                         </th>
                         </tr>
 

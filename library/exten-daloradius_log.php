@@ -53,7 +53,7 @@ if (isset($configValues['CONFIG_LOG_FILE'])) {
 					if ($counter == 0) {
 						break;
 					}
-					echo $line . "<br>";
+					echo htmlspecialchars($line, ENT_QUOTES) . "<br>";
 					$counter--;
 				}
 				// Old Code
@@ -67,6 +67,7 @@ if (isset($configValues['CONFIG_LOG_FILE'])) {
 				// 		$counter--;
 				// 	}
 				// }
+			}
 		}
 	}
 }

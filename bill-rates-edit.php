@@ -48,7 +48,7 @@
 		if (trim($ratename) != "") {
 
 			$currDate = date('Y-m-d H:i:s');
-			$currBy = $_SESSION['operator_user'];
+			$currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
 			$ratetype = "$ratetypenum/$ratetypetime";
 
@@ -62,7 +62,7 @@
 			$logDebugSQL = "";
 			$logDebugSQL .= $sql . "\n";
 
-			$successMsg = "Updated rate: <b> $ratename </b>";
+			$successMsg = "Updated rate: <b>" . htmlspecialchars($ratename, ENT_QUOTES) . " </b>";
 			$logAction .= "Successfully updated rate [$ratename] on page: ";
 
 		} else {
@@ -120,7 +120,7 @@
 	<div id="contentnorightbar">
 
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesedit.php'] ?>
-		:: <?php if (isset($ratename)) { echo $ratename; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($ratename)) { echo htmlspecialchars($ratename, ENT_QUOTES); } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo $l['helpPage']['billratesedit'] ?>
@@ -130,7 +130,7 @@
 			include_once('include/management/actionMessages.php');
 		?>
 
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -146,18 +146,18 @@
 
 			<li class='fieldset'>
 			<label for='ratename' class='form'><?php echo $l['all']['RateName'] ?></label>
-			<input disabled name='ratename' type='text' id='ratename' value='<?php echo $ratename ?>' tabindex=100 />
+			<input disabled name='ratename' type='text' id='ratename' value='<?php echo htmlspecialchars($ratename, ENT_QUOTES) ?>' tabindex=100 />
 			</li>
 
 			<li class='fieldset'>
 			<label for='ratetype' class='form'><?php echo $l['all']['RateType'] ?></label>
 
-	                <input class='integer' name='ratetypenum' type='text' id='ratetypenum' value='<?php echo $ratetypenum ?>' tabindex=101 />
+	                <input class='integer' name='ratetypenum' type='text' id='ratetypenum' value='<?php echo htmlspecialchars($ratetypenum, ENT_QUOTES) ?>' tabindex=101 />
 	                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratetypenum','increment')" />
 	                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratetypenum','decrement')"/>
 
 	                <select class='form' tabindex=102 name='ratetypetime' id='ratetypetime' >
-				<option value='<?php echo $ratetypetime ?>'><?php echo $ratetypetime ?></option>
+				<option value='<?php echo htmlspecialchars($ratetypetime, ENT_QUOTES) ?>'><?php echo htmlspecialchars($ratetypetime, ENT_QUOTES) ?></option>
 				<option value=''></option>
 	                        <option value='second'>second</option>
  	                        <option value='minute'>minute</option>
@@ -176,7 +176,7 @@
 
 			<li class='fieldset'>
 			<label for='ratecost' class='form'><?php echo $l['all']['RateCost'] ?></label>
-			<input class='integer' name='ratecost' type='text' id='ratecost' value='<?php echo $ratecost ?>' tabindex=103 />
+			<input class='integer' name='ratecost' type='text' id='ratecost' value='<?php echo htmlspecialchars($ratecost, ENT_QUOTES) ?>' tabindex=103 />
         	        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratecost','increment')" />
 	                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratecost','decrement')"/>
 			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateCostTooltip')" />
@@ -198,7 +198,7 @@
 
 	</fieldset>
 
-	<input type=hidden value="<?php echo $ratename ?>" name="ratename"/>
+	<input type=hidden value="<?php echo htmlspecialchars($ratename, ENT_QUOTES) ?>" name="ratename"/>
 
 </div>
 
@@ -215,19 +215,19 @@
 
         <br/>
         <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
-        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
+        <input disabled value='<?php if (isset($creationdate)) echo htmlspecialchars($creationdate, ENT_QUOTES) ?>' tabindex=313 />
         <br/>
 
         <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
-        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
+        <input disabled value='<?php if (isset($creationby)) echo htmlspecialchars($creationby, ENT_QUOTES) ?>' tabindex=314 />
         <br/>
 
         <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
-        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
+        <input disabled value='<?php if (isset($updatedate)) echo htmlspecialchars($updatedate, ENT_QUOTES) ?>' tabindex=315 />
         <br/>
 
         <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
-        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
+        <input disabled value='<?php if (isset($updateby)) echo htmlspecialchars($updateby, ENT_QUOTES) ?>' tabindex=316 />
         <br/>
 
 

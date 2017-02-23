@@ -72,6 +72,14 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS'];
 	$res = $dbSocket->query($sql);
@@ -124,76 +132,76 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasID']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=nasname&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasIPHost']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=shortname&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasShortname']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=type&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasType']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=ports&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasPorts']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=secret&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasSecret']."</a>
 		<br/>
 		</th>
 
                 <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
+                <a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=secret&orderType=" . urlencode($orderType) . "\">
                 ".$l['all']['NasVirtualServer']."</a>
                 <br/>
                 </th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=community&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasCommunity']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=description&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NasDescription']."</a>
 		<br/>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-                                <td> <input type='checkbox' name='nashost[]' value='$row[1]'> $row[0] </td>
+                                <td> <input type='checkbox' name='nashost[]' value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>" . htmlspecialchars($row[0], ENT_QUOTES) . "</td>
                                 <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-nas-edit.php?nashost=$row[1]'>".$l['Tooltip']['EditNAS']."</a>
-                                        <a class='toolTip' href='mng-rad-nas-del.php?nashost=$row[1]'>".$l['Tooltip']['RemoveNAS']."</a>
+                                        <a class='toolTip' href='mng-rad-nas-edit.php?nashost=" . urlencode($row[1]) . "'>".$l['Tooltip']['EditNAS']."</a>
+                                        <a class='toolTip' href='mng-rad-nas-del.php?nashost=" . urlencode($row[1]) . "'>".$l['Tooltip']['RemoveNAS']."</a>
                                         <br/>\"
-                                        >$row[1]</a></td>
-				<td> $row[2] </td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
-				<td> $row[5] </td>
-				<td> $row[6] </td>
-				<td> $row[7] </td>
-               <td> $row[8] </td>
+                                        >" . htmlspecialchars($row[1], ENT_QUOTES) . "</a></td>
+				<td>" . htmlspecialchars($row[2], ENT_QUOTES) . " </td>
+				<td>" . htmlspecialchars($row[3], ENT_QUOTES) . " </td>
+				<td>" . htmlspecialchars($row[4], ENT_QUOTES) . " </td>
+				<td>" . htmlspecialchars($row[5], ENT_QUOTES) . " </td>
+				<td>" . htmlspecialchars($row[6], ENT_QUOTES) . " </td>
+				<td>" . htmlspecialchars($row[7], ENT_QUOTES) . " </td>
+                <td>" . htmlspecialchars($row[8], ENT_QUOTES) . " </td>
 
 		</tr>";
 	}

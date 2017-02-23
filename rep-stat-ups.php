@@ -79,8 +79,8 @@
 ?>
 
   <tr>
-    <td class='summaryKey'> <?php echo $var ?> </td>
-    <td class='summaryValue'><span class='sleft'> <?php echo $val ?> </span> </td>
+    <td class='summaryKey'> <?php echo htmlspecialchars($var, ENT_QUOTES) ?> </td>
+    <td class='summaryValue'><span class='sleft'> <?php echo htmlspecialchars($val, ENT_QUOTES) ?> </span> </td>
   </tr>
 
 <?php endforeach; ?>

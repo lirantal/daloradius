@@ -37,12 +37,12 @@
                                                         autocomplete='off'
                                 						onClick='javascript:__displayTooltip();'
 														tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
-                                                    	value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=3>
+                                                    	value="<?php if (isset($edit_username)) echo htmlspecialchars($edit_username, ENT_QUOTES); ?>" tabindex=3>
                                                     	
                                                         <input name="invoice_id" type="text" id="invoice_id" 
                                 						onClick='javascript:__displayTooltip();'
 														tooltipText='<?php echo $l['Tooltip']['invoiceID']; ?> <br/>'
-                                                    	value="<?php if (isset($edit_invoice_id)) echo $edit_invoice_id; ?>" tabindex=3>
+                                                    	value="<?php if (isset($edit_invoice_id)) echo htmlspecialchars($edit_invoice_id, ENT_QUOTES); ?>" tabindex=3>
 													</form>
                                                 
                                                 </li>
@@ -52,7 +52,7 @@
                                                         <input name="payment_id" type="text" id="payment_id" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['PaymentId']; ?> <br/>'
-                                                                value="<?php if (isset($edit_payment_id)) echo $edit_payment_id; ?>" tabindex=3>
+                                                                value="<?php if (isset($edit_payment_id)) echo htmlspecialchars($edit_payment_id, ENT_QUOTES); ?>" tabindex=3>
                                                         </form></li>
 
                                                 <li><a href="bill-payments-del.php"><b>&raquo;</b><?php echo $l['button']['RemovePayment'] ?></a></li>
@@ -69,7 +69,7 @@
                                                         <input name="paymentname" type="text" id="paymentname" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['PayTypeName']; ?> <br/>'
-                                                                value="<?php if (isset($edit_paymentName)) echo $edit_paymentName; ?>" tabindex=3>
+                                                                value="<?php if (isset($edit_paymentName)) echo htmlspecialchars($edit_paymentName, ENT_QUOTES); ?>" tabindex=3>
                                                         </form></li>
                                                 <li><a href="bill-payment-types-del.php"><b>&raquo;</b><?php echo $l['button']['RemovePayType'] ?></a></li>
                                 </ul>

@@ -116,21 +116,21 @@ function createMarker(point,html) {
 
 	while($row = $res->fetchRow()) {
                 echo "
-		var point_$row[0] = new GLatLng($row[3]);
+		var point_" . htmlspecialchars($row[0], ENT_QUOTES) . " = new GLatLng(" . htmlspecialchars($row[3], ENT_QUOTES) . ");
 
 		// original createMarker function which creates a simple marker
-		// var marker_$row[0] = createMarker(point_$row[0], '$row[1]');
+		// var marker_" . htmlspecialchars($row[0], ENT_QUOTES) . " = createMarker(point_" . htmlspecialchars($row[0], ENT_QUOTES) . ", '" . htmlspecialchars($row[1], ENT_QUOTES) . "');
 
 		// the new function provides a tabbed marker to be created 
 
 
-		var marker_$row[0] = createTabbedMarker(point_$row[0], ['<b> Hotspot Name: </b> $row[1] <br/> \
-					<b> Mac Addr: </b> $row[2] <br/> \
-					 <b> Geo Loc: </b> $row[3] <br/>', '<a href=acct-hotspot-compare.php> Hotspot Comparison </a> \
-					<br/> <a href=acct-hotspot-accounting.php?hotspot=$row[1]> Hotspot Statistics </a> <br/> '], ['Info','Statistics']);
+		var marker_" . htmlspecialchars($row[0], ENT_QUOTES) . " = createTabbedMarker(point_" . htmlspecialchars($row[0], ENT_QUOTES) . ", ['<b> Hotspot Name: </b> " . htmlspecialchars($row[1], ENT_QUOTES) . " <br/> \
+					<b> Mac Addr: </b> " . htmlspecialchars($row[2], ENT_QUOTES) . " <br/> \
+					 <b> Geo Loc: </b> " . htmlspecialchars($row[3], ENT_QUOTES) . " <br/>', '<a href=acct-hotspot-compare.php> Hotspot Comparison </a> \
+					<br/> <a href=acct-hotspot-accounting.php?hotspot=" . urlencode($row[1]) . "> Hotspot Statistics </a> <br/> '], ['Info','Statistics']);
 
 
-		map.addOverlay(marker_$row[0]);
+		map.addOverlay(marker_" . htmlspecialchars($row[0], ENT_QUOTES) . ");
                         ";
 
 

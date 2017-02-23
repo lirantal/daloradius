@@ -43,8 +43,8 @@
 		<div id="contentnorightbar">
 		
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogssystem.php']; ?>
-                :: <?php if (isset($systemLineCount)) { echo $systemLineCount . " Lines Count "; } ?>
-                   <?php if (isset($systemFilter)) { echo " with filter set to " . $systemFilter; } ?>
+                :: <?php if (isset($systemLineCount)) { echo htmlspecialchars($systemLineCount, ENT_QUOTES) . " Lines Count "; } ?>
+                   <?php if (isset($systemFilter)) { echo " with filter set to " . htmlspecialchars($systemFilter, ENT_QUOTES); } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >

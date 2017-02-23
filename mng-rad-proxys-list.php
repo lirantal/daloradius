@@ -71,6 +71,14 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    //escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
+    //escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." ";
 	$res = $dbSocket->query($sql);
@@ -117,19 +125,19 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=proxyname&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=proxyname&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['ProxyName']."</a>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-			<td> <input type='checkbox' name='proxyname[]' value='$row[1]'>
+			<td> <input type='checkbox' name='proxyname[]' value='" . htmlspecialchars($row[1], ENT_QUOTES) . "'>
 				<a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-proxys-edit.php?proxyname=$row[1]'>".$l['Tooltip']['EditProxy']."</a>
+                                        <a class='toolTip' href='mng-rad-proxys-edit.php?proxyname=" . urlencode($row[1]) . "'>".$l['Tooltip']['EditProxy']."</a>
                                         <br/>\"
-				>$row[1]</a></td>
+				>" . htmlspecialchars($row[1], ENT_QUOTES) . "</a></td>
 		</tr>";
 	}
 

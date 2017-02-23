@@ -37,7 +37,7 @@ include_once ("lang/main.php");
                         <form name="daloradius_log" action="rep-logs-daloradius.php" method="get" class="sidebar">
 	                        <select class="generic" name="daloradiusLineCount" type="text">
 					<?php if (isset($daloradiusLineCount)) {
-						echo "<option value='$daloradiusLineCount'> $daloradiusLineCount Lines </option>";
+						echo "<option value='" . htmlspecialchars($daloradiusLineCount, ENT_QUOTES) . "'> " . htmlspecialchars($daloradiusLineCount, ENT_QUOTES) . " Lines </option>";
 					      } else {
 						echo "<option value='50'> 50 Lines Output Limit </option>";
 					      }
@@ -52,9 +52,9 @@ include_once ("lang/main.php");
 	                        <select class="generic" name="daloradiusFilter" type="text">
 					<?php if (isset($daloradiusFilter)) {
 						if ($daloradiusFilter == ".") 
-							echo "<option value='$daloradiusFilter'> Any </option>";
+							echo "<option value='" . htmlspecialchars($daloradiusFilter, ENT_QUOTES) . "'> Any </option>";
 						else
-							echo "<option value='$daloradiusFilter'> $daloradiusFilter </option>";
+							echo "<option value='" . htmlspecialchars($daloradiusFilter, ENT_QUOTES) . "'>" . htmlspecialchars($daloradiusFilter, ENT_QUOTES) . "</option>";
 					      } else {
 						echo "<option value='.'> No filter </option>";
 					      }
@@ -72,7 +72,7 @@ include_once ("lang/main.php");
                         <form name="radius_log" action="rep-logs-radius.php" method="get" class="sidebar">
 	                        <select class="generic" name="radiusLineCount" type="text">
 					<?php if (isset($radiusLineCount)) {
-						echo "<option value='$radiusLineCount'> $radiusLineCount Lines </option>";
+						echo "<option value='" . htmlspecialchars($radiusLineCount, ENT_QUOTES) . "'>" . htmlspecialchars($radiusLineCount, ENT_QUOTES) . " Lines </option>";
 					      } else {
 						echo "<option value='50'> 50 Lines Output Limit </option>";
 					      }
@@ -87,9 +87,9 @@ include_once ("lang/main.php");
 	                        <select class="generic" name="radiusFilter" type="text">
 					<?php if (isset($radiusFilter)) {
 						if ($radiusFilter == ".") 
-							echo "<option value='$radiusFilter'> Any </option>";
+							echo "<option value='" . htmlspecialchars($radiusFilter, ENT_QUOTES) . "'> Any </option>";
 						else
-							echo "<option value='$radiusFilter'> $radiusFilter </option>";
+							echo "<option value='" . htmlspecialchars($radiusFilter, ENT_QUOTES) . "'>" . htmlspecialchars($radiusFilter, ENT_QUOTES) . "</option>";
 					      } else {
 						echo "<option value='.'> No filter </option>";
 					      }
@@ -106,7 +106,7 @@ include_once ("lang/main.php");
                         <form name="system_log" action="rep-logs-system.php" method="get" class="sidebar">
 	                        <select class="generic" name="systemLineCount" type="text">
 					<?php if (isset($systemLineCount)) {
-						echo "<option value='$systemLineCount'> $systemLineCount Lines </option>";
+						echo "<option value='" . htmlspecialchars($systemLineCount, ENT_QUOTES) . "'>" . htmlspecialchars($systemLineCount, ENT_QUOTES) . " Lines </option>";
 					      } else {
 						echo "<option value='50'> 50 Lines Output Limit </option>";
 					      }
@@ -121,7 +121,7 @@ include_once ("lang/main.php");
 	                        <input type="text" name="systemFilter" 
 	                                onClick='javascript:__displayTooltip();'
 	                                tooltipText='<?php echo $l['Tooltip']['Filter']; ?> <br/>'
-					value="<?php if (isset($systemFilter)) echo $systemFilter; ?>" />
+					value="<?php if (isset($systemFilter)) echo htmlspecialchars($systemFilter, ENT_QUOTES); ?>" />
                         </form></li>
 
 
@@ -130,7 +130,7 @@ include_once ("lang/main.php");
                         <form name="boot_log" action="rep-logs-boot.php" method="get" class="sidebar">
 	                        <select class="generic" name="bootLineCount" type="text">
 					<?php if (isset($bootLineCount)) {
-						echo "<option value='$bootLineCount'> $bootLineCount Lines </option>";
+						echo "<option value='" . htmlspecialchars($bootLineCount, ENT_QUOTES) . "'>" . htmlspecialchars($bootLineCount, ENT_QUOTES) . " Lines </option>";
 					      } else {
 						echo "<option value='50'> 50 Lines Output Limit </option>";
 					      }
@@ -145,7 +145,7 @@ include_once ("lang/main.php");
 	                        <input type="text" name="bootFilter" 
 	                                onClick='javascript:__displayTooltip();'
 	                                tooltipText='<?php echo $l['Tooltip']['Filter']; ?> <br/>'
-					value="<?php if (isset($bootFilter)) echo $bootFilter; ?>" />
+					value="<?php if (isset($bootFilter)) echo htmlspecialchars($bootFilter, ENT_QUOTES); ?>" />
                         </form></li>
 
 		</ul>

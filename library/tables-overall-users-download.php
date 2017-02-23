@@ -38,7 +38,7 @@ function daily($username, $orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' AND acctstoptime>0 AND AcctStartTime>DATE_SUB(curdate(),INTERVAL (DAY(curdate())-1) DAY) AND AcctStartTime< now() group by day ORDER BY $orderBy $orderType;";
+		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='" . $dbSocket->escapeSimple($username) . "' AND acctstoptime>0 AND AcctStartTime>DATE_SUB(curdate(),INTERVAL (DAY(curdate())-1) DAY) AND AcctStartTime< now() group by day ORDER BY " . $dbSocket->escapeSimple($orderBy) . " " . $dbSocket->escapeSimple($orderType) . ";";
 
 
 	$res = $dbSocket->query($sql);
@@ -80,26 +80,26 @@ function daily($username, $orderBy, $orderType) {
         echo "<thread> <tr>
 				<th scope='col'> Downloads count in MB
 				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=downloads&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=downloads&orderType=desc\"> < </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=daily&orderBy=downloads&orderType=asc\"> > </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=daily&orderBy=downloads&orderType=desc\"> < </a>
 				</th>
 				<th scope='col'> Day of month
 				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=desc\"> < </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=daily&orderBy=day&orderType=asc\"> > </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=daily&orderBy=day&orderType=desc\"> < </a>
 				</th>
 		</tr> </thread>";
 
 	$i=0;
 	foreach ($array_days as $a_day) {
 		echo "<tr>
-				<td> $array_downloads[$i] </td>
-				<td> $a_day </td>
+				<td> " . htmlspecialchars($array_downloads[$i], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($a_day, ENT_QUOTES) . " </td>
 		</tr>";
 		$i++;
 	}
 
-	echo "<tr> <td> <b> $total_downloads </b> </td> </tr>";
+	echo "<tr> <td> <b> " . htmlspecialchars($total_downloads, ENT_QUOTES) . " </b> </td> </tr>";
 	echo "</table>";
 
 	include 'library/closedb.php';
@@ -114,7 +114,7 @@ function monthly($username, $orderBy, $orderType) {
 	include 'opendb.php';
         
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month ORDER BY $orderBy $orderType;";
+		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='" . $dbSocket->escapeSimple($username) . "' group by month ORDER BY " . $dbSocket->escapeSimple($orderBy) . " " . $dbSocket->escapeSimple($orderType) . ";";
 	$res = $dbSocket->query($sql);
 
 	$total_downloads = 0;		// initialize variables
@@ -155,13 +155,13 @@ function monthly($username, $orderBy, $orderType) {
 	echo "<thread> <tr>
 			<th scope='col'> Downloads count in MB
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=downloads&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=downloads&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=monthly&orderBy=downloads&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=monthly&orderBy=downloads&orderType=desc\"> < </a>
 			</th>
 			<th scope='col'> Month of year
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=month&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=month&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=monthly&orderBy=month&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=monthly&orderBy=month&orderType=desc\"> < </a>
 			</th>
 		</tr> </thread>
 	";
@@ -169,14 +169,14 @@ function monthly($username, $orderBy, $orderType) {
 	$i=0;
 	foreach ($array_months as $a_month) {
 		echo "<tr>
-			<td> $array_downloads[$i] </td>
-			<td> $a_month </td>
+			<td> " . htmlspecialchars($array_downloads[$i], ENT_QUOTES) . " </td>
+			<td> " . htmlspecialchars($a_month, ENT_QUOTES) . " </td>
 		</tr>";
 		$i++;
 	}
 
 
-	echo "<tr> <td> <b> $total_downloads </b> </td> </tr>";
+	echo "<tr> <td> <b> " . htmlspecialchars($total_downloads, ENT_QUOTES) . " </b> </td> </tr>";
 	echo "</table>";
 
 	include 'library/closedb.php';
@@ -194,7 +194,7 @@ function yearly($username, $orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year ORDER BY $orderBy $orderType;";
+			$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='" . $dbSocket->escapeSimple($username) . "' group by year ORDER BY " . $dbSocket->escapeSimple($orderBy) . " " . $dbSocket->escapeSimple($orderType) . ";";
 
 	$res = $dbSocket->query($sql);
 
@@ -235,13 +235,13 @@ function yearly($username, $orderBy, $orderType) {
 	echo "<thread> <tr>
 				<th scope='col'> Downloads count in MB
 				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=downloads&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=downloads&orderType=desc\"> < </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=yearly&orderBy=downloads&orderType=asc\"> > </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=yearly&orderBy=downloads&orderType=desc\"> < </a>
 				</th>
 				<th scope='col'> Year
 				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=desc\"> < </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=yearly&orderBy=year&orderType=asc\"> > </a>
+				<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?username=" . urlencode($username) . "&type=yearly&orderBy=year&orderType=desc\"> < </a>
 				</th>
 		</tr> </thread>
 	";
@@ -250,15 +250,15 @@ function yearly($username, $orderBy, $orderType) {
 	$i=0;
 	foreach ($array_years as $a_year) {
 		echo "<tr>
-			<td> $array_downloads[$i] </td>
-			<td> $a_year </td>
+			<td> " . htmlspecialchars($array_downloads[$i], ENT_QUOTES) . " </td>
+			<td> " . htmlspecialchars($a_year, ENT_QUOTES) . " </td>
 		</tr>";
 
 		$i++;
 	}
 
 
-	echo "<tr> <td> <b> $total_downloads </b> </td> </tr>";
+	echo "<tr> <td> <b> " . htmlspecialchars($total_downloads, ENT_QUOTES) . " </b> </td> </tr>";
 	echo "</table>";
 
 	include 'closedb.php';

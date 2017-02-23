@@ -42,7 +42,7 @@
 			$res = $dbSocket->query($sql);
 			$logDebugSQL .= $sql . "\n";
 
-			$successMsg = "Cleaned up stale sessions until date: <b> $enddate </b>";
+			$successMsg = "Cleaned up stale sessions until date: <b>" . htmlspecialchars($enddate, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully cleaned up stale sessions until date [$enddate] on page: ";
 
 			include 'library/closedb.php';
@@ -95,13 +95,13 @@
 			include_once('include/management/actionMessages.php');
 		?>
 		
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
         <fieldset>
 			<h302> <?php echo $l['title']['CleanupRecords'] ?> </h302>
 			<br/>
 			
 			<label for='enddate' class='form'><?php echo $l['all']['CleanupSessions']?></label>
-			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
+			<input name='enddate' type='text' id='enddate' value='<?php echo htmlspecialchars($enddate, ENT_QUOTES) ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
 			"showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
 			<br />

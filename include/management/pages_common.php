@@ -350,7 +350,6 @@ function addToolTipBalloon($view) {
 							<br/>'
 			>".$view['value']."</a>";
 
-
 	return $str;
 }
 

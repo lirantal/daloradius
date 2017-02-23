@@ -73,13 +73,15 @@
 				</div>
 				<br/>
 
-
 <?php
 
 	include 'library/opendb.php';
 	include 'include/management/pages_common.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
 
 	// if provided username, we'll need to turn that into the userbillinfo user id
 	if (!empty($username)) {
@@ -172,37 +174,37 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['Invoice']."</a>
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Invoice']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=contactperson&orderType=$orderTypeNextPage\">
-		".$l['all']['ClientName']."</a>
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=contactperson&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['ClientName']."</a>
 		</th>
 
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=$orderTypeNextPage\">
-		".$l['all']['Date']."</a>
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=date&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Date']."</a>
 		</th>
 		
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalbilled&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalBilled']."</a>
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=totalbilled&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['TotalBilled']."</a>
 		</th>
 		
 		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalpayed&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalPayed']."</a>
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=totalpayed&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['TotalPayed']."</a>
+		</th>
+		
+		<th scope='col'>"
+        .$l['all']['Balance']."
 		</th>
 		
 		<th scope='col'> 
-		".$l['all']['Balance']."
-		</th>
-		
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=status_id&orderType=$orderTypeNextPage\">
-		".$l['all']['Status']."</a>
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=status_id&orderType=" . urlencode($orderTypeNextPage) . "\">"
+        .$l['all']['Status']."</a>
 		</th>
 		
 	</tr> </thread>";
@@ -224,21 +226,21 @@
 		$contactperson = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
-									'value' => $row['contactperson'],
+									'value' => htmlspecialchars($row['contactperson'], ENT_QUOTES),
 									'divId' => '',
 		
 							));
 							
 		$balance = ($row['totalpayed'] - $row['totalbilled']);
 		if ($balance < 0)
-			$balance = '<font color="red">'.$balance.'</font>';
+			$balance = '<font color="red">'. $balance .'</font>';
 		echo '<td> <input type="checkbox" name="invoice_id[]" value="'.$row['id'].'"> '.$invoice_id.' </td>';
-		echo '<td> '.$contactperson.' </td>';
-		echo '<td> '.$row['date'].' </td>';
-		echo '<td> '.$row['totalbilled'].' </td>';
-		echo '<td> '.$row['totalpayed'].' </td>';
-		echo '<td> '.$balance.' </td>';
-		echo '<td> '.$row['status'].' </td>';
+		echo '<td> ' . $contactperson . ' </td>';
+		echo '<td> ' . htmlspecialchars($row['date'], ENT_QUOTES) . ' </td>';
+		echo '<td> ' . htmlspecialchars($row['totalbilled'], ENT_QUOTES) . ' </td>';
+		echo '<td> ' . htmlspecialchars($row['totalpayed'], ENT_QUOTES) . ' </td>';
+		echo '<td> ' . $balance . ' </td>';
+		echo '<td> ' . htmlspecialchars($row['status'], ENT_QUOTES) . ' </td>';
 		
 		echo '</tr>';
 		

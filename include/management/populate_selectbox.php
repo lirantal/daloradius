@@ -33,9 +33,9 @@
  */
 function populate_payment_type_id($defaultOption = "Select Payment Type", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-        echo "<select onChange=\"javascript:setStringText(this.id,'populate_payment_type_id')\" id='populate_payment_type_id' $mode
-                        name='$elementName' class='$cssClass' />
-                        <option value='$defaultOptionValue'>$defaultOption</option>
+        echo "<select onChange=\"javascript:setStringText(this.id,'populate_payment_type_id')\" id='populate_payment_type_id' " . htmlspecialchars($mode, ENT_QUOTES) . "
+                        name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' />
+                        <option value='" . htmlspecialchars($defaultOptionValue, ENT_QUOTES) . "'>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
                         <option value=''></option>";
 
         include 'library/opendb.php';
@@ -45,7 +45,7 @@ function populate_payment_type_id($defaultOption = "Select Payment Type", $eleme
 
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
                 echo "
-                        <option value='".$row['id']."'>".$row['value']."</option>
+                        <option value='" . htmlspecialchars($row['id'], ENT_QUOTES) . "'>" . htmlspecialchars($row['value'], ENT_QUOTES) . "</option>
                         ";
 
         }
@@ -68,9 +68,9 @@ function populate_payment_type_id($defaultOption = "Select Payment Type", $eleme
  */
 function populate_customer_id($defaultOption = "Select Customer", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'customer_id')\" id='customer_id' $mode
-			name='$elementName' class='$cssClass' />
-			<option value='$defaultOptionValue'>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'customer_id')\" id='customer_id' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' />
+			<option value='$defaultOptionValue'>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -80,7 +80,7 @@ function populate_customer_id($defaultOption = "Select Customer", $elementName =
 
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
                 echo "  
-                        <option value='".$row['id']."'>".$row['value']."</option>
+                        <option value='" . htmlspecialchars($row['id'], ENT_QUOTES) . "'>" . htmlspecialchars($row['value'], ENT_QUOTES) . "</option>
                         ";
 
         }
@@ -104,9 +104,9 @@ function populate_customer_id($defaultOption = "Select Customer", $elementName =
  */
 function populate_invoice_status_id($defaultOption = "Select Status", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'invoice_status_id')\" id='invoice_status_id' $mode
-			name='$elementName' class='$cssClass' />
-			<option value='$defaultOptionValue'>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'invoice_status_id')\" id='invoice_status_id' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' />
+			<option value='$defaultOptionValue'>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -116,7 +116,7 @@ function populate_invoice_status_id($defaultOption = "Select Status", $elementNa
 
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
                 echo "  
-                        <option value='".$row['id']."'>".$row['value']."</option>
+                        <option value='".htmlspecialchars($row['id'], ENT_QUOTES)."'>".htmlspecialchars($row['value'], ENT_QUOTES)."</option>
                         ";
 
         }
@@ -142,9 +142,9 @@ function populate_invoice_status_id($defaultOption = "Select Status", $elementNa
  */
 function populate_invoice_type_id($defaultOption = "Select Status", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'populate_invoice_type_id')\" id='populate_invoice_type_id' $mode
-			name='$elementName' class='$cssClass' />
-			<option value='$defaultOptionValue'>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'populate_invoice_type_id')\" id='populate_invoice_type_id' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' />
+			<option value='$defaultOptionValue'>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -154,7 +154,7 @@ function populate_invoice_type_id($defaultOption = "Select Status", $elementName
 
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
                 echo "  
-                        <option value='".$row['id']."'>".$row['value']."</option>
+                        <option value='".htmlspecialchars($row['id'], ENT_QUOTES)."'>".htmlspecialchars($row['value'], ENT_QUOTES)."</option>
                         ";
 
         }
@@ -179,9 +179,9 @@ function populate_invoice_type_id($defaultOption = "Select Status", $elementName
  */
 function populate_hotspots($defaultOption = "Select Hotspot", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'hotspot')\" id='hotspot' $mode
-			name='$elementName' class='$cssClass' />
-			<option value='$defaultOptionValue'>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'hotspot')\" id='hotspot' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' />
+			<option value='" . htmlspecialchars($defaultOptionValue, ENT_QUOTES) . "'>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -193,7 +193,7 @@ function populate_hotspots($defaultOption = "Select Hotspot", $elementName = "",
 
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
                 echo "  
-                        <option value='".$row['id']."'>".$row['name']."</option>
+                        <option value='" . htmlspecialchars($row['id'], ENT_QUOTES) . "'>" . htmlspecialchars($row['name'], ENT_QUOTES) . "</option>
                         ";
 
         }
@@ -209,8 +209,8 @@ function populate_hotspots($defaultOption = "Select Hotspot", $elementName = "",
  */
 function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "", $valueIsId = false) {
 
-	echo "<select $mode name='$elementName' class='$cssClass' tabindex=105 />".
-			"<option value='$defaultOptionValue'>$defaultOption</option>".
+	echo "<select " . htmlspecialchars($mode, ENT_QUOTES) . " name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' tabindex=105 />".
+			"<option value='" . htmlspecialchars($defaultOptionValue, ENT_QUOTES) . "'>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>".
 			"<option value=''></option>";
 
         include 'library/opendb.php';
@@ -228,7 +228,7 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
         	else
         		$value = $row[0];
         		        	
-            echo "<option value='$value'> $row[0] </option> ";
+            echo "<option value='" . htmlspecialchars($value, ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </option> ";
 
         }
 
@@ -250,9 +250,9 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
  */
 function populate_groups($defaultOption = "Select Group", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
-			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value='$defaultOptionValue'>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' tabindex=105 />
+			<option value='" . htmlspecialchars($defaultOptionValue, ENT_QUOTES) . "'>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -265,7 +265,7 @@ function populate_groups($defaultOption = "Select Group", $elementName = "", $cs
 
         while($row = $res->fetchRow()) {
                 echo "  
-                        <option value='$row[0]'> $row[0] </option>
+                        <option value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </option>
                         ";
 
         }
@@ -287,9 +287,9 @@ function populate_groups($defaultOption = "Select Group", $elementName = "", $cs
  */
 function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $cssClass = "form", $mode = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
-			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' tabindex=105 />
+			<option value=''>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -301,7 +301,7 @@ function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $c
 
         while($row = $res->fetchRow()) {
                 echo "  
-                        <option value='$row[0]'> $row[0] </option>
+                        <option value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </option>
                         ";
 
         }
@@ -323,9 +323,9 @@ function populate_vendors($defaultOption = "Select Vendor",$elementName = "", $c
  */
 function populate_realms($defaultOption = "Select Realm",$elementName = "", $cssClass = "form", $mode = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'realm')\" id='realmlist' $mode
-			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'realm')\" id='realmlist' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' tabindex=105 />
+			<option value=''>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -339,7 +339,7 @@ function populate_realms($defaultOption = "Select Realm",$elementName = "", $css
 
         while($row = $res->fetchRow()) {
                 echo "  
-                        <option value='$row[0]'> $row[0] </option>
+                        <option value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </option>
                         ";
 
         }
@@ -364,9 +364,9 @@ function populate_realms($defaultOption = "Select Realm",$elementName = "", $css
  */
 function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $cssClass = "form", $mode = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'proxy')\" id='proxylist' $mode
-			name='$elementName' class='$cssClass' tabindex=105 />
-			<option value=''>$defaultOption</option>
+	echo "<select onChange=\"javascript:setStringText(this.id,'proxy')\" id='proxylist' " . htmlspecialchars($mode, ENT_QUOTES) . "
+			name='" . htmlspecialchars($elementName, ENT_QUOTES) . "' class='" . htmlspecialchars($cssClass, ENT_QUOTES) . "' tabindex=105 />
+			<option value=''>" . htmlspecialchars($defaultOption, ENT_QUOTES) . "</option>
 			<option value=''></option>";
 
         include 'library/opendb.php';
@@ -380,7 +380,7 @@ function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $css
 
         while($row = $res->fetchRow()) {
                 echo "  
-                        <option value='$row[0]'> $row[0] </option>
+                        <option value='" . htmlspecialchars($row[0], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </option>
                         ";
 
         }

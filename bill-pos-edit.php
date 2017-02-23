@@ -97,7 +97,7 @@
 		// search to see if the plan is associated with any profiles
 		$sql = "SELECT profile_name FROM ".
 				$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'].
-				" WHERE plan_name='$planName'";
+				" WHERE plan_name='$dbSocket->escapeSimple($planName)'";
 		// $res is an array of all profiles associated with this plan
 		$res = $dbSocket->getCol($sql);
 		
@@ -107,7 +107,7 @@
 			// if profiles are associated with this plan, loop through each and add a usergroup entry for each
 			foreach($res as $profile_name) {
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-					" VALUES ('".$dbSocket->escapeSimple($username)."','$profile_name','0')";
+					" VALUES ('".$dbSocket->escapeSimple($username)."','$dbSocket->escapeSimple($profile_name)','0')";
 				$res = $dbSocket->query($sql);
 			}
 		
@@ -177,7 +177,7 @@
 	if (isset($_POST["submit"])) {
 
                 $currDate = date('Y-m-d H:i:s');                        // current date and time to enter as creationdate field
-                $currBy = $_SESSION['operator_user'];
+                $currBy = $dbSocket->escapeSimple($_SESSION['operator_user']);
 
                 isset ($_POST['newgroups']) ? $newgroups = $_POST['newgroups'] : $newgroups = "";
                 isset ($_POST['groups']) ? $groups = $_POST['groups'] : $groups = "";
@@ -604,7 +604,7 @@ function refillSessionTraffic() {
 		checkDisabled($username);
 	?>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 <div class="tabber">
 
@@ -623,8 +623,8 @@ function refillSessionTraffic() {
                 <div id='UserContainer'>
                 <li class='fieldset'>
                 <label for='username' class='form'><?php echo $l['all']['Username']?></label>
-				<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
-                <input name='username' type='text' id='username' value='<?php if (isset($username)) echo $username ?>' disabled tabindex=100 />
+				<input name='username' type='hidden' value='<?php if (isset($username)) echo htmlspecialchars($username, ENT_QUOTES) ?>' />
+                <input name='username' type='text' id='username' value='<?php if (isset($username)) echo htmlspecialchars($username, ENT_QUOTES) ?>' disabled tabindex=100 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
                 <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -635,8 +635,8 @@ function refillSessionTraffic() {
 
                 <li class='fieldset'>
                 <label for='password' class='form'><?php echo $l['all']['Password']?></label>
-                <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo $user_password ?>'
-                        <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> disabled tabindex=101 />
+                <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo htmlspecialchars($user_password, ENT_QUOTES) ?>'
+                        <?php if (isset($hiddenPassword)) echo htmlspecialchars($hiddenPassword, ENT_QUOTES) ?> disabled tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
                 <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
@@ -650,7 +650,7 @@ function refillSessionTraffic() {
 
 				<li class='fieldset'>
 				<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
-				<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
+				<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo htmlspecialchars($bi_planname, ENT_QUOTES) ?>' />
 		                <?php
 		                       populate_plans("$bi_planname","planName","form", NULL, $bi_planname);
 		                ?>

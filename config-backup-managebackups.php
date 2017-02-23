@@ -61,7 +61,7 @@
 			$isError++;
 
 		if ($isError > 0) {
-			$failureMsg = "Failed downloading backup file <b>$fileName</b> from web server, please check file availability and permissions";
+			$failureMsg = "Failed downloading backup file <b>" . htmlspecialchars($fileName, ENT_QUOTES) . "</b> from web server, please check file availability and permissions";
 			$logAction .= "Failed downloading backup file [$fileName] from web server on page: ";
 		}
 
@@ -136,10 +136,10 @@
 
 
 		if ($isError > 0) {
-			$failureMsg = "Failed rolling-back from file <b>$fileName</b>, please check file availability and permissions";
+			$failureMsg = "Failed rolling-back from file <b>" . htmlspecialchars($fileName, ENT_QUOTES) . "</b>, please check file availability and permissions";
 			$logAction .= "Failed rolling-back from file [$fileName] on page: ";
 		} else {
-			$successMsg = "Successfully rolled-back database from source file <b>$baseFile</b><br/> Affected tables were: <b>$tableNames</b>";
+			$successMsg = "Successfully rolled-back database from source file <b>" . htmlspecialchars($baseFile, ENT_QUOTES) . "</b><br/> Affected tables were: <b>" . htmlspecialchars($tableNames, ENT_QUOTES) . "</b>";
 			$logAction .= "Successfully rolled-back database from source file [$baseFile] on page: ";
 		}
 
@@ -176,7 +176,7 @@
 					include_once('include/management/actionMessages.php');
                 ?>
 
-				<form name="managebackups" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<form name="managebackups" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES); ?>" method="post">
 
 
 
@@ -218,23 +218,23 @@
 
 				echo "<tr>";
 				echo "<td>";
-					echo $fileDate ." ". $fileTime;
+					echo htmlspecialchars($fileDate, ENT_QUOTES) ." ". htmlspecialchars($fileTime, ENT_QUOTES);
 				echo "</td>";
 
 				echo "<td>";
-					echo $file;
+					echo htmlspecialchars($file, ENT_QUOTES);
 				echo "</td>";
 
 				echo "<td>";
-					echo $fileSize . " bytes";
+					echo htmlspecialchars($fileSize, ENT_QUOTES) . " bytes";
 				echo "</td>";
 
 				echo "<td>";
-					echo "<a class='tablenovisit' href='?file=$file&action=download' >".$l['all']['Download']."</a>";
+					echo "<a class='tablenovisit' href='?file=" . urlencode($file) . "&action=download' >".$l['all']['Download']."</a>";
 
 					echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
-					echo "<a class='tablenovisit' href='#' onClick=\"javascript:backupRollback('$file');\">".$l['all']['Rollback']."</a>";
+					echo "<a class='tablenovisit' href='#' onClick=\"javascript:backupRollback('" . urlencode($file) . "');\">".$l['all']['Rollback']."</a>";
 				echo "</td>";
 
 				}

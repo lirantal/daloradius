@@ -37,7 +37,7 @@ function daily($orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT count(username) AS numberoflogins, day(AcctStartTime) AS day from ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			" GROUP BY day ORDER BY $orderBy $orderType;";
+			" GROUP BY day ORDER BY " . $dbSocket->escapeSimple($orderBy) . " " . $dbSocket->escapeSimple($orderType) . ";";
 	$res = $dbSocket->query($sql);
 
 	$total_logins = 0;		// initialize variables
@@ -81,13 +81,13 @@ function daily($orderBy, $orderType) {
 		<thread> <tr>
 			<th scope='col'> Logins/Hits count
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=numberoflogins&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=numberoflogins&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=daily&orderBy=numberoflogins&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=daily&orderBy=numberoflogins&orderType=desc\"> < </a>
 			</th>
 			<th scope='col'> Day of month
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=day&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=daily&orderBy=day&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=daily&orderBy=day&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=daily&orderBy=day&orderType=desc\"> < </a>
 			</th>
 			</tr> </thread>
 	";
@@ -95,15 +95,15 @@ function daily($orderBy, $orderType) {
 	$i=0;
 	foreach ($array_days as $a_day) {
 		echo "<tr>
-			<td> $array_logins[$i] </td>
-			<td> $a_day </td>
+			<td> " . htmlspecialchars($array_logins[$i], ENT_QUOTES) . " </td>
+			<td> " . htmlspecialchars($a_day, ENT_QUOTES) . " </td>
 			</tr>
 		";
 		$i++;
 	}
 
 
-	echo "<tr> <td> <b> $total_logins </b> </td> </tr>";
+	echo "<tr> <td> <b> " . htmlspecialchars($total_logins, ENT_QUOTES) . " </b> </td> </tr>";
 	echo "</table>";
 
 	include 'closedb.php';
@@ -118,7 +118,7 @@ function monthly($orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT count(username) as numberoflogins, monthname(AcctStartTime) AS month from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." group by month ORDER BY $orderBy $orderType;";
+			$configValues['CONFIG_DB_TBL_RADACCT']." group by month ORDER BY " . $dbSocket->escapeSimple($orderBy) . " " . $dbSocket->escapeSimple($orderType) . ";";
 	$res = $dbSocket->query($sql);
 
 	$total_logins = 0;		// initialize variables
@@ -157,13 +157,13 @@ function monthly($orderBy, $orderType) {
 		<thread> <tr>
 			<th scope='col'> Logins/Hits count
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=numberoflogins&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=numberoflogins&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=monthly&orderBy=numberoflogins&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=monthly&orderBy=numberoflogins&orderType=desc\"> < </a>
 			</th>
 			<th scope='col'> Month of year
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=month&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=monthly&orderBy=month&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=monthly&orderBy=month&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=monthly&orderBy=month&orderType=desc\"> < </a>
 			</th>
 		</tr> </thread>
 	";
@@ -171,14 +171,14 @@ function monthly($orderBy, $orderType) {
 	$i=0;
 	foreach ($array_months as $a_month) {
 		echo "<tr>
-			<td> $array_logins[$i] </td>
-			<td> $a_month </td>
+			<td> " . htmlspecialchars($array_logins[$i], ENT_QUOTES) . " </td>
+			<td> " . htmlspecialchars($a_month, ENT_QUOTES) . " </td>
 			</tr>
 		";
 		$i++;
 	}
 
-	echo "<tr> <td> <b> $total_logins </b> </td> </tr>";
+	echo "<tr> <td> <b> " . htmlspecialchars($total_logins, ENT_QUOTES) . " </b> </td> </tr>";
 	echo "</table>";
 
 	include 'closedb.php';
@@ -196,7 +196,7 @@ function yearly($orderBy, $orderType) {
 	include 'opendb.php';
 
 	$sql = "SELECT count(username) AS numberoflogins, year(AcctStartTime) AS year from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." GROUP BY year ORDER BY $orderBy $orderType;";
+			$configValues['CONFIG_DB_TBL_RADACCT']." GROUP BY year ORDER BY " . $dbSocket->escapeSimple($orderBy) . " " . $dbSocket->escapeSimple($orderType) . ";";
 	$res = $dbSocket->query($sql);
 
 	$total_logins = 0;		// initialize variables
@@ -238,13 +238,13 @@ function yearly($orderBy, $orderType) {
 	echo "<thread> <tr>
 			<th scope='col'> Logins/Hits count</th>
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=numberoflogins&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=yearly&orderBy=numberoflogins&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=yearly&orderBy=numberoflogins&orderType=desc\"> < </a>
 			</th>
 			<th scope='col'> Year </th>
 			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?type=yearly&orderBy=year&orderType=desc\"> < </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=yearly&orderBy=year&orderType=asc\"> > </a>
+			<a class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?type=yearly&orderBy=year&orderType=desc\"> < </a>
 			</th>
 		</tr> </thread>
 	";
@@ -252,14 +252,14 @@ function yearly($orderBy, $orderType) {
 	$i=0;
 	foreach ($array_years as $a_year) {
 			echo "<tr>
-					<td> $array_logins[$i]</td>
-					<td> $a_year </td>
+					<td> " . htmlspecialchars($array_logins[$i], ENT_QUOTES) . " </td>
+					<td> " . htmlspecialchars($a_year, ENT_QUOTES) . " </td>
 				</tr>";
 			$i++;
 	}
 
 
-	echo "<tr> <td> <b> $total_logins </b> </td> </tr>";
+	echo "<tr> <td> <b> " . htmlspecialchars($total_logins, ENT_QUOTES) . " </b> </td> </tr>";
 	echo "</table>";
 
 	include 'closedb.php';

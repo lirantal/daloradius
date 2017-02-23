@@ -71,6 +71,14 @@
 	include 'library/opendb.php';
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
+    // escape SQL
+    $orderBy = $dbSocket->escapeSimple($orderBy);
+    $orderType = $dbSocket->escapeSimple($orderType);
+
 	//orig: used as method to get total rows - this is required for the pages_numbering.php page	
 	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL'];
 	$res = $dbSocket->query($sql);
@@ -120,77 +128,77 @@
 
 	echo "<thread> <tr>
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=id&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['ID']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pool_name&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=pool_name&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['PoolName']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=framedipaddress&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['IPAddress']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=nasipaddress&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['NASIPAddress']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=CalledStationId&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=CalledStationId&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['CalledStationId']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=CallingStationID&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=CallingStationID&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['CallingStationID']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=expiry_time&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=expiry_time&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['ExpiryTime']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=username&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['Username']."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pool_key&orderType=$orderType\">
+		<a title='Sort' class='novisit' href=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?orderBy=pool_key&orderType=" . urlencode($orderType) . "\">
 		".$l['all']['PoolKey']."</a>
 		<br/>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
-                                <td> <input type='checkbox' name='poolname[]' value='$row[1]||$row[2]'> $row[0] </td>
-				<td> $row[1] </td>
+                                <td> <input type='checkbox' name='poolname[]' value='" . htmlspecialchars($row[1], ENT_QUOTES) . "||" . htmlspecialchars($row[2], ENT_QUOTES) . "'> " . htmlspecialchars($row[0], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[1], ENT_QUOTES) . " </td>
                                 <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-ippool-edit.php?poolname=$row[1]&ipaddressold=$row[2]'>".$l['Tooltip']['EditIPAddress']."</a>
+                                        <a class='toolTip' href='mng-rad-ippool-edit.php?poolname=" . urlencode($row[1]) . "&ipaddressold=" . urlencode($row[2]) . "'>".$l['Tooltip']['EditIPAddress']."</a>
 					<br/>
-                                        <a class='toolTip' href='mng-rad-ippool-del.php?poolname=$row[1]&ipaddress=$row[2]'>".$l['Tooltip']['RemoveIPAddress']."</a>
+                                        <a class='toolTip' href='mng-rad-ippool-del.php?poolname=" . urlencode($row[1]) . "&ipaddress=" . urlencode($row[2]) . "'>".$l['Tooltip']['RemoveIPAddress']."</a>
                                         <br/>\"
-                                        >$row[2]</a></td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
-				<td> $row[5] </td>
-				<td> $row[6] </td>
-				<td> $row[7] </td>
-				<td> $row[8] </td>
+                                        >" . htmlspecialchars($row[2], ENT_QUOTES) . "</a></td>
+				<td> " . htmlspecialchars($row[3], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[4], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[5], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[6], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[7], ENT_QUOTES) . " </td>
+				<td> " . htmlspecialchars($row[8], ENT_QUOTES) . " </td>
 		</tr>";
 	}
 

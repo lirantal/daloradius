@@ -92,6 +92,8 @@
 		$vendor_type = $dbSocket->escapeSimple($vendor_type);
 		$startdate = $dbSocket->escapeSimple($startdate);
 		$enddate = $dbSocket->escapeSimple($enddate);
+        $orderBy = $dbSocket->escapeSimple($orderBy);
+        $orderType = $dbSocket->escapeSimple($orderType);
 
 	        include_once('include/management/userBilling.php');
 	        userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, $vendor_type, 1);
@@ -271,7 +273,7 @@
 			$title = $l['all']['PaymentAddressStatus'];
 			break;
 		default:
-			$title = $value;
+			$title = htmlspecialchars($value, ENT_QUOTES);
 			break;
 		}
 
@@ -284,7 +286,7 @@
 	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
 		echo "<tr>";
 		foreach ($sqlfields as $value) {
-			echo "<td> " . $row[$value] . "</td>";
+			echo "<td> " . htmlspecialchars($row[$value], ENT_QUOTES) . "</td>";
 		}
 		echo "</tr>";
 	}

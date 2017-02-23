@@ -49,7 +49,7 @@
                                                         <input name="startdate" type="text" id="startdate" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
-value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
+value="<?php if (isset($accounting_custom_startdate)) echo htmlspecialchars($accounting_custom_startdate, ENT_QUOTES);
 						else echo date("Y-m-01"); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
@@ -57,7 +57,7 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
                                                         <input name="enddate" type="text" id="enddate" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
-value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
+value="<?php if (isset($accounting_custom_enddate)) echo htmlspecialchars($accounting_custom_enddate, ENT_QUOTES);
 						else echo date("Y-m-t"); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
@@ -101,7 +101,7 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 		<input type="text" name="where_field" 
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo $l['Tooltip']['Filter']; ?> <br/>'
-			value="<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
+			value="<?php if (isset($accounting_custom_value)) echo htmlspecialchars($accounting_custom_value, ENT_QUOTES); ?>" />
 
 		<br/><br/>
 		<h109><?php echo $l['button']['AccountingFieldsinQuery']; ?></h109><br/>
