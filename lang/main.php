@@ -53,6 +53,9 @@
 		case "ja":
 			include (dirname(__FILE__)."/ja.php");
 			break;
+        case "zh":
+            include (dirname(__FILE__)."/zh.php");
+            break;
 		default:
 			include (dirname(__FILE__)."/en.php");
 			break;
