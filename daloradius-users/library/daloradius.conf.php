@@ -18,13 +18,15 @@
  *              daloRADIUS Configuration File
  *
  * Modification Date:
- *              Tue Sep 30 16:29:00 EDT 2008
+ *              Mon Mar 28 22:55:00 EDT 2011
  *********************************************************************************************************
  */
 
 
-$configValues['CONFIG_DB_ENGINE'] = 'mysql';
-$configValues['CONFIG_DB_HOST'] = '127.0.0.1';
+$configValues['DALORADIUS_VERSION'] = '0.9-9';
+$configValues['FREERADIUS_VERSION'] = '2';
+$configValues['CONFIG_DB_ENGINE'] = 'mysqli';
+$configValues['CONFIG_DB_HOST'] = 'localhost';
 $configValues['CONFIG_DB_PORT'] = '3306';
 $configValues['CONFIG_DB_USER'] = 'root';
 $configValues['CONFIG_DB_PASS'] = '';
@@ -33,27 +35,15 @@ $configValues['CONFIG_DB_TBL_RADCHECK'] = 'radcheck';
 $configValues['CONFIG_DB_TBL_RADREPLY'] = 'radreply';
 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = 'radgroupreply';
 $configValues['CONFIG_DB_TBL_RADGROUPCHECK'] = 'radgroupcheck';
-$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'usergroup';
+$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'radusergroup';
 $configValues['CONFIG_DB_TBL_RADNAS'] = 'nas';
+$configValues['CONFIG_DB_TBL_RADHG'] = 'radhuntgroup';
 $configValues['CONFIG_DB_TBL_RADPOSTAUTH'] = 'radpostauth';
 $configValues['CONFIG_DB_TBL_RADACCT'] = 'radacct';
 $configValues['CONFIG_DB_TBL_RADIPPOOL'] = 'radippool';
 $configValues['CONFIG_DB_TBL_DALOOPERATORS'] = 'operators';
 $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'] = 'operators_acl';
 $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'] = 'operators_acl_files';
-$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'] = 'batch_history';
-$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'] = 'invoice';
-$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'] = 'invoice_items';
-$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'] = 'invoice_status';
-$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] = 'invoice_type';
-$configValues['CONFIG_DB_TBL_DALOPAYMENTS'] = 'payment';
-$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] = 'payment_type';
-$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'] = 'billing_plans_profiles';
-$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
-$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] = 'billing_merchant';
-$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
-$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
-$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
 $configValues['CONFIG_DB_TBL_DALORATES'] = 'rates';
 $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = 'hotspots';
 $configValues['CONFIG_DB_TBL_DALOUSERINFO'] = 'userinfo';
@@ -61,6 +51,20 @@ $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
 $configValues['CONFIG_DB_TBL_DALODICTIONARY'] = 'dictionary';
 $configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
 $configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
+$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] = 'billing_merchant';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
+$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
+$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
+$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'] = 'batch_history';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'] = 'billing_plans_profiles';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'] = 'invoice';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'] = 'invoice_items';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'] = 'invoice_status';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] = 'invoice_type';
+$configValues['CONFIG_DB_TBL_DALOPAYMENTS'] = 'payment';
+$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] = 'payment_type';
+$configValues['CONFIG_DB_TBL_DALONODE'] = 'node';
 $configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/proxy.conf';
 $configValues['CONFIG_PATH_RADIUS_DICT'] = '';
 $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
@@ -80,6 +84,5 @@ $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = '127.0.0.1';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
 $configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
 $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
-
 
 ?>
