@@ -1,4 +1,4 @@
-#About
+# About
 
 ![daloradius_logo][daloRADIUS_Logo]
 
@@ -14,14 +14,14 @@ It is based on a [FreeRADIUS](http://www.freeradius.org) deployment with a datab
 Among other features it implements ACLs, GoogleMaps integration for locating 
 hotspots/access points visually and many more features.
 
-#daloRADIUS Book
+# daloRADIUS Book
 
 Liran Tal authored a book about working with daloRADIUS covering most aspects through the UI, including setting up a captive portal system.
-##Amazon Paperback Book
+## Amazon Paperback Book
 The paperback book version is available through Amazon at http://www.amazon.com/daloRADIUS-User-Guide-Volume-1/dp/1463752199
 
 ![daloradius_book][daloRADIUS_Book]
-##PDF Digital Book
+## PDF Digital Book
 There is also a digital version of the book via PDF, available at: https://lirantal.selz.com/
 
 
@@ -29,10 +29,10 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-#Features
+# Features
 
-##Management
-###User Management
+## Management
+### User Management
 
     * List Users
     * Create New User
@@ -44,7 +44,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 ![daloradius_logo][daloRADIUS_Feature_Management]
 
-##HotSpot Management
+## HotSpot Management
 
     * List HotSpots
     * Create New HotSpot
@@ -53,7 +53,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-##NAS Management
+## NAS Management
 
     * List NAS
     * Create New NAS
@@ -62,7 +62,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-##Groups Management
+## Groups Management
 
     * List, Create New, Edit and Delete User-Groups Mapping
       usergroup table in radius database
@@ -72,8 +72,8 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-##Accounting
-###Users Accounting By
+## Accounting
+### Users Accounting By
 
     * Username
     * IP Address
@@ -87,7 +87,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 	* Custom Accounting Query 
 
 
-###HotSpots Accounting
+### HotSpots Accounting
 
     * Comparison of Accounting for different HotSpots
       provides information on hotspot's unique users, total hits, average time and total time
@@ -96,7 +96,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-###GIS - Geographical Information System
+### GIS - Geographical Information System
 
 	daloRADIUS comes with integrated support for GIS provided by GoogleMaps and thus
 	provides the ability to visually locate deployed HotSpots across a map, see their status,
@@ -111,10 +111,10 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-##Reporting
+## Reporting
 
 
-###Basic Reporting
+### Basic Reporting
 
     * Online Users
       View Online users, users that are connected to the system from all NASes at a current
@@ -128,7 +128,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-###Logs Reporting
+### Logs Reporting
 
     * daloRADIUS Log
       daloRADIUS keeps a log file for all the actions it performs itself (viewing pages,
@@ -143,7 +143,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-###Status Reporting
+### Status Reporting
 
     * Server Status
       Provides detailed information on the server daloRADIUS is deployed.
@@ -155,9 +155,9 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 
 
-##Graphs
+## Graphs
 
-###Users Graphs
+### Users Graphs
 Provides visual graphs and statistical listing per user connection's attributes, being:
 
     * Logins/Hits
@@ -165,7 +165,7 @@ Provides visual graphs and statistical listing per user connection's attributes,
     * Upload
 
 
-###Server-Wide Graphs
+### Server-Wide Graphs
 Provides visual graphs and statistical listing for the entire server, all-time information on:
 
     * Logins/Hits
@@ -174,9 +174,9 @@ Provides visual graphs and statistical listing for the entire server, all-time i
 
 
 
-##Configuration
+## Configuration
 
-###Global Configuration
+### Global Configuration
 
     * Database Settings
       Database connection information (storage: mysql, postgresql and others),
@@ -193,7 +193,7 @@ Provides visual graphs and statistical listing for the entire server, all-time i
       and addition of numbers links for quick-access to different pages.
 
 
-###Maintenance
+### Maintenance
 
     * Test User Connectivity
       Provides the ability to check if a user's credentials (username and password) are valid by
@@ -202,7 +202,7 @@ Provides visual graphs and statistical listing for the entire server, all-time i
 	  Supply a username and send a PoD (Packet of Disconnect) or CoA (Change of Authority) packet
 	  to the NAS to disconnect the user.
 
-###Operators
+### Operators
 
 daloRADIUS supports Operators for complete management of the entire platform.
 Different Operators can be added with their contact information and ACLs settings to
@@ -220,7 +220,7 @@ grant or revoke them of permissions to access different pages.
 
 
 
-#Credits
+# Credits
 
  [daloRADIUS](http://www.daloradius.com) makes use of several third-party packages and I would like to thank these
  great tools and their authors for releasing such a good software to the community.
@@ -233,7 +233,7 @@ grant or revoke them of permissions to access different pages.
 
 
 
-#Support
+# Support
 
 Helpful resources to find help and support with daloRADIUS:
 
@@ -245,7 +245,7 @@ Helpful resources to find help and support with daloRADIUS:
 
 
 
-#Copyright
+# Copyright
 
 Copyright Liran Tal 2007. All rights reserved.
 For release information and license, read LICENSE.
