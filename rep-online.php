@@ -238,7 +238,7 @@
 						<a class='toolTip' href='mng-edit.php?username=$username'>".
 							$l['Tooltip']['UserEdit']."</a>
 						&nbsp;
-						<a class='toolTip' href='config-maint-disconnect-user.php?username=$username&nasaddr=$nasip&customattributes=Acct-Session-Id=$acctsessionid'>".
+						<a class='toolTip' href='config-maint-disconnect-user.php?username=$username&nasaddr=$nasip&customattributes=Acct-Session-Id=$acctsessionid,Framed-IP-Address=$ip'>".
 							$l['all']['Disconnect']."</a>
 						<br/>\"
 					>$username</a>
