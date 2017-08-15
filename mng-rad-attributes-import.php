@@ -35,8 +35,7 @@
 
 		include 'library/opendb.php';
 
-		$myDictionary = preg_split("\n", $dictionary);				// we break the POST variable (continous string) into an array
-
+        $myDictionary = preg_split('/\n/', $dictionary);            // we break the POST variable (continous string) into an array
 
 		$myVendor = $vendor;							// by default we set the vendor name to be the file name
 		$myAttribute = '';								// variables are initialized
