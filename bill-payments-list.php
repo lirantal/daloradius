@@ -231,7 +231,7 @@
                               >#$row[1]</a>
                         </td>
                        
-                                <td> $row[2] </td>
+                                <td class='money'> $row[2] </td>
                                 <td> $row[3] </td>
                                 <td> $row[4] </td>
                                 <td> $row[5] </td>

@@ -24,19 +24,15 @@
 	require_once(dirname(__FILE__)."/../../library/config_read.php");
 	
 	isset($_GET['invoice_id']) ? $invoice_id = $_GET['invoice_id'] : $invoice_id = "";
-	isset($_GET['destination']) ? $destination = $_GET['destination'] : $destination = "download";
+	isset($_GET['destination']) ? $destination = $_GET['destination'] : $destination = "preview";
 	
 	if ($invoice_id != "") {
 		$customerInfo = @getInvoiceDetails($invoice_id);
-		
-		$smtpInfo['host'] = $configValues['CONFIG_MAIL_SMTPADDR'];
-		$smtpInfo['port'] = $configValues['CONFIG_MAIL_SMTPPORT'];
-		$smtpInfo['auth'] = $configValues['CONFIG_MAIL_SMTPAUTH'];
-		$from = $configValues['CONFIG_MAIL_SMTPFROM'];
-		
-		$pdfDocument = @createNotification($customerInfo);
+		$document = @createNotification($customerInfo, $destination == "preview");
 		
 		if ($destination == "download") {
+			
+			$pdfDocument = $document;
 			
 			header("Content-type: application/pdf");
 			header("Content-Disposition: attachment; filename=notification_user_invoice_" . date("Ymd") . ".pdf; size=" . strlen($pdfDocument));
@@ -44,10 +40,23 @@
 			
 		} else if ($destination == "email") {
 			
+			$pdfDocument = $document;
+			
+			$smtpInfo['host'] = $configValues['CONFIG_MAIL_SMTPADDR'];
+			$smtpInfo['port'] = $configValues['CONFIG_MAIL_SMTPPORT'];
+			$smtpInfo['auth'] = $configValues['CONFIG_MAIL_SMTPAUTH'];
+			$from = $configValues['CONFIG_MAIL_SMTPFROM'];
+		
 			@emailNotification($pdfDocument, $customerInfo, $smtpInfo, $from);
 			header("Location: ".$_SERVER['HTTP_REFERER']);
+			
+		} else if ($destination == 'preview') {
+
+			$htmlDocument = $document;
+
+			$result = file_put_contents(dirname(__FILE__).'/../../notifications/templates/invoice_preview.html', $htmlDocument);
+			header('Location: ../../notifications/templates/invoice_preview.html');
 		}
-		
 	}
 	
 	
@@ -61,15 +70,12 @@
 		if ($invoice_id == NULL || empty($invoice_id))
 			exit;
 			
-
-			
 		$tableTags = "width='580px' ";
 		$tableTrTags = "bgcolor='#ECE5B6'";
 		
-		
 		// get invoice details
-		$sql = "SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, b.contactperson, b.username, ".
-				" b.city, b.state, b.address, b.email, b.emailinvoice, b.phone, f.value as type, ".
+		$sql = "SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, b.contactperson, b.username, b.company, ".
+				" b.city, b.state, b.country, b.zip, b.address, b.email, b.emailinvoice, b.phone, f.value as type, ".
 				" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
 				" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
 				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
@@ -112,7 +118,24 @@
 		
 		$customerInfo['invoice_details'] = $invoice_details;
 		
-
+		// populate customer data - NEW STYLE
+		$customerInfo['customerId'] = $invoiceDetails['user_id'];
+		$customerInfo['customerName'] = (isset($invoiceDetails['company']) ? $invoiceDetails['company'] : $invoiceDetails['contactperson']);
+		$customerInfo['customerAddress'] = $invoiceDetails['address'];
+		$customerInfo['customerAddress2'] = $invoiceDetails['zip'] . ' '. $invoiceDetails['city'] . ' ' .
+		                                    $invoiceDetails['state'] . ' ' . $invoiceDetails['country'];
+		$customerInfo['customerEmail'] = $invoiceDetails['email'];
+		$customerInfo['customerPhone'] = $invoiceDetails['phone'];
+		$customerInfo['customerContact'] = $invoiceDetails['contactperson'];
+		
+		$customerInfo['invoiceNumber'] = $invoice_id;
+		$customerInfo['invoiceDate'] = date('Y-m-d', strtotime($invoiceDetails['date']));
+		$customerInfo['invoiceStatus'] = strtoupper($invoiceDetails['status']);
+		$customerInfo['invoiceTotalBilled'] = $invoiceDetails['totalbilled'];
+		$customerInfo['invoicePaid'] = $invoiceDetails['totalpayed'];
+		$customerInfo['invoiceDue'] = $balance;
+		$customerInfo['invoiceNotes'] = $invoiceDetails['notes'];
+		
 		// populate user invoice items
 		$invoice_items = "";
 		$invoice_items .= "<table $tableTags><tr $tableTrTags>
@@ -131,6 +154,12 @@
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 		
+		// initialize invoice items - NEW STYLE
+		$invoiceItems = array();
+		$invoiceItemsNumber = 1;
+		$invoiceItemsTotalAmount = 0;
+		$invoiceItemsTotalTax = 0;
+		
 		while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
 
 			$invoice_items .= "". 
@@ -140,20 +169,36 @@
 					"<td>".$row['tax_amount']."</td>".
 					"<td>".$row['notes']."</td>".
 				"</tr>";
+				
+			// populate invoice items - NEW STYLE
+			$invoiceItem = array();
 			
+			$invoiceItem['invoiceItemNumber'] = sprintf('%02d', $invoiceItemsNumber);
+			$invoiceItem['invoiceItemPlan'] = $row['planName'];
+			$invoiceItem['invoiceItemNotes'] = $row['notes'];
+			$invoiceItem['invoiceItemAmount'] = $row['amount'];
+			$invoiceItem['invoiceItemTaxAmount'] = $row['tax_amount'];
+			$invoiceItem['invoiceItemTotalAmount'] = $row['amount'] + $row['tax_amount'];
+			
+			$invoiceItems[] = $invoiceItem;
+			$invoiceItemsTotalAmount += $row['amount'];
+			$invoiceItemsTotalTax += $row['tax_amount'];
+			
+			++$invoiceItemsNumber;
 		}
 
 		$invoice_items .= "</table>";
 		
 		$customerInfo['invoice_items'] = $invoice_items;
 		
-		
+		// populate invoice items - NEW STYLE
+		$customerInfo['invoiceItems'] = $invoiceItems;
+		$customerInfo['invoiceTotalAmount'] = $invoiceItemsTotalAmount;
+		$customerInfo['invoiceTotalTax'] = $invoiceItemsTotalTax;
 		
 		require(dirname(__FILE__)."/../../library/closedb.php");
-		
+
 		return $customerInfo;
-		
-		
 	}
 	
 ?>

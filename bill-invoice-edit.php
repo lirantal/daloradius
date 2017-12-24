@@ -304,17 +304,17 @@ function removeTableRow(rowCounter) {
 
 		<li class='fieldset'>
 		<label for='' class='form'><?php echo $l['all']['TotalBilled']?></label>
-		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalbilled']?>' tabindex=101 />
+		<input class="money" name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalbilled']?>' tabindex=101 />
 		</li>
 		
 		<li class='fieldset'>
 		<label for='' class='form'><?php echo $l['all']['TotalPayed']?></label>
-		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalpayed']?>' tabindex=101 />
+		<input class="money" name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalpayed']?>' tabindex=101 />
 		</li>
 		
 		<li class='fieldset'>
 		<label for='' class='form'><?php echo $l['all']['Balance']?></label>
-		<input name='' type='text' disabled id='' value='<?php echo (float) ($invoiceDetails['totalpayed'] - $invoiceDetails['totalbilled'])?>' tabindex=101 />
+		<input class="money" name='' type='text' disabled id='' value='<?php echo (float) ($invoiceDetails['totalpayed'] - $invoiceDetails['totalbilled'])?>' tabindex=101 />
 		</li>
 
 		<br/>
@@ -376,6 +376,7 @@ function removeTableRow(rowCounter) {
 		<br/>
 		<br/>
 		
+		<input class='button' type='button' value='Preview Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=preview'"/>
 		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=download'"/>
 		<input class='button' type='button' value='Email Invoice to Customer' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=email'"/>
 	  	              			
@@ -441,8 +442,8 @@ function removeTableRow(rowCounter) {
 						"<td> ";
 					populate_plans($row['planName'],"item_".$itemName."[plan]", "form", "", $row['plan_id'], true);
 					echo " </td>".
-						"<td> <input type='text' id='_item".$itemName."' value='".$row['amount']."'name='item_".$itemName."[amount]' /> </td>".
-						"<td> <input type='text' id='_item".$itemName."' value='".$row['tax_amount']."'name='item_".$itemName."[tax]' /> </td>".
+						"<td> <input class='money' type='text' id='_item".$itemName."' value='".$row['amount']."'name='item_".$itemName."[amount]' /> </td>".
+						"<td> <input class='money' type='text' id='_item".$itemName."' value='".$row['tax_amount']."'name='item_".$itemName."[tax]' /> </td>".
 						//"<td> <select name=''> <option value='1'> 1 </option> </select> </td> ".
 						"<td> <input type='text' id='_item".$row['plan_id']."' value='".$row['notes']."' name='item_".$itemName."[notes]' /> </td>".
 						"<td> <input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow('itemsRow_".$itemName."');\" class='button'> </td>".

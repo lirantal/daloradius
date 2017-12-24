@@ -33,16 +33,23 @@
 	 * wrapper-function to create the notification to the customer
 	 * 
 	 * @param		array			customer information array
+	 * @param		boolean			true for HTML output, false for PDF output
+	 * @return 		string			returns the HTML or PDF output
 	 */
-	function createNotification($customerInfo) {
+	function createNotification($customerInfo, $asHTML = false) {
 
 		global $base;
 		
 		$html = prepareNotificationTemplate($customerInfo);
-		$pdfDocument = createPDF($html);
 		
-		return $pdfDocument;
-		
+		if($asHTML) {
+			$document = $html;
+		}
+		else {
+			$document = createPDF($html);
+		}
+
+		return $document;
 	}
 
 	
@@ -62,10 +69,11 @@
 		if (empty($customerInfo['customer_email']))
 			return;
 		
-		$headers = array(	"From"	=>	$from, 
-							"Subject"	=>	"Invoice Information",
-							"Reply-To"=> $from
-					);
+		$headers = array (
+			"From" => $from, 
+			"Subject" => "Invoice Information",
+			"Reply-To" => $from
+		);
 				
 		$mime = new Mail_mime();
 		$mime->setTXTBody("Notification letter of service"); 
@@ -74,7 +82,6 @@
 		$headers = $mime->headers($headers);
 		$mail =& Mail::factory("smtp", $smtpInfo);
 		$mail->send($customerInfo['customer_email'], $headers, $body);
-	
 	}
 	
 	
@@ -88,11 +95,40 @@
 	function prepareNotificationTemplate($customerInfo) {
 	
 		global $base;
+		global $configValues;
 		
-		// the HTML template
+		// the default HTML template - OLD STYLE
 		$notification_template = "$base/templates/user_invoice.html";
+		$notification_item_template = null;
+		
+		// the default HTML template - NEW STYLE
+		if(isset($configValues['CONFIG_INVOICE_TEMPLATE'])) {
+			$notification_template = "$base/templates/" . $configValues['CONFIG_INVOICE_TEMPLATE'];
+			
+			if(isset($configValues['CONFIG_INVOICE_ITEM_TEMPLATE'])) {
+				$notification_item_template = "$base/templates/" . $configValues['CONFIG_INVOICE_ITEM_TEMPLATE'];
+			}
+		}
+		
+		// the default HTML template for current location - NEW STYLE
+		if((isset($_SESSION['location_name'])) && ($_SESSION['location_name'] != "default")) {
+			if(isset($configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['CONFIG_INVOICE_TEMPLATE'])) {
+				$notification_template = "$base/templates/" . $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['CONFIG_INVOICE_TEMPLATE'];
+				
+				if(isset($configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['CONFIG_INVOICE_ITEM_TEMPLATE'])) {
+					$notification_item_template = "$base/templates/" . $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['CONFIG_INVOICE_ITEM_TEMPLATE'];
+				}
+			}
+		}
+
+		// load template for invoice
 		$notification_html_template = file_get_contents($notification_template);
-	
+		
+		// load template for each invoice item
+		if($notification_item_template !== null) {
+			$notification_item_html_template = file_get_contents($notification_item_template);
+		}
+
 		$date = date("Y-m-d");
 		
 		$name = $customerInfo['customer_name'];
@@ -116,7 +152,48 @@
 		$notification_html_template = str_replace("####__INVOICE_DETAILS__####", $invoice_details, $notification_html_template);
 		$notification_html_template = str_replace("####__INVOICE_ITEMS__####", $invoice_items, $notification_html_template);
 		
+		// customer details - NEW STYLE			
+		$notification_html_template = str_replace("[CustomerId]", $customerInfo['customerId'], $notification_html_template);
+		$notification_html_template = str_replace("[CustomerName]", $customerInfo['customerName'], $notification_html_template);
+		$notification_html_template = str_replace("[CustomerAddress]", $customerInfo['customerAddress'], $notification_html_template);
+		$notification_html_template = str_replace("[CustomerAddress2]", $customerInfo['customerAddress2'], $notification_html_template);
+		$notification_html_template = str_replace("[CustomerPhone]", $customerInfo['customerPhone'], $notification_html_template);
+		$notification_html_template = str_replace("[CustomerEmail]", $customerInfo['customerEmail'], $notification_html_template);
+		$notification_html_template = str_replace("[CustomerContact]", $customerInfo['customerContact'], $notification_html_template);
+		
+		// invoice details - NEW STYLE
+		$notification_html_template = str_replace("[InvoiceNumber]", $customerInfo['invoiceNumber'], $notification_html_template);
+		$notification_html_template = str_replace("[InvoiceDate]", $customerInfo['invoiceDate'], $notification_html_template);
+		$notification_html_template = str_replace("[InvoiceStatus]", $customerInfo['invoiceStatus'], $notification_html_template);
+		$notification_html_template = str_replace("[InvoiceTotalBilled]", $customerInfo['invoiceTotalBilled'], $notification_html_template);
+		$notification_html_template = str_replace("[InvoicePaid]", $customerInfo['invoicePaid'], $notification_html_template);
+		$notification_html_template = str_replace("[InvoiceDue]", $customerInfo['invoiceDue'], $notification_html_template);
+		$notification_html_template = str_replace("[InvoiceNotes]", $customerInfo['invoiceNotes'], $notification_html_template);
+		
+		// invoice items - NEW STYLE
+		if($notification_item_template !== null) {
+			$invoiceItems = '';
+			
+			foreach($customerInfo['invoiceItems'] as $invoiceItem) {
+				$invoiceItemTemplate = $notification_item_html_template;
+		
+				$invoiceItemTemplate = str_replace("[InvoiceItemNumber]", $invoiceItem['invoiceItemNumber'], $invoiceItemTemplate);
+				$invoiceItemTemplate = str_replace("[InvoiceItemPlan]", $invoiceItem['invoiceItemPlan'], $invoiceItemTemplate);
+				$invoiceItemTemplate = str_replace("[InvoiceItemNotes]", $invoiceItem['invoiceItemNotes'], $invoiceItemTemplate);
+				$invoiceItemTemplate = str_replace("[InvoiceItemAmount]", $invoiceItem['invoiceItemAmount'], $invoiceItemTemplate);
+				$invoiceItemTemplate = str_replace("[InvoiceItemTaxAmount]", $invoiceItem['invoiceItemTaxAmount'], $invoiceItemTemplate);
+				$invoiceItemTemplate = str_replace("[InvoiceItemTotalAmount]", $invoiceItem['invoiceItemTotalAmount'], $invoiceItemTemplate);
+				
+				$invoiceItems .= $invoiceItemTemplate;
+			}
 
+			$notification_html_template = str_replace("[InvoiceItems]", $invoiceItems, $notification_html_template);
+		}
+		
+		// more invoice details - NEW STYLE
+		$notification_html_template = str_replace("[InvoiceTotalAmount]", $customerInfo['invoiceTotalAmount'], $notification_html_template);
+		$notification_html_template = str_replace("[InvoiceTotalTax]", $customerInfo['invoiceTotalTax'], $notification_html_template);
+		
 		return $notification_html_template;
 	}
 	
@@ -140,7 +217,6 @@
 		$notification_pdf = $dompdf->output();
 		
 		return $notification_pdf;
-
 	}
 
 ?>
