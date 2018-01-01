@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Invoice</title>
+		
+		<style type="text/css">
+			body {
+				font-family: sans-serif;
+				font-size: 1em;
+				padding-left: 10%;
+				padding-right: 10%;
+			}
+			table {
+				width: 100%;
+			}
+			td.company-logo {
+				vertical-align: top;
+			}
+			td.company-address {
+				text-align: right;
+				vertical-align: top;
+			}
+			td.invoice-title {
+				vertical-align: top;
+				font-size: 3em;
+				font-weight: bold;
+			}
+			td.invoice-fields {
+				text-align: right;
+				vertical-align: top;
+			}
+			td.invoice-values {
+				vertical-align: top;
+				padding-left: 1em;
+			}
+			tr.invoice-item-fields {
+				background-color: lightgray;
+			}
+			td.invoice-item-number-field, .invoice-item-plan-field, .invoice-item-notes-field,
+			  .invoice-item-amount-field, .invoice-item-tax-field, .invoice-item-total-field {
+				font-weight: bold;
+				padding-top: 0.5em;
+				padding-bottom: 0.5em;
+			}
+			td.invoice-item-number-field, .invoice-item-plan-field, .invoice-item-notes-field {
+				padding-left: 0.5em;
+			}
+			td.invoice-item-amount-field, .invoice-item-tax-field, .invoice-item-total-field {
+				text-align: center;
+				width: 15%;
+			}
+			td.invoice-item-number, .invoice-item-plan, .invoice-item-notes {
+				padding-top: 0.5em;
+				padding-bottom: 0.5em;
+				padding-left: 0.5em;
+			}
+			td.invoice-item-amount, .invoice-item-tax, .invoice-item-total {
+				text-align: right;
+				padding-top: 0.5em;
+				padding-bottom: 0.5em;
+				padding-right: 0.5em;
+			}
+			td.invoice-item-total-amount, .invoice-item-total-tax, .invoice-item-grand-total {
+				text-align: right;
+				font-weight: bold;
+				padding-top: 0.5em;
+				padding-bottom: 0.5em;
+				padding-right: 0.5em;
+			}
+			td.invoice-grand-total {
+				text-align: right;
+				font-size: 2em;
+				font-weight: bold;
+			}
+			td.invoice-details-title {
+			}
+			td.invoice-details-field {
+			}
+			td.invoice-details {
+			}
+			td.invoice-details-amount {
+				text-align: right;
+			}
+			td.invoice-details-rest {
+				width: 70%;
+			}
+			td.invoice-footer {
+				text-align: center;
+				font-size: 0.75em;
+			}
+			hr.separator {
+				border: 0px;
+				border-style: solid;
+				color: black;
+				background-color: black;
+				height: 1px;
+			}
+		</style>
+	</head>
+	
+	<body>
+	
+		<table>
+			<tr>
+				<td class="company-logo">
+					<img src="company-logo.jpg">
+				</td>
+				<td class="company-address">
+					<strong>Daloradius Inc.</strong><br>
+					Software St., 32<br>
+					City, Zip 1024 State - Country<br>
+					123 456 789 &phone;<br>
+					info@daloradius.inc &#9993;<br>
+					http://www.daloradius.inc &#127760;
+				</td>
+			</tr>
+		</table>
+		
+		<br>
+		<hr class="separator">
+		<br>
+		
+		<table>
+			<tr>
+				<td class="invoice-title">
+					INVOICE
+				</td>
+				<td class="invoice-fields">
+					<strong>Invoice #</strong>:<br>
+					<strong>Date</strong>:<br>
+					<strong>Customer</strong>:
+				</td>
+				<td class="invoice-values">
+					[InvoiceNumber]<br>
+					[InvoiceDate]<br>
+					[CustomerName] &nbsp; [# [CustomerId]]<br>
+					[CustomerAddress]<br>
+					[CustomerAddress2]<br>
+					&phone; [CustomerPhone]<br>
+					&#9993; [CustomerEmail]<br>
+					&#128100; [CustomerContact]
+				</td>
+			</tr>
+		</table>
+		
+		<br>
+		
+		<table>
+			<tr class="invoice-item-fields">
+				<td class="invoice-item-number-field">
+					Item #
+				</td>
+				<td class="invoice-item-plan-field">
+					Plan
+				</td>
+				<td class="invoice-item-notes-field">
+					Notes
+				</td>
+				<td class="invoice-item-amount-field">
+					Amount
+				</td>
+				<td class="invoice-item-tax-field">
+					Tax
+				</td>
+				<td class="invoice-item-total-field">
+					Total
+				</td>
+			</tr>
+			
+			[InvoiceItems]
+			
+			<tr>
+				<td class="invoice-item-total-amount" colspan="4">
+					[InvoiceTotalAmount] &euro;
+				</td>
+				<td class="invoice-item-total-tax">
+					[InvoiceTotalTax] &euro;
+				</td>
+				<td class="invoice-item-grand-total">
+					[InvoiceTotalBilled] &euro;
+				</td>
+			</tr>
+
+		</table>
+		
+		<hr class="separator">
+		<br>
+		
+		<table>
+			<tr>
+				<td class="invoice-grand-total">
+					Total Invoice [InvoiceTotalBilled] &euro;
+				</td>
+			</tr>
+		</table>
+		
+		<br>
+		<br>
+		
+		<table>
+			<tr>
+				<td class="invoice-details-title" colspan="3">
+					<strong>Invoice details:</strong><br>
+				</td>
+			</tr>
+			<tr>
+				<td class="invoice-details-field">
+					Status:
+				</td>
+				<td class="invoice-details">
+					[InvoiceStatus]
+				</td>
+				<td class="invoice-details-rest">
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td class="invoice-details-field">
+					Total billed:
+				</td>
+				<td class="invoice-details-amount">
+					[InvoiceTotalBilled] &euro;
+				</td>
+				<td class="invoice-details-rest">
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td class="invoice-details-field">
+					Total paid:
+				</td>
+				<td class="invoice-details-amount">
+					[InvoicePaid] &euro;
+				</td>
+				<td class="invoice-details-rest">
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td class="invoice-details-field">
+					Total due:
+				</td>
+				<td class="invoice-details-amount">
+					[InvoiceDue] &euro;
+				</td>
+				<td class="invoice-details-rest">
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+		
+		<br>
+		
+		<table>
+			<tr>
+				<td class="invoice-details-title">
+					<strong>Please, make a payment to:</strong><br>
+				</td>
+			</tr>
+			<tr>
+				<td class="invoice-details">
+					Bank of Money<br>
+					IBAN 000 0102 0304 0506 0708
+				</td>
+			</tr>
+		</table>
+		
+		<br>
+		
+		<table>
+			<tr>
+				<td class="invoice-details-title">
+					<strong>Notes:</strong><br>
+				</td>
+			</tr>
+			<tr>
+				<td class="invoice-details">
+					[InvoiceNotes]
+				</td>
+			</tr>
+		</table>
+		
+		<br>
+		<hr class="separator">
+
+		<table>
+			<tr>
+				<td class="invoice-footer">
+					Daloradius Inc., a company registered with the # 12345678.
+				</td>
+			</tr>
+		</table>
+		
+	</body>
+</html>

@@ -235,9 +235,9 @@
 		echo '<td> <input type="checkbox" name="invoice_id[]" value="'.$row['id'].'"> '.$invoice_id.' </td>';
 		echo '<td> '.$contactperson.' </td>';
 		echo '<td> '.$row['date'].' </td>';
-		echo '<td> '.$row['totalbilled'].' </td>';
-		echo '<td> '.$row['totalpayed'].' </td>';
-		echo '<td> '.$balance.' </td>';
+		echo '<td class="money"> '.$row['totalbilled'].' </td>';
+		echo '<td class="money"> '.$row['totalpayed'].' </td>';
+		echo '<td class="money"> '.$balance.' </td>';
 		echo '<td> '.$row['status'].' </td>';
 		
 		echo '</tr>';

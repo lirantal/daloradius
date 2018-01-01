@@ -572,7 +572,9 @@ input.integer {
         width:19px;
 }
 
-
+input.money {
+	text-align:right;
+}
 
 input[type="radio"] {
         width:13px;
@@ -800,6 +802,10 @@ tbody a.tablenovisit {
 	color: #348017;
 /*	color: #7E2217; */
 /*  border-bottom: 1px dotted #fff; */
+}
+
+td.money {
+	text-align:right;
 }
 
 /* the color red used on acct-active.php to highlight overdue accounts */
