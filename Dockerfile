@@ -51,7 +51,7 @@ ADD . /var/www/html
 RUN chown www-data.www-data -R /var/www/html
 
 # Run MySQL server so that it initializes the database and seeds information
-RUN /usr/bin/mysqld_safe & \
+RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld; /usr/bin/mysqld_safe & \
  sleep 10s && \
  /usr/bin/mysql --host localhost --port 3306 -u root --password="" -e "CREATE DATABASE radius" && \
  /usr/bin/mysql -u root --password="" radius < /var/www/html/contrib/db/fr2-mysql-daloradius-and-freeradius.sql
