@@ -92,20 +92,27 @@
 	$orderBy = $dbSocket->escapeSimple($orderBy);
 	$orderType = $dbSocket->escapeSimple($orderType);
         
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute FROM 
-		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
+        //orig: used as maethod to get total rows - this is required for the pages_numbering.php page
+        /*
+        $sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute FROM
+		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON
+		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username
 		WHERE (Attribute='Auth-Type') or (Attribute LIKE '%-Password') GROUP BY UserName";
 	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
+	$numrows = $res->numRows();*/ 
+
+        // Fix by Felix Kurth @ inmedias.it : Faster method to get totals rows (no Joins)
+        $sql = "SELECT COUNT(DISTINCT(" . $configValues['CONFIG_DB_TBL_RADCHECK'] . ".username)) FROM " . $configValues['CONFIG_DB_TBL_RADCHECK'] . ";";
+        $res = $dbSocket->query($sql);
+        $data = $res->fetchrow();
+        $numrows = $data[0];
 
 
 	/* we are searching for both kind of attributes for the password, being User-Password, the more
 	   common one and the other which is Password, this is also done for considerations of backwards
 	   compatibility with version 0.7        */
-
+        /*
 	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
 		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname
@@ -119,10 +126,41 @@
 		 ON disabled.username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username AND disabled.groupname = 'daloRADIUS-Disabled-Users' 
  		WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=userinfo.username) AND Attribute IN ('Cleartext-Password', 'Auth-Type','User-Password', 
  			'Crypt-Password', 'MD5-Password', 'SMD5-Password', 'SHA-Password', 'SSHA-Password', 'NT-Password', 'LM-Password', 'SHA1-Password', 'CHAP-Password', 
- 			'NS-MTA-MD5-Password') GROUP by ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
+ 			'NS-MTA-MD5-Password') GROUP by ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Username ORDER BY '$orderBy' '$orderType' LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+	$logDebugSQL .= $sql . "\n";*/
+        
+        // Fix by Felix Kurth @ inmedias.it : Faster Data-Query - using PHP and Sub-Query to relieve MySQL
+        // I set no Debug Log here cause too many Strings
+        $data = array();
+        $sql = "SELECT DISTINCT(" . $configValues['CONFIG_DB_TBL_RADCHECK'] . ".username), " . $configValues['CONFIG_DB_TBL_RADCHECK'] . ".value, " . $configValues['CONFIG_DB_TBL_RADCHECK'] . ".id, " . $configValues['CONFIG_DB_TBL_RADCHECK'] . ".attribute FROM " . $configValues['CONFIG_DB_TBL_RADCHECK'] . " WHERE " . $configValues['CONFIG_DB_TBL_RADCHECK'] . ".attribute IN ('Cleartext-Password', 'Auth-Type','User-Password', 'Crypt-Password', 'MD5-Password', 'SMD5-Password', 'SHA-Password', 'SSHA-Password', 'NT-Password', 'LM-Password', 'SHA1-Password', 'CHAP-Password', 'NS-MTA-MD5-Password') ORDER BY '$orderBy' '$orderType' LIMIT $offset, $rowsPerPage";
+        $res = $dbSocket->query($sql);
+        while ($row = $res->fetchRow()) {
+            $sql = "SELECT " . $configValues['CONFIG_DB_TBL_DALOUSERINFO'] . ".firstname, " . $configValues['CONFIG_DB_TBL_DALOUSERINFO'] . ".lastname, IFNULL(disabled.username,0) as disabled
+                    FROM " . $configValues['CONFIG_DB_TBL_DALOUSERINFO'] . " 
+                    LEFT JOIN " . $configValues['CONFIG_DB_TBL_RADUSERGROUP'] . " disabled ON disabled.username=userinfo.username AND disabled.groupname = 'daloRADIUS-Disabled-Users'
+                    WHERE " . $configValues['CONFIG_DB_TBL_DALOUSERINFO'] . ".username = '".$row[0]."'";
+            $rec = $dbSocket->query($sql);
+            while ($r = $rec->fetchRow()) {
+                $sql = "SELECT " . $configValues['CONFIG_DB_TBL_RADUSERGROUP'] . ".groupname as groupname FROM " . $configValues['CONFIG_DB_TBL_RADUSERGROUP'] . " WHERE " . $configValues['CONFIG_DB_TBL_RADUSERGROUP'] . ".username = '".$row[0]."'";
+                $group = $dbSocket->query($sql);
+                $groups = '';
+                while ($g = $group->fetchRow()){
+                    $groups .= $g[0]."<br>\n";
+                }
+                // Sort Array for Output
+                $tmp[0] = $row[0];
+                $tmp[1] = $row[1];
+                $tmp[2] = $row[2];
+                $tmp[3] = $groups; // groupname
+                $tmp[4] = $row[3];
+                $tmp[5] = $r[0];
+                $tmp[6] = $r[1];
+                $tmp[7] = $r[2];
+                $data[] = $tmp;
+            }
+        }
 
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -190,7 +228,9 @@
 		</th>
 		</tr> </thread>";
 
-	while($row = $res->fetchRow()) {
+	//while($row = $res->fetchRow()) {
+        // Fix by Felix Kurth @ inmedias.it : replaced while with foreach
+        foreach($data as $row){
 
 		printqn("
 			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
@@ -205,8 +245,8 @@
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 
 
-		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".urlencode($row[0])."');";
-		$content =  '<a class="toolTip" href="mng-edit.php?username='.urlencode($row[0]).'">'.$l['Tooltip']['UserEdit'].'</a>';
+		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".$row[0]."');";
+		$content =  '<a class="toolTip" href="mng-edit.php?username='.$row[0].'">'.$l['Tooltip']['UserEdit'].'</a>';
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => $js,
