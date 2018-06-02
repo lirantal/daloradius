@@ -32,8 +32,8 @@
 	isset($_GET['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
 	isset($_GET['radiusreply']) ? $radiusReply = $_GET['radiusreply'] : $radiusReply = "Any";
 
-	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = date("Y-01-01");
-	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = date("Y-m-t");
+	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = date("Y-m-01");
+	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = date( "Y-m-01",mktime (0,0,0,date('n')+1,1,date('Y')));
 	
 	include_once('library/config_read.php');
     $log = "visited page: ";
