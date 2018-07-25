@@ -154,7 +154,7 @@
 
 				if (trim($value) != "") {
 
-					list($userSessions,$acctStartTime) = preg_split('\|\|', $value);
+					list($userSessions,$acctStartTime) = preg_split('/\\|\\|/', $value);
 
 					$allUsernames .= $userSessions . ", ";
 
