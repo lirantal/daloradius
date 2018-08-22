@@ -203,6 +203,9 @@ function get_ip_addr($ifname) {
 	if (preg_match("/inet addr:[0-9\.]*/i", $ifip, $match)) {
 		$match = explode(":", $match[0]);
 		return $match[1];
+	} elseif (preg_match("/inet [0-9\.]*/i", $ifip, $match)) {
+		$match = explode(" ", $match[0]);
+		return $match[1];
 	} else {
 		return "(none)";
 	}
@@ -219,6 +222,9 @@ function get_mac_addr($ifname) {
 
 	$ifmac = implode($command_result, "\n");
 	if (preg_match("/hwaddr [0-9A-F:]*/i", $ifmac, $match)) {
+		$match = explode(" ", $match[0]);
+		return $match[1];
+	} elseif (preg_match("/ether [0-9A-F:]*/i", $ifmac, $match)) {
 		$match = explode(" ", $match[0]);
 		return $match[1];
 	} else {
@@ -239,6 +245,9 @@ function get_mask_addr($ifname) {
 	$ifmask = implode($command_result, "\n");
 	if (preg_match("/mask:[0-9\.]*/i", $ifmask, $match)) {
 		$match = explode(":", $match[0]);
+		return $match[1];
+	} elseif (preg_match("/netmask [0-9\.]*/i", $ifmask, $match)) {
+		$match = explode(" ", $match[0]);
 		return $match[1];
 	} else {
 		return "(none)";
