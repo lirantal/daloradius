@@ -438,6 +438,7 @@ $l['Tooltip']['InvoiceEdit'] = "Edit Invoice";
 $l['Tooltip']['invoiceTypeTooltip'] = "";
 $l['Tooltip']['invoiceStatusTooltip'] = "";
 $l['Tooltip']['invoiceID'] = "Type the invoice id";
+$l['Tooltip']['user_idTooltip'] = "User id";
 
 $l['Tooltip']['amountTooltip'] = "";
 $l['Tooltip']['taxTooltip'] = "";
