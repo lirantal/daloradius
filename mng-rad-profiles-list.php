@@ -72,7 +72,7 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
+	/* $sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
 		" AS Users FROM ".
 		$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
 		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
@@ -83,10 +83,15 @@
 		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
 		$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName;";
 	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-
+	$numrows = $res->numRows();*/
+        
+        // Fix by Felix Kurth @ inmedias.it : Faster method to get totals rows (no Joins)
+        $sql = "SELECT COUNT(DISTINCT(" . $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] . ".GroupName)) FROM " . $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] . ";";
+        $res = $dbSocket->query($sql);
+        $data = $res->fetchrow();
+        $numrows = $data[0];
 	
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
+	/*$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName), count(distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) ".
 		" AS Users FROM ".
 		$configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON ".
 		$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName GROUP BY ".
@@ -99,7 +104,31 @@
 		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+	$logDebugSQL .= $sql . "\n";*/
+        
+        // Fix by Felix Kurth @ inmedias.it : Faster method to get datas - no Union select and Joins
+        $sql1 = "SELECT DISTINCT(radgroupreply.groupname) FROM radgroupreply ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+        $sql2 = "SELECT DISTINCT(radgroupcheck.GroupName) FROM radgroupcheck ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+        $sql3 = "SELECT COUNT(*) FROM " . $configValues['CONFIG_DB_TBL_RADUSERGROUP'] . " WHERE " . $configValues['CONFIG_DB_TBL_RADUSERGROUP'] . ".groupname = '::groupname::'";
+        $data = array();
+
+        $res = $dbSocket->query($sql1);
+        while ($row = $res->fetchRow())
+            $data[$row[0]][0] = $row[0];
+
+        $res = $dbSocket->query($sql2);
+        while ($row = $res->fetchRow())
+            $data[$row[0]][0] = $row[0];
+
+        foreach($data as $k=>$v){
+            $res = $dbSocket->query(str_replace('::groupname::', $k, $sql3));
+            $row = $res->fetchRow();
+            $data[$k][1] = $row[0];
+        }
+        $logDebugSQL = "";
+        $logDebugSQL .= $sql1 . "\n";
+        $logDebugSQL .= $sql2 . "\n";
+        $logDebugSQL .= $sql3 . "\n";
 	
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -145,7 +174,9 @@
 		</th>
 
 	</tr> </thread>";
-	while($row = $res->fetchRow()) {
+	//while($row = $res->fetchRow()) {
+        // Fix by Felix Kurth @ inmedias.it : foreach insted of while
+        foreach($data as $row){
 		echo "<tr>
 			<td> <input type='checkbox' name='profile[]' value='$row[0]'>
 				<a class='tablenovisit' href='javascript:return;'

@@ -72,17 +72,22 @@
 	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".UserName), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName, ".
+	/* $sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".UserName), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName, ".
 		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".priority, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname ".
 		" FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
 		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username ".
 			" GROUP BY UserName;";
 	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-
+	$numrows = $res->numRows();*/
+        
+        // Fix by Felix Kurth @ inmedias.it : Faster method to get totals rows (no Joins)
+        $sql = "SELECT COUNT(DISTINCT(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username)) FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].";";
+        $res = $dbSocket->query($sql);
+        $data = $res->fetchrow();
+        $numrows = $data[0];
 	
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".UserName), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName, ".
+	/*$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".UserName), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".GroupName, ".
 		$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".priority, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".
 		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname ".
 		" FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." ON ".
@@ -90,7 +95,22 @@
 			" GROUP BY UserName ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+	$logDebugSQL .= $sql . "\n";*/
+        
+        // Fix by Felix Kurth @ inmedias.it : Faster method to get data
+        $logDebugSQL = "";
+        $sql1 = "SELECT DISTINCT(".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username), ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname, ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
+        $sql2 = "SELECT ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username = '::username::';";
+        $res1 = $dbSocket->query($sql1);
+        $logDebugSQL .= $sql1 . "\n";
+        $logDebugSQL .= $sql2 . "\n";
+        $data = array();
+        while($row1 = $res1->fetchRow()){
+            $res2 = $dbSocket->query(str_replace('::username::', $row1[0], $sql2));
+            while($row2 = $res2->fetchRow()){
+                $data[] = array_merge($row1, $row2);
+            }
+        }
 	
 	/* START - Related to pages_numbering.php */
 	$maxPage = ceil($numrows/$rowsPerPage);
@@ -149,7 +169,9 @@
 		</th>
 
 	</tr> </thread>";
-	while($row = $res->fetchRow()) {
+	// while($row = $res->fetchRow()) {
+        // Fix by Felix Kurth @ inmedias.it : foreach insted of while
+        foreach($data as $row) {
 		echo "<tr>
 			<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
 			<td> $row[3] $row[4] </td>
