@@ -60,11 +60,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergrouplistuser'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradusergrouplistuser') ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradusergrouplistuser'] ?>
+			<?php echo t('helpPage','mngradusergrouplistuser') ?>
 			<br/>
 		</div>			
 		<br/>
@@ -121,17 +121,17 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=groupname&orderType=$orderTypeNextPage\">
-		".$l['all']['Groupname']."</a>
+		".t('all','Groupname')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=priority&orderType=$orderTypeNextPage\">
-		".$l['all']['Priority']."</a>
+		".t('all','Priority')."</a>
 		</th>
 
 	</tr> </thread>";
@@ -141,9 +141,9 @@
 					<a class='tablenovisit' href='javascript:return;'
                         onclick=\"javascript:__displayTooltip();\"
                         tooltipText=\"
-                        <a class='toolTip' href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['EditUserGroup']."</a>
+                        <a class='toolTip' href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>".t('Tooltip','EditUserGroup')."</a>
 					<br/><br/>
-                       <a class='toolTip' href='mng-rad-usergroup-del.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['DeleteUserGroup']."</a>
+                       <a class='toolTip' href='mng-rad-usergroup-del.php?username=$row[0]&group=$row[1]'>".t('Tooltip','DeleteUserGroup')."</a>
                        <br/>\"
 					>$row[1]</a></td>
 				<td> $row[1] </td>

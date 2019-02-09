@@ -137,32 +137,32 @@
 		$service_plan_info .= "".
 
 					"<tr $tableTrTags'>
-					<td>".$l['all']['Username']."</td>
+					<td>".t('all','Username')."</td>
 					<td>".$row['username']."</td>
 					</tr>".
 		
 					"<tr $tableTrTags'>
-					<td>".$l['all']['PlanName']."</td>
+					<td>".t('all','PlanName')."</td>
 					<td>".$row['planname']."</td>
 					</tr>".
 					"<tr $tableTrTags'>
-					<td>".$l['all']['PlanRecurring']."</td>
+					<td>".t('all','PlanRecurring')."</td>
 					<td>".$row['planRecurring']."</td>
 					</tr>".
 					"<tr $tableTrTags'>
-					<td>".$l['all']['PlanRecurringPeriod']."</td>
+					<td>".t('all','PlanRecurringPeriod')."</td>
 					<td>".$row['planRecurringPeriod']."</td>
 					</tr>".
 					"<tr $tableTrTags'>
-					<td>".$l['all']['PlanCost']."</td>
+					<td>".t('all','PlanCost')."</td>
 					<td>".$row['planCost']."</td>
 					</tr>".
 					"<tr $tableTrTags'>
-					<td>".$l['all']['NextBill']."</td>
+					<td>".t('all','NextBill')."</td>
 					<td>".$row['nextbill']."</td>
 					</tr>".
 					"<tr $tableTrTags'>
-					<td>".$l['all']['BillDue']."</td>
+					<td>".t('all','BillDue')."</td>
 					<td>".$row['billdue']."</td>
 					</tr>".
 					"";
@@ -239,43 +239,43 @@
 		
 		$batch_details .= "<table $tableTags><tr $tableTrTags>
 					<td> 
-			".$l['all']['BatchName']."
+			".t('all','BatchName')."
 			</td>
 	
 			<td> 
-			".$l['all']['HotSpot']."
+			".t('all','HotSpot')."
 			</td>
 	
 			<td> 
-			".$l['all']['BatchStatus']."
+			".t('all','BatchStatus')."
 			</td>
 			
 			<td> 
-			".$l['all']['TotalUsers']."
+			".t('all','TotalUsers')."
 			</td>
 	
 			<td> 
-			".$l['all']['ActiveUsers']."
+			".t('all','ActiveUsers')."
 			</td>
 	
 			<td> 
-			".$l['all']['PlanName']."
+			".t('all','PlanName')."
 			</td>
 	
 			<td> 
-			".$l['all']['PlanCost']."
+			".t('all','PlanCost')."
 			</td>
 	
 			<td> 
-			".$l['all']['BatchCost']."
+			".t('all','BatchCost')."
 			</td>
 	
 			<td> 
-			".$l['all']['CreationDate']."
+			".t('all','CreationDate')."
 			</td>
 	
 			<td> 
-			".$l['all']['CreationBy']."
+			".t('all','CreationBy')."
 			</td>
 	
 			</tr>";
@@ -431,15 +431,15 @@
 		
 		$batch_active_users = "<table $tableTags><tr $tableTrTags'>
 			<td> 
-			".$l['all']['BatchName']."
+			".t('all','BatchName')."
 			</td>
 	
 			<td> 
-			".$l['all']['Username']."
+			".t('all','Username')."
 			</td>
 	
 			<td> 
-			".$l['all']['StartTime']."
+			".t('all','StartTime')."
 			</td>
 	
 			</tr>";

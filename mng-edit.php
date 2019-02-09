@@ -720,11 +720,11 @@ function enableUser() {
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngedit.php'] ?>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngedit.php') ?>
 	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['mngedit'] ?>
+		<?php echo t('helpPage','mngedit') ?>
 		<br/>
 	</div>
 	<?php
@@ -741,36 +741,36 @@ function enableUser() {
 	<input type="hidden" value="<?php echo $username ?>" name="username" />
 
 	<div class="tabber">
- <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
+ <div class="tabbertab" title="<?php echo t('title','AccountInfo'); ?>">
 
 	<fieldset>
 
-                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+                <h302> <?php echo t('title','AccountInfo'); ?> </h302>
 
                 <ul>
 
                 <div id='UserContainer'>
                 <li class='fieldset'>
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <label for='username' class='form'><?php echo t('all','Username')?></label>
 		<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
                 <input name='username' type='text' id='username' value='<?php if (isset($username)) echo $username ?>' disabled tabindex=100 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
                 <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['usernameTooltip'] ?>
+                        <?php echo t('Tooltip','usernameTooltip') ?>
                 </div>
                 </li>
 
                 <li class='fieldset'>
-                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
+                <label for='password' class='form'><?php echo t('all','Password')?></label>
                 <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo $user_password ?>'
                         <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> disabled tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
                 <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['passwordTooltip'] ?>
+                        <?php echo t('Tooltip','passwordTooltip') ?>
                 </div>
                 </li>
                 </div>
@@ -778,7 +778,7 @@ function enableUser() {
 
 
 		<li class='fieldset'>
-		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+		<label for='planName' class='form'><?php echo t('all','PlanName') ?></label>
 		<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
                 <?php
  	               include 'include/management/populate_selectbox.php';
@@ -788,7 +788,7 @@ function enableUser() {
 
 		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planNameTooltip'] ?>
+			<?php echo t('Tooltip','planNameTooltip') ?>
 		</div>
 		</li>
 
@@ -810,7 +810,7 @@ function enableUser() {
 				onClick='javascript:disableUser()' />
 
 		<br/><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 
 		<div style="float: right; text-align: right;">
 				<a href="<?php echo $_SESSION['PREV_LIST_PAGE']; ?>">Back to Listing Page</a>
@@ -825,11 +825,11 @@ function enableUser() {
 	</div>
 
 
-		<div class="tabbertab" title="<?php echo $l['title']['RADIUSCheck']; ?>">
+		<div class="tabbertab" title="<?php echo t('title','RADIUSCheck'); ?>">
 
 		<fieldset>
 
-			<h302> <?php echo $l['title']['RADIUSCheck']; ?> </h302>
+			<h302> <?php echo t('title','RADIUSCheck'); ?> </h302>
 			<br/>
 
 			<ul>
@@ -859,7 +859,7 @@ function enableUser() {
 
 	if ($numrows = $res->numRows() == 0) {
 		echo "<center>";
-		echo $l['messages']['noCheckAttributesForUser'];
+		echo t('messages','noCheckAttributesForUser');
 		echo "</center>";
 	}
 
@@ -919,7 +919,7 @@ function enableUser() {
 			<hr><br/>
 
 			<br/>
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
 			<br/>
 
 			</ul>
@@ -927,11 +927,11 @@ function enableUser() {
 		</fieldset>
 	</div>
 
-	<div class='tabbertab' title='<?php echo $l['title']['RADIUSReply']?>' >
+	<div class='tabbertab' title='<?php echo t('title','RADIUSReply')?>' >
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['RADIUSReply']; ?> </h302>
+		<h302> <?php echo t('title','RADIUSReply'); ?> </h302>
 		<br/>
 
 		<ul>
@@ -957,7 +957,7 @@ function enableUser() {
 
 	if ($numrows = $res->numRows() == 0) {
 		echo "<center>";
-		echo $l['messages']['noReplyAttributesForUser'];
+		echo t('messages','noReplyAttributesForUser');
 		echo "</center>";
 	}
 
@@ -1014,7 +1014,7 @@ function enableUser() {
         <hr><br/>
 
         <br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
         <br/>
 
 	</ul>
@@ -1027,27 +1027,27 @@ function enableUser() {
 ?>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userinfo.php');
         ?>
      </div>
 
-        <div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userbillinfo.php');
         ?>
         </div>
 
-     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Attributes'); ?>">
         <?php
                 include_once('include/management/attributes.php');
         ?>
      </div>
 
-     <div class="tabbertab" title="<?php echo $l['title']['Groups']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Groups'); ?>">
 
 <?php
         include 'library/opendb.php';
@@ -1065,7 +1065,7 @@ function enableUser() {
         <li class='fieldset'>
 
                 <li class='fieldset'>
-                <label for='group' class='form'><?php echo $l['all']['Group']?></label>
+                <label for='group' class='form'><?php echo t('all','Group')?></label>
                 <?php
                         include_once 'include/management/populate_selectbox.php';
                         populate_groups("Select Groups","newgroups[]");
@@ -1082,7 +1082,7 @@ function enableUser() {
 
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                        <?php echo t('Tooltip','groupTooltip') ?>
                 </div>
                 </li>
 
@@ -1092,7 +1092,7 @@ function enableUser() {
 
         <br/>
         <hr><br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
         </li>
 
         </ul>

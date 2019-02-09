@@ -157,12 +157,12 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofilesedit.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradprofilesedit.php') ?>
 		:: <?php if (isset($profile)) { echo $profile; } ?><h144>+</h144></a></h2>
 
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradprofilesedit'] ?>
+			<?php echo t('helpPage','mngradprofilesedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -176,11 +176,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['RADIUSCheck']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','RADIUSCheck'); ?>">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['RADIUSCheck']?> </h302>
+                <h302> <?php echo t('title','RADIUSCheck')?> </h302>
                 <br/>
 
 		<ul>
@@ -209,7 +209,7 @@
 
         if ($numrows = $res->numRows() == 0) {
 			echo "<center>";
-			echo $l['messages']['noCheckAttributesForGroup'];
+			echo t('messages','noCheckAttributesForGroup');
 			echo "</center>";
         }
 
@@ -269,18 +269,18 @@
         <br/><br/>
         <hr><br/>
         <br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
 
 	</ul>
 
         </fieldset>
         </div>
 
-        <div class='tabbertab' title='<?php echo $l['title']['RADIUSReply']?>' >
+        <div class='tabbertab' title='<?php echo t('title','RADIUSReply')?>' >
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['RADIUSReply']?> </h302>
+                <h302> <?php echo t('title','RADIUSReply')?> </h302>
                 <br/>
 
 		<ul>
@@ -304,7 +304,7 @@
 
         if ($numrows = $res->numRows() == 0) {
                 echo "<center>";
-                echo $l['messages']['noReplyAttributesForGroup'];
+                echo t('messages','noReplyAttributesForGroup');
                 echo "</center>";
         }
 
@@ -366,7 +366,7 @@
         <br/><br/>
         <hr><br/>
         <br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply']?>' class='button' />
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
         <br/>
 
 	</ul>
@@ -380,7 +380,7 @@
 
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Attributes']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Attributes'); ?>">
         <?php
 			include_once('include/management/attributes.php');
         ?>

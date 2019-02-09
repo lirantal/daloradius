@@ -28,12 +28,12 @@
 	
 	<ul class="subnav">
 
-		<li><a href="config-user.php"><b>&raquo;</b><?php echo $l['button']['UserSettings'] ?></a></li>
-		<li><a href="config-db.php"><b>&raquo;</b><?php echo $l['button']['DatabaseSettings'] ?></a></li>
-		<li><a href="config-lang.php"><b>&raquo;</b><?php echo $l['button']['LanguageSettings'] ?></a></li>
-		<li><a href="config-logging.php"><b>&raquo;</b><?php echo $l['button']['LoggingSettings'] ?></a></li>
-		<li><a href="config-interface.php"><b>&raquo;</b><?php echo $l['button']['InterfaceSettings'] ?></a></li>
-		<li><a href="config-mail.php"><b>&raquo;</b><?php echo $l['button']['MailSettings'] ?></a></li>
+		<li><a href="config-user.php"><b>&raquo;</b><?php echo t('button','UserSettings') ?></a></li>
+		<li><a href="config-db.php"><b>&raquo;</b><?php echo t('button','DatabaseSettings') ?></a></li>
+		<li><a href="config-lang.php"><b>&raquo;</b><?php echo t('button','LanguageSettings') ?></a></li>
+		<li><a href="config-logging.php"><b>&raquo;</b><?php echo t('button','LoggingSettings') ?></a></li>
+		<li><a href="config-interface.php"><b>&raquo;</b><?php echo t('button','InterfaceSettings') ?></a></li>
+		<li><a href="config-mail.php"><b>&raquo;</b><?php echo t('button','MailSettings') ?></a></li>
 
 	</ul>
 	

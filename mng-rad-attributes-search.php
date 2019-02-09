@@ -59,11 +59,11 @@
 
 	<div id="contentnorightbar">
 	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributessearch.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradattributessearch.php') ?>
 		:: <?php if (isset($attribute)) { echo $attribute; } ?><h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradattributessearch'] ?>
+			<?php echo t('helpPage','mngradattributessearch') ?>
 			<br/>
 		</div>
 		<br/>
@@ -126,17 +126,17 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage&attribute=$attribute\">
-		".$l['all']['VendorID']."</a>
+		".t('all','VendorID')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=$orderTypeNextPage&attribute=$attribute\">
-		".$l['all']['VendorName']."</a>
+		".t('all','VendorName')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage&attribute=$attribute\">
-		".$l['all']['VendorAttribute']."</a>
+		".t('all','VendorAttribute')."</a>
 		</th>
 
 		</tr> </thread>";
@@ -149,7 +149,7 @@
                                         javascript:__displayTooltip();'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]\">
-                                                {$l['Tooltip']['AttributeEdit']}</a>
+                                                {t('Tooltip','AttributeEdit')}</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerAttributeInfo\">

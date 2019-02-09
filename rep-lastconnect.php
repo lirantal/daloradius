@@ -48,11 +48,11 @@
 ?>		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replastconnect.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','replastconnect.php'); ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replastconnect'] ?>
+			<?php echo t('helpPage','replastconnect') ?>
 			<br/>
 		</div>
 		<br/>
@@ -169,22 +169,22 @@
         echo "<thread> <tr>
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=".$tableSetting['postauth']['user']."&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']." 
+		".t('all','Username')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=pass&orderType=$orderTypeNextPage\">
-		".$l['all']['Password']." 
+		".t('all','Password')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=".$tableSetting['postauth']['date']."&orderType=$orderTypeNextPage\">
-		".$l['all']['StartTime']." 
+		".t('all','StartTime')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=reply&orderType=$orderTypeNextPage\">
-		".$l['all']['RADIUSReply']." 
+		".t('all','RADIUSReply')." 
 		</th>
 
         </tr> </thread>";

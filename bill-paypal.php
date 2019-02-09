@@ -24,7 +24,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['paypalmain.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo t('Intro','paypalmain.php') ?></a></h2>
 
 
 <?php

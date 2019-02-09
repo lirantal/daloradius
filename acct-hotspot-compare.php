@@ -48,11 +48,11 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['accthotspotcompare.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','accthotspotcompare.php'); ?>
 		<h144>+</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['accthotspotcompare'] ?>
+			<?php echo t('helpPage','accthotspotcompare') ?>
 			<br/>
 		</div>
 		<br/>
@@ -88,7 +88,7 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>".$l['all']['Records']."</th>
+                                <th colspan='10'>".t('all','Records')."</th>
                                 </tr>
                         </thead>
                 ";
@@ -103,27 +103,27 @@
                 <th scope='col'> 
 			<br/>
 			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=$orderType\">
-			".$l['all']['HotSpot']."</a>
+			".t('all','HotSpot')."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
 			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=$orderType\">
-			".$l['all']['UniqueUsers']."</a>
+			".t('all','UniqueUsers')."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
 			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=$orderType\">
-			".$l['all']['TotalHits']."</a>
+			".t('all','TotalHits')."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
 			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=$orderType\">
-			".$l['all']['AverageTime']."</a>
+			".t('all','AverageTime')."</a>
 			</th>
 			<th scope='col'> 
 			<br/>
 			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=$orderType\">
-			".$l['all']['TotalTime']."</a>
+			".t('all','TotalTime')."</a>
 			</th>
 			<th scope='col'> 
 			<br/>

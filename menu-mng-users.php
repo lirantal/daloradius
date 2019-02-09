@@ -24,38 +24,38 @@
 	
 		<li><a href="mng-list-all.php"><b>&raquo;</b>
 			<img src='images/icons/userList.gif' border='0'>
-			<?php echo $l['button']['ListUsers'] ?></a>
+			<?php echo t('button','ListUsers') ?></a>
 		</li>
 		<li><a href="mng-new.php"><b>&raquo;</b>
 			<img src='images/icons/userNew.gif' border='0'>
-			<?php echo $l['button']['NewUser'] ?></a>
+			<?php echo t('button','NewUser') ?></a>
 		</li>
 		<li><a href="mng-new-quick.php"><b>&raquo;</b>
 			<img src='images/icons/userNew.gif' border='0'>
-			<?php echo $l['button']['NewUserQuick'] ?></a>
+			<?php echo t('button','NewUserQuick') ?></a>
 		</li>
 		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b>
 			<img src='images/icons/userEdit.gif' border='0'>
-			<?php echo $l['button']['EditUser'] ?></a>
+			<?php echo t('button','EditUser') ?></a>
 			<form name="mngedit" action="mng-edit.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameEdit" autocomplete="off"
 				onClick='javascript:__displayTooltip();' 
-				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
 			</form></li>
 		<li><a href="javascript:document.mngsearch.submit();""><b>&raquo;</b>
 			<img src='images/icons/userSearch.gif' border='0'>
-			<?php echo $l['button']['SearchUsers'] ?></a>
+			<?php echo t('button','SearchUsers') ?></a>
 			<form name="mngsearch" action="mng-search.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameSearch" autocomplete="off"
 				onClick='javascript:__displayTooltip();' 
-				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard']; ?>'
+				tooltipText='<?php echo t('Tooltip','Username'); ?> <br/> <?php echo t('Tooltip','UsernameWildcard'); ?>'
 				value="<?php if (isset($search_username)) echo $search_username; ?>" tabindex=2>
 			</form></li>
 		
 		<li><a href="mng-del.php"><b>&raquo;</b>
 			<img src='images/icons/userRemove.gif' border='0'>
-			<?php echo $l['button']['RemoveUsers'] ?>
+			<?php echo t('button','RemoveUsers') ?>
 			</a>
 		</li>
 		
@@ -67,7 +67,7 @@
 	
 		<li><a href="mng-import-users.php"><b>&raquo;</b>
 			<img src='images/icons/userNew.gif' border='0'>
-			<?php echo $l['button']['ImportUsers'] ?></a>
+			<?php echo t('button','ImportUsers') ?></a>
 		</li>
 		
 	</ul>

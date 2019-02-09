@@ -36,16 +36,16 @@
 
 		<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>
 			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo $l['button']['UserLogins'] ?></a>
+			<?php echo t('button','UserLogins') ?></a>
 			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
 			<input name="username" type="text" id="usernameLogins" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username; ?>">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo $l['all']['Daily'] ?>
-				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
-				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+				<option value="daily"> <?php echo t('all','Daily') ?>
+				<option value="monthly"> <?php echo t('all','Monthly') ?>
+				<option value="yearly"> <?php echo t('all','Yearly') ?>
 			</select>
 			</form>
 		</li>
@@ -53,20 +53,20 @@
 
 		<li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>
 			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo $l['button']['UserDownloads'] ?></a>
+			<?php echo t('button','UserDownloads') ?></a>
 			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
 			<input name="username" type="text" id="usernameDownloads" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				value="<?php if (isset($overall_download_username)) echo $overall_download_username; ?>">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo $l['all']['Daily'] ?>
-				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
-				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+				<option value="daily"> <?php echo t('all','Daily') ?>
+				<option value="monthly"> <?php echo t('all','Monthly') ?>
+				<option value="yearly"> <?php echo t('all','Yearly') ?>
 			</select>
 			<select class="generic" name="size" type="text">
-				<option value="megabytes"> <?php echo $l['all']['Megabytes'] ?>
-				<option value="gigabytes"> <?php echo $l['all']['Gigabytes'] ?>
+				<option value="megabytes"> <?php echo t('all','Megabytes') ?>
+				<option value="gigabytes"> <?php echo t('all','Gigabytes') ?>
 			</select>
 			</form>
 		</li>
@@ -74,20 +74,20 @@
 
 		<li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>
 			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo $l['button']['UserUploads'] ?></a>
+			<?php echo t('button','UserUploads') ?></a>
 			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
 			<input name="username" type="text" id="usernameUploads" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username; ?>">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo $l['all']['Daily'] ?>
-				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
-				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+				<option value="daily"> <?php echo t('all','Daily') ?>
+				<option value="monthly"> <?php echo t('all','Monthly') ?>
+				<option value="yearly"> <?php echo t('all','Yearly') ?>
 			</select>
 			<select class="generic" name="size" type="text">
-				<option value="megabytes"> <?php echo $l['all']['Megabytes'] ?>
-				<option value="gigabytes"> <?php echo $l['all']['Gigabytes'] ?>
+				<option value="megabytes"> <?php echo t('all','Megabytes') ?>
+				<option value="gigabytes"> <?php echo t('all','Gigabytes') ?>
 			</select>
 			</form>
 		</li>
@@ -100,12 +100,12 @@
 
 		<li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>
 			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo $l['button']['TotalLogins'] ?></a>
+			<?php echo t('button','TotalLogins') ?></a>
 			<form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo $l['all']['Daily'] ?>
-				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
-				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+				<option value="daily"> <?php echo t('all','Daily') ?>
+				<option value="monthly"> <?php echo t('all','Monthly') ?>
+				<option value="yearly"> <?php echo t('all','Yearly') ?>
 			</select>
 			</form></li>
 
@@ -113,26 +113,26 @@
 
 		<li><a href="javascript:document.alltime_traffic_compare.submit();"><b>&raquo;</b>
 			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo $l['button']['TotalTraffic'] ?></a>
+			<?php echo t('button','TotalTraffic') ?></a>
 			<form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" 
 				class="sidebar">
 			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo $l['all']['Daily'] ?>
-				<option value="monthly"> <?php echo $l['all']['Monthly'] ?>
-				<option value="yearly"> <?php echo $l['all']['Yearly'] ?>
+				<option value="daily"> <?php echo t('all','Daily') ?>
+				<option value="monthly"> <?php echo t('all','Monthly') ?>
+				<option value="yearly"> <?php echo t('all','Yearly') ?>
 			</select>
 			<select class="generic" name="size" type="text">
-				<option value="megabytes"> <?php echo $l['all']['Megabytes'] ?>
-				<option value="gigabytes"> <?php echo $l['all']['Gigabytes'] ?>
+				<option value="megabytes"> <?php echo t('all','Megabytes') ?>
+				<option value="gigabytes"> <?php echo t('all','Gigabytes') ?>
 			</select>
 			</form></li>
 			
 			
 		<li><a href="javascript:document.logged_users.submit();"><b>&raquo;</b>
 			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo $l['button']['LoggedUsers'] ?></a>
+			<?php echo t('button','LoggedUsers') ?></a>
 			<form name="logged_users" action="graphs-logged_users.php" method="post" class="sidebar">
-			<?php echo $l['graphs']['Day']; ?>:</br>
+			<?php echo t('graphs','Day'); ?>:</br>
 			<?php $d = date("j"); ?>
 			<select class="generic" name="day" type="text">
 				<?php 
@@ -143,23 +143,23 @@
 				<?php $i++; 	?>
 				<?php endwhile; ?>
 			</select>
-			<?php echo $l['graphs']['Month']; ?>:</br>
+			<?php echo t('graphs','Month'); ?>:</br>
 			<?php $m = date("M"); ?>
 			<select class="generic" name="month" type="text">
-				<option value="jan" <?php if ($m == 'Jan') echo "selected" ?>> <?php echo $l['graphs']['Jan']?> </option>
-				<option value="feb" <?php if ($m == 'Feb') echo "selected" ?>> <?php echo $l['graphs']['Feb']?> </option>
-				<option value="mar" <?php if ($m == 'Mar') echo "selected" ?>> <?php echo $l['graphs']['Mar']?> </option>
-				<option value="apr" <?php if ($m == 'Apr') echo "selected" ?>> <?php echo $l['graphs']['Apr']?> </option>
-				<option value="may" <?php if ($m == 'May') echo "selected" ?>> <?php echo $l['graphs']['May']?> </option>
-				<option value="jun" <?php if ($m == 'Jun') echo "selected" ?>> <?php echo $l['graphs']['Jun']?> </option>
-				<option value="jul" <?php if ($m == 'Jul') echo "selected" ?>> <?php echo $l['graphs']['Jul']?> </option>
-				<option value="aug" <?php if ($m == 'Aug') echo "selected" ?>> <?php echo $l['graphs']['Aug']?> </option>
-				<option value="sep" <?php if ($m == 'Sep') echo "selected" ?>> <?php echo $l['graphs']['Sep']?> </option>
-				<option value="oct" <?php if ($m == 'Oct') echo "selected" ?>> <?php echo $l['graphs']['Oct']?> </option>
-				<option value="nov" <?php if ($m == 'Nov') echo "selected" ?>> <?php echo $l['graphs']['Nov']?> </option>
-				<option value="dec" <?php if ($m == 'Dec') echo "selected" ?>> <?php echo $l['graphs']['Dec']?> </option>
+				<option value="jan" <?php if ($m == 'Jan') echo "selected" ?>> <?php echo t('graphs','Jan')?> </option>
+				<option value="feb" <?php if ($m == 'Feb') echo "selected" ?>> <?php echo t('graphs','Feb')?> </option>
+				<option value="mar" <?php if ($m == 'Mar') echo "selected" ?>> <?php echo t('graphs','Mar')?> </option>
+				<option value="apr" <?php if ($m == 'Apr') echo "selected" ?>> <?php echo t('graphs','Apr')?> </option>
+				<option value="may" <?php if ($m == 'May') echo "selected" ?>> <?php echo t('graphs','May')?> </option>
+				<option value="jun" <?php if ($m == 'Jun') echo "selected" ?>> <?php echo t('graphs','Jun')?> </option>
+				<option value="jul" <?php if ($m == 'Jul') echo "selected" ?>> <?php echo t('graphs','Jul')?> </option>
+				<option value="aug" <?php if ($m == 'Aug') echo "selected" ?>> <?php echo t('graphs','Aug')?> </option>
+				<option value="sep" <?php if ($m == 'Sep') echo "selected" ?>> <?php echo t('graphs','Sep')?> </option>
+				<option value="oct" <?php if ($m == 'Oct') echo "selected" ?>> <?php echo t('graphs','Oct')?> </option>
+				<option value="nov" <?php if ($m == 'Nov') echo "selected" ?>> <?php echo t('graphs','Nov')?> </option>
+				<option value="dec" <?php if ($m == 'Dec') echo "selected" ?>> <?php echo t('graphs','Dec')?> </option>
 			</select>
-			<?php echo $l['graphs']['Year']; ?>:</br>
+			<?php echo t('graphs','Year'); ?>:</br>
 			<select class="generic" name="year" type="text">
 				<?php
 					for($i = 0; $i <= 10; $i++) {

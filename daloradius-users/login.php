@@ -62,22 +62,22 @@ body {
 		
 		<h2>
 		
-		<?php echo $l['all']['copyright1']; ?>	
+		<?php echo t('all','copyright1'); ?>	
 		</h2>
 		<br/>
 		
 		<ul id="subnav">
 		
-		<li><?php echo $l['all']['daloRADIUS'] ?></li>
+		<li><?php echo t('all','daloRADIUS') ?></li>
 		
 		</ul>
 	</div>
 	
 	<div id="sidebar">
 	
-	<h2><?php echo $l['text']['LoginRequired'] ?></h2>
+	<h2><?php echo t('text','LoginRequired') ?></h2>
 
-	<h3><?php echo $l['text']['LoginPlease'] ?></h3>
+	<h3><?php echo t('text','LoginPlease') ?></h3>
 
 		<form name="login" action="dologin.php" class="sidebar" method="post" >
 			<ul class="subnav">
@@ -93,18 +93,18 @@ body {
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['login.php'] ?></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','login.php') ?></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['login'] ?>
+			<?php echo t('helpPage','login') ?>
 		</div>
 
-		<?php echo $l['helpPage']['loginUsersPortal'] ?>
+		<?php echo t('helpPage','loginUsersPortal') ?>
 
 <?php
 	if ($error) {
 		echo $error;
-		echo $l['messages']['loginerror'];
+		echo t('messages','loginerror');
 }
 ?>
 

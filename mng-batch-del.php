@@ -184,11 +184,11 @@
 
 <div id="contentnorightbar">
 	
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngbatchdel.php'] ?>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngbatchdel.php') ?>
 	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['mngbatchdel'] ?>
+		<?php echo t('helpPage','mngbatchdel') ?>
 		<br/>
 	</div>
 	<?php
@@ -200,15 +200,15 @@
 	
 	<fieldset>
 
-		<h302> <?php echo $l['title']['BatchRemoval'] ?> </h302>
+		<h302> <?php echo t('title','BatchRemoval') ?> </h302>
 		<br/>
 
-		<label for='batch_name' class='form'><?php echo $l['all']['BatchName']?></label>
+		<label for='batch_name' class='form'><?php echo t('all','BatchName')?></label>
 		<input name='batch_name' type='text' id='batch_name' value='' tabindex=100 />
 
 		<br/><br/>
 		<hr><br/>
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 
+		<input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 
 			class='button' />
 
 	</fieldset>

@@ -41,11 +41,11 @@
 ?>
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnas.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradnas.php') ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >				
-					<?php echo $l['helpPage']['mngradnas'] ?>
+					<?php echo t('helpPage','mngradnas') ?>
 					<br/>
 				</div>
 				<br/>

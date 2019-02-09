@@ -330,10 +330,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configbackupcreatebackups.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configbackupcreatebackups.php') ?>
 				<h144>+</h144></a></h2>
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configbackupcreatebackups'] ?>
+					<?php echo t('helpPage','configbackupcreatebackups') ?>
 					<br/>
 				</div>
                 <?php
@@ -344,11 +344,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['FreeRADIUSTables']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','FreeRADIUSTables'); ?>">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['Backups']; ?> </h302>
+                <h302> <?php echo t('title','Backups'); ?> </h302>
 		<br/>
 
                 <label class='form'>Select database tables to backup:</label>
@@ -448,7 +448,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
 		</ul>
@@ -456,11 +456,11 @@
 
 	</div>
 
-     <div class="tabbertab" title="<?php echo $l['title']['daloRADIUSTables']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','daloRADIUSTables'); ?>">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['Backups']; ?> </h302>
+                <h302> <?php echo t('title','Backups'); ?> </h302>
 		<br/>
 
                 <label class='form'>Select databases tables to backup:</label>
@@ -734,7 +734,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
                 </ul>

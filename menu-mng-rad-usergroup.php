@@ -24,31 +24,31 @@
 	<h3>User-Group Management</h3>
 	<ul class="subnav">
 
-		<li><a href="mng-rad-usergroup-list.php"><b>&raquo;</b><?php echo $l['button']['ListUserGroup'] ?></a></li>
-		<li><a href="javascript:document.mngradusrgrplist.submit();""><b>&raquo;</b><?php echo $l['button']['ListUsersGroup'] ?><a>
+		<li><a href="mng-rad-usergroup-list.php"><b>&raquo;</b><?php echo t('button','ListUserGroup') ?></a></li>
+		<li><a href="javascript:document.mngradusrgrplist.submit();""><b>&raquo;</b><?php echo t('button','ListUsersGroup') ?><a>
 			<form name="mngradusrgrplist" action="mng-rad-usergroup-list-user.php" method="get" 
 				class="sidebar">
 			<input name="username" type="text" id="usernameList" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				/>
 			</form></li>
 
-		<li><a href="mng-rad-usergroup-new.php"><b>&raquo;</b><?php echo $l['button']['NewUserGroup'] ?></a></li>
-		<li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditUserGroup'] ?><a>
+		<li><a href="mng-rad-usergroup-new.php"><b>&raquo;</b><?php echo t('button','NewUserGroup') ?></a></li>
+		<li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b><?php echo t('button','EditUserGroup') ?><a>
 			<form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
 			<input name="username" type="text" value="" id="usernameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				/>
 			<input name="group" type="text" value="" id="groupnameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				/>
 			</form></li>
 
 
-		<li><a href="mng-rad-usergroup-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveUserGroup'] ?></a></li>
+		<li><a href="mng-rad-usergroup-del.php"><b>&raquo;</b><?php echo t('button','RemoveUserGroup') ?></a></li>
 	</ul>
 
 </div>

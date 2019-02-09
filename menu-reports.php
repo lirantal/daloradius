@@ -37,27 +37,27 @@ include_once ("lang/main.php");
 				
 						<li><a href="javascript:document.reponline.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsOnlineUsers.gif' border='0'>
-							<?php echo $l['button']['OnlineUsers'] ?></a>
+							<?php echo t('button','OnlineUsers') ?></a>
 							
 							<form name="reponline" action="rep-online.php" method="get" class="sidebar">
 								<input name="usernameOnline" type="text" id="usernameOnline"
 				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/> <?php echo t('Tooltip','UsernameWildcard') ?> <br/>'
 								value="<?php if (isset($usernameOnline)) echo $usernameOnline ?>" tabindex=1>
 							</form>
 							</li>							
 
                                                 <li><a href="javascript:document.replastconnect.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsLastConnection.png' border='0'>
-							<?php echo $l['button']['LastConnectionAttempts'] ?></a>
+							<?php echo t('button','LastConnectionAttempts') ?></a>
 
 
 							<form name="replastconnect" action="rep-lastconnect.php" method="get" class="sidebar">
 								<input name="usernameLastConnect" type="text" id="usernameLastConnect"
 				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/> <?php echo $l['Tooltip']['UsernameWildcard'] ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/> <?php echo t('Tooltip','UsernameWildcard') ?> <br/>'
 								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>
 								<select class="generic" name="radiusreply" tabindex=3>
 									<option value="Any">Any</option>
@@ -68,7 +68,7 @@ include_once ("lang/main.php");
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'startdate_lastconnect', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="startdate" type="text" id="startdate_lastconnect" onClick='javascript:__displayTooltip();'
-								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 							value="<?php if (isset($startdate)) echo $startdate;
 							else echo date("Y-m-01"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
@@ -79,7 +79,7 @@ include_once ("lang/main.php");
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'enddate_lastconnect', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="enddate" type="text" id="enddate_lastconnect" onClick='javascript:__displayTooltip();'
-								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 								value="<?php if (isset($enddate)) echo $enddate;
 							else echo date("Y-m-t"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
@@ -93,14 +93,14 @@ include_once ("lang/main.php");
 
 						<li><a href="javascript:document.repnewusers.submit();"><b>&raquo;</b>
 						<img src='images/icons/userList.gif' border='0'>
-						<?php echo $l['button']['NewUsers'] ?></a>
+						<?php echo t('button','NewUsers') ?></a>
 
 						<form name="repnewusers" action="rep-newusers.php" method="get" class="sidebar">
 							<h4>Start Date</h4>
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="startdate" type="text" id="startdate" onClick='javascript:__displayTooltip();'
-								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 							value="<?php if (isset($startdate)) echo $startdate;
 							else echo date("Y-01-01"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
@@ -110,7 +110,7 @@ include_once ("lang/main.php");
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 							<input name="enddate" type="text" id="enddate" onClick='javascript:__displayTooltip();'
-								tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 								value="<?php if (isset($enddate)) echo $enddate;
 							else echo date("Y-m-t"); ?>">
 							<div id="chooserSpan" class="dateChooser select-free" 
@@ -123,7 +123,7 @@ include_once ("lang/main.php");
 							
 						<li><a href="javascript:document.topusers.submit();"><b>&raquo;</b>
 							<img src='images/icons/reportsTopUsers.png' border='0'>
-							<?php echo $l['button']['TopUser'] ?></a>
+							<?php echo t('button','TopUser') ?></a>
 							<form name="topusers" action="rep-topusers.php" method="get" class="sidebar">
 							<select class="generic" name="limit" type="text" tabindex=3>
 								<option value="5"> 5 </option>
@@ -141,7 +141,7 @@ include_once ("lang/main.php");
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'startdate_topuser', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 			<input name="startdate" type="text" id="startdate_topuser" onClick='javascript:__displayTooltip();'
-                     tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+                     tooltipText='<?php echo t('Tooltip','Date'); ?>'
 			value="<?php if (isset($startdate)) echo $startdate;
 			else echo date("Y-m-01"); ?>">
 			<div id="chooserSpan" class="dateChooser select-free" 
@@ -152,7 +152,7 @@ include_once ("lang/main.php");
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'enddate_topuser', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 			<input name="enddate" type="text" id="enddate_topuser" onClick='javascript:__displayTooltip();'
-                     tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+                     tooltipText='<?php echo t('Tooltip','Date'); ?>'
 			value="<?php if (isset($enddate)) echo $enddate;
 			else echo date("Y-m-t"); ?>">
 			<div id="chooserSpan" class="dateChooser select-free" 
@@ -167,7 +167,7 @@ include_once ("lang/main.php");
 							</form></li>
                                                 <li><a href="rep-history.php"><b>&raquo;</b>
 							<img src='images/icons/reportsHistory.png' border='0'>
-							<?php echo $l['button']['History'] ?></a></li>
+							<?php echo t('button','History') ?></a></li>
 				</ul>
 		
 				

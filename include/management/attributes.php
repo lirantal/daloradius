@@ -1,6 +1,6 @@
 
 <fieldset>
-	<h302> <?php echo $l['title']['Attributes']; ?> </h302>
+	<h302> <?php echo t('title','Attributes'); ?> </h302>
 	<br/>
 
 	<input checked type='radio' value="" name="" onclick="javascript:toggleAttributeSelectbox();"/>
@@ -72,7 +72,7 @@
 		</ul>
 
 <br/>
-<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
 </fieldset>
 <br/>

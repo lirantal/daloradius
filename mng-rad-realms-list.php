@@ -57,11 +57,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradrealms.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradrealms.php') ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo $l['helpPage']['mngradrealmslist'] ?>
+			<?php echo t('helpPage','mngradrealmslist') ?>
 			<br/>
 		</div>	
 		<br/>
@@ -118,7 +118,7 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=realmname&orderType=$orderType\">
-		".$l['all']['RealmName']."</a>
+		".t('all','RealmName')."</a>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
@@ -127,7 +127,7 @@
 				<a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-realms-edit.php?realmname=$row[1]'>".$l['Tooltip']['EditRealm']."</a>
+                                        <a class='toolTip' href='mng-rad-realms-edit.php?realmname=$row[1]'>".t('Tooltip','EditRealm')."</a>
                                         <br/>\"
 				>$row[1]</a></td>
 		</tr>";

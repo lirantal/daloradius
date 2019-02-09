@@ -53,9 +53,9 @@
 
 	<ul class="subnav">
 
-	<li><a href="pref-main.php"><b>&raquo;</b><?php echo $l['button']['Preferences'] ?></a></li>
-	<li><a href="acct-main.php"><b>&raquo;</b><?php echo $l['button']['Accounting'] ?></a></li>
-	<li><a href="graph-main.php"><b>&raquo;</b><?php echo $l['button']['Graphs'] ?></a></li>
+	<li><a href="pref-main.php"><b>&raquo;</b><?php echo t('button','Preferences') ?></a></li>
+	<li><a href="acct-main.php"><b>&raquo;</b><?php echo t('button','Accounting') ?></a></li>
+	<li><a href="graph-main.php"><b>&raquo;</b><?php echo t('button','Graphs') ?></a></li>
 
 	</ul>
 	

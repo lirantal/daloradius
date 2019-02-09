@@ -111,14 +111,14 @@
 		$balance = (float) ($invoiceDetails['totalpayed'] - $invoiceDetails['totalbilled']);
 		$invoice_details = "";
 		$invoice_details .= "".
-		"<b>".$l['all']['ClientName']."</b>: ".$invoiceDetails['contactperson']."<br/>".
-		"<b>".$l['all']['Invoice']."</b>: ".$invoice_id."<br/>".
-		"<b>".$l['all']['Date']."</b>: ".$invoiceDetails['date']."<br/>".
-		"<b>".$l['all']['TotalBilled']."</b>: ".$invoiceDetails['totalbilled']."<br/>".
-		"<b>".$l['all']['TotalPayed']."</b>: ".$invoiceDetails['totalpayed']."<br/>".
-		"<b>".$l['all']['Balance']."</b>: ".$balance."<br/>".
-		"<b>".$l['all']['Status']."</b>: ".$invoiceDetails['status']."<br/>".
-		"<b>".$l['ContactInfo']['Notes']."</b>: ".$invoiceDetails['notes']."<br/><br/><br/>";
+		"<b>".t('all','ClientName')."</b>: ".$invoiceDetails['contactperson']."<br/>".
+		"<b>".t('all','Invoice')."</b>: ".$invoice_id."<br/>".
+		"<b>".t('all','Date')."</b>: ".$invoiceDetails['date']."<br/>".
+		"<b>".t('all','TotalBilled')."</b>: ".$invoiceDetails['totalbilled']."<br/>".
+		"<b>".t('all','TotalPayed')."</b>: ".$invoiceDetails['totalpayed']."<br/>".
+		"<b>".t('all','Balance')."</b>: ".$balance."<br/>".
+		"<b>".t('all','Status')."</b>: ".$invoiceDetails['status']."<br/>".
+		"<b>".t('ContactInfo','Notes')."</b>: ".$invoiceDetails['notes']."<br/><br/><br/>";
 		
 		$customerInfo['invoice_details'] = $invoice_details;
 		

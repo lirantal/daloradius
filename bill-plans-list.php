@@ -58,11 +58,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billplanslist.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billplanslist.php') ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['billplanslist'] ?>
+					<?php echo t('helpPage','billplanslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -125,17 +125,17 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planid&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanId']."</a>
+		".t('all','PlanId')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planname&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanName']."</a>
+		".t('all','PlanName')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=plantype&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanType']."</a>
+		".t('all','PlanType')."</a>
 		</th>
 	</tr> </thread>";
 
@@ -147,7 +147,7 @@
                                 onClick='javascript:__displayTooltip();'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"bill-plans-edit.php?planName=$row[1]\">
-                                                {$l['button']['EditPlan']}</a>
+                                                {t('button','EditPlan')}</a>
                                         <br/><br/>'
                                 >$row[1]</a>
                         </td>

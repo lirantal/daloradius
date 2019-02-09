@@ -32,14 +32,14 @@
 	
 	<h3>GIS Mapping</h3>
 	<ul class="subnav">
-		<li><a href="gis-viewmap.php"><b>&raquo;</b><?php echo $l['button']['ViewMAP'] ?></a></li>
-		<li><a href="gis-editmap.php"><b>&raquo;</b><?php echo $l['button']['EditMAP'] ?></a></li>		
+		<li><a href="gis-viewmap.php"><b>&raquo;</b><?php echo t('button','ViewMAP') ?></a></li>
+		<li><a href="gis-editmap.php"><b>&raquo;</b><?php echo t('button','EditMAP') ?></a></li>		
 	</ul>
 
 	<h3>Settings</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.gisregister.submit();"/><b>&raquo;</b><?php echo $l['button']['RegisterGoogleMapsAPI']?>
+		<li><a href="javascript:document.gisregister.submit();"/><b>&raquo;</b><?php echo t('button','RegisterGoogleMapsAPI')?>
 			</a>
 			<form name="gisregister" action="gis-main.php" method="get" class="sidebar">
 			<input name="code" type="text">

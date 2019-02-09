@@ -125,12 +125,12 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofilesnew.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradprofilesnew.php') ?>
 				<h144>+</h144></a></h2>
 
 
 				<div id="helpPage" style="display:none;visibility:visible" >				
-					<?php echo $l['helpPage']['mngradprofilesnew'] ?>
+					<?php echo t('helpPage','mngradprofilesnew') ?>
 					<br/>
 				</div>
                 <?php
@@ -141,7 +141,7 @@
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['ProfileInfo'] ?> </h302>
+                <h302> <?php echo t('title','ProfileInfo') ?> </h302>
                 <br/>
 
                 <label for='profile' class='form'>Profile Name</label>
@@ -151,7 +151,7 @@
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

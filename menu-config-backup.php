@@ -31,11 +31,11 @@
 
 		<li><a href="config-backup-managebackups.php"><b>&raquo;</b>
 			<img src='images/icons/configMaintenance.png' border='0'>
-			<?php echo $l['button']['ManageBackups'] ?></a>
+			<?php echo t('button','ManageBackups') ?></a>
 		</li>
 		<li><a href="config-backup-createbackups.php"><b>&raquo;</b>
 			<img src='images/icons/configMaintenance.png' border='0'>
-			<?php echo $l['button']['CreateBackups'] ?></a>
+			<?php echo t('button','CreateBackups') ?></a>
 		</li>
 		
 	</ul>

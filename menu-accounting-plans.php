@@ -42,16 +42,16 @@
 	<h3>Accounting</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['PlanUsage'] ?></a>
+		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo t('button','PlanUsage') ?></a>
 			<form name="acctdate" action="acct-plans-usage.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernamePlan" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?>'
 				value="<?php if (isset($accounting_plan_username)) echo $accounting_plan_username;  ?>">
 
 			<input name="startdate" type="text" id="startdate" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?>'
 				value="<?php if (isset($accounting_plan_startdate)) echo $accounting_plan_startdate;
 			else echo date("Y-m-01"); ?>">
 			
@@ -62,7 +62,7 @@
 
 			<input name="enddate" type="text" id="enddate" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?>'
 				value="<?php if (isset($accounting_plan_enddate)){ echo $accounting_plan_enddate;}
 				else { echo date("Y-m-t");} ?>">
 			<img src="library/js_date/calendar.gif" 

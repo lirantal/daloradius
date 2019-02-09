@@ -59,11 +59,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymenttypeslist.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','paymenttypeslist.php') ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['paymenttypeslist'] ?>
+					<?php echo t('helpPage','paymenttypeslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -125,16 +125,16 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=paymentname&orderType=$orderTypeNextPage\">
-		".$l['all']['PayTypeName']."</a>
+		".t('all','PayTypeName')."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PayTypeNotes']."
+		".t('all','PayTypeNotes')."
 		</th>
 
 
@@ -146,9 +146,9 @@
                         <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-payment-types-edit.php?paymentname=$row[1]'>".$l['Tooltip']['EditPayType']."</a>
+                                        <a class='toolTip' href='bill-payment-types-edit.php?paymentname=$row[1]'>".t('Tooltip','EditPayType')."</a>
 					<br/>
-                                        <a class='toolTip' href='bill-payment-types-del.php?paymentname=$row[1]'>".$l['Tooltip']['RemovePayType']."</a>
+                                        <a class='toolTip' href='bill-payment-types-del.php?paymentname=$row[1]'>".t('Tooltip','RemovePayType')."</a>
                                         <br/><br/>\"
                               >$row[1]</a>
                         </td>

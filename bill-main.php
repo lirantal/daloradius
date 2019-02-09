@@ -22,7 +22,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['billmain.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo t('Intro','billmain.php') ?></a></h2>
 				
 <?php
 	include('include/config/logging.php');

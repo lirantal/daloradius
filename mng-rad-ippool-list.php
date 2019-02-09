@@ -56,11 +56,11 @@
 
 	<div id="contentnorightbar">
 	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradippoollist.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradippoollist.php') ?>
 		<h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradippoollist'] ?>
+			<?php echo t('helpPage','mngradippoollist') ?>
 			<br/>
 		</div>
 		<br/>
@@ -121,55 +121,55 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pool_name&orderType=$orderType\">
-		".$l['all']['PoolName']."</a>
+		".t('all','PoolName')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=$orderType\">
-		".$l['all']['IPAddress']."</a>
+		".t('all','IPAddress')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderType\">
-		".$l['all']['NASIPAddress']."</a>
+		".t('all','NASIPAddress')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=CalledStationId&orderType=$orderType\">
-		".$l['all']['CalledStationId']."</a>
+		".t('all','CalledStationId')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=CallingStationID&orderType=$orderType\">
-		".$l['all']['CallingStationID']."</a>
+		".t('all','CallingStationID')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=expiry_time&orderType=$orderType\">
-		".$l['all']['ExpiryTime']."</a>
+		".t('all','ExpiryTime')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pool_key&orderType=$orderType\">
-		".$l['all']['PoolKey']."</a>
+		".t('all','PoolKey')."</a>
 		<br/>
 		</th>
 	</tr> </thread>";
@@ -180,9 +180,9 @@
                                 <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-ippool-edit.php?poolname=$row[1]&ipaddressold=$row[2]'>".$l['Tooltip']['EditIPAddress']."</a>
+                                        <a class='toolTip' href='mng-rad-ippool-edit.php?poolname=$row[1]&ipaddressold=$row[2]'>".t('Tooltip','EditIPAddress')."</a>
 					<br/>
-                                        <a class='toolTip' href='mng-rad-ippool-del.php?poolname=$row[1]&ipaddress=$row[2]'>".$l['Tooltip']['RemoveIPAddress']."</a>
+                                        <a class='toolTip' href='mng-rad-ippool-del.php?poolname=$row[1]&ipaddress=$row[2]'>".t('Tooltip','RemoveIPAddress')."</a>
                                         <br/>\"
                                         >$row[2]</a></td>
 				<td> $row[3] </td>

@@ -40,11 +40,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['msgerrorpermissions.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','msgerrorpermissions.php'); ?>
 		<h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['msgerrorpermissions'] ?>
+			<?php echo t('helpPage','msgerrorpermissions') ?>
 			<br/>
 		</div>
 		<br/>

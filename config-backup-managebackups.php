@@ -166,10 +166,10 @@
 
 		<div id="contentnorightbar">
 
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configbackupmanagebackups.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configbackupmanagebackups.php') ?>
 				<h144>+</h144></a></h2>
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configbackupmanagebackups'] ?>
+					<?php echo t('helpPage','configbackupmanagebackups') ?>
 					<br/>
 				</div>
                 <?php
@@ -230,11 +230,11 @@
 				echo "</td>";
 
 				echo "<td>";
-					echo "<a class='tablenovisit' href='?file=$file&action=download' >".$l['all']['Download']."</a>";
+					echo "<a class='tablenovisit' href='?file=$file&action=download' >".t('all','Download')."</a>";
 
 					echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
-					echo "<a class='tablenovisit' href='#' onClick=\"javascript:backupRollback('$file');\">".$l['all']['Rollback']."</a>";
+					echo "<a class='tablenovisit' href='#' onClick=\"javascript:backupRollback('$file');\">".t('all','Rollback')."</a>";
 				echo "</td>";
 
 				}

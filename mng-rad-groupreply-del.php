@@ -123,11 +123,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplydel.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradgroupreplydel.php') ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradgroupreplydel'] ?>
+			<?php echo t('helpPage','mngradgroupreplydel') ?>
 			<br/>
 		</div>
 		<?php
@@ -140,25 +140,25 @@
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+			<h302> <?php echo t('title','GroupInfo') ?> </h302>
 			<br/>
 
-			<label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
+			<label for='groupname' class='form'><?php echo t('all','Groupname') ?></label>
 			<input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
 			<br/>
 
-			<label for='value' class='form'><?php echo $l['all']['Value'] ?></label>
+			<label for='value' class='form'><?php echo t('all','Value') ?></label>
 			<input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=101 />
 			<br/>
 
-			<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
+			<label for='attribute' class='form'><?php echo t('all','Attribute') ?></label>
 			<input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=102 />
 			<br/>
 
 			<br/><br/>
 			<hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

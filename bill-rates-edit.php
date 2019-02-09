@@ -119,11 +119,11 @@
 ?>
 	<div id="contentnorightbar">
 
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesedit.php'] ?>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billratesedit.php') ?>
 		:: <?php if (isset($ratename)) { echo $ratename; } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['billratesedit'] ?>
+			<?php echo t('helpPage','billratesedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -134,23 +134,23 @@
 
 <div class="tabber">
 
-	<div class="tabbertab" title="<?php echo $l['title']['RateInfo']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','RateInfo'); ?>">
 
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['RateInfo']; ?> </h302>
+		<h302> <?php echo t('title','RateInfo'); ?> </h302>
 		<br/>
 
 		<ul>
 
 			<li class='fieldset'>
-			<label for='ratename' class='form'><?php echo $l['all']['RateName'] ?></label>
+			<label for='ratename' class='form'><?php echo t('all','RateName') ?></label>
 			<input disabled name='ratename' type='text' id='ratename' value='<?php echo $ratename ?>' tabindex=100 />
 			</li>
 
 			<li class='fieldset'>
-			<label for='ratetype' class='form'><?php echo $l['all']['RateType'] ?></label>
+			<label for='ratetype' class='form'><?php echo t('all','RateType') ?></label>
 
 	                <input class='integer' name='ratetypenum' type='text' id='ratetypenum' value='<?php echo $ratetypenum ?>' tabindex=101 />
 	                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratetypenum','increment')" />
@@ -170,12 +170,12 @@
 
 			<div id='rateTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 				<img src='images/icons/comment.png' alt='Tip' border='0' />
-				<?php echo $l['Tooltip']['rateTypeTooltip'] ?>
+				<?php echo t('Tooltip','rateTypeTooltip') ?>
 			</div>
 			</li>
 
 			<li class='fieldset'>
-			<label for='ratecost' class='form'><?php echo $l['all']['RateCost'] ?></label>
+			<label for='ratecost' class='form'><?php echo t('all','RateCost') ?></label>
 			<input class='integer' name='ratecost' type='text' id='ratecost' value='<?php echo $ratecost ?>' tabindex=103 />
         	        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratecost','increment')" />
 	                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratecost','decrement')"/>
@@ -183,14 +183,14 @@
 
 			<div id='rateCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 				<img src='images/icons/comment.png' alt='Tip' border='0' />
-				<?php echo $l['Tooltip']['rateCostTooltip'] ?>
+				<?php echo t('Tooltip','rateCostTooltip') ?>
 			</div>
 			</li>
 
 			<li class='fieldset'>
 			<br/>
 			<hr><br/>
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
 				class='button' />
 			</li>
 
@@ -202,7 +202,7 @@
 
 </div>
 
-<div class="tabbertab" title="<?php echo $l['title']['Optional']; ?>">
+<div class="tabbertab" title="<?php echo t('title','Optional'); ?>">
 
 <fieldset>
 
@@ -214,19 +214,19 @@
         <br/>
 
         <br/>
-        <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
+        <label for='creationdate' class='form'><?php echo t('all','CreationDate') ?></label>
         <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
         <br/>
 
-        <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
+        <label for='creationby' class='form'><?php echo t('all','CreationBy') ?></label>
         <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
         <br/>
 
-        <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
+        <label for='updatedate' class='form'><?php echo t('all','UpdateDate') ?></label>
         <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
         <br/>
 
-        <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
+        <label for='updateby' class='form'><?php echo t('all','UpdateBy') ?></label>
         <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
         <br/>
 
@@ -234,7 +234,7 @@
         <br/><br/>
         <hr><br/>
 
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
                 class='button' />
 
 </fieldset>

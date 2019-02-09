@@ -40,15 +40,15 @@
 
 	<form name="acctcustomquery" action="acct-custom-query.php" method="get" class="sidebar">
 
-	<input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+	<input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
 	<br/><br/>	
 
-	<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
+	<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
 	
 
                                                         <input name="startdate" type="text" id="startdate" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
 						else echo date("Y-m-01"); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
@@ -56,7 +56,7 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 
                                                         <input name="enddate" type="text" id="enddate" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
 						else echo date("Y-m-t"); ?>">
 <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
@@ -64,7 +64,7 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 
 
 		<br/><br/>
-		<h109><?php echo $l['button']['Where']; ?></h109> <br/>
+		<h109><?php echo t('button','Where'); ?></h109> <br/>
 			<center>
 			<select name="fields" size="1" class="generic" >
 				<option value="RadAcctId"> RadAcctId </option>
@@ -100,11 +100,11 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 			</center>
 		<input type="text" name="where_field" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Filter']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Filter'); ?> <br/>'
 			value="<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
 
 		<br/><br/>
-		<h109><?php echo $l['button']['AccountingFieldsinQuery']; ?></h109><br/>
+		<h109><?php echo t('button','AccountingFieldsinQuery'); ?></h109><br/>
 		<input type="checkbox" name="sqlfields[]" value="RadAcctId" /> <h109> RadAcctId </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctSessionId" /> <h109> AcctSessionId </h109> <br/>
 		<input type="checkbox" name="sqlfields[]" value="AcctUniqueId" /> <h109> AcctUniqueId</h109> <br/>
@@ -133,7 +133,7 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 		<a class="table" href="javascript:SetChecked(1,'sqlfields[]','acctcustomquery')">All</a>
 		<a class="table" href="javascript:SetChecked(0,'sqlfields[]','acctcustomquery')">None</a>
 		<br/><br/>
-		<h109><?php echo $l['button']['OrderBy'] ?><h109> <br/>
+		<h109><?php echo t('button','OrderBy') ?><h109> <br/>
 			<center>
 			<select name="orderBy" size="1">
 				<option value="RadAcctId"> RadAcctId </option>
@@ -170,7 +170,7 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 
 
 	<br/>
-	<input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+	<input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
 	</form></li>
 				
 

@@ -159,11 +159,11 @@
 
 <div id="contentnorightbar">
 	
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billposdel.php'] ?>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billposdel.php') ?>
 	:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billposdel'] ?>
+		<?php echo t('helpPage','billposdel') ?>
 		<br/>
 	</div>
 	<?php
@@ -175,14 +175,14 @@
 	
 	<fieldset>
 
-		<h302> <?php echo $l['title']['AccountRemoval'] ?> </h302>
+		<h302> <?php echo t('title','AccountRemoval') ?> </h302>
 		<br/>
 
-		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
+		<label for='username' class='form'><?php echo t('all','Username')?></label>
 		<input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
 		<br />
 
-		<label for='delradacct' class='form'><?php echo $l['all']['RemoveRadacctRecords']?></label>
+		<label for='delradacct' class='form'><?php echo t('all','RemoveRadacctRecords')?></label>
 		<select class='form' tabindex=102 name='delradacct' tabindex=101>
 			<option value='no'>no</option>
 			<option value='yes'>yes</option>
@@ -191,7 +191,7 @@
 
 		<br/><br/>
 		<hr><br/>
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 
+		<input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 
 			class='button' />
 
 	</fieldset>

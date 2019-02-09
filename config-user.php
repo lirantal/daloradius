@@ -61,11 +61,11 @@
 			
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configuser.php']; ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configuser.php'); ?>
 				<h144>+</h144></a></h2>
 
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configuser'] ?>
+					<?php echo t('helpPage','configuser') ?>
 					<br/>
 				</div>
                 <?php
@@ -76,17 +76,17 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
 
         <fieldset>
 
-                <h302><?php echo $l['title']['Settings']; ?></h302>
+                <h302><?php echo t('title','Settings'); ?></h302>
 		<br/>
 
 		<ul>
 
 		<li class='fieldset'>
-		<label for='' class='form'><?php echo $l['all']['DBPasswordEncryption']?></label>
+		<label for='' class='form'><?php echo t('all','DBPasswordEncryption')?></label>
 		<select class='form' name="config_db_pass_encrypt">
 			<option value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>"> <?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?> </option>
 			<option value=""></option>
@@ -98,7 +98,7 @@
 		
 
 		<li class='fieldset'>
-		<label for='config_user_allowedrandomchars' class='form'><?php echo $l['all']['RandomChars'] ?></label>
+		<label for='config_user_allowedrandomchars' class='form'><?php echo t('all','RandomChars') ?></label>
 		<input type='text' value="<?php echo htmlentities($configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']) ?>" name="config_user_allowedrandomchars" />
 		</li>
 
@@ -109,7 +109,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 		</li>
 
 		</ul>

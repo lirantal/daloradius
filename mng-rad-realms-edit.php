@@ -153,11 +153,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradrealmsedit.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradrealmsedit.php') ?>
 		<h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradrealmsedit'] ?>
+			<?php echo t('helpPage','mngradrealmsedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -168,11 +168,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['RealmInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','RealmInfo'); ?>">
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['RealmInfo']; ?> </h302>
+		<h302> <?php echo t('title','RealmInfo'); ?> </h302>
 		<br/>
 
 		<ul>
@@ -180,65 +180,65 @@
 		<input type='hidden' name='realmname' id='realmname' value='<?php if (isset($realmname)) echo $realmname; ?>' />
 
 		<li class='fieldset'>
-		<label for='realmname' class='form'><?php echo $l['all']['RealmName'] ?></label>
+		<label for='realmname' class='form'><?php echo t('all','RealmName') ?></label>
 		<input disabled name='realmname' type='text' id='realmname' 
 			value='<?php if (isset($realmname)) echo $realmname; ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNameTooltip')" />
 		
 		<div id='realmNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmNameTooltip'] ?>
+			<?php echo t('Tooltip','realmNameTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='type' class='form'><?php echo $l['all']['Type'] ?></label>
+		<label for='type' class='form'><?php echo t('all','Type') ?></label>
 		<input name='type' type='text' id='type' value='<?php if (isset($type)) echo $type; ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmTypeTooltip')"/>
 		
 		<div id='realmTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmTypeTooltip'] ?>
+			<?php echo t('Tooltip','realmTypeTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='authhost' class='form'><?php echo $l['all']['AuthHost'] ?></label>
+		<label for='authhost' class='form'><?php echo t('all','AuthHost') ?></label>
 		<input name='authhost' type='text' id='authhost' value='<?php if (isset($authhost)) echo $authhost; ?>' tabindex=102 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmAuthhostTooltip')"/>
 		
 		<div id='realmAuthhostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmAuthhostTooltip'] ?>
+			<?php echo t('Tooltip','realmAuthhostTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='accthost' class='form'><?php echo $l['all']['AcctHost'] ?></label>
+		<label for='accthost' class='form'><?php echo t('all','AcctHost') ?></label>
 		<input name='accthost' type='text' id='accthost' value='<?php if (isset($accthost)) echo $accthost; ?>' tabindex=103 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmAccthostTooltip')"/>
 		
 		<div id='realmAccthostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmAccthostTooltip'] ?>
+			<?php echo t('Tooltip','realmAccthostTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='secret' class='form'><?php echo $l['all']['RealmSecret'] ?></label>
+		<label for='secret' class='form'><?php echo t('all','RealmSecret') ?></label>
 		<input name='secret' type='text' id='secret' value='<?php if (isset($secret)) echo $secret; ?>' tabindex=104 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmSecretTooltip')"/>
 		
 		<div id='realmSecretTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmSecretTooltip'] ?>
+			<?php echo t('Tooltip','realmSecretTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>
@@ -247,62 +247,62 @@
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Advanced']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Advanced'); ?>">
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['RealmInfo']; ?> </h302>
+		<h302> <?php echo t('title','RealmInfo'); ?> </h302>
 		<br/>
 		<ul>
 
 		<li class='fieldset'>
-		<label for='ldflag' class='form'><?php echo $l['all']['Ldflag'] ?></label>
+		<label for='ldflag' class='form'><?php echo t('all','Ldflag') ?></label>
 		<input name='ldflag' type='text' id='ldflag' value='<?php if (isset($ldflag)) echo $ldflag; ?>' tabindex=105 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmLdflagTooltip')"/>
 		
 		<div id='realmLdflagTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmLdflagTooltip'] ?>
+			<?php echo t('Tooltip','realmLdflagTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='nostrip' class='form'><?php echo $l['all']['Nostrip'] ?></label>
+		<label for='nostrip' class='form'><?php echo t('all','Nostrip') ?></label>
 		<input name='nostrip' type='text' id='nostrip' value='<?php if (isset($nostrip)) echo $nostrip; ?>' tabindex=106 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNostripTooltip')"/>
 		
 		<div id='realmNostripTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmNostripTooltip'] ?>
+			<?php echo t('Tooltip','realmNostripTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='hints' class='form'><?php echo $l['all']['Hints'] ?></label>
+		<label for='hints' class='form'><?php echo t('all','Hints') ?></label>
 		<input name='hints' type='text' id='hints' value='<?php if (isset($hints)) echo $hints; ?>' tabindex=107 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmHintsTooltip')"/>
 		
 		<div id='realmHintsTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmHintsTooltip'] ?>
+			<?php echo t('Tooltip','realmHintsTooltip') ?>
 		</div>
 		</li>
 
                 <li class='fieldset'>
-		<label for='notrealm' class='form'><?php echo $l['all']['Notrealm'] ?></label>
+		<label for='notrealm' class='form'><?php echo t('all','Notrealm') ?></label>
 		<input name='notrealm' type='text' id='notrealm' value='<?php if (isset($notrealm)) echo $notrealm; ?>' tabindex=108 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNotrealmTooltip')"/>
 		
 		<div id='realmNotrealmTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['realmNotrealmTooltip'] ?>
+			<?php echo t('Tooltip','realmNotrealmTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' /> 
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' /> 
 		</li>
 
 		</ul>

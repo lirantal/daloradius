@@ -53,10 +53,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configlang.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configlang.php') ?>
 				<h144>+</h144></a></h2>
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configlang'] ?>
+					<?php echo t('helpPage','configlang') ?>
 					<br/>
 				</div>
                 <?php
@@ -67,14 +67,14 @@
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['Settings']; ?> </h302>
+                <h302> <?php echo t('title','Settings'); ?> </h302>
                 <br/>
 
                 <ul>
 
 
                 <li class='fieldset'>
-                <label for='config_lan' class='form'><?php echo $l['all']['PrimaryLanguage']?></label>
+                <label for='config_lan' class='form'><?php echo t('all','PrimaryLanguage')?></label>
 		<select name="config_lang" class='form'>
 			<option value="en"> English </option>
 			<option value="ru"> Russian </option>
@@ -89,7 +89,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
                 </ul>

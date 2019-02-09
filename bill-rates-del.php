@@ -91,10 +91,10 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesdel.php'] ?>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billratesdel.php') ?>
 	:: <?php if (isset($ratename)) { echo $ratename; } ?><h144>+</h144></a></h2>
 
-	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo $l['helpPage']['billhsdel'] ?>
+	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo t('helpPage','billhsdel') ?>
 		<br/>
 	</div>
 	<?php
@@ -106,17 +106,17 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['RateInfo'] ?> </h302>
+		<h302> <?php echo t('title','RateInfo') ?> </h302>
 		<br/>
 
-		<label for='ratename' class='form'><?php echo $l['all']['RateName'] ?></label>
+		<label for='ratename' class='form'><?php echo t('all','RateName') ?></label>
 		<input name='ratename[]' type='text' id='ratename' value='<?php echo $ratename ?>' tabindex=100 />
 		<br/>
 
 		<br/><br/>
 		<hr><br/>
 
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=1000 
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
 			class='button' />
 
 	</fieldset>

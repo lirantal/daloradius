@@ -24,15 +24,15 @@
 	
 		<li><a href="mng-batch-list.php"><b>&raquo;</b>
 			<img src='images/icons/userList.gif' border='0'>
-			<?php echo $l['button']['ListBatches'] ?></a>
+			<?php echo t('button','ListBatches') ?></a>
 		</li>
 		<li><a href="mng-batch-add.php"><b>&raquo;</b>
 			<img src='images/icons/userNew.gif' border='0'>
-			<?php echo $l['button']['BatchAddUsers'] ?></a>
+			<?php echo t('button','BatchAddUsers') ?></a>
 		</li>
 		<li><a href="mng-batch-del.php"><b>&raquo;</b>
 			<img src='images/icons/userRemove.gif' border='0'>
-			<?php echo $l['button']['RemoveBatch'] ?>
+			<?php echo t('button','RemoveBatch') ?>
 			</a>
 		</li>
 		
