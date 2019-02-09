@@ -60,5 +60,32 @@
 			include (dirname(__FILE__)."/en.php");
 			break;
 	}
+	
+	// Translation function
+	function t($a, $b = null, $c = null, $d = null)
+	{
+		global $l;
+
+		$t = null;
+
+		if($b === null) {
+			$t = isset($l[$a]) ? $l[$a] : null;
+		}
+		else if($c === null) {
+			$t = isset($l[$a][$b]) ? $l[$a][$b] : null;
+		}
+		else if($d === null) {
+			$t = isset($l[$a][$b][$c]) ? $l[$a][$b][$c] : null;
+		}
+		else {
+			$t = isset($l[$a][$b][$c][$d]) ? $l[$a][$b][$c][$d] : null;
+		}
+
+		if($t === null) {
+			$t = 'Lang Error!';
+		}
+
+		return $t;
+	}
 
 ?>
