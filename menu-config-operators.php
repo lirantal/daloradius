@@ -36,7 +36,6 @@
 		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo t('button','EditOperator') ?></a>
 			<form name="mngedit" action="config-operators-edit.php" method="get" class="sidebar">
 			<input name="operator_username" type="text"
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','OperatorName'); ?> <br/>'
 				/>
 			</form>

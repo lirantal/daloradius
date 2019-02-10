@@ -148,7 +148,6 @@
                         <td> <input type='checkbox' name='ratename[]' value='$row[1]'> $row[0] </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='bill-rates-edit.php?ratename=$row[1]'>".t('Tooltip','EditRate')."</a>
 					<br/>

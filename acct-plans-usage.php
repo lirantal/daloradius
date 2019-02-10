@@ -240,8 +240,7 @@
 			
 		printqn("<tr>
                         <td> <a class='tablenovisit' href='javascript:return;'
-						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");
-                                        javascript:__displayTooltip();'
+						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");'
                                 tooltipText='
 								<a class=\"toolTip\" href=\"bill-pos-edit.php?username={$row['username']}\">
 	                                        {t('Tooltip','UserEdit')}</a>

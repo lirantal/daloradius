@@ -123,7 +123,6 @@
 
                 <label for='username' class='form'><?php echo t('all','Username')?></label>
                 <input name="username" type="text" id="usernameEdit" autocomplete="off"
-				onClick='javascript:__displayTooltip();' 
 				tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				value="<?php if (isset($username)) echo $username; ?>" tabindex=100>
 		 <br />

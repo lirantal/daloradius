@@ -37,18 +37,15 @@
 		<li><a href="javascript:document.mngradattributesedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo t('button','EditVendorAttribute') ?></a>
 			<form name="mngradattributesedit" action="mng-rad-attributes-edit.php" method="get" class="sidebar">
 			<input name="vendor" type="text" id="vendornameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','VendorName'); ?> <br/>'
 				value="<?php if (isset($vendor)) echo $vendor ?>" tabindex=4>
 			<input name="attribute" type="text" id="attributenameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				value="<?php if (isset($attribute)) echo $attribute  ?>" tabindex=5>
 			</form></li>
 		<li><a href="javascript:document.mngradattributessearch.submit();" tabindex=6 ><b>&raquo;</b><?php echo t('button','SearchVendorAttribute') ?></a>
 			<form name="mngradattributessearch" action="mng-rad-attributes-search.php" method="get" class="sidebar">
 			<input name="attribute" type="text" id="attributenameSearch" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				value="<?php if (isset($attribute)) echo $attribute ?>" tabindex=7>
 			</form></li>

@@ -275,7 +275,6 @@
 				<td>
 				<input type='checkbox' name='batch_id[]' value='{$row['id']}'>
 				<a class='tablenovisit' href='javascript:return;'
-					onClick='javascript:__displayTooltip();'
 					tooltipText='
 					<a class=\"toolTip\" href=\"rep-batch-details.php?batch_name={$row['batch_name']}\">
 						{t('Tooltip','BatchDetails')}</a>

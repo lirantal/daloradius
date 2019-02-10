@@ -35,12 +35,10 @@
 													<form name="paymentslist" action="bill-payments-list.php" method="get" class="sidebar">
                                                         <input name="username" type="text" id="username" 
                                                         autocomplete='off'
-                                						onClick='javascript:__displayTooltip();'
 														tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
                                                     	value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=3>
                                                     	
                                                         <input name="invoice_id" type="text" id="invoice_id" 
-                                						onClick='javascript:__displayTooltip();'
 														tooltipText='<?php echo t('Tooltip','invoiceID'); ?> <br/>'
                                                     	value="<?php if (isset($edit_invoice_id)) echo $edit_invoice_id; ?>" tabindex=3>
 													</form>
@@ -50,7 +48,6 @@
                                                 <li><a href="javascript:document.paymentsedit.submit();"><b>&raquo;</b><?php echo t('button','EditPayment') ?></a>
                                                         <form name="paymentsedit" action="bill-payments-edit.php" method="get" class="sidebar">
                                                         <input name="payment_id" type="text" id="payment_id" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','PaymentId'); ?> <br/>'
                                                                 value="<?php if (isset($edit_payment_id)) echo $edit_payment_id; ?>" tabindex=3>
                                                         </form></li>
@@ -67,7 +64,6 @@
                                                 <li><a href="javascript:document.paymenttypesedit.submit();""><b>&raquo;</b><?php echo t('button','EditPayType') ?></a>
                                                         <form name="paymenttypesedit" action="bill-payment-types-edit.php" method="get" class="sidebar">
                                                         <input name="paymentname" type="text" id="paymentname" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','PayTypeName'); ?> <br/>'
                                                                 value="<?php if (isset($edit_paymentName)) echo $edit_paymentName; ?>" tabindex=3>
                                                         </form></li>

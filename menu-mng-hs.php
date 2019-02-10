@@ -27,7 +27,6 @@
 		<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b><?php echo t('button','EditHotspot') ?><a>
 			<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
 			<input name="name" type="text"  id="hotspotEdit" autocomplete="off"
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','HotspotName'); ?> <br/>'
 				value="<?php if (isset($edit_hotspotname)) echo $edit_hotspotname; ?>" tabindex=3>
 			</form></li>

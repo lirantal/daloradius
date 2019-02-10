@@ -28,11 +28,9 @@
 		<li><a href="javascript:document.mngradhuntedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo t('button','EditHG') ?></a>
 			<form name="mngradhuntedit" action="mng-rad-hunt-edit.php" method="get" class="sidebar">
 			<input name="nasipaddress" type="text" id="nashostEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','hgNasIpAddress'); ?> <br/>'
 			tabindex=4 />
                         <input name="groupname" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','hgGroupName'); ?> <br/>'
             tabindex=5 />
 

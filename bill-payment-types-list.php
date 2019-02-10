@@ -144,7 +144,6 @@
                         <td> <input type='checkbox' name='paymentname[]' value='$row[1]'> $row[0] </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='bill-payment-types-edit.php?paymentname=$row[1]'>".t('Tooltip','EditPayType')."</a>
 					<br/>

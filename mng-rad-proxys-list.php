@@ -125,7 +125,6 @@
 		echo "<tr>
 			<td> <input type='checkbox' name='proxyname[]' value='$row[1]'>
 				<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-proxys-edit.php?proxyname=$row[1]'>".t('Tooltip','EditProxy')."</a>
                                         <br/>\"

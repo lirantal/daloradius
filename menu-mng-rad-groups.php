@@ -31,7 +31,6 @@
 			<form name="mngradgroupreplysearch" action="mng-rad-groupreply-search.php" method="get" 
 				class="sidebar">
 			<input name="groupname" type="text" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
 			</form></li>
@@ -44,11 +43,9 @@
 			<?php echo t('button','EditGroupReply') ?><a>
 			<form name="mngradgrprplyedit" action="mng-rad-groupreply-edit.php" method="get" class="sidebar">
 			<input name="groupname" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				/>
 			<input name="attribute" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				/>
 			</form></li>
@@ -70,7 +67,6 @@
 			<form name="mngradgroupchecksearch" action="mng-rad-groupcheck-search.php" method="get" 
 				class="sidebar">
 			<input name="groupname" type="text" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
 			</form></li>
@@ -83,11 +79,9 @@
 			<?php echo t('button','EditGroupCheck') ?><a>
 			<form name="mngradgrpchkedit" action="mng-rad-groupcheck-edit.php" method="get" class="sidebar">
 			<input name="groupname" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				/>
 			<input name="attribute" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				/>
 			</form></li>

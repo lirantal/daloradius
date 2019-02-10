@@ -27,11 +27,9 @@
 		<li><a href="javascript:document.mngradippooledit.submit();" tabindex=3 ><b>&raquo;</b><?php echo t('button','EditIPPool') ?></a>
 			<form name="mngradippooledit" action="mng-rad-ippool-edit.php" method="get" class="sidebar">
 			<input name="poolname" type="text" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','PoolName'); ?> <br/>'
 				value="<?php if (isset($poolname)) echo $poolname ?>" tabindex=4>
 			<input name="ipaddressold" type="text" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','IPAddress'); ?> <br/>'
 				value="<?php if (isset($ipaddressold)) echo $ipaddressold  ?>" tabindex=4>
 			</form></li>

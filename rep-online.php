@@ -233,7 +233,6 @@
 		echo "<tr>
 				<td> <input type='checkbox' name='clearSessionsUsers[]' value='$username||$start'>
 					<a class='tablenovisit' href='javascript:return;'
-					onclick=\"javascript:__displayTooltip();\" 
 					tooltipText=\"
 						<a class='toolTip' href='mng-edit.php?username=$username'>".
 							t('Tooltip','UserEdit')."</a>

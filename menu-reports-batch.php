@@ -45,7 +45,6 @@ include_once ("lang/main.php");
 				<a href="javascript:document.batch_name_details.submit();"><b>&raquo;</b><?php echo t('button','BatchDetails') ?></a>
 				<form name="batch_name_details" action="rep-batch-details.php" method="get" class="sidebar">
 				<input name="batch_name" type="text" id="batchNameDetails" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-									onClick='javascript:__displayTooltip();'
 									tooltipText='<?php echo t('Tooltip','BatchName'); ?>'
 					value="<?php if (isset($batch_name_details)) echo $batch_name_details; ?>">
 				</form>
