@@ -226,7 +226,7 @@
 					<a class='tablenovisit' href='javascript:return;'
 						tooltipText='
 									<div id=\"divContainerUserInfo\">
-										<b>{t('all','batchDescription')}</b>:<br/><br/>
+										<b>".t('all','batchDescription')."</b>:<br/><br/>
 										{$row['batch_description']}
 									</div>
 									<br/>

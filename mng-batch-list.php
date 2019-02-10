@@ -277,10 +277,10 @@
 				<a class='tablenovisit' href='javascript:return;'
 					tooltipText='
 					<a class=\"toolTip\" href=\"rep-batch-details.php?batch_name={$row['batch_name']}\">
-						{t('Tooltip','BatchDetails')}</a>
+						".t('Tooltip','BatchDetails')."</a>
 						<br/><br/>
 								<div id=\"divContainerUserInfo\">
-									<b>{t('all','batchDescription')}</b>:<br/><br/>
+									<b>".t('all','batchDescription')."</b>:<br/><br/>
 									{$row['batch_description']}
 								</div>
 								<br/>

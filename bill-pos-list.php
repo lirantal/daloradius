@@ -235,7 +235,7 @@
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".urlencode($row['username'])."\");'
                                 tooltipText='
 	                                <a class=\"toolTip\" href=\"bill-pos-edit.php?username=".urlencode($row['username'])."\">
-						{t('Tooltip','UserEdit')}</a>
+						".t('Tooltip','UserEdit')."</a>
 					<br/><br/>
 
 					<div id=\"divContainerUserInfo\">

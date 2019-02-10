@@ -167,15 +167,15 @@
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-	                                        {t('Tooltip','UserEdit')}</a>
+	                                        ".t('Tooltip','UserEdit')."</a>
                                         &nbsp
 					<br/>
 					<a class=\"toolTip\" href=\"config-maint-test-user.php?username=$row[0]&password=$row[1]\">
-						{t('all','TestUser')}</a>
+						".t('all','TestUser')."</a>
 					&nbsp
 					<br/>
 					 <a class=\"toolTip\" href=\"acct-username.php?username=$row[0]\">
-						{t('all','Accounting')}</a>
+						".t('all','Accounting')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerUserInfo\">

@@ -146,7 +146,7 @@
                         <td> <a class='tablenovisit' href='javascript:return;'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"bill-plans-edit.php?planName=$row[1]\">
-                                                {t('button','EditPlan')}</a>
+                                                ".t('button','EditPlan')."</a>
                                         <br/><br/>'
                                 >$row[1]</a>
                         </td>

@@ -152,7 +152,7 @@
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-                                                {t('Tooltip','UserEdit')}</a>
+                                                ".t('Tooltip','UserEdit')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerUserInfo\">
