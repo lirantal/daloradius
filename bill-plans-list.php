@@ -144,7 +144,6 @@
                         <td> <input type='checkbox' name='planName[]' value='$row[1]'> $row[0] </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"bill-plans-edit.php?planName=$row[1]\">
                                                 {t('button','EditPlan')}</a>

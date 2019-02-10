@@ -183,8 +183,7 @@
                         <td> $row[1] </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");
-                                        javascript:__displayTooltip();'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
                                                 {t('Tooltip','UserEdit')}</a>

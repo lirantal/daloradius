@@ -47,7 +47,6 @@
 	
 
                                                         <input name="startdate" type="text" id="startdate" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
 						else echo date("Y-m-01"); ?>">
@@ -55,7 +54,6 @@ value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_st
 <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
                                                         <input name="enddate" type="text" id="enddate" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
 						else echo date("Y-m-t"); ?>">
@@ -99,7 +97,6 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 			</select>
 			</center>
 		<input type="text" name="where_field" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Filter'); ?> <br/>'
 			value="<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
 

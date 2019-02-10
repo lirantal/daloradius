@@ -145,8 +145,7 @@
                                 <td> <input type='checkbox' name='vendor[]' value='$row[1]||$row[2]'> $row[0] </td>
 				<td> <a class='tablenovisit' href='mng-rad-attributes-list.php?vendor=$row[1]'>$row[1]</a></td>
                                 <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=$row[2]\");
-                                        javascript:__displayTooltip();'
+                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=$row[2]\");'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]\">
                                                 {t('Tooltip','AttributeEdit')}</a>

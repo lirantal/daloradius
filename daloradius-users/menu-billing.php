@@ -76,7 +76,6 @@
 				<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
 				
 				<input name="startdate" type="text" id="startdate" 
-			                                onClick='javascript:__displayTooltip();'
 			                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 					value="<?php if (isset($billinvoice_startdate)) echo $billinvoice_startdate;
 									else echo date("Y-m-01"); ?>">
@@ -84,7 +83,6 @@
 				<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 			
 				<input name="enddate" type="text" id="enddate" 
-			                                onClick='javascript:__displayTooltip();'
 			                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 					value="<?php if (isset($billinvoice_enddate)) echo $billinvoice_enddate;
 									else echo date("Y-m-t"); ?>">
@@ -109,7 +107,6 @@
 		<li><a href="javascript:document.billinvoiceedit.submit();""><b>&raquo;</b><?php echo t('button','ShowInvoice') ?><a>
 			<form name="billinvoiceedit" action="bill-invoice-show.php" method="get" class="sidebar">
 			<input name="invoice_id" type="text" id="invoiceIdEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','invoiceID'); ?> <br/>'
 				value="<?php if (isset($edit_invoiceid)) echo $edit_invoiceid; ?>" tabindex=3>
 			</form></li>

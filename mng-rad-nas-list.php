@@ -181,7 +181,6 @@
 		echo "<tr>
                                 <td> <input type='checkbox' name='nashost[]' value='$row[1]'> $row[0] </td>
                                 <td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-nas-edit.php?nashost=$row[1]'>".t('Tooltip','EditNAS')."</a>
                                         <a class='toolTip' href='mng-rad-nas-del.php?nashost=$row[1]'>".t('Tooltip','RemoveNAS')."</a>

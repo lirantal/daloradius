@@ -224,7 +224,6 @@
 	
 			printqn("
 					<a class='tablenovisit' href='javascript:return;'
-						onClick='javascript:__displayTooltip();'
 						tooltipText='
 									<div id=\"divContainerUserInfo\">
 										<b>{t('all','batchDescription')}</b>:<br/><br/>

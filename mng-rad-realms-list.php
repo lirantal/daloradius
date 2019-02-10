@@ -125,7 +125,6 @@
 		echo "<tr>
 			<td> <input type='checkbox' name='realmname[]' value='$row[1]'>
 				<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-realms-edit.php?realmname=$row[1]'>".t('Tooltip','EditRealm')."</a>
                                         <br/>\"

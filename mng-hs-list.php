@@ -155,8 +155,7 @@
                                 <td> <input type='checkbox' name='name[]' value='$row[1]'> $row[0] </td>
 
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");
-                                        javascript:__displayTooltip();'
+                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
                                                 {t('Tooltip','HotspotEdit')}</a>

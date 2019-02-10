@@ -45,7 +45,6 @@
 		<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b><?php echo t('button','UserAccounting') ?></a>
 			<form name="acctusername" action="acct-username.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameAcct" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Username'); ?>'
 				value="<?php if (isset($accounting_username)) echo $accounting_username; ?>">
 			</form></li>
@@ -53,7 +52,6 @@
 		<li><a href="javascript:document.acctipaddress.submit();"><b>&raquo;</b><?php echo t('button','IPAccounting') ?></a>
 			<form name="acctipaddress" action="acct-ipaddress.php" method="get" class="sidebar">
 			<input name="ipaddress" type="text" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','IPAddress'); ?>'
 				value="<?php if (isset($accounting_ipaddress)) echo $accounting_ipaddress; ?>">
 			</form></li>
@@ -61,7 +59,6 @@
 		<li><a href="javascript:document.acctnasipaddress.submit();"><b>&raquo;</b><?php echo t('button','NASIPAccounting') ?></a>
 			<form name="acctnasipaddress" action="acct-nasipaddress.php" method="get" class="sidebar">
 			<input name="nasipaddress" type="text" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','IPAddress'); ?>'
 				value="<?php if (isset($accounting_nasipaddress)) echo $accounting_nasipaddress; ?>">
 			</form></li>
@@ -69,11 +66,9 @@
 		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo t('button','DateAccounting') ?></a>
 			<form name="acctdate" action="acct-date.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameDate" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Username'); ?>'
 				value="<?php if (isset($accounting_date_username)) echo $accounting_date_username;  ?>">
 			<input name="startdate" type="text" id="startdate" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Date'); ?>'
 				value="<?php if (isset($accounting_date_startdate)) echo $accounting_date_startdate;
 			else echo date("Y-m-01"); ?>">
@@ -84,7 +79,6 @@
 				style="display: none; visibility: hidden; 	width: 160px;"></div>
 
 			<input name="enddate" type="text" id="enddate" 
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Date'); ?>'
 				value="<?php if (isset($accounting_date_enddate)){ echo $accounting_date_enddate;}
 				else { echo date("Y-m-t");} ?>">

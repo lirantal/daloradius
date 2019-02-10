@@ -28,7 +28,6 @@
 		<li><a href="javascript:document.mngradnasedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo t('button','EditNAS') ?></a>
 			<form name="mngradnasedit" action="mng-rad-nas-edit.php" method="get" class="sidebar">
 			<input name="nashost" type="text" id="nashostEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','NasName'); ?> <br/>'
 			tabindex=4>
 			</form></li>

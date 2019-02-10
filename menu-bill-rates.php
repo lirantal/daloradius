@@ -49,11 +49,9 @@
 			</select>
 
                         <input name="username" type="text" id="username" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
                                 value="<?php if (isset($billing_date_username)) echo $billing_date_username; ?>">
                         <input name="startdate" type="text" id="startdate"
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
                                 value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
                         else echo date("Y-m-01"); ?>">
@@ -64,7 +62,6 @@
                                 style="display: none; visibility: hidden;       width: 160px;"></div>
 
                         <input name="enddate" type="text" id="enddate"
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
                                 value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
                                 else echo date("Y-m-t"); ?>">
@@ -86,7 +83,6 @@
                                                 <li><a href="javascript:document.billratesedit.submit();""><b>&raquo;</b><?php echo t('button','EditRate') ?></a>
                                                         <form name="billratesedit" action="bill-rates-edit.php" method="get" class="sidebar">
                                                         <input name="ratename" type="text" id="ratename" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','RateName'); ?> <br/>'
 								value="<?php if (isset($edit_rateName)) echo $edit_rateName; ?>" tabindex=3>
                                                         </form></li>

@@ -42,7 +42,6 @@ include_once ("lang/main.php");
 							<form name="reponline" action="rep-online.php" method="get" class="sidebar">
 								<input name="usernameOnline" type="text" id="usernameOnline"
 				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Username'); ?> <br/> <?php echo t('Tooltip','UsernameWildcard') ?> <br/>'
 								value="<?php if (isset($usernameOnline)) echo $usernameOnline ?>" tabindex=1>
 							</form>
@@ -56,7 +55,6 @@ include_once ("lang/main.php");
 							<form name="replastconnect" action="rep-lastconnect.php" method="get" class="sidebar">
 								<input name="usernameLastConnect" type="text" id="usernameLastConnect"
 				<?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Username'); ?> <br/> <?php echo t('Tooltip','UsernameWildcard') ?> <br/>'
 								value="<?php if (isset($usernameLastConnect)) echo $usernameLastConnect ?>" tabindex=2>
 								<select class="generic" name="radiusreply" tabindex=3>
@@ -67,7 +65,7 @@ include_once ("lang/main.php");
 							<h4>Start Date</h4>
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'startdate_lastconnect', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-							<input name="startdate" type="text" id="startdate_lastconnect" onClick='javascript:__displayTooltip();'
+							<input name="startdate" type="text" id="startdate_lastconnect"
 								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 							value="<?php if (isset($startdate)) echo $startdate;
 							else echo date("Y-m-01"); ?>">
@@ -78,7 +76,7 @@ include_once ("lang/main.php");
 
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'enddate_lastconnect', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-							<input name="enddate" type="text" id="enddate_lastconnect" onClick='javascript:__displayTooltip();'
+							<input name="enddate" type="text" id="enddate_lastconnect"
 								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 								value="<?php if (isset($enddate)) echo $enddate;
 							else echo date("Y-m-t"); ?>">
@@ -99,7 +97,7 @@ include_once ("lang/main.php");
 							<h4>Start Date</h4>
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-							<input name="startdate" type="text" id="startdate" onClick='javascript:__displayTooltip();'
+							<input name="startdate" type="text" id="startdate"
 								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 							value="<?php if (isset($startdate)) echo $startdate;
 							else echo date("Y-01-01"); ?>">
@@ -109,7 +107,7 @@ include_once ("lang/main.php");
 							<h4>End Date</h4>
 							<img src="library/js_date/calendar.gif" 
 								onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-							<input name="enddate" type="text" id="enddate" onClick='javascript:__displayTooltip();'
+							<input name="enddate" type="text" id="enddate"
 								tooltipText='<?php echo t('Tooltip','Date'); ?>'
 								value="<?php if (isset($enddate)) echo $enddate;
 							else echo date("Y-m-t"); ?>">
@@ -140,7 +138,7 @@ include_once ("lang/main.php");
 			<h4>Start Date</h4>
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'startdate_topuser', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-			<input name="startdate" type="text" id="startdate_topuser" onClick='javascript:__displayTooltip();'
+			<input name="startdate" type="text" id="startdate_topuser"
                      tooltipText='<?php echo t('Tooltip','Date'); ?>'
 			value="<?php if (isset($startdate)) echo $startdate;
 			else echo date("Y-m-01"); ?>">
@@ -151,7 +149,7 @@ include_once ("lang/main.php");
 			<h4>End Date</h4>
 			<img src="library/js_date/calendar.gif" 
 				onclick="showChooser(this, 'enddate_topuser', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-			<input name="enddate" type="text" id="enddate_topuser" onClick='javascript:__displayTooltip();'
+			<input name="enddate" type="text" id="enddate_topuser"
                      tooltipText='<?php echo t('Tooltip','Date'); ?>'
 			value="<?php if (isset($enddate)) echo $enddate;
 			else echo date("Y-m-t"); ?>">

@@ -143,7 +143,6 @@
 		echo "<tr>
 			<td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
 				<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]'>".t('Tooltip','EditGroup')."</a>
                                         <br/>\"

@@ -343,7 +343,6 @@ function addToolTipBalloon($view) {
 		$viewId = '';
 		
 	$str = "<a class='tablenovisit' href='javascript:return;'
-                onClick=\"".$view['onClick']." javascript:__displayTooltip();\"
                 tooltipText='".$view['content']."
 							<br/><br/>
 							$viewId

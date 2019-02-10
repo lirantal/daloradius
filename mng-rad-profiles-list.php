@@ -149,7 +149,6 @@
 		echo "<tr>
 			<td> <input type='checkbox' name='profile[]' value='$row[0]'>
 				<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-profiles-edit.php?profile=$row[0]'>".t('Tooltip','EditProfile')."</a>
                                         <br/>\"

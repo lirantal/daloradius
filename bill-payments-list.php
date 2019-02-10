@@ -213,7 +213,6 @@
                         <td> <input type='checkbox' name='payment_id[]' value='$row[0]'> 
 
                         	<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='bill-payments-edit.php?payment_id=$row[0]'>".t('Tooltip','EditPayment')."</a>
 					<br/><br/>
@@ -224,7 +223,6 @@
                         
                         
                         <td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
                                         <a class='toolTip' href='bill-invoice-edit.php?invoice_id=$row[1]'>".t('Tooltip','InvoiceEdit')."</a>
                                         <br/><br/>\"

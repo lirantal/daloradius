@@ -28,7 +28,6 @@
 		<li><a href="javascript:document.billplansedit.submit();""><b>&raquo;</b><?php echo t('button','EditPlan') ?><a>
 			<form name="billplansedit" action="bill-plans-edit.php" method="get" class="sidebar">
 			<input name="planName" type="text" id="planNameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','BillingPlanName'); ?> <br/>'
 				value="<?php if (isset($edit_planname)) echo $edit_planname; ?>" tabindex=3>
 			</form></li>

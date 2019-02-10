@@ -29,7 +29,6 @@
 			<form name="mngradusrgrplist" action="mng-rad-usergroup-list-user.php" method="get" 
 				class="sidebar">
 			<input name="username" type="text" id="usernameList" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				/>
 			</form></li>
@@ -38,11 +37,9 @@
 		<li><a href="javascript:document.mngradusrgrpedit.submit();""><b>&raquo;</b><?php echo t('button','EditUserGroup') ?><a>
 			<form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="get" class="sidebar">
 			<input name="username" type="text" value="" id="usernameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				/>
 			<input name="group" type="text" value="" id="groupnameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
                                 tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				/>
 			</form></li>

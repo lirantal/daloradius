@@ -119,7 +119,6 @@ include_once ("lang/main.php");
                                         <option value="1000"> 1000 Lines </option>
                                 </select>
 	                        <input type="text" name="systemFilter" 
-	                                onClick='javascript:__displayTooltip();'
 	                                tooltipText='<?php echo t('Tooltip','Filter'); ?> <br/>'
 					value="<?php if (isset($systemFilter)) echo $systemFilter; ?>" />
                         </form></li>
@@ -143,7 +142,6 @@ include_once ("lang/main.php");
                                         <option value="1000"> 1000 Lines </option>
                                 </select>
 	                        <input type="text" name="bootFilter" 
-	                                onClick='javascript:__displayTooltip();'
 	                                tooltipText='<?php echo t('Tooltip','Filter'); ?> <br/>'
 					value="<?php if (isset($bootFilter)) echo $bootFilter; ?>" />
                         </form></li>
