@@ -148,7 +148,8 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 			<td> <input type='checkbox' name='profile[]' value='$row[0]'>
-				<a class='tablenovisit' href='javascript:return;'
+				<a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-profiles-edit.php?profile=$row[0]'>".t('Tooltip','EditProfile')."</a>
                                         <br/>\"

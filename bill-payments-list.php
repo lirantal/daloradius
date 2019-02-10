@@ -212,7 +212,8 @@
 		printqn("<tr>
                         <td> <input type='checkbox' name='payment_id[]' value='$row[0]'> 
 
-                        	<a class='tablenovisit' href='javascript:return;'
+                        	<a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
                                         <a class='toolTip' href='bill-payments-edit.php?payment_id=$row[0]'>".t('Tooltip','EditPayment')."</a>
 					<br/><br/>
@@ -222,7 +223,8 @@
                         </td>
                         
                         
-                        <td> <a class='tablenovisit' href='javascript:return;'
+                        <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
                                         <a class='toolTip' href='bill-invoice-edit.php?invoice_id=$row[1]'>".t('Tooltip','InvoiceEdit')."</a>
                                         <br/><br/>\"

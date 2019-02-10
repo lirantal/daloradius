@@ -153,8 +153,8 @@
 
 				<td>$row[1]</td>
 
-		                <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=$row[2]\");'
+		                <td> <a class='tablenovisit' href='#'
+                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=$row[2]\");return false;'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]\">
                                                 ".t('Tooltip','AttributeEdit')."</a>

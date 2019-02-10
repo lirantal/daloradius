@@ -214,8 +214,8 @@
 
 				printqn("<tr>
 						<td> $row[0] </td>
-						<td> <a class='tablenovisit' href='javascript:return;'
-								onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");'
+						<td> <a class='tablenovisit' href='#'
+								onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");return false;'
 								tooltipText='
 										<a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
 												".t('Tooltip','HotspotEdit')."</a>
@@ -231,8 +231,8 @@
 								>$row[1]</a>
 						</td>
 
-						<td> <a class='tablenovisit' href='javascript:return;'
-								onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");'
+						<td> <a class='tablenovisit' href='#'
+								onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");return false;'
 								tooltipText='
 										<a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
 											".t('Tooltip','UserEdit')."</a>

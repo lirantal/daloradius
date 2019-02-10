@@ -231,8 +231,8 @@
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 		
 		printqn("
-			<a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".urlencode($row['username'])."\");'
+			<a class='tablenovisit' href='#'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".urlencode($row['username'])."\");return false;'
                                 tooltipText='
 	                                <a class=\"toolTip\" href=\"bill-pos-edit.php?username=".urlencode($row['username'])."\">
 						".t('Tooltip','UserEdit')."</a>

@@ -148,8 +148,8 @@
 		}
 
                 printqn("<tr>
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");'
+                        <td> <a class='tablenovisit' href='#'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");return false;'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
                                                 ".t('Tooltip','UserEdit')."</a>

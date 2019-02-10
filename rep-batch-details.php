@@ -223,7 +223,8 @@
 					<td>";
 	
 			printqn("
-					<a class='tablenovisit' href='javascript:return;'
+					<a class='tablenovisit' href='#'
+						onclick='javascript:return false;'
 						tooltipText='
 									<div id=\"divContainerUserInfo\">
 										<b>".t('all','batchDescription')."</b>:<br/><br/>

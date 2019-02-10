@@ -139,7 +139,8 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 			<td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
-				<a class='tablenovisit' href='javascript:return;'
+				<a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]'>".t('Tooltip','EditGroup')."</a>
                                         <br/>\"
