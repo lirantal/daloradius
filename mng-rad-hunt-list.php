@@ -151,7 +151,8 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
                                 <td> <input type='checkbox' name='nashost[]' value='$row[2]||$row[3]'> $row[0] </td>
-                                <td> <a class='tablenovisit' href='javascript:return;'
+                                <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-hunt-edit.php?nasipaddress=$row[2]&nasportid=$row[3]'>".t('Tooltip','EditHG')."</a>
                                         <a class='toolTip' href='mng-rad-hunt-del.php?nasipaddress=$row[2]&nasportid=$row[3]'>".t('Tooltip','RemoveHG')."</a>

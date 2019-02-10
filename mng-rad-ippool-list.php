@@ -177,7 +177,8 @@
 		echo "<tr>
                                 <td> <input type='checkbox' name='poolname[]' value='$row[1]||$row[2]'> $row[0] </td>
 				<td> $row[1] </td>
-                                <td> <a class='tablenovisit' href='javascript:return;'
+                                <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
                                         <a class='toolTip' href='mng-rad-ippool-edit.php?poolname=$row[1]&ipaddressold=$row[2]'>".t('Tooltip','EditIPAddress')."</a>
 					<br/>

@@ -143,7 +143,8 @@
 		printqn("<tr>
                         <td> <input type='checkbox' name='paymentname[]' value='$row[1]'> $row[0] </td>
 
-                        <td> <a class='tablenovisit' href='javascript:return;'
+                        <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
                                         <a class='toolTip' href='bill-payment-types-edit.php?paymentname=$row[1]'>".t('Tooltip','EditPayType')."</a>
 					<br/>

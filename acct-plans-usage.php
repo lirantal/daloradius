@@ -239,8 +239,8 @@
 			$percFormatted = "$perc";
 			
 		printqn("<tr>
-                        <td> <a class='tablenovisit' href='javascript:return;'
-						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");'
+                        <td> <a class='tablenovisit' href='#'
+						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");return false;'
                                 tooltipText='
 								<a class=\"toolTip\" href=\"bill-pos-edit.php?username={$row['username']}\">
 	                                        ".t('Tooltip','UserEdit')."</a>

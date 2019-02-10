@@ -138,7 +138,8 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 				<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> 
-					<a class='tablenovisit' href='javascript:return;'
+					<a class='tablenovisit' href='#'
+						onclick='javascript:return false;'
                         tooltipText=\"
                         <a class='toolTip' href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>".t('Tooltip','EditUserGroup')."</a>
 					<br/><br/>
