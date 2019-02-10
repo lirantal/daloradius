@@ -588,11 +588,11 @@ function refillSessionTraffic() {
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billposedit.php'] ?>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billposedit.php') ?>
 	<h144>+</h144></a></h2>
 	
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billposedit'] ?>
+		<?php echo t('helpPage','billposedit') ?>
 		<br/>
 	</div>
 	<?php
@@ -608,7 +608,7 @@ function refillSessionTraffic() {
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','AccountInfo'); ?>">
 
 	<fieldset>
 
@@ -616,32 +616,32 @@ function refillSessionTraffic() {
 					include_once('include/management/populate_selectbox.php');
 				?>
 				
-                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+                <h302> <?php echo t('title','AccountInfo'); ?> </h302>
 
                 <ul>
 
                 <div id='UserContainer'>
                 <li class='fieldset'>
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <label for='username' class='form'><?php echo t('all','Username')?></label>
 				<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
                 <input name='username' type='text' id='username' value='<?php if (isset($username)) echo $username ?>' disabled tabindex=100 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
                 <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['usernameTooltip'] ?>
+                        <?php echo t('Tooltip','usernameTooltip') ?>
                 </div>
                 </li>
 
                 <li class='fieldset'>
-                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
+                <label for='password' class='form'><?php echo t('all','Password')?></label>
                 <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo $user_password ?>'
                         <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> disabled tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
                 <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['passwordTooltip'] ?>
+                        <?php echo t('Tooltip','passwordTooltip') ?>
                 </div>
                 </li>
                 </div>
@@ -649,7 +649,7 @@ function refillSessionTraffic() {
 
 
 				<li class='fieldset'>
-				<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+				<label for='planName' class='form'><?php echo t('all','PlanName') ?></label>
 				<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
 		                <?php
 		                       populate_plans("$bi_planname","planName","form", NULL, $bi_planname);
@@ -658,20 +658,20 @@ function refillSessionTraffic() {
 				
 				<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 					<img src='images/icons/comment.png' alt='Tip' border='0' />
-					<?php echo $l['Tooltip']['planNameTooltip'] ?>
+					<?php echo t('Tooltip','planNameTooltip') ?>
 				</div>
 				</li>
 	
 
                 <div id='UserContainer'>
                 <li class='fieldset'>
-                <label for='reassignplanprofiles' class='form'><?php echo $l['button']['ReAssignPlanProfiles'] ?></label>
+                <label for='reassignplanprofiles' class='form'><?php echo t('button','ReAssignPlanProfiles') ?></label>
 				<input name='reassignplanprofiles' type='checkbox' value='1' />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('reassignplanprofiles')" />
 
                 <div id='reassignplanprofiles'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['reassignplanprofiles'] ?>
+                        <?php echo t('Tooltip','reassignplanprofiles') ?>
                 </div>
                 </li>
 		
@@ -698,7 +698,7 @@ function refillSessionTraffic() {
 				
 			<br/>		
 			
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 
 		</li>
 
@@ -709,23 +709,23 @@ function refillSessionTraffic() {
 	</div>
 
 
-        <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userinfo.php');
         ?>
         </div>
 
-        <div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userbillinfo.php');
         ?>
         </div>
 
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Profiles']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Profiles'); ?>">
 
 <?php
         include 'library/opendb.php';
@@ -745,7 +745,7 @@ function refillSessionTraffic() {
         <li class='fieldset'>
 
                 <li class='fieldset'>
-                <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
+                <label for='profile' class='form'><?php echo t('all','Profile')?></label>
                 <?php
                         populate_groups("Select Profile","newgroups[]");
                 ?>
@@ -760,7 +760,7 @@ function refillSessionTraffic() {
 
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                        <?php echo t('Tooltip','groupTooltip') ?>
                 </div>
                 </li>
 
@@ -768,7 +768,7 @@ function refillSessionTraffic() {
 
         <br/>
         <hr><br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
         </li>
 
         </ul>
@@ -781,7 +781,7 @@ function refillSessionTraffic() {
 
 
 
-        <div class="tabbertab" title="<?php echo $l['title']['Invoices']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','Invoices'); ?>">
         <?php
                 include_once('include/management/userBilling.php');
                 userInvoicesStatus($user_id, 1);

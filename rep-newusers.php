@@ -67,11 +67,11 @@
 
                 <div id="contentnorightbar">
                 
-                                <h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['repnewusers.php']; ?>
+                                <h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','repnewusers.php'); ?>
                                 <h144>+</h144></a></h2>
                                 
                 <div id="helpPage" style="display:none;visibility:visible" >
-                        <?php echo $l['helpPage']['repnewusers']; ?>
+                        <?php echo t('helpPage','repnewusers'); ?>
                         <br/>
                 </div>
                 <br/>
@@ -131,11 +131,11 @@
 
         echo "<thread> <tr>
                 <th scope='col'>
-                ".$l['all']['Month']. "
+                ".t('all','Month'). "
                 </th>
 
                 <th scope='col'>
-                        ".$l['all']['Users']."
+                        ".t('all','Users')."
                 </th>
 
         </tr> </thread>";

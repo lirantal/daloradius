@@ -46,13 +46,13 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogsradius.php']; ?>
+		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','replogsradius.php'); ?>
                 :: <?php if (isset($radiusLineCount)) { echo $radiusLineCount . " Lines Count "; } ?>
                    <?php if (isset($radiusFilter)) { echo " with radiusFilter set to " . $radiusFilter; } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replogsradius'] ?>
+			<?php echo t('helpPage','replogsradius') ?>
 			<br/>
 		</div>
 		<br/>

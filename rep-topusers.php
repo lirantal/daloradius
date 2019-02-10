@@ -60,12 +60,12 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['reptopusers.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','reptopusers.php'); ?>
 		<h144>+</h144></a></h2></a></h2>
 				
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['reptopusers']." ".$orderBy ?>
+			<?php echo t('helpPage','reptopusers')." ".$orderBy ?>
 			<br/>
 		</div>
 		<br/>
@@ -104,7 +104,7 @@
 
 					<thead>
 							<tr>
-							<th colspan='10'>".$l['all']['Records']."</th>
+							<th colspan='10'>".t('all','Records')."</th>
 							</tr>
 					</thead>
 			";
@@ -120,47 +120,47 @@
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=username&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['Username']." </a>
+		".t('all','Username')." </a>
 		</th>
 		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=framedipaddress&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['IPAddress']."</a>
+		".t('all','IPAddress')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstarttime&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['StartTime']."</a>
+		".t('all','StartTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctstoptime&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['StopTime']."</a>
+		".t('all','StopTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Time&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['TotalTime']."</a>
+		".t('all','TotalTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Upload&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
+		".t('all','Upload')." (".t('all','Bytes').")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=Download&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
+		".t('all','Download')." (".t('all','Bytes').")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=acctterminatecause&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['Termination']."</a>
+		".t('all','Termination')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?limit=$limit&orderBy=nasipaddress&orderType=$orderType&username=$username&startdate=$startdate&enddate=$enddate\">
-		".$l['all']['NASIPAddress']."</a>
+		".t('all','NASIPAddress')."</a>
 		</th>
 		</tr> </thread>";
 		

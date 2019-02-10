@@ -48,12 +48,12 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradrealms.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradrealms.php') ?>
 		<h144>+</h144></a></h2>
 			
 
 		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo $l['helpPage']['mngradrealms'] ?>
+			<?php echo t('helpPage','mngradrealms') ?>
 			<br/>
 		</div>	
 		<br/>

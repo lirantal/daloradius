@@ -64,11 +64,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymentslist.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','paymentslist.php') ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['paymentslist'] ?>
+					<?php echo t('helpPage','paymentslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -182,28 +182,28 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=invoice_id&orderType=$orderTypeNextPage\">
-		".$l['all']['PaymentInvoiceID']."</a>
+		".t('all','PaymentInvoiceID')."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PaymentAmount']."
+		".t('all','PaymentAmount')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PaymentDate']."
+		".t('all','PaymentDate')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PaymentType']."
+		".t('all','PaymentType')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PaymentNotes']."
+		".t('all','PaymentNotes')."
 		</th>
 
 
@@ -215,9 +215,9 @@
                         	<a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-payments-edit.php?payment_id=$row[0]'>".$l['Tooltip']['EditPayment']."</a>
+                                        <a class='toolTip' href='bill-payments-edit.php?payment_id=$row[0]'>".t('Tooltip','EditPayment')."</a>
 					<br/><br/>
-                                        <a class='toolTip' href='bill-payments-del.php?payment_id=$row[0]'>".$l['Tooltip']['RemovePayment']."</a>
+                                        <a class='toolTip' href='bill-payments-del.php?payment_id=$row[0]'>".t('Tooltip','RemovePayment')."</a>
                                         <br/><br/>\"
                               >#$row[0]</a>
                         </td>
@@ -226,7 +226,7 @@
                         <td> <a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-invoice-edit.php?invoice_id=$row[1]'>".$l['Tooltip']['InvoiceEdit']."</a>
+                                        <a class='toolTip' href='bill-invoice-edit.php?invoice_id=$row[1]'>".t('Tooltip','InvoiceEdit')."</a>
                                         <br/><br/>\"
                               >#$row[1]</a>
                         </td>

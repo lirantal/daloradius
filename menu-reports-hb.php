@@ -32,7 +32,7 @@ include_once ("lang/main.php");
 
 		<h3>Dashboard</h3>
 
-			<li><a href="rep-hb-dashboard.php"><b>&raquo;</b><?php echo $l['button']['Dashboard'] ?></a></li>
+			<li><a href="rep-hb-dashboard.php"><b>&raquo;</b><?php echo t('button','Dashboard') ?></a></li>
 
 		</ul>
 

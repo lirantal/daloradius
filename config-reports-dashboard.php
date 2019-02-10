@@ -57,11 +57,11 @@
 			
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configdashboard.php']; ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configdashboard.php'); ?>
 				<h144>+</h144></a></h2>
 
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configdashboard'] ?>
+					<?php echo t('helpPage','configdashboard') ?>
 					<br/>
 				</div>
                 <?php
@@ -72,22 +72,22 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['Dashboard']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Dashboard'); ?>">
 
         <fieldset>
 
-                <h302><?php echo $l['title']['Settings']; ?></h302>
+                <h302><?php echo t('title','Settings'); ?></h302>
 		<br/>
 
 		<ul>
 
 		<li class='fieldset'>
-		<label for='config_dashboard_dalo_secretkey' class='form'><?php echo $l['all']['DashboardSecretKey'] ?></label>
+		<label for='config_dashboard_dalo_secretkey' class='form'><?php echo t('all','DashboardSecretKey') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] ?>" name="config_dashboard_dalo_secretkey" />
 		</li>
 
 		<li class='fieldset'>
-		<label for='config_dashboard_dalo_debug' class='form'><?php echo $l['all']['DashboardDebug']?></label>
+		<label for='config_dashboard_dalo_debug' class='form'><?php echo t('all','DashboardDebug')?></label>
 		<select class='form' name="config_dashboard_dalo_debug">
 			<option value="<?php echo $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] ?>"> <?php echo $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] ?> </option>
 			<option value=""></option>
@@ -99,7 +99,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 		</li>
 		
 		</ul>
@@ -109,29 +109,29 @@
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
 
         <fieldset>
 
-                <h302><?php echo $l['title']['Settings']; ?></h302>
+                <h302><?php echo t('title','Settings'); ?></h302>
 		<br/>
 		
 		<ul>
 		
 		<li class='fieldset'>
-		<label for='config_dashboard_dalo_delay_soft' class='form'><?php echo $l['all']['DashboardDelaySoft'] ?></label>
+		<label for='config_dashboard_dalo_delay_soft' class='form'><?php echo t('all','DashboardDelaySoft') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] ?>" name="config_dashboard_dalo_delay_soft" />
 		</li>
 		
 		<li class='fieldset'>
-		<label for='config_dashboard_dalo_delay_hard' class='form'><?php echo $l['all']['DashboardDelayHard'] ?></label>
+		<label for='config_dashboard_dalo_delay_hard' class='form'><?php echo t('all','DashboardDelayHard') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] ?>" name="config_dashboard_dalo_delay_hard" />
 		</li>
 
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 		</li>
 
 		</ul>

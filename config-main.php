@@ -39,11 +39,11 @@
 		
 		<div id="contentnorightbar">
 		
-			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmain.php'] ?>
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configmain.php') ?>
 			<h144>+</h144></a></h2>
                 
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configmain'] ?>
+					<?php echo t('helpPage','configmain') ?>
 					<br/>
 				</div>
 				<br/>

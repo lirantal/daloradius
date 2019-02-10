@@ -84,11 +84,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctmaintenancecleanup.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctmaintenancecleanup.php') ?>
 		<h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['acctmaintenancecleanup'] ?>
+			<?php echo t('helpPage','acctmaintenancecleanup') ?>
 			<br/>
 		</div>
 		<?php
@@ -97,10 +97,10 @@
 		
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
         <fieldset>
-			<h302> <?php echo $l['title']['CleanupRecords'] ?> </h302>
+			<h302> <?php echo t('title','CleanupRecords') ?> </h302>
 			<br/>
 			
-			<label for='enddate' class='form'><?php echo $l['all']['CleanupSessions']?></label>
+			<label for='enddate' class='form'><?php echo t('all','CleanupSessions')?></label>
 			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
 			"showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
@@ -108,7 +108,7 @@
 
 			<br/><br/>
 			<hr><br/>
-			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 class='button' />
+			<input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 class='button' />
 	</fieldset>
 
 	<div id="chooserSpan" class="dateChooser select-free" 

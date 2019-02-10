@@ -64,11 +64,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billinvoicelist.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billinvoicelist.php') ?>
 				<h144>+</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['billinvoicelist'] ?>
+					<?php echo t('helpPage','billinvoicelist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -173,36 +173,36 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['Invoice']."</a>
+		".t('all','Invoice')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=contactperson&orderType=$orderTypeNextPage\">
-		".$l['all']['ClientName']."</a>
+		".t('all','ClientName')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=$orderTypeNextPage\">
-		".$l['all']['Date']."</a>
+		".t('all','Date')."</a>
 		</th>
 		
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalbilled&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalBilled']."</a>
+		".t('all','TotalBilled')."</a>
 		</th>
 		
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalpayed&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalPayed']."</a>
+		".t('all','TotalPayed')."</a>
 		</th>
 		
 		<th scope='col'> 
-		".$l['all']['Balance']."
+		".t('all','Balance')."
 		</th>
 		
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=status_id&orderType=$orderTypeNextPage\">
-		".$l['all']['Status']."</a>
+		".t('all','Status')."</a>
 		</th>
 		
 	</tr> </thread>";
@@ -211,7 +211,7 @@
 		
 		echo '<tr>';
 		
-		$content =  '<a class="toolTip" href="bill-invoice-edit.php?invoice_id='.$row['id'].'">'.$l['Tooltip']['InvoiceEdit'].'</a>';
+		$content =  '<a class="toolTip" href="bill-invoice-edit.php?invoice_id='.$row['id'].'">'.t('Tooltip','InvoiceEdit').'</a>';
 		$invoice_id = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -220,7 +220,7 @@
 		
 							));
 
-		$content =  '<a class="toolTip" href="bill-pos-edit.php?username='.urlencode($row['username']).'">'.$l['Tooltip']['UserEdit'].'</a>';
+		$content =  '<a class="toolTip" href="bill-pos-edit.php?username='.urlencode($row['username']).'">'.t('Tooltip','UserEdit').'</a>';
 		$contactperson = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',

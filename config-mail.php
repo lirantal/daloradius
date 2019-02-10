@@ -60,11 +60,11 @@
 			
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmail.php']; ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configmail.php'); ?>
 				<h144>+</h144></a></h2>
 
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configmail'] ?>
+					<?php echo t('helpPage','configmail') ?>
 					<br/>
 				</div>
                 <?php
@@ -75,27 +75,27 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
 
         <fieldset>
 
-                <h302><?php echo $l['title']['Settings']; ?></h302>
+                <h302><?php echo t('title','Settings'); ?></h302>
 		<br/>
 
 		<ul>
 
 		<li class='fieldset'>
-		<label for='config_mail_smtpaddr' class='form'><?php echo $l['all']['SMTPServerAddress'] ?></label>
+		<label for='config_mail_smtpaddr' class='form'><?php echo t('all','SMTPServerAddress') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_MAIL_SMTPADDR'] ?>" name="config_mail_smtpaddr" />
 		</li>
 
 		<li class='fieldset'>
-		<label for='config_mail_smtpport' class='form'><?php echo $l['all']['SMTPServerPort'] ?></label>
+		<label for='config_mail_smtpport' class='form'><?php echo t('all','SMTPServerPort') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_MAIL_SMTPPORT'] ?>" name="config_mail_smtpport" />
 		</li>
 
 		<li class='fieldset'>
-		<label for='config_mail_smtp_fromemail' class='form'><?php echo $l['all']['SMTPServerFromEmail'] ?></label>
+		<label for='config_mail_smtp_fromemail' class='form'><?php echo t('all','SMTPServerFromEmail') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_MAIL_SMTPFROM'] ?>" name="config_mail_smtp_fromemail" />
 		</li>
 
@@ -103,7 +103,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 		</li>
 
 		</ul>

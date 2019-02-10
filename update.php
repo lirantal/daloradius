@@ -2003,7 +2003,7 @@ if (isset($_POST['submit'])) {
 
 <?php
 echo "
-	".$l['all']['copyright2']."
+	".t('all','copyright2')."
 	<br />
 	</p>
 ";

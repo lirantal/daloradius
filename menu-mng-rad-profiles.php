@@ -22,13 +22,13 @@
 
 		<li><a href="mng-rad-profiles-list.php"><b>&raquo;</b>
 			<img src='images/icons/groupsList.png' border='0'>
-			<?php echo $l['button']['ListProfiles'] ?></a></li>
+			<?php echo t('button','ListProfiles') ?></a></li>
 		<li><a href="mng-rad-profiles-new.php"><b>&raquo;</b>
 			<img src='images/icons/groupsAdd.png' border='0'>
-			<?php echo $l['button']['NewProfile'] ?></a></li>
+			<?php echo t('button','NewProfile') ?></a></li>
 		<li><a href="javascript:document.mngradprofileedit.submit();""><b>&raquo;</b>
 			<img src='images/icons/groupsEdit.png' border='0'>
-			<?php echo $l['button']['EditProfile'] ?><a>
+			<?php echo t('button','EditProfile') ?><a>
 			<form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="get" class="sidebar">
 			<?php   
 				include 'include/management/populate_selectbox.php';
@@ -38,11 +38,11 @@
 
 		<li><a href="mng-rad-profiles-duplicate.php"><b>&raquo;</b>
 			<img src='images/icons/groupsEdit.png' border='0'>
-			<?php echo $l['button']['DuplicateProfile'] ?></a></li>
+			<?php echo t('button','DuplicateProfile') ?></a></li>
 
 		<li><a href="mng-rad-profiles-del.php"><b>&raquo;</b>
 			<img src='images/icons/groupsRemove.png' border='0'>
-			<?php echo $l['button']['RemoveProfile'] ?></a></li>
+			<?php echo t('button','RemoveProfile') ?></a></li>
 	</ul>
 
 </div>

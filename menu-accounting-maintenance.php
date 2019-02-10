@@ -37,9 +37,9 @@
 	<h3>Maintenance</h3>
 	<ul class="subnav">
 
-		<li><a href="acct-maintenance-cleanup.php"><b>&raquo;</b><?php echo $l['button']['CleanupStaleSessions'] ?>
+		<li><a href="acct-maintenance-cleanup.php"><b>&raquo;</b><?php echo t('button','CleanupStaleSessions') ?>
 			</a></li>
-		<li><a href="acct-maintenance-delete.php"><b>&raquo;</b><?php echo $l['button']['DeleteAccountingRecords'] ?>
+		<li><a href="acct-maintenance-delete.php"><b>&raquo;</b><?php echo t('button','DeleteAccountingRecords') ?>
 			</a></li>
 	</ul>
 

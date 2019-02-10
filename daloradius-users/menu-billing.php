@@ -73,11 +73,11 @@
 		<li>
 			<form name="billinvoicereport" action="bill-invoice-report.php" method="get" class="sidebar">
 			
-				<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
+				<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
 				
 				<input name="startdate" type="text" id="startdate" 
 			                                onClick='javascript:__displayTooltip();'
-			                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+			                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 					value="<?php if (isset($billinvoice_startdate)) echo $billinvoice_startdate;
 									else echo date("Y-m-01"); ?>">
 				<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
@@ -85,7 +85,7 @@
 			
 				<input name="enddate" type="text" id="enddate" 
 			                                onClick='javascript:__displayTooltip();'
-			                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+			                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 					value="<?php if (isset($billinvoice_enddate)) echo $billinvoice_enddate;
 									else echo date("Y-m-t"); ?>">
 				<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
@@ -100,17 +100,17 @@
 					<br/>
 					
 					<br/>
-				<input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['GenerateReport'] ?>" tabindex=3 />
+				<input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','GenerateReport') ?>" tabindex=3 />
 				
 			</form>
 			</li>
 
 			
-		<li><a href="javascript:document.billinvoiceedit.submit();""><b>&raquo;</b><?php echo $l['button']['ShowInvoice'] ?><a>
+		<li><a href="javascript:document.billinvoiceedit.submit();""><b>&raquo;</b><?php echo t('button','ShowInvoice') ?><a>
 			<form name="billinvoiceedit" action="bill-invoice-show.php" method="get" class="sidebar">
 			<input name="invoice_id" type="text" id="invoiceIdEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['invoiceID']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','invoiceID'); ?> <br/>'
 				value="<?php if (isset($edit_invoiceid)) echo $edit_invoiceid; ?>" tabindex=3>
 			</form></li>
 			

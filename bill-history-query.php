@@ -58,11 +58,11 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billhistoryquery.php']?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billhistoryquery.php')?>
 		<h144>+</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['billhistoryquery'] ?>
+			<?php echo t('helpPage','billhistoryquery') ?>
 			<br/>
 		</div>
 		<br/>
@@ -138,7 +138,7 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='25'>".$l['all']['Records']."</th>
+							<th colspan='25'>".t('all','Records')."</th>
 							</tr>
 
                                                         <tr>
@@ -161,67 +161,67 @@
 		switch($value) {
 
 		case "id":
-			$title = $l['all']['ID'];
+			$title = t('all','ID');
 			break;
 		case "username":
-			$title = $l['all']['Username'];
+			$title = t('all','Username');
 			break;
 		case "planId":
-			$title = $l['all']['PlanId'];
+			$title = t('all','PlanId');
 			break;
 		case "billAmount":
-			$title = $l['all']['BillAmount'];
+			$title = t('all','BillAmount');
 			break;
 		case "billAction":
-			$title = $l['all']['BillAction'];
+			$title = t('all','BillAction');
 			break;
 		case "billPerformer":
-			$title = $l['all']['BillPerformer'];
+			$title = t('all','BillPerformer');
 			break;
 		case "billReason":
-			$title = $l['all']['BillReason'];
+			$title = t('all','BillReason');
 			break;
 		case "paymentmethod":
-			$title = $l['ContactInfo']['PaymentMethod'];
+			$title = t('ContactInfo','PaymentMethod');
 			break;
 		case "cash":
-			$title = $l['ContactInfo']['Cash'];
+			$title = t('ContactInfo','Cash');
 			break;
 		case "creditcardname":
-			$title = $l['ContactInfo']['CreditCardName'];
+			$title = t('ContactInfo','CreditCardName');
 			break;
 		case "creditcardnumber":
-			$title = $l['ContactInfo']['CreditCardNumber'];
+			$title = t('ContactInfo','CreditCardNumber');
 			break;
 		case "creditcardverification":
-			$title = $l['ContactInfo']['CreditCardVerificationNumber'];
+			$title = t('ContactInfo','CreditCardVerificationNumber');
 			break;
 		case "creditcardtype":
-			$title = $l['ContactInfo']['CreditCardType'];
+			$title = t('ContactInfo','CreditCardType');
 			break;
 		case "creditcardexp":
-			$title = $l['ContactInfo']['CreditCardExpiration'];
+			$title = t('ContactInfo','CreditCardExpiration');
 			break;
 		case "coupon":
-			$title = $l['all']['Coupon'];
+			$title = t('all','Coupon');
 			break;
 		case "discount":
-			$title = $l['all']['Discount'];
+			$title = t('all','Discount');
 			break;
 		case "notes":
-			$title = $l['ContactInfo']['Notes'];
+			$title = t('ContactInfo','Notes');
 			break;
 		case "creationdate":
-			$title = $l['all']['CreationDate'];
+			$title = t('all','CreationDate');
 			break;
 		case "creationby":
-			$title = $l['all']['CreationBy'];
+			$title = t('all','CreationBy');
 			break;
 		case "updatedate":
-			$title = $l['all']['UpdateDate'];
+			$title = t('all','UpdateDate');
 			break;
 		case "updateby":
-			$title = $l['all']['UpdateBy'];
+			$title = t('all','UpdateBy');
 			break;
 		default:
 			$title = $value;

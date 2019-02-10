@@ -142,11 +142,11 @@
 ?>		
 	<div id="contentnorightbar">
 
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['prefuserinfoedit.php'] ?>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','prefuserinfoedit.php') ?>
 		:: <?php if (isset($login)) { echo $login; } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['prefuserinfoedit'] ?>
+			<?php echo t('helpPage','prefuserinfoedit') ?>
 			<br/>
 		</div>
 		<?php

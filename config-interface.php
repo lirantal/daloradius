@@ -58,11 +58,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configinterface.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configinterface.php') ?>
 				<h144>+</h144></a></h2>
 
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configinterface'] ?>
+					<?php echo t('helpPage','configinterface') ?>
 					<br/>
 				</div>
                 <?php
@@ -73,13 +73,13 @@
 
 	<fieldset>
 
-                <h302> <?php echo $l['title']['Settings']; ?> </h302>
+                <h302> <?php echo t('title','Settings'); ?> </h302>
                 <br/>
 
                 <ul>
 
                 <li class='fieldset'>
-                <label for='config_iface_pass_hidden' class='form'><?php echo $l['all']['PasswordHidden']?></label>
+                <label for='config_iface_pass_hidden' class='form'><?php echo t('all','PasswordHidden')?></label>
 		<select name="config_iface_pass_hidden" class='form'>
 			<option value="<?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?>"> <?php echo $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] ?> </option>
 			<option value="">  </option>
@@ -89,12 +89,12 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_iface_tablelisting' class='form'><?php echo $l['all']['TablesListing'] ?></label>
+                <label for='config_iface_tablelisting' class='form'><?php echo t('all','TablesListing') ?></label>
 		<input value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING'] ?>" name="config_iface_tableslisting" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_iface_tableslisting_num' class='form'><?php echo $l['all']['TablesListingNum'] ?></label>
+                <label for='config_iface_tableslisting_num' class='form'><?php echo t('all','TablesListingNum') ?></label>
 		<select class='form' name="config_iface_tableslisting_num">
 			<option value="<?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?>"> <?php echo $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] ?> </option>
 			<option value="">  </option>
@@ -104,7 +104,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_iface_auto_complete' class='form'><?php echo $l['all']['AjaxAutoComplete'] ?></label>
+                <label for='config_iface_auto_complete' class='form'><?php echo t('all','AjaxAutoComplete') ?></label>
 		<select class='form' name="config_iface_auto_complete">
 			<option value="<?php echo $configValues['CONFIG_IFACE_AUTO_COMPLETE'] ?>"> <?php echo $configValues['CONFIG_IFACE_AUTO_COMPLETE'] ?> </option>
 			<option value="">  </option>
@@ -116,7 +116,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
                 </ul>

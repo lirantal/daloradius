@@ -63,10 +63,10 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billratesdate.php']; ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billratesdate.php'); ?>
 		<h144>+</h144></a></h2>
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['billratesdate'] ?>
+			<?php echo t('helpPage','billratesdate') ?>
 			<br/>
 		</div>
 		<br/>
@@ -185,26 +185,26 @@
 		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=$orderTypeNextPage\">
-		".$l['all']['NASIPAddress']."</a>
+		".t('all','NASIPAddress')."</a>
 		</th>
 		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
-		".$l['all']['LastLoginTime']."</a>
+		".t('all','LastLoginTime')."</a>
 		</th>
 		<th scope='col'>
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&ratename=$ratename&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalTime']."</a>
+		".t('all','TotalTime')."</a>
 		</th>
 		<th scope='col'>
 		<br/>
-		 ".$l['all']['Billed']."
+		 ".t('all','Billed')."
 		</th>
                 </tr> </thread>";
 

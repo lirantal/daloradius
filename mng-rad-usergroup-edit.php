@@ -136,11 +136,11 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
 	<div id="contentnorightbar">
 	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupedit'] ?> 
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradusergroupedit') ?> 
 		<?php echo $username ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo $l['helpPage']['mngradusergroupedit'] ?>
+			<?php echo t('helpPage','mngradusergroupedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -153,40 +153,40 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+                <h302> <?php echo t('title','GroupInfo') ?> </h302>
                 <br/>
 
                 <ul>
 
                 <li class='fieldset'>
-                <label for='username' class='form'><?php echo $l['all']['Username'] ?></label>
+                <label for='username' class='form'><?php echo t('all','Username') ?></label>
                 <input type='hidden' name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
                 <input disabled type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
                 </li>
 
 
                 <li class='fieldset'>
-                <label for='groupOld' class='form'><?php echo $l['all']['CurrentGroupname'] ?></label>
+                <label for='groupOld' class='form'><?php echo t('all','CurrentGroupname') ?></label>
                 <input type='hidden' name='groupOld' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
                 <input disabled type='text' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
 				Old Group Name
                 </li>
 
                 <li class='fieldset'>
-                <label for='group' class='form'><?php echo $l['all']['NewGroupname'] ?></label>
+                <label for='group' class='form'><?php echo t('all','NewGroupname') ?></label>
                 <?php   
 					include 'include/management/populate_selectbox.php';
 					populate_groups("Select Groups","group","form");
                 ?>
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 					<img src='images/icons/comment.png' alt='Tip' border='0' />
-					<?php echo $l['Tooltip']['groupTooltip'] ?>
+					<?php echo t('Tooltip','groupTooltip') ?>
                 </div>
                 </li>
 
 
                 <li class='fieldset'>
-                <label for='priority' class='form'><?php echo $l['all']['Priority'] ?></label>
+                <label for='priority' class='form'><?php echo t('all','Priority') ?></label>
                 <input class='integer' name='priority' type='text' id='priority' value='<?php echo $priority ?>' tabindex=103 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('priority','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('priority','decrement')"/>
@@ -195,7 +195,7 @@ AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
 

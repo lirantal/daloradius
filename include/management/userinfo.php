@@ -19,15 +19,15 @@ echo "
 	<h301> Personal </h301>
 	<br/>
 
-	<label for='username' class='form'>".$l['ContactInfo']['FirstName']."</label>
+	<label for='username' class='form'>".t('ContactInfo','FirstName')."</label>
         <input value='"; if (isset($ui_firstname)) echo $ui_firstname; echo "' name='firstname' id='firstname' tabindex=300 />
 	<br/>
 	
-	<label for='lastname' class='form'>".$l['ContactInfo']['LastName']."</label>
+	<label for='lastname' class='form'>".t('ContactInfo','LastName')."</label>
         <input value='"; if (isset($ui_lastname)) echo $ui_lastname; echo "' name='lastname' id='lastname' tabindex=301 />
 	<br/>
 
-	<label for='email' class='form'>".$l['ContactInfo']['Email']."</label>
+	<label for='email' class='form'>".t('ContactInfo','Email')."</label>
         <input value='"; if (isset($ui_email)) echo $ui_email; echo "' name='email' id='email' tabindex=302 />
         <br/>
 
@@ -42,43 +42,43 @@ echo "
 	<h301> Business </h301>
 	<br/>
 
-	<label for='department' class='form'>".$l['ContactInfo']['Department']."</label>
+	<label for='department' class='form'>".t('ContactInfo','Department')."</label>
         <input value='"; if (isset($ui_department)) echo $ui_department; echo "' name='department' tabindex=303 />
         <br/>
 
-	<label for='company' class='form'>".$l['ContactInfo']['Company']."</label>
+	<label for='company' class='form'>".t('ContactInfo','Company')."</label>
 	<input value='"; if (isset($ui_company)) echo $ui_company; echo "' name='company' id='company' tabindex=304 />
         <br/>
 
-	<label for='workphone' class='form'>".$l['ContactInfo']['WorkPhone']."</label>
+	<label for='workphone' class='form'>".t('ContactInfo','WorkPhone')."</label>
 	<input value='"; if (isset($ui_workphone)) echo $ui_workphone; echo "' name='workphone' id='workphone' tabindex=305 />
         <br/>
 
-	<label for='homephone' class='form'>".$l['ContactInfo']['HomePhone']."</label>
+	<label for='homephone' class='form'>".t('ContactInfo','HomePhone')."</label>
 	<input value='"; if (isset($ui_homephone)) echo $ui_homephone; echo "' name='homephone' tabindex=306 />
         <br/>
 
-	<label for='mobilephone' class='form'>".$l['ContactInfo']['MobilePhone']."</label>
+	<label for='mobilephone' class='form'>".t('ContactInfo','MobilePhone')."</label>
 	<input value='"; if (isset($ui_mobilephone)) echo $ui_mobilephone; echo "' name='mobilephone' tabindex=307 />
         <br/>
 
-	<label for='address' class='form'>".$l['ContactInfo']['Address']."</label>
+	<label for='address' class='form'>".t('ContactInfo','Address')."</label>
 	<input value='"; if (isset($ui_address)) echo $ui_address; echo "' name='address' id='address' tabindex=308 />
         <br/>
 
-	<label for='city' class='form'>".$l['ContactInfo']['City']."</label>
+	<label for='city' class='form'>".t('ContactInfo','City')."</label>
 	<input value='"; if (isset($ui_city)) echo $ui_city; echo "' name='city' id='city' tabindex=309 />
         <br/>
 
-	<label for='state' class='form'>".$l['ContactInfo']['State']."</label>
+	<label for='state' class='form'>".t('ContactInfo','State')."</label>
 	<input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' id='state' tabindex=310 />
         <br/>
         
-	<label for='country' class='form'>".$l['ContactInfo']['Country']."</label>
+	<label for='country' class='form'>".t('ContactInfo','Country')."</label>
 	<input value='"; if (isset($ui_country)) echo $ui_country; echo "' name='country' id='country' tabindex=310 />
         <br/>
 
-	<label for='zip' class='form'>".$l['ContactInfo']['Zip']."</label>
+	<label for='zip' class='form'>".t('ContactInfo','Zip')."</label>
 	<input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' id='zip' tabindex=311 />
         <br/>
 
@@ -86,7 +86,7 @@ echo "
 	<h301> Other </h301>
 	<br/>
 
-	<label for='notes' class='form'>".$l['ContactInfo']['Notes']."</label>
+	<label for='notes' class='form'>".t('ContactInfo','Notes')."</label>
 	<textarea class='form' name='notes' tabindex=312 >"; if (isset($ui_notes)) echo $ui_notes; echo "</textarea> 
         <br/>
 
@@ -111,32 +111,32 @@ echo "
 	
 echo "
 
-	<label for='userupdate' class='form'>".$l['ContactInfo']['EnableUserUpdate']."</label>
+	<label for='userupdate' class='form'>".t('ContactInfo','EnableUserUpdate')."</label>
 	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isUIChecked tabindex=313 />
         <br/>
         
-	<label for='userupdate' class='form'>".$l['ContactInfo']['EnablePortalLogin']."</label>
+	<label for='userupdate' class='form'>".t('ContactInfo','EnablePortalLogin')."</label>
 	<input type='checkbox' class='form' name='enableUserPortalLogin' value='$ui_enableUserPortalLogin' $isenableUserPortalLogin tabindex=313 />
         <br/>
 
-	<label for='portalLoginPassword' class='form'>".$l['ContactInfo']['PortalLoginPassword']."</label>
+	<label for='portalLoginPassword' class='form'>".t('ContactInfo','PortalLoginPassword')."</label>
 	<input name='portalLoginPassword' id='portalLoginPassword' value='"; if (isset($ui_PortalLoginPassword)) echo $ui_PortalLoginPassword; echo "' tabindex=314 />
         <br/>
 
 	<br/>
-	<label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
+	<label for='creationdate' class='form'>".t('all','CreationDate')."</label>
 	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=314 />
         <br/>
 
-	<label for='creationby' class='form'>".$l['all']['CreationBy']."</label>
+	<label for='creationby' class='form'>".t('all','CreationBy')."</label>
 	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=315 />
         <br/>
 
-	<label for='updatedate' class='form'>".$l['all']['UpdateDate']."</label>
+	<label for='updatedate' class='form'>".t('all','UpdateDate')."</label>
 	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=316 />
         <br/>
 
-	<label for='updateby' class='form'>".$l['all']['UpdateBy']."</label>
+	<label for='updateby' class='form'>".t('all','UpdateBy')."</label>
 	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=317 />
         <br/>
 

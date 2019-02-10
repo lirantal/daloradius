@@ -23,21 +23,21 @@
 	<h3>HuntGroup Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-rad-hunt-list.php" tabindex=1><b>&raquo;</b><?php echo $l['button']['ListHG'] ?></a></li>
-		<li><a href="mng-rad-hunt-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewHG'] ?></a></li>
-		<li><a href="javascript:document.mngradhuntedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditHG'] ?></a>
+		<li><a href="mng-rad-hunt-list.php" tabindex=1><b>&raquo;</b><?php echo t('button','ListHG') ?></a></li>
+		<li><a href="mng-rad-hunt-new.php" tabindex=2><b>&raquo;</b><?php echo t('button','NewHG') ?></a></li>
+		<li><a href="javascript:document.mngradhuntedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo t('button','EditHG') ?></a>
 			<form name="mngradhuntedit" action="mng-rad-hunt-edit.php" method="get" class="sidebar">
 			<input name="nasipaddress" type="text" id="nashostEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['hgNasIpAddress']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','hgNasIpAddress'); ?> <br/>'
 			tabindex=4 />
                         <input name="groupname" type="text" value=""
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['hgGroupName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','hgGroupName'); ?> <br/>'
             tabindex=5 />
 
 			</form></li>
-		<li><a href="mng-rad-hunt-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveHG'] ?></a></li>
+		<li><a href="mng-rad-hunt-del.php" tabindex=5><b>&raquo;</b><?php echo t('button','RemoveHG') ?></a></li>
 		
 	</ul>
 

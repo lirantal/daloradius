@@ -56,11 +56,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupchecklist.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradgroupchecklist.php') ?>
 		<h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradgroupchecklist'] ?>
+			<?php echo t('helpPage','mngradgroupchecklist') ?>
 			<br/>
 		</div>
 		<br/>
@@ -117,22 +117,22 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
-		".$l['all']['Groupname']."</a>
+		".t('all','Groupname')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
-		".$l['all']['Attribute']."</a>
+		".t('all','Attribute')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=$orderTypeNextPage\">
-		".$l['all']['Operator']."</a>
+		".t('all','Operator')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=$orderTypeNextPage\">
-		".$l['all']['Value']."</a>
+		".t('all','Value')."</a>
 		</th>
 
 	</tr> </thread>";
@@ -142,7 +142,7 @@
 				<a class='tablenovisit' href='javascript:return;'
                                 onclick=\"javascript:__displayTooltip();\"
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]'>".$l['Tooltip']['EditGroup']."</a>
+                                        <a class='toolTip' href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]'>".t('Tooltip','EditGroup')."</a>
                                         <br/>\"
 				>$row[0]</td>
 			<td> $row[1] </td>

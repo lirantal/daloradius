@@ -42,13 +42,13 @@
 ?>	
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogssystem.php']; ?>
+		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','replogssystem.php'); ?>
                 :: <?php if (isset($systemLineCount)) { echo $systemLineCount . " Lines Count "; } ?>
                    <?php if (isset($systemFilter)) { echo " with filter set to " . $systemFilter; } ?>
 		<h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replogssystem'] ?>
+			<?php echo t('helpPage','replogssystem') ?>
 			<br/>
 		</div>
 		<br/>

@@ -42,39 +42,39 @@
 	<h3>Users Accounting</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b><?php echo $l['button']['UserAccounting'] ?></a>
+		<li><a href="javascript:document.acctusername.submit();"><b>&raquo;</b><?php echo t('button','UserAccounting') ?></a>
 			<form name="acctusername" action="acct-username.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameAcct" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?>'
 				value="<?php if (isset($accounting_username)) echo $accounting_username; ?>">
 			</form></li>
 
-		<li><a href="javascript:document.acctipaddress.submit();"><b>&raquo;</b><?php echo $l['button']['IPAccounting'] ?></a>
+		<li><a href="javascript:document.acctipaddress.submit();"><b>&raquo;</b><?php echo t('button','IPAccounting') ?></a>
 			<form name="acctipaddress" action="acct-ipaddress.php" method="get" class="sidebar">
 			<input name="ipaddress" type="text" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?>'
+                                tooltipText='<?php echo t('Tooltip','IPAddress'); ?>'
 				value="<?php if (isset($accounting_ipaddress)) echo $accounting_ipaddress; ?>">
 			</form></li>
 
-		<li><a href="javascript:document.acctnasipaddress.submit();"><b>&raquo;</b><?php echo $l['button']['NASIPAccounting'] ?></a>
+		<li><a href="javascript:document.acctnasipaddress.submit();"><b>&raquo;</b><?php echo t('button','NASIPAccounting') ?></a>
 			<form name="acctnasipaddress" action="acct-nasipaddress.php" method="get" class="sidebar">
 			<input name="nasipaddress" type="text" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?>'
+                                tooltipText='<?php echo t('Tooltip','IPAddress'); ?>'
 				value="<?php if (isset($accounting_nasipaddress)) echo $accounting_nasipaddress; ?>">
 			</form></li>
 
-		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
+		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo t('button','DateAccounting') ?></a>
 			<form name="acctdate" action="acct-date.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameDate" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?>'
 				value="<?php if (isset($accounting_date_username)) echo $accounting_date_username;  ?>">
 			<input name="startdate" type="text" id="startdate" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?>'
 				value="<?php if (isset($accounting_date_startdate)) echo $accounting_date_startdate;
 			else echo date("Y-m-01"); ?>">
 			
@@ -85,7 +85,7 @@
 
 			<input name="enddate" type="text" id="enddate" 
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?>'
 				value="<?php if (isset($accounting_date_enddate)){ echo $accounting_date_enddate;}
 				else { echo date("Y-m-t");} ?>">
 			<img src="library/js_date/calendar.gif" 
@@ -95,8 +95,8 @@
 
 			</form></li>
 
-		<li><a href="acct-all.php"><b>&raquo;</b><?php echo $l['button']['AllRecords'] ?></a></li>
-		<li><a href="acct-active.php"><b>&raquo;</b><?php echo $l['button']['ActiveRecords'] ?></a></li>
+		<li><a href="acct-all.php"><b>&raquo;</b><?php echo t('button','AllRecords') ?></a></li>
+		<li><a href="acct-active.php"><b>&raquo;</b><?php echo t('button','ActiveRecords') ?></a></li>
 
 	</ul>
 

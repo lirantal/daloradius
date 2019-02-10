@@ -169,11 +169,11 @@
 
 	<div id="contentnorightbar">
 	
-			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngimportusers.php'] ?>
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngimportusers.php') ?>
 			<h144>+</h144></a></h2>
 			
 			<div id="helpPage" style="display:none;visibility:visible" >
-				<?php echo $l['helpPage']['mngimportusers'] ?>
+				<?php echo t('helpPage','mngimportusers') ?>
 				<br/>
 			</div>
 			<?php
@@ -184,7 +184,7 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['ImportUsers']; ?> </h302>
+		<h302> <?php echo t('title','ImportUsers'); ?> </h302>
 		<br/>
 
 		<ul>
@@ -195,7 +195,7 @@
 		
 		
 		<li class='fieldset'>
-		<label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
+		<label for='passwordType' class='form'><?php echo t('all','PasswordType')?> </label>
 		<select class='form' tabindex=102 name='passwordType' >
 			<option value='Cleartext-Password'>Cleartext-Password</option>
 			<option value='User-Password'>User-Password</option>
@@ -207,7 +207,7 @@
 		</li>
 		
 		<li class='fieldset'>
-		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
+		<label for='group' class='form'><?php echo t('all','Group')?></label>
 		<?php   
 			include_once 'include/management/populate_selectbox.php';
 			populate_groups("Select Groups","groups[]");
@@ -221,7 +221,7 @@
 
 
 		<li class='fieldset'>
-		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+		<label for='planName' class='form'><?php echo t('all','PlanName') ?></label>
                 <?php
                        populate_plans("Select Plan","planName","form");
                 ?>
@@ -229,12 +229,12 @@
 		
 		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planNameTooltip'] ?>
+			<?php echo t('Tooltip','planNameTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='userType' class='form'><?php echo $l['all']['UserType'] ?></label>
+		<label for='userType' class='form'><?php echo t('all','UserType') ?></label>
 		<input type='checkbox' name='userType' value='userType' /> If users are MAC or PIN based authentication, check this box
 		</li>
 
@@ -244,7 +244,7 @@
 
 		
 		<li class='fieldset'>
-		<label for='csvdata' class='form'><?php echo $l['all']['CSVData'] ?></label>
+		<label for='csvdata' class='form'><?php echo t('all','CSVData') ?></label>
 		<textarea class='form_fileimport' name='csvdata' tabindex=101></textarea>
 		</li>
 
@@ -252,7 +252,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>

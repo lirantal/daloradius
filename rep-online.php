@@ -68,11 +68,11 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['reponline.php']; ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','reponline.php'); ?>
 				<h144>+</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['reponline']; ?>
+			<?php echo t('helpPage','reponline'); ?>
 			<br/>
 		</div>
 		<br/>
@@ -152,7 +152,7 @@
 
                                 <a class=\"table\" href=\"javascript:SetChecked(0,'clearSessionsUsers[]','usersonline')\">None</a>
                         <br/>
-                                <input class='button' type='button' value='".$l['button']['ClearSessions']."' onClick='javascript:removeCheckbox(\"usersonline\",\"mng-del.php\")' />
+                                <input class='button' type='button' value='".t('button','ClearSessions')."' onClick='javascript:removeCheckbox(\"usersonline\",\"mng-del.php\")' />
                                 <input class='button' type='button' value='CSV Export'
                                         onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
                                         />
@@ -175,37 +175,37 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']. "</a>
+		".t('all','Username'). "</a>
 		</th>
 
 		<th scope='col'>
-			".$l['all']['Name']."
+			".t('all','Name')."
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=framedipaddress&orderType=$orderTypeNextPage\">
-		".$l['all']['IPAddress']."</a>
+		".t('all','IPAddress')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=acctstarttime&orderType=$orderTypeNextPage\">
-		".$l['all']['StartTime']."</a>
+		".t('all','StartTime')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalTime']."</a>
+		".t('all','TotalTime')."</a>
 		</th>
 
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=NASshortname&orderType=$orderTypeNextPage\">
-			".$l['all']['HotSpot']." / 
-			".$l['all']['NasShortname']."
+			".t('all','HotSpot')." / 
+			".t('all','NasShortname')."
 		</th>
 
 		<th scope='col'>
-			".$l['all']['TotalTraffic']."
+			".t('all','TotalTraffic')."
 		</th>		
 		
 
@@ -236,10 +236,10 @@
 					onclick=\"javascript:__displayTooltip();\" 
 					tooltipText=\"
 						<a class='toolTip' href='mng-edit.php?username=$username'>".
-							$l['Tooltip']['UserEdit']."</a>
+							t('Tooltip','UserEdit')."</a>
 						&nbsp;
 						<a class='toolTip' href='config-maint-disconnect-user.php?username=$username&nasaddr=$nasip&customattributes=Acct-Session-Id=$acctsessionid,Framed-IP-Address=$ip'>".
-							$l['all']['Disconnect']."</a>
+							t('all','Disconnect')."</a>
 						<br/>\"
 					>$username</a>
 					</td>
@@ -248,7 +248,7 @@
 				<td> $start </td>
 				<td> $totalTime </td>
 				<td> $hotspot $nasshortname </td>
-				<td> ".$l['all']['Upload'].": $upload <br/> ".$l['all']['Download'].": $download <br/> ".$l['all']['TotalTraffic'].": <b>$traffic</b> </td>
+				<td> ".t('all','Upload').": $upload <br/> ".t('all','Download').": $download <br/> ".t('all','TotalTraffic').": <b>$traffic</b> </td>
 		</tr>";
 	}
 

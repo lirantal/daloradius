@@ -106,11 +106,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradippooldel.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradippooldel.php') ?>
 		:: <?php if (isset($poolname)) { echo $poolname; } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradippooldel'] ?>
+			<?php echo t('helpPage','mngradippooldel') ?>
 			<br/>
 		</div>
 <?php
@@ -122,21 +122,21 @@
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['IPPoolInfo'] ?> </h302>
+			<h302> <?php echo t('title','IPPoolInfo') ?> </h302>
 			<br/>
 
-			<label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
+			<label for='poolname' class='form'><?php echo t('all','PoolName') ?></label>
 			<input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
 			<br />
 
-			<label for='ipaddress' class='form'><?php echo $l['all']['IPAddress'] ?></label>
+			<label for='ipaddress' class='form'><?php echo t('all','IPAddress') ?></label>
 			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
 			<br />
 
 			<br/><br/>
 			<hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

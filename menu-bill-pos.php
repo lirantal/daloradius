@@ -24,7 +24,7 @@
 	<ul class="subnav">
 	
 		<li>
-		<a href="javascript:document.billposlist.submit();"><b>&raquo;</b><?php echo $l['button']['ListUsers'] ?></a>
+		<a href="javascript:document.billposlist.submit();"><b>&raquo;</b><?php echo t('button','ListUsers') ?></a>
 		<form name="billposlist" action="bill-pos-list.php" method="get" class="sidebar">
 		<br/>
 			<?php   
@@ -33,16 +33,16 @@
 			?>
 		</form>
 		</li>
-		<li><a href="bill-pos-new.php"><b>&raquo;</b><?php echo $l['button']['NewUser'] ?></a></li>
-		<li><a href="javascript:document.billposedit.submit();"><b>&raquo;</b><?php echo $l['button']['EditUser'] ?><a>
+		<li><a href="bill-pos-new.php"><b>&raquo;</b><?php echo t('button','NewUser') ?></a></li>
+		<li><a href="javascript:document.billposedit.submit();"><b>&raquo;</b><?php echo t('button','EditUser') ?><a>
 			<form name="billposedit" action="bill-pos-edit.php" method="get" class="sidebar">
 			<input name="username" type="text" id="usernameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
                                 value="<?php if (isset($edit_username)) echo $edit_username; ?>" tabindex=1>
 			</form></li>
 			
-		<li><a href="bill-pos-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveUsers'] ?></a></li>
+		<li><a href="bill-pos-del.php"><b>&raquo;</b><?php echo t('button','RemoveUsers') ?></a></li>
 		
 	</ul>
 	

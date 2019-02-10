@@ -46,7 +46,7 @@
 	$res = $dbSocket->query($sql);
 
 	if ($res->numRows() == 0) {
-		echo "<center> ".$l['messages']['nogroupdefinedforuser']." <br/></center>";
+		echo "<center> ".t('messages','nogroupdefinedforuser')." <br/></center>";
 	} else {
 
 		$counter = 0;
@@ -56,7 +56,7 @@
 			echo "
 
 				<li class='fieldset'>
-				<label for='group' class='form'>".$l['all'][$groupTerminology]." #".($counter+1)."</label>
+				<label for='group' class='form'>".t('all')[$groupTerminology]." #".($counter+1)."</label>
 				<select name='groups[]' id='usergroup$counter' tabindex=105 class='form' >
 					<option value='$row[0]'>$row[0]</option>
 					<option value=''></option>
@@ -64,7 +64,7 @@
 				</select>
 
 				<br/>
-				<label for='groupPriority' class='form'>".$l['all'][$groupTerminologyPriority]."</label>
+				<label for='groupPriority' class='form'>".t('all')[$groupTerminologyPriority]."</label>
 				<input class='integer' value='$row[1]' name='groups_priority[]' id='group_priority$counter' >
 				<img src=\"images/icons/bullet_arrow_up.png\" alt=\"+\" 
 					onclick=\"javascript:changeInteger('group_priority$counter','increment')\" />

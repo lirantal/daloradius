@@ -112,11 +112,11 @@
 ?>		
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymenttypesedit.php'] ?>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','paymenttypesedit.php') ?>
 		:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['paymenttypesedit'] ?>
+			<?php echo t('helpPage','paymenttypesedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -127,23 +127,23 @@
 
 <div class="tabber">
 
-	<div class="tabbertab" title="<?php echo $l['title']['PayTypeInfo']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','PayTypeInfo'); ?>">
 
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['PayTypeInfo']; ?> </h302>
+		<h302> <?php echo t('title','PayTypeInfo'); ?> </h302>
 		<br/>
 
 		<ul>
 
 			<li class='fieldset'>
-			<label for='paymentname' class='form'><?php echo $l['all']['PayTypeName'] ?></label>
+			<label for='paymentname' class='form'><?php echo t('all','PayTypeName') ?></label>
 			<input disabled name='paymentname' type='text' id='paymentname' value='<?php echo $paymentname ?>' tabindex=100 />
 			</li>
 
 			<li class='fieldset'>
-			<label for='paymentnotes' class='form'><?php echo $l['all']['PayTypeNotes'] ?></label>
+			<label for='paymentnotes' class='form'><?php echo t('all','PayTypeNotes') ?></label>
 
 	                <input class='text' name='paymentnotes' type='text' id='paymentnotes' value='<?php echo $paymentnotes ?>' tabindex=101 />
 
@@ -152,7 +152,7 @@
 			<li class='fieldset'>
 			<br/>
 			<hr><br/>
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
 				class='button' />
 			</li>
 
@@ -164,7 +164,7 @@
 
 </div>
 
-<div class="tabbertab" title="<?php echo $l['title']['Optional']; ?>">
+<div class="tabbertab" title="<?php echo t('title','Optional'); ?>">
 
 <fieldset>
 
@@ -176,19 +176,19 @@
         <br/>
 
         <br/>
-        <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
+        <label for='creationdate' class='form'><?php echo t('all','CreationDate') ?></label>
         <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
         <br/>
 
-        <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
+        <label for='creationby' class='form'><?php echo t('all','CreationBy') ?></label>
         <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
         <br/>
 
-        <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
+        <label for='updatedate' class='form'><?php echo t('all','UpdateDate') ?></label>
         <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
         <br/>
 
-        <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
+        <label for='updateby' class='form'><?php echo t('all','UpdateBy') ?></label>
         <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
         <br/>
 
@@ -196,7 +196,7 @@
         <br/><br/>
         <hr><br/>
 
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
                 class='button' />
 
 </fieldset>

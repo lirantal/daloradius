@@ -41,7 +41,7 @@
 	<h3>Hotspots Accounting</h3>
 	<ul class="subnav">
 
-		<li><a href="javascript:document.accthotspot.submit();"><b>&raquo;</b><?php echo $l['button']['HotspotAccounting'] ?><a>
+		<li><a href="javascript:document.accthotspot.submit();"><b>&raquo;</b><?php echo t('button','HotspotAccounting') ?><a>
 			<form name="accthotspot" action="acct-hotspot-accounting.php" method="post" class="sidebar">
 				<select name="hotspot" size="3">
 <?php
@@ -66,7 +66,7 @@
 				</select>
 				</form></li>
 			
-				<li><a href="acct-hotspot-compare.php"><b>&raquo;</b><?php echo $l['button']['HotspotsComparison'] ?>
+				<li><a href="acct-hotspot-compare.php"><b>&raquo;</b><?php echo t('button','HotspotsComparison') ?>
 					</a></li>
 			</ul>
 			

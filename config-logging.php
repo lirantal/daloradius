@@ -64,10 +64,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configlogging.php'] ?>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configlogging.php') ?>
 				<h144>+</h144></a></h2>
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configlogging'] ?>
+					<?php echo t('helpPage','configlogging') ?>
 					<br/>
 				</div>
                 <?php
@@ -79,13 +79,13 @@
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['Settings']; ?> </h302>
+                <h302> <?php echo t('title','Settings'); ?> </h302>
 		<br/>
 
                 <ul>
 
                 <li class='fieldset'>
-                <label for='config_pageslogging' class='form'><?php echo $l['all']['PagesLogging'] ?></label>
+                <label for='config_pageslogging' class='form'><?php echo t('all','PagesLogging') ?></label>
 		<select class='form' name="config_pageslogging">
 			<option value="<?php echo $configValues['CONFIG_LOG_PAGES'] ?>"> <?php echo $configValues['CONFIG_LOG_PAGES'] ?> </option>
 			<option value="">  </option>
@@ -95,7 +95,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_querieslogging' class='form'><?php echo $l['all']['QueriesLogging'] ?></label>
+                <label for='config_querieslogging' class='form'><?php echo t('all','QueriesLogging') ?></label>
 		<select class='form' name="config_querieslogging">
 			<option value="<?php echo $configValues['CONFIG_LOG_QUERIES'] ?>"> <?php echo $configValues['CONFIG_LOG_QUERIES'] ?> </option>
 			<option value="">  </option>
@@ -105,7 +105,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_actionslogging' class='form'><?php echo $l['all']['ActionsLogging'] ?></label>
+                <label for='config_actionslogging' class='form'><?php echo t('all','ActionsLogging') ?></label>
 		<select class='form' name="config_actionslogging">
 			<option value="<?php echo $configValues['CONFIG_LOG_ACTIONS'] ?>"> <?php echo $configValues['CONFIG_LOG_ACTIONS'] ?> </option>
 			<option value="">  </option>
@@ -115,7 +115,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_debuglogging' class='form'><?php echo $l['all']['LoggingDebugInfo'] ?></label>
+                <label for='config_debuglogging' class='form'><?php echo t('all','LoggingDebugInfo') ?></label>
 		<select class='form' name="config_debuglogging">
 			<option value="<?php echo $configValues['CONFIG_DEBUG_SQL'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL'] ?> </option>
 			<option value="">  </option>
@@ -125,7 +125,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_debugpageslogging' class='form'><?php echo $l['all']['LoggingDebugOnPages'] ?></label>
+                <label for='config_debugpageslogging' class='form'><?php echo t('all','LoggingDebugOnPages') ?></label>
 		<select class='form' name="config_debugpageslogging">
 			<option value="<?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?>"> <?php echo $configValues['CONFIG_DEBUG_SQL_ONPAGE'] ?> </option>
 			<option value="">  </option>
@@ -135,7 +135,7 @@
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_filenamelogging' class='form'><?php echo $l['all']['FilenameLogging'] ?></label>
+                <label for='config_filenamelogging' class='form'><?php echo t('all','FilenameLogging') ?></label>
 		<input value="<?php echo $configValues['CONFIG_LOG_FILE'] ?>" name="config_filenamelogging" />
 		</li>
 
@@ -143,7 +143,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
                 </ul>

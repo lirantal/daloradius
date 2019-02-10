@@ -30,7 +30,7 @@
                                 <h3>Track Rates</h3>
 	<ul class="subnav">
 
-                <li><a href="javascript:document.billrates.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?></a>
+                <li><a href="javascript:document.billrates.submit();"><b>&raquo;</b><?php echo t('button','DateAccounting') ?></a>
                         <form name="billrates" action="bill-rates-date.php" method="get" class="sidebar">
 			<select name="ratename" size="1">
 				<option value="<?php if (isset($billing_date_ratename)) echo $billing_date_ratename; else echo ""; ?>">
@@ -50,11 +50,11 @@
 
                         <input name="username" type="text" id="username" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
                                 value="<?php if (isset($billing_date_username)) echo $billing_date_username; ?>">
                         <input name="startdate" type="text" id="startdate"
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
                                 value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
                         else echo date("Y-m-01"); ?>">
 
@@ -65,7 +65,7 @@
 
                         <input name="enddate" type="text" id="enddate"
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
                                 value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
                                 else echo date("Y-m-t"); ?>">
 
@@ -81,16 +81,16 @@
                                 <h3>Rates Management</h3>
                                 <ul class="subnav">
 
-                                                <li><a href="bill-rates-list.php"><b>&raquo;</b><?php echo $l['button']['ListRates'] ?></a></li>
-                                                <li><a href="bill-rates-new.php"><b>&raquo;</b><?php echo $l['button']['NewRate'] ?></a></li>
-                                                <li><a href="javascript:document.billratesedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditRate'] ?></a>
+                                                <li><a href="bill-rates-list.php"><b>&raquo;</b><?php echo t('button','ListRates') ?></a></li>
+                                                <li><a href="bill-rates-new.php"><b>&raquo;</b><?php echo t('button','NewRate') ?></a></li>
+                                                <li><a href="javascript:document.billratesedit.submit();""><b>&raquo;</b><?php echo t('button','EditRate') ?></a>
                                                         <form name="billratesedit" action="bill-rates-edit.php" method="get" class="sidebar">
                                                         <input name="ratename" type="text" id="ratename" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
                                 onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['RateName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','RateName'); ?> <br/>'
 								value="<?php if (isset($edit_rateName)) echo $edit_rateName; ?>" tabindex=3>
                                                         </form></li>
-                                                <li><a href="bill-rates-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveRate'] ?></a></li>
+                                                <li><a href="bill-rates-del.php"><b>&raquo;</b><?php echo t('button','RemoveRate') ?></a></li>
                                 </ul>
 
                                 <br/><br/>

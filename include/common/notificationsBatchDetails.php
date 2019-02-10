@@ -119,43 +119,43 @@
 
 		$batch_details .= "<table $tableTags><tr $tableTrTags>
 					<td>
-			".$l['all']['BatchName']."
+			".t('all','BatchName')."
 			</td>
 
 			<td>
-			".$l['all']['HotSpot']."
+			".t('all','HotSpot')."
 			</td>
 
 			<td>
-			".$l['all']['BatchStatus']."
+			".t('all','BatchStatus')."
 			</td>
 
 			<td>
-			".$l['all']['TotalUsers']."
+			".t('all','TotalUsers')."
 			</td>
 
 			<td>
-			".$l['all']['ActiveUsers']."
+			".t('all','ActiveUsers')."
 			</td>
 
 			<td>
-			".$l['all']['PlanName']."
+			".t('all','PlanName')."
 			</td>
 
 			<td>
-			".$l['all']['PlanCost']."
+			".t('all','PlanCost')."
 			</td>
 
 			<td>
-			".$l['all']['BatchCost']."
+			".t('all','BatchCost')."
 			</td>
 
 			<td>
-			".$l['all']['CreationDate']."
+			".t('all','CreationDate')."
 			</td>
 
 			<td>
-			".$l['all']['CreationBy']."
+			".t('all','CreationBy')."
 			</td>
 
 			</tr>";
@@ -311,15 +311,15 @@
 
 		$batch_active_users = "<table $tableTags><tr $tableTrTags'>
 			<td>
-			".$l['all']['BatchName']."
+			".t('all','BatchName')."
 			</td>
 
 			<td>
-			".$l['all']['Username']."
+			".t('all','Username')."
 			</td>
 
 			<td>
-			".$l['all']['StartTime']."
+			".t('all','StartTime')."
 			</td>
 
 			</tr>";

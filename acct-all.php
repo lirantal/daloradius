@@ -44,11 +44,11 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctall.php']?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctall.php')?>
 		<h144>+</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['acctall'] ?>
+			<?php echo t('helpPage','acctall') ?>
 			<br/>
 		</div>
 		<br/>
@@ -111,57 +111,57 @@
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=radacctid&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=$orderTypeNextPage\">
-		".$l['all']['HotSpot']."</a>
+		".t('all','HotSpot')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=$orderTypeNextPage\">
-		".$l['all']['IPAddress']."</a>
+		".t('all','IPAddress')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstarttime&orderType=$orderTypeNextPage\">
-		".$l['all']['StartTime']."</a>
+		".t('all','StartTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstoptime&orderType=$orderTypeNextPage\">
-		".$l['all']['StopTime']."</a>
+		".t('all','StopTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalTime']."</a>
+		".t('all','TotalTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctinputoctets&orderType=$orderTypeNextPage\">
-		".$l['all']['Upload']." (".$l['all']['Bytes'].")</a>
+		".t('all','Upload')." (".t('all','Bytes').")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctoutputoctets&orderType=$orderTypeNextPage\">
-		".$l['all']['Download']." (".$l['all']['Bytes'].")</a>
+		".t('all','Download')." (".t('all','Bytes').")</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctterminatecause&orderType=$orderTypeNextPage\">
-		".$l['all']['Termination']."</a>
+		".t('all','Termination')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderTypeNextPage\">
-		".$l['all']['NASIPAddress']."</a>
+		".t('all','NASIPAddress')."</a>
 		</th>
 		</tr> </thread>";
 	
@@ -175,10 +175,10 @@
                                         javascript:__displayTooltip();'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
-						{$l['Tooltip']['HotspotEdit']}</a>
+						{t('Tooltip','HotspotEdit')}</a>
 					&nbsp;
                                         <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
-	                                        {$l['all']['Compare']}</a>
+	                                        {t('all','Compare')}</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerHotspotInfo\">
@@ -194,7 +194,7 @@
                                         javascript:__displayTooltip();'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
-	                                        {$l['Tooltip']['UserEdit']}</a>
+	                                        {t('Tooltip','UserEdit')}</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerUserInfo\">

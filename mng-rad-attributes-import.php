@@ -161,11 +161,11 @@
 
 	<div id="contentnorightbar">
 
-			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesimport.php'] ?>
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradattributesimport.php') ?>
 			<h144>+</h144></a></h2>
 
 			<div id="helpPage" style="display:none;visibility:visible" >
-				<?php echo $l['helpPage']['mngradattributesimport'] ?>
+				<?php echo t('helpPage','mngradattributesimport') ?>
 				<br/>
 			</div>
 			<?php
@@ -176,24 +176,24 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['VendorAttribute']; ?> </h302>
+		<h302> <?php echo t('title','VendorAttribute'); ?> </h302>
 		<br/>
 
 		<ul>
 
 		<li class='fieldset'>
-		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
+		<label for='vendor' class='form'><?php echo t('all','VendorName') ?></label>
 		<input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
 
 		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['vendorNameTooltip'] ?>
+			<?php echo t('Tooltip','vendorNameTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='dictionary' class='form'><?php echo $l['all']['Dictionary'] ?></label>
+		<label for='dictionary' class='form'><?php echo t('all','Dictionary') ?></label>
 		<textarea class='form_fileimport' name='dictionary' tabindex=102></textarea>
 		</li>
 
@@ -201,7 +201,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>

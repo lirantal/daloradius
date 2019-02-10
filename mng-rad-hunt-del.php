@@ -124,11 +124,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradhuntdel.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradhuntdel.php') ?>
 		:: <?php if (isset($nasipaddress)) { echo $nasipaddress; } ?><h144>+</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradhuntdel'] ?>
+			<?php echo t('helpPage','mngradhuntdel') ?>
 			<br/>
 		</div>
 		<?php
@@ -140,21 +140,21 @@
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['HGInfo'] ?> </h302>
+			<h302> <?php echo t('title','HGInfo') ?> </h302>
 			<br/>
 
-			<label for='nasipaddress' class='form'><?php echo $l['all']['HgIPHost'] ?></label>
+			<label for='nasipaddress' class='form'><?php echo t('all','HgIPHost') ?></label>
 			<input name='nasipaddress' type='text' id='nasipaddress' value='' tabindex=100 />
 			<br />
 
-                        <label for='nasportid' class='form'><?php echo $l['all']['HgPortId'] ?></label>
+                        <label for='nasportid' class='form'><?php echo t('all','HgPortId') ?></label>
                         <input name='nasportid' type='text' id='nasportid' value='<?php echo $nasportid ?>' tabindex=101 />
                         <br/>
 
 			<br/><br/>
 			<hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

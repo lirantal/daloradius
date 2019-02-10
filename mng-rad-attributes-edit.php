@@ -122,11 +122,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradattributesedit.php'] ?>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradattributesedit.php') ?>
 		:: <?php if (isset($vendor)) { echo $vendor; } ?><h144>+</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradattributesedit'] ?>
+			<?php echo t('helpPage','mngradattributesedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -137,7 +137,7 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['VendorAttribute']; ?> </h302>
+		<h302> <?php echo t('title','VendorAttribute'); ?> </h302>
 		<br/>
 
 		<ul>
@@ -145,31 +145,31 @@
 		<input type='hidden' name='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' />
 
 		<li class='fieldset'>
-		<label for='vendor' class='form'><?php echo $l['all']['VendorName'] ?></label>
+		<label for='vendor' class='form'><?php echo t('all','VendorName') ?></label>
 		<input disabled name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
 		
 		<div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['vendorNameTooltip'] ?>
+			<?php echo t('Tooltip','vendorNameTooltip') ?>
 		</div>
 		</li>
 
 		<input type='hidden' name='attributeOld' value='<?php if (isset($attribute)) echo $attribute ?>' />
 
 		<li class='fieldset'>
-		<label for='attribute' class='form'><?php echo $l['all']['Attribute'] ?></label>
+		<label for='attribute' class='form'><?php echo t('all','Attribute') ?></label>
 		<input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('attributeTooltip')" />
 		
 		<div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['attributeTooltip'] ?>
+			<?php echo t('Tooltip','attributeTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='type' class='form'><?php echo $l['all']['Type'] ?></label>
+		<label for='type' class='form'><?php echo t('all','Type') ?></label>
 		<select name='type' type='text' id='type' class='form' tabindex=102 />
 		<option value='<?php echo $type; ?>'><?php echo $type; ?></option>
 		<?php
@@ -181,12 +181,12 @@
 		
 		<div id='typeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['typeTooltip'] ?>
+			<?php echo t('Tooltip','typeTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='RecommendedOP' class='form'><?php echo $l['all']['RecommendedOP'] ?></label>
+		<label for='RecommendedOP' class='form'><?php echo t('all','RecommendedOP') ?></label>
 		<select name='RecommendedOP' type='text' id='RecommendedOP' class='form' tabindex=103 />
 		<option value='<?php echo $RecommendedOP; ?>'><?php echo $RecommendedOP; ?></option>
 		<?php
@@ -198,12 +198,12 @@
 		
 		<div id='RecommendedOPTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['RecommendedOPTooltip'] ?>
+			<?php echo t('Tooltip','RecommendedOPTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='RecommendedTable' class='form'><?php echo $l['all']['RecommendedTable'] ?></label>
+		<label for='RecommendedTable' class='form'><?php echo t('all','RecommendedTable') ?></label>
 		<select name='RecommendedTable' type='text' id='RecommendedTable' class='form' tabindex=104 />
 		<option value='<?php echo $RecommendedTable; ?>'><?php echo $RecommendedTable; ?></option>
 		<?php
@@ -215,24 +215,24 @@
 		
 		<div id='RecommendedTableTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['RecommendedTableTooltip'] ?>
+			<?php echo t('Tooltip','RecommendedTableTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='RecommendedTooltip' class='form'><?php echo $l['all']['RecommendedTooltip'] ?></label>
+		<label for='RecommendedTooltip' class='form'><?php echo t('all','RecommendedTooltip') ?></label>
 		<textarea class='form' name='RecommendedTooltip' type='text' id='RecommendedTooltip' tabindex=105 /><?php if (isset($RecommendedTooltip)) echo $RecommendedTooltip ?></textarea>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('RecommendedTooltipTooltip')" />
 		
 		<div id='RecommendedTooltipTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['RecommendedTooltipTooltip'] ?>
+			<?php echo t('Tooltip','RecommendedTooltipTooltip') ?>
 		</div>
 		</li>
 
 
 		<li class='fieldset'>
-		<label for='RecommendedHelper' class='form'><?php echo $l['all']['RecommendedHelper'] ?></label>
+		<label for='RecommendedHelper' class='form'><?php echo t('all','RecommendedHelper') ?></label>
 		<select name='RecommendedHelper' type='text' id='RecommendedHelper' class='form' tabindex=104 />
 		<option value='<?php echo $RecommendedHelper; ?>'><?php echo $RecommendedHelper; ?></option>
 		<?php
@@ -244,14 +244,14 @@
 		
 		<div id='RecommendedHelperTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['RecommendedHelperTooltip'] ?>
+			<?php echo t('Tooltip','RecommendedHelperTooltip') ?>
 		</div>
 		</li>
 	
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>
