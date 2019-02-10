@@ -208,10 +208,10 @@
                                 onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
-                                                {t('Tooltip','HotspotEdit')}</a>
+                                                ".t('Tooltip','HotspotEdit')."</a>
                                         &nbsp;
                                         <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
-                                                {t('all','Compare')}</a>
+                                                ".t('all','Compare')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerHotspotInfo\">
@@ -225,7 +225,7 @@
                                 onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
-	                                        {t('Tooltip','UserEdit')}</a>
+	                                        ".t('Tooltip','UserEdit')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerUserInfo\">
