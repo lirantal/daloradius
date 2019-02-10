@@ -67,6 +67,7 @@ if (isset($configValues['CONFIG_LOG_FILE'])) {
 				// 		$counter--;
 				// 	}
 				// }
+			}
 		}
 	}
 }
