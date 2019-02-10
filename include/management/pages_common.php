@@ -336,19 +336,20 @@ function getPrevBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
  */
 function addToolTipBalloon($view) {
 	
-	
 	if ($view['divId'])
 		$viewId = '<div id="'.$view['divId'].'">Loading...</div>';
 	else
 		$viewId = '';
-		
-	$str = "<a class='tablenovisit' href='javascript:return;'
+	
+	$sep = ($view['onClick'] != '' && substr($view['onClick'], -1) != ';' ? ';' : '');
+	
+	$str = "<a class='tablenovisit' href='#'
+				onClick=\"".$view['onClick'].$sep."return false;\"
                 tooltipText='".$view['content']."
 							<br/><br/>
 							$viewId
 							<br/>'
 			>".$view['value']."</a>";
-
 
 	return $str;
 }
