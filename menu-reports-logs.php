@@ -150,8 +150,8 @@ include_once ("lang/main.php");
 
 	
 	<br/><br/>
-	<h2>Search</h2>
-	<input name="" type="text" value="Search" />
+	
+	
 	
 
 </div>

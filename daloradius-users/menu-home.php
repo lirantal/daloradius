@@ -68,8 +68,8 @@
 	</p>
 
 
-	<h2>Search</h2>
+	
 
-	<input name="" type="text" value="Search" />
+	
 
 </div>
