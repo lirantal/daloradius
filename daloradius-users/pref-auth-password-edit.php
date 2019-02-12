@@ -155,7 +155,7 @@ function verifyPassword(passwordStr1, passwordStr2) {
 	<div id="contentnorightbar">
 
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','prefpasswordedit.php') ?>
-		:: <?php if (isset($login)) { echo $login; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($login)) { echo $login; } ?><h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo t('helpPage','prefpasswordedit') ?>

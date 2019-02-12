@@ -819,9 +819,10 @@ h109 {
 
 /* the <h144> header tag is used to display the ? char for page's helpPage information */
 h144 {
-	font-weight: bold;
-	font:35% Verdana;
-	color:#FF0000;
+	font-family: Verdana,sans-serif;
+	font-size: 0.75em;
+    color:#000000;
+	border-left: 1px dotted #000000;
 }
 
 /* used in language files to highlight sections */

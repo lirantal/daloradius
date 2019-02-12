@@ -93,7 +93,7 @@
 <div id="contentnorightbar">
 
 	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','paymenttypesdel.php') ?>
-	:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>+</h144></a></h2>
+	:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>&#x2754;</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo t('helpPage','paymenttypesdel') ?>
 		<br/>
