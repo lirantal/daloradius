@@ -215,8 +215,13 @@ grant or revoke them of permissions to access different pages.
 
 
 
+# Requirements
 
-
+ * PEAR packages Mail and Mail_Mime to send notifications by email. To install them, execute at the command line:
+   ```
+   pear install -a Mail
+   pear install -a Mail_Mime
+   ```
 
 
 
@@ -230,6 +235,7 @@ grant or revoke them of permissions to access different pages.
  * icons collection - Mark James of famfamfam.com icons <mjames@gmail.com>
  * ajax auto complete - Batur Orkun <batur@bilkent.edu.tr>
  * dhtml-Suite - Magne Kalleland <post@dhtmlgoodies.com>
+ * dompdf - [https://github.com/dompdf](https://github.com/dompdf)
 
 
 
