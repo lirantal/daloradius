@@ -1,7 +1,11 @@
                 <div id="header">
 
                                 <form action="mng-search.php">
-                                <input name="username" value="Search" />
+									<input name="username"
+										value=""
+										placeholder="<?php echo t('button','SearchUsers') ?>"
+										title="<?php echo t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard'); ?>"
+									/>
                                 </form>
 
                                 <h1><a href="index.php"> <img src="images/daloradius_small.png" border=0/></a></h1>
