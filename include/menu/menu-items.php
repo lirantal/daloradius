@@ -1,4 +1,10 @@
                 <div id="header">
+				
+								<span id="login_data">
+									Welcome, <b><?php echo $operator; ?></b>. <a href="logout.php" title="Logout">&#x274E;</a>
+									<br>
+									Location: <b><?php echo $_SESSION['location_name'] ?></b>.
+								</span>
 
                                 <form action="mng-search.php">
 									<input name="username"
@@ -7,14 +13,20 @@
 										title="<?php echo t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard'); ?>"
 									/>
                                 </form>
+								
+								<span id="sep">
+									&nbsp;
+									<br>
+									&nbsp;
+								</span>
 
                                 <h1><a href="index.php"> <img src="images/daloradius_small.png" border=0/></a></h1>
 
                                 <h2>
                                 
                                 <?php echo t('all','copyright1'); ?>
-                                
-				                                </h2>
+            
+				                </h2>
 
                                 <ul id="nav">
 				<a name='top'></a>

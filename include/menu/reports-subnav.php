@@ -7,12 +7,6 @@
 												<li><a href="rep-batch.php"><em>B</em>atch Users</a></li>
 												<li><a href="rep-hb.php"><em>D</em>ashboard</a></li>
 
-<div id="logindiv" style="text-align: right;">
-                                                <li>Location: <b><?php echo $_SESSION['location_name'] ?></b></li><br/>
-                                                <li>Welcome, <?php echo $operator; ?></li>
-
-                                                <li><a href="logout.php">[logout]</a></li>
-
                                 </ul>
 								
                 </div>
