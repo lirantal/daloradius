@@ -790,7 +790,7 @@ h144 {
 	font-family: Verdana,sans-serif;
 	font-size: 0.75em;
     color:#000000;
-	border-left: 1px dotted #000000;
+	border-left: 1px solid #ccc;
 }
 
 /* used in language files to highlight sections */
