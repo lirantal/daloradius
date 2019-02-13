@@ -1,5 +1,5 @@
 body {
-	font: 78.5%/1.6em "Lucida Grande", "Lucida Sans Unicode", verdana, geneva, sans-serif;
+	font: 1em sans-serif;
 	word-spacing:2px;
 	color:#444;
 	margin:20px;
@@ -37,7 +37,7 @@ body {
 	padding:5px;
 	background:#fff;
 	border:2px solid #f6f6f6;
-	font:110% Arial;
+	font:110% sans-serif;
 	color:#999;
 }
 
@@ -51,18 +51,17 @@ body {
 }
 
 #header form {
-	padding:27px 25px 20px 25px;
+	padding:27px 25px 20px 10px;
 	float:right;
-	background:#fff;
+	/*background:#fff;*/
 	width:160px;
 	margin:-20px -20px 0 0 !important;
-	margin:-20px -10px 0 0;
 	border:none;
 }
 
 #header h1 {
 	float:left;
-	font:250% Arial;
+	font:250% sans-serif;
 	color:#333;
 	padding:5px 20px 5px 5px;
 	border-right:1px solid #ccc;
@@ -81,7 +80,7 @@ body {
 }
 
 #header h2 {
-	font:150% Arial;
+	font:1.25em sans-serif;
 	color:#666;
 	padding:16px 0 0 0;
 	border:none;
@@ -95,6 +94,25 @@ body {
 
 #header h2 a:hover {
 	border-bottom:2px solid #79B5D6;
+}
+
+#header #login_data {
+	float:right;
+	margin:0 0 0 0;
+	padding: 0 0 0 20px;
+}
+
+#header #login_data a {
+	color:#f00;
+	text-decoration:none;
+}
+
+#header #sep {
+	float:right;
+	border-right:1px solid #ccc;
+	margin:0 0 0 0;
+	padding: 0 0 0 0;
+	font-size: 46px;
 }
 
 #header #nav {
@@ -115,7 +133,7 @@ body {
 
 #header #nav a {
 	color:#fff;
-	font:140% Trebuchet MS;
+	font:140% sans-serif;
 	text-decoration:none;
 	padding:10px;
 }
@@ -136,8 +154,8 @@ body {
 
 #header #subnav {
 	background:#4F9EC9;
-	padding:5px 7px 7px 7px;
-	font:90% Verdana;
+	padding:5px 7px 7px 25px;
+	font:90% sans-serif;
 	color:#DEEDF5;
 	border-bottom:2px solid #388CBA;
 	border-left:2px solid #388CBA;
@@ -152,7 +170,7 @@ body {
 #header #subnav a {
 	color:#DEEDF5;
 	text-decoration:none;
-	font:100% Verdana;
+	font:100% sans-serif;
 	padding:5px;
 	border-bottom:2px solid #4F9EC9;
 }
@@ -179,7 +197,7 @@ body {
 }
 
 #sidebar h2 {
-	font:160% Arial;
+	font:160% sans-serif;
 	color:#999;
 	margin:10px 0 10px 0;
 	background:url(../images/sidebarh2.jpg) right no-repeat;
@@ -187,8 +205,8 @@ body {
 }
 
 #sidebar h3 {
-        color:#FF8040;
-	font:90% Verdana;
+    color:#FF8040;
+	font:90% sans-serif;
 	font-weight:bold;
 	letter-spacing:2px;
 }
@@ -205,7 +223,7 @@ body {
 	color:#ccc;
 	display:block;
 	text-align:right;
-	font:80% Verdana;
+	font:80% sans-serif;
 	text-transform:uppercase;
 	letter-spacing:1px;
 	text-decoration:none;
@@ -251,7 +269,7 @@ body {
 	background:#2c2c2c;
 	border:1px solid #222222;
 	color:#FFFFFF;
-	font:90% Verdana;
+	font:90% sans-serif;
 	width:190px;
 }
 
@@ -259,8 +277,8 @@ body {
 	background:#2c2c2c;
 	border:1px solid #222222;
 	color:#FFFFFF;
-        font:90% Verdana;
-        width:160px;
+	font:90% sans-serif;
+	width:160px;
 }	
 
 #sidebar select.generic {
@@ -268,8 +286,8 @@ body {
 	background:#2c2c2c;
 	border:1px solid #222222;
 	color:#FFFFFF;
-        font:90% Verdana;
-        width:200px;
+	font:90% sans-serif;
+	width:200px;
 }	
 
 #sidebar input[type='checkbox'] {
@@ -277,7 +295,7 @@ body {
         padding:4px;
         border:1;
         border-bottom:1px dotted #ccc;
-        font:90% Verdana;
+        font:90% sans-serif;
         color:#777;
 }
 
@@ -289,14 +307,14 @@ body {
 }
 
 #sidebarright p {
-	font:90% Verdana;
+	font:90% sans-serif;
 	color:#777;
 	line-height:20px;
 	margin:10px 0;
 }
 
 #sidebarright h2 {
-	font:140% Arial;
+	font:140% sans-serif;
 	color:#333;
 	margin:10px 0;
 	border:none;
@@ -304,7 +322,7 @@ body {
 
 #sidebarright ul {
 	margin:10px 0 10px 15px;
-	font:90% Verdana;
+	font:90% sans-serif;
 }
 
 #sidebarright ul li {
@@ -343,7 +361,7 @@ body {
 
 #contentnorightbar {
 	margin:0 0 0 240px;
-	background:url(../images/content.jpg) top left no-repeat;
+	/*background:url(../images/content.jpg) top left no-repeat;*/
 	padding:20px 0 0 20px;
 }
 
@@ -353,7 +371,7 @@ p {
 }
 
 h2 {
-	font:190% Arial;
+	font:190% sans-serif;
 	color:#79B933;
 	border-bottom:2px solid #f6f6f6;
 }
@@ -392,7 +410,7 @@ a:hover {
 }
 
 h3 {
-	font:140% Trebuchet MS;
+	font:140% sans-serif;
 	margin:10px 0;
 }
 
@@ -415,14 +433,14 @@ li.fieldset {
 }
 
 #contentnorightbar h9 {
-        font:150% Arial;
+        font:150% sans-serif;
         color:#0066CC;
         padding:16px 0 0 0;
         border:none;
 }
 
 #contentnorightbar h8 {
-        font:150% Arial;
+        font:150% sans-serif;
         color:#FF0000;
         padding:16px 0 0 0;
         border:none;
@@ -430,7 +448,7 @@ li.fieldset {
 
 
 #contentnorightbar h7 {
-        font:150% Arial;
+        font:150% sans-serif;
         color:#666;
         padding:16px 0 0 0;
         border:none;
@@ -462,7 +480,7 @@ form fieldset{
 	border-style:solid;
 	border-color:#cee574;
 	
-	font-family:Arial, Helvetica, sans-serif;
+	font-family:sans-serif;
 	font-size:12px;
 		
 	width:95%;
@@ -525,7 +543,7 @@ input {
 	width:180px;
 	padding:1px;
 	border:1;
-	font:100% Verdana;
+	font:100% sans-serif;
 	color:#000000;
 	margin: 2px;
 }
@@ -535,7 +553,7 @@ input.sidebutton {
 	width:180px;
 	padding:1px;
 	border:1;
-	font:100% Verdana;
+	font:100% sans-serif;
 	color:#000000;
 	margin: 2px;
 }
@@ -554,7 +572,7 @@ input.button {
 	background-color: #ffffff;
 	border:1px solid #777;
 	padding:0px;
-	font:90% Verdana;
+	font:90% sans-serif;
 	color:#000000;
 	margin-top: 5px;
 }
@@ -596,7 +614,7 @@ select.form {
 	height:22px;
 	padding:1px;
 	border:1;
-	font:100% Verdana;
+	font:100% sans-serif;
 	color:#000000;
 	margin: 2px;
 }
@@ -606,14 +624,14 @@ select.long {
 	height:20px;
 	padding:1px;
 	border:1;
-	font:100% Verdana;
+	font:100% sans-serif;
 	color:#000000;
 	margin: 2px;
 }
 
 
 div.ToolTip {
-	font:88% Verdana;
+	font:88% sans-serif;
 	padding-top: 1px;
 	padding-bottom: 1px;
 	float:left;
@@ -625,7 +643,7 @@ div.ToolTip {
 
 
 div.ToolTip2 {
-	font:88% Verdana;
+	font:88% sans-serif;
 	padding-top: 1px;
 	padding-bottom: 1px;
 	color:#646729;
@@ -642,7 +660,7 @@ textarea.form {
 	margin:2px;
 	background:#ffffff;
 	color:#000000;
-	font:90% Verdana;
+	font:90% sans-serif;
 	width:175px;
 	height:60px;
 }
@@ -652,7 +670,7 @@ textarea.form_fileimport {
 	margin:2px;
 	background:#ffffff;
 	color:#000000;
-	font:90% Verdana;
+	font:90% sans-serif;
 	width:575px;
 	height:400px;
 }
@@ -664,14 +682,14 @@ p img {
 
 a.helper {
 	color: green;
-        font: 9px "Trebuchet MS",Verdana;
+        font: 9px sans-serif;
 	padding: 2px;
 	text-decoration:none;
 }
 
 
 blockquote p {
-	font:160% Georgia;
+	font:160% sans-serif;
 	color:#aaa;
 	padding:0 10% 0 0;
 	line-height:30px;
@@ -681,7 +699,7 @@ table {
 	width: 100%;
 	color: #000000;
 /*	color: #617C58; */
-	font: 0.9em/1.6em "Trebuchet MS",Verdana,sans-serif;
+	font: 0.9em/1.6em sans-serif;
 	border-collapse: collapse
 	margin-left: auto;
 	margin-right: auto;
@@ -788,7 +806,7 @@ tbody td a[href="http://www.rodcast.com.br/"] {
 }
 
 tbody a:visited:after {
-	font-family: Verdana,sans-serif;
+	font-family: sans-serif;
 /*	content: "\00A0\221A" */
 }
 
@@ -819,9 +837,10 @@ h109 {
 
 /* the <h144> header tag is used to display the ? char for page's helpPage information */
 h144 {
-	font-weight: bold;
-	font:35% Verdana;
-	color:#FF0000;
+	font-family: sans-serif;
+	font-size: 0.75em;
+    color:#000000;
+	border-left: 1px solid #ccc;
 }
 
 /* used in language files to highlight sections */
@@ -831,7 +850,7 @@ h200 {
 
 /* header used in fieldset */
 h301 {
-	font:110% Arial;
+	font:110% sans-serif;
 	font-weight:bold;
 	color:#333;
 }
@@ -839,7 +858,7 @@ h301 {
 /* header used in fieldset */
 h302 {
 	float:right;
-	font:85% Arial;
+	font:85% sans-serif;
 	text-decoration:underline;
 	color:#333;
 }
@@ -892,7 +911,7 @@ h302 {
     padding: 9pt 9pt 9pt 33pt;
     color: #484554;
     //color: #996600;
-    font-family:"Lucida Grande","Lucida Sans Unicode","Lucida Sans",Verdana,Arial,sans-serif;
+    font-family:sans-serif;
     font-size: 8pt;
     background: #FDDDD9 url("../images/icons/action-error.gif") 6pt 6pt no-repeat;
     margin: 1em 0px 0em 0px;

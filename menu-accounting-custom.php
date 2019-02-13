@@ -175,8 +175,8 @@ value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_endd
 				</ul>
 				
 				<br/><br/>
-				<h2>Search</h2>
-				<input name="" type="text" value="Search" />
+				
+				
 				
 		
 		</div>

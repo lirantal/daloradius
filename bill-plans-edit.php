@@ -225,7 +225,7 @@
 	<div id="contentnorightbar">
 		
 		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billplansedit.php') ?>
-		:: <?php if (isset($planName)) { echo $planName; } ?><h144>+</h144></a></h2>
+		:: <?php if (isset($planName)) { echo $planName; } ?><h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo t('helpPage','billplansedit') ?>

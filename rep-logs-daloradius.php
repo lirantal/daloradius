@@ -47,7 +47,7 @@
 		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','replogsdaloradius.php'); ?>
 		:: <?php if (isset($daloradiusLineCount)) { echo $daloradiusLineCount . " Lines Count "; } ?>
 		   <?php if (isset($daloradiusFilter)) { echo " with filter set to " . $daloradiusFilter; } ?>
-		<h144>+</h144></a></h2>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo t('helpPage','replogsdaloradius') ?>

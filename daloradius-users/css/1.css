@@ -1,5 +1,5 @@
 body {
-	font: 78.5%/1.6em "Lucida Grande", "Lucida Sans Unicode", verdana, geneva, sans-serif;
+	font: 1em "Lucida Grande", "Lucida Sans Unicode", verdana, geneva, sans-serif;
 	word-spacing:2px;
 	color:#444;
 	margin:20px;
@@ -51,9 +51,9 @@ body {
 }
 
 #header form {
-	padding:27px 25px 20px 25px;
+	padding:27px 25px 20px 20px;
 	float:right;
-	background:#fff;
+	/*background:#fff;*/
 	width:160px;
 	margin:-20px -20px 0 0 !important;
 	margin:-20px -10px 0 0;
@@ -95,6 +95,24 @@ body {
 
 #header h2 a:hover {
 	border-bottom:2px solid #79B5D6;
+}
+
+#header #login_data {
+	float:right;
+	border-left:1px solid #ccc;
+	margin:0 0 0 20px;
+	padding: 0 0 0 20px;
+}
+
+#header #login_data a {
+	color:#f00;
+	text-decoration:none;
+}
+
+#header #sep {
+	float:right;
+	border-right:1px solid #ccc;
+	margin:0 0 0 0;
 }
 
 #header #nav {
@@ -335,7 +353,7 @@ body {
 
 #contentnorightbar {
 	margin:0 0 0 240px;
-	background:url(../images/content.jpg) top left no-repeat;
+	/*background:url(../images/content.jpg) top left no-repeat;*/
 	padding:20px 0 0 20px;
 }
 
@@ -769,9 +787,10 @@ h109 {
 
 /* the <h144> header tag is used to display the ? char for page's helpPage information */
 h144 {
-	font-weight: bold;
-	font:35% Verdana;
-        color:#FF0000;
+	font-family: Verdana,sans-serif;
+	font-size: 0.75em;
+    color:#000000;
+	border-left: 1px solid #ccc;
 }
 
 /* used in language files to highlight sections */
