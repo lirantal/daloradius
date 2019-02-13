@@ -5,6 +5,10 @@
 									<br>
 									Location: <b><?php echo $_SESSION['location_name'] ?></b>.
 								</span>
+								
+								<span id="sep">
+									&nbsp;
+								</span>
 
                                 <form action="mng-search.php">
 									<input name="username"
@@ -13,19 +17,15 @@
 										title="<?php echo t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard'); ?>"
 									/>
                                 </form>
-								
+																
 								<span id="sep">
-									&nbsp;
-									<br>
 									&nbsp;
 								</span>
 
                                 <h1><a href="index.php"> <img src="images/daloradius_small.png" border=0/></a></h1>
 
                                 <h2>
-                                
-                                <?php echo t('all','copyright1'); ?>
-            
+									<?php echo t('all','copyright1'); ?>
 				                </h2>
 
                                 <ul id="nav">
