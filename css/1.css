@@ -361,7 +361,7 @@ body {
 
 #contentnorightbar {
 	margin:0 0 0 240px;
-	background:url(../images/content.jpg) top left no-repeat;
+	/*background:url(../images/content.jpg) top left no-repeat;*/
 	padding:20px 0 0 20px;
 }
 
