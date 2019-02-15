@@ -217,6 +217,10 @@ grant or revoke them of permissions to access different pages.
 
 # Requirements
 
+ * PEAR package DB in order to access the database. Install it with:
+   ```
+   pear install DB
+   ```
  * PEAR packages Mail and Mail_Mime to send notifications by email. To install them, execute at the command line:
    ```
    pear install -a Mail
