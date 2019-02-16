@@ -47,7 +47,7 @@
 	<p class="news">
 		daloRADIUS <br/>
 		RADIUS Management 
-		<a href="http://www.enginx.com" class="more">Read More &raquo;</a>
+		<a href="https://github.com/lirantal/daloradius" class="more">Read More &raquo;</a>
 	</p>
 
 
