@@ -22,7 +22,7 @@
 	<p class="news">
 		daloRADIUS version svn-trnk
 		RADIUS Management 
-		<a href="http://www.enginx.com" class="more">Read More &raquo;</a>
+		<a href="https://github.com/lirantal/daloradius" class="more">Read More &raquo;</a>
 	</p>
 
 </div>
