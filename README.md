@@ -14,6 +14,30 @@ It is based on a [FreeRADIUS](http://www.freeradius.org) deployment with a datab
 Among other features it implements ACLs, GoogleMaps integration for locating 
 hotspots/access points visually and many more features.
 
+# Requirements
+
+ * Apache.
+ * PHP v5 or higher.
+ * MySQL v4.1 or higher.
+ * [PEAR](https://pear.php.net/) PHP extension.
+ * PEAR package DB in order to access the database. To install it, execute at the command line:
+   ```
+   pear install DB
+   ```
+ * PEAR packages Mail and Mail_Mime to send notifications by email. To install them, execute at the command line:
+   ```
+   pear install -a Mail
+   pear install -a Mail_Mime
+   ```
+
+More details about installation and requirements can be found if needed on the (maybe very old) files:
+   
+ * INSTALL
+ * INSTALL.openSUSE
+ * INSTALL.quick
+ * INSTALL.win
+ * FAQS
+ 
 # daloRADIUS Book
 
 Liran Tal authored a book about working with daloRADIUS covering most aspects through the UI, including setting up a captive portal system.
@@ -212,20 +236,6 @@ grant or revoke them of permissions to access different pages.
     * Create New Operator
     * Edit Operator
     * Delete Operator
-
-
-
-# Requirements
-
- * PEAR package DB in order to access the database. Install it with:
-   ```
-   pear install DB
-   ```
- * PEAR packages Mail and Mail_Mime to send notifications by email. To install them, execute at the command line:
-   ```
-   pear install -a Mail
-   pear install -a Mail_Mime
-   ```
 
 
 
