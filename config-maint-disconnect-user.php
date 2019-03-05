@@ -147,14 +147,10 @@
 
 	if ($autoComplete) {
 		echo "<script type=\"text/javascript\">
-			/** Making usernameEdit interactive **/
-	              autoComEdit = new DHTMLSuite.autoComplete();
-	              autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-
-			/** Making usernameSearch interactive **/
-	              autoComSearch = new DHTMLSuite.autoComplete();
-	              autoComSearch.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-	              </script>";
+				/** Making usernameEdit interactive **/
+				autoComEdit = new DHTMLSuite.autoComplete();
+				autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+				</script>";
 	} 
 ?>
 
