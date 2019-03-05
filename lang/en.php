@@ -867,7 +867,8 @@ $l['title']['IPPoolInfo'] = "IP-Pool Info";
 
 $l['title']['BusinessInfo'] = "Business Info";
 
-$l['title']['CleanupRecords'] = "Cleanup Records";
+$l['title']['CleanupRecordsByUsername'] = "By Username";
+$l['title']['CleanupRecordsByDate'] = "By Date";
 $l['title']['DeleteRecords'] = "Delete Records";
 
 $l['title']['RealmInfo'] = "Realm Info";
@@ -1719,7 +1720,14 @@ $l['helpPage']['acctmaintenance'] = "
 	except for a supervised administrator access to this page.
 <br/>
 ";
-$l['helpPage']['acctmaintenancecleanup'] = "";
+$l['helpPage']['acctmaintenancecleanup'] = "
+<h200><b>Cleanup Stale Sessions</b></h200> - Cleanup Stale Sessions by username or date.<br/><br/>
+	A stale session occurs when a user connection remains as active in FreeRADIUS (so, in daloRADIUS), but it does not exists in the NAS.
+	This is normally caused by a lost disconnect message from the NAS to FreeRADIUS.</br></br>
+	You have two choices to cleanup stale sessions, use them with caution:<br/>
+	&nbsp;&bullet; By Username: This option will <b>CLOSE</b> all opened sessions for a username in the FreeRADIUS database.<br/>
+	&nbsp;&bullet; By Date: This option will <b>DELETE</b> all opened sessions older than a date in the FreeRADIUS database.<br/>	
+";
 $l['helpPage']['acctmaintenancedelete'] = "";
 
 
