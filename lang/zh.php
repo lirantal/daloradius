@@ -23,10 +23,10 @@
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
-$l['all']['daloRADIUSVersion'] = "版本 0.9-9";
+$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "版本 " . $configValues['DALORADIUS_VERSION'];
 $l['all']['copyright1'] = "RADIUS 管理、报告、会计和账单<a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of Produced by SanDuo Chinese language pack</a>.";
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by Liran Tal of Produced by SanDuo Chinese language pack</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "IP地址名称";
 $l['all']['CalledStationId'] = "被叫号码";

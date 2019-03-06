@@ -1,3 +1,13 @@
+release 1.0-0 - 06 Mar 2019
+	- small fixes here and there (tooltips, autocomplete, ...)
+	. added new translation function to avoid PHP warnings on missing keys
+	- added install requirements in documentation
+	- added some user interface improvements
+	- added cleanup stale sessions by username, closing the record in the FreeRADIUS database
+	- added new optional billing style (new data variables and templates)
+	- improved PHP 7 support
+	- and a lot more
+
 release 0.9-9 - 27 May 2011
 	- added linux os heartbeat script
 	- added new monitoring script for heartbeat nodes with email notifications, also update default crontab script
