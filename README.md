@@ -267,10 +267,10 @@ Helpful resources to find help and support with daloRADIUS:
 
 # Copyright
 
-Copyright Liran Tal 2007. All rights reserved.
+Copyright Liran Tal 2007-2019. All rights reserved.
 For release information and license, read LICENSE.
 
-[daloRADIUS](http://www.daloradius.com) version 0.9 stable release
+[daloRADIUS](http://www.daloradius.com) version 1.0-0 stable release
 by Liran Tal <liran.tal@gmail.com>
 
 
