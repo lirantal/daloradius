@@ -271,7 +271,8 @@ Copyright Liran Tal 2007-2019. All rights reserved.
 For release information and license, read LICENSE.
 
 [daloRADIUS](http://www.daloradius.com) version 1.0-0 stable release
-by Liran Tal <liran.tal@gmail.com>
+by Liran Tal <liran.tal@gmail.com>,
+Miguel García <floppysoftware@gmail.com>.
 
 
 [daloRADIUS_Logo]: https://cloud.githubusercontent.com/assets/316371/7488472/87a11c08-f3d3-11e4-9a8e-96deafaf4d2f.png
