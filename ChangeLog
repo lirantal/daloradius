@@ -1,3 +1,6 @@
+release 1.0-1 - 24 Mar 2019
+	- fixed SQL error when target value is empty when adding profiles, show error message instead
+
 release 1.0-0 - 06 Mar 2019
 	- small fixes here and there (tooltips, autocomplete, ...)
 	. added new translation function to avoid PHP warnings on missing keys
