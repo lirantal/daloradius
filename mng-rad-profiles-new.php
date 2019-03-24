@@ -68,7 +68,7 @@
 					$table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
 
 
-				if (!($value))
+				if (!($value) || $table == '')
 					continue;
 
 				$sql = "INSERT INTO $table (id,GroupName,Attribute,op,Value) ".
