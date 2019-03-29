@@ -34,7 +34,8 @@ RUN apt-get update && \
 	php-mail-mime \
   php-pear \
   php-db \
-  freeradius-utils
+  freeradius-utils \
+  cron
 
 # Apache2 install
 RUN apt-get -y install apache2 libapache2-mod-php7.0
