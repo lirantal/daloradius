@@ -55,11 +55,12 @@
 						<br/>
 						<li><a href="#" >Location</a> </li>
 						<select name="location" tabindex=3 class="generic" >
-							<option value="default">Default</option>
 							<?php
-								if (isset($configValues['CONFIG_LOCATIONS']) && is_array($configValues['CONFIG_LOCATIONS'])) {
+								if (isset($configValues['CONFIG_LOCATIONS']) && is_array($configValues['CONFIG_LOCATIONS']) && count($configValues['CONFIG_LOCATIONS']) > 0) {
 							        	foreach ($configValues['CONFIG_LOCATIONS'] as $locations=>$val)
 							                	echo "<option value='$locations'>$locations</option>";
+								} else {
+								        echo "<option value='default'>Default</option>";	
 								}
 							?>
 						</select>
