@@ -66,7 +66,7 @@
 	$radiusReplySQL = "";
 	if ($radiusReply <> "Any") $radiusReplySQL = " AND (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply = '$radiusReply') ";
 	
-	if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
+	if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2' || $configValues['FREERADIUS_VERSION'] == '3')) {
 		$tableSetting['postauth']['user'] = 'username';
 		$tableSetting['postauth']['date'] = 'authdate';
 	} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
