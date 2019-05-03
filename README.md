@@ -14,6 +14,26 @@ It is based on a [FreeRADIUS](http://www.freeradius.org) deployment with a datab
 Among other features it implements ACLs, GoogleMaps integration for locating 
 hotspots/access points visually and many more features.
 
+## Contributors
+
+Thanks goes to these wonderful people :
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table><tr><td align="center"><a href="https://github.com/liran_tal"><img src="https://avatars1.githubusercontent.com/u/316371?v=4" width="100px;" alt="Liran Tal"/><br /><sub><b>Liran Tal</b></sub></a><br /></td><td align="center"><a href="https://github.com/MiguelVis"><img src="https://avatars0.githubusercontent.com/u/4165032?s=460&v=4" width="100px;" alt="MiguelVis"/><br /><sub><b>MiguelVis</b></sub></a><br /></td><td align="center"><a href="https://github.com/screwloose8"><img src="https://avatars0.githubusercontent.com/u/18901582?s=460&v=4" width="100px;" alt="screwloose83"/><br /><sub><b>screwloose83</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/AxeyGabriel"><img src="https://avatars1.githubusercontent.com/u/6699637?s=460&v=4" width="100px;" alt="Axey Gabriel Müller Endres
+"/><br /><sub><b>screwloose83</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/zanix"><img src="https://avatars2.githubusercontent.com/u/1580378?s=460&v=4" width="100px;" alt="Joshua Clark"/><br /><sub><b>Joshua Clark</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/theFra985"><img src="https://avatars2.githubusercontent.com/u/16063131?s=460&v=4" width="100px;" alt="Francesco Cattoni"/><br /><sub><b>Francesco Cattoni</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/Tantawi"><img src="https://avatars2.githubusercontent.com/u/1369523?s=460&v=4" width="100px;" alt="Mohamed Eltantawi"/><br /><sub><b>Mohamed Eltantawi</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/Seazonx"><img src="https://avatars1.githubusercontent.com/u/41646287?s=460&v=4" width="100px;" alt="Seazon"/><br /><sub><b>Seazon</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/reigelgallarde"><img src="https://avatars3.githubusercontent.com/u/10612336?s=400&v=4" width="100px;" alt="Reigel Gallarde"/><br /><sub><b>Reigel Gallarde</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/jomaxro"><img src="https://avatars0.githubusercontent.com/u/15638256?s=400&v=4" width="100px;" alt="Joshua Rosenfeld"/><br /><sub><b>Joshua Rosenfeld</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/seanmavley"><img src="https://avatars2.githubusercontent.com/u/5289083?s=400&v=4" width="100px;" alt="Nkansah Rexford"/><br /><sub><b>Nkansah Rexford</b></sub></a><br /></td>
+	<td align="center"><a href="https://github.com/dennisdegreef"><img src="https://avatars0.githubusercontent.com/u/361905?s=400&v=4" width="100px;" alt="Dennis de Greef"/><br /><sub><b>Dennis de Greef</b></sub></a><br /></td>
+	</tr></table>
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 # Requirements
 
  * Apache.
