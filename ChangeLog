@@ -4,6 +4,7 @@ release 1.1-0 - 19 Jun 2019
     - add freeradius-utils and cron to Dockerfile
     - remove "default" location if multiple locations are set
 	- add select box for password types in Batch Add Users option
+	- stylish ToolTip boxes
 
 release 1.0-1 - 24 Mar 2019
 	- fixed SQL error when target value is empty when adding profiles, show error message instead
