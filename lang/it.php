@@ -311,6 +311,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specific
 
 $l['Tooltip']['usernameTooltip'] = "Il nome utente esatto<br/>&nbsp;&nbsp;&nbsp;
 					così come l'utente userà connettersi al sistema";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
 $l['Tooltip']['passwordTooltip'] = "Le password sono sensibili alle maiuscole<br/>&nbsp;&nbsp;&nbsp;
 					in certi sistemi. Prestare attenzione";
 $l['Tooltip']['groupTooltip'] = "L'utente verrà aggiunto a questo gruppo.<br/>&nbsp;&nbsp;&nbsp;

@@ -671,6 +671,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "値を指�
 $l['Tooltip']['usernameTooltip'] = "ユーザがシステムに接続できる<br/>&nbsp;&nbsp;&nbsp;
 正確なユーザ名を入力してください";
 
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";
 $l['Tooltip']['passwordTooltip'] = "パスワードはシステムによっては大文字小文字を区別しますので、特別な措置が必要です";
 
 $l['Tooltip']['groupTooltip'] = "ユーザはこのグループに追加されます。<br/>&nbsp;&nbsp;&nbsp;
