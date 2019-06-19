@@ -1,3 +1,10 @@
+release 1.1-0 - 19 Jun 2019
+    - fix SQL syntax errors when using the column 'lead' with MySQL 8.0.2+
+    - fix SQL query for last connection attempts where FreeRADIUS is v3
+    - add freeradius-utils and cron to Dockerfile
+    - remove "default" location if multiple locations are set
+	- add select box for password types in Batch Add Users option
+
 release 1.0-1 - 24 Mar 2019
 	- fixed SQL error when target value is empty when adding profiles, show error message instead
 
