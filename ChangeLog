@@ -1,3 +1,8 @@
+release 1.1-1 - 28 Jul 2019
+    - fix memory overflow on database backups
+	- added daloRADIUS version date to configuration
+	- improve the documentation a bit
+
 release 1.1-0 - 19 Jun 2019
     - fix SQL syntax errors when using the column 'lead' with MySQL 8.0.2+
     - fix SQL query for last connection attempts where FreeRADIUS is v3
