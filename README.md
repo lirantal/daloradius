@@ -2,8 +2,8 @@
 
 ![daloradius_logo][daloRADIUS_Logo]
 
-[daloRADIUS](http://www.daloradius.com) is an advanced RADIUS web management application aimed at managing hotspots and 
-general-purpose ISP deployments. It features user management, graphical reporting, accounting, 
+[daloRADIUS](http://www.daloradius.com) is an advanced RADIUS web management application aimed at managing hotspots and
+general-purpose ISP deployments. It features user management, graphical reporting, accounting,
 a billing engine and integrates with GoogleMaps for geo-locating.
 
 daloRADIUS is written in PHP and JavaScript and utilizes a database abstraction
@@ -11,7 +11,7 @@ layer which means that it supports many database systems, among them the popular
 MySQL, PostgreSQL, Sqlite, MsSQL, and many others.
 
 It is based on a [FreeRADIUS](http://www.freeradius.org) deployment with a database server serving as the backend.
-Among other features it implements ACLs, GoogleMaps integration for locating 
+Among other features it implements ACLs, GoogleMaps integration for locating
 hotspots/access points visually and many more features.
 
 ## Contributors
@@ -51,13 +51,19 @@ Thanks goes to these wonderful people :
    ```
 
 More details about installation and requirements can be found if needed on the (maybe very old) files:
-   
+
  * INSTALL
  * INSTALL.openSUSE
  * INSTALL.quick
  * INSTALL.win
  * FAQS
- 
+
+# Documentation
+
+You can find some documentation in the `doc` directory.
+
+
+
 # daloRADIUS Book
 
 Liran Tal authored a book about working with daloRADIUS covering most aspects through the UI, including setting up a captive portal system.
@@ -67,9 +73,6 @@ The paperback book version is available through Amazon at http://www.amazon.com/
 ![daloradius_book][daloRADIUS_Book]
 ## PDF Digital Book
 There is also a digital version of the book via PDF, available at: https://lirantal.selz.com/
-
-
-
 
 
 
@@ -128,7 +131,7 @@ There is also a digital version of the book via PDF, available at: https://liran
     * Display of Active Accounting records
       performed by an algorithm implemented by daloRADIUS itself to calculate if
       an account has expired or not based on it's Max-All-Session attribute or Expiration attribute
-	* Custom Accounting Query 
+	* Custom Accounting Query
 
 
 ### HotSpots Accounting
@@ -145,7 +148,7 @@ There is also a digital version of the book via PDF, available at: https://liran
 	daloRADIUS comes with integrated support for GIS provided by GoogleMaps and thus
 	provides the ability to visually locate deployed HotSpots across a map, see their status,
 	and monitor them visually.
-	
+
 	* View Map
 	  Provides functionality of monitoring deployed HotSpots
 
@@ -196,6 +199,17 @@ There is also a digital version of the book via PDF, available at: https://liran
       Provides information whether the freeradius server is running along with the database
       server (mysql, postgresql, or others)
 
+
+
+## Billing
+
+    * POS (Point of Sales)
+	* Plans
+	* Rates
+	* PayPal Transactions
+	* Billing History
+	* Invoices
+	* Payments
 
 
 
@@ -290,9 +304,9 @@ Helpful resources to find help and support with daloRADIUS:
 Copyright Liran Tal 2007-2019. All rights reserved.
 For release information and license, read LICENSE.
 
-[daloRADIUS](http://www.daloradius.com) version 1.1-0 stable release
+[daloRADIUS](http://www.daloradius.com) version 1.1-1 stable release
 by Liran Tal <liran.tal@gmail.com>,
-Miguel García <floppysoftware@gmail.com>.
+Miguel García <miguelvisgarcia@gmail.com>.
 
 
 [daloRADIUS_Logo]: https://cloud.githubusercontent.com/assets/316371/7488472/87a11c08-f3d3-11e4-9a8e-96deafaf4d2f.png
