@@ -66,19 +66,28 @@
 	$radiusReplySQL = "";
 	if ($radiusReply <> "Any") $radiusReplySQL = " AND (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply = '$radiusReply') ";
 	
-	if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2' || $configValues['FREERADIUS_VERSION'] == '3')) {
-		$tableSetting['postauth']['user'] = 'username';
-		$tableSetting['postauth']['date'] = 'authdate';
-	} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
-		$tableSetting['postauth']['user'] = 'user';
-		$tableSetting['postauth']['date'] = 'date';
+	// setting table-related parameters first
+	switch($configValues['FREERADIUS_VERSION']) {
+		case '1' :
+			$tableSetting['postauth']['user'] = 'user';
+			$tableSetting['postauth']['date'] = 'date';
+			break;
+		case '2' :
+			// down
+		case '3' :
+			// down
+		default  :
+			$tableSetting['postauth']['user'] = 'username';
+			$tableSetting['postauth']['date'] = 'authdate';
+			break;
 	}
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".
-					$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL ".
-					" AND (".$tableSetting['postauth']['date']." >='$startdate' AND ".$tableSetting['postauth']['date']." <='$enddate') ";
-        $_SESSION['reportType'] = "reportsLastConnectionAttempts";
+	
+	// setup php session variables for exporting
+	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+	$_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".
+				$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL ".
+				" AND (".$tableSetting['postauth']['date']." >='$startdate' AND ".$tableSetting['postauth']['date']." <='$enddate') ";
+	$_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
 	$sql = "SELECT ".

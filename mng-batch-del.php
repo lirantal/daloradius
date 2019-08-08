@@ -95,13 +95,20 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
-				// setting table-related parameters first
-				if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
-					$tableSetting['postauth']['user'] = 'username';
-					$tableSetting['postauth']['date'] = 'authdate';
-				} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
-					$tableSetting['postauth']['user'] = 'user';
-					$tableSetting['postauth']['date'] = 'date';
+				// setting table-related parameters first				
+				switch($configValues['FREERADIUS_VERSION']) {
+					case '1' :
+						$tableSetting['postauth']['user'] = 'user';
+						$tableSetting['postauth']['date'] = 'date';
+						break;
+					case '2' :
+						// down
+					case '3' :
+						// down
+					default  :
+						$tableSetting['postauth']['user'] = 'username';
+						$tableSetting['postauth']['date'] = 'authdate';
+						break;
 				}
 								
 				// loop through each user and delete it
