@@ -1560,10 +1560,10 @@ Huntgroup-Name := \"%{sql:select groupname from radhuntgroup where nasipaddress=
 <i> What this does is perform a lookup in the radhuntgroup table using the ip-address as a key to return the huntgroup name. It then adds an attribute/value pair to the request where the name of the attribute is Huntgroup-Name and it's value is whatever was returned from the SQL query. If the query did not find anything then the value is the empty string. </i>";
 
 
-+$l['helpPage']['mngradhuntdel'] = "データベスからハントグループエントリを削除するには、ハントグループの IP/ホスト とポートIDを入力しなければなりません";
-+$l['helpPage']['mngradhuntnew'] = "";
-+$l['helpPage']['mngradhuntlist'] = "";
-+$l['helpPage']['mngradhuntedit'] = "";
+$l['helpPage']['mngradhuntdel'] = "データベスからハントグループエントリを削除するには、ハントグループの IP/ホスト とポートIDを入力しなければなりません";
+$l['helpPage']['mngradhuntnew'] = "";
+$l['helpPage']['mngradhuntlist'] = "";
+$l['helpPage']['mngradhuntedit'] = "";
 
 $l['helpPage']['mnghsdel'] = "データベースからホットスポットを削除するには、ホットスポットの名前を入力しなければなりません<br/>";
 

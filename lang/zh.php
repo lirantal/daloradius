@@ -1405,10 +1405,10 @@ update request {
 <i> 这是使用IP地址作为回报huntgroup名字中的一个重要radhuntgroup表中执行查找。然后添加一个属性/值对该请求的属性名称是huntgroup的名字和它的值就是从SQL查询返回的。如果查询没有发现任何值是空字符串。 </i>";
 
 
-+$l['helpPage']['mngradhuntdel'] = "从数据库中删除组条目必须提供的ip /主机和端口id";
-+$l['helpPage']['mngradhuntnew'] = "";
-+$l['helpPage']['mngradhuntlist'] = "";
-+$l['helpPage']['mngradhuntedit'] = "";
+$l['helpPage']['mngradhuntdel'] = "从数据库中删除组条目必须提供的ip /主机和端口id";
+$l['helpPage']['mngradhuntnew'] = "";
+$l['helpPage']['mngradhuntlist'] = "";
+$l['helpPage']['mngradhuntedit'] = "";
 
 $l['helpPage']['mnghsdel'] = "从数据库中删除一个热点必须提供热点的名称<br/>";
 $l['helpPage']['mnghsedit'] = "您可以编辑以下细节热点<br/>";

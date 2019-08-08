@@ -1,3 +1,7 @@
+release 1.1-2 - 08 Aug 2019
+    - syntax fix in language translations
+	- set right column names for table radpostauth in FreeRADIUS v3
+
 release 1.1-1 - 28 Jul 2019
     - fix memory overflow on database backups
 	- added daloRADIUS version date to configuration
