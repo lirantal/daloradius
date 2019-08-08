@@ -23,8 +23,8 @@
  */
 
 
-$configValues['DALORADIUS_VERSION'] = '1.1-1';
-$configValues['DALORADIUS_DATE'] = '28 Jul 2019';
+$configValues['DALORADIUS_VERSION'] = '1.1-2';
+$configValues['DALORADIUS_DATE'] = '08 Aug 2019';
 $configValues['FREERADIUS_VERSION'] = '2';
 $configValues['CONFIG_DB_ENGINE'] = 'mysqli';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
