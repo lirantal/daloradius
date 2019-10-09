@@ -50,7 +50,7 @@ RUN apt-get install -y mysql-server
 # git@github.com:lirantal/daloradius.git
 
 ADD . /var/www/html
-RUN chown www-data.www-data -R /var/www/html
+RUN chown www-data.www-data -R /var/www/html && mkdir -p /var/run/mysqld
 
 # Run MySQL server so that it initializes the database and seeds information
 RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld; /usr/bin/mysqld_safe & \
