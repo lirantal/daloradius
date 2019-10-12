@@ -90,7 +90,7 @@
 
 			include 'library/opendb.php';
 
-			$rollBackQuery = preg_split("\n\n\n", $fileRollback);	// when we created the backup file we splitted every table INSERT INTO
+			$rollBackQuery = preg_split("/\n\n\n/", $fileRollback);	// when we created the backup file we splitted every table INSERT INTO
 										// entry with a tripple newline (\n\n\n) 3 bytes characteres and so to insert
 										// these again we split into an array each INSERT query because Pear DB
 										// can't handle multiple INSERTs in a concatenated string
