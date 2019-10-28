@@ -24,13 +24,6 @@ ENV RADPASS radpass
 ENV CLIENT_NET "0.0.0.0/0"
 ENV CLIENT_SECRET 891011121314
 
-# Local Ubuntu mirror Repository
-RUN echo "deb http://foobar.turbo.net.id/ubuntu xenial main universe multiverse restricted" > /etc/apt/sources.list && \
-echo "deb http://foobar.turbo.net.id/ubuntu xenial-security main universe multiverse restricted" >> /etc/apt/sources.list && \
-echo "deb http://foobar.turbo.net.id/ubuntu xenial-updates main universe multiverse restricted" >> /etc/apt/sources.list && \
-echo "deb http://foobar.turbo.net.id/ubuntu xenial-backports main universe multiverse restricted" >> /etc/apt/sources.list
-
-
 # PHP,Apache2,MySQL and FreeRADIUS install
 RUN apt-get update && \
 	apt-get -y install php7.0 \
