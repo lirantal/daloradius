@@ -37,6 +37,7 @@ RUN apt-get update && \
 	php-mail-mime nano \
         php-pear \
         php-db \
+	net-tools \
         freeradius-utils \
         apache2 \
 	libapache2-mod-php7.0 \
