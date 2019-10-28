@@ -3,7 +3,7 @@
 #
 # Build image:
 # 1. git pull git@github.com:lirantal/daloradius.git
-# 2. docker build . -t lirantal/daloradius
+# 2. docker build . -t lirantal/daloradius -f Dockerfile-freeradius
 #
 # Run the container:
 # 1. docker run -p 80:80 -d lirantal/daloradius
