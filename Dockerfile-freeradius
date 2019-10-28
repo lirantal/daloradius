@@ -27,23 +27,25 @@ ENV CLIENT_SECRET 891011121314
 # PHP,Apache2,MySQL and FreeRADIUS install
 RUN apt-get update && \
 	apt-get -y install php7.0 \
-  php7.0-cli \
+        php7.0-cli \
 	php7.0-common \
 	php7.0-curl \
-  php7.0-gd \
-  php7.0-mcrypt \
+        php7.0-gd \
+        php7.0-mcrypt \
 	php7.0-mysql \
 	php-mail \
 	php-mail-mime nano \
-  php-pear \
-  php-db \
-  freeradius-utils \
-  apache2 libapache2-mod-php7.0 \
-  mysql-server mysql-client \
-  freeradius freeradius-mysql \
-  cron
-
-
+        php-pear \
+        php-db \
+        freeradius-utils \
+        apache2 \
+	libapache2-mod-php7.0 \
+        mysql-server \
+	mysql-client \
+        freeradius \
+	freeradius-mysql \
+        cron
+	
 # PHP Pear DB library install
 RUN pear install DB && rm -rf /var/cache/apk/*
 
