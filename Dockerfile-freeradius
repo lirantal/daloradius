@@ -18,7 +18,7 @@ LABEL Description="daloRADIUS Official Docker based on Ubuntu 16.04 LTS and PHP7
 
 # silence package installations to that debpkg doesn't prompt for mysql
 # passwords and other input
-ENV DEBIAN_FRONTEND "noninteractive"
+ARG DEBIAN_FRONTEND noninteractive
 ENV mysql_pass ""
 ENV RADPASS radpass
 ENV CLIENT_NET "0.0.0.0/0"
