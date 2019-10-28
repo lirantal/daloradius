@@ -45,8 +45,10 @@ RUN apt-get update && \
 	mysql-client \
         freeradius \
 	freeradius-mysql \
-        cron
-	
+        cron \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 # PHP Pear DB library install
 RUN pear install DB && rm -rf /var/cache/apk/*
 
