@@ -50,7 +50,7 @@ RUN apt-get update && \
  && rm -rf /var/lib/apt/lists/*
 
 # PHP Pear DB library install
-RUN pear install DB && rm -rf /var/cache/apk/*
+RUN pear install DB
 
 # Add current project directory which should be a clone of daloradius from:
 # git@github.com:lirantal/daloradius.git
