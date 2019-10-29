@@ -81,7 +81,7 @@ RUN rm -rf /var/www/html/index.html
 RUN touch /var/log/daloradius.log && chown -R www-data:www-data /var/log/daloradius.log
 
 # Expose FreeRADIUS Ports, MySQL, and Web for daloRADIUS
-EXPOSE 1812 1813 80 443 3306
+EXPOSE 1812 1813 80 443
 
 # Run the script which executes Apache2 in the foreground as a running process
 CMD ["/var/www/html/init-freeradius.sh"]
