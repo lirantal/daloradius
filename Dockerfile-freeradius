@@ -3,7 +3,7 @@
 #
 # Build image:
 # 1. git pull git@github.com:lirantal/daloradius.git
-# 2. docker build . -t lirantal/daloradius
+# 2. docker build -t lirantal/daloradius -f Dockerfile-freeradius
 #
 # Run the container:
 # 1. docker run -p 80:80 -d lirantal/daloradius
@@ -13,46 +13,45 @@ MAINTAINER Liran Tal <liran.tal@gmail.com>
 
 LABEL Description="daloRADIUS Official Docker based on Ubuntu 16.04 LTS and PHP7." \
 	License="GPLv2" \
-	Usage="docker build . -t lirantal/daloradius && docker run -d -p 80:80 lirantal/daloradius" \
+	Usage="docker build -t lirantal/daloradius -f Dockerfile-freeradius && docker run -d -p 80:80 lirantal/daloradius" \
 	Version="1.0"
 
 # silence package installations to that debpkg doesn't prompt for mysql
 # passwords and other input
-ENV DEBIAN_FRONTEND "noninteractive"
+ARG DEBIAN_FRONTEND=noninteractive
 ENV mysql_pass ""
 ENV RADPASS radpass
 ENV CLIENT_NET "0.0.0.0/0"
 ENV CLIENT_SECRET 891011121314
 
-# Local Ubuntu mirror Repository
-RUN echo "deb http://foobar.turbo.net.id/ubuntu xenial main universe multiverse restricted" > /etc/apt/sources.list && \
-echo "deb http://foobar.turbo.net.id/ubuntu xenial-security main universe multiverse restricted" >> /etc/apt/sources.list && \
-echo "deb http://foobar.turbo.net.id/ubuntu xenial-updates main universe multiverse restricted" >> /etc/apt/sources.list && \
-echo "deb http://foobar.turbo.net.id/ubuntu xenial-backports main universe multiverse restricted" >> /etc/apt/sources.list
-
-
 # PHP,Apache2,MySQL and FreeRADIUS install
 RUN apt-get update && \
 	apt-get -y install php7.0 \
-  php7.0-cli \
+        php7.0-cli \
 	php7.0-common \
 	php7.0-curl \
-  php7.0-gd \
-  php7.0-mcrypt \
+        php7.0-gd \
+        php7.0-mcrypt \
 	php7.0-mysql \
 	php-mail \
 	php-mail-mime nano \
-  php-pear \
-  php-db \
-  freeradius-utils \
-  apache2 libapache2-mod-php7.0 \
-  mysql-server mysql-client \
-  freeradius freeradius-mysql \
-  cron
-
-
+        php-pear \
+        php-db \
+	net-tools \
+        freeradius-utils \
+        apache2 \
+	libapache2-mod-php7.0 \
+        mysql-server \
+	mysql-client \
+        freeradius \
+	freeradius-mysql \
+        cron \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* \
 # PHP Pear DB library install
-RUN pear install DB && rm -rf /var/cache/apk/*
+ && pear install DB \
+ && pear install -a Mail \
+ && pear install -a Mail_Mime
 
 # Add current project directory which should be a clone of daloradius from:
 # git@github.com:lirantal/daloradius.git
@@ -82,7 +81,7 @@ RUN rm -rf /var/www/html/index.html
 RUN touch /var/log/daloradius.log && chown -R www-data:www-data /var/log/daloradius.log
 
 # Expose FreeRADIUS Ports, MySQL, and Web for daloRADIUS
-EXPOSE 1812 1813 80 443 3306
+EXPOSE 1812 1813 80 443
 
 # Run the script which executes Apache2 in the foreground as a running process
 CMD ["/var/www/html/init-freeradius.sh"]
