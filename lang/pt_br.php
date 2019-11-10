@@ -21,30 +21,30 @@
  *
  *********************************************************************************************************
  */
- 
-$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
-$l['all']['daloRADIUSVersion'] = "version " . $configValues['DALORADIUS_VERSION'];
-$l['all']['copyright1'] = "RADIUS Management, Reporting, Accounting and Billing by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
+
+$l['all']['daloRADIUS'] = "Dalo Radius " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "versão " . $configValues['DALORADIUS_VERSION'];
+$l['all']['copyright1'] = "Radius Gerenciador de usuarios radius e hotspot <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
+$l['all']['copyright2'] = "daloRADIUS C &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
-$l['all']['PoolName'] = "Pool Name";
-$l['all']['CalledStationId'] = "CalledStationId";
-$l['all']['CallingStationID'] = "CallingStationID";
-$l['all']['ExpiryTime'] = "Expiry Time";
-$l['all']['PoolKey'] = "Pool Key";
+$l['all']['PoolName'] = "Nome da fila";
+$l['all']['CalledStationId'] = "IDEstaçãoChamada";
+$l['all']['CallingStationID'] = "IDEstaçãoChama";
+$l['all']['ExpiryTime'] = "Tempo para expirar";
+$l['all']['PoolKey'] = "Chave da Fila";
 
 /********************************************************************************/
 /* Vendor Attributes related translation                                        */
 /********************************************************************************/
 $l['all']['Dictionary'] = "Dicionario";
-$l['all']['VendorID'] = "Vendor ID";
-$l['all']['VendorName'] = "Vendor Name";
-$l['all']['VendorAttribute'] = "Vendor Attribute";
-$l['all']['RecommendedOP'] = "Recommended OP";
-$l['all']['RecommendedTable'] = "Recommended Table";
-$l['all']['RecommendedTooltip'] = "Recommended Tooltip";
-$l['all']['RecommendedHelper'] = "Recommended Helper";
+$l['all']['VendorID'] = "ID do Vendedor";
+$l['all']['VendorName'] = "Nome do Vendedor";
+$l['all']['VendorAttribute'] = "Atributos do vendedor";
+$l['all']['RecommendedOP'] = "OP Recomendada";
+$l['all']['RecommendedTable'] = "Tabela Recomendada";
+$l['all']['RecommendedTooltip'] = "Dica da Ferramenta";
+$l['all']['RecommendedHelper'] = "Ajuda Recomendada";
 /********************************************************************************/
 
 /* radius related text */
@@ -64,42 +64,42 @@ $l['all']['DeleteSessions'] = "Excluir sessoes anteriores a";
 $l['all']['StartingDate'] = "Data Inicial";
 $l['all']['EndingDate'] = "Data Final";
 
-$l['all']['Realm'] = "Realm";
-$l['all']['RealmName'] = "Realm Name";
-$l['all']['RealmSecret'] = "Realm Secert";
-$l['all']['AuthHost'] = "Auth Host";
-$l['all']['AcctHost'] = "Acct Host";
+$l['all']['Realm'] = "Reino";
+$l['all']['RealmName'] = "Nome do Reino";
+$l['all']['RealmSecret'] = "Senha do Reino";
+$l['all']['AuthHost'] = "Autenticação Host";
+$l['all']['AcctHost'] = "Conta do  Host";
 $l['all']['Ldflag'] = "ldflag";
-$l['all']['Nostrip'] = "nostrip";
-$l['all']['Notrealm'] = "notrealm";
-$l['all']['Hints'] = "hints";
+$l['all']['Nostrip'] = "sem tira";
+$l['all']['Notrealm'] = "não é o reino";
+$l['all']['Hints'] = "dicas";
 
 $l['all']['Proxy'] = "Proxy";
-$l['all']['ProxyName'] = "Proxy Name";
-$l['all']['ProxySecret'] = "Proxy Secert";
-$l['all']['DeadTime'] = "Dead Time";
-$l['all']['RetryDelay'] = "Retry Delay";
-$l['all']['RetryCount'] = "Retry Count";
-$l['all']['DefaultFallback'] = "Default Fallback";
+$l['all']['ProxyName'] = "Nome do proxy";
+$l['all']['ProxySecret'] = "Senha do Proxy";
+$l['all']['DeadTime'] = "Hora Final";
+$l['all']['RetryDelay'] = "Tentar novamente com atraso";
+$l['all']['RetryCount'] = "Repetir Contagem";
+$l['all']['DefaultFallback'] = "Retorno padrão";
 
-$l['all']['FramedIPAddress'] = "Framed-IP-Address";
-$l['all']['SimultaneousUse'] = "Simultaneous-Use";
+$l['all']['FramedIPAddress'] = "Faixa de ip";
+$l['all']['SimultaneousUse'] = "Uso Simultaneo";
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
 $l['all']['NasIPHost'] = "NAS IP/Host";
 $l['all']['NasShortname'] = "NAS Shortname";
-$l['all']['NasType'] = "NAS Type";
-$l['all']['NasPorts'] = "NAS Ports";
-$l['all']['NasSecret'] = "NAS Secret";
-$l['all']['NasVirtualServer'] = "NAS Virtual Server";
-$l['all']['NasCommunity'] = "NAS Community";
-$l['all']['NasDescription'] = "NAS Description";
-$l['all']['PacketType'] = "Packet Type";
+$l['all']['NasType'] = "NAS Tipo";
+$l['all']['NasPorts'] = "NAS Portas";
+$l['all']['NasSecret'] = "NAS Senha";
+$l['all']['NasVirtualServer'] = "NAS Servidor Virtual";
+$l['all']['NasCommunity'] = "NAS Comunidade";
+$l['all']['NasDescription'] = "NAS Descrição";
+$l['all']['PacketType'] = "Tipo de pacote";
 $l['all']['HotSpot'] = "HotSpot";
 $l['all']['HotSpots'] = "HotSpots";
-$l['all']['HotSpotName'] = "Hotspot Name";
+$l['all']['HotSpotName'] = "Nome do Hotspot ";
 $l['all']['Name'] = "Nome";
-$l['all']['Username'] = "Username";
+$l['all']['Username'] = "Usuario";
 $l['all']['Password'] = "Senha";
 $l['all']['PasswordType'] = "Tipo da Senha";
 $l['all']['IPAddress'] = "Endereco IP";
@@ -115,8 +115,8 @@ $l['all']['Attribute'] = "Atributo";
 $l['all']['Operator'] = "Operador";
 $l['all']['Value'] = "Valor";
 $l['all']['NewValue'] = "Novo Valor";
-$l['all']['MaxTimeExpiration'] = "Tempo maximo / Expiration";
-$l['all']['UsedTime'] = "Used Time";
+$l['all']['MaxTimeExpiration'] = "Tempo maximo / Expiração";
+$l['all']['UsedTime'] = "Tempo de uso";
 $l['all']['Status'] = "Status";
 $l['all']['Usage'] = "Uso";
 $l['all']['StartTime'] = "Horario Inicial";
@@ -125,123 +125,123 @@ $l['all']['TotalTime'] = "Tempo Total";
 $l['all']['Bytes'] = "Bytes";
 $l['all']['Upload'] = "Upload";
 $l['all']['Download'] = "Download";
-$l['all']['Rollback'] = "Roll-back";
+$l['all']['Rollback'] = "Reversão";
 $l['all']['Termination'] = "Terminacao";
 $l['all']['NASIPAddress'] = "NAS - Endereco IP";
 $l['all']['Action'] = "Acao";
-$l['all']['UniqueUsers'] = "Unique Users";
+$l['all']['UniqueUsers'] = "Usuario unico ";
 $l['all']['TotalHits'] = "Total Hits";
-$l['all']['AverageTime'] = "Average Time";
+$l['all']['AverageTime'] = "Tempo Medio";
 $l['all']['Records'] = "Registros";
 $l['all']['Summary'] = "Sumario";
 $l['all']['Statistics'] = "Statisticas";
-$l['all']['Credit'] = "Cerdito";
+$l['all']['Credit'] = "Credito";
 $l['all']['Used'] = "Utilizado";
 $l['all']['LeftTime'] = "Tempo Restante";
 $l['all']['LeftPercent'] = "% de tempo restante";
 $l['all']['TotalSessions'] = "Total de Sessoes";
 $l['all']['LastLoginTime'] = "Ultimo Login";
 $l['all']['TotalSessionTime'] = "Total da Sessao";
-$l['all']['RateName'] = "Rate Name";
-$l['all']['RateType'] = "Rate Type";
-$l['all']['RateCost'] = "Rate Cost";
-$l['all']['Billed'] = "Billed";
+$l['all']['RateName'] = "Nome da taxa";
+$l['all']['RateType'] = "Tipo da taxa";
+$l['all']['RateCost'] = "Custo da taxa";
+$l['all']['Billed'] = "Faturado";
 $l['all']['TotalUsers'] = "Total de Usuarios";
 $l['all']['TotalBilled'] = "Total de Cobrancas";
-$l['all']['CardBank'] = "Card Bank";
-$l['all']['Type'] = "Type";
-$l['all']['CardBank'] = "CardBank";
-$l['all']['MACAddress'] = "MAC Address";
+$l['all']['CardBank'] = "Cartão de credito";
+$l['all']['Type'] = "Tipo";
+$l['all']['CardBank'] = "Cartão de credito";
+$l['all']['MACAddress'] = "Endereço do MAC";
 $l['all']['Geocode'] = "Geocode";
-$l['all']['PINCode'] = "PIN Code";
-$l['all']['CreationDate'] = "Creation Date";
-$l['all']['CreationBy'] = "Creation By";
-$l['all']['UpdateDate'] = "Update Date";
-$l['all']['UpdateBy'] = "Update By";
+$l['all']['PINCode'] = "Codigo PIN";
+$l['all']['CreationDate'] = "Data de criação";
+$l['all']['CreationBy'] = "Criado por";
+$l['all']['UpdateDate'] = "Atualização de data";
+$l['all']['UpdateBy'] = "Atualizado por";
 
-$l['all']['Discount'] = "Discount";
-$l['all']['BillAmount'] = "Billed Amount";
-$l['all']['BillAction'] = "Billed Action";
-$l['all']['BillPerformer'] = "Bill Performer";
-$l['all']['BillReason'] = "Billing Reason";
-$l['all']['Lead'] = "Lead";
-$l['all']['Coupon'] = "Coupon";
-$l['all']['OrderTaker'] = "Order Taker";
-$l['all']['BillStatus'] = "Bill Status";
-$l['all']['LastBill'] = "Last Bill";
-$l['all']['NextBill'] = "Next Bill";
-$l['all']['PostalInvoice'] = "Postal Invoice";
-$l['all']['FaxInvoice'] = "Fax Invoice";
-$l['all']['EmailInvoice'] = "Email Invoice";
+$l['all']['Discount'] = "Desconto";
+$l['all']['BillAmount'] = "Quantia paga";
+$l['all']['BillAction'] = "Quantia faturada";
+$l['all']['BillPerformer'] = "Fatura realizada";
+$l['all']['BillReason'] = "Motivo da cobrança";
+$l['all']['Lead'] = "Encaminhar";
+$l['all']['Coupon'] = "Cupom";
+$l['all']['OrderTaker'] = "Gerente de pedidos";
+$l['all']['BillStatus'] = "Status da conta";
+$l['all']['LastBill'] = "Ultima Conta";
+$l['all']['NextBill'] = "Proxima Conta";
+$l['all']['PostalInvoice'] = "Endereço para o pedido";
+$l['all']['FaxInvoice'] = "Fax para o pedido";
+$l['all']['EmailInvoice'] = "E-mail para o pedido";
 
 $l['all']['edit'] = "editar";
 $l['all']['del'] = "deletar";
-$l['all']['groupslist'] = "groups-list";
+$l['all']['groupslist'] = "Lista de grupos";
 $l['all']['TestUser'] = "Testar Usuario";
-$l['all']['Accounting'] = "Accounting";
-$l['all']['RADIUSReply'] = "RADIUS Reply";
+$l['all']['Accounting'] = "Contas";
+$l['all']['RADIUSReply'] = "RADIUS Resposta";
 
 $l['all']['Disconnect'] = "Desconectar";
 
 $l['all']['Debug'] = "Debug";
-$l['all']['Timeout'] = "Timeout";
-$l['all']['Retries'] = "Retries";
-$l['all']['Count'] = "Count";
-$l['all']['Requests'] = "Requests";
+$l['all']['Timeout'] = "Tempo esgotado";
+$l['all']['Retries'] = "Tentativa";
+$l['all']['Count'] = "Contador";
+$l['all']['Requests'] = "Requesição";
 
-$l['all']['DatabaseHostname'] = "Database Hostname";
-$l['all']['DatabaseUser'] = "Database User";
-$l['all']['DatabasePass'] = "Database Pass";
-$l['all']['DatabaseName'] = "Database Name";
+$l['all']['DatabaseHostname'] = "Nome do host do banco de dados";
+$l['all']['DatabaseUser'] = "Usuario do Banco";
+$l['all']['DatabasePass'] = "Senha do Bacno";
+$l['all']['DatabaseName'] = "Nome do banco";
 
-$l['all']['PrimaryLanguage'] = "Primary Language";
+$l['all']['PrimaryLanguage'] = "Linguagem primaria";
 
-$l['all']['PagesLogging'] = "Logging of Pages (page visits)";
-$l['all']['QueriesLogging'] = "Logging of Queries (reports and graphs)";
-$l['all']['ActionsLogging'] = "Logging of Actions (form submits)";
-$l['all']['FilenameLogging'] = "Logging filename (full path)";
-$l['all']['LoggingDebugOnPages'] = "Logging of Debug info on pages";
-$l['all']['LoggingDebugInfo'] = "Logging of Debug Info";
+$l['all']['PagesLogging'] = "Registro em paginas";
+$l['all']['QueriesLogging'] = "Registro de consultas";
+$l['all']['ActionsLogging'] = "Registro de ações";
+$l['all']['FilenameLogging'] = "Registro de nome de arquivos";
+$l['all']['LoggingDebugOnPages'] = "Registro de erros e informações";
+$l['all']['LoggingDebugInfo'] = "Registro de erros e informações";
 
-$l['all']['PasswordHidden'] = "Enable Password Hiding (asterisk will be shown)";
-$l['all']['TablesListing'] = "Rows/Records per Tables Listing page";
-$l['all']['TablesListingNum'] = "Enable Tables Listing Numbering";
-$l['all']['AjaxAutoComplete'] = "Enable Ajax Auto-Complete";
+$l['all']['PasswordHidden'] = "Habilitar Esconder password";
+$l['all']['TablesListing'] = "Registro de tabelas por pagina e listagem";
+$l['all']['TablesListingNum'] = "Ativar numeração de listagem de tabelas";
+$l['all']['AjaxAutoComplete'] = "Ativar Ajax Auto-Complete";
 
-$l['all']['RadiusServer'] = "Radius Server";
-$l['all']['RadiusPort'] = "Radius Port";
+$l['all']['RadiusServer'] = "Radius Servidor";
+$l['all']['RadiusPort'] = "Radius Porta";
 
-$l['all']['UsernamePrefix'] = "Username Prefix";
-$l['all']['NumberInstances'] = "Number of instances to create";
-$l['all']['UsernameLength'] = "Length of username string";
-$l['all']['PasswordLength'] = "Length of password string";
+$l['all']['UsernamePrefix'] = "Usuario Prefixo";
+$l['all']['NumberInstances'] = "Numero de instacias para criar";
+$l['all']['UsernameLength'] = "Cumprimento do nome";
+$l['all']['PasswordLength'] = "Cumprimento do password";
 
-$l['all']['Expiration'] = "Expiration";
-$l['all']['MaxAllSession'] = "Max-All-Session";
-$l['all']['SessionTimeout'] = "Session Timeout";
-$l['all']['IdleTimeout'] = "Idle Timeout";
+$l['all']['Expiration'] = "Validade";
+$l['all']['MaxAllSession'] = "Numero Maximo de Sessão";
+$l['all']['SessionTimeout'] = "Tempo maximo sessão";
+$l['all']['IdleTimeout'] = "Tempo inativo";
 
-$l['all']['DBEngine'] = "DB Engine";
-$l['all']['radcheck'] = "radcheck";
+$l['all']['DBEngine'] = "Driver Banco de dados";
+$l['all']['radcheck'] = "radiocheck";
 $l['all']['radreply'] = "radreply";
 $l['all']['radgroupcheck'] = "radgroupcheck";
 $l['all']['radgroupreply'] = "radgroupreply";
-$l['all']['usergroup'] = "usergroup";
+$l['all']['usergroup'] = "grupodousuario";
 $l['all']['radacct'] = "radacct";
-$l['all']['operators'] = "operators";
-$l['all']['billingrates'] = "billing rates";
+$l['all']['operators'] = "operador";
+$l['all']['billingrates'] = "Taxa de cobrança";
 $l['all']['hotspots'] = "hotspots";
 $l['all']['nas'] = "nas";
-$l['all']['radpostauth'] = "radpostauth";
-$l['all']['radippool'] = "radippool";
-$l['all']['userinfo'] = "userinfo";
-$l['all']['dictionary'] = "dictionary";
-$l['all']['realms'] = "realms";
+$l['all']['radpostauth'] = "Após Autenticação Radius";
+$l['all']['radippool'] = "radipfaixa";
+$l['all']['userinfo'] = "infousuario";
+$l['all']['dictionary'] = "dicionario";
+$l['all']['realms'] = "reino";
 $l['all']['proxys'] = "proxys";
-$l['all']['billingpaypal'] = "billing paypal";
-$l['all']['billingplans'] = "billing plans";
-$l['all']['billinghistory'] = "billing history";
-$l['all']['billinginfo'] = "billing user info";
+$l['all']['billingpaypal'] = "Fatura pelo paypal";
+$l['all']['billingplans'] = "Forma de pagamento";
+$l['all']['billinghistory'] = "Historico de pagamentos";
+$l['all']['billinginfo'] = "Informações do pagamento do usuario";
 
 
 $l['all'][''] = "";
@@ -263,57 +263,57 @@ $l['all'][''] = "";
 $l['all'][''] = "";
 $l['all'][''] = "";
 
-$l['all']['PaymentDate'] = "Payment Date";
-$l['all']['PaymentStatus'] = "Payment Status";
-$l['all']['FirstName'] = "First name";
-$l['all']['LastName'] = "Last name";
-$l['all']['VendorType'] = "Merchant Vendor";
-$l['all']['PayerStatus'] = "Payer Status";
-$l['all']['PaymentAddressStatus'] = "Payment Address Status";
-$l['all']['PayerEmail'] = "Payer Email";
-$l['all']['TxnId'] = "Tranasction Id";
-$l['all']['PlanTimeType'] = "Plan Time Type";
-$l['all']['PlanTimeBank'] = "Plan Time Bank";
-$l['all']['PlanTimeRefillCost'] = "Plan Refill Cost";
-$l['all']['PlanTrafficRefillCost'] = "Plan Refill Cost";
-$l['all']['PlanBandwidthUp'] = "Plan Bandwidth Up";
-$l['all']['PlanBandwidthDown'] = "Plan Bandwidth Down";
-$l['all']['PlanTrafficTotal'] = "Plan Traffic Total";
-$l['all']['PlanTrafficDown'] = "Plan Traffic Down";
-$l['all']['PlanTrafficUp'] = "Plan Traffic Up";
-$l['all']['PlanRecurring'] = "Plan Recurring";
-$l['all']['PlanRecurringPeriod'] = "Plan Recurring Period";
-$l['all']['PlanCost'] = "Plan Cost";
-$l['all']['PlanSetupCost'] = "Plan Setup Cost";
-$l['all']['PlanTax'] = "Plan Tax";
-$l['all']['PlanCurrency'] = "Plan Currency";
-$l['all']['PlanGroup'] = "Plan Profile (Group)";
-$l['all']['PlanType'] = "Plan Type";
-$l['all']['PlanName'] = "Plan Name";
-$l['all']['PlanId'] = "Plan Id";
-$l['all']['Quantity'] = "Quantity";
-$l['all']['ReceiverEmail'] = "Receiver Email";
-$l['all']['Business'] = "Business";
-$l['all']['Tax'] = "Tax";
-$l['all']['Cost'] = "Cost";
-$l['all']['TotalCost'] = "Total Cost";
-$l['all']['TransactionFee'] = "Transaction Fee";
-$l['all']['PaymentCurrency'] = "Payment Currency";
-$l['all']['AddressRecipient'] = "Address Recipient";
-$l['all']['Street'] = "Street";
-$l['all']['Country'] = "Country";
-$l['all']['CountryCode'] = "Country Code";
-$l['all']['City'] = "City";
-$l['all']['State'] = "State";
-$l['all']['Zip'] = "Zip";
+$l['all']['PaymentDate'] = "Data de pagamento";
+$l['all']['PaymentStatus'] = "Status do pagamentos";
+$l['all']['FirstName'] = "Primeiro nome";
+$l['all']['LastName'] = "Ultimo Nome";
+$l['all']['VendorType'] = "Vendedor";
+$l['all']['PayerStatus'] = "Status do pagamento";
+$l['all']['PaymentAddressStatus'] = "Status do endereço de pagamento";
+$l['all']['PayerEmail'] = "Email do pagamento";
+$l['all']['TxnId'] = "Id da transação";
+$l['all']['PlanTimeType'] = "Tempo do tipo de plano";
+$l['all']['PlanTimeBank'] = "Tempo do tipo de bacno";
+$l['all']['PlanTimeRefillCost'] = "Custo para recarga";
+$l['all']['PlanTrafficRefillCost'] = "Plano de recarga";
+$l['all']['PlanBandwidthUp'] = "Plano de upload";
+$l['all']['PlanBandwidthDown'] = "Plano de  Download";
+$l['all']['PlanTrafficTotal'] = "Plano de trafego  Total";
+$l['all']['PlanTrafficDown'] = "Plano Trafego baixo";
+$l['all']['PlanTrafficUp'] = "Plano Trafego alto";
+$l['all']['PlanRecurring'] = "Plano Recorrente";
+$l['all']['PlanRecurringPeriod'] = "Plano periodo recorrente";
+$l['all']['PlanCost'] = "Custo do Plano";
+$l['all']['PlanSetupCost'] = "Configuração custo do plano";
+$l['all']['PlanTax'] = "Taxa do plano";
+$l['all']['PlanCurrency'] = "Plano corrente";
+$l['all']['PlanGroup'] = "Perfil do plano (Grupo)";
+$l['all']['PlanType'] = "Tipo de plano";
+$l['all']['PlanName'] = "Nome do Plano";
+$l['all']['PlanId'] = "Id do Plano";
+$l['all']['Quantity'] = "Quantidade";
+$l['all']['ReceiverEmail'] = "Endereço de Email";
+$l['all']['Business'] = "Negocios";
+$l['all']['Tax'] = "Taxa";
+$l['all']['Cost'] = "Custo";
+$l['all']['TotalCost'] = "Custo Total";
+$l['all']['TransactionFee'] = "imposto da transação";
+$l['all']['PaymentCurrency'] = "Pagamento atual";
+$l['all']['AddressRecipient'] = "Endereço do recebedor";
+$l['all']['Street'] = "Rua";
+$l['all']['Country'] = "Pais";
+$l['all']['CountryCode'] = "Codigo do Páis";
+$l['all']['City'] = "Cidade";
+$l['all']['State'] = "Estado";
+$l['all']['Zip'] = "CEP";
 
-$l['all']['BusinessName'] = "Business Name";
-$l['all']['BusinessPhone'] = "Business Phone";
-$l['all']['BusinessAddress'] = "Business Address";
-$l['all']['BusinessWebsite'] = "Business Website";
-$l['all']['BusinessEmail'] = "Business Email";
-$l['all']['BusinessContactPerson'] = "Business Contact Person";
-$l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
+$l['all']['BusinessName'] = "Nome do negocio";
+$l['all']['BusinessPhone'] = "Telefone da empresa";
+$l['all']['BusinessAddress'] = "Endereço da empresa";
+$l['all']['BusinessWebsite'] = "Site da empresa";
+$l['all']['BusinessEmail'] = "Email da empresa";
+$l['all']['BusinessContactPerson'] = "Contato pessoal da empresa";
+$l['all']['DBPasswordEncryption'] = "Tipo de criptografia do banco";
 
 
 /* **********************************************************************************
@@ -321,33 +321,32 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
-$l['Tooltip']['Username'] = "Type the Username";
-$l['Tooltip']['UsernameWildcard'] = "Hint: you may use the char * or % to specify a wildcard";
-$l['Tooltip']['HotspotName'] = "Type the Hotspot name";
-$l['Tooltip']['NasName'] = "Type the NAS name";
-$l['Tooltip']['GroupName'] = "Type the Group name";
-$l['Tooltip']['AttributeName'] = "Type the Attribute name";
-$l['Tooltip']['VendorName'] = "Type the Vendor name";
-$l['Tooltip']['PoolName'] = "Type the Pool name";
-$l['Tooltip']['IPAddress'] = "Type the IP address";
-$l['Tooltip']['Filter'] = "Type a filter, can be any alpha numeric string. Leave empty to match anything. ";
-$l['Tooltip']['Date'] = "Type the date <br/> example: 1982-06-04 (Y-M-D)";
-$l['Tooltip']['RateName'] = "Type the Rate name";
-$l['Tooltip']['OperatorName'] = "Type the Operator name";
-$l['Tooltip']['BillingPlanName'] = "Type the Billing Plan name";
+$l['Tooltip']['Username'] = "Digite o usuario";
+$l['Tooltip']['UsernameWildcard'] = "Voçe pode usar * para especificar um curinga";
+$l['Tooltip']['HotspotName'] = "Digita o nome do hotspot";
+$l['Tooltip']['NasName'] = "Digite o nome do NAS";
+$l['Tooltip']['GroupName'] = "Digite o nome do grupo";
+$l['Tooltip']['AttributeName'] = "Digite o nome para atribuir";
+$l['Tooltip']['VendorName'] = "Digite o nome da empresa";
+$l['Tooltip']['PoolName'] = "Digite o nome da faixa";
+$l['Tooltip']['IPAddress'] = "Digite o ip address";
+$l['Tooltip']['Filter'] = "Digite um filtro, pode ser qualquer sequência alfanumérica. Deixe em branco para combinar com qualquer coisa. ";
+$l['Tooltip']['Date'] = "Digite a data no formato : 1982-06-04 (Y-M-D)";
+$l['Tooltip']['RateName'] = "Digite o nome da TAxa";
+$l['Tooltip']['OperatorName'] = "Digite o nome do operador";
+$l['Tooltip']['BillingPlanName'] = "Digite o nome do plano";
 
-$l['Tooltip']['EditRate'] = "Edit Rate";
-$l['Tooltip']['RemoveRate'] = "Remove Rate";
+$l['Tooltip']['EditRate'] = "Edite a taxa";
+$l['Tooltip']['RemoveRate'] = "Remova a taxa;
 
-$l['Tooltip']['rateNameTooltip'] = "The rate friendly name,<br/>
-					to describe the purpose of the rate";
-$l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br/>
-					the operation of the rate";
-$l['Tooltip']['rateCostTooltip'] = "The rate cost amount";
+$l['Tooltip']['rateNameTooltip'] = "Nome para a taxa,<br/>
+					para descrever o objetivo da taxa ";
+$l['Tooltip']['rateTypeTooltip'] = "Tipo de taxa <br/>
+					o que essa taxa faz";
+$l['Tooltip']['rateCostTooltip'] = "O valor do custo da taxa";
 
-$l['Tooltip']['planNameTooltip'] = "The Plan's name. This is<br/>
-					a friendly name describing the
-					characeristics of the plan";
+$l['Tooltip']['planNameTooltip'] = "O nome do plano<br/>
+					breve descrição do plano";
 $l['Tooltip']['planIdTooltip'] = "";
 $l['Tooltip']['planTimeTypeTooltip'] = "";
 $l['Tooltip']['planTimeBankTooltip'] = "";
@@ -367,10 +366,10 @@ $l['Tooltip']['planTaxTooltip'] = "";
 $l['Tooltip']['planCurrencyTooltip'] = "";
 $l['Tooltip']['planGroupTooltip'] = "";
 
-$l['Tooltip']['EditIPPool'] = "Edit IP-Pool";
-$l['Tooltip']['RemoveIPPool'] = "Remove IP-Pool";
-$l['Tooltip']['EditIPAddress'] = "Edit IP Address";
-$l['Tooltip']['RemoveIPAddress'] = "Remove IP Address";
+$l['Tooltip']['EditIPPool'] = "Editar faixa de ip";
+$l['Tooltip']['RemoveIPPool'] = "Remover faixa de ip";
+$l['Tooltip']['EditIPAddress'] = "Editar endereço ip";
+$l['Tooltip']['RemoveIPAddress'] = "Remover endereço de ip";
 
 $l['Tooltip']['BusinessNameTooltip'] = "";
 $l['Tooltip']['BusinessPhoneTooltip'] = "";
@@ -379,30 +378,30 @@ $l['Tooltip']['BusinessWebsiteTooltip'] = "";
 $l['Tooltip']['BusinessEmailTooltip'] = "";
 $l['Tooltip']['BusinessContactPersonTooltip'] = "";
 
-$l['Tooltip']['proxyNameTooltip'] = "Proxy name";
-$l['Tooltip']['proxyRetryDelayTooltip'] = "The time (in seconds) to wait <br/>
-					for a response from the proxy, <br/>
-					before re-sending the proxied request.";
-$l['Tooltip']['proxyRetryCountTooltip'] = "The number of retries to send <br/>
-					before giving up, and sending a <br/>
-					reject message to the NAS.";
-$l['Tooltip']['proxyDeadTimeTooltip'] = "If the home server does not respond <br/>
-					to any of the multiple retries, <br/>
-					then FreeRADIUS will stop sending it <br/>
-					proxy requests, and mark it 'dead'.";
-$l['Tooltip']['proxyDefaultFallbackTooltip'] = "If all exact matching realms <br/>
-						did not respond, we can try the <br/>
+$l['Tooltip']['proxyNameTooltip'] = "Nome do proxy";
+$l['Tooltip']['proxyRetryDelayTooltip'] = "Tempo em segundos que falta <br/>
+					para o proxy responder, <br/>
+					após ser enviado a requisição para o proxy.";
+$l['Tooltip']['proxyRetryCountTooltip'] = "O numero de tentativas para reenviar <br/>
+					apos reenviar <br/>
+					mensagem rejeitado peloa NAS";
+$l['Tooltip']['proxyDeadTimeTooltip'] = "Se o servidor não responder <br/>
+					para varios servidores, <br/>
+					freeraius parou de responder <br/>
+					após requisições não resondeu o proxy.";
+$l['Tooltip']['proxyDefaultFallbackTooltip'] = "Nome identico ao do reino <br/>
+						não precisa responder <br/>
 						";
-$l['Tooltip']['realmNameTooltip'] = "Realm name";
-$l['Tooltip']['realmTypeTooltip'] = "Set to radius for default";
-$l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS shared secret";
-$l['Tooltip']['realmAuthhostTooltip'] = "Realm authentication host";
-$l['Tooltip']['realmAccthostTooltip'] = "Realm accounting host";
-$l['Tooltip']['realmLdflagTooltip'] = "Allows for load balancing<br/>
-					Allowed values are 'fail_over' <br/>
-					and 'round_robin'.";
-$l['Tooltip']['realmNostripTooltip'] = "Whether to strip or not the <br/>
-					realm suffix";
+$l['Tooltip']['realmNameTooltip'] = "Nome do reino";
+$l['Tooltip']['realmTypeTooltip'] = "Escolher Servidor radius default";
+$l['Tooltip']['realmSecretTooltip'] = "Chave compartilhado do reino e radius ";
+$l['Tooltip']['realmAuthhostTooltip'] = "Reino auteticação no dominio";
+$l['Tooltip']['realmAccthostTooltip'] = "Conta do host ";
+$l['Tooltip']['realmLdflagTooltip'] = "Permitido balanceamento <br/>
+					em caso de  'fail_over' <br/>
+					ou 'round_robin'.";
+$l['Tooltip']['realmNostripTooltip'] = "Remover sufixo do dominio <br/>
+					";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
@@ -428,71 +427,71 @@ $l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be<b
 
 
 
-$l['Tooltip']['AttributeEdit'] = "Edit Attribute";
+$l['Tooltip']['AttributeEdit'] = "Editar Atributo";
 
 
-$l['Tooltip']['UserEdit'] = "Edit User";
-$l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
-$l['Tooltip']['EditNAS'] = "Edit NAS";
-$l['Tooltip']['RemoveNAS'] = "Remove NAS";
+$l['Tooltip']['UserEdit'] = "Editar Usuario";
+$l['Tooltip']['HotspotEdit'] = "Editar Hotspot";
+$l['Tooltip']['EditNAS'] = "Editar NAS";
+$l['Tooltip']['RemoveNAS'] = "Remover NAS";
 
-$l['Tooltip']['EditUserGroup'] = "Edit User Group";
-$l['Tooltip']['ListUserGroups'] = "List User Groups";
+$l['Tooltip']['EditUserGroup'] = "Editar Usuario do Group";
+$l['Tooltip']['ListUserGroups'] = "Listar Usuario dos Grupos";
 
-$l['Tooltip']['EditProfile'] = "Edit Profile";
+$l['Tooltip']['EditProfile'] = "Editar Perfil";
 
-$l['Tooltip']['EditRealm'] = "Edit Realm";
-$l['Tooltip']['EditProxy'] = "Edit Proxy";
+$l['Tooltip']['EditRealm'] = "Editar Reino";
+$l['Tooltip']['EditProxy'] = "Editar Proxy";
 
-$l['Tooltip']['EditGroup'] = "Edit Group";
+$l['Tooltip']['EditGroup'] = "Editar Grupo";
 
-$l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+$l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "Se você especificar o valor, apenas o registro único que corresponder ao nome do grupo e ao valor específico que você especificou será removido. Se você omitir o valor, todos os registros para esse nome de grupo específico serão removidos!";
 
-$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
+$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "
+Se você especificar o valor, apenas o registro único que corresponder ao nome do grupo e ao valor específico que você especificou será removido. Se você omitir o valor, todos os registros para esse nome de grupo específico serão removidos!";
 
-$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive name)";
+$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(Descrição do nome)";
 
-$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
+$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se você especificar grupo, apenas o registro único que corresponder ao nome de usuário e ao grupo que você especificou será removido. Se você omitir o grupo, todos os registros para esse usuário específico serão removidos!"
+
+$l['Tooltip']['usernameTooltip'] = "O nome exato do usuario <br/>&nbsp;&nbsp;&nbsp;
+					para se conectar no sistema";
+$l['Tooltip']['passwordTypeTooltip'] = "O password digitado corresponde ao usuario do radius";
+$l['Tooltip']['passwordTooltip'] = "O password  é case sensitive<br/>&nbsp;&nbsp;&nbsp;
+					Tenha um cuidado dobrado";
+$l['Tooltip']['groupTooltip'] = "O usuario foi adicionado ao grupo<br/>&nbsp;&nbsp;&nbsp;
+					Usuario particular adicionado ao grupo<br/>&nbsp;&nbsp;&nbsp;
+					O usuario é o assunto's attributes";
+$l['Tooltip']['macaddressTooltip'] = "Exemplo: 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
+					O formato do endereço MAC deve ser o mesmo<br/>&nbsp;&nbsp;&nbsp;
+					como o NAS envia. Principalmente isso é sem<br/>&nbsp;&nbsp;&nbsp;
+					qualquer caracter";
+$l['Tooltip']['pincodeTooltip'] = "Exemplo: khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
+					Esse é o código exato, conforme o usuário o digitará.<br/>&nbsp;&nbsp;&nbsp;
+					Você pode usar caracteres alfanuméricos, caso sensível";
+$l['Tooltip']['usernamePrefixTooltip'] = "Exemplo: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
+					O usuario foi adicionando <br/>&nbsp;&nbsp;&nbsp;
+					o usuario foi gerado finalmente.";
+$l['Tooltip']['instancesToCreateTooltip'] = "Exemplo: 100<br/>&nbsp;&nbsp;&nbsp;
+					A quantidade de usuarios aleatorios a serem criados<br/>&nbsp;&nbsp;&nbsp;
+					em perfil especifico.";
+$l['Tooltip']['lengthOfUsernameTooltip'] = "Exemplo: 8<br/>&nbsp;&nbsp;&nbsp;
+					O comprimento dos caracteres do nome de usuário<br/>&nbsp;&nbsp;&nbsp;
+					recomendado de 8-12  caracteres.";
+$l['Tooltip']['lengthOfPasswordTooltip'] = "Exemplo: 8<br/>&nbsp;&nbsp;&nbsp;
+					O cumprimento do password<br/>&nbsp;&nbsp;&nbsp;
+					Recomendado de  8-12 caracteres.";
 
 
-$l['Tooltip']['usernameTooltip'] = "The exact username as the user<br/>&nbsp;&nbsp;&nbsp;
-					will use to connect to the system";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
-$l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in<br/>&nbsp;&nbsp;&nbsp;
-					certain systems so take extra care";
-$l['Tooltip']['groupTooltip'] = "The user will be added to this group.<br/>&nbsp;&nbsp;&nbsp;
-					By assigning a user to a particular group<br/>&nbsp;&nbsp;&nbsp;
-					the user is subject to the group's attributes";
-$l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
-					The MAC Address format should be the same<br/>&nbsp;&nbsp;&nbsp;
-					as the NAS sends it. Mostly this is without<br/>&nbsp;&nbsp;&nbsp;
-					any characters.";
-$l['Tooltip']['pincodeTooltip'] = "Example: khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
-					This is the exact pincode as the user will enter it.<br/>&nbsp;&nbsp;&nbsp;
-					You may use alpha numeric characters, case is sensituve";
-$l['Tooltip']['usernamePrefixTooltip'] = "Example: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
-					This username prefix will be added to<br/>&nbsp;&nbsp;&nbsp;
-					the generated username finally.";
-$l['Tooltip']['instancesToCreateTooltip'] = "Example: 100<br/>&nbsp;&nbsp;&nbsp;
-					The amount of random users to create<br/>&nbsp;&nbsp;&nbsp;
-					with the specified profile.";
-$l['Tooltip']['lengthOfUsernameTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
-					The characters length of the username<br/>&nbsp;&nbsp;&nbsp;
-					to be created. Recommended 8-12 chars.";
-$l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
-					The characters length of the password<br/>&nbsp;&nbsp;&nbsp;
-					to be created. Recommended 8-12 chars.";
+$l['Tooltip']['hotspotNameTooltip'] = "Exemplo: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
+					nome amigavel para o hotspot <br/>";
 
+$l['Tooltip']['hotspotMacaddressTooltip'] = "Exeplo: 00:aa:bb:cc:dd:ee<br/>&nbsp;&nbsp;&nbsp;
+					Endereço mac do  NAS<br/>";
 
-$l['Tooltip']['hotspotNameTooltip'] = "Example: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
-					a friendly name of the hotspot<br/>";
-
-$l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00:aa:bb:cc:dd:ee<br/>&nbsp;&nbsp;&nbsp;
-					The MAC address of the NAS<br/>";
-
-$l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
-					This is the GooleMaps location code used<br/>&nbsp;&nbsp;&nbsp;
-					to pin the Hotspot/NAS on the map (see GIS).";
+$l['Tooltip']['geocodeTooltip'] = "Exemplo: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
+					A localização do google maps será usuada<br/>&nbsp;&nbsp;&nbsp;
+					para o pin do NAS/HOTSPOT  (olhe GIS).";
 
 
 /* ********************************************************************************** */
@@ -503,143 +502,143 @@ $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
 /* **********************************************************************************
  * Links and Buttons
  ************************************************************************************/
-$l['button']['ClearSessions'] = "Clear Sessions";
+$l['button']['ClearSessions'] = "Limpar Sessão";
 
-$l['button']['ListRates'] = "List Rates";
-$l['button']['NewRate'] = "New Rate";
-$l['button']['EditRate'] = "Edit Rate";
-$l['button']['RemoveRate'] = "Remove Rate";
+$l['button']['ListRates'] = "Lista de taxas";
+$l['button']['NewRate'] = "Novas taxas";
+$l['button']['EditRate'] = "Editar taxas";
+$l['button']['RemoveRate'] = "Remover taxa";
 
-$l['button']['ListPlans'] = "List Plans";
-$l['button']['NewPlan'] = "New Plan";
-$l['button']['EditPlan'] = "Edit Plan";
-$l['button']['RemovePlan'] = "Remove Plan";
+$l['button']['ListPlans'] = "Listar Planos";
+$l['button']['NewPlan'] = "Novo Plano";
+$l['button']['EditPlan'] = "Editar Plano";
+$l['button']['RemovePlan'] = "Remover Plano";
 
-$l['button']['ListRealms'] = "List Realms";
-$l['button']['NewRealm'] = "New Realm";
-$l['button']['EditRealm'] = "Edit Realm";
-$l['button']['RemoveRealm'] = "Remove Realm";
+$l['button']['ListRealms'] = "Listar Reino";
+$l['button']['NewRealm'] = "Novo Reino";
+$l['button']['EditRealm'] = "Editar Reino";
+$l['button']['RemoveRealm'] = "Remover Reino";
 
-$l['button']['ListProxys'] = "List Proxys";
-$l['button']['NewProxy'] = "New Proxy";
-$l['button']['EditProxy'] = "Edit Proxy";
-$l['button']['RemoveProxy'] = "Remove Proxy";
+$l['button']['ListProxys'] = "Listar Proxys";
+$l['button']['NewProxy'] = "Novo Proxy";
+$l['button']['EditProxy'] = "Editar Proxy";
+$l['button']['RemoveProxy'] = "Remover Proxy";
 
-$l['button']['ListAttributesforVendor'] = "List Attributes for Vendor:";
-$l['button']['NewVendorAttribute'] = "New Vendor Attribute";
-$l['button']['EditVendorAttribute'] = "Edit Vendor's Attribute";
-$l['button']['SearchVendorAttribute'] = "Search Attribute";
-$l['button']['RemoveVendorAttribute'] = "Remove Vendor's Attribute";
-$l['button']['ImportVendorDictionary'] = "Import Vendor Dictionary";
+$l['button']['ListAttributesforVendor'] = "Listar atributos para vendedor:";
+$l['button']['NewVendorAttribute'] = "Novo atributo para vendedor";
+$l['button']['EditVendorAttribute'] = "Editar atributo do vendedor";
+$l['button']['SearchVendorAttribute'] = "Procura atributos";
+$l['button']['RemoveVendorAttribute'] = "Remover atributtos do vendedor";
+$l['button']['ImportVendorDictionary'] = "Importar dicionario do vendedor";
 
 
-$l['button']['BetweenDates'] = "Between Dates:";
-$l['button']['Where'] = "Where";
-$l['button']['AccountingFieldsinQuery'] = "Accounting Fields in Query:";
-$l['button']['OrderBy'] = "Order By";
-$l['button']['HotspotAccounting'] = "Hotspot Accounting";
-$l['button']['HotspotsComparison'] = "Hotspots Comparison";
+$l['button']['BetweenDates'] = "Entre datas:";
+$l['button']['Where'] = "Onde";
+$l['button']['AccountingFieldsinQuery'] = "Campos contábeis na consulta:";
+$l['button']['OrderBy'] = "Ordenar por";
+$l['button']['HotspotAccounting'] = "Hotspot Conta";
+$l['button']['HotspotsComparison'] = "Hotspots Comparação";
 
-$l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
-$l['button']['DeleteAccountingRecords'] = "Delete Accounting Records";
+$l['button']['CleanupStaleSessions'] = "Sessões obsoletas da limpeza";
+$l['button']['DeleteAccountingRecords'] = "Deletando gravações de contas";
 
-$l['button']['ListUsers'] = "List Users";
-$l['button']['NewUser'] = "New User";
-$l['button']['NewUserQuick'] = "New User - Quick Add";
-$l['button']['BatchAddUsers'] = "Batch Add Users";
-$l['button']['EditUser'] = "Edit User";
-$l['button']['SearchUsers'] = "Search Users";
-$l['button']['RemoveUsers'] = "Remove Users";
-$l['button']['ListHotspots'] = "List Hotspots";
-$l['button']['NewHotspot'] = "New Hotspot";
-$l['button']['EditHotspot'] = "Edit Hotspot";
-$l['button']['RemoveHotspot'] = "Remove Hotspot";
+$l['button']['ListUsers'] = "Listar Usuarios";
+$l['button']['NewUser'] = "Novo Ususario";
+$l['button']['NewUserQuick'] = "Novo Usuario - Rapido";
+$l['button']['BatchAddUsers'] = "Adicionar usuários em lote";
+$l['button']['EditUser'] = "Editar Usuario";
+$l['button']['SearchUsers'] = "Procura Usuarios";
+$l['button']['RemoveUsers'] = "Remover Usuarios";
+$l['button']['ListHotspots'] = "Listar Hotspots";
+$l['button']['NewHotspot'] = "Novo Hotspot";
+$l['button']['EditHotspot'] = "Editar Hotspot";
+$l['button']['RemoveHotspot'] = "Remover Hotspot";
 
-$l['button']['ListIPPools'] = "List IP-Pools";
-$l['button']['NewIPPool'] = "New IP-Pool";
-$l['button']['EditIPPool'] = "Edit IP-Pool";
-$l['button']['RemoveIPPool'] = "Remove IP-Pool";
+$l['button']['ListIPPools'] = "Listar IP-da-faixa";
+$l['button']['NewIPPool'] = "Novo IP-na-faixa";
+$l['button']['EditIPPool'] = "Editar IP-da-faixa";
+$l['button']['RemoveIPPool'] = "Remover IP-da-faixa";
 
-$l['button']['ListNAS'] = "List NAS";
-$l['button']['NewNAS'] = "New NAS";
-$l['button']['EditNAS'] = "Edit NAS";
-$l['button']['RemoveNAS'] = "Remove NAS";
+$l['button']['ListNAS'] = "Listar NAS";
+$l['button']['NewNAS'] = "Novo NAS";
+$l['button']['EditNAS'] = "Editar NAS";
+$l['button']['RemoveNAS'] = "Remover NAS";
 
-$l['button']['ListUserGroup'] = "List User-Group Mappings";
-$l['button']['ListUsersGroup'] = "List  User's Group Mappings";
-$l['button']['NewUserGroup'] = "New User-Group Mappings";
-$l['button']['EditUserGroup'] = "Edit User-Group Mappings";
-$l['button']['RemoveUserGroup'] = "Remove User-Group Mappings";
+$l['button']['ListUserGroup'] = "Listar Usuario-Grupos Mapeados";
+$l['button']['ListUsersGroup'] = "Listar  Usuarios e Grupo Mapeados";
+$l['button']['NewUserGroup'] = "Novo Usuario-Grupo Mapeados";
+$l['button']['EditUserGroup'] = "Editar Usuario-Grupo Mapeados";
+$l['button']['RemoveUserGroup'] = "Remover Usuario-Grupo Mapeados";
 
-$l['button']['ListProfiles'] = "List Profiles";
-$l['button']['NewProfile'] = "New Profile";
-$l['button']['EditProfile'] = "Edit Profile";
-$l['button']['DuplicateProfile'] = "Duplicate Profile";
-$l['button']['RemoveProfile'] = "Remove Profile";
+$l['button']['ListProfiles'] = "Listar Perfil";
+$l['button']['NewProfile'] = "Novo Perfil";
+$l['button']['EditProfile'] = "Editar Perfil";
+$l['button']['DuplicateProfile'] = "Duplicar Perfil";
+$l['button']['RemoveProfile'] = "Remover Perfil";
 
-$l['button']['ListGroupReply'] = "List Group Reply Mappings";
-$l['button']['SearchGroupReply'] = "Search Group Reply";
-$l['button']['NewGroupReply'] = "New Group Reply Mapping";
-$l['button']['EditGroupReply'] = "Edit Group Reply Mapping";
-$l['button']['RemoveGroupReply'] = "Remove Group Reply Mapping";
+$l['button']['ListGroupReply'] = "Listar Grupo Reposta Mapeadas";
+$l['button']['SearchGroupReply'] = "Procurar grupo de resposta";
+$l['button']['NewGroupReply'] = "Novo grupo de resposta mapeada";
+$l['button']['EditGroupReply'] = "Editar Grupo Resposta Mapeada";
+$l['button']['RemoveGroupReply'] = "Remover Grupo Resposta Mapeada";
 
-$l['button']['ListGroupCheck'] = "List Group Check Mappings";
-$l['button']['SearchGroupCheck'] = "Search Group Check";
-$l['button']['NewGroupCheck'] = "New Group Check Mapping";
-$l['button']['EditGroupCheck'] = "Edit Group Check Mapping";
-$l['button']['RemoveGroupCheck'] = "Remove Group Check Mapping";
+$l['button']['ListGroupCheck'] = "Listar Grupo Checar Mapeados";
+$l['button']['SearchGroupCheck'] = "Procura Grupo Checado";
+$l['button']['NewGroupCheck'] = "Novo Grupo Checado e Mapeado";
+$l['button']['EditGroupCheck'] = "Editar Grupo Checado e Mapeado";
+$l['button']['RemoveGroupCheck'] = "Remover Grupo Checado Mapeado";
 
-$l['button']['UserAccounting'] = "User Accounting";
-$l['button']['IPAccounting'] = "IP Accounting";
-$l['button']['NASIPAccounting'] = "NAS IP Accounting";
-$l['button']['NASIPAccountingOnlyActive'] = "Show only active";
-$l['button']['DateAccounting'] = "Date Accounting";
-$l['button']['AllRecords'] = "All Records";
-$l['button']['ActiveRecords'] = "Active Records";
+$l['button']['UserAccounting'] = "Conta de Usuario ";
+$l['button']['IPAccounting'] = "IP da conta";
+$l['button']['NASIPAccounting'] = "NAS IP Conta";
+$l['button']['NASIPAccountingOnlyActive'] = "Mostre Somente ativos";
+$l['button']['DateAccounting'] = "Data da conta";
+$l['button']['AllRecords'] = "Todos os registros";
+$l['button']['ActiveRecords'] = "Gravações ativas";
 
-$l['button']['OnlineUsers'] = "Online Users";
-$l['button']['LastConnectionAttempts'] = "Last Connection Attempts";
-$l['button']['TopUser'] = "Top User";
-$l['button']['History'] = "History";
+$l['button']['OnlineUsers'] = "Usuarios Online";
+$l['button']['LastConnectionAttempts'] = "Ultima tentativa de conexão";
+$l['button']['TopUser'] = "Usuarios Maior Trafego";
+$l['button']['History'] = "Historico";
 
-$l['button']['ServerStatus'] = "Server Status";
-$l['button']['ServicesStatus'] = "Services Status";
+$l['button']['ServerStatus'] = "Status do servidor";
+$l['button']['ServicesStatus'] = "Status do serviço";
 
 $l['button']['daloRADIUSLog'] = "daloRADIUS Log";
 $l['button']['RadiusLog'] = "Radius Log";
-$l['button']['SystemLog'] = "System Log";
+$l['button']['SystemLog'] = "Logs do Sistema";
 $l['button']['BootLog'] = "Boot Log";
 
-$l['button']['UserLogins'] = "User Logins";
-$l['button']['UserDownloads'] = "User Downloads";
-$l['button']['UserUploads'] = "User Uploads";
-$l['button']['TotalLogins'] = "Total Logins";
-$l['button']['TotalTraffic'] = "Total Traffic";
+$l['button']['UserLogins'] = "Logins de usuário";
+$l['button']['UserDownloads'] = "Download de Usuarios";
+$l['button']['UserUploads'] = "Upload to usuarios";
+$l['button']['TotalLogins'] = "Total de Logins";
+$l['button']['TotalTraffic'] = "Total Trafego";
 
-$l['button']['ViewMAP'] = "View MAP";
-$l['button']['EditMAP'] = "Edit MAP";
+$l['button']['ViewMAP'] = "Visão do  MAP";
+$l['button']['EditMAP'] = "Editar MAP";
 $l['button']['RegisterGoogleMapsAPI'] = "RegisterGoogleMaps API";
 
-$l['button']['DatabaseSettings'] = "Database Settings";
-$l['button']['LanguageSettings'] = "Language Settings";
-$l['button']['LoggingSettings'] = "Logging Settings";
-$l['button']['InterfaceSettings'] = "Interface Settings";
+$l['button']['DatabaseSettings'] = "Configurações do Banco de dados";
+$l['button']['LanguageSettings'] = "Configurações de linguagem";
+$l['button']['LoggingSettings'] = "Configurações de log";
+$l['button']['InterfaceSettings'] = "Configurações da interface";
 
-$l['button']['TestUserConnectivity'] = "Test User Connectivity";
-$l['button']['DisconnectUser'] = "Disconnect User";
+$l['button']['TestUserConnectivity'] = "Testar conectividade do usuário";
+$l['button']['DisconnectUser'] = "Desconectar Usuário";
 
-$l['button']['ManageBackups'] = "Manage Backups";
-$l['button']['CreateBackups'] = "Create Backups";
+$l['button']['ManageBackups'] = "Gerenciar Backups";
+$l['button']['CreateBackups'] = "Criar Backups";
 
-$l['button']['ListOperators'] = "List Operators";
-$l['button']['NewOperator'] = "New Operator";
-$l['button']['EditOperator'] = "Edit Operator";
-$l['button']['RemoveOperator'] = "Remove Operator";
+$l['button']['ListOperators'] = "Listar Operadores";
+$l['button']['NewOperator'] = "Novo Operador";
+$l['button']['EditOperator'] = "Editar Operador";
+$l['button']['RemoveOperator'] = "Remover Operador";
 
-$l['button']['ProcessQuery'] = "Process Query";
+$l['button']['ProcessQuery'] = "Processar consulta";
 
- 
- 
+
+
 /* ********************************************************************************** */
 
 
@@ -648,66 +647,66 @@ $l['button']['ProcessQuery'] = "Process Query";
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
-$l['title']['RateInfo'] = "Rate Information";
-$l['title']['PlanInfo'] = "Plan Information";
-$l['title']['TimeSettings'] = "Time Settings";
-$l['title']['BandwidthSettings'] = "Bandwidth Settings";
-$l['title']['PlanRemoval'] = "Plan Removal";
+$l['title']['RateInfo'] = "Informação da taxa";
+$l['title']['PlanInfo'] = "Informação do plano";
+$l['title']['TimeSettings'] = "Configurações do Tempo";
+$l['title']['BandwidthSettings'] = "Configurações da banda";
+$l['title']['PlanRemoval'] = "Remover plano";
 
 $l['title']['Backups'] = "Backups";
-$l['title']['FreeRADIUSTables'] = "FreeRADIUS Tables";
-$l['title']['daloRADIUSTables'] = "daloRADIUS Tables";
+$l['title']['FreeRADIUSTables'] = "FreeRADIUS Tabelas";
+$l['title']['daloRADIUSTables'] = "daloRADIUS Tabelas";
 
-$l['title']['IPPoolInfo'] = "IP-Pool Info";
+$l['title']['IPPoolInfo'] = "IP-da-faixa Informação";
 
-$l['title']['BusinessInfo'] = "Business Info";
+$l['title']['BusinessInfo'] = "Informação do negocio";
 
-$l['title']['CleanupRecords'] = "Cleanup Records";
-$l['title']['DeleteRecords'] = "Delete Records";
+$l['title']['CleanupRecords'] = "Limpando gravações";
+$l['title']['DeleteRecords'] = "Deletar gravações";
 
-$l['title']['RealmInfo'] = "Realm Info";
+$l['title']['RealmInfo'] = "Informação do Reino";
 
-$l['title']['ProxyInfo'] = "Proxy Info";
+$l['title']['ProxyInfo'] = "Informação do proxy";
 
-$l['title']['VendorAttribute'] = "Vendor Attribute";
+$l['title']['VendorAttribute'] = "Atributo do vendedor";
 
-$l['title']['AccountRemoval'] = "Account Removal";
-$l['title']['AccountInfo'] = "Account Info";
+$l['title']['AccountRemoval'] = "Remover conta";
+$l['title']['AccountInfo'] = "Informações da conta";
 
-$l['title']['Profiles'] = "Profiles";
-$l['title']['ProfileInfo'] = "Profile Info";
+$l['title']['Profiles'] = "perfils";
+$l['title']['ProfileInfo'] = "Informação dos perfils";
 
-$l['title']['GroupInfo'] = "Group Info";
-$l['title']['GroupAttributes'] = "Group Attributes";
+$l['title']['GroupInfo'] = "Informação do grupo";
+$l['title']['GroupAttributes'] = "Atributos do grupo";
 
-$l['title']['NASInfo'] = "NAS Info";
-$l['title']['NASAdvanced'] = "NAS Advanced";
+$l['title']['NASInfo'] = "Informação do NAS";
+$l['title']['NASAdvanced'] = "Configuração avancado do NAS ";
 
-$l['title']['UserInfo'] = "User Info";
-$l['title']['BillingInfo'] = "Billing Info";
+$l['title']['UserInfo'] = "Informação do usuário";
+$l['title']['BillingInfo'] = "Informação do pagamento";
 
-$l['title']['Attributes'] = "Attributes";
-$l['title']['ProfileAttributes'] = "Profile Attributes";
+$l['title']['Attributes'] = "Atributos";
+$l['title']['ProfileAttributes'] = "Atributos do perfil";
 
-$l['title']['HotspotInfo'] = "Hotspot Info";
-$l['title']['HotspotRemoval'] = "Hotspot Removal";
+$l['title']['HotspotInfo'] = "Informação do Hotspot";
+$l['title']['HotspotRemoval'] = "Remover Hotspot";
 
-$l['title']['ContactInfo'] = "Contact Info";
+$l['title']['ContactInfo'] = "Informações do Contato";
 
-$l['title']['Plan'] = "Plan";
+$l['title']['Plan'] = "Planos";
 
-$l['title']['Profile'] = "Profile";
-$l['title']['Groups'] = "Groups";
-$l['title']['RADIUSCheck'] = "Check Attributes";
-$l['title']['RADIUSReply'] = "Reply Attributes";
+$l['title']['Profile'] = "Perfil";
+$l['title']['Groups'] = "Grupos";
+$l['title']['RADIUSCheck'] = "Checar atributos";
+$l['title']['RADIUSReply'] = "Resposta Atributos";
 
-$l['title']['Settings'] = "Settings";
-$l['title']['DatabaseSettings'] = "Database Settings";
-$l['title']['DatabaseTables'] = "Database Tables";
-$l['title']['AdvancedSettings'] = "Advanced Settings";
+$l['title']['Settings'] = "Configurações";
+$l['title']['DatabaseSettings'] = "Configurações do Banco de Dados";
+$l['title']['DatabaseTables'] = "Tabelas do Banco";
+$l['title']['AdvancedSettings'] = "Configurações avançadas";
 
-$l['title']['Advanced'] = "Advanced";
-$l['title']['Optional'] = "Optional";
+$l['title']['Advanced'] = "Avançadas";
+$l['title']['Optional'] = "Opcional";
 
 /* ********************************************************************************** */
 
@@ -717,81 +716,81 @@ $l['title']['Optional'] = "Optional";
  * General text information that is used through-out the pages
  ************************************************************************************/
 
-$l['text']['LoginRequired'] = "Login Required";
-$l['text']['LoginPlease'] = "Login Please";
+$l['text']['LoginRequired'] = "Login é Requirido";
+$l['text']['LoginPlease'] = "Login Por Favor";
 
 /* ********************************************************************************** */
 
 
 
 /* **********************************************************************************
- * Contact Info 
+ * Contact Info
  * Related to all contact info text, user info, hotspot owner contact information etc
  ************************************************************************************/
 
-$l['ContactInfo']['FirstName'] = "First Name";
-$l['ContactInfo']['LastName'] = "Last Name";
-$l['ContactInfo']['Email'] = "Email";
-$l['ContactInfo']['Department'] = "Department";
-$l['ContactInfo']['WorkPhone'] = "Work Phone";
-$l['ContactInfo']['HomePhone'] = "Home Phone";
-$l['ContactInfo']['Phone'] = "Phone";
-$l['ContactInfo']['MobilePhone'] = "Mobile Phone";
-$l['ContactInfo']['Notes'] = "Notes";
-$l['ContactInfo']['EnableUserUpdate'] = "Enable User Update";
+$l['ContactInfo']['FirstName'] = "Primeiro Nome";
+$l['ContactInfo']['LastName'] = "Ultimo Nome";
+$l['ContactInfo']['Email'] = "E-mail";
+$l['ContactInfo']['Department'] = "Departmentos";
+$l['ContactInfo']['WorkPhone'] = "Telefone do trabalho";
+$l['ContactInfo']['HomePhone'] = "Telefone Residencial ";
+$l['ContactInfo']['Phone'] = "Telefone";
+$l['ContactInfo']['MobilePhone'] = "Telefone Celular";
+$l['ContactInfo']['Notes'] = "Observações";
+$l['ContactInfo']['EnableUserUpdate'] = "Habilitar atualização do usuário";
 
-$l['ContactInfo']['OwnerName'] = "Owner Name";
-$l['ContactInfo']['OwnerEmail'] = "Owner Email";
-$l['ContactInfo']['ManagerName'] = "Manager Name";
-$l['ContactInfo']['ManagerEmail'] = "Manager Email";
-$l['ContactInfo']['Company'] = "Company";
-$l['ContactInfo']['Address'] = "Address";
-$l['ContactInfo']['City'] = "City";
-$l['ContactInfo']['State'] = "State";
-$l['ContactInfo']['Zip'] = "Zip";
-$l['ContactInfo']['Phone1'] = "Phone 1";
-$l['ContactInfo']['Phone2'] = "Phone 2";
-$l['ContactInfo']['HotspotType'] = "Hotspot Type";
-$l['ContactInfo']['CompanyWebsite'] = "Company Website";
-$l['ContactInfo']['CompanyPhone'] = "Company Phone";
-$l['ContactInfo']['CompanyEmail'] = "Company Email";
-$l['ContactInfo']['CompanyContact'] = "Company Contact";
+$l['ContactInfo']['OwnerName'] = "Nome do dono";
+$l['ContactInfo']['OwnerEmail'] = "E-mail do dono";
+$l['ContactInfo']['ManagerName'] = "Nome do gerente";
+$l['ContactInfo']['ManagerEmail'] = "E-mail do gerente";
+$l['ContactInfo']['Company'] = "Compania";
+$l['ContactInfo']['Address'] = "Endereço";
+$l['ContactInfo']['City'] = "Cidade";
+$l['ContactInfo']['State'] = "Estado";
+$l['ContactInfo']['Zip'] = "CEP";
+$l['ContactInfo']['Phone1'] = "Telefone 1";
+$l['ContactInfo']['Phone2'] = "Telefone 2";
+$l['ContactInfo']['HotspotType'] = "Tipo de Hotspot";
+$l['ContactInfo']['CompanyWebsite'] = "Site da empresa";
+$l['ContactInfo']['CompanyPhone'] = "Telefone da empresa";
+$l['ContactInfo']['CompanyEmail'] = "Email da empresa";
+$l['ContactInfo']['CompanyContact'] = "Contato na empresa";
 
-$l['ContactInfo']['PlanName'] = "Plan Name";
-$l['ContactInfo']['ContactPerson'] = "Contact Person";
-$l['ContactInfo']['PaymentMethod'] = "Payment Method";
-$l['ContactInfo']['Cash'] = "Cash";
-$l['ContactInfo']['CreditCardNumber'] = "Credit Card Number";
-$l['ContactInfo']['CreditCardName'] = "Credit Card Name";
-$l['ContactInfo']['CreditCardVerificationNumber'] = "Credit Card Verification Number";
-$l['ContactInfo']['CreditCardType'] = "Credit Card Type";
-$l['ContactInfo']['CreditCardExpiration'] = "Credit Card Expiration";
+$l['ContactInfo']['PlanName'] = "Nome do plano";
+$l['ContactInfo']['ContactPerson'] = "Pessoa para contato";
+$l['ContactInfo']['PaymentMethod'] = "Metodo de pagamento";
+$l['ContactInfo']['Cash'] = "Dinheiro";
+$l['ContactInfo']['CreditCardNumber'] = "Numero do cartão";
+$l['ContactInfo']['CreditCardName'] = "Nome do cartão";
+$l['ContactInfo']['CreditCardVerificationNumber'] = "Codigo de segurança";
+$l['ContactInfo']['CreditCardType'] = "Tipo de cartão de credito";
+$l['ContactInfo']['CreditCardExpiration'] = "Validade do cartão";
 
 /* ********************************************************************************** */
 
 
-$l['Intro']['billhistorymain.php'] = "Billing History";
-$l['Intro']['msgerrorpermissions.php'] = "Error";
+$l['Intro']['billhistorymain.php'] = "Historico de pagamento";
+$l['Intro']['msgerrorpermissions.php'] = "Erro";
 
-$l['Intro']['mngradproxys.php'] = "Proxys Management";
-$l['Intro']['mngradproxysnew.php'] = "New Proxy";
-$l['Intro']['mngradproxyslist.php'] = "List Proxy";
-$l['Intro']['mngradproxysedit.php'] = "Edit Proxy";
-$l['Intro']['mngradproxysdel.php'] = "Remove Proxy";
+$l['Intro']['mngradproxys.php'] = "Gerenciando os Proxys";
+$l['Intro']['mngradproxysnew.php'] = "Novo Proxy";
+$l['Intro']['mngradproxyslist.php'] = "Listar Proxy";
+$l['Intro']['mngradproxysedit.php'] = "Editar Proxy";
+$l['Intro']['mngradproxysdel.php'] = "Remover Proxy";
 
-$l['Intro']['mngradrealms.php'] = "Realms Management";
-$l['Intro']['mngradrealmsnew.php'] = "New Realm";
-$l['Intro']['mngradrealmslist.php'] = "List Realm";
-$l['Intro']['mngradrealmsedit.php'] = "Edit Realm";
-$l['Intro']['mngradrealmsdel.php'] = "Remove Realm";
+$l['Intro']['mngradrealms.php'] = "Gerenciar Reino";
+$l['Intro']['mngradrealmsnew.php'] = "Novo Reino";
+$l['Intro']['mngradrealmslist.php'] = "Listar Reino";
+$l['Intro']['mngradrealmsedit.php'] = "Editar Reino";
+$l['Intro']['mngradrealmsdel.php'] = "Remover Reino";
 
-$l['Intro']['mngradattributes.php'] = "Vendor's Attributes Management";
-$l['Intro']['mngradattributeslist.php'] = "Vendor's Attributes List";
-$l['Intro']['mngradattributesnew.php'] = "New Vendor Attributes";
-$l['Intro']['mngradattributesedit.php'] = "Edit Vendor's Attributes";
-$l['Intro']['mngradattributessearch.php'] = "Search Attributes";
-$l['Intro']['mngradattributesdel.php'] = "Remove Vendor's Attributes";
-$l['Intro']['mngradattributesimport.php'] = "Import Vendor Dictionary";
+$l['Intro']['mngradattributes.php'] = "Atributos do vendedor gerente";
+$l['Intro']['mngradattributeslist.php'] = "Lista atributos do gerente";
+$l['Intro']['mngradattributesnew.php'] = "Novo atributo do vendedor";
+$l['Intro']['mngradattributesedit.php'] = "Editar atributos do vendedor";
+$l['Intro']['mngradattributessearch.php'] = "Procurar atributos";
+$l['Intro']['mngradattributesdel.php'] = "Remover atributos do vendedor";
+$l['Intro']['mngradattributesimport.php'] = "Importar dicionario do vendedor";
 
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
@@ -944,7 +943,7 @@ $l['captions']['detailsofnewrate'] = "You may fill below details for the new rat
 $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
 
 /* **********************************************************************************
- * Help Pages Info 
+ * Help Pages Info
  * Each page has a header which is the Intro class, when clicking on the header
  * it will reveal/hide a helpPage div content which is a description of a specific
  * page, basically your expanded tool-tip.
@@ -1106,7 +1105,7 @@ default are not used, and the password encryption type in the database.<br/>
 <h200><b>Global Settings</b></h200> - Database Storage Engine<br/>
 <h200><b>Tables Settings</b></h200> - If not using the default FreeRADIUS schema you may change the names
 of the table names<br/>
-<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in 
+<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in
 plain text but rather have it encrypted somehow you may choose one of MD5 or Crypt<br/>
 ";
 $l['helpPage']['configlang'] = "
@@ -1225,7 +1224,7 @@ Other possible locations for the logfile may take place, if this is the case ple
 ";
 $l['helpPage']['repmain'] = "
 <b>General Reports</b><br/>
-<h200><b>Online Users</b></h200> - Provides a listing of all users which are 
+<h200><b>Online Users</b></h200> - Provides a listing of all users which are
 found to be online through the accounting table in the database. The check which is being performed is for users
 with no ending time (AcctStopTime) set. It is important to notice that these users may also be of stale sessions
 which happens when NASs for some reason fail to send the accounting-stop packets.<br/>
@@ -1242,7 +1241,7 @@ $l['helpPage']['repstatserver'] = "Provides general information about the FreeRA
 $l['helpPage']['repstatus'] = "<b>Status</b><br/>
 <h200><b>Server Status</b></h200> - Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
 <h200><b>RADIUS Status</b></h200> - Provides general information about the FreeRADIUS daemon and MySQL Database server";
-$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session 
+$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session
 time or bandwidth usage. Listing users of category: ";
 $l['helpPage']['repusername'] = "Records found for user:";
 $l['helpPage']['reponline'] = "
@@ -1266,7 +1265,7 @@ radius attributes";
 
 // accounting section
 $l['helpPage']['acctactive'] = "
-	Provides information that would prove useful for tracking Active or Expired users in the database 
+	Provides information that would prove useful for tracking Active or Expired users in the database
 	in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 ";
@@ -1284,32 +1283,32 @@ $l['helpPage']['acctipaddress'] = "
 ";
 $l['helpPage']['acctmain'] = "
 <b>General Accounting</b><br/>
-<h200><b>User Accounting</b></h200> - 
+<h200><b>User Accounting</b></h200> -
 	Provides full accounting information for all sessions in the database for a particular user.
 <br/>
-<h200><b>IP Accounting</b></h200> - 
+<h200><b>IP Accounting</b></h200> -
 	Provides full accounting information for all sessions that originated with a particular IP Address.
 <br/>
-<h200><b>NAS Accounting</b></h200> - 
+<h200><b>NAS Accounting</b></h200> -
 	Provides full accounting information for all the sessions that the specific NAS IP address has handled.
 <br/>
-<h200><b>Date Accounting</b></h200> - 
+<h200><b>Date Accounting</b></h200> -
 	Provides full accounting information for all sessions between the given 2 dates for a particular user.
 <br/>
-<h200><b>All Accounting Records</b></h200> - 
+<h200><b>All Accounting Records</b></h200> -
 	Provides full accounting information for all sessions in the database.
 <br/>
-<h200><b>Active Records Accounting</b></h200> - 
-	Provides information that would prove useful for tracking Active or Expired users in the database 
+<h200><b>Active Records Accounting</b></h200> -
+	Provides information that would prove useful for tracking Active or Expired users in the database
 	in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 
 <br/>
 <b>Sub-Category Accounting</b><br/>
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
 	Provides the most flexible custom query to run on the database.
 <br/>
-<h200><b>Hotspots</b></h200> - 
+<h200><b>Hotspots</b></h200> -
 	Provides information on the different managed hotspots, comparison, and other useful information.
 <br/>
 ";
@@ -1346,17 +1345,17 @@ $l['helpPage']['accthotspotcompare'] = "
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
-<h200><b>Hotspot Accounting</b></h200> - 
+<h200><b>Hotspot Accounting</b></h200> -
 	Provides full accounting information for all sessions which originated from this specific Hotspot.
 <br/>
-<h200><b>Hotspot Comparison</b></h200> - 
+<h200><b>Hotspot Comparison</b></h200> -
 	Provides basic accounting information for comparison between all the active hotspots found in the database.
 	Provides a graph plot of different comparisons made.
 <br/>
 ";
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
 	Provides the most flexible custom query to run on the database.<br/>
 	You may adjust the query to it's max by modifying the settings in the left sidebar.<br/>
 <br/>
@@ -1376,12 +1375,12 @@ $l['helpPage']['acctcustom'] = "
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>Cleanup stale-sessions</b></h200> - 
+<h200><b>Cleanup stale-sessions</b></h200> -
 	Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
 	user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
 	record (false positive).
 <br/>
-<h200><b>Delete accounting records</b></h200> - 
+<h200><b>Delete accounting records</b></h200> -
 	Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
 	except for a supervised administrator access to this page.
 <br/>
@@ -1398,7 +1397,7 @@ $l['helpPage']['giseditmap'] = "
 	the hotspot's name and it's MAC address. These are 2 crucial details later used to identify this hotspot
 	in the accounting table. Always provide the correct MAC Address!
 <br/><br/>
-	<b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the 
+	<b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the
 	database.
 <br/>
 ";
@@ -1414,16 +1413,16 @@ $l['helpPage']['gismain'] = "
 <b> General Information </b>
 GIS Mapping provides visual mappings of the hotspot location across the world's map using Google Maps API. <br/>
 In the Management page you are able to add new hotspot entries to the database where there is also a field
-called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact 
+called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact
 location of that hotspot on the map.<br/><br/>
 
 <h200><b>2 Modes of Operation are provided:</b></h200>
-One is the <b>View MAP</b> mode which enables 'surfing' through the world map 
+One is the <b>View MAP</b> mode which enables 'surfing' through the world map
 and view the current locations of the hotspots in the database and another one - <b>Edit MAP</b> - which is the mode
-that one can use in order to create hotspot's visually by simply left-clicking on the map or removing 
+that one can use in order to create hotspot's visually by simply left-clicking on the map or removing
 existing hotspot entries by left-clicking on existing hotspot flags.<br/><br/>
 
-Another important issue is that each computer on the network requires a unique Registration code which you 
+Another important issue is that each computer on the network requires a unique Registration code which you
 can obtain from Google Maps API page by providing the complete web address to the hosted directory of
 daloRADIUS application on your server. Once you have obtained that code from Google, simply paste it in the
 Registration box and click the 'Register code' button to write it.
@@ -1470,12 +1469,12 @@ $l['buttons']['savesettings'] = "Save Settings";
 $l['buttons']['apply'] = "Apply";
 
 $l['menu']['Home'] = "<em>H</em>ome</a>";
-$l['menu']['Managment'] = "<em>M</em>anagement</a>";
-$l['menu']['Reports'] = "<em>R</em>eports</a>";
-$l['menu']['Accounting'] = "<em>A</em>ccounting</a>";
-$l['menu']['Billing'] = "<em>B</em>illing</a>";
+$l['menu']['Managment'] = "<em>G</em>estão</a>";
+$l['menu']['Reports'] = "<em>R</em>elatórios</a>";
+$l['menu']['Accounting'] = "<em>C</em>contas</a>";
+$l['menu']['Billing'] = "<em>P</em>agamentos</a>";
 $l['menu']['Gis'] = "<em>G</em>IS</a>";
-$l['menu']['Graphs'] = "<em>G</em>raphs</a>";
-$l['menu']['Config'] = "<em>C</em>onfig</a>";
-$l['menu']['Help'] = "<em>H</em>elp</a>";
+$l['menu']['Graphs'] = "<em>G</em>áficos</a>";
+$l['menu']['Config'] = "<em>C</em>onfigurações</a>";
+$l['menu']['Help'] = "<em>A</em>juda</a>";
 ?>
