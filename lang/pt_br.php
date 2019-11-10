@@ -1080,119 +1080,121 @@ $l['helpPage']['mngradippool'] = "
 <h200><b>Editar faixa de ip </b></h200> - Editar endereço IP configurado para faixa de IP <br/>
 <h200><b>Remover IP Pool</b></h200> - Remover endereço IP configurado para faixa de IP<br/>
 ";
-$l['helpPage']['mngradippoollist'] = "<h200><b>List IP Pools</b></h200> - List Configured IP Pools and their assigned IP Addresses <br/>";
-$l['helpPage']['mngradippoolnew'] = "<h200><b>New IP Pool</b></h200> - Add a new IP Address to a configured IP Pool <br/>";
-$l['helpPage']['mngradippooledit'] = "<h200><b>Edit IP Pool</b></h200> - Edit an IP Address for a configured IP Pool <br/>";
-$l['helpPage']['mngradippooldel'] = "<h200><b>Remove IP Pool</b></h200> - Remove an IP Address from a configured IP Pool <br/>";
+$l['helpPage']['mngradippoollist'] = "<h200><b>Listar faixa IP </b></h200> - Listar IP dos endereços configurados na faixa de IP <br/>";
+$l['helpPage']['mngradippoolnew'] = "<h200><b>Nova faixa de IP</b></h200> - Adicionar novo IP para a faixa de IPS <br/>";
+$l['helpPage']['mngradippooledit'] = "<h200><b>Editar Faixa de  IP</b></h200> - Editar IP dos endereços configurados na faixa de IP <br/>";
+$l['helpPage']['mngradippooldel'] = "<h200><b>Remover Faixa de IP</b></h200> - Remover IP dos endereços configurados na faixa de IP <br/>";
 
 
 $l['helpPage']['mngradnas'] = "";
-$l['helpPage']['mngradnasdel'] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
+$l['helpPage']['mngradnasdel'] = "Para remover uma entrada de ip / host nas do banco de dados, você deve fornecer o ip / host da conta";
 $l['helpPage']['mngradnasnew'] = "";
 $l['helpPage']['mngradnaslist'] = "";
 $l['helpPage']['mngradnasedit'] = "";
 
 
 
-$l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
-$l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
-$l['helpPage']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
-$l['helpPage']['mnghslist'] = "List of all hotspots in the database. You may use the quick links to edit or delete a hotspot from the database.";
+$l['helpPage']['mnghsdel'] = "Para remover um ponto ativo do banco de dados, você deve fornecer o nome do ponto ativo<br/>";
+$l['helpPage']['mnghsedit'] = "Você pode editar abaixo os detalhes do HOTSPOT<br/>";
+$l['helpPage']['mnghsnew'] = "Você pode preencher os detalhes abaixo para adicionar um novo ponto de acesso ao banco de dados";
+$l['helpPage']['mnghslist'] = "Lista de todos os pontos de acesso no banco de dados. Você pode usar os links rápidos para editar ou excluir um ponto de acesso do banco de dados.";
 
 $l['helpPage']['configdb'] = "
-<b>Database Settings</b> - Configure database engine, connection settings, tables names if the
-default are not used, and the password encryption type in the database.<br/>
-<h200><b>Global Settings</b></h200> - Database Storage Engine<br/>
-<h200><b>Tables Settings</b></h200> - If not using the default FreeRADIUS schema you may change the names
-of the table names<br/>
-<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in
-plain text but rather have it encrypted somehow you may choose one of MD5 or Crypt<br/>
+<b>Configuração do Banco de Dados </b> -Configure o mecanismo de banco de dados, configurações de conexão, nomes de tabelas se o
+padrão não são utilizados e o tipo de criptografia de senha no banco de dados.<br/>
+<h200><b>Configurações Globais</b></h200> - Engrenagem do storage do banco <br/>
+<h200><b>Configurações da tabelas </b></h200> - Se não estiver usando o esquema FreeRADIUS padrão, você poderá alterar os nomes
+dos nomes da tabela<br/>
+<h200><b>Configurações avançadas</b></h200> -Se você deseja armazenar senhas para usuários no banco de dados não
+texto simples, mas sim criptografado de alguma forma, você pode escolher um dos MD5 ou Crypt<br/>
 ";
 $l['helpPage']['configlang'] = "
-<h200><b>Language Settings</b></h200> - Configure interface language.<br/>
+<h200><b>Configuração Linguagem</b></h200> - Configurando liguagem da interface<br/>
 ";
 $l['helpPage']['configlogging'] = "
-<h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
-Please make sure that the filename that you specify has write permissions by the webserver<br/>";
+<h200><b>Configurando Logs </b></h200> - Configurando logs e facilitadores <br/>
+Certifique-se de que o nome do arquivo especificado tenha permissões de gravação pelo servidor da webbr/>";
 $l['helpPage']['configinterface'] = "
-<h200><b>Interface Settings</b></h200> - Configure interface layout settings and behvaiour <br/>
+<h200><b>Configurando Interface </b></h200> - Definir configurações de layout de interface e comportamento <br/>
 ";
 $l['helpPage']['configmain'] = "
-<b>Global Settings</b><br/>
-<h200><b>Database Settings</b></h200> - Configure database engine, connection settings, tables names if the
-default are not used, and the password encryption type in the database.<br/>
-<h200><b>Language Settings</b></h200> - Configure interface language.<br/>
-<h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
-<h200><b>Interface Settings</b></h200> - Configure interface layout settings and behvaiour <br/>
+<b>Configurações Globais</b><br/>
+<h200><b>Configurações do Banco de dados  </b></h200> - Configure o mecanismo de banco de dados, configurações de conexão, nomes de tabelas se o
+o padrão não é usado e o tipo de criptografia de senha no banco de dados.<br/>
+<h200><b>Configurando Interface</b></h200> - Configurando interface de Linguagem.<br/>
+<h200><b>Configurações de logs</b></h200> - Configurando logs e facilitadores <br/>
+<h200><b>Configurações de interface </b></h200> - Definir configurações de layout de interface e comportamento <br/>
 
-<b>Sub-Category Configuration</b>
-<h200><b>Maintenance </b></h200> - Maintenance options for Testing users connections or terminating their sessions <br/>
-<h200><b>Operators</b></h200> - Configure Operators Access Control List (ACL) <br/>
+<b>Configuração de sub-categoria</b>
+<h200><b>Manutenção </b></h200> - Opções de manutenção para Testar conexões de usuários ou encerrar suas sessões <br/>
+<h200><b>Operadores</b></h200> - Configurar lista de controle de acesso de operadores (ACL) <br/>
 ";
 $l['helpPage']['configbusiness'] = "
-<b>Business Information</b><br/>
-<h200><b>Business Contact</b></h200> - set the business contact information (owners, title, address, phone, etc)<br/>
+<b>Informações do negocio</b><br/>
+<h200><b>Business Contact</b></h200> - defina as informações de contato da empresa (proprietários, cargo, endereço, telefone etc.)<br/>
 ";
 $l['helpPage']['configbusinessinfo'] = "";
 $l['helpPage']['configmaint'] = "
-<b>Maintenance</b><br/>
-<h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid<br/>
-<h200><b>Disconnect User</b></h200> - Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server
-to disconnect a user and terminate his/her session in a given NAS.<br/>
+<b>Manutenção</b><br/>
+<h200><b>Testar conectividade do usuario</b></h200> -
+Envie uma solicitação de acesso ao servidor RADIUS para verificar se as credenciais do usuário são válidas<br/>Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server
+to disconnect a user and terminate his/her session in a given NAS.
+<h200><b>Disconectar Usuarios</b></h200> - Envie um pacote PoD (Packet of Disconnect) ou CoA (Change of Authority) para o servidor NAS
+desconectar um usuário e encerrar sua sessão em um determinado NAS.<br/>
 ";
 $l['helpPage']['configmainttestuser'] = "
-<h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid.<br/>
-daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes. <br/>
-daloRADIUS counts on the radclient binary being available in your \$PATH environment variable, if it is not, please make
-corrections to the library/exten-maint-radclient.php file.<br/><br/>
+<h200><b>Testar conectividade do usuario</b></h200> - Envie uma solicitação de acesso ao servidor RADIUS para verificar se as credenciais do usuário são válidas.<br/>
+O daloRADIUS usa o utilitário binário radclient para executar o teste e retorna os resultados do comando após a conclusão. <br/>
+O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ $ PATH; caso contrário, faça
+correções no arquivo library / exten-maint-radclient.php.<br/><br/>
 
-Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and
-radclient will retransmit the packets.
-
-In the Advanced tab it is possible to fine-tune the options for the test:<br/>
-Timeout - Wait 'timeout' seconds before retrying (may be a floating point number) <br/>
-Retries - If timeout, retry sending the packet 'retries' times. <br/>
-Count - Send each packet 'count' times <br/>
-Requests -  Send 'num' packets from a file in parallel <br/>
+Observe que pode demorar um pouco para o teste terminar (até vários segundos [10-20 segundos]] devido a falhas e
+O radclient retransmitirá os pacotes.
+Na guia Avançado, é possível ajustar as opções para o teste:<br/>
+Tempo limite - aguarde o tempo limite segundos antes de tentar novamente (pode ser um número de ponto flutuante) <br/>
+Tentativas - Se o tempo limite expirar, tente enviar novamente o pacote 'tentativas'.  <br/>
+Contagem - Envie cada pacote 'contar' vezes <br/>
+Solicitações - Envie pacotes 'num' de um arquivo em paralelo <br/>
 ";
 $l['helpPage']['configmaintdisconnectuser'] = "
-<h200><b>Disconnect User</b></h200> - Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server to disconnect a user and terminate his/her session in a given NAS.<br/>
-For terminating a user's session it is required that the NAS support the PoD or CoA packet types, please consult your NAS vendor or
-documentation for this. Moreover, it is required to know the NAS ports for PoD or CoA packets, whereas newer NASs use port 3799
-while other ones are configured to receive the packet on port 1700.
+<h200><b>Disconnect User</b></h200> - Envie um pacote PoD (Packet of Disconnect) ou CoA (Change of Authority) ao servidor NAS para desconectar um usuário e encerrar sua sessão em um determinado NAS.<br/>
+Para encerrar a sessão de um usuário, é necessário que o NAS suporte os tipos de pacotes PoD ou CoA, consulte o fornecedor do NAS ou
+documentação para isso. Além disso, é necessário conhecer as portas NAS para pacotes PoD ou CoA, enquanto os NASs mais recentes usam a porta 3799
+enquanto outros estão configurados para receber o pacote na porta 1700.
 
-daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes. <br/>
-daloRADIUS counts on the radclient binary being available in your \$PATH environment variable, if it is not, please make
-corrections to the library/exten-maint-radclient.php file.<br/><br/>
 
-Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and
-radclient will retransmit the packets.
+O daloRADIUS usa o utilitário binário radclient para executar o teste e retorna os resultados do comando após a conclusão. <br/>
+O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ $ PATH; caso contrário, faça
+correções no arquivo library / exten-maint-radclient.php.<br/><br/>
 
-In the Advanced tab it is possible to fine-tune the options for the test:<br/>
-Timeout - Wait 'timeout' seconds before retrying (may be a floating point number) <br/>
-Retries - If timeout, retry sending the packet 'retries' times. <br/>
-Count - Send each packet 'count' times <br/>
-Requests -  Send 'num' packets from a file in parallel <br/>
+Observe que pode demorar um pouco para o teste terminar (até vários segundos [10-20 segundos]] devido a falhas e
+O radclient retransmitirá os pacotes.
+
+Na guia Avançado, é possível ajustar as opções para o teste:<br/>
+Tempo limite - aguarde o tempo limite segundos antes de tentar novamente (pode ser um número de ponto flutuante) <br/>
+Tentativas - Se o tempo limite expirar, tente enviar novamente o pacote 'tentativas'. <br/>
+Contagem - Envie cada pacote 'contar' vezes <br/>
+Solicitações - Envie pacotes 'num' de um arquivo em paralelo<br/>
 
 
 ";
-$l['helpPage']['configoperatorsdel'] = "To remove an operator from the database you must provide the username.";
-$l['helpPage']['configoperatorsedit'] = "Edit the operator user details below";
-$l['helpPage']['configoperatorsnew'] = "You may fill below details for a new operator user addition to database";
-$l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
-$l['helpPage']['configoperators'] = "Operators Configuration";
-$l['helpPage']['configbackup'] = "Perform Backup";
-$l['helpPage']['configbackupcreatebackups'] = "Create Backups";
-$l['helpPage']['configbackupmanagebackups'] = "Manage Backups";
+$l['helpPage']['configoperatorsdel'] = "Para remover um operador do banco de dados, você deve fornecer o nome de usuário.";
+$l['helpPage']['configoperatorsedit'] = "Edite os detalhes do usuário do operador abaixo";
+$l['helpPage']['configoperatorsnew'] = "Você pode preencher os detalhes abaixo para adicionar um novo usuário ao banco de dados";
+$l['helpPage']['configoperatorslist'] = "Listando todos os operadores no banco de dados";
+$l['helpPage']['configoperators'] = "Configuração de Operadores";
+$l['helpPage']['configbackup'] = "Executar backup";
+$l['helpPage']['configbackupcreatebackups'] = "Criar Backups";
+$l['helpPage']['configbackupmanagebackups'] = "Gerenciar Backups";
 
 
 $l['helpPage']['graphmain'] = "
-<b>Graphs</b><br/>
-<h200><b>Overall Logins/Hits</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
-The amount of Logins (or 'hits' to the NAS) are displayed in a graph as well as accompanied by a table listing.<br/>
-<h200><b>Overall Download Statistics</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
-The amount of data Downloaded by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
-<h200><b>Overall Upload Statistics</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
+<b>Graficos</b><br/>
+<h200><b>Logins Gerais</b></h200> -Plota um gráfico gráfico do uso de um usuário específico por um determinado período de tempo.
+A quantidade de logins (ou 'ocorrências' no NAS) é exibida em um gráfico e acompanhada por uma listagem de tabela.<br/>
+<h200><b>Estatiticas total dos downloads </b></h200> - Plota um gráfico gráfico do uso de um usuário específico por um determinado período de tempo.
+A quantidade de dados baixados pelo cliente é o valor que está sendo calculado. O gráfico é acompanhado por uma listagem de tabela<br/>
+<h200><b>Estatiticas total dos uploads</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
 The amount of data Upload by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
 <br/>
 <h200><b>Alltime Logins/Hits</b></h200> - Plots a graphical chart of the Logins to the server for a given period of time.<br/>
