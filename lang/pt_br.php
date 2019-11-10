@@ -793,154 +793,154 @@ $l['Intro']['mngradattributesdel.php'] = "Remover atributos do vendedor";
 $l['Intro']['mngradattributesimport.php'] = "Importar dicionario do vendedor";
 
 
-$l['Intro']['acctactive.php'] = "Active Records Accounting";
-$l['Intro']['acctall.php'] = "All Users Accounting";
-$l['Intro']['acctdate.php'] = "Date Sort Accounting";
-$l['Intro']['accthotspot.php'] = "Hotspot Accounting";
-$l['Intro']['acctipaddress.php'] = "IP Accounting";
-$l['Intro']['accthotspotcompare.php'] = "Hotspot Comparison";
-$l['Intro']['acctmain.php'] = "Accounting Page";
-$l['Intro']['acctnasipaddress.php'] = "NAS IP Accounting";
-$l['Intro']['acctusername.php'] = "Users Accounting";
-$l['Intro']['acctcustom.php'] = "Custom Accountings";
-$l['Intro']['acctcustomquery.php'] = "Custom Query Accounting";
-$l['Intro']['acctmaintenance.php'] = "Accounting Records Maintenance";
-$l['Intro']['acctmaintenancecleanup.php'] = "Cleanup Stale-connections";
-$l['Intro']['acctmaintenancedelete.php'] = "Delete Accounting Records";
+$l['Intro']['acctactive.php'] = "Registro ativos na conta";
+$l['Intro']['acctall.php'] = "Todos os usuarios da conta";
+$l['Intro']['acctdate.php'] = "Filtrar por data a conta";
+$l['Intro']['accthotspot.php'] = "Conta do Hotspot";
+$l['Intro']['acctipaddress.php'] = "IP da conta";
+$l['Intro']['accthotspotcompare.php'] = "Comparando Hotspot";
+$l['Intro']['acctmain.php'] = "Pagina da conta";
+$l['Intro']['acctnasipaddress.php'] = "IP do NAS";
+$l['Intro']['acctusername.php'] = "Conta do usuário";
+$l['Intro']['acctcustom.php'] = "Personalizando a Conta";
+$l['Intro']['acctcustomquery.php'] = "Personalizando pesquisa na conta";
+$l['Intro']['acctmaintenance.php'] = "Registro de conta em manutenção";
+$l['Intro']['acctmaintenancecleanup.php'] = "Limpando status da manutenção";
+$l['Intro']['acctmaintenancedelete.php'] = "Deletando gravações da conta";
 
-$l['Intro']['billmain.php'] = "Billing Page";
-$l['Intro']['ratesmain.php'] = "Rates Billing Page";
-$l['Intro']['billratesdate.php'] = "Rates Prepaid Accounting";
-$l['Intro']['billratesdel.php'] = "Delete Rate entry";
-$l['Intro']['billratesedit.php'] = "Edit Rate Details";
-$l['Intro']['billrateslist.php'] = "Rates Table";
-$l['Intro']['billratesnew.php'] = "New Rate entry";
+$l['Intro']['billmain.php'] = "Pagina de pagamento";
+$l['Intro']['ratesmain.php'] = "Pagina de pagamento de taxas";
+$l['Intro']['billratesdate.php'] = "Prepagamento da conta";
+$l['Intro']['billratesdel.php'] = "Remover taxa de entrada";
+$l['Intro']['billratesedit.php'] = "Editar detalhe das taxas";
+$l['Intro']['billrateslist.php'] = "Tabela de taxas";
+$l['Intro']['billratesnew.php'] = "Nova entrada de taxas";
 
-$l['Intro']['paypalmain.php'] = "PayPal Transactions Page";
-$l['Intro']['billpaypaltransactions.php'] = "PayPal Transactions Page";
+$l['Intro']['paypalmain.php'] = "Pagina de transação do PayPal";
+$l['Intro']['billpaypaltransactions.php'] = "Paginas de pagamentos do PayPal";
 
-$l['Intro']['billhistoryquery.php'] = "Billing History";
+$l['Intro']['billhistoryquery.php'] = "Historico de pagamento";
 
-$l['Intro']['billplans.php'] = "Billing Plans Page";
-$l['Intro']['billplansdel.php'] = "Delete Plan entry";
-$l['Intro']['billplansedit.php'] = "Edit Plan Details";
-$l['Intro']['billplanslist.php'] = "Plans Table";
-$l['Intro']['billplansnew.php'] = "New Plan entry";
+$l['Intro']['billplans.php'] = "Pagina de pagamento dos planos";
+$l['Intro']['billplansdel.php'] = "Deletar entrada de planos";
+$l['Intro']['billplansedit.php'] = "Editar detalhes do plano ";
+$l['Intro']['billplanslist.php'] = "Tabelas de Planos";
+$l['Intro']['billplansnew.php'] = "Nova entrada de plano";
 
-$l['Intro']['billpos.php'] = "Billing Point of Sales Page";
-$l['Intro']['billposdel.php'] = "Delete User";
-$l['Intro']['billposedit.php'] = "Edit User";
-$l['Intro']['billposlist.php'] = "List Users";
-$l['Intro']['billposnew.php'] = "New User";
+$l['Intro']['billpos.php'] = "Pagina do ponto de vendas";
+$l['Intro']['billposdel.php'] = "Deletar Usuario ";
+$l['Intro']['billposedit.php'] = "Editar Usuario";
+$l['Intro']['billposlist.php'] = "Listar Usuario";
+$l['Intro']['billposnew.php'] = "Novo Usuario";
 
-$l['Intro']['giseditmap.php'] = "Edit MAP Mode";
-$l['Intro']['gismain.php'] = "GIS Mapping";
-$l['Intro']['gisviewmap.php'] = "View MAP Mode";
+$l['Intro']['giseditmap.php'] = "Editar modo do  MAPA ";
+$l['Intro']['gismain.php'] = "GIS Mapeado";
+$l['Intro']['gisviewmap.php'] = "Visualize Modo do MAPA";
 
-$l['Intro']['graphmain.php'] = "Usage Graphs";
-$l['Intro']['graphsalltimetrafficcompare.php'] = "Total Traffic Comparison Usage";
-$l['Intro']['graphsalltimelogins.php'] = "Total Logins";
-$l['Intro']['graphsoveralldownload.php'] = "User Downlads";
-$l['Intro']['graphsoveralllogins.php'] = "User Logins";
-$l['Intro']['graphsoverallupload.php'] = "User Uploads";
+$l['Intro']['graphmain.php'] = "Grafico do uso";
+$l['Intro']['graphsalltimetrafficcompare.php'] = "Comparando total trafego de uso ";
+$l['Intro']['graphsalltimelogins.php'] = "Total de Logins";
+$l['Intro']['graphsoveralldownload.php'] = "Download dos usuarios";
+$l['Intro']['graphsoveralllogins.php'] = "Logins dos usuarios";
+$l['Intro']['graphsoverallupload.php'] = "Uploads dos Usuarios";
 
-$l['Intro']['rephistory.php'] = "Action History";
-$l['Intro']['replastconnect.php'] = "Last 50 Connection Attempts";
-$l['Intro']['repstatradius.php'] = "Daemons Information";
-$l['Intro']['repstatserver.php'] = "Server Status and Information";
-$l['Intro']['reponline.php'] = "Listing Online Users";
-$l['Intro']['replogssystem.php'] = "System Logfile";
-$l['Intro']['replogsradius.php'] = "RADIUS Server Logfile";
-$l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
-$l['Intro']['replogsboot.php'] = "Boot Logfile";
+$l['Intro']['rephistory.php'] = "Historico de ações";
+$l['Intro']['replastconnect.php'] = "50 Ultimas tentativas de conexão";
+$l['Intro']['repstatradius.php'] = "Informações do Daemon";
+$l['Intro']['repstatserver.php'] = "Status do Servidor e informações";
+$l['Intro']['reponline.php'] = "Listando usuarios logados";
+$l['Intro']['replogssystem.php'] = "Logfile do sistema";
+$l['Intro']['replogsradius.php'] = "Logfile do servidor RADIUS";
+$l['Intro']['replogsdaloradius.php'] = "Logfile daloRADIUS";
+$l['Intro']['replogsboot.php'] = "Logfile do Boot";
 $l['Intro']['replogs.php'] = "Logs";
 
-$l['Intro']['rephsall.php'] = "Hotspots Listing";
-$l['Intro']['repmain.php'] = "Reports Page";
-$l['Intro']['repstatus.php'] = "Status Page";
-$l['Intro']['replogs.php'] = "Logs Page";
-$l['Intro']['reptopusers.php'] = "Top Users";
-$l['Intro']['repusername.php'] = "Users Listing";
+$l['Intro']['rephsall.php'] = "Lista de Hotspots";
+$l['Intro']['repmain.php'] = "Pagina de relatório";
+$l['Intro']['repstatus.php'] = "Pagina de Status";
+$l['Intro']['replogs.php'] = "Pagina de logs";
+$l['Intro']['reptopusers.php'] = "Usuarios mas ativos";
+$l['Intro']['repusername.php'] = "Listando usuários";
 
-$l['Intro']['mngbatch.php'] = "Create batch users";
-$l['Intro']['mngdel.php'] = "Remove User";
-$l['Intro']['mngedit.php'] = "Edit User Details";
-$l['Intro']['mnglistall.php'] = "Users Listing";
-$l['Intro']['mngmain.php'] = "Users and Hotspots Management";
-$l['Intro']['mngnew.php'] = "New User";
-$l['Intro']['mngnewquick.php'] = "Quick User Add";
-$l['Intro']['mngsearch.php'] = "User Search";
+$l['Intro']['mngbatch.php'] = "Criar usuarios em lotes";
+$l['Intro']['mngdel.php'] = "Remover Usuário";
+$l['Intro']['mngedit.php'] = "Editar detalhes do usuário";
+$l['Intro']['mnglistall.php'] = "Listando Usuarios";
+$l['Intro']['mngmain.php'] = "Gerenciando Usuários e HOTSPOT";
+$l['Intro']['mngnew.php'] = "Novo Usuário";
+$l['Intro']['mngnewquick.php'] = "Adicionar usuário Rapido";
+$l['Intro']['mngsearch.php'] = "Procurar usuário";
 
-$l['Intro']['mnghsdel.php'] = "Remove Hotspots";
-$l['Intro']['mnghsedit.php'] = "Edit Hotspots Details";
-$l['Intro']['mnghslist.php'] = "List Hotspots";
-$l['Intro']['mnghsnew.php'] = "New Hotspot";
+$l['Intro']['mnghsdel.php'] = "Remover Hotspot";
+$l['Intro']['mnghsedit.php'] = "Editar Detalhes do  Hotspots";
+$l['Intro']['mnghslist.php'] = "Listar Hotspots";
+$l['Intro']['mnghsnew.php'] = "Novo Hotspot";
 
-$l['Intro']['mngradusergroupdel.php'] = "Remove User-Group Mapping";
-$l['Intro']['mngradusergroup.php'] = "User-Group Configuration";
-$l['Intro']['mngradusergroupnew.php'] = "New User-Group Mapping";
-$l['Intro']['mngradusergrouplist'] = "User-Group Mapping in Database";
-$l['Intro']['mngradusergrouplistuser'] = "User-Group Mapping in Database";
-$l['Intro']['mngradusergroupedit'] = "Edit User-Group Mapping for User:";
+$l['Intro']['mngradusergroupdel.php'] = "Remove Usuarios-Grupos Mapeados";
+$l['Intro']['mngradusergroup.php'] = "Configuração Usuarios-Grupos Mapeados";
+$l['Intro']['mngradusergroupnew.php'] = "Novo  Usuarios-Grupos Mapeados";
+$l['Intro']['mngradusergrouplist'] = "Mapeando Usuarios-Grupos no Banco de Dados";
+$l['Intro']['mngradusergrouplistuser'] = "Usuarios-Grupos Mapeado no Banco de Dados";
+$l['Intro']['mngradusergroupedit'] = "Editando  Usuarios-Grupos Mapeado para usuario:";
 
-$l['Intro']['mngradippool.php'] = "IP-Pool Configuration";
-$l['Intro']['mngradippoolnew.php'] = "New IP-Pool";
-$l['Intro']['mngradippoollist.php'] = "List IP-Pools";
-$l['Intro']['mngradippooledit.php'] = "Edit IP-Pool";
-$l['Intro']['mngradippooldel.php'] = "Remove IP-Pool";
+$l['Intro']['mngradippool.php'] = "Configuração de Faixa de IP ";
+$l['Intro']['mngradippoolnew.php'] = "Nova Faixa de ip";
+$l['Intro']['mngradippoollist.php'] = "Listar Faixa de IP;
+$l['Intro']['mngradippooledit.php'] = "Editar Faixa de IP";
+$l['Intro']['mngradippooldel.php'] = "Remover Faixa de IP";
 
-$l['Intro']['mngradnas.php'] = "NAS Configuration";
-$l['Intro']['mngradnasnew.php'] = "New NAS Record";
-$l['Intro']['mngradnaslist.php'] = "NAS Listing in Database";
-$l['Intro']['mngradnasedit.php'] = "Edit NAS Record";
-$l['Intro']['mngradnasdel.php'] = "Remove NAS Record";
+$l['Intro']['mngradnas.php'] = "Configuração do NAS";
+$l['Intro']['mngradnasnew.php'] = "Novo registro no  NAS";
+$l['Intro']['mngradnaslist.php'] = "Listando banco de dados de NAS";
+$l['Intro']['mngradnasedit.php'] = "Editar registros do  NAS ";
+$l['Intro']['mngradnasdel.php'] = "Remover registro do NAS";
 
-$l['Intro']['mngradprofiles.php'] = "Profiles Configuration";
-$l['Intro']['mngradprofilesedit.php'] = "Edit Profiles";
-$l['Intro']['mngradprofilesduplicate.php'] = "Duplicate Profiles";
-$l['Intro']['mngradprofilesdel.php'] = "Delete Profiles";
-$l['Intro']['mngradprofileslist.php'] = "List Profiles";
-$l['Intro']['mngradprofilesnew.php'] = "New Profile";
+$l['Intro']['mngradprofiles.php'] = "Configuração de Perfil";
+$l['Intro']['mngradprofilesedit.php'] = "Editar Perfil";
+$l['Intro']['mngradprofilesduplicate.php'] = "Duplicar Perfil";
+$l['Intro']['mngradprofilesdel.php'] = "Deletar Perfil";
+$l['Intro']['mngradprofileslist.php'] = "Listar Perfil";
+$l['Intro']['mngradprofilesnew.php'] = "Novo Perfil";
 
-$l['Intro']['mngradgroups.php'] = "Groups Configuration";
+$l['Intro']['mngradgroups.php'] = "Configuração do grupo";
 
-$l['Intro']['mngradgroupreplynew.php'] = "New Group Reply Mapping";
-$l['Intro']['mngradgroupreplylist.php'] = "Group Reply Mapping in Database";
-$l['Intro']['mngradgroupreplyedit.php'] = "Edit Group Reply Mapping for Group:";
-$l['Intro']['mngradgroupreplydel.php'] = "Remove Group Reply Mapping";
-$l['Intro']['mngradgroupreplysearch.php'] = "Search Group Reply Mapping";
+$l['Intro']['mngradgroupreplynew.php'] = "Novo Grupo de resposta Mapeada";
+$l['Intro']['mngradgroupreplylist.php'] = "Grupo de resposta mapeado no Banco de dados";
+$l['Intro']['mngradgroupreplyedit.php'] = "Editar resposta do Grupo mapeado para o grupo:";
+$l['Intro']['mngradgroupreplydel.php'] = "Remover grupo de resposta mapeada";
+$l['Intro']['mngradgroupreplysearch.php'] = "Procura grupo de resposta mapeada";
 
-$l['Intro']['mngradgroupchecknew.php'] = "New Group Check Mapping";
-$l['Intro']['mngradgroupchecklist.php'] = "Group Check Mapping in Database";
-$l['Intro']['mngradgroupcheckedit.php'] = "Edit Group Check Mapping for Group:";
-$l['Intro']['mngradgroupcheckdel.php'] = "Remove Group Check Mapping";
-$l['Intro']['mngradgroupchecksearch.php'] = "Search Group Check Mapping";
+$l['Intro']['mngradgroupchecknew.php'] = "Novo grupo de resposta valida";
+$l['Intro']['mngradgroupchecklist.php'] = "Grupo valiido maṕeado em banco de dados";
+$l['Intro']['mngradgroupcheckedit.php'] = "Editar grupo valido mapeado para grupo:";
+$l['Intro']['mngradgroupcheckdel.php'] = "Remover grupo valido";
+$l['Intro']['mngradgroupchecksearch.php'] = "Procura grupo valido";
 
-$l['Intro']['configdb.php'] = "Database Configuration";
-$l['Intro']['configlang.php'] = "Language Configuration";
-$l['Intro']['configlogging.php'] = "Logging Configuration";
-$l['Intro']['configinterface.php'] = "Web Interface Configuration";
-$l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
-$l['Intro']['configmain.php'] = "Database Configuration";
-$l['Intro']['configmaint.php'] = "Maintenance";
-$l['Intro']['configmaintdisconnectuser.php'] = "Disconnect User";
-$l['Intro']['configbusiness.php'] = "Business Details";
-$l['Intro']['configbusinessinfo.php'] = "Business Information";
+$l['Intro']['configdb.php'] = "Configuração Banco de Dados";
+$l['Intro']['configlang.php'] = "Configuração de Linguagem";
+$l['Intro']['configlogging.php'] = "Configurações de LOGS";
+$l['Intro']['configinterface.php'] = "Configuração de interface web";
+$l['Intro']['configmainttestuser.php'] = "Testando conectividade do usuario";
+$l['Intro']['configmain.php'] = "Configuração Banco de Dados";
+$l['Intro']['configmaint.php'] = "Manutenção";
+$l['Intro']['configmaintdisconnectuser.php'] = "Disconectar Usuário";
+$l['Intro']['configbusiness.php'] = "Detalhes do negocio";
+$l['Intro']['configbusinessinfo.php'] = "Informações do negocio";
 $l['Intro']['configbackup.php'] = "Backup";
-$l['Intro']['configbackupcreatebackups.php'] = "Create Backups";
-$l['Intro']['configbackupmanagebackups.php'] = "Manage Backups";
+$l['Intro']['configbackupcreatebackups.php'] = "Criar Backups";
+$l['Intro']['configbackupmanagebackups.php'] = "Gerenciar Backups";
 
-$l['Intro']['configoperators.php'] = "Operators Configuration";
-$l['Intro']['configoperatorsdel.php'] = "Remove Operator";
-$l['Intro']['configoperatorsedit.php'] = "Edit Operator Settings";
-$l['Intro']['configoperatorsnew.php'] = "New Operator";
-$l['Intro']['configoperatorslist.php'] = "Operators Listing";
+$l['Intro']['configoperators.php'] = "Configurações do Operador";
+$l['Intro']['configoperatorsdel.php'] = "Remover Operador";
+$l['Intro']['configoperatorsedit.php'] = "Editar configurações do Operador";
+$l['Intro']['configoperatorsnew.php'] = "Novo Operador";
+$l['Intro']['configoperatorslist.php'] = "Lista de Operador";
 
 $l['Intro']['login.php'] = "Login";
 
-$l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
-$l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
-$l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
+$l['captions']['providebillratetodel'] = "Forneça o tipo de entrada de tarifa que você deseja remover";
+$l['captions']['detailsofnewrate'] = "Você pode preencher os detalhes abaixo para a nova tarifa";
+$l['captions']['filldetailsofnewrate'] = "Preencha abaixo os detalhes para a nova entrada de tarifa";
 
 /* **********************************************************************************
  * Help Pages Info
@@ -952,8 +952,8 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
 
 $l['helpPage']['login'] = "";
 
-$l['helpPage']['billpaypaltransactions'] = "List all PayPal transactions";
-$l['helpPage']['billhistoryquery'] = "List all billing history for a user(s)";
+$l['helpPage']['billpaypaltransactions'] = "Listar todas as transações do PAYPAL";
+$l['helpPage']['billhistoryquery'] = "Listando todos os pagamentos do usuario";
 
 $l['helpPage']['billplanslist'] = "";
 $l['helpPage']['billplansnew'] = "";
@@ -991,11 +991,11 @@ $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
 
-$l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
-Please consult with your System Administrator. <br/>";
+$l['helpPage']['msgerrorpermissions'] = "Voçe não tem permissão de acessar essa pagina <br/>
+consult o administrador do Sistema <br/>";
 
 $l['helpPage']['mngradusergroup'] = "";
-$l['helpPage']['mngradusergroupdel'] = "To remove a user entry from the database you must provide the username of the account";
+$l['helpPage']['mngradusergroupdel'] = "Para remover uma entrada de usuário do banco de dados, você deve fornecer o nome de usuário da conta";
 $l['helpPage']['mngradusergroupnew'] = "";
 $l['helpPage']['mngradusergrouplist'] = "";
 $l['helpPage']['mngradusergrouplistuser'] = "";
@@ -1003,82 +1003,82 @@ $l['helpPage']['mngradusergroupedit'] = "";
 
 
 $l['helpPage']['mngradprofiles'] = "
-<b>Profiles Management</b> - Manage Profiles for Users by composing a set of Reply Attributes and Check Attributes <br/>
-Profiles can be thought of as the composition of Group Reply and Group Check. <br/>
-<h200><b>List Profiles </b></h200> - List Profiles <br/>
-<h200><b>New Profile </b></h200> - Add a Profile <br/>
-<h200><b>Edit Profile </b></h200> - Edit a Profile <br/>
-<h200><b>Delete Profile </b></h200> - Delete a Profile <br/>
+<b>Gerenciador de perfis</b> - Gerenciar perfis para usuários compondo um conjunto de atributos de resposta e atributos de verificação <br/>
+Os perfis podem ser considerados como a composição da resposta do grupo e da verificação do grupo. <br/>
+<h200><b>Listar Perfis </b></h200> - Listar Perfis <br/>
+<h200><b>Novo Perfil </b></h200> - Adicionar um perfil <br/>
+<h200><b>Editar Perfil </b></h200> - Editar um perfil <br/>
+<h200><b>Deletar Perfil </b></h200> - Deletar um perfil <br/>
 ";
 $l['helpPage']['mngradprofilesedit'] = "
-<h200><b>Edit Profile </b></h200> - Edit a Profile <br/>
+<h200><b>Editar Perfil </b></h200> - Editar um perfil <br/>
 ";
 $l['helpPage']['mngradprofilesdel'] = "
-<h200><b>Delete Profile </b></h200> - Delete a Profile <br/>
+<h200><b>Deletar Perfil </b></h200> - Deletar um Perfil <br/>
 ";
 $l['helpPage']['mngradprofilesduplicate'] = "
-<h200><b>Duplicate Profile </b></h200> - Duplicate a Profile's set of attributes to a new one with a different profile name <br/>
+<h200><b>Duplicar Perfil </b></h200> - Duplicar perfil e setar atributos para um novo perfil <br/>
 ";
 $l['helpPage']['mngradprofileslist'] = "
-<h200><b>List Profiles </b></h200> - List Profiles <br/>
+<h200><b>Listar Perfil </b></h200> - Listar Perfil <br/>
 ";
 $l['helpPage']['mngradprofilesnew'] = "
-<h200><b>New Profile </b></h200> - Add a Profile <br/>
+<h200><b>Novo Perfil </b></h200> - Adicionar a um perfil <br/>
 ";
 
 $l['helpPage']['mngradgroups'] = "
-<b>Groups Management</b> - Manage Group Reply and Group Check mappings (radgroupreply/radgroupcheck tables).<br/>
-<h200><b>List Group Reply/Check </b></h200> - List Group Reply/Check Mappings<br/>
-<h200><b>Search Group Reply/Check </b></h200> - Search a Group Reply/Check Mapping (you may use wildcards) <br/>
-<h200><b>New Group Reply/Check </b></h200> - Add a Group Reply/Check Mapping <br/>
-<h200><b>Edit Group Reply/Check </b></h200> - Edit a Group Reply/Check Mapping <br/>
-<h200><b>Delete Group Reply/Check </b></h200> - Delete a Group Reply/Check Mapping <br/>
+<b>Gerenciamento de grupo</b> - Gerenciando Grupo de Resposta  e  Grupos Validos Mapeados (radgroupreply/radgroupcheck tables).<br/>
+<h200><b>Listar Grupos Respostas/Validos </b></h200> - Lista de Grupos De Resposta/Mapeados<br/>
+<h200><b>Procurar Grupo Resposta/Valido </b></h200> - Procurar grupo Mapeado Resposta/Validos <br/>
+<h200><b>Novo  Grupo Resposta/Valido </b></h200> - ADicionar Grupo Respostas/Validos <br/>
+<h200><b>Editar Grupo  Respostas/Valido </b></h200> - Editar Grupo   Respostas/Valido  Mapeado <br/>
+<h200><b>Deletar Grupo  Respostas/Valido  </b></h200> - Deletar Grupo   Respostas/Valido  Mapeado <br/>
 ";
 
 
 $l['helpPage']['mngradgroupchecknew'] = "
-<h200><b>New Group Check </b></h200> - Add a Group Check Mapping <br/>
+<h200><b>Novo Grupo Valido </b></h200> - Adicionar grupo Valido mapeado<br/>
 ";
 $l['helpPage']['mngradgroupcheckdel'] = "
-<h200><b>Delete Group Check </b></h200> - Delete a Group Check Mapping <br/>
+<h200><b>Deletar grupo valido </b></h200> - Deletar  Grupo valido mapeado <br/>
 ";
 
 $l['helpPage']['mngradgroupchecklist'] = "
-<h200><b>List Group Check </b></h200> - List Group Check Mappings<br/>
+<h200><b>Listar grupo valido </b></h200> - Listar grupo valido mapeado<br/>
 ";
 $l['helpPage']['mngradgroupcheckedit'] = "
-<h200><b>Edit Group Check </b></h200> - Edit a Group Check Mapping <br/>
+<h200><b>Editar grupo valido </b></h200> - Editar grupo valido mapeado <br/>
 ";
 $l['helpPage']['mngradgroupchecksearch'] = "
-<h200><b>Search Group Check </b></h200> - Search a Group Check Mapping <br/>
-to use a wildcard you may either type the % character which is familiar in SQL or you may use the more common *
-for convenience reasons and daloRADIUS will translate it to %
+<h200><b>Procurar Grupo Valido </b></h200> - Procurar um grupo valido Mapeado <br/>
+Para usar um curinga, você pode digitar o caractere% familiar no SQL ou usar os caracteres mais comuns *
+por razões de conveniência, o daloRADIUS o traduzirá para %
 ";
 
 $l['helpPage']['mngradgroupreplynew'] = "
-<h200><b>New Group Reply </b></h200> - Add a Group Reply Mapping <br/>
+<h200><b>Novo Grupo de respota </b></h200> - Adicionar um grupo de respota Mapeado <br/>
 ";
 $l['helpPage']['mngradgroupreplydel'] = "
-<h200><b>Delete Group Reply </b></h200> - Delete a Group Reply Mapping <br/>
+<h200><b>Deletar grupo de respota </b></h200> - Deletar um grupo de respota Mapeado <br/>
 ";
 $l['helpPage']['mngradgroupreplylist'] = "
-<h200><b>List Group Reply </b></h200> - List Group Reply Mappings<br/>
+<h200><b>Listar grupo de respota  </b></h200> - Listar grupo de respota Mapeado<br/>
 ";
 $l['helpPage']['mngradgroupreplyedit'] = "
-<h200><b>Edit Group Reply </b></h200> - Edit a Group Reply Mapping <br/>
+<h200><b>Editar grupo de respota  </b></h200> - Editar grupo de respota Mapeado <br/>
 ";
 $l['helpPage']['mngradgroupreplysearch'] = "
-<h200><b>Search Group Reply </b></h200> - Search a Group Reply </ Mapping <br/>
-to use a wildcard you may either type the % character which is familiar in SQL or you may use the more common *
-for convenience reasons and daloRADIUS will translate it to %
+<h200><b>Procurar grupo de respota  </b></h200> - Procurar grupo de respota </ Mapeado <br/>
+Para usar um curinga, você pode digitar o caractere% familiar no SQL ou usar os caracteres mais comuns *
+por razões de conveniência, o daloRADIUS o traduzirá para %
 ";
 
 
 $l['helpPage']['mngradippool'] = "
-<h200><b>List IP Pools</b></h200> - List Configured IP Pools and their assigned IP Addresses <br/>
-<h200><b>New IP Pool</b></h200> - Add a new IP Address to a configured IP Pool <br/>
-<h200><b>Edit IP Pool</b></h200> - Edit an IP Address for a configured IP Pool <br/>
-<h200><b>Remove IP Pool</b></h200> - Remove an IP Address from a configured IP Pool <br/>
+<h200><b>Lista de  IP Pools</b></h200> - Listar faixe de IP configurados e seus endereços IP atribuídos<br/>
+<h200><b>Nova Faixa de IP </b></h200> - Adiciona novo endereço  de   IP  para a faixa de IP <br/>
+<h200><b>Editar faixa de ip </b></h200> - Editar endereço IP configurado para faixa de IP <br/>
+<h200><b>Remover IP Pool</b></h200> - Remover endereço IP configurado para faixa de IP<br/>
 ";
 $l['helpPage']['mngradippoollist'] = "<h200><b>List IP Pools</b></h200> - List Configured IP Pools and their assigned IP Addresses <br/>";
 $l['helpPage']['mngradippoolnew'] = "<h200><b>New IP Pool</b></h200> - Add a new IP Address to a configured IP Pool <br/>";
