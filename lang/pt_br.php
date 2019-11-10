@@ -337,7 +337,7 @@ $l['Tooltip']['OperatorName'] = "Digite o nome do operador";
 $l['Tooltip']['BillingPlanName'] = "Digite o nome do plano";
 
 $l['Tooltip']['EditRate'] = "Edite a taxa";
-$l['Tooltip']['RemoveRate'] = "Remova a taxa;
+$l['Tooltip']['RemoveRate'] = "Remova a taxa";
 
 $l['Tooltip']['rateNameTooltip'] = "Nome para a taxa,<br/>
 					para descrever o objetivo da taxa ";
