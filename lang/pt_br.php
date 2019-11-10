@@ -1433,40 +1433,40 @@ Você poderá usar os serviços do Google Maps. <br/><br/>";
 
 
 $l['messages']['noCheckAttributesForUser'] = "Este usuário não possui atributos de verificação associados";
-$l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
+$l['messages']['noReplyAttributesForUser'] = "Este usuário não possui atributos de resposta associados";
 
-$l['messages']['noCheckAttributesForGroup'] = "This group has no check attributes associated with it";
-$l['messages']['noReplyAttributesForGroup'] = "This group has no reply attributes associated with it";
+$l['messages']['noCheckAttributesForGroup'] = "Este grupo não possui atributos de verificação associados";
+$l['messages']['noReplyAttributesForGroup'] = "Este grupo não possui atributos de resposta associados";
 
-$l['messages']['nogroupdefinedforuser'] = "This user has no Groups associated with it";
-$l['messages']['wouldyouliketocreategroup'] = "Would you like to create one?";
+$l['messages']['nogroupdefinedforuser'] = "Este usuário não possui Grupos associados";
+$l['messages']['wouldyouliketocreategroup'] = "Gostaria de criar um?";
 
 
-$l['messages']['missingratetype'] = "error: missing rate type to delete";
-$l['messages']['missingtype'] = "error: missing type";
-$l['messages']['missingcardbank'] = "error: missing cardbank";
-$l['messages']['missingrate'] = "error: missing rate";
-$l['messages']['success'] = "success";
-$l['messages']['gisedit1'] = "Welcome, you are currently in Edit mode";
-$l['messages']['gisedit2'] = "Remove current marker from map and database?";
-$l['messages']['gisedit3'] = "Please enter name of HotSpot";
-$l['messages']['gisedit4'] = "Add current marker to database?";
-$l['messages']['gisedit5'] = "Please enter name of HotSpot";
-$l['messages']['gisedit6'] = "Please enter the MAC Address of the Hotspot";
+$l['messages']['missingratetype'] = "error: tipo de taxa ausente a ser excluído";
+$l['messages']['missingtype'] = "erro: tipo ausente";
+$l['messages']['missingcardbank'] = "erro: falta de cartão";
+$l['messages']['missingrate'] = "erro: taxa ausente";
+$l['messages']['success'] = "successo";
+$l['messages']['gisedit1'] = "Bem-vindo, você está no modo de edição";
+$l['messages']['gisedit2'] = "Remover marcador atual do mapa e banco de dados?";
+$l['messages']['gisedit3'] = "Digite o nome do HotSpot";
+$l['messages']['gisedit4'] = "Adicionar marcador atual ao banco de dados?";
+$l['messages']['gisedit5'] = "Digite o nome do HotSpot";
+$l['messages']['gisedit6'] = "Digite o endereço MAC do ponto de acesso";
 
-$l['messages']['gismain1'] = "Successfully updated GoogleMaps API Registration code";
-$l['messages']['gismain2'] = "error: could not open the file for writing:";
-$l['messages']['gismain3'] = "Check file permissions. The file should be writable by the webserver's user/group";
-$l['messages']['gisviewwelcome'] = "Welcome to Enginx Visual Maps";
+$l['messages']['gismain1'] = "Código de registro da API do GoogleMaps atualizado com sucesso";
+$l['messages']['gismain2'] = "erro: não foi possível abrir o arquivo para gravação:";
+$l['messages']['gismain3'] = "Verifique as permissões de arquivo. O arquivo deve ser gravável pelo usuário / grupo do servidor da web";
+$l['messages']['gisviewwelcome'] = "Bem-vindo ao Enginx Visual Maps";
 
-$l['messages']['loginerror'] = "<br/><br/>either of the following:<br/>
-1. bad username/password<br/>
-2. an administrator is already logged-in (only one instance is allowed) <br/>
-3. there appears to be more than one 'administrator' user in the database <br/>
+$l['messages']['loginerror'] = "<br/><br/>um dos seguintes:<br/>
+1. nome de usuário / senha incorretos<br/>
+2. um administrador já está logado (apenas uma instância é permitida) <br/>
+3. parece haver mais de um usuário 'administrador' no banco de dados<br/>
 ";
 
-$l['buttons']['savesettings'] = "Save Settings";
-$l['buttons']['apply'] = "Apply";
+$l['buttons']['savesettings'] = "Salvando configurações";
+$l['buttons']['apply'] = "Aplicar";
 
 $l['menu']['Home'] = "<em>H</em>ome</a>";
 $l['menu']['Managment'] = "<em>G</em>estão</a>";
