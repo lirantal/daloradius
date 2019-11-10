@@ -87,7 +87,7 @@ $l['all']['SimultaneousUse'] = "Uso Simultaneo";
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
 $l['all']['NasIPHost'] = "NAS IP/Host";
-$l['all']['NasShortname'] = "NAS Shortname";
+$l['all']['NasShortname'] = "NAS NomeCurto";
 $l['all']['NasType'] = "NAS Tipo";
 $l['all']['NasPorts'] = "NAS Portas";
 $l['all']['NasSecret'] = "NAS Senha";
@@ -99,7 +99,7 @@ $l['all']['HotSpot'] = "HotSpot";
 $l['all']['HotSpots'] = "HotSpots";
 $l['all']['HotSpotName'] = "Nome do Hotspot ";
 $l['all']['Name'] = "Nome";
-$l['all']['Username'] = "Usuario";
+$l['all']['Username'] = "Usuário";
 $l['all']['Password'] = "Senha";
 $l['all']['PasswordType'] = "Tipo da Senha";
 $l['all']['IPAddress'] = "Endereco IP";
@@ -129,7 +129,7 @@ $l['all']['Rollback'] = "Reversão";
 $l['all']['Termination'] = "Terminacao";
 $l['all']['NASIPAddress'] = "NAS - Endereco IP";
 $l['all']['Action'] = "Acao";
-$l['all']['UniqueUsers'] = "Usuario unico ";
+$l['all']['UniqueUsers'] = "Usuário unico ";
 $l['all']['TotalHits'] = "Total Hits";
 $l['all']['AverageTime'] = "Tempo Medio";
 $l['all']['Records'] = "Registros";
@@ -146,7 +146,7 @@ $l['all']['RateName'] = "Nome da taxa";
 $l['all']['RateType'] = "Tipo da taxa";
 $l['all']['RateCost'] = "Custo da taxa";
 $l['all']['Billed'] = "Faturado";
-$l['all']['TotalUsers'] = "Total de Usuarios";
+$l['all']['TotalUsers'] = "Total de Usuários";
 $l['all']['TotalBilled'] = "Total de Cobrancas";
 $l['all']['CardBank'] = "Cartão de credito";
 $l['all']['Type'] = "Tipo";
@@ -177,7 +177,7 @@ $l['all']['EmailInvoice'] = "E-mail para o pedido";
 $l['all']['edit'] = "editar";
 $l['all']['del'] = "deletar";
 $l['all']['groupslist'] = "Lista de grupos";
-$l['all']['TestUser'] = "Testar Usuario";
+$l['all']['TestUser'] = "Testar Usuário";
 $l['all']['Accounting'] = "Contas";
 $l['all']['RADIUSReply'] = "RADIUS Resposta";
 
@@ -190,7 +190,7 @@ $l['all']['Count'] = "Contador";
 $l['all']['Requests'] = "Requesição";
 
 $l['all']['DatabaseHostname'] = "Nome do host do banco de dados";
-$l['all']['DatabaseUser'] = "Usuario do Banco";
+$l['all']['DatabaseUser'] = "Usuário do Banco";
 $l['all']['DatabasePass'] = "Senha do Bacno";
 $l['all']['DatabaseName'] = "Nome do banco";
 
@@ -211,7 +211,7 @@ $l['all']['AjaxAutoComplete'] = "Ativar Ajax Auto-Complete";
 $l['all']['RadiusServer'] = "Radius Servidor";
 $l['all']['RadiusPort'] = "Radius Porta";
 
-$l['all']['UsernamePrefix'] = "Usuario Prefixo";
+$l['all']['UsernamePrefix'] = "Usuário Prefixo";
 $l['all']['NumberInstances'] = "Numero de instacias para criar";
 $l['all']['UsernameLength'] = "Cumprimento do nome";
 $l['all']['PasswordLength'] = "Cumprimento do password";
@@ -240,7 +240,7 @@ $l['all']['realms'] = "reino";
 $l['all']['proxys'] = "proxys";
 $l['all']['billingpaypal'] = "Fatura pelo paypal";
 $l['all']['billingplans'] = "Forma de pagamento";
-$l['all']['billinghistory'] = "Historico de pagamentos";
+$l['all']['billinghistory'] = "Histórico de pagamentos";
 $l['all']['billinginfo'] = "Informações do pagamento do usuario";
 
 
@@ -430,13 +430,13 @@ $l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be<b
 $l['Tooltip']['AttributeEdit'] = "Editar Atributo";
 
 
-$l['Tooltip']['UserEdit'] = "Editar Usuario";
+$l['Tooltip']['UserEdit'] = "Editar Usuário";
 $l['Tooltip']['HotspotEdit'] = "Editar Hotspot";
 $l['Tooltip']['EditNAS'] = "Editar NAS";
 $l['Tooltip']['RemoveNAS'] = "Remover NAS";
 
-$l['Tooltip']['EditUserGroup'] = "Editar Usuario do Group";
-$l['Tooltip']['ListUserGroups'] = "Listar Usuario dos Grupos";
+$l['Tooltip']['EditUserGroup'] = "Editar Usuário do Group";
+$l['Tooltip']['ListUserGroups'] = "Listar Usuário dos Grupos";
 
 $l['Tooltip']['EditProfile'] = "Editar Perfil";
 
@@ -459,7 +459,7 @@ $l['Tooltip']['passwordTypeTooltip'] = "O password digitado corresponde ao usuar
 $l['Tooltip']['passwordTooltip'] = "O password  é case sensitive<br/>&nbsp;&nbsp;&nbsp;
 					Tenha um cuidado dobrado";
 $l['Tooltip']['groupTooltip'] = "O usuario foi adicionado ao grupo<br/>&nbsp;&nbsp;&nbsp;
-					Usuario particular adicionado ao grupo<br/>&nbsp;&nbsp;&nbsp;
+					Usuário particular adicionado ao grupo<br/>&nbsp;&nbsp;&nbsp;
 					O usuario é o assunto's attributes";
 $l['Tooltip']['macaddressTooltip'] = "Exemplo: 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
 					O formato do endereço MAC deve ser o mesmo<br/>&nbsp;&nbsp;&nbsp;
@@ -541,13 +541,13 @@ $l['button']['HotspotsComparison'] = "Hotspots Comparação";
 $l['button']['CleanupStaleSessions'] = "Sessões obsoletas da limpeza";
 $l['button']['DeleteAccountingRecords'] = "Deletando gravações de contas";
 
-$l['button']['ListUsers'] = "Listar Usuarios";
-$l['button']['NewUser'] = "Novo Ususario";
-$l['button']['NewUserQuick'] = "Novo Usuario - Rapido";
+$l['button']['ListUsers'] = "Listar Usuários";
+$l['button']['NewUser'] = "Novo Usuário";
+$l['button']['NewUserQuick'] = "Novo Usuário - Rapido";
 $l['button']['BatchAddUsers'] = "Adicionar usuários em lote";
-$l['button']['EditUser'] = "Editar Usuario";
-$l['button']['SearchUsers'] = "Procura Usuarios";
-$l['button']['RemoveUsers'] = "Remover Usuarios";
+$l['button']['EditUser'] = "Editar Usuário";
+$l['button']['SearchUsers'] = "Procurar Usuários";
+$l['button']['RemoveUsers'] = "Remover Usuários";
 $l['button']['ListHotspots'] = "Listar Hotspots";
 $l['button']['NewHotspot'] = "Novo Hotspot";
 $l['button']['EditHotspot'] = "Editar Hotspot";
@@ -563,11 +563,11 @@ $l['button']['NewNAS'] = "Novo NAS";
 $l['button']['EditNAS'] = "Editar NAS";
 $l['button']['RemoveNAS'] = "Remover NAS";
 
-$l['button']['ListUserGroup'] = "Listar Usuario-Grupos Mapeados";
-$l['button']['ListUsersGroup'] = "Listar  Usuarios e Grupo Mapeados";
-$l['button']['NewUserGroup'] = "Novo Usuario-Grupo Mapeados";
-$l['button']['EditUserGroup'] = "Editar Usuario-Grupo Mapeados";
-$l['button']['RemoveUserGroup'] = "Remover Usuario-Grupo Mapeados";
+$l['button']['ListUserGroup'] = "Listar Usuário-Grupos Mapeados";
+$l['button']['ListUsersGroup'] = "Listar  Usuários e Grupo Mapeados";
+$l['button']['NewUserGroup'] = "Novo Usuário-Grupo Mapeados";
+$l['button']['EditUserGroup'] = "Editar Usuário-Grupo Mapeados";
+$l['button']['RemoveUserGroup'] = "Remover Usuário-Grupo Mapeados";
 
 $l['button']['ListProfiles'] = "Listar Perfil";
 $l['button']['NewProfile'] = "Novo Perfil";
@@ -587,7 +587,7 @@ $l['button']['NewGroupCheck'] = "Novo Grupo Checado e Mapeado";
 $l['button']['EditGroupCheck'] = "Editar Grupo Checado e Mapeado";
 $l['button']['RemoveGroupCheck'] = "Remover Grupo Checado Mapeado";
 
-$l['button']['UserAccounting'] = "Conta de Usuario ";
+$l['button']['UserAccounting'] = "Conta de Usuário ";
 $l['button']['IPAccounting'] = "IP da conta";
 $l['button']['NASIPAccounting'] = "NAS IP Conta";
 $l['button']['NASIPAccountingOnlyActive'] = "Mostre Somente ativos";
@@ -595,10 +595,10 @@ $l['button']['DateAccounting'] = "Data da conta";
 $l['button']['AllRecords'] = "Todos os registros";
 $l['button']['ActiveRecords'] = "Gravações ativas";
 
-$l['button']['OnlineUsers'] = "Usuarios Online";
+$l['button']['OnlineUsers'] = "Usuários Online";
 $l['button']['LastConnectionAttempts'] = "Ultima tentativa de conexão";
-$l['button']['TopUser'] = "Usuarios Maior Trafego";
-$l['button']['History'] = "Historico";
+$l['button']['TopUser'] = "Usuários Maior Trafego";
+$l['button']['History'] = "Histórico";
 
 $l['button']['ServerStatus'] = "Status do servidor";
 $l['button']['ServicesStatus'] = "Status do serviço";
@@ -609,13 +609,13 @@ $l['button']['SystemLog'] = "Logs do Sistema";
 $l['button']['BootLog'] = "Boot Log";
 
 $l['button']['UserLogins'] = "Logins de usuário";
-$l['button']['UserDownloads'] = "Download de Usuarios";
+$l['button']['UserDownloads'] = "Download de Usuários";
 $l['button']['UserUploads'] = "Upload to usuarios";
 $l['button']['TotalLogins'] = "Total de Logins";
 $l['button']['TotalTraffic'] = "Total Trafego";
 
-$l['button']['ViewMAP'] = "Visão do  MAP";
-$l['button']['EditMAP'] = "Editar MAP";
+$l['button']['ViewMAP'] = "Visão do  MAPA";
+$l['button']['EditMAP'] = "Editar MAPA";
 $l['button']['RegisterGoogleMapsAPI'] = "RegisterGoogleMaps API";
 
 $l['button']['DatabaseSettings'] = "Configurações do Banco de dados";
@@ -679,7 +679,7 @@ $l['title']['GroupInfo'] = "Informação do grupo";
 $l['title']['GroupAttributes'] = "Atributos do grupo";
 
 $l['title']['NASInfo'] = "Informação do NAS";
-$l['title']['NASAdvanced'] = "Configuração avancado do NAS ";
+$l['title']['NASAdvanced'] = "Configuração avançada do NAS ";
 
 $l['title']['UserInfo'] = "Informação do usuário";
 $l['title']['BillingInfo'] = "Informação do pagamento";
@@ -768,7 +768,7 @@ $l['ContactInfo']['CreditCardExpiration'] = "Validade do cartão";
 /* ********************************************************************************** */
 
 
-$l['Intro']['billhistorymain.php'] = "Historico de pagamento";
+$l['Intro']['billhistorymain.php'] = "Histórico de pagamento";
 $l['Intro']['msgerrorpermissions.php'] = "Erro";
 
 $l['Intro']['mngradproxys.php'] = "Gerenciando os Proxys";
@@ -818,7 +818,7 @@ $l['Intro']['billratesnew.php'] = "Nova entrada de taxas";
 $l['Intro']['paypalmain.php'] = "Pagina de transação do PayPal";
 $l['Intro']['billpaypaltransactions.php'] = "Paginas de pagamentos do PayPal";
 
-$l['Intro']['billhistoryquery.php'] = "Historico de pagamento";
+$l['Intro']['billhistoryquery.php'] = "Histórico de pagamento";
 
 $l['Intro']['billplans.php'] = "Pagina de pagamento dos planos";
 $l['Intro']['billplansdel.php'] = "Deletar entrada de planos";
@@ -827,10 +827,10 @@ $l['Intro']['billplanslist.php'] = "Tabelas de Planos";
 $l['Intro']['billplansnew.php'] = "Nova entrada de plano";
 
 $l['Intro']['billpos.php'] = "Pagina do ponto de vendas";
-$l['Intro']['billposdel.php'] = "Deletar Usuario ";
-$l['Intro']['billposedit.php'] = "Editar Usuario";
-$l['Intro']['billposlist.php'] = "Listar Usuario";
-$l['Intro']['billposnew.php'] = "Novo Usuario";
+$l['Intro']['billposdel.php'] = "Deletar Usuário ";
+$l['Intro']['billposedit.php'] = "Editar Usuário";
+$l['Intro']['billposlist.php'] = "Listar Usuário";
+$l['Intro']['billposnew.php'] = "Novo Usuário";
 
 $l['Intro']['giseditmap.php'] = "Editar modo do  MAPA ";
 $l['Intro']['gismain.php'] = "GIS Mapeado";
@@ -841,9 +841,9 @@ $l['Intro']['graphsalltimetrafficcompare.php'] = "Comparando total trafego de us
 $l['Intro']['graphsalltimelogins.php'] = "Total de Logins";
 $l['Intro']['graphsoveralldownload.php'] = "Download dos usuarios";
 $l['Intro']['graphsoveralllogins.php'] = "Logins dos usuarios";
-$l['Intro']['graphsoverallupload.php'] = "Uploads dos Usuarios";
+$l['Intro']['graphsoverallupload.php'] = "Uploads dos Usuários";
 
-$l['Intro']['rephistory.php'] = "Historico de ações";
+$l['Intro']['rephistory.php'] = "Histórico de ações";
 $l['Intro']['replastconnect.php'] = "50 Ultimas tentativas de conexão";
 $l['Intro']['repstatradius.php'] = "Informações do Daemon";
 $l['Intro']['repstatserver.php'] = "Status do Servidor e informações";
@@ -858,13 +858,13 @@ $l['Intro']['rephsall.php'] = "Lista de Hotspots";
 $l['Intro']['repmain.php'] = "Pagina de relatório";
 $l['Intro']['repstatus.php'] = "Pagina de Status";
 $l['Intro']['replogs.php'] = "Pagina de logs";
-$l['Intro']['reptopusers.php'] = "Usuarios mas ativos";
+$l['Intro']['reptopusers.php'] = "Usuários mas ativos";
 $l['Intro']['repusername.php'] = "Listando usuários";
 
 $l['Intro']['mngbatch.php'] = "Criar usuarios em lotes";
 $l['Intro']['mngdel.php'] = "Remover Usuário";
 $l['Intro']['mngedit.php'] = "Editar detalhes do usuário";
-$l['Intro']['mnglistall.php'] = "Listando Usuarios";
+$l['Intro']['mnglistall.php'] = "Listando Usuários";
 $l['Intro']['mngmain.php'] = "Gerenciando Usuários e HOTSPOT";
 $l['Intro']['mngnew.php'] = "Novo Usuário";
 $l['Intro']['mngnewquick.php'] = "Adicionar usuário Rapido";
@@ -875,12 +875,12 @@ $l['Intro']['mnghsedit.php'] = "Editar Detalhes do  Hotspots";
 $l['Intro']['mnghslist.php'] = "Listar Hotspots";
 $l['Intro']['mnghsnew.php'] = "Novo Hotspot";
 
-$l['Intro']['mngradusergroupdel.php'] = "Remove Usuarios-Grupos Mapeados";
-$l['Intro']['mngradusergroup.php'] = "Configuração Usuarios-Grupos Mapeados";
-$l['Intro']['mngradusergroupnew.php'] = "Novo  Usuarios-Grupos Mapeados";
-$l['Intro']['mngradusergrouplist'] = "Mapeando Usuarios-Grupos no Banco de Dados";
-$l['Intro']['mngradusergrouplistuser'] = "Usuarios-Grupos Mapeado no Banco de Dados";
-$l['Intro']['mngradusergroupedit'] = "Editando  Usuarios-Grupos Mapeado para usuario:";
+$l['Intro']['mngradusergroupdel.php'] = "Remove Usuários-Grupos Mapeados";
+$l['Intro']['mngradusergroup.php'] = "Configuração Usuários-Grupos Mapeados";
+$l['Intro']['mngradusergroupnew.php'] = "Novo  Usuários-Grupos Mapeados";
+$l['Intro']['mngradusergrouplist'] = "Mapeando Usuários-Grupos no Banco de Dados";
+$l['Intro']['mngradusergrouplistuser'] = "Usuários-Grupos Mapeado no Banco de Dados";
+$l['Intro']['mngradusergroupedit'] = "Editando  Usuários-Grupos Mapeado para usuario:";
 
 $l['Intro']['mngradippool.php'] = "Configuração de Faixa de IP ";
 $l['Intro']['mngradippoolnew.php'] = "Nova Faixa de ip";
@@ -1138,7 +1138,7 @@ $l['helpPage']['configmaint'] = "
 <h200><b>Testar conectividade do usuario</b></h200> -
 Envie uma solicitação de acesso ao servidor RADIUS para verificar se as credenciais do usuário são válidas<br/>Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server
 to disconnect a user and terminate his/her session in a given NAS.
-<h200><b>Disconectar Usuarios</b></h200> - Envie um pacote PoD (Packet of Disconnect) ou CoA (Change of Authority) para o servidor NAS
+<h200><b>Disconectar Usuários</b></h200> - Envie um pacote PoD (Packet of Disconnect) ou CoA (Change of Authority) para o servidor NAS
 desconectar um usuário e encerrar sua sessão em um determinado NAS.<br/>
 ";
 $l['helpPage']['configmainttestuser'] = "
@@ -1224,14 +1224,14 @@ Outros locais possíveis para o arquivo de log podem ocorrer, se este for o caso
 ";
 $l['helpPage']['repmain'] = "
 <b>Rela Gerais</b><br/>
-<h200><b>Usuarios Online</b></h200> - Fornece uma lista de todos os usuários que são
+<h200><b>Usuários Online</b></h200> - Fornece uma lista de todos os usuários que são
 encontrado on-line através da tabela contábil no banco de dados. A verificação que está sendo realizada é para usuários
 sem hora final (AcctStopTime) definida. É importante notar que esses usuários também podem ter sessões obsoletas
 o que acontece quando os NASs, por algum motivo, não conseguem enviar os pacotes de interrupção contábil.<br/>
 <h200><b>Ultima Tentativa de conexão</b></h200> -Fornece uma lista de todos os logins de aceitação de acesso e rejeição de acesso (aceitos e com falha)
 para usuários. <br/> Elas são extraídas da tabela postauth do banco de dados, que precisa ser definida
 no arquivo de configuração do FreeRADIUS para realmente registrá-los.<br/>
-<h200><b>Usuarios mas ativos</b></h200> - Fornece uma lista dos principais usuários N para consumo de largura de banda e tempo de sessão usado<br/><br/>
+<h200><b>Usuários mas ativos</b></h200> - Fornece uma lista dos principais usuários N para consumo de largura de banda e tempo de sessão usado<br/><br/>
 <b>Sub-Categoria de relatórios</b><br/>
 <h200><b>Logs</b></h200> - Providencia  accesso to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
 <h200><b>Status</b></h200> - Providencia informações do servidor  and RADIUS Components status";
@@ -1283,7 +1283,7 @@ Fornece informações contábeis completas para todas as sessões originadas com
 ";
 $l['helpPage']['acctmain'] = "
 <b>Conta Geral</b><br/>
-<h200><b>Conta de Usuario</b></h200> -
+<h200><b>Conta de Usuário</b></h200> -
 Fornece informações contábeis completas para todas as sessões no banco de dados para um usuário específico.
 <br/>
 <h200><b>IP da Conta</b></h200> -
