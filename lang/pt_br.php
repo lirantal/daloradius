@@ -991,7 +991,7 @@ $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "Voçe não tem permissão de acessar essa pagina <br/>
-consult o administrador do Sistema <br/>";
+consulte o administrador do Sistema <br/>";
 
 $l['helpPage']['mngradusergroup'] = "";
 $l['helpPage']['mngradusergroupdel'] = "Para remover uma entrada de usuário do banco de dados, você deve fornecer o nome de usuário da conta";
