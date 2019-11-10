@@ -1194,197 +1194,195 @@ $l['helpPage']['graphmain'] = "
 A quantidade de logins (ou 'ocorrências' no NAS) é exibida em um gráfico e acompanhada por uma listagem de tabela.<br/>
 <h200><b>Estatiticas total dos downloads </b></h200> - Plota um gráfico gráfico do uso de um usuário específico por um determinado período de tempo.
 A quantidade de dados baixados pelo cliente é o valor que está sendo calculado. O gráfico é acompanhado por uma listagem de tabela<br/>
-<h200><b>Estatiticas total dos uploads</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
-The amount of data Upload by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
+<h200><b>Estatiticas total dos uploads</b></h200> - Plota um gráfico gráfico do uso de um usuário específico por um determinado período de tempo.
+A quantidade de dados carregados pelo cliente é o valor que está sendo calculado. O gráfico é acompanhado por uma listagem de tabela<br/>
 <br/>
-<h200><b>Alltime Logins/Hits</b></h200> - Plots a graphical chart of the Logins to the server for a given period of time.<br/>
-<h200><b>Alltime Traffic Comparison</b></h200> - Plots a graphical chart of the Downloaded and Uploaded statisticse.
-";
-$l['helpPage']['graphsalltimelogins'] = "An All-Time statistics of Logins to the server based on a distribution over a period of time";
-$l['helpPage']['graphsalltimetrafficcompare'] = "An All-Time statistics of Traffic through the server based on a distribution over a period of time.";
-$l['helpPage']['graphsoveralldownload'] = "Plots a graphical chart of the Downloaded bytes to the server";
-$l['helpPage']['graphsoverallupload'] = "Plots a graphical chart of the Uploaded bytes to the server";
-$l['helpPage']['graphsoveralllogins'] = "Plots a graphical chart of the Login attempts to the server";
+<h200><b>Login de todos os tempos</b></h200> - PlotaPlota um gráfico gráfico dos Logins no servidor por um determinado período de tempo. um gráfico gráfico dos Logins no servidor por um determinado período de tempo.<br/>
+<h200><b>Comparação de tráfego de todos os tempos</b></h200> -Traça um gráfico gráfico da estatística Downloaded and Uploaded.";
+$l['helpPage']['graphsalltimelogins'] = "Estatísticas de todos os tempos de logons no servidor com base em uma distribuição por um período de tempo";
+$l['helpPage']['graphsalltimetrafficcompare'] = "Estatísticas de tráfego de todos os tempos através do servidor com base em uma distribuição durante um período de tempo.";
+$l['helpPage']['graphsoveralldownload'] = "Traça um gráfico gráfico dos bytes baixados para o servidor";
+$l['helpPage']['graphsoverallupload'] = "Traça um gráfico gráfico dos bytes carregados no servidor";
+$l['helpPage']['graphsoveralllogins'] = "Traça um gráfico gráfico das tentativas de login no servidor";
 
 
 
-$l['helpPage']['rephistory'] = "Lists all activity performed on management items and provides information on <br/>
-Creation Date, Creation By as well as Updated Date and Update By history fields";
-$l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
-$l['helpPage']['replogsboot'] = "Monitor Operating System Boot log - equivalent to running the dmesg command.";
-$l['helpPage']['replogsdaloradius'] = "Monitor daloRADIUS's Logfile.";
-$l['helpPage']['replogsradius'] = "Monitor FreeRADIUS's Logfile.";
-$l['helpPage']['replogssystem'] = "Monitor Operating System Logfile.";
+$l['helpPage']['rephistory'] = "Lista todas as atividades realizadas nos itens de gerenciamento e fornece informações sobre <br/>
+Campos Data da criação, Criação por e Data atualizada e Atualização por histórico";
+$l['helpPage']['replastconnect'] = "Lista todas as tentativas de logon no servidor RADIUS, logons bem-sucedidos e com falha";
+$l['helpPage']['replogsboot'] = "Monitorar o log de inicialização do sistema operacional - equivalente à execução do comando dmesg.";
+$l['helpPage']['replogsdaloradius'] = "Monitorando daloRADIUS's Logfile.";
+$l['helpPage']['replogsradius'] = "Monitorando FreeRADIUS's Logfile.";
+$l['helpPage']['replogssystem'] = "Monitorando Operating System Logfile.";
 $l['helpPage']['replogs'] = "
 <b>Logs</b><br/>
-<h200><b>daloRADIUS Log</b></h200> - Monitor daloRADIUS's Logfile.<br/>
-<h200><b>RADIUS Log</b></h200> - Monitor FreeRADIUS's Logfile - equivalent to /var/log/freeradius/radius.log or /usr/local/var/log/radius/radius.log.
-Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
-<h200><b>System Log</b></h200> - Monitor Operating System Logfile - equivalent to /var/log/syslog or /var/log/message on most platform.
-Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
-<h200><b>Boot Log</b></h200> - Monitor Operating System Boot log - equivalent to running the dmesg command.
+<h200><b>daloRADIUS Log</b></h200> - Monitorando daloRADIUS's Logfile.<br/>
+<h200><b>RADIUS Log</b></h200> - Monitor FreeRADIUS's Logfile - equivalente a /var/log/freeradius/radius.log ou /usr/local/var/log/radius/radius.log.
+Outros locais possíveis para o arquivo de log podem ocorrer, se este for o caso, ajuste a configuração de acordo.<br/>
+<h200><b>System Log</b></h200> - Monitorando  Logs do Sistema operacional - equivalent a /var/log/syslog ou /var/log/message on most platform.
+Outros locais possíveis para o arquivo de log podem ocorrer, se este for o caso, ajuste a configuração de acordo.<br/>
+<h200><b>Boot Log</b></h200> - Monitorar o log de inicialização do sistema operacional - equivalente à execução do comando dmesg.
 ";
 $l['helpPage']['repmain'] = "
-<b>General Reports</b><br/>
-<h200><b>Online Users</b></h200> - Provides a listing of all users which are
-found to be online through the accounting table in the database. The check which is being performed is for users
-with no ending time (AcctStopTime) set. It is important to notice that these users may also be of stale sessions
-which happens when NASs for some reason fail to send the accounting-stop packets.<br/>
-<h200><b>Last Connection Attempts</b></h200> - Provides a listing of all Access-Accept and Access-Reject (accepted and failed) logins
-for users. <br/> These are pulled from the database's postauth table which is required to be defined
-in FreeRADIUS's config file to actually log these.<br/>
-<h200><b>Top User</b></h200> - Provides a listing of the top N users for bandwidth consumption and session time used<br/><br/>
-<b>Sub-Category Reports</b><br/>
-<h200><b>Logs</b></h200> - Provides access to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
-<h200><b>Status</b></h200> - Provides information on server status and RADIUS Components status";
-$l['helpPage']['repstatradius'] = "Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.
+<b>Rela Gerais</b><br/>
+<h200><b>Usuarios Online</b></h200> - Fornece uma lista de todos os usuários que são
+encontrado on-line através da tabela contábil no banco de dados. A verificação que está sendo realizada é para usuários
+sem hora final (AcctStopTime) definida. É importante notar que esses usuários também podem ter sessões obsoletas
+o que acontece quando os NASs, por algum motivo, não conseguem enviar os pacotes de interrupção contábil.<br/>
+<h200><b>Ultima Tentativa de conexão</b></h200> -Fornece uma lista de todos os logins de aceitação de acesso e rejeição de acesso (aceitos e com falha)
+para usuários. <br/> Elas são extraídas da tabela postauth do banco de dados, que precisa ser definida
+no arquivo de configuração do FreeRADIUS para realmente registrá-los.<br/>
+<h200><b>Usuarios mas ativos</b></h200> - Fornece uma lista dos principais usuários N para consumo de largura de banda e tempo de sessão usado<br/><br/>
+<b>Sub-Categoria de relatórios</b><br/>
+<h200><b>Logs</b></h200> - Providencia  accesso to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
+<h200><b>Status</b></h200> - Providencia informações do servidor  and RADIUS Components status";
+$l['helpPage']['repstatradius'] = "Providencia informações sobre hardware: CPU Usage, Processes, Uptime, Memory usage, etc.
 ";
-$l['helpPage']['repstatserver'] = "Provides general information about the FreeRADIUS daemon and MySQL Database server";
+$l['helpPage']['repstatserver'] = "Providencia informações do  FreeRADIUS daemon and MySQL Database server";
 $l['helpPage']['repstatus'] = "<b>Status</b><br/>
-<h200><b>Server Status</b></h200> - Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
-<h200><b>RADIUS Status</b></h200> - Provides general information about the FreeRADIUS daemon and MySQL Database server";
-$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session
-time or bandwidth usage. Listing users of category: ";
-$l['helpPage']['repusername'] = "Records found for user:";
+<h200><b>Server Status</b></h200> - Providencia informações : CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
+<h200><b>RADIUS Status</b></h200> - Providencia informação  FreeRADIUS daemon and MySQL Database server";
+$l['helpPage']['reptopusers'] = "Registro dos usuarios  mais ativos , aqueles listados abaixo ganharam o maior consumo de sessões
+uso de tempo ou largura de banda. Listando usuários da categoria: ";
+$l['helpPage']['repusername'] = "Registro encontrado para usuario:";
 $l['helpPage']['reponline'] = "
-The following table lists users who are currently connected to
-the system. It is very much possible that there are stale connections,
-meaning that users got disconnected but the NAS didn't send or wasn't
-able to send a STOP accounting packet to the RADIUS server.
+A tabela a seguir lista os usuários que estão conectados no momento
+o sistema. É muito possível que haja conexões obsoletas,
+o que significa que os usuários foram desconectados, mas o NAS não enviou ou não foi
+capaz de enviar um pacote de contabilidade STOP para o servidor RADIUS.
 ";
 
 
-$l['helpPage']['mnglistall'] = "Listing users in database";
-$l['helpPage']['mngsearch'] = "Searching for user: ";
-$l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
-$l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
-$l['helpPage']['mngdel'] = "To remove a user entry from the database you must provide the username of the account<br/>";
-$l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
-Note that these settings will apply for all the users that you are creating.<br/>";
-$l['helpPage']['mngnewquick'] = "The following user/card is of type prepaid.<br/>
-The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
-radius attributes";
+$l['helpPage']['mnglistall'] = "Listando usuarios no banco de dados ";
+$l['helpPage']['mngsearch'] = "Procurando por usuário: ";
+$l['helpPage']['mngnew'] = "Você pode preencher os detalhes abaixo para adicionar novos usuários ao banco de dados<br/>";
+$l['helpPage']['mngedit'] = "Edite os detalhes do usuário abaixo.<br/>";
+$l['helpPage']['mngdel'] = "Para remover uma entrada de usuário do banco de dados, você deve fornecer o nome de usuário da conta<br/>";
+$l['helpPage']['mngbatch'] = "Você pode preencher os detalhes abaixo para adicionar novos usuários ao banco de dados.<br/>
+Observe que essas configurações serão aplicadas a todos os usuários que você está criando.<br/>";
+$l['helpPage']['mngnewquick'] = "O seguinte usuário / cartão é do tipo pré-pago.<br/>
+A quantidade de tempo especificada em Crédito por tempo será usada como o tempo limite da sessão e o máximo de todas as sessões
+atributos de raio";
 
 // accounting section
 $l['helpPage']['acctactive'] = "
-	Provides information that would prove useful for tracking Active or Expired users in the database
-	in terms of users which have an Expiration attribute or a Max-All-Session attribute.
+Fornece informações que seriam úteis para rastrear usuários ativos ou expirados no banco de dados
+em termos de usuários que possuem um atributo Expiration ou Max-All-Session.
 <br/>
 ";
 $l['helpPage']['acctall'] = "
-	Provides full accounting information for all sessions in the database.
+Fornece informações contábeis completas para todas as sessões no banco de dados.
 <br/>
 ";
 $l['helpPage']['acctdate'] = "
-	Provides full accounting information for all sessions between the given 2 dates for a particular user.
+	Fornece informações contábeis completas para todas as sessões entre as duas datas especificadas para um usuário específico.
 <br/>
 ";
 $l['helpPage']['acctipaddress'] = "
-	Provides full accounting information for all sessions that originated with a particular IP Address.
+Fornece informações contábeis completas para todas as sessões originadas com um endereço IP específico.
 <br/>
 ";
 $l['helpPage']['acctmain'] = "
-<b>General Accounting</b><br/>
-<h200><b>User Accounting</b></h200> -
-	Provides full accounting information for all sessions in the database for a particular user.
+<b>Conta Geral</b><br/>
+<h200><b>Conta de Usuario</b></h200> -
+Fornece informações contábeis completas para todas as sessões no banco de dados para um usuário específico.
 <br/>
-<h200><b>IP Accounting</b></h200> -
-	Provides full accounting information for all sessions that originated with a particular IP Address.
+<h200><b>IP da Conta</b></h200> -
+Fornece informações contábeis completas para todas as sessões originadas com um endereço IP específico.
 <br/>
-<h200><b>NAS Accounting</b></h200> -
-	Provides full accounting information for all the sessions that the specific NAS IP address has handled.
+<h200><b>Conta no NAS</b></h200> -
+Fornece informações contábeis completas para todas as sessões que o endereço IP do NAS específico manipulou.
 <br/>
-<h200><b>Date Accounting</b></h200> -
-	Provides full accounting information for all sessions between the given 2 dates for a particular user.
+<h200><b>Data da contas</b></h200> -
+Fornece informações contábeis completas para todas as sessões entre as duas datas especificadas para um usuário específico.
 <br/>
-<h200><b>All Accounting Records</b></h200> -
-	Provides full accounting information for all sessions in the database.
+<h200><b>Todos os regitros da contas</b></h200> -
+Fornece informações contábeis completas para todas as sessões no banco de dados.
 <br/>
-<h200><b>Active Records Accounting</b></h200> -
-	Provides information that would prove useful for tracking Active or Expired users in the database
-	in terms of users which have an Expiration attribute or a Max-All-Session attribute.
+<h200><b>Registros de contas atividades</b></h200> -
+Fornece informações que seriam úteis para rastrear usuários ativos ou expirados no banco de dados
+em termos de usuários que possuem um atributo Expiration ou Max-All-Session.
 <br/>
 
 <br/>
-<b>Sub-Category Accounting</b><br/>
+<b>Sub-Categoria da Contas/b><br/>
 <h200><b>Custom</b></h200> -
-	Provides the most flexible custom query to run on the database.
+	Fornece a consulta personalizada mais flexível para executar no banco de dados.
 <br/>
 <h200><b>Hotspots</b></h200> -
-	Provides information on the different managed hotspots, comparison, and other useful information.
+	Fornece informações sobre os diferentes pontos ativos gerenciados, comparação e outras informações úteis.
 <br/>
 ";
 $l['helpPage']['acctnasipaddress'] = "
-	Provides full accounting information for all the sessions that the specific NAS IP address has handled.
+	Fornece informações contábeis completas para todas as sessões que o endereço IP do NAS específico manipulou.
 <br/>
 ";
 $l['helpPage']['acctusername'] = "
-	Provides full accounting information for all sessions in the database for a particular user.
+Fornece informações contábeis completas para todas as sessões no banco de dados para um usuário específico.
 <br/>
 ";
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
-	Provides full accounting information for all sessions which originated from this specific Hotspot.
-	This list is computed by listing only those records in the radacct table with the CalledStationId
-	field which match a Hotspot's MAC Address entry in the Hotspot's management database.
+Fornece informações contábeis completas para todas as sessões originadas neste ponto de acesso específico.
+Esta lista é calculada listando apenas os registros na tabela radacct com o CalledStationId
+campo que corresponde a uma entrada de Endereço MAC do Hotspot no banco de dados de gerenciamento do Hotspot.
 <br/>
 ";
-$l['helpPage']['accthotspotcompare'] = "
-	Provides basic accounting information for comparison between all the active hotspots found in the database.
-	Accounting information provided: <br/><br/>
-	Hotspot Name - The Hotspot's name <br/>
-	Unique Users - Users that have logined only through this hotspot <br/>
-	Total Hits - The total logins that were performed from this hotspot (unique and non unique) <br/>
-	Average Time - The average time a user spent in this hotspot <br/>
-	Total Time - The accumolated spent time of all users in this hotspot <br/>
+$l['helpPage']['accthotspotcompare'] = "Fornece informações contábeis básicas para comparação entre todos os pontos ativos encontrados no banco de dados.
+Informações contábeis fornecidas: <br/><br/>
+	Nome do Hotspot  - O nome do hopspot <br/>
+  Usuários únicos - Usuários que efetuaram logon somente neste ponto de acesso <br/>
+	Total de Acessos - O total de logins que foram executados neste ponto de acesso (exclusivo e não exclusivo)<br/>
+  Tempo médio - o tempo médio que um usuário passou neste ponto de acesso <br/>
+	Tempo total - o tempo gasto acumulado de todos os usuários neste ponto de acesso <br/>
 
 <br/>
-	Provides a graph plot of different comparisons made <br/>
-	Graphs: <br/><br/>
-	Distribution of Unique users per hotspot <br/>
-	Distribution of Hits per hotspot <br/>
-	Distribution of Time usage per hotspot <br/>
+	Fornece um gráfico gráfico de diferentes comparações feitas<br/>
+	Graficos: <br/><br/>
+  Distribuição de usuários únicos por ponto de acesso <br/>
+	Distribuição de hits por ponto de acesso <br/>
+	Distribuição do uso do tempo por ponto de acesso <br/>
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
-<h200><b>Hotspot Accounting</b></h200> -
-	Provides full accounting information for all sessions which originated from this specific Hotspot.
+<h200><b>Conta do hotspot</b></h200> -
+	Fornece informações contábeis completas para todas as sessões originadas neste ponto de acesso específico.
 <br/>
-<h200><b>Hotspot Comparison</b></h200> -
-	Provides basic accounting information for comparison between all the active hotspots found in the database.
-	Provides a graph plot of different comparisons made.
+<h200><b>comparações do hotspot </b></h200> -
+Fornece informações contábeis básicas para comparação entre todos os pontos ativos encontrados no banco de dados.
+Fornece um gráfico gráfico de diferentes comparações feitas.
 <br/>
 ";
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> -
-	Provides the most flexible custom query to run on the database.<br/>
-	You may adjust the query to it's max by modifying the settings in the left sidebar.<br/>
+<h200><b>Customizações</b></h200> -
+Fornece a consulta personalizada mais flexível para executar no banco de dados.<br/>
+	Você pode ajustar a consulta ao máximo modificando as configurações na barra lateral esquerda.<br/>
 <br/>
-	<b> Between Dates </b> - Set the beginning and ending date.
+	<b> Entre Datas </b> -Defina a data inicial e final.
 <br/>
-	<b> Where </b> - Set the field in the database you wish to match (like a key), choose if the value
-	to match to should be Equal (=) or it Contains part of the value you search for (like a regex). If you
-	choose to use the Contains operator you shouldn't add any wildcards of the common form '*' but rather
-	the value you input will automatically be searched in this form: *value* (or in mysql style: %value%).
+	<b> Onde </b> - Defina o campo no banco de dados que você deseja corresponder (como uma chave), escolha se o valor
+para corresponder a deve ser Igual (=) ou Contém parte do valor que você procura (como uma regex). Se vocês
+optar por usar o operador Contains, você não deve adicionar curingas do formulário comum '*', mas sim
+o valor digitado será automaticamente pesquisado neste formato: * value * (ou no estilo mysql:% value%).
 <br/>
-	<b> Query Accounting Fields </b> - You may choose which fields you would like to present in the resulting
-	list.
+	<b> Campos de contabilidade de consulta </b> - Você pode escolher quais campos você gostaria de apresentar no resultado
+Lista.
 <br/>
-	<b> Order By </b> - Choose by which field you would like to order the results and it's type (Ascending
-	or descending)
+	<b> Ordenar por </b> - Escolha por qual campo você deseja ordenar os resultados e seu tipo (Crescente
+ou descendente)
 <br/>
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>Cleanup stale-sessions</b></h200> -
-	Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
-	user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
-	record (false positive).
+<h200><b>Limpando  Sess obsoletas</b></h200> -
+	Em geral, podem ocorrer obsoletos porque o NAS não conseguiu fornecer um registro STOP contábil para o <br/>
+  sessão de usuário, resultando em uma sessão aberta antiga nos registros contábeis, que simula um usuário logado falso
+  registro (falso positivo).
 <br/>
-<h200><b>Delete accounting records</b></h200> -
-	Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
-	except for a supervised administrator access to this page.
+<h200><b>Deletando registros da conta </b></h200> -
+Exclusão de registros contábeis no banco de dados. Pode não ser aconselhável fazer isso ou permitir que outros usuários
+exceto pelo acesso de administrador supervisionado a esta página.
 <br/>
 ";
 $l['helpPage']['acctmaintenancecleanup'] = "";
@@ -1393,48 +1391,48 @@ $l['helpPage']['acctmaintenancedelete'] = "";
 
 
 $l['helpPage']['giseditmap'] = "
-	Edit Map Mode - in this mode you are able to either Add or Delete Hotspots simply by clicking
-	on a location of the map or by clicking on a hotspot (respectively).<br/><br/>
-	<b> Adding Hotspot </b> - Simply click on a clear location of the map, you will be asked to provide
-	the hotspot's name and it's MAC address. These are 2 crucial details later used to identify this hotspot
-	in the accounting table. Always provide the correct MAC Address!
+Editar modo de mapa - nesse modo, você pode adicionar ou excluir pontos de acesso simplesmente clicando em
+em um local do mapa ou clicando em um ponto de acesso (respectivamente).<br/><br/>
+	<b> Adicionando  Hotspot </b> -Basta clicar em um local claro do mapa, você será solicitado a fornecer
+o nome do ponto de acesso e o endereço MAC. Estes são 2 detalhes cruciais usados ​​posteriormente para identificar este ponto de acesso
+na tabela contábil. Sempre forneça o endereço MAC correto!
 <br/><br/>
-	<b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the
-	database.
+	<b> Deletando Hotspot </b> - Basta clicar no ícone de um ponto de acesso e você confirmar a exclusão do
+base de dados.
 <br/>
 ";
 $l['helpPage']['gisviewmap'] = "
-	View Map Mode - in this mode you are able to browse the Hotspots as they are layed out
-	in icons across the maps provided by GoogleMaps service.<br/><br/>
+View Map Mode - in this mode you are able to browse the Hotspots as they are layed out
+in icons across the maps provided by GoogleMaps service.<br/><br/>
 
-	<b> Clicking a Hotspot </b> -Will provide you with more in-depth detail on the hotspot.
-	Such as the contact information for the hotspot, and statistics details.
+	<b> Clicando no Hotspot </b> -Fornecerá detalhes mais detalhados sobre o hotspot.
+Como as informações de contato do ponto de acesso e detalhes das estatísticas.
 <br/>
 ";
 $l['helpPage']['gismain'] = "
-<b> General Information </b>
-GIS Mapping provides visual mappings of the hotspot location across the world's map using Google Maps API. <br/>
-In the Management page you are able to add new hotspot entries to the database where there is also a field
-called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact
-location of that hotspot on the map.<br/><br/>
+<b> Informações Gerais </b>
+O GIS Mapping fornece mapeamentos visuais da localização do ponto de acesso em todo o mundo usando a API do Google Maps.<br/>
+Na página Gerenciamento, você pode adicionar novas entradas de ponto de acesso ao banco de dados, onde também há um campo
+chamado Geolocalização, esse é o valor numérico que a API do Google Maps usa para identificar com precisão
+localização desse ponto de acesso no mapa.<br/><br/>
 
-<h200><b>2 Modes of Operation are provided:</b></h200>
-One is the <b>View MAP</b> mode which enables 'surfing' through the world map
-and view the current locations of the hotspots in the database and another one - <b>Edit MAP</b> - which is the mode
-that one can use in order to create hotspot's visually by simply left-clicking on the map or removing
-existing hotspot entries by left-clicking on existing hotspot flags.<br/><br/>
+<h200><b>2 Modos de operação do servidor:</b></h200>
+Um é o <b>Visualize o  MAP</b> modo que permite 'surfing' através do mapa do mundo
+e visualize os locais atuais dos pontos de acesso no banco de dados e outro - <b>Edite o  MAP</b> - qual é o modo
+que você pode usar para criar visualmente pontos de acesso, simplesmente clicando com o botão esquerdo no mapa ou removendo
+entradas de ponto de acesso existentes clicando com o botão esquerdo nos sinalizadores de ponto de acesso existentes.<br/><br/>
 
-Another important issue is that each computer on the network requires a unique Registration code which you
-can obtain from Google Maps API page by providing the complete web address to the hosted directory of
-daloRADIUS application on your server. Once you have obtained that code from Google, simply paste it in the
-Registration box and click the 'Register code' button to write it.
-Then you may be able to use Google Maps services. <br/><br/>";
+Outra questão importante é que cada computador na rede requer um código de registro exclusivo, que você
+pode ser obtido na página da API do Google Maps, fornecendo o endereço da Web completo para o diretório hospedado de
+aplicação daloRADIUS no seu servidor. Depois de obter esse código do Google, basta colá-lo no diretório
+Registre a caixa e clique no botão 'Register code' para escrevê-lo.
+Você poderá usar os serviços do Google Maps. <br/><br/>";
 
 /* ********************************************************************************** */
 
 
 
-$l['messages']['noCheckAttributesForUser'] = "This user has no check attributes associated with it";
+$l['messages']['noCheckAttributesForUser'] = "Este usuário não possui atributos de verificação associados";
 $l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
 
 $l['messages']['noCheckAttributesForGroup'] = "This group has no check attributes associated with it";
