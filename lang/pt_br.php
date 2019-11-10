@@ -447,12 +447,11 @@ $l['Tooltip']['EditGroup'] = "Editar Grupo";
 
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "Se você especificar o valor, apenas o registro único que corresponder ao nome do grupo e ao valor específico que você especificou será removido. Se você omitir o valor, todos os registros para esse nome de grupo específico serão removidos!";
 
-$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "
-Se você especificar o valor, apenas o registro único que corresponder ao nome do grupo e ao valor específico que você especificou será removido. Se você omitir o valor, todos os registros para esse nome de grupo específico serão removidos!";
+$l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "Se você especificar o valor, apenas o registro único que corresponder ao nome do grupo e ao valor específico que você especificou será removido. Se você omitir o valor, todos os registros para esse nome de grupo específico serão removidos!";
 
 $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(Descrição do nome)";
 
-$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se você especificar grupo, apenas o registro único que corresponder ao nome de usuário e ao grupo que você especificou será removido. Se você omitir o grupo, todos os registros para esse usuário específico serão removidos!"
+$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se você especificar grupo, apenas o registro único que corresponder ao nome de usuário e ao grupo que você especificou será removido. Se você omitir o grupo, todos os registros para esse usuário específico serão removidos!";
 
 $l['Tooltip']['usernameTooltip'] = "O nome exato do usuario <br/>&nbsp;&nbsp;&nbsp;
 					para se conectar no sistema";
@@ -885,7 +884,7 @@ $l['Intro']['mngradusergroupedit'] = "Editando  Usuarios-Grupos Mapeado para usu
 
 $l['Intro']['mngradippool.php'] = "Configuração de Faixa de IP ";
 $l['Intro']['mngradippoolnew.php'] = "Nova Faixa de ip";
-$l['Intro']['mngradippoollist.php'] = "Listar Faixa de IP;
+$l['Intro']['mngradippoollist.php'] = "Listar Faixa de IP";
 $l['Intro']['mngradippooledit.php'] = "Editar Faixa de IP";
 $l['Intro']['mngradippooldel.php'] = "Remover Faixa de IP";
 
@@ -1471,7 +1470,7 @@ $l['buttons']['apply'] = "Aplicar";
 $l['menu']['Home'] = "<em>H</em>ome</a>";
 $l['menu']['Managment'] = "<em>G</em>estão</a>";
 $l['menu']['Reports'] = "<em>R</em>elatórios</a>";
-$l['menu']['Accounting'] = "<em>C</em>contas</a>";
+$l['menu']['Accounting'] = "<em>C</em>ontas</a>";
 $l['menu']['Billing'] = "<em>P</em>agamentos</a>";
 $l['menu']['Gis'] = "<em>G</em>IS</a>";
 $l['menu']['Graphs'] = "<em>G</em>áficos</a>";
