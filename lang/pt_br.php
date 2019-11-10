@@ -189,10 +189,10 @@ $l['all']['Retries'] = "Tentativa";
 $l['all']['Count'] = "Contador";
 $l['all']['Requests'] = "Requesição";
 
-$l['all']['DatabaseHostname'] = "Nome do host do banco de dados";
+$l['all']['DatabaseHostname'] = "Host do banco de dados";
 $l['all']['DatabaseUser'] = "Usuário do Banco";
-$l['all']['DatabasePass'] = "Senha do Bacno";
-$l['all']['DatabaseName'] = "Nome do banco";
+$l['all']['DatabasePass'] = "Senha do Banco";
+$l['all']['DatabaseName'] = "Nome do Banco";
 
 $l['all']['PrimaryLanguage'] = "Linguagem primaria";
 
