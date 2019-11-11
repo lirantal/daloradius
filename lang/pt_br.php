@@ -24,7 +24,7 @@
 
 $l['all']['daloRADIUS'] = "Dalo Radius " . $configValues['DALORADIUS_VERSION'];
 $l['all']['daloRADIUSVersion'] = "versão " . $configValues['DALORADIUS_VERSION'];
-$l['all']['copyright1'] = "Radius Gerenciador de usuarios radius e hotspot <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
+$l['all']['copyright1'] = "RADIUS Management, Reporting, Accounting and Billing by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
 $l['all']['copyright2'] = "daloRADIUS C &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
