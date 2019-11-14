@@ -85,6 +85,7 @@
 	$number = "";
 	$length_pass = "";
 	$length_user = "";
+	$pass_type = "";
 	$group = "";
 	$group_priority = "";
 
@@ -96,6 +97,7 @@
 		$number = $_POST['number'];
 		$length_pass = $_POST['length_pass'];
 		(isset($_POST['length_user'])) ? $length_user = $_POST['length_user'] : $length_user = 0;
+		$pass_type = $_POST['passwordType'];
 		$group = $_POST['group'];
 		$plan = $_POST['plan'];
 		$group_priority = $_POST['group_priority'];
@@ -175,7 +177,8 @@
 				if ($i+1 != $number)
 					$actionMsgGoodUsernames .= ", ";
 
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."',  'User-Password', ':=', '".$dbSocket->escapeSimple($password)."')";
+				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."',
+				'".$dbSocket->escapeSimple($pass_type)."', ':=', '".$dbSocket->escapeSimple($password)."')";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 				
@@ -677,6 +680,19 @@
 
 
 		<br/>
+		
+		<li class='fieldset'>
+		<label for='passwordType' class='form'><?php echo t('all','PasswordType')?></label>
+		<?php
+		        include_once('include/management/populate_selectbox.php');
+		        populate_password_types("passwordType");
+		?>
+		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTypeTooltip')" />
+		<div id='passwordTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+			<img src='images/icons/comment.png' alt='Tip' border='0' />
+			<?php echo t('Tooltip','passwordTypeTooltip') ?>
+		</div>
+		</li>
 		
 		<li class='fieldset'>
 		<label for='passwordLength' class='form'><?php echo t('all','PasswordLength') ?></label>

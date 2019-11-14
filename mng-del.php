@@ -58,12 +58,20 @@
 
 				include 'library/opendb.php';
 
-				if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
-					$tableSetting['postauth']['user'] = 'username';
-					$tableSetting['postauth']['date'] = 'authdate';
-				} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
-					$tableSetting['postauth']['user'] = 'user';
-					$tableSetting['postauth']['date'] = 'date';
+				// setting table-related parameters first
+				switch($configValues['FREERADIUS_VERSION']) {
+					case '1' :
+						$tableSetting['postauth']['user'] = 'user';
+						$tableSetting['postauth']['date'] = 'date';
+						break;
+					case '2' :
+						// down
+					case '3' :
+						// down
+					default  :
+						$tableSetting['postauth']['user'] = 'username';
+						$tableSetting['postauth']['date'] = 'authdate';
+						break;
 				}
 
 				// delete all attributes associated with a username

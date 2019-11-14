@@ -1,3 +1,27 @@
+*wip* 1.1-3 BETA
+	- update Portuguese language
+	- dockerfile improvements
+	- dockerfile-freeradius and init-freeradius.sh
+	- fix regex query for rollback
+	- fix mysql directory in dockerfile
+
+release 1.1-2 - 08 Aug 2019
+    - syntax fix in language translations
+	- set right column names for table radpostauth in FreeRADIUS v3
+
+release 1.1-1 - 28 Jul 2019
+    - fix memory overflow on database backups
+	- added daloRADIUS version date to configuration
+	- improve the documentation a bit
+
+release 1.1-0 - 19 Jun 2019
+    - fix SQL syntax errors when using the column 'lead' with MySQL 8.0.2+
+    - fix SQL query for last connection attempts where FreeRADIUS is v3
+    - add freeradius-utils and cron to Dockerfile
+    - remove "default" location if multiple locations are set
+	- add select box for password types in Batch Add Users option
+	- stylish ToolTip boxes
+
 release 1.0-1 - 24 Mar 2019
 	- fixed SQL error when target value is empty when adding profiles, show error message instead
 

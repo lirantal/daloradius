@@ -18,6 +18,7 @@
  *		displays a welcome page for the main index.php file
  *
  * Authors:	Liran Tal <liran@enginx.com>
+ *          Miguel García <miguelvisgarcia@gmail.com>
  *
  *********************************************************************************************************
  */
@@ -26,7 +27,7 @@ echo "
 	<center>
 
 		<h2> daloRADIUS Web Management Server </h2>
-		<h3> ".t('all','daloRADIUSVersion')." </h3>
+		<h3> ".t('all','daloRADIUSVersion')." / ".$configValues['DALORADIUS_DATE']." </h3>
 		<h4> <a href=\"mailto:liran.tal@gmail.com\"> Liran Tal </a> </h4>
 		<br/><br/><br/>
 		<img src='images/daloradius_logo.jpg' border=0 />

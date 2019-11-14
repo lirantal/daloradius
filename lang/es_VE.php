@@ -427,6 +427,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Si especifi
 
 
 $l['Tooltip']['usernameTooltip'] = "El nombre de usuario con el que<br/>&nbsp;&nbsp;&nbsp; se conectar&aacute; al sistema";
+$l['Tooltip']['passwordTypeTooltip'] = "Tipo de contrase&ntilde;a utilizado para autenticar al usuario en Radius.";
 $l['Tooltip']['passwordTooltip'] = "Las contrase&ntilde;as son sensibles<br/>&nbsp;&nbsp;&nbsp; a las may&uacute;sculas y min&uacute;sculas en algunos sistemas";
 $l['Tooltip']['groupTooltip'] = "El usuario ser&aacute; agregado a este grupo.<br/>&nbsp;&nbsp;&nbsp; Cuando se asigna un grupo a un usuario <br/>&nbsp;&nbsp;&nbsp;el usuario est&aacute; sujeto a los atributos de ese grupo.";
 $l['Tooltip']['macaddressTooltip'] = "Ejemplo: 00-AA-BB-CC-DD-EE<br/>&nbsp;&nbsp;&nbsp;El formato de la direcci&oacute;n MAC debe ser <br/>&nbsp;&nbsp;&nbsp;igual al que env&iacute;a el NAS. La mayor&iacute;a de las veces no lleva<br/>&nbsp;&nbsp;&nbsp;separadores.";

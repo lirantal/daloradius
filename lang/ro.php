@@ -589,6 +589,7 @@ $ l [ 'FormField'] [ 'mngradusergroupdel.php'] [ 'Tooltip'] [ 'Groupname'] = "Da
 
 $ l [ 'Tooltip'] [ 'usernameTooltip'] = "exact ca numele de utilizator a utilizatorului <br/> 
 Se va folosi pentru a se conecta la sistem "; 
+$ l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";
 $ l [ 'Tooltip'] [ 'passwordTooltip'] = "Parolele sunt sensetive �n <br/> 
 Anumitor sisteme a?a ia extra grija "; 
 $ l [ 'Tooltip'] [ 'groupTooltip'] = "Utilizatorul va fi ad?ugat la acest grup. <br/> 

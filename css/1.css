@@ -633,12 +633,16 @@ select.long {
 div.ToolTip {
 	font:88% sans-serif;
 	padding-top: 1px;
-	padding-bottom: 1px;
-	float:left;
+	padding-bottom: 8px;
+	padding-right: 8px;
+	float:right; 
 /*	color:#E8A417; */
 	color:#646729; 
-/*	background-color: #F4F4F4; */
-	margin-left:190px;
+	background-color: #FFF;
+	margin-right:32px;
+	border: 1px solid #C0C0C0;
+	border-radius: 4px;
+	box-shadow: 4px 4px #000;
 }
 
 
