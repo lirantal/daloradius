@@ -1,4 +1,5 @@
 *wip* 1.1-3 BETA
+	- remove unavailable data in SUBSCRIPTION ANALYSIS view.
 	- update Portuguese language
 	- dockerfile improvements
 	- dockerfile-freeradius and init-freeradius.sh

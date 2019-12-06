@@ -218,7 +218,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                         </th>
         
                         </tr> </thread>";
-        
+/*        
         	echo "
         		<tr>
         			<td>Session Limit</td>
@@ -227,7 +227,8 @@ function userSubscriptionAnalysis($username, $drawTable) {
         			<td>$userTimeLimitWeekly</td>
         			<td>$userTimeLimitDaily</td>
         		</tr>
-        
+*/				
+        	echo "        
         		<tr>
         			<td>Session Used</td>
         			<td>$userSumMaxAllSession</td>
