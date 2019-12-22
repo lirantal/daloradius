@@ -131,7 +131,7 @@
 
         echo "<thread> <tr>
                 <th scope='col'>
-                ".t('all','Month'). "
+                ".t('all','Monthly'). "
                 </th>
 
                 <th scope='col'>
