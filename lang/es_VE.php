@@ -243,25 +243,7 @@ $l['all']['billingplans'] = "Planes de facturaci&oacute;n";
 $l['all']['billinghistory'] = "Hist&oacute;rico de cobros";
 $l['all']['billinginfo'] = "Informaci&oacute;n de facturaci&oacute;n del usuario";
 
-
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
+$l['all']['Month'] = "Mes";
 
 $l['all']['PaymentDate'] = "Fecha de pago";
 $l['all']['PaymentStatus'] = "Estado del pago";

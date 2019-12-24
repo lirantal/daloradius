@@ -83,6 +83,8 @@ $l['all']['Weekly'] = "週";
 $l['all']['Monthly'] = "月";
 $l['all']['Yearly'] = "年";
 
+$l['all']['Month'] = "月";
+
 $l['all']['RemoveRadacctRecords'] = "アカウンティングレポート削除";
 
 $l['all']['CleanupSessions'] = "指定より古いセッションのクリア";

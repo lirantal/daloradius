@@ -246,24 +246,7 @@ $l['all']['billingplans'] = "billing plans";
 $l['all']['billinghistory'] = "billing history";
 $l['all']['billinginfo'] = "billing user info";
 
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
+$l['all']['Month'] = "Hónap";
 
 $l['all']['PaymentDate'] = "Payment Date";
 $l['all']['PaymentStatus'] = "Payment Status";

@@ -91,6 +91,8 @@ $l['all']['Weekly'] = "Weekly";
 $l['all']['Monthly'] = "Monthly";
 $l['all']['Yearly'] = "Yearly";
 
+$l['all']['Month'] = "Month";
+
 $l['all']['RemoveRadacctRecords'] = "Remove Accounting Records";
 
 $l['all']['CleanupSessions'] = "Cleanup sessions older than";
