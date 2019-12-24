@@ -151,6 +151,8 @@ $l['all']['MaxAllSession'] = "Max-All-Session";
 $l['all']['SessionTimeout'] = "Таймаут сессии";
 $l['all']['IdleTimeout'] = "Таймаут неактивности";
 
+$l['all']['Month'] = "Месяц";
+
 $l['all']['DBEngine'] = "Тип БД";
 $l['all']['radcheck'] = "radcheck";
 $l['all']['radreply'] = "radreply";

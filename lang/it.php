@@ -15,7 +15,7 @@
  *
  *********************************************************************************************************
  * Description:
- *		Italian language file
+ *		Italian language file94
  *
  * Authors:	Alessandro Rendina <ale@seleneinformatica.it>
  *
@@ -205,6 +205,7 @@ $l['all']['operators'] = "operators";
 $l['all']['rates'] = "rates";
 $l['all']['hotspots'] = "hotspots";
 
+$l['all']['Month'] = "Mese";
 
 $l['all']['BusinessName'] = "Nome Lavoro";
 $l['all']['BusinessPhone'] = "Telefono Lavoro";

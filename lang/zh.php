@@ -91,6 +91,8 @@ $l['all']['Weekly'] = "每周";
 $l['all']['Monthly'] = "每月";
 $l['all']['Yearly'] = "每年";
 
+$l['all']['Month'] = "月";
+
 $l['all']['RemoveRadacctRecords'] = "删除账单记录";
 
 $l['all']['CleanupSessions'] = "清理会话年龄比";
