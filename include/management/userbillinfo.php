@@ -181,19 +181,19 @@ echo "
         
 	<br/>
 	<label for='creationdate' class='form'>".t('all','CreationDate')."</label>
-	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=414 />
+	<input disabled value='"; if (isset($bi_creationdate)) echo $bi_creationdate; echo "' tabindex=414 />
         <br/>
 
 	<label for='creationby' class='form'>".t('all','CreationBy')."</label>
-	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=415 />
+	<input disabled value='"; if (isset($bi_creationby)) echo $bi_creationby; echo "' tabindex=415 />
         <br/>
 
 	<label for='updatedate' class='form'>".t('all','UpdateDate')."</label>
-	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=416 />
+	<input disabled value='"; if (isset($bi_updatedate)) echo $bi_updatedate; echo "' tabindex=416 />
         <br/>
 
 	<label for='updateby' class='form'>".t('all','UpdateBy')."</label>
-	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=417 />
+	<input disabled value='"; if (isset($bi_updateby)) echo $bi_updateby; echo "' tabindex=417 />
         <br/>
 
 	<br/>
