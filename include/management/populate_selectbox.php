@@ -250,7 +250,7 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
  */
 function populate_groups($defaultOption = "Select Group", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
+	echo "<select onChange=\"javascript:setStringText(this.id,'usergroup')\" id='usergroup' $mode
 			name='$elementName' class='$cssClass' tabindex=105 />
 			<option value='$defaultOptionValue'>$defaultOption</option>
 			<option value=''></option>";
