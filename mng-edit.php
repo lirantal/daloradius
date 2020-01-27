@@ -648,10 +648,10 @@
     $bi_faxinvoice = $row['faxinvoice'];
     $bi_emailinvoice = $row['emailinvoice'];
 	$bi_changeuserbillinfo = $row['changeuserbillinfo'];
-	$ui_creationdate = $row['creationdate'];
-	$ui_creationby = $row['creationby'];
-	$ui_updatedate = $row['updatedate'];
-	$ui_updateby = $row['updateby'];
+	$bi_creationdate = $row['creationdate'];
+	$bi_creationby = $row['creationby'];
+	$bi_updatedate = $row['updatedate'];
+	$bi_updateby = $row['updateby'];
 
 	include 'library/closedb.php';
 
