@@ -1,43 +1,10 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: table_frame_reflower.cls.php,v $
- * Created on: 2004-06-17
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-
-/* $Id: table_frame_reflower.cls.php,v 1.10 2006/07/07 21:31:04 benjcarson Exp $ */
 
 /**
  * Reflows tables
@@ -46,6 +13,12 @@
  * @package dompdf
  */
 class Table_Frame_Reflower extends Frame_Reflower {
+  /**
+   * Frame for this reflower
+   *
+   * @var Table_Frame_Decorator
+   */
+  protected $_frame;
 
   /**
    * Cache of results between call to get_min_max_width and assign_widths
@@ -64,6 +37,7 @@ class Table_Frame_Reflower extends Frame_Reflower {
    */
   function reset() {
     $this->_state = null;
+    $this->_min_max_cache = null;
   }
 
   //........................................................................
@@ -89,20 +63,32 @@ class Table_Frame_Reflower extends Frame_Reflower {
 
     $width = $style->width;
 
-    // Calcluate padding & border fudge factor
+    // Calculate padding & border fudge factor
     $left = $style->margin_left;
     $right = $style->margin_right;
+    
+    $centered = ( $left === "auto" && $right === "auto" );
 
-    $left = $left == "auto" ? 0 : $style->length_in_pt($left, $cb["w"]);
-    $right = $right == "auto" ? 0 : $style->length_in_pt($right, $cb["w"]);
+    $left  = $left  === "auto" ? 0 : $style->length_in_pt($left, $cb["w"]);
+    $right = $right === "auto" ? 0 : $style->length_in_pt($right, $cb["w"]);
 
-    $delta = $left + $right + $style->length_in_pt(array($style->padding_left,
-                                                         $style->border_left_width,
-                                                         $style->border_right_width,
-                                                         $style->padding_right), $cb["w"]);
-
+    $delta = $left + $right;
+    
+    if ( !$centered ) {
+      $delta += $style->length_in_pt(array(
+        $style->padding_left,
+        $style->border_left_width,
+        $style->border_right_width,
+        $style->padding_right), 
+      $cb["w"]);
+    }
+    
     $min_table_width = $style->length_in_pt( $style->min_width, $cb["w"] - $delta );
 
+    // min & max widths already include borders & padding
+    $min_width -= $delta;
+    $max_width -= $delta;
+    
     if ( $width !== "auto" ) {
 
       $preferred_width = $style->length_in_pt($width, $cb["w"]) - $delta;
@@ -133,6 +119,10 @@ class Table_Frame_Reflower extends Frame_Reflower {
     $style->width = $width;
 
     $cellmap = $this->_frame->get_cellmap();
+    
+    if ( $cellmap->is_columns_locked() ) {
+      return;
+    }
 
     // If the whole table fits on the page, then assign each column it's max width
     if ( $width == $max_width ) {
@@ -152,22 +142,25 @@ class Table_Frame_Reflower extends Frame_Reflower {
       // case we distribute extra space across all columns weighted by max-width.
       //
       // 2. Only absolute widths have been specified.  In this case we
-      // distribute any extra space equally among 'width: auto' columns.
+      // distribute any extra space equally among 'width: auto' columns, or all
+      // columns if no auto columns have been specified.
       //
       // 3. Only percentage widths have been specified.  In this case we
       // normalize the percentage values and distribute any remaining % to
       // width: auto columns.  We then proceed to assign widths as fractions
       // of the table width.
       //
-      // 4. Both absolute and percentage widths have been specified.  This
-      // is annoying.
+      // 4. Both absolute and percentage widths have been specified.
+
+      $increment = 0;
 
       // Case 1:
       if ( $absolute_used == 0 && $percent_used == 0 ) {
         $increment = $width - $min_width;
 
-        foreach (array_keys($columns) as $i)
+        foreach (array_keys($columns) as $i) {
           $cellmap->set_column_width($i, $columns[$i]["min-width"] + $increment * ($columns[$i]["max-width"] / $max_width));
+        }
         return;
       }
 
@@ -177,16 +170,20 @@ class Table_Frame_Reflower extends Frame_Reflower {
 
         if ( count($auto) > 0 )
           $increment = ($width - $auto_min - $absolute_used) / count($auto);
-        else
-          $increment = 0;
 
         // Use the absolutely specified width or the increment
         foreach (array_keys($columns) as $i) {
 
-          if ( $columns[$i]["absolute"] > 0 )
+          if ( $columns[$i]["absolute"] > 0 && count($auto) )
             $cellmap->set_column_width($i, $columns[$i]["min-width"]);
-          else
-            $cellmap->set_column_width($i,$columns[$i]["min-width"] + $increment);
+          else if ( count($auto) ) 
+            $cellmap->set_column_width($i, $columns[$i]["min-width"] + $increment);
+          else {
+            // All absolute columns
+            $increment = ($width - $absolute_used) * $columns[$i]["absolute"] / $absolute_used;
+
+            $cellmap->set_column_width($i, $columns[$i]["min-width"] + $increment);
+          }
 
         }
         return;
@@ -361,32 +358,38 @@ class Table_Frame_Reflower extends Frame_Reflower {
 
     }
 
-
     return $height;
 
   }
   //........................................................................
 
-  function reflow() {
-
+  /**
+   * @param Block_Frame_Decorator $block
+   */
+  function reflow(Block_Frame_Decorator $block = null) {
+    /**
+     * @var Table_Frame_Decorator
+     */
+    $frame = $this->_frame;
+    
     // Check if a page break is forced
-    $page = $this->_frame->get_root();
-    $page->check_forced_page_break($this->_frame);
+    $page = $frame->get_root();
+    $page->check_forced_page_break($frame);
 
     // Bail if the page is full
     if ( $page->is_full() )
       return;
-
+    
     // Let the page know that we're reflowing a table so that splits
     // are suppressed (simply setting page-break-inside: avoid won't
     // work because we may have an arbitrary number of block elements
     // inside tds.)
     $page->table_reflow_start();
-
+    
     // Collapse vertical margins, if required
     $this->_collapse_margins();
 
-    $this->_frame->position();
+    $frame->position();
 
     // Table layout algorithm:
     // http://www.w3.org/TR/CSS21/tables.html#auto-table-layout
@@ -394,8 +397,8 @@ class Table_Frame_Reflower extends Frame_Reflower {
     if ( is_null($this->_state) )
       $this->get_min_max_width();
 
-    $cb = $this->_frame->get_containing_block();
-    $style = $this->_frame->get_style();
+    $cb = $frame->get_containing_block();
+    $style = $frame->get_style();
 
     // This is slightly inexact, but should be okay.  Add half the
     // border-spacing to the table as padding.  The other half is added to
@@ -406,10 +409,10 @@ class Table_Frame_Reflower extends Frame_Reflower {
       $v = $style->length_in_pt($v) / 2;
       $h = $style->length_in_pt($h) / 2;
 
-      $style->padding_left = $style->length_in_pt($style->padding_left, $cb["w"]) + $h;
-      $style->padding_right = $style->length_in_pt($style->padding_right, $cb["w"]) + $h;
-      $style->padding_top = $style->length_in_pt($style->padding_top, $cb["w"]) + $v;
-      $style->padding_bottom = $style->length_in_pt($style->padding_bottom, $cb["w"]) + $v;
+      $style->padding_left   = $style->length_in_pt($style->padding_left,   $cb["w"]) + $h;
+      $style->padding_right  = $style->length_in_pt($style->padding_right,  $cb["w"]) + $h;
+      $style->padding_top    = $style->length_in_pt($style->padding_top,    $cb["h"]) + $v;
+      $style->padding_bottom = $style->length_in_pt($style->padding_bottom, $cb["h"]) + $v;
 
     }
 
@@ -422,33 +425,42 @@ class Table_Frame_Reflower extends Frame_Reflower {
 
     $diff = $cb["w"] - $width;
 
-    if ( $left === "auto" && $right === "auto" && $diff > 0 ) {
-      $left = $right = $diff / 2;
+    if ( $left === "auto" && $right === "auto" ) {
+      if ( $diff < 0 ) {
+        $left = 0;
+        $right = $diff;
+      }
+      else {
+        $left = $right = $diff / 2;
+      }
+      
       $style->margin_left = "$left pt";
       $style->margin_right = "$right pt";
 
     } else {
-      $left = $style->length_in_pt($left, $cb["w"]);
-      $right = $style->length_in_pt($right, $cb["w"]);
+      if ( $left === "auto" ) {
+        $left = $style->length_in_pt($cb["w"] - $right - $width, $cb["w"]);
+      }
+      if ( $right === "auto" ) {
+        $left = $style->length_in_pt($left, $cb["w"]);
+      }
     }
 
-
-    list($x, $y) = $this->_frame->get_position();
+    list($x, $y) = $frame->get_position();
 
     // Determine the content edge
     $content_x = $x + $left + $style->length_in_pt(array($style->padding_left,
                                                          $style->border_left_width), $cb["w"]);
     $content_y = $y + $style->length_in_pt(array($style->margin_top,
                                                  $style->border_top_width,
-                                                 $style->padding_top), $cb["w"]);
+                                                 $style->padding_top), $cb["h"]);
 
     if ( isset($cb["h"]) )
       $h = $cb["h"];
     else
       $h = null;
 
-
-    $cellmap = $this->_frame->get_cellmap();
+    $cellmap = $frame->get_cellmap();
     $col =& $cellmap->get_column(0);
     $col["x"] = $content_x;
 
@@ -458,17 +470,18 @@ class Table_Frame_Reflower extends Frame_Reflower {
     $cellmap->assign_x_positions();
 
     // Set the containing block of each child & reflow
-    foreach ( $this->_frame->get_children() as $child ) {
+    foreach ( $frame->get_children() as $child ) {
 
       // Bail if the page is full
-      if ( $page->is_full() )
+      if ( !$page->in_nested_table() && $page->is_full() )
         break;
 
       $child->set_containing_block($content_x, $content_y, $width, $h);
       $child->reflow();
 
-      // Check if a split has occured
-      $page->check_page_break($child);
+      if ( !$page->in_nested_table() )
+        // Check if a split has occured
+        $page->check_page_break($child);
 
     }
 
@@ -484,11 +497,20 @@ class Table_Frame_Reflower extends Frame_Reflower {
 
     // Debugging:
     //echo ($this->_frame->get_cellmap());
+    
+    if ( $block && $style->float === "none" && $frame->is_in_flow() ) {
+      $block->add_frame_to_line($frame);
+      $block->add_line();
+    }
   }
 
   //........................................................................
 
   function get_min_max_width() {
+
+    if ( !is_null($this->_min_max_cache)  )
+      return $this->_min_max_cache;
+
     $style = $this->_frame->get_style();
 
     $this->_frame->normalise();
@@ -530,9 +552,27 @@ class Table_Frame_Reflower extends Frame_Reflower {
       }
     }
 
-    return array($this->_state["min_width"], $this->_state["max_width"],
-                 "min" => $this->_state["min_width"], "max" => $this->_state["max_width"]);
+    // Account for margins & padding
+    $dims = array($style->border_left_width,
+                  $style->border_right_width,
+                  $style->padding_left,
+                  $style->padding_right,
+                  $style->margin_left,
+                  $style->margin_right);
+
+    if ( $style->border_collapse !== "collapse" ) 
+      list($dims[]) = $style->border_spacing;
+
+    $delta = $style->length_in_pt($dims, $this->_frame->get_containing_block("w"));
+
+    $this->_state["min_width"] += $delta;
+    $this->_state["max_width"] += $delta;
+
+    return $this->_min_max_cache = array(
+      $this->_state["min_width"], 
+      $this->_state["max_width"],
+      "min" => $this->_state["min_width"], 
+      "max" => $this->_state["max_width"],
+    );
   }
 }
-
-?>

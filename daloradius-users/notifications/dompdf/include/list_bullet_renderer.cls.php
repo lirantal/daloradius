@@ -1,43 +1,11 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: list_bullet_renderer.cls.php,v $
- * Created on: 2004-06-23
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @author  Helmut Tischer <htischer@weihenstephan.org>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-
-/* $Id: list_bullet_renderer.cls.php,v 1.5 2006/07/07 21:31:03 benjcarson Exp $ */
 
 /**
  * Renders list bullets
@@ -46,59 +14,223 @@
  * @package dompdf
  */
 class List_Bullet_Renderer extends Abstract_Renderer {
+  static function get_counter_chars($type) {
+    static $cache = array();
+    
+    if ( isset($cache[$type]) ) {
+      return $cache[$type];
+    }
+    
+    $uppercase = false;
+    $text = "";
+    
+    switch ($type) {
+      case "decimal-leading-zero":
+      case "decimal":
+      case "1":
+        return "0123456789";
+      
+      case "upper-alpha":
+      case "upper-latin":
+      case "A":
+        $uppercase = true;
+      case "lower-alpha":
+      case "lower-latin":
+      case "a":
+        $text = "abcdefghijklmnopqrstuvwxyz";
+        break;
+        
+      case "upper-roman":
+      case "I":
+        $uppercase = true;
+      case "lower-roman":
+      case "i":
+        $text = "ivxlcdm";
+        break;
+      
+      case "lower-greek":
+        for($i = 0; $i < 24; $i++) {
+          $text .= unichr($i+944);
+        }
+        break;
+    }
+    
+    if ( $uppercase ) {
+      $text = strtoupper($text);
+    }
+    
+    return $cache[$type] = "$text.";
+  }
+
+  /**
+   * @param integer $n
+   * @param string  $type
+   * @param integer $pad
+   *
+   * @return string
+   */
+  private function make_counter($n, $type, $pad = null){
+    $n = intval($n);
+    $text = "";
+    $uppercase = false;
+    
+    switch ($type) {
+      case "decimal-leading-zero":
+      case "decimal":
+      case "1":
+        if ($pad) 
+          $text = str_pad($n, $pad, "0", STR_PAD_LEFT);
+        else 
+          $text = $n;
+        break;
+      
+      case "upper-alpha":
+      case "upper-latin":
+      case "A":
+        $uppercase = true;
+      case "lower-alpha":
+      case "lower-latin":
+      case "a":
+        $text = chr( ($n % 26) + ord('a') - 1);
+        break;
+        
+      case "upper-roman":
+      case "I":
+        $uppercase = true;
+      case "lower-roman":
+      case "i":
+        $text = dec2roman($n);
+        break;
+      
+      case "lower-greek":
+        $text = unichr($n + 944);
+        break;
+    }
+    
+    if ( $uppercase ) {
+      $text = strtoupper($text);
+    }
+    
+    return "$text.";
+  }
   
-  //........................................................................
-
   function render(Frame $frame) {
-
     $style = $frame->get_style();
+    $font_size = $style->get_font_size();
     $line_height = $style->length_in_pt($style->line_height, $frame->get_containing_block("w"));
 
+    $this->_set_opacity( $frame->get_opacity( $style->opacity ) );
+
+    $li = $frame->get_parent();
+
+    // Don't render bullets twice if if was split
+    if ($li->_splitted) {
+      return;
+    }
+
     // Handle list-style-image
-    if ( $style->list_style_image != "none" ) {
+    // If list style image is requested but missing, fall back to predefined types
+    if ( $style->list_style_image !== "none" &&
+         !Image_Cache::is_broken($img = $frame->get_image_url())) {
 
       list($x,$y) = $frame->get_position();
-      $w = $frame->get_width();
-      $h = $frame->get_height();
-      $x += $w / 2;
-      $y += $line_height / 2 - $h / 2;
-
-      $this->_canvas->image( $frame->get_image_url(), $frame->get_image_ext(), $x, $y, $w, $h);
       
+      //For expected size and aspect, instead of box size, use image natural size scaled to DPI.
+      // Resample the bullet image to be consistent with 'auto' sized images
+      // See also Image_Frame_Reflower::get_min_max_width
+      // Tested php ver: value measured in px, suffix "px" not in value: rtrim unnecessary.
+      //$w = $frame->get_width();
+      //$h = $frame->get_height();
+      list($width, $height) = dompdf_getimagesize($img, $this->_dompdf->get_http_context());
+      $dpi = $this->_dompdf->get_option("dpi");
+      $w = ((float)rtrim($width, "px") * 72) / $dpi;
+      $h = ((float)rtrim($height, "px") * 72) / $dpi;
+      
+      $x -= $w;
+      $y -= ($line_height - $font_size)/2; //Reverse hinting of list_bullet_positioner
+
+      $this->_canvas->image( $img, $x, $y, $w, $h);
+
     } else {
 
       $bullet_style = $style->list_style_type;
-      $bullet_size = List_Bullet_Frame_Decorator::BULLET_SIZE;
 
       $fill = false;
-      
+
       switch ($bullet_style) {
-      
+
       default:
       case "disc":
         $fill = true;
-        
+
       case "circle":
-        if ( !$fill )
-          $fill = false;
-      
         list($x,$y) = $frame->get_position();
-        $x += $bullet_size / 2 + List_Bullet_Frame_Decorator::BULLET_PADDING;
-        $y += $line_height - $bullet_size;
-        $r = $bullet_size / 2;
-        $this->_canvas->circle($x, $y, $r, $style->color, 0.2, null, $fill);
+        $r = ($font_size*(List_Bullet_Frame_Decorator::BULLET_SIZE /*-List_Bullet_Frame_Decorator::BULLET_THICKNESS*/ ))/2;
+        $x -= $font_size*(List_Bullet_Frame_Decorator::BULLET_SIZE/2);
+        $y += ($font_size*(1-List_Bullet_Frame_Decorator::BULLET_DESCENT))/2;
+        $o = $font_size*List_Bullet_Frame_Decorator::BULLET_THICKNESS;
+        $this->_canvas->circle($x, $y, $r, $style->color, $o, null, $fill);
         break;
 
       case "square":
         list($x, $y) = $frame->get_position();
-        $w = $bullet_size;
-        $x += List_Bullet_Frame_Decorator::BULLET_PADDING;
-        $y += $line_height - $w - List_Bullet_Frame_Decorator::BULLET_PADDING;
+        $w = $font_size*List_Bullet_Frame_Decorator::BULLET_SIZE;
+        $x -= $w;
+        $y += ($font_size*(1-List_Bullet_Frame_Decorator::BULLET_DESCENT-List_Bullet_Frame_Decorator::BULLET_SIZE))/2;
         $this->_canvas->filled_rectangle($x, $y, $w, $w, $style->color);
         break;
+    
+      case "decimal-leading-zero":
+      case "decimal":
+      case "lower-alpha":
+      case "lower-latin":
+      case "lower-roman":
+      case "lower-greek":
+      case "upper-alpha":
+      case "upper-latin":
+      case "upper-roman":
+      case "1": // HTML 4.0 compatibility
+      case "a":
+      case "i":
+      case "A":
+      case "I":
+        $pad = null;
+        if ( $bullet_style === "decimal-leading-zero" ) {
+          $pad = strlen($li->get_parent()->get_node()->getAttribute("dompdf-children-count"));
+        }
 
+        $node = $frame->get_node();
+
+        if ( !$node->hasAttribute("dompdf-counter") ) {
+          return;
+        }
+
+        $index = $node->getAttribute("dompdf-counter");
+        $text = $this->make_counter($index, $bullet_style, $pad);
+
+        if ( trim($text) == "" ) {
+          return;
+        }
+        
+        $spacing = 0;
+        $font_family = $style->font_family;
+        
+        $line = $li->get_containing_line();
+        list($x, $y) = array($frame->get_position("x"), $line->y);
+
+        $x -= Font_Metrics::get_text_width($text, $font_family, $font_size, $spacing);
+        
+        // Take line-height into account
+        $line_height = $style->line_height;
+        $y += ($line_height - $font_size) / 4; // FIXME I thought it should be 2, but 4 gives better results
+        
+        $this->_canvas->text($x, $y, $text,
+                             $font_family, $font_size,
+                             $style->color, $spacing);
+      
+      case "none":
+        break;
       }
     }
   }
 }
-?>

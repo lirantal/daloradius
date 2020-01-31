@@ -1,43 +1,10 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: cached_pdf_decorator.cls.php,v $
- * Created on: 2004-07-23
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-
-/* $Id: cached_pdf_decorator.cls.php,v 1.3 2006/07/07 21:31:02 benjcarson Exp $ */
 
 /**
  * Caching canvas implementation
@@ -53,16 +20,27 @@
  * @package dompdf
  */
 class Cached_PDF_Decorator extends CPDF_Adapter implements Canvas {
+  /**
+   * @var CPDF_Adapter
+   */
   protected $_pdf;
   protected $_cache_id;
   protected $_current_page_id;
   protected $_fonts;  // fonts used in this document
   
-  function __construct($cache_id, CPDF_Adapter $pdf) {
-    $this->_pdf = $pdf;
-    $this->_cache_id = $cache_id;
+  function __construct($paper = "letter", $orientation = "portrait", DOMPDF $dompdf) {
     $this->_fonts = array();
-    
+  }
+
+  /**
+   * Must be called after constructor
+   *
+   * @param int          $cache_id
+   * @param CPDF_Adapter $pdf
+   */
+  function init($cache_id, CPDF_Adapter $pdf) {
+    $this->_cache_id = $cache_id;
+    $this->_pdf = $pdf;
     $this->_current_page_id = $this->_pdf->open_object();
   }
 
@@ -71,7 +49,7 @@ class Cached_PDF_Decorator extends CPDF_Adapter implements Canvas {
   function get_cpdf() { return $this->_pdf->get_cpdf(); }
 
   function open_object() { $this->_pdf->open_object(); }
-  function reopen_object() { return $this->_pdf->reopen_object(); }
+  function reopen_object($object) { $this->_pdf->reopen_object($object); }
   
   function close_object() { $this->_pdf->close_object(); }
 
@@ -111,20 +89,28 @@ class Cached_PDF_Decorator extends CPDF_Adapter implements Canvas {
     $this->_pdf->circle($x, $y, $r1, $color, $width, $style, $fill);
   }
 
-  function image($img_url, $x, $y, $w = null, $h = null) {
-    $this->_pdf->image($img_url, $x, $y, $w, $h);
+  function image($img_url, $x, $y, $w, $h, $resolution = "normal") {
+    $this->_pdf->image($img_url, $x, $y, $w, $h, $resolution);
   }
   
-  function text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0, $angle = 0) {
+  function text($x, $y, $text, $font, $size, $color = array(0,0,0), $word_space = 0.0, $char_space = 0.0, $angle = 0.0) {
     $this->_fonts[$font] = true;
-    $this->_pdf->text($x, $y, $text, $font, $size, $color, $adjust, $angle);
+    $this->_pdf->text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
   }
 
-  function page_text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0, $angle = 0) {
+  function page_text($x, $y, $text, $font, $size, $color = array(0,0,0), $word_space = 0.0, $char_space = 0.0, $angle = 0.0) {
     
     // We want to remove this from cached pages since it may not be correct
     $this->_pdf->close_object();
-    $this->_pdf->page_text($x, $y, $text, $font, $size, $color, $adjust, $angle);
+    $this->_pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
+    $this->_pdf->reopen_object($this->_current_page_id);
+  }
+  
+  function page_script($script, $type = 'text/php') {
+    
+    // We want to remove this from cached pages since it may not be correct
+    $this->_pdf->close_object();
+    $this->_pdf->page_script($script, $type);
     $this->_pdf->reopen_object($this->_current_page_id);
   }
   
@@ -143,7 +129,7 @@ class Cached_PDF_Decorator extends CPDF_Adapter implements Canvas {
     return $this->_current_page_id;
   }
   
-  function stream($filename) {
+  function stream($filename, $options = null) {
     // Store the last page in the page cache
     if ( !is_null($this->_current_page_id) ) {
       $this->_pdf->close_object();
@@ -159,7 +145,7 @@ class Cached_PDF_Decorator extends CPDF_Adapter implements Canvas {
     
   }
   
-  function &output() {
+  function output($options = null) {
     // Store the last page in the page cache
     if ( !is_null($this->_current_page_id) ) {
       $this->_pdf->close_object();
@@ -176,5 +162,3 @@ class Cached_PDF_Decorator extends CPDF_Adapter implements Canvas {
   function get_messages() { return $this->_pdf->get_messages(); }
   
 }
-
-?>

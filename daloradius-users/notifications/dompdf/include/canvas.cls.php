@@ -1,48 +1,16 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: canvas.cls.php,v $
- * Created on: 2004-06-06
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-
-/* $Id: canvas.cls.php,v 1.7 2006/07/07 21:31:02 benjcarson Exp $ */
 
 /**
  * Main rendering interface
  *
- * Currently only {@link CPDF_Adapter} and {@link PDFLib_Adapter}
+ * Currently {@link CPDF_Adapter}, {@link PDFLib_Adapter}, {@link TCPDF_Adapter}, and {@link GD_Adapter}
  * implement this interface.
  *
  * Implementations should measure x and y increasing to the left and down,
@@ -53,6 +21,12 @@
  * @package dompdf
  */
 interface Canvas {
+  function __construct($paper = "letter", $orientation = "portrait", DOMPDF $dompdf);
+
+  /**
+   * @return DOMPDF
+   */
+  function get_dompdf();
 
   /**
    * Returns the current page number
@@ -78,7 +52,7 @@ interface Canvas {
   /**
    * Draws a line from x1,y1 to x2,y2
    *
-   * See {@link Style::munge_colour()} for the format of the colour array.
+   * See {@link Style::munge_color()} for the format of the color array.
    * See {@link Cpdf::setLineStyle()} for a description of the format of the
    * $style parameter (aka dash).
    *
@@ -95,7 +69,7 @@ interface Canvas {
   /**
    * Draws a rectangle at x1,y1 with width w and height h
    *
-   * See {@link Style::munge_colour()} for the format of the colour array.
+   * See {@link Style::munge_color()} for the format of the color array.
    * See {@link Cpdf::setLineStyle()} for a description of the $style
    * parameter (aka dash)
    *
@@ -112,7 +86,7 @@ interface Canvas {
   /**
    * Draws a filled rectangle at x1,y1 with width w and height h
    *
-   * See {@link Style::munge_colour()} for the format of the colour array.
+   * See {@link Style::munge_color()} for the format of the color array.
    *
    * @param float $x1
    * @param float $y1
@@ -122,6 +96,72 @@ interface Canvas {
    */   
   function filled_rectangle($x1, $y1, $w, $h, $color);
 
+  /**
+   * Starts a clipping rectangle at x1,y1 with width w and height h
+   *
+   * @param float $x1
+   * @param float $y1
+   * @param float $w
+   * @param float $h
+   */   
+  function clipping_rectangle($x1, $y1, $w, $h);
+
+  /**
+   * Starts a rounded clipping rectangle at x1,y1 with width w and height h
+   *
+   * @param float $x1
+   * @param float $y1
+   * @param float $w
+   * @param float $h
+   * @param float $tl
+   * @param float $tr
+   * @param float $br
+   * @param float $bl
+   *
+   * @return
+   */
+  function clipping_roundrectangle($x1, $y1, $w, $h, $tl, $tr, $br, $bl);
+  
+  /**
+   * Ends the last clipping shape
+   */  
+  function clipping_end();
+  
+  /**
+   * Save current state
+   */
+  function save();
+  
+  /**
+   * Restore last state
+   */
+  function restore();
+  
+  /**
+   * Rotate
+   */
+  function rotate($angle, $x, $y);
+  
+  /**
+   * Skew
+   */
+  function skew($angle_x, $angle_y, $x, $y);
+  
+  /**
+   * Scale
+   */
+  function scale($s_x, $s_y, $x, $y);
+  
+  /**
+   * Translate
+   */
+  function translate($t_x, $t_y);
+  
+  /**
+   * Transform
+   */
+  function transform($a, $b, $c, $d, $e, $f);
+  
   /**
    * Draws a polygon
    *
@@ -136,7 +176,7 @@ interface Canvas {
    *       );
    * </code>
    *
-   * See {@link Style::munge_colour()} for the format of the colour array.
+   * See {@link Style::munge_color()} for the format of the color array.
    * See {@link Cpdf::setLineStyle()} for a description of the $style
    * parameter (aka dash)   
    *
@@ -151,7 +191,7 @@ interface Canvas {
   /**
    * Draws a circle at $x,$y with radius $r
    *
-   * See {@link Style::munge_colour()} for the format of the colour array.
+   * See {@link Style::munge_color()} for the format of the color array.
    * See {@link Cpdf::setLineStyle()} for a description of the $style
    * parameter (aka dash)
    *
@@ -172,28 +212,49 @@ interface Canvas {
    * given width and height.
    *
    * @param string $img_url the path to the image
-   * @param string $img_type the type (e.g. extension) of the image
    * @param float $x x position
    * @param float $y y position
    * @param int $w width (in pixels)
    * @param int $h height (in pixels)
+   * @param string $resolution The resolution of the image
    */
-  function image($img_url, $img_type, $x, $y, $w, $h);
+  function image($img_url, $x, $y, $w, $h, $resolution = "normal");
+
+  /**
+   * Add an arc to the PDF
+   * See {@link Style::munge_color()} for the format of the color array.
+   *
+   * @param float $x      X coordinate of the arc
+   * @param float $y      Y coordinate of the arc
+   * @param float $r1     Radius 1
+   * @param float $r2     Radius 2
+   * @param float $astart Start angle in degrees
+   * @param float $aend   End angle in degrees
+   * @param array $color  Color
+   * @param float $width
+   * @param array $style
+   *
+   * @return void
+   */
+  function arc($x, $y, $r1, $r2, $astart, $aend, $color, $width, $style = array());
 
   /**
    * Writes text at the specified x and y coordinates
+   * See {@link Style::munge_color()} for the format of the color array.
    *
-   * See {@link Style::munge_colour()} for the format of the colour array.
+   * @param float  $x
+   * @param float  $y
+   * @param string $text       the text to write
+   * @param string $font       the font file to use
+   * @param float  $size       the font size, in points
+   * @param array  $color
+   * @param float  $word_space word spacing adjustment
+   * @param float  $char_space char spacing adjustment
+   * @param float  $angle      angle
    *
-   * @param float $x
-   * @param float $y
-   * @param string $text the text to write
-   * @param string $font the font file to use
-   * @param float $size the font size, in points
-   * @param array $color
-   * @param float $adjust word spacing adjustment
+   * @return void
    */
-  function text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0);
+  function text($x, $y, $text, $font, $size, $color = array(0,0,0), $word_space = 0.0, $char_space = 0.0, $angle = 0.0);
 
   /**
    * Add a named destination (similar to <a name="foo">...</a> in html)
@@ -205,13 +266,23 @@ interface Canvas {
   /**
    * Add a link to the pdf
    *
-   * @param string $url The url to link to
-   * @param float  $x   The x position of the link
-   * @param float  $y   The y position of the link
-   * @param float  $width   The width of the link
-   * @param float  $height   The height of the link
+   * @param string $url    The url to link to
+   * @param float  $x      The x position of the link
+   * @param float  $y      The y position of the link
+   * @param float  $width  The width of the link
+   * @param float  $height The height of the link
+   *
+   * @return void
    */
   function add_link($url, $x, $y, $width, $height);
+
+  /**
+   * Add meta information to the pdf
+   *
+   * @param string $name  Label of the value (Creator, Producer, etc.)
+   * @param string $value The text to set
+   */
+  function add_info($name, $value);
   
   /**
    * Calculates text size, in points
@@ -219,21 +290,76 @@ interface Canvas {
    * @param string $text the text to be sized
    * @param string $font the desired font
    * @param float  $size the desired font size
-   * @param float  $spacing word spacing, if any
+   * @param float  $word_spacing word spacing, if any
+   * @param float  $char_spacing
+   *
    * @return float
    */
-  function get_text_width($text, $font, $size, $spacing = 0);
+  function get_text_width($text, $font, $size, $word_spacing = 0.0, $char_spacing = 0.0);
 
   /**
    * Calculates font height, in points
    *
    * @param string $font
-   * @param float $size
+   * @param float  $size
+   *
    * @return float
    */
   function get_font_height($font, $size);
 
+  /**
+   * Calculates font baseline, in points
+   *
+   * @param string $font
+   * @param float  $size
+   *
+   * @return float
+   */
+  function get_font_baseline($font, $size);
   
+  /**
+   * Returns the font x-height, in points
+   *
+   * @param string $font
+   * @param float  $size
+   *
+   * @return float
+   */
+  //function get_font_x_height($font, $size);
+  
+  /**
+   * Sets the opacity
+   *
+   * @param float  $opacity
+   * @param string $mode
+   */
+  function set_opacity($opacity, $mode = "Normal");
+
+  /**
+   * Sets the default view
+   *
+   * @param string $view
+   * 'XYZ'  left, top, zoom
+   * 'Fit'
+   * 'FitH' top
+   * 'FitV' left
+   * 'FitR' left,bottom,right
+   * 'FitB'
+   * 'FitBH' top
+   * 'FitBV' left
+   * @param array  $options
+   *
+   * @return void
+   */
+  function set_default_view($view, $options = array());
+
+  /**
+   * @param string $script
+   *
+   * @return void
+   */
+  function javascript($script);
+
   /**
    * Starts a new page
    *
@@ -256,6 +382,4 @@ interface Canvas {
    * @return string
    */
   function output($options = null);
-  
 }
-?>

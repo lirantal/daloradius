@@ -1,43 +1,11 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: image_frame_reflower.cls.php,v $
- * Created on: 2004-08-08
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-
-/* $Id: image_frame_reflower.cls.php,v 1.9 2006/07/07 21:31:03 benjcarson Exp $ */
 
 /**
  * Image reflower class
@@ -51,78 +19,168 @@ class Image_Frame_Reflower extends Frame_Reflower {
     parent::__construct($frame);
   }
 
-  function reflow() {
+  function reflow(Block_Frame_Decorator $block = null) {
+    $this->_frame->position();
     
+    //FLOAT
+    //$frame = $this->_frame;
+    //$page = $frame->get_root();
+
+    //$enable_css_float = $this->get_dompdf()->get_option("enable_css_float");
+    //if ($enable_css_float && $frame->get_style()->float !== "none" ) {
+    //  $page->add_floating_frame($this);
+    //}
     // Set the frame's width
     $this->get_min_max_width();
     
+    if ( $block ) {
+      $block->add_frame_to_line($this->_frame);
+    }
   }
 
   function get_min_max_width() {
-
-    // We need to grab our *parent's* style because images are wrapped...
-    $style = $this->_frame->get_parent()->get_style();
-    
-    $width = $style->width;
-    $height = $style->height;
-    
-    // Determine the image's size
-    list($img_width, $img_height, $type) = getimagesize($this->_frame->get_image_url());
-
-    if ( is_percent($width) )
-      $width = ((float)rtrim($width,"%")) * $img_width / 100;
-
-    if ( is_percent($height) )
-      $height = ((float)rtrim($height,"%")) * $img_height / 100;
-                 
-    $width = $style->length_in_pt($width);
-    $height = $style->length_in_pt($height);
-
-    if ( $width === "auto" && $height === "auto" ) {
-      $width = $img_width;
-      $height = $img_height;
-      
-    } else if ( $width === "auto" && $height !== "auto" ) {
-      $width = (float)$height / $img_height * $img_width;
-      
-    } else if ( $width !== "auto" && $height === "auto" ) {
-      $height = (float)$width / $img_width * $img_height;
-      
-    } 
-    
-    // Resample images if the sizes were auto
-    if ( $style->width === "auto" && $style->height === "auto" ) {
-      $width = ((float)rtrim($width, "px")) * 72 / DOMPDF_DPI;
-      $height = ((float)rtrim($height, "px")) * 72 / DOMPDF_DPI;
+    if (DEBUGPNG) {
+      // Determine the image's size. Time consuming. Only when really needed?
+      list($img_width, $img_height) = dompdf_getimagesize($this->_frame->get_image_url(), $this->get_dompdf()->get_http_context());
+      print "get_min_max_width() ".
+        $this->_frame->get_style()->width.' '.
+        $this->_frame->get_style()->height.';'.
+        $this->_frame->get_parent()->get_style()->width." ".
+        $this->_frame->get_parent()->get_style()->height.";".
+        $this->_frame->get_parent()->get_parent()->get_style()->width.' '.
+        $this->_frame->get_parent()->get_parent()->get_style()->height.';'.
+        $img_width. ' '.
+        $img_height.'|' ;
     }
 
-    // Synchronize the styles
-    $inner_style = $this->_frame->get_style();
-    $inner_style->width = $style->width = $width . "pt";
-    $inner_style->height = $style->height = $height . "pt";
+    $style = $this->_frame->get_style();
+    
+    $width_forced = true;
+    $height_forced = true;
 
-    $inner_style->padding_top = $style->padding_top;
-    $inner_style->padding_right = $style->padding_right;
-    $inner_style->padding_bottom = $style->padding_bottom;
-    $inner_style->padding_left = $style->padding_left;
+    //own style auto or invalid value: use natural size in px
+    //own style value: ignore suffix text including unit, use given number as px
+    //own style %: walk up parent chain until found available space in pt; fill available space
+    //
+    //special ignored unit: e.g. 10ex: e treated as exponent; x ignored; 10e completely invalid ->like auto
 
-    $inner_style->border_top_width = $style->border_top_width;
-    $inner_style->border_right_width = $style->border_right_width;
-    $inner_style->border_bottom_width = $style->border_bottom_width;
-    $inner_style->border_left_width = $style->border_left_width;
+    $width = ($style->width > 0 ? $style->width : 0);
+    if ( is_percent($width) ) {
+      $t = 0.0;
+      for ($f = $this->_frame->get_parent(); $f; $f = $f->get_parent()) {
+        $f_style = $f->get_style();
+        $t = $f_style->length_in_pt($f_style->width);
+        if ($t != 0) {
+          break;
+        }
+      }
+      $width = ((float)rtrim($width,"%") * $t)/100; //maybe 0
+    } elseif ( !mb_strpos($width, 'pt') ) {
+      // Don't set image original size if "%" branch was 0 or size not given.
+      // Otherwise aspect changed on %/auto combination for width/height
+      // Resample according to px per inch
+      // See also List_Bullet_Image_Frame_Decorator::__construct
+      $width = $style->length_in_pt($width);
+    }
 
-    $inner_style->border_top_style = $style->border_top_style;
-    $inner_style->border_right_style = $style->border_right_style;
-    $inner_style->border_bottom_style = $style->border_bottom_style;
-    $inner_style->border_left_style = $style->border_left_style;
+    $height = ($style->height > 0 ? $style->height : 0);
+    if ( is_percent($height) ) {
+      $t = 0.0;
+      for ($f = $this->_frame->get_parent(); $f; $f = $f->get_parent()) {
+        $f_style = $f->get_style();
+        $t = $f_style->length_in_pt($f_style->height);
+        if ($t != 0) {
+          break;
+        }
+      }
+      $height = ((float)rtrim($height,"%") * $t)/100; //maybe 0
+    } elseif ( !mb_strpos($height, 'pt') ) {
+      // Don't set image original size if "%" branch was 0 or size not given.
+      // Otherwise aspect changed on %/auto combination for width/height
+      // Resample according to px per inch
+      // See also List_Bullet_Image_Frame_Decorator::__construct
+      $height = $style->length_in_pt($height);
+    }
 
-    $inner_style->margin_top = $style->margin_top;
-    $inner_style->margin_right = $style->margin_right;
-    $inner_style->margin_bottom = $style->margin_bottom;
-    $inner_style->margin_left = $style->margin_left;
+    if ($width == 0 || $height == 0) {
+      // Determine the image's size. Time consuming. Only when really needed!
+      list($img_width, $img_height) = dompdf_getimagesize($this->_frame->get_image_url(), $this->get_dompdf()->get_http_context());
+      
+      // don't treat 0 as error. Can be downscaled or can be catched elsewhere if image not readable.
+      // Resample according to px per inch
+      // See also List_Bullet_Image_Frame_Decorator::__construct
+      if ($width == 0 && $height == 0) {
+        $dpi = $this->_frame->get_dompdf()->get_option("dpi");
+        $width = (float)($img_width * 72) / $dpi;
+        $height = (float)($img_height * 72) / $dpi;
+        $width_forced = false;
+        $height_forced = false;
+      } elseif ($height == 0 && $width != 0) {
+        $height_forced = false;
+        $height = ($width / $img_width) * $img_height; //keep aspect ratio
+      } elseif ($width == 0 && $height != 0) {
+        $width_forced = false;
+        $width = ($height / $img_height) * $img_width; //keep aspect ratio
+      }
+    }
+    
+    // Handle min/max width/height
+    if ( $style->min_width  !== "none" || 
+         $style->max_width  !== "none" || 
+         $style->min_height !== "none" || 
+         $style->max_height !== "none" ) {
+           
+      list(/*$x*/, /*$y*/, $w, $h) = $this->_frame->get_containing_block();
+      
+      $min_width = $style->length_in_pt($style->min_width, $w);
+      $max_width = $style->length_in_pt($style->max_width, $w);
+      $min_height = $style->length_in_pt($style->min_height, $h);
+      $max_height = $style->length_in_pt($style->max_height, $h);
+  
+      if ( $max_width !== "none" && $width > $max_width ) {
+        if ( !$height_forced ) {
+          $height *= $max_width / $width;
+        }
+        
+        $width = $max_width;
+      }
+  
+      if ( $min_width !== "none" && $width < $min_width ) {
+        if ( !$height_forced ) {
+          $height *= $min_width / $width;
+        }
+        
+        $width = $min_width;
+      }
+      
+      if ( $max_height !== "none" && $height > $max_height ) {
+        if ( !$width_forced ) {
+          $width *= $max_height / $height;
+        }
+        
+        $height = $max_height;
+      }
+      
+      if ( $min_height !== "none" && $height < $min_height ) {
+        if ( !$width_forced ) {
+          $width *= $min_height / $height;
+        }
+        
+        $height = $min_height;
+      }
+    }
+    
+    if (DEBUGPNG) print $width.' '.$height.';';
+
+    $style->width = $width . "pt";
+    $style->height = $height . "pt";
+    
+    $style->min_width = "none";
+    $style->max_width = "none";
+    $style->min_height = "none";
+    $style->max_height = "none";
 
     return array( $width, $width, "min" => $width, "max" => $width);
     
   }
 }
-?>

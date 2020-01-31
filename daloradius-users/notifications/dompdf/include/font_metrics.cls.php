@@ -1,54 +1,27 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: font_metrics.cls.php,v $
- * Created on: 2004-06-02
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @author  Helmut Tischer <htischer@weihenstephan.org>
+ * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 
-/* $Id: font_metrics.cls.php,v 1.6 2006/07/07 21:31:03 benjcarson Exp $ */
-
-require_once(DOMPDF_LIB_DIR . "/class.pdf.php");
+require_once DOMPDF_LIB_DIR . "/class.pdf.php";
 
 /**
  * Name of the font cache file
  *
- * This file must be writable by the webserver process.  Declared here
- * because PHP5 prevents constants from being declared with expressions
+ * This file must be writable by the webserver process only to update it
+ * with save_font_families() after adding the .afm file references of a new font family
+ * with Font_Metrics::save_font_families().
+ * This is typically done only from command line with load_font.php on converting
+ * ttf fonts to ufm with php-font-lib.
+ *
+ * Declared here because PHP5 prevents constants from being declared with expressions
  */
-define('__DOMPDF_FONT_CACHE_FILE', DOMPDF_FONT_DIR . "dompdf_font_family_cache");
-
+define('__DOMPDF_FONT_CACHE_FILE', DOMPDF_FONT_DIR . "dompdf_font_family_cache.php");
 
 /**
  * The font metrics class
@@ -68,9 +41,9 @@ class Font_Metrics {
   const CACHE_FILE = __DOMPDF_FONT_CACHE_FILE;
   
   /**
-   * Underlying {@link Cpdf} object to perform text size calculations
+   * Underlying {@link Canvas} object to perform text size calculations
    *
-   * @var Cpdf
+   * @var Canvas
    */
   static protected $_pdf = null;
 
@@ -88,10 +61,13 @@ class Font_Metrics {
    * Class initialization
    *
    */
-  static function init() {
+  static function init(Canvas $canvas = null) {
     if (!self::$_pdf) {
-      self::load_font_families();
-      self::$_pdf = Canvas_Factory::get_instance();
+      if (!$canvas) {
+        $canvas = Canvas_Factory::get_instance(new DOMPDF());
+      }
+      
+      self::$_pdf = $canvas;
     }
   }
 
@@ -101,11 +77,38 @@ class Font_Metrics {
    * @param string $text the text to be sized
    * @param string $font the desired font
    * @param float  $size the desired font size
-   * @param float  $spacing word spacing, if any
+   * @param float  $word_spacing
+   * @param float  $char_spacing
+   *
+   * @internal param float $spacing word spacing, if any
    * @return float
    */
-  static function get_text_width($text, $font, $size, $spacing = 0) {
-    return self::$_pdf->get_text_width($text, $font, $size, $spacing);
+  static function get_text_width($text, $font, $size, $word_spacing = 0.0, $char_spacing = 0.0) {
+    //return self::$_pdf->get_text_width($text, $font, $size, $word_spacing, $char_spacing);
+    
+    // @todo Make sure this cache is efficient before enabling it
+    static $cache = array();
+    
+    if ( $text === "" ) {
+      return 0;
+    }
+    
+    // Don't cache long strings
+    $use_cache = !isset($text[50]); // Faster than strlen
+    
+    $key = "$font/$size/$word_spacing/$char_spacing";
+    
+    if ( $use_cache && isset($cache[$key][$text]) ) {
+      return $cache[$key]["$text"];
+    }
+    
+    $width = self::$_pdf->get_text_width($text, $font, $size, $word_spacing, $char_spacing);
+    
+    if ( $use_cache ) {
+      $cache[$key][$text] = $width;
+    }
+    
+    return $width;
   }
 
   /**
@@ -121,32 +124,86 @@ class Font_Metrics {
 
   /**
    * Resolves a font family & subtype into an actual font file
-   *
    * Subtype can be one of 'normal', 'bold', 'italic' or 'bold_italic'.  If
    * the particular font family has no suitable font file, the default font
    * ({@link DOMPDF_DEFAULT_FONT}) is used.  The font file returned
    * is the absolute pathname to the font file on the system.
    *
-   * @param string $family
-   * @param string $subtype
+   * @param string $family_raw
+   * @param string $subtype_raw
+   *
    * @return string
    */
-  static function get_font($family, $subtype = "normal") {
+  static function get_font($family_raw, $subtype_raw = "normal") {
+    static $cache = array();
     
-    $family = str_replace( array("'", '"'), "", mb_strtolower($family));
-    $subtype = mb_strtolower($subtype);
+    if ( isset($cache[$family_raw][$subtype_raw]) ) {
+      return $cache[$family_raw][$subtype_raw];
+    }
     
-    if ( !isset(self::$_font_lookup[$family]) )
-      $family = DOMPDF_DEFAULT_FONT;
-
-    if ( !in_array($subtype, array("normal", "bold", "italic", "bold_italic")) )
-      //throw new DOMPDF_Exception("Font subtype '$subtype' is unsupported.");
-      return self::$_font_lookup[DOMPDF_DEFAULT_FONT]["normal"];
+    /* Allow calling for various fonts in search path. Therefore not immediately
+     * return replacement on non match.
+     * Only when called with NULL try replacement.
+     * When this is also missing there is really trouble.
+     * If only the subtype fails, nevertheless return failure.
+     * Only on checking the fallback font, check various subtypes on same font.
+     */
     
-    if ( !isset(self::$_font_lookup[$family][$subtype]) )
+    $subtype = strtolower($subtype_raw);
+    
+    if ( $family_raw ) {
+      $family = str_replace( array("'", '"'), "", strtolower($family_raw));
+      
+      if ( isset(self::$_font_lookup[$family][$subtype]) ) {
+        return $cache[$family_raw][$subtype_raw] = self::$_font_lookup[$family][$subtype];
+      }
+      
       return null;
+    }
+
+    $family = "serif";
+
+    if ( isset(self::$_font_lookup[$family][$subtype]) ) {
+      return $cache[$family_raw][$subtype_raw] = self::$_font_lookup[$family][$subtype];
+    }
     
-    return self::$_font_lookup[$family][$subtype];
+    if ( !isset(self::$_font_lookup[$family]) ) {
+      return null;
+    }
+    
+    $family = self::$_font_lookup[$family];
+
+    foreach ( $family as $sub => $font ) {
+      if (strpos($subtype, $sub) !== false) {
+        return $cache[$family_raw][$subtype_raw] = $font;
+      }
+    }
+
+    if ($subtype !== "normal") {
+      foreach ( $family as $sub => $font ) {
+        if ($sub !== "normal") {
+          return $cache[$family_raw][$subtype_raw] = $font;
+        }
+      }
+    }
+
+    $subtype = "normal";
+
+    if ( isset($family[$subtype]) ) {
+      return $cache[$family_raw][$subtype_raw] = $family[$subtype];
+    }
+    
+    return null;
+  }
+  
+  static function get_family($family) {
+    $family = str_replace( array("'", '"'), "", mb_strtolower($family));
+    
+    if ( isset(self::$_font_lookup[$family]) ) {
+      return self::$_font_lookup[$family];
+    }
+    
+    return null;
   }
 
   /**
@@ -159,9 +216,20 @@ class Font_Metrics {
    * @see Font_Metrics::load_font_families()
    */
   static function save_font_families() {
-
-    file_put_contents(self::CACHE_FILE, var_export(self::$_font_lookup, true));
-    
+    // replace the path to the DOMPDF font directories with the corresponding constants (allows for more portability)
+    $cache_data = sprintf("<?php return array (%s", PHP_EOL);
+    foreach (self::$_font_lookup as $family => $variants) {
+      $cache_data .= sprintf("  '%s' => array(%s", addslashes($family), PHP_EOL);
+      foreach ($variants as $variant => $path) {
+        $path = sprintf("'%s'", $path);
+        $path = str_replace('\'' . DOMPDF_FONT_DIR , 'DOMPDF_FONT_DIR . \'' , $path);
+        $path = str_replace('\'' . DOMPDF_DIR , 'DOMPDF_DIR . \'' , $path);
+        $cache_data .= sprintf("    '%s' => %s,%s", $variant, $path, PHP_EOL);
+      }
+      $cache_data .= sprintf("  ),%s", PHP_EOL);
+    }
+    $cache_data .= ") ?>";
+    file_put_contents(self::CACHE_FILE, $cache_data);
   }
 
   /**
@@ -170,14 +238,84 @@ class Font_Metrics {
    * @see save_font_families()
    */
   static function load_font_families() {
-    if ( !is_readable(self::CACHE_FILE) )
+    $dist_fonts = require_once DOMPDF_DIR . "/lib/fonts/dompdf_font_family_cache.dist.php";
+    
+    // FIXME: temporary step for font cache created before the font cache fix
+    if ( is_readable( DOMPDF_FONT_DIR . "dompdf_font_family_cache" ) ) {
+      $old_fonts = require_once DOMPDF_FONT_DIR . "dompdf_font_family_cache";
+      // If the font family cache is still in the old format
+      if ( $old_fonts === 1 ) {
+        $cache_data = file_get_contents(DOMPDF_FONT_DIR . "dompdf_font_family_cache");
+        file_put_contents(DOMPDF_FONT_DIR . "dompdf_font_family_cache", "<"."?php return $cache_data ?".">");
+        $old_fonts = require_once DOMPDF_FONT_DIR . "dompdf_font_family_cache";
+      }
+      $dist_fonts += $old_fonts;
+    }
+    
+    if ( !is_readable(self::CACHE_FILE) ) {
+      self::$_font_lookup = $dist_fonts;
       return;
-
-    $data = file_get_contents(self::CACHE_FILE);
-
-    if ( $data != "" )
-      eval ('self::$_font_lookup = ' . $data . ";");
-
+    }
+    
+    $cache_data = require_once self::CACHE_FILE;
+    
+    // If the font family cache is still in the old format
+    if ( self::$_font_lookup === 1 ) {
+      $cache_data = file_get_contents(self::CACHE_FILE);
+      file_put_contents(self::CACHE_FILE, "<"."?php return $cache_data ?".">");
+      $cache_data = require_once self::CACHE_FILE;
+    }
+    
+    self::$_font_lookup = array();
+    foreach ($cache_data as $key => $value) {
+      self::$_font_lookup[stripslashes($key)] = $value;
+    }
+    
+    // Merge provided fonts
+    self::$_font_lookup += $dist_fonts;
+  }
+  
+  static function get_type($type) {
+    if (preg_match("/bold/i", $type)) {
+      if (preg_match("/italic|oblique/i", $type)) {
+        $type = "bold_italic";
+      }
+      else {
+        $type = "bold";
+      }
+    }
+    elseif (preg_match("/italic|oblique/i", $type)) {
+      $type = "italic";
+    }
+    else {
+      $type = "normal";
+    }
+      
+    return $type;
+  }
+  
+  static function install_fonts($files) {
+    $names = array();
+    
+    foreach($files as $file) {
+      $font = Font::load($file);
+      $records = $font->getData("name", "records");
+      $type = self::get_type($records[2]);
+      $names[mb_strtolower($records[1])][$type] = $file;
+    }
+    
+    return $names;
+  }
+  
+  static function get_system_fonts() {
+    $files = glob("/usr/share/fonts/truetype/*.ttf") +
+             glob("/usr/share/fonts/truetype/*/*.ttf") +
+             glob("/usr/share/fonts/truetype/*/*/*.ttf") +
+             glob("C:\\Windows\\fonts\\*.ttf") + 
+             glob("C:\\WinNT\\fonts\\*.ttf") + 
+             glob("/mnt/c_drive/WINDOWS/Fonts/");
+    
+    return self::install_fonts($files);
   }
 
   /**
@@ -192,8 +330,53 @@ class Font_Metrics {
   static function set_font_family($fontname, $entry) {
     self::$_font_lookup[mb_strtolower($fontname)] = $entry;
   }
+  
+  static function register_font($style, $remote_file, $context = null) {
+    $fontname = mb_strtolower($style["family"]);
+    $families = Font_Metrics::get_font_families();
+    
+    $entry = array();
+    if ( isset($families[$fontname]) ) {
+      $entry = $families[$fontname];
+    }
+    
+    $local_file = DOMPDF_FONT_DIR . md5($remote_file);
+    $local_temp_file = DOMPDF_TEMP_DIR . "/" . md5($remote_file);
+    $cache_entry = $local_file;
+    $local_file .= ".ttf";
+    
+    $style_string = Font_Metrics::get_type("{$style['weight']} {$style['style']}");
+    
+    if ( !isset($entry[$style_string]) ) {
+      $entry[$style_string] = $cache_entry;
+      
+      // Download the remote file
+      file_put_contents($local_temp_file, file_get_contents($remote_file, null, $context));
+      
+      $font = Font::load($local_temp_file);
+      
+      if (!$font) {
+        unlink($local_temp_file);
+        return false;
+      }
+      
+      $font->parse();
+      $font->saveAdobeFontMetrics("$cache_entry.ufm");
+      
+      unlink($local_temp_file);
+      
+      if ( !file_exists("$cache_entry.ufm") ) {
+        return false;
+      }
+      
+      // Save the changes
+      file_put_contents($local_file, file_get_contents($remote_file, null, $context));
+      Font_Metrics::set_font_family($fontname, $entry);
+      Font_Metrics::save_font_families();
+    }
+    
+    return true;
+  }
 }
 
-Font_Metrics::init();
-
-?>
+Font_Metrics::load_font_families();
