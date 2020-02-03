@@ -31,6 +31,11 @@ if (array_key_exists('daloradius_logged_in', $_SESSION)
 
 include("lang/main.php");
 
+// ~ used later for rendering location select element
+$onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
+                        && is_array($configValues['CONFIG_LOCATIONS'])
+                        && count($configValues['CONFIG_LOCATIONS']) > 0);
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -44,12 +49,8 @@ include("lang/main.php");
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="css/1.css" type="text/css"
             media="screen,projection" />
-        <style type="text/css">
-            #helpPage {
-                display: none;
-                visibility: visible;
-            }
-        </style>
+        <link rel="stylesheet" href="css/style.css" type="text/css"
+            media="screen,projection" />
     </head>
 
     <body onLoad="document.login.operator_user.focus()">
@@ -63,73 +64,65 @@ include("lang/main.php");
                     </h1>
                     <h2><?= t('all','copyright1') ?></h2>
                     <br/>
-                    <ul id="subnav">
-                        <li><?= t('all','daloRADIUS') ?></li>
-                    </ul>
-                </div>
+                </div><!-- #header -->
 		
-                <div id="sidebar">
-                    <h2><?= t('text','LoginRequired') ?></h2>
-                    <h3><?= t('text','LoginPlease') ?></h3>
+        
+                <div id="main">
+                    <h2 class="form-header"><?= t('text','LoginRequired') ?></h2>
                     
-                    <form name="login" action="dologin.php" class="sidebar"
-                        method="post">
-                        
+                     <form class="form-box" name="login" action="dologin.php" method="post">
+                            
                         <label for="operator_user">Username</label>
-                        <input id="operator_user" name="operator_user"
-                            value="administrator" type="text" tabindex="1" />
+                        <input class="form-input" id="operator_user"
+                            name="operator_user" value="administrator"
+                            type="text" tabindex="1" />
                         
                         <label for="operator_pass">Password</label>
-                        <input id="operator_pass" name="operator_pass"
-                            value="" type="password" tabindex="2" />
-                            
+                        <input class="form-input" id="operator_pass"
+                            name="operator_pass" value=""
+                            type="password" tabindex="2" />
+                        
                         <label for="location">Location</label>
-                        <?php
-                            $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
-                                && is_array($configValues['CONFIG_LOCATIONS'])
-                                && count($configValues['CONFIG_LOCATIONS']) > 0);
-                        ?>
                         <select id="location" name="location" tabindex="3"
-                            class="generic"<?= ($onlyDefaultLocation) ? " disabled" : "" ?>>
+                            class="form-input"<?= ($onlyDefaultLocation) ? " disabled" : "" ?>>
                             <?php
                                 if ($onlyDefaultLocation) {
-                                    echo '<option value="default">default</option>';
+                                    echo "<option value=\"default\">default</option>\n";
                                 } else {
                                     $locations = array_keys($configValues['CONFIG_LOCATIONS']);
                                     foreach ($locations as $l) {
-                                        echo "<option value=\"$l\">$l</option>";
+                                        echo "<option value=\"$l\">$l</option>\n";
                                     }
                                 }
                             ?>
                         </select>
-                        <input class="sidebutton" type="submit"
-                            value="Login" tabindex="4" />
+                        <input class="form-submit" type="submit"
+                            value="<?= t('text','LoginPlease') ?>" tabindex="4" />
                     </form>
-                </div>
-                
-                <div id="contentnorightbar">
-                    <h2 id="Intro">
-                        <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                            <?= t('Intro','login.php') ?></a>
-                    </h2>
                     
-                    <div id="helpPage">
-                        <?= t('helpPage','login') ?>
-                    </div>
+                    <small class="form-caption"><?= t('all','daloRADIUS') ?></small>
                     
                     <?php
                         if (array_key_exists('operator_login_error', $_SESSION)
                             && $_SESSION['operator_login_error'] !== false) {
-                            echo t('messages','loginerror');
+                    ?>
+                    <div id="inner-box">
+                        <h3 class="error-title">Error!</h3>
+                        <?= t('messages','loginerror') ?>
+                    </div><!-- #inner-box -->
+                    
+                    <?php            
+                            
                         }
                     ?>
-                </div>
-		
+                    
+                </div><!-- #main -->
+        
                 <div id="footer">
                     <?php include('page-footer.php'); ?>
-                </div>
+                </div><!-- #footer -->
                 
-            </div>
-        </div>
+            </div><!-- #innerwrapper -->
+        </div><!-- #wrapper -->
     </body>
 </html>
