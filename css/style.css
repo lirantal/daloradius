@@ -5,6 +5,7 @@
 }
 
 .form-header {
+    color: #79B933;
     font: 105% sans-serif;
     font-weight: bold;
     margin: 50px auto 0;
@@ -12,11 +13,19 @@
     text-align: center;
 }
 
-.error-title {
-    color: #FF8040;
+.text-title {
+    color: black;
     font: 95% sans-serif;
     font-weight: bold;
     margin: 0;
+}
+
+.error-title {
+    color: #FF8040;
+}
+
+.success-title {
+    color: #79B933;
 }
 
 .form-box {
@@ -44,6 +53,11 @@
     padding: 20px;
 }
 
+hr.inner-separator {
+    border-top: 1px solid #e0e0e0;
+    margin: 10px auto;
+}
+
 .form-input {
     font: 100% sans-serif;
     width: 100%;
@@ -51,7 +65,7 @@
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #222222;
-    color: #ffffff;
+    color: white;
     background: #2c2c2c;
     border-radius: 4px;
     box-sizing: border-box;
@@ -66,7 +80,7 @@
     font: 100% sans-serif;
     width: 100%;
     border: 1px solid #222222;
-    color: #ffffff;
+    color: white;
     background: #1f1f1f;
     padding: 14px 20px;
     margin: 8px 0;

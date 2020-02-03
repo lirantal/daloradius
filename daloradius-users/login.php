@@ -37,31 +37,17 @@ include("lang/main.php");
 <html lang="<?= $langCode ?>" xml:lang="<?= $langCode ?>"
     xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <script src="library/javascript/pages_common.js" type="text/javascript"></script>
+        <script src="library/javascript/pages_common.js"
+            type="text/javascript"></script>
         <title>daloRADIUS</title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-        <style type="text/css">
-            body {
-                font: 78.5%/1.6em "Lucida Grande", "Lucida Sans Unicode", verdana, geneva, sans-serif;
-                word-spacing: 2px;
-                color: #444;
-                margin-top: 20px;
-                margin-left: 130px;
-                margin-right: 200px;
-                margin-bottom: 20px;
-                background: url(images/body.jpg) #f6f6f6;
-            }
-            
-            #helpPage {
-                display: none;
-                visibility: visible;
-            }
-        </style>
+        <link rel="stylesheet" href="../css/1.css" type="text/css"
+            media="screen,projection" />
+        <link rel="stylesheet" href="../css/style.css" type="text/css"
+            media="screen,projection" />
     </head>
  
-    <body onLoad="document.login.operator_user.focus()">
+    <body onLoad="document.login.login_user.focus()">
         <div id="wrapper">
             <div id="innerwrapper">
                 <div id="header">
@@ -72,56 +58,52 @@ include("lang/main.php");
                     </h1>
                     <h2><?= t('all','copyright1') ?></h2>
                     <br/>
-                    <ul id="subnav">
-                        <li><?= t('all','daloRADIUS') ?></li>
-                    </ul>
-                </div>
+                </div><!-- #header -->
                 
-                <div id="sidebar">
-                    <h2><?= t('text','LoginRequired') ?></h2>
-                    <h3><?= t('text','LoginPlease') ?></h3>
-                    
-                    <form name="login" action="dologin.php" class="sidebar"
-                        method="post">
-                        <ul class="subnav">
-                            <li><a href="#">Username</a></li>
-                            <input name="login_user" value="" type="text"
-                                tabindex="1" />
+                <div id="main">
+                    <h2 class="form-header"><?= t('text','LoginRequired') ?></h2>
+                    <form class="form-box" name="login" action="dologin.php" method="post">
+                        <label for="login_user">Username</label>
+                        <input class="form-input" id="login_user"
+                            name="login_user" value=""
+                            type="text" tabindex="1" />
+                        
+                        <label for="login_pass">Password</label>
+                        <input class="form-input" id="login_pass"
+                            name="login_pass" value=""
+                            type="password" tabindex="2" />
                             
-                            <li><a href="#">Password</a></li>
-                            <input name="login_pass" value="" type="password"
-                                tabindex="2" />
-                            
-                            <br/><br/>
-                            <input type="submit" value="Login" tabindex="3" />
-                        </ul>
+                        <input class="form-submit" type="submit"
+                            value="<?= t('text','LoginPlease') ?>" tabindex="3" />
                     </form>
-                </div>
-                
-                <div id="contentnorightbar">
-                    <h2 id="Intro">
-                        <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                            <?= t('Intro','login.php') ?></a>
-                    </h2>
                     
-                    <div id="helpPage">
-                        <?= t('helpPage','login') ?>
-                    </div>
+                    <small class="form-caption"><?= t('all','daloRADIUS') ?></small>
                     
+                    
+                    <div id="inner-box">
                     <?php
-                        echo t('helpPage','loginUsersPortal');
                         if (array_key_exists('login_error', $_SESSION)
                             && $_SESSION['login_error'] !== false) {
-                            echo t('messages','loginerror');
+                    ?>
+                        <h3 class="text-title error-title">Error!</h3>
+                        <?= t('messages','loginerror') ?>
+                        <hr class="inner-separator">
+                        
+                    <?php
                         }
                     ?>
+                        
+                        <h3 class="text-title success-title">Welcome!</h3>
+                        <?= t('helpPage','loginUsersPortal') ?>
                     
-                </div>
+                    </div><!-- #inner-box -->
+                    
+                </div><!-- #main -->
                 
                 <div id="footer">
                     <?php include('page-footer.php'); ?>
-                </div>
-            </div>
-        </div>
+                </div><!-- #footer -->
+            </div><!-- #innerwrapper -->
+        </div><!-- #wrapper -->
     </body>
 </html>

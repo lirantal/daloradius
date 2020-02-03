@@ -106,13 +106,13 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                         if (array_key_exists('operator_login_error', $_SESSION)
                             && $_SESSION['operator_login_error'] !== false) {
                     ?>
+                    
                     <div id="inner-box">
-                        <h3 class="error-title">Error!</h3>
+                        <h3 class="text-title error-title">Error!</h3>
                         <?= t('messages','loginerror') ?>
                     </div><!-- #inner-box -->
                     
-                    <?php            
-                            
+                    <?php
                         }
                     ?>
                     
