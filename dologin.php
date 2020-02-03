@@ -57,11 +57,13 @@ $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
 $res = $dbSocket->query($sql);
 $numRows = $res->numRows();
 
-include('library/closedb.php');
-
 if ($numRows != 1) {
     $_SESSION['daloradius_logged_in'] = false;
     $_SESSION['operator_login_error'] = true;
+    
+    // ~ close connection to db before redirecting
+    include('library/closedb.php');
+    
     header('Location: login.php');
     exit;
 }
@@ -82,9 +84,10 @@ $sqlFormat = "update %s set lastlogin='%s' where username='%s'";
 $sql = sprintf($sqlFormat,
     $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $now, $operator_user);
 $res = $dbSocket->query($sql);
+
+// ~ close connection to db before redirecting
+include('library/closedb.php');
+
 header('Location: index.php');
-
-
-
 
 ?>
