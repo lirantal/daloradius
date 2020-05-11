@@ -460,20 +460,27 @@
 				}
 
 		   } elseif ($authType == "macAuth") {
-
-				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+			    
+				$macaddress = preg_replace("/:|\.|\-/", "", trim($macaddress));
 				
-				addGroups($dbSocket, $macaddress, $group_macaddress);
-				addUserInfo($dbSocket, $macaddress);
-                                addUserBillInfo($dbSocket, $username);
-				addAttributes($dbSocket, $macaddress);
+				if (preg_match('/[a-fA-F0-9]/', $macaddress) == 1 && strlen($macaddress) == 12){
+					// insert username/password
+					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
+						" VALUES (0, '".$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+				
+					addGroups($dbSocket, $macaddress, $group_macaddress);
+					addUserInfo($dbSocket, $macaddress);
+                                	addUserBillInfo($dbSocket, $username);
+					addAttributes($dbSocket, $macaddress);
 
-				$successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
-				$logAction .= "Successfully added new mac auth user [$macaddress] on page: ";
+					$successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
+					$logAction .= "Successfully added new mac auth user [$macaddress] on page: ";
+				} else { 
+					$failureMsg = "Invalid Mac address format: <b> $username </b>";
+					$logAction .= "Failed adding new user invalid mac address format [$username] on page: ";
+				}
 
 		   } elseif ($authType == "pincodeAuth") {
 
