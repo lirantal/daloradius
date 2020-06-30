@@ -224,7 +224,7 @@ function drawHelperDateTime($num) {
 	$currYear = date('Y', time());
 
         echo <<<EOF
-	objHelper.innerHTML = "<img src='library/js_date/calendar.gif' onClick=\"showChooser(this, '$inputId', 'chooserSpan$num', 1950, $currYear, 'Y-m-d H:i:s', true);\">";
+	objHelper.innerHTML = "<img src='library/js_date/calendar.gif' onClick=\"showChooser(this, '$inputId', 'chooserSpan$num', 1950, $currYear+5, 'Y-m-d H:i:s', true);\">";
 
 EOF;
 
@@ -238,7 +238,7 @@ function drawHelperDate($num) {
 	$currYear = date('Y', time());
 
         echo <<<EOF
-	objHelper.innerHTML = "<img src='library/js_date/calendar.gif' onClick=\"showChooser(this, '$inputId', 'chooserSpan$num', 1950, $currYear, 'd M Y', false);\">";
+	objHelper.innerHTML = "<img src='library/js_date/calendar.gif' onClick=\"showChooser(this, '$inputId', 'chooserSpan$num', 1950, $currYear+5, 'd M Y', false);\">";
 
 EOF;
 
