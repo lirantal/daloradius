@@ -11,7 +11,6 @@ function init_daloradius {
 	sed -i "s/\$configValues\['CONFIG_DB_NAME'\] = .*;/\$configValues\['CONFIG_DB_NAME'\] = '$MYSQL_DATABASE';/" $DALORADIUS_PATH/library/daloradius.conf.php
 	sed -i "s/\$configValues\['FREERADIUS_VERSION'\] = .*;/\$configValues\['FREERADIUS_VERSION'\] = '3';/" $DALORADIUS_PATH/library/daloradius.conf.php
 	sed -i "s|\$configValues\['CONFIG_PATH_DALO_VARIABLE_DATA'\] = .*;|\$configValues\['CONFIG_PATH_DALO_VARIABLE_DATA'\] = '/var/www/html/var';|" $DALORADIUS_PATH/library/daloradius.conf.php
-	sed -i "s|\$configValues\['CONFIG_DB_TBL_RADIPPOOL'\] = .*;|\$configValues\['CONFIG_DB_TBL_RADIPPOOL'\] = 'fr_ippool';|" $DALORADIUS_PATH/library/daloradius.conf.php
 
 	if [ -n "$DEFAULT_FREERADIUS_SERVER" ]; then
 		sed -i "s/\$configValues\['CONFIG_MAINT_TEST_USER_RADIUSSERVER'\] = .*;/\$configValues\['CONFIG_MAINT_TEST_USER_RADIUSSERVER'\] = '$DEFAULT_FREERADIUS_SERVER';/" $DALORADIUS_PATH/library/daloradius.conf.php
