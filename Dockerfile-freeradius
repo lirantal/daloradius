@@ -16,6 +16,8 @@ LABEL Description="freeradius Docker based on Ubuntu 20.04 LTS, optimized for da
 	Usage="docker build -t lirantal/dalofreeradius -f Dockerfile-freeradius && docker run -d -p 80:80 lirantal/dalofreeradius" \
 	Version="1.0"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # default timezone
 ENV TZ Europe/Vienna
 

@@ -16,6 +16,8 @@ LABEL Description="daloRADIUS Official Docker based on Ubuntu 20.04 LTS and PHP7
 	Usage="docker build . -t lirantal/daloradius && docker run -d -p 80:80 lirantal/daloradius" \
 	Version="1.0"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # default timezone
 ENV TZ Europe/Vienna
 
