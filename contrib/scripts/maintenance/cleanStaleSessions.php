@@ -27,11 +27,11 @@
 
 /* Configuration Section ************************************************ */
 
-$configValues['CONFIG_DB_ENGINE'] = 'mysql';
+$configValues['CONFIG_DB_ENGINE'] = 'mysqli';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
 $configValues['CONFIG_DB_PORT'] = '3306';
-$configValues['CONFIG_DB_USER'] = 'daloradius';
-$configValues['CONFIG_DB_PASS'] = 'daloradius';
+$configValues['CONFIG_DB_USER'] = 'radius';
+$configValues['CONFIG_DB_PASS'] = 'radpass';
 $configValues['CONFIG_DB_NAME'] = 'radius';
 $configValues['CONFIG_DB_TBL_RADACCT'] = 'radacct';
 
@@ -125,7 +125,7 @@ function clearStaleSessions($dbSocket) {
 				"((UNIX_TIMESTAMP(NOW()) - (UNIX_TIMESTAMP(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctstarttime) + ".$configValues['CONFIG_DB_TBL_RADACCT'].".acctsessiontime)) > (".$configValues['INTERVAL']."+".
 				$configValues['GRACE']."))".
 			" AND ".
-				" (AcctStopTime = '0000-00-00 00:00:00' OR AcctStopTime IS NULL) ";
+				" (AcctStopTime IS NULL) ";
 
 	$res = $dbSocket->query($sql);
 
