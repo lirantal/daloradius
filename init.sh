@@ -2,8 +2,14 @@
 # Executable process script for daloRADIUS docker image:
 # GitHub: git@github.com:lirantal/daloradius.git
 DALORADIUS_PATH=/var/www/html
+DALORADIUS_CONF_PATH=/var/www/html/library/daloradius.conf.php
 
 function init_daloradius {
+
+	if ! test -f "$/var/www/html/library/daloradius.conf.php"; then
+		cp "$DALORADIUS_PATH/library/daloradius.conf.php.sample" "$DALORADIUS_CONF_PATH"
+	fi
+
 	sed -i "s/\$configValues\['CONFIG_DB_HOST'\] = .*;/\$configValues\['CONFIG_DB_HOST'\] = '$MYSQL_HOST';/" $DALORADIUS_PATH/library/daloradius.conf.php
 	sed -i "s/\$configValues\['CONFIG_DB_PORT'\] = .*;/\$configValues\['CONFIG_DB_PORT'\] = '$MYSQL_PORT';/" $DALORADIUS_PATH/library/daloradius.conf.php
 	sed -i "s/\$configValues\['CONFIG_DB_PASS'\] = .*;/\$configValues\['CONFIG_DB_PASS'\] = '$MYSQL_PASSWORD';/" $DALORADIUS_PATH/library/daloradius.conf.php 
