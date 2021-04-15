@@ -29,6 +29,9 @@
 		case "en":
 			include (dirname(__FILE__)."/en.php");
 			break;
+		case "fr":
+			include (dirname(__FILE__)."/fr.php");
+			break;
 		case "ru":
 			include (dirname(__FILE__)."/ru.php");
 			break;
