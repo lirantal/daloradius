@@ -260,7 +260,7 @@
 					"', zip='".$dbSocket->escapeSimple($bi_zip).
 					"', notes='".$dbSocket->escapeSimple($bi_notes).
 					"', changeuserbillinfo='".$dbSocket->escapeSimple($bi_changeuserbillinfo).
-                                        "', lead='".$dbSocket->escapeSimple($bi_lead).
+                                        "', `lead`='".$dbSocket->escapeSimple($bi_lead).
                                         "', coupon='".$dbSocket->escapeSimple($bi_coupon).
                                         "', ordertaker='".$dbSocket->escapeSimple($bi_ordertaker).
                                         "', billstatus='".$dbSocket->escapeSimple($bi_billstatus).
