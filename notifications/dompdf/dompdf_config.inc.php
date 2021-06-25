@@ -168,7 +168,7 @@ define("DOMPDF_DPI", "150");
  *
  * @var bool
  */
-define("DOMPDF_ENABLE_PHP", true);
+define("DOMPDF_ENABLE_PHP", false);
 
 
 /**
