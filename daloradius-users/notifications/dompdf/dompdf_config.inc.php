@@ -179,7 +179,7 @@ define("DOMPDF_ENABLE_PHP", false);
  *
  * @var bool 
  */
-define("DOMPDF_ENABLE_REMOTE", true);
+define("DOMPDF_ENABLE_REMOTE", false);
  
 /**
  * DOMPDF autoload function
