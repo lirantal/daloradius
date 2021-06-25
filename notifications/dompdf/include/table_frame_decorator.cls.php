@@ -1,43 +1,10 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: table_frame_decorator.cls.php,v $
- * Created on: 2004-06-04
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-
-/* $Id: table_frame_decorator.cls.php,v 1.11 2006/07/07 21:31:04 benjcarson Exp $ */
 
 /**
  * Decorates Frames for table layout
@@ -45,7 +12,7 @@
  * @access private
  * @package dompdf
  */
-class Table_Frame_Decorator extends Frame_Decorator {  
+class Table_Frame_Decorator extends Frame_Decorator {
   static $VALID_CHILDREN = array("table-row-group",
                                  "table-row",
                                  "table-header-group",
@@ -80,7 +47,7 @@ class Table_Frame_Decorator extends Frame_Decorator {
    * @var float
    */
   protected $_max_width;
-  
+
   /**
    * Table header rows.  Each table header is duplicated when a table
    * spans pages.
@@ -95,33 +62,39 @@ class Table_Frame_Decorator extends Frame_Decorator {
    *
    * @var array
    */
-  protected $_footers;  
-  
+  protected $_footers;
+
   /**
    * Class constructor
    *
-   * @param Frame $frame the frame to decorate
+   * @param Frame  $frame the frame to decorate
+   * @param DOMPDF $dompdf
    */
   function __construct(Frame $frame, DOMPDF $dompdf) {
     parent::__construct($frame, $dompdf);
-    $this->_cellmap = new Cellmap($this);    
+    $this->_cellmap = new Cellmap($this);
+    
+    if ( $frame->get_style()->table_layout === "fixed" ) {
+      $this->_cellmap->set_layout_fixed(true);
+    }
+    
     $this->_min_width = null;
     $this->_max_width = null;
     $this->_headers = array();
     $this->_footers = array();
   }
 
- 
+
   function reset() {
     parent::reset();
     $this->_cellmap->reset();
     $this->_min_width = null;
     $this->_max_width = null;
     $this->_headers = array();
-    $this->_footers = array();    
+    $this->_footers = array();
     $this->_reflower->reset();
   }
-  
+
   //........................................................................
 
   /**
@@ -129,22 +102,25 @@ class Table_Frame_Decorator extends Frame_Decorator {
    * added to the clone.  This method is overidden in order to remove
    * frames from the cellmap properly.
    *
-   * @param Frame $row
+   * @param Frame $child
+   * @param bool  $force_pagebreak
+   *
+   * @return void
    */
-  function split($child = null) {
-    
+  function split(Frame $child = null, $force_pagebreak = false) {
+
     if ( is_null($child) ) {
       parent::split();
       return;
     }
-      
+
     // If $child is a header or if it is the first non-header row, do
-    // not duplicate headers, simply move the table to the next page.    
-    if ( count($this->_headers) && !in_array($child, $this->_headers) && 
-         !in_array($child->get_prev_sibling(), $this->_headers) ) {
+    // not duplicate headers, simply move the table to the next page.
+    if ( count($this->_headers) && !in_array($child, $this->_headers, true) &&
+         !in_array($child->get_prev_sibling(), $this->_headers, true) ) {
 
       $first_header = null;
-      
+
       // Insert copies of the table headers before $child
       foreach ($this->_headers as $header) {
 
@@ -152,40 +128,56 @@ class Table_Frame_Decorator extends Frame_Decorator {
 
         if ( is_null($first_header) )
           $first_header = $new_header;
-        
+
         $this->insert_child_before($new_header, $child);
       }
 
       parent::split($first_header);
-      
+
     } else if ( in_array($child->get_style()->display, self::$ROW_GROUPS) ) {
 
       // Individual rows should have already been handled
       parent::split($child);
-      
+
     } else {
-      
-        $iter = $child;
+
+      $iter = $child;
 
       while ($iter) {
         $this->_cellmap->remove_row($iter);
         $iter = $iter->get_next_sibling();
       }
-    
+
       parent::split($child);
     }
   }
-  
+
+  /**
+   * Return a copy of this frame with $node as its node
+   * 
+   * @param DOMNode $node
+   * @return Frame
+   */ 
+  function copy(DOMNode $node) {
+    $deco = parent::copy($node);
+    
+    // In order to keep columns' widths through pages
+    $deco->_cellmap->set_columns($this->_cellmap->get_columns());
+    $deco->_cellmap->lock_columns();
+
+    return $deco;
+  }
+
   /**
    * Static function to locate the parent table of a frame
    *
    * @param Frame $frame
-   * @return Frame the table that is an ancestor of $frame
+   * @return Table_Frame_Decorator the table that is an ancestor of $frame
    */
   static function find_parent_table(Frame $frame) {
 
-    while ( $frame = $frame->get_parent() ) 
-      if ( in_array($frame->get_style()->display, Style::$TABLE_TYPES) )
+    while ( $frame = $frame->get_parent() )
+      if ( $frame->is_table() )
         break;
 
     return $frame;
@@ -197,7 +189,7 @@ class Table_Frame_Decorator extends Frame_Decorator {
    * @return Cellmap
    */
   function get_cellmap() { return $this->_cellmap; }
- 
+
   /**
    * Return the minimum width of this table
    *
@@ -211,12 +203,12 @@ class Table_Frame_Decorator extends Frame_Decorator {
    * @return float
    */
   function get_max_width() { return $this->_max_width; }
-  
+
   /**
    * Set the minimum width of the table
    *
    * @param float $width the new minimum width
-   */  
+   */
   function set_min_width($width) { $this->_min_width = $width; }
 
   /**
@@ -225,7 +217,7 @@ class Table_Frame_Decorator extends Frame_Decorator {
    * @param float $width the new maximum width
    */
   function set_max_width($width) { $this->_max_width = $width; }
-  
+
   /**
    * Restructure tree so that the table has the correct structure.
    * Invalid children (i.e. all non-table-rows) are moved below the
@@ -240,15 +232,15 @@ class Table_Frame_Decorator extends Frame_Decorator {
     while ( $iter ) {
       $child = $iter;
       $iter = $iter->get_next_sibling();
-      
+
       $display = $child->get_style()->display;
 
       if ( $anon_row ) {
 
-        if ( $display == "table-row" ) {
+        if ( $display === "table-row" ) {
           // Add the previous anonymous row
           $this->insert_child_before($table_row, $child);
-          
+
           $table_row->normalise();
           $child->normalise();
           $anon_row = false;
@@ -258,24 +250,24 @@ class Table_Frame_Decorator extends Frame_Decorator {
         // add the child to the anonymous row
         $table_row->append_child($child);
         continue;
-      
+
       } else {
 
-        if ( $display == "table-row" ) {
+        if ( $display === "table-row" ) {
           $child->normalise();
           continue;
         }
 
-        if ( $display == "table-cell") {
+        if ( $display === "table-cell" ) {
           // Create an anonymous table row
           $tr = $this->get_node()->ownerDocument->createElement("tr");
 
           $frame = new Frame($tr);
 
           $css = $this->get_style()->get_stylesheet();
-          $style = $css->create_style();          
+          $style = $css->create_style();
           $style->inherit($this->get_style());
-          
+
           // Lookup styles for tr tags.  If the user wants styles to work
           // better, they should make the tr explicit... I'm not going to
           // try to guess what they intended.
@@ -285,14 +277,13 @@ class Table_Frame_Decorator extends Frame_Decorator {
           // Okay, I have absolutely no idea why I need this clone here, but
           // if it's omitted, php (as of 2004-07-28) segfaults.
           $frame->set_style(clone $style);
-          $table_row = Frame_Factory::decorate_frame($frame, $this->_dompdf);
-          $table_row->set_root($this->_root);
-          
+          $table_row = Frame_Factory::decorate_frame($frame, $this->_dompdf, $this->_root);
+
           // Add the cell to the row
           $table_row->append_child($child);
 
           $anon_row = true;
-          continue;          
+          continue;
         }
 
         if ( !in_array($display, self::$VALID_CHILDREN) ) {
@@ -302,15 +293,16 @@ class Table_Frame_Decorator extends Frame_Decorator {
 
         // Normalise other table parts (i.e. row groups)
         foreach ($child->get_children() as $grandchild) {
-          if ( $grandchild->get_style()->display == "table-row" ) 
+          if ( $grandchild->get_style()->display === "table-row" ) {
             $grandchild->normalise();
+          }
         }
 
         // Add headers and footers
-        if ( $display == "table-header-group" )
+        if ( $display === "table-header-group" )
           $this->_headers[] = $child;
 
-        else if ( $display == "table-footer-group" )
+        else if ( $display === "table-footer-group" )
           $this->_footers[] = $child;
       }
     }
@@ -321,8 +313,8 @@ class Table_Frame_Decorator extends Frame_Decorator {
       $table_row->normalise();
       $this->_cellmap->add_row();
     }
-    
-    foreach ($erroneous_frames as $frame) 
+
+    foreach ($erroneous_frames as $frame)
       $this->move_after($frame);
 
   }
@@ -336,8 +328,7 @@ class Table_Frame_Decorator extends Frame_Decorator {
    * @param Frame $frame the frame to move
    */
   function move_after(Frame $frame) {
-    $this->get_parent()->insert_child_after($frame, $this);    
+    $this->get_parent()->insert_child_after($frame, $this);
   }
 
 }
-?>

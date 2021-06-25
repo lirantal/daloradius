@@ -1,43 +1,10 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile: frame_factory.cls.php,v $
- * Created on: 2004-06-17
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
- *
- * @link http://www.digitaljunkies.ca/dompdf
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+ * @link    http://dompdf.github.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-
-/* $Id: frame_factory.cls.php,v 1.7 2006/07/07 21:31:03 benjcarson Exp $ */
 
 /**
  * Contains frame decorating logic
@@ -52,6 +19,13 @@
  */
 class Frame_Factory {
 
+  /**
+   * Decorate the root Frame
+   * 
+   * @param $root Frame The frame to decorate
+   * @param $dompdf DOMPDF The dompdf instance
+   * @return Page_Frame_Decorator
+   */
   static function decorate_root(Frame $root, DOMPDF $dompdf) {
     $frame = new Page_Frame_Decorator($root, $dompdf);
     $frame->set_reflower( new Page_Frame_Reflower($frame) );
@@ -59,11 +33,33 @@ class Frame_Factory {
     return $frame;
   }
 
-  // FIXME: this is admittedly a little smelly...
-  static function decorate_frame(Frame $frame, $dompdf) {
-    if ( is_null($dompdf) )
-      throw new Exception("foo");
-    switch ($frame->get_style()->display) {
+  /**
+   * Decorate a Frame
+   *
+   * @param Frame  $frame  The frame to decorate
+   * @param DOMPDF $dompdf The dompdf instance
+   * @param Frame  $root   The frame to decorate
+   *
+   * @throws DOMPDF_Exception
+   * @return Frame_Decorator
+   * FIXME: this is admittedly a little smelly...
+   */
+  static function decorate_frame(Frame $frame, DOMPDF $dompdf, Frame $root = null) {
+    if ( is_null($dompdf) ) {
+      throw new DOMPDF_Exception("The DOMPDF argument is required");
+    }
+    
+    $style = $frame->get_style();
+    
+    // Floating (and more generally out-of-flow) elements are blocks 
+    // http://coding.smashingmagazine.com/2007/05/01/css-float-theory-things-you-should-know/
+    if ( !$frame->is_in_flow() && in_array($style->display, Style::$INLINE_TYPES)) {
+      $style->display = "block";
+    }
+      
+    $display = $style->display;
+    
+    switch ($display) {
       
     case "block":
       $positioner = "Block";        
@@ -79,12 +75,20 @@ class Frame_Factory {
 
     case "inline":
       $positioner = "Inline";
-      if ( $frame->get_node()->nodeName == "#text" ) {
+      if ( $frame->is_text_node() ) {
         $decorator = "Text";
         $reflower = "Text";
-      } else {
-        $decorator = "Inline";
-        $reflower = "Inline";
+      } 
+      else {
+        $enable_css_float = $dompdf->get_option("enable_css_float");
+        if ( $enable_css_float && $style->float !== "none" ) {
+          $decorator = "Block";
+          $reflower = "Block";
+        }
+        else {
+          $decorator = "Inline";
+          $reflower = "Inline";
+        }
       }
       break;   
 
@@ -127,15 +131,19 @@ class Frame_Factory {
       break;
 
     case "-dompdf-list-bullet":
-      if ( $frame->get_style()->list_style_position == "inside" )
+      if ( $style->list_style_position === "inside" ) {
         $positioner = "Inline";
-      else        
+      }
+      else {        
         $positioner = "List_Bullet";
+      }
 
-      if ( $frame->get_style()->list_style_image != "none" )
+      if ( $style->list_style_image !== "none" ) {
         $decorator = "List_Bullet_Image";
-      else
+      }
+      else {
         $decorator = "List_Bullet";
+      }
       
       $reflower = "List_Bullet";
       break;
@@ -155,52 +163,90 @@ class Frame_Factory {
     default:
       // FIXME: should throw some sort of warning or something?
     case "none":
+      if ( $style->_dompdf_keep !== "yes" ) {
+        // Remove the node and the frame
+        $frame->get_parent()->remove_child($frame);
+        return;
+      }
+
       $positioner = "Null";
       $decorator = "Null";
       $reflower = "Null";
       break;
-
     }
 
+    // Handle CSS position
+    $position = $style->position;
+    
+    if ( $position === "absolute" ) {
+      $positioner = "Absolute";
+    }
+    else if ( $position === "fixed" ) {
+      $positioner = "Fixed";
+    }
+      
+    $node = $frame->get_node();
+    
+    // Handle nodeName
+    if ( $node->nodeName === "img" ) {
+      $style->display = "-dompdf-image";
+      $decorator = "Image";
+      $reflower = "Image";
+    }
+  
     $positioner .= "_Positioner";
     $decorator .= "_Frame_Decorator";
     $reflower .= "_Frame_Reflower";
 
     $deco = new $decorator($frame, $dompdf);
-    $deco->set_positioner( new $positioner($deco) );
-    $reflow = new $reflower($deco);
     
-    // Generated content is a special case
-    if ( $frame->get_node()->nodeName == "_dompdf_generated" ) {
-      // Decorate the reflower
-      $gen = new Generated_Frame_Reflower( $deco );
-      $gen->set_reflower( $reflow );
-      $reflow = $gen;
+    $deco->set_positioner( new $positioner($deco) );
+    $deco->set_reflower( new $reflower($deco) );
+    
+    if ( $root ) {
+      $deco->set_root($root);
     }
     
-    $deco->set_reflower( $reflow );
+    if ( $display === "list-item" ) {
+      // Insert a list-bullet frame
+      $xml = $dompdf->get_dom();
+      $bullet_node = $xml->createElement("bullet"); // arbitrary choice
+      $b_f = new Frame($bullet_node);
 
-    // Images are a special case
-//    if ( $frame->get_node()->nodeName == "img" ) {
-
-//       // FIXME: This is a hack
-//       $node =$frame->get_node()->ownerDocument->createElement("img_sub");
-//       $node->setAttribute("src", $frame->get_node()->getAttribute("src"));
+      $node = $frame->get_node();
+      $parent_node = $node->parentNode;
       
-//       $img_frame = new Frame( $node );
-
-//       $style = $frame->get_style()->get_stylesheet()->create_style();
-//       $style->inherit($frame->get_style());
-//       $img_frame->set_style( $style );
-
-//       $img_deco = new Image_Frame_Decorator($img_frame, $dompdf);
-//       $img_deco->set_reflower( new Image_Frame_Reflower($img_deco) );
-//       $deco->append_child($img_deco);
-
-//     }   
+      if ( $parent_node ) {
+        if ( !$parent_node->hasAttribute("dompdf-children-count") ) {
+          $xpath = new DOMXPath($xml);
+          $count = $xpath->query("li", $parent_node)->length;
+          $parent_node->setAttribute("dompdf-children-count", $count);
+        }
+        
+        if ( is_numeric($node->getAttribute("value")) ) {
+          $index = intval($node->getAttribute("value"));
+        }
+        else {
+          if ( !$parent_node->hasAttribute("dompdf-counter") ) {
+            $index = ($parent_node->hasAttribute("start") ? $parent_node->getAttribute("start") : 1);
+          }
+          else {
+            $index = $parent_node->getAttribute("dompdf-counter")+1;
+          }
+        }
+        
+        $parent_node->setAttribute("dompdf-counter", $index);
+        $bullet_node->setAttribute("dompdf-counter", $index);
+      }
+      
+      $new_style = $dompdf->get_css()->create_style();
+      $new_style->display = "-dompdf-list-bullet";
+      $new_style->inherit($style);
+      $b_f->set_style($new_style);
+      
+      $deco->prepend_child( Frame_Factory::decorate_frame($b_f, $dompdf, $root) );
+    }
     
     return $deco;
   }
-  
 }
-?>

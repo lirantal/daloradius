@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<link rel="STYLESHEET" href="print_static.css" type="text/css" />
+<link rel="STYLESHEET" href="css/print_static.css" type="text/css" />
 </head>
 
 <body>
@@ -16,8 +16,8 @@
 <div class="page" style="font-size: 7pt">
 <table style="width: 100%;" class="header">
 <tr>
-<td><h1 style="text-align: left">SCHEDULE A</td>
-<td><h1 style="text-align: right">Job: 132-003</td>
+<td><h1 style="text-align: left">SCHEDULE A</h1></td>
+<td><h1 style="text-align: right">Job: 132-003</h1></td>
 </tr>
 </table>
 
@@ -160,7 +160,9 @@ PER:
 
 if ( isset($pdf) ) {
 
-  $font = Font_Metrics::get_font("verdana");;
+  $font = Font_Metrics::get_font("verdana");
+  // If verdana isn't available, we'll use sans-serif.
+  if (!isset($font)) { Font_Metrics::get_font("sans-serif"); }
   $size = 6;
   $color = array(0,0,0);
   $text_height = Font_Metrics::get_font_height($font, $size);
@@ -197,7 +199,7 @@ if ( isset($pdf) ) {
  
   // Mark the document as a duplicate
   $pdf->text(110, $h - 240, "DUPLICATE", Font_Metrics::get_font("verdana", "bold"),
-             110, array(0.85, 0.85, 0.85), 0, -52);
+             110, array(0.85, 0.85, 0.85), 0, 0, -52);
 
   $text = "Page {PAGE_NUM} of {PAGE_COUNT}";  
 

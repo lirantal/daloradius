@@ -1,6 +1,6 @@
 <?php
 /*
- *********************************************************************************************************
+ *******************************************************************************
  * daloRADIUS - RADIUS Web Platform
  * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
@@ -13,24 +13,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *********************************************************************************************************
+ *******************************************************************************
  *
  * Authors:	Liran Tal <liran@enginx.com>
  *
- *********************************************************************************************************
+ *******************************************************************************
  */
 
-session_start();
-
-// if the user is logged in, unset the session
-if (isset($_SESSION['logged_in'])) {
-	unset($_SESSION['logged_in']);
-}
-
-// completely destory the session and all it's variables
-session_destroy();
-
-// now that the user is logged out,
-// go to login page
+include('library/sessions.php');
+dalo_session_start();
+dalo_session_destroy();
 header('Location: login.php');
+
 ?>
