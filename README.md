@@ -37,7 +37,7 @@ Thanks goes to these wonderful people :
 # Requirements
 
  * Apache.
- * PHP v5 or higher.
+ * PHP v5.5 or higher.
  * MySQL v4.1 or higher.
  * [PEAR](https://pear.php.net/) PHP extension.
  * PEAR package DB in order to access the database. To install it, execute at the command line:

@@ -461,9 +461,10 @@
 
 		   } elseif ($authType == "macAuth") {
 			    
-				$macaddress = preg_replace("/:|\.|\-/", "", trim($macaddress));
+				$macaddress = trim($macaddress);
 				
-				if (preg_match('/[a-fA-F0-9]/', $macaddress) == 1 && strlen($macaddress) == 12){
+				if (filter_var($macaddress, FILTER_VALIDATE_MAC)) {
+
 					// insert username/password
 					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
 						" VALUES (0, '".$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
