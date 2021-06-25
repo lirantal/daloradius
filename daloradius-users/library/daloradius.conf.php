@@ -23,7 +23,7 @@
  */
 
 
-$configValues['DALORADIUS_VERSION'] = '1.1-3 BETA';
+$configValues['DALORADIUS_VERSION'] = '1.2';
 $configValues['FREERADIUS_VERSION'] = '2';
 $configValues['CONFIG_DB_ENGINE'] = 'mysqli';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
