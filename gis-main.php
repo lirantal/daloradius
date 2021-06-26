@@ -13,8 +13,10 @@
 
     function writeGoogleMapsCode($googleMapsCode) {
 		$myfile = "library/googlemaps.php";
+	    
+	    	$sanitizedGoogleMapsCode = preg_replace("/[^-a-zA-Z0-9]+/", "", $googleMapsCode);
 		if ($fh = fopen($myfile, 'w') ) {
-			$strCode = "<script src='//maps.google.com/maps?file=api&amp;v=3&amp;key=" . $googleMapsCode . 
+			$strCode = "<script src='//maps.google.com/maps?file=api&amp;v=3&amp;key=" . $sanitizedGoogleMapsCode . 
 						"' type='text/javascript'></script>";
 			fwrite($fh, $strCode);
 			fclose($fh);
