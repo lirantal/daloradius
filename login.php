@@ -90,8 +90,8 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                                     echo "<option value=\"default\">default</option>\n";
                                 } else {
                                     $locations = array_keys($configValues['CONFIG_LOCATIONS']);
-                                    foreach ($locations as $l) {
-                                        echo "<option value=\"$l\">$l</option>\n";
+                                    foreach ($locations as $location) {
+                                        echo "<option value=\"$location\">$location</option>\n";
                                     }
                                 }
                             ?>
