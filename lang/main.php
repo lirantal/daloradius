@@ -23,34 +23,44 @@
  *******************************************************************************
  */
 
-$langDir = dirname(__FILE__);
+// Load language dictionary according to:
+//
+// 1. Load default language.
+// 2. Try to load the language according to configuration. If the language file does
+//    not exists, or it's the default one, do nothing.
+//    If it's loaded, the missing dictionary entries will remain the ones from
+//    the default language.
 
-$langList = array_filter(scandir($langDir), function($fileName) {
-    global $langDir;
-    
-    $skipList = array(
-        ".", "..", "main.php",
-        "ro.php" // FIXME ro.php is currently broken and needs a fix...
-    );
-    
-    if (in_array($fileName, $skipList)) {
-        return false;
-    }
-    
-    $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-    return !($ext == "php" and is_file("$langDir/$fileName"));
-});
+// Load configuration
+require_once(__DIR__ . '/../library/daloradius.conf.php');
 
-include_once("$langDir/../library/daloradius.conf.php");
-$langFile = $configValues["CONFIG_LANG"] . ".php";
+// Declare global array with language keys
+global $l;
 
-if (!in_array($langFile, $langList)) {
-    $langFile = "en.php"; // default language is english
+$l = array();
+
+// Load default language: English
+$langDefault = 'en';
+
+$langFile = __DIR__ . '/' . $langDefault . '.php';
+
+require_once($langFile);
+
+// Try to load language according to configuration
+$langConf = $configValues['CONFIG_LANG'];
+
+if($langConf != $langDefault) {
+	$langFileConf = __DIR__ . '/' . $langConf . '.php';
+
+	if(is_file($langFileConf)) {
+		require_once($langFileConf);
+		
+		$langFile = $langFileConf;
+	}
 }
 
 // $langCode can be used in html tag elements like lang and/or xml:lang
 $langCode = str_replace("_", "-", pathinfo($langFile, PATHINFO_FILENAME));
-include("$langDir/$langFile");
 
 // Translation function
 function t($a, $b = null, $c = null, $d = null) {

@@ -6,6 +6,8 @@
 	- fix regex query for rollback
 	- fix mysql directory in dockerfile
 	- fix MAC validation in new user (requires PHP v5.5)
+	- fix load of language file
+	- mark Romanian language files as broken
 
 release 1.1-2 - 08 Aug 2019
     - syntax fix in language translations
