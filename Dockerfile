@@ -37,6 +37,7 @@ RUN apt-get update \
 		php-gd \
 		php-curl \
 		php-mail \
+		php-dev \
 		php-mail-mime \
 		php-db \
 		php-mysql \
