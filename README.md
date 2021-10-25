@@ -145,7 +145,8 @@ There is also a digital version of the book via PDF, available at: https://liran
 
 ### GIS - Geographical Information System
 
-	daloRADIUS comes with integrated support for GIS provided by GoogleMaps and thus
+	daloRADIUS comes with integrated support for GIS provided by
+	Leaflet and CARTO basemap thus
 	provides the ability to visually locate deployed HotSpots across a map, see their status,
 	and monitor them visually.
 
