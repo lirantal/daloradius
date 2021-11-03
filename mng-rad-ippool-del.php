@@ -67,7 +67,7 @@
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg .= "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolnamex</b> from database";
+				$successMsg .= "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolnamex</b> from database <br>";
 				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolnamex] on page: ";
 
 				include 'library/closedb.php';
