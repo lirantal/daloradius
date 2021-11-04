@@ -22,5 +22,5 @@
  *********************************************************************************************************
  */
 
-$configValues['DALORADIUS_VERSION'] = '1.2';
-$configValues['DALORADIUS_DATE'] = '25 Jun 2021';
+$configValues['DALORADIUS_VERSION'] = '1.3';
+$configValues['DALORADIUS_DATE'] = '04 Nov 2021';
