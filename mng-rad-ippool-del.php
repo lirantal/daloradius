@@ -52,23 +52,23 @@
 
 		foreach ($itemsArray as $value) {
 
-			list($poolname, $ipaddress) = preg_split('\|\|', $value);
+			list($poolnamex, $ipaddress) = preg_split('/\|\|/', $value);
 
-			if ( (trim($poolname) != "") && (trim($ipaddress) != "") ) {
+			if ( (trim($poolnamex) != "") && (trim($ipaddress) != "") ) {
 
 				include 'library/opendb.php';
 
-				$allPoolNames .= $poolname . ", ";
+				$allPoolNames .= $poolnamex . ", ";
 				$allIPAddresses .= $ipaddress .", ";
 
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL']." WHERE ".
-					" pool_name='".$dbSocket->escapeSimple($poolname)."' AND".
+					" pool_name='".$dbSocket->escapeSimple($poolnamex)."' AND".
 					" framedipaddress='".$dbSocket->escapeSimple($ipaddress)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolname</b> from database";
-				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolname] on page: ";
+				$successMsg .= "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolnamex</b> from database <br>";
+				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolnamex] on page: ";
 
 				include 'library/closedb.php';
 
