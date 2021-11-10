@@ -47,7 +47,7 @@
 
                 foreach ($hgroup_array as $hgroup) {
 
-                        list($nasipaddress, $nasportid) = preg_split('\|\|', $hgroup);
+                        list($nasipaddress, $nasportid) = preg_split('/\|\|/', $hgroup);
 
                         if (trim($nasipaddress) != "") {
 
