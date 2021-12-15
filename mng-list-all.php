@@ -188,6 +188,10 @@
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
 		".t('title','Groups')."</a>
 		</th>
+
+		<th scope='col'> 
+		Last Login
+		</th>
 		</tr> </thread>";
 
 	while($row = $res->fetchRow()) {
@@ -223,7 +227,7 @@
 			echo "<td>$row[1]</td>";
 		}
 		echo "
-			<td>$row[3]</td>
+			<td>$row[3]</td><td>$row[8]</td>
 		</tr>";
 	}
 	
