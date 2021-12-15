@@ -185,6 +185,7 @@ $l['all']['UsedTime'] = "Used Time";
 $l['all']['Status'] = "Status";
 $l['all']['Usage'] = "Usage";
 $l['all']['StartTime'] = "Start Time";
+$l['all']['LastLogin'] = "Last Login";
 $l['all']['StopTime'] = "Stop Time";
 $l['all']['TotalTime'] = "Total Time";
 $l['all']['TotalTraffic'] = "Total Traffic";
