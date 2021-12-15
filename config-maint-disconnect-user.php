@@ -164,15 +164,27 @@
         $res = $dbSocket->query($sql);
 
         while($row = $res->fetchRow()) {
+			if($row[0] == $_GET['nasaddr']){
+				echo "
+                        <option value='$row[0]||$row[2]' selected> $row[1] - $row[0] </option>
+                        ";
+			}else{
                 echo "
                         <option value='$row[0]||$row[2]'> $row[1] - $row[0] </option>
                         ";
-
+			}
         }
 
         include 'library/closedb.php';
 ?>
 		</select>
+
+ <script type="text/JavaScript">
+		setTimeout(() => {
+			document.getElementById('naslist').onchange()
+		}, 1000);
+</script>
+
                 <br/>
 
                 <input name='nassecret' type='hidden' type='hidden' id='nassecret' value='' tabindex=104 />
