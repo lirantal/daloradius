@@ -25,8 +25,8 @@
  */
 
 
-$logfile_loc1 = '/var/log/syslog';
-$logfile_loc2 = '/var/log/messages';
+$logfile_loc1 = $configValues['CONFIG_SYSLOG_DIR'].'syslog';
+$logfile_loc2 = $configValues['CONFIG_SYSLOG_DIR'].'messages';
 
 if (file_exists($logfile_loc1))
 	$logfile = $logfile_loc1;

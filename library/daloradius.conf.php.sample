@@ -76,6 +76,7 @@ $configValues['CONFIG_LOG_QUERIES'] = 'no';
 $configValues['CONFIG_DEBUG_SQL'] = 'no';
 $configValues['CONFIG_DEBUG_SQL_ONPAGE'] = 'no';
 $configValues['CONFIG_LOG_FILE'] = '/tmp/daloradius.log';
+$configValues['CONFIG_SYSLOG_DIR'] = '/var/log/';
 $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = 'no';
 $configValues['CONFIG_IFACE_TABLES_LISTING'] = '25';
 $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = 'yes';

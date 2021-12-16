@@ -191,7 +191,7 @@
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameOnline=$usernameOnline&orderBy=acctstarttime&orderType=$orderType\">
-		".t('all','StartTime')."</a>
+		".t('all','LastLogin')."</a>
 		</th>
 		</tr> </thread>";
 
