@@ -154,9 +154,9 @@ function get_memory() {
 
 
 //Get FreeDiskSpace
-function get_hdd_freespace() {
-$df = disk_free_space("/");
-return $df;
+function get_hdd_freespace($dir) {
+$df = disk_free_space($dir);
+return toxbyte($df);
 }
 
 
@@ -311,17 +311,28 @@ function get_mask_addr($ifname) {
 
 <?php
 	echo "<h3>Harddrive Information</h3>";
-	$hddfreespace = get_hdd_freespace();
+	$hddfreespace = get_hdd_freespace("/");
+
+	echo("
+		<table class='summarySection'>
+			<tr>
+				<td class='summaryKey'> Free Drive Space </td>
+				<td class='summaryValue'><span class='sleft'>$hddfreespace</span> </td>
+			</tr>"
+	);
+
+	if($configValues['CONFIG_MOUNTED_DIR'] != ''){
+		$mntfreespace = get_hdd_freespace($configValues['CONFIG_MOUNTED_DIR']);
+		echo("
+			<tr>
+				<td class='summaryKey'> Mounted Drive Space </td>
+				<td class='summaryValue'><span class='sleft'>$mntfreespace</span> </td>
+			</tr>"
+		);
+	}
+
+	echo("</table>");
 ?>
-
-
-<table class='summarySection'>
-  <tr>
-    <td class='summaryKey'> Free Drive Space </td>
-    <td class='summaryValue'><span class='sleft'><?php echo toxbyte ($hddfreespace); ?></span> </td>
-  </tr>
-
-</table>
 
 <?php
 	echo "<h3>Network Interfaces</h3>";
