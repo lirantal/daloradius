@@ -50,6 +50,6 @@ function check_service($sname) {
   </tr>
   <tr>
     <td class='summaryKey'> Mysql </td>
-    <td class='summaryValue'><span class='sleft'><?php echo check_service("mysql");  ?></span> </td>
+    <td class='summaryValue'><span class='sleft'><?php echo check_service("mysql|mariadb");  ?></span> </td>
   </tr>
 </table>
