@@ -52,4 +52,8 @@ function check_service($sname) {
     <td class='summaryKey'> Mysql </td>
     <td class='summaryValue'><span class='sleft'><?php echo check_service("mysql");  ?></span> </td>
   </tr>
+  <tr>
+    <td class='summaryKey'> Maria </td>
+    <td class='summaryValue'><span class='sleft'><?php echo check_service("mariadb");  ?></span> </td>
+  </tr>
 </table>
