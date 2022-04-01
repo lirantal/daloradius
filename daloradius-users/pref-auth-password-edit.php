@@ -36,7 +36,7 @@
 		$newPassword = $_POST['newpassword'];
 		$verifyPassword = $_POST['verifypassword'];
 
-		if ($newPassword == $verifyPassword) {
+		if ($newPassword === $verifyPassword) {
 
 			if (trim($currentPassword) != "") {
 
