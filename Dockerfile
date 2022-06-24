@@ -68,6 +68,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
 RUN mkdir /data /internal_data
 
 ADD . /var/www/html
+RUN touch /var/www/html/library/daloradius.conf.php
 RUN chown -R www-data:www-data /var/www/html
 
 # Enable the .htaccess in /var/www/html
