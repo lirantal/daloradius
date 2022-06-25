@@ -71,6 +71,12 @@ ADD . /var/www/html
 RUN touch /var/www/html/library/daloradius.conf.php
 RUN chown -R www-data:www-data /var/www/html
 
+# Fix logging files
+RUN mkdir /var/log/freeradius
+RUN touch /var/log/freeradius/radius.log
+RUN touch /tmp/daloradius.log
+RUN chown www-data:www-data /tmp/daloradius.log
+
 # Enable the .htaccess in /var/www/html
 RUN /bin/sed -i 's/AllowOverride\ None/AllowOverride\ All/g' /etc/apache2/apache2.conf
 
