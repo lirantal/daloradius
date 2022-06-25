@@ -17,6 +17,9 @@ function init_freeradius {
 	ln -s $RADIUS_PATH/mods-available/sqlcounter $RADIUS_PATH/mods-enabled/sqlcounter
 	ln -s $RADIUS_PATH/mods-available/sqlippool $RADIUS_PATH/mods-enabled/sqlippool
 	sed -i 's|instantiate {|instantiate {\nsql|' $RADIUS_PATH/radiusd.conf # mods-enabled does not ensure the right order
+	
+	# Enable used tunnel for unifi
+	sed -i 's|use_tunneled_reply = no|use_tunneled_reply = yes|' $RADIUS_PATH/mods-available/eap
 
 	# Enable status in freeadius
 	ln -s $RADIUS_PATH/sites-available/status $RADIUS_PATH/sites-enabled/status
