@@ -81,7 +81,10 @@ RUN chmod +x /var/www/html/init.sh
 RUN rm -rf /var/www/html/index.html
 
 # Create daloRADIUS Log file
-RUN touch /var/log/daloradius.log && chown -R www-data:www-data /var/log/daloradius.log
+RUN touch /tmp/daloradius.log && chown -R www-data:www-data /tmp/daloradius.log
+
+# Create freeradius log
+RUN mkdir /var/log/freeradius && touch /var/log/freeradius/radius.log
 
 # Expose Web port for daloRADIUS
 EXPOSE 80
