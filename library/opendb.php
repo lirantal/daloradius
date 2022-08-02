@@ -23,26 +23,11 @@
 	include (dirname(__FILE__).'/config_read.php');
 	include (dirname(__FILE__).'/tableConventions.php');
 
-	// setup database connectio information according to the session's location name which is held in $SESSION['location_name'].
+	// setup database connection information according to the session's location name which is held in $SESSION['location_name'].
 	// this is introduced in order to provide daloRADIUS to authenticate and manage several database backends without having to
 	// install several web directories of daloradius
 
-	if ((isset($_SESSION['location_name'])) && ($_SESSION['location_name'] == "default")) {
-
-		$mydbEngine = $configValues['CONFIG_DB_ENGINE'];
-		$mydbUser = $configValues['CONFIG_DB_USER'];
-		$mydbPass = $configValues['CONFIG_DB_PASS'];
-		$mydbHost = $configValues['CONFIG_DB_HOST'];
-		$mydbPort = $configValues['CONFIG_DB_PORT'];
-		$mydbName = $configValues['CONFIG_DB_NAME'];
-
-		if (!$mydbPort)
-			$mydbPort = '3306';
-
-		$dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
-					$mydbHost.":".$mydbPort."/".$mydbName;
-
-	} elseif ((isset($_SESSION['location_name'])) && ($_SESSION['location_name'] != "default")) {
+	if ((isset($_SESSION['location_name'])) && ($_SESSION['location_name'] != "default")) {
 
 		$mydbEngine = $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['Engine'];
 		$mydbUser = $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['Username'];
@@ -50,9 +35,6 @@
 		$mydbHost = $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['Hostname'];
 		$mydbPort = $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['Port'];
 		$mydbName = $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]['Database'];
-
-		if (!$mydbPort)
-			$mydbPort = '3306';
 
 		$dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
 					$mydbHost.":".$mydbPort."/".$mydbName;
@@ -68,9 +50,6 @@
 		$mydbHost = $configValues['CONFIG_DB_HOST'];
 		$mydbPort = $configValues['CONFIG_DB_PORT'];
 		$mydbName = $configValues['CONFIG_DB_NAME'];
-
-		if (!$mydbPort)
-			$mydbPort = '3306';
 
 		$dbConnectString = $mydbEngine . "://".$mydbUser.":".$mydbPass."@".
 					$mydbHost.":".$mydbPort."/".$mydbName;
