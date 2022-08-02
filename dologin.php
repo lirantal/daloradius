@@ -25,14 +25,13 @@
  */
 
 include('library/sessions.php');
+include_once('library/config_read.php');
 
 // set's the session max lifetime to 3600 seconds
 ini_set('session.gc_maxlifetime', 3600);
 
 dalo_session_start();
 dalo_session_regenerate_id();
-
-include('library/opendb.php');
 
 $errorMessage = '';
 
@@ -42,11 +41,17 @@ $errorMessage = '';
 // validate location
 $location_name = (!empty($_POST['location'])) ? $_POST['location']: "default";
 
+/*
 $_SESSION['location_name'] = (array_key_exists('CONFIG_LOCATIONS', $configValues)
     && is_array($configValues['CONFIG_LOCATIONS'])
     && count($configValues['CONFIG_LOCATIONS']) > 0
     && in_array($location_name, $configValues['CONFIG_LOCATIONS'])) ?
         $location_name : "default";
+*/
+
+$_SESSION['location_name'] = isset($configValues['CONFIG_LOCATIONS'][$location_name]) ? $location_name : 'default';
+
+include('library/opendb.php');		
         
 $operator_user = $dbSocket->escapeSimple($_POST['operator_user']);
 $operator_pass = $dbSocket->escapeSimple($_POST['operator_pass']);

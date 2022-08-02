@@ -111,6 +111,7 @@ $configValues['CONFIG_LOCATIONS'] =                     array(
                 "Password" => "",
                 "Database" => "radius",
                 "Hostname" => "127.0.0.1",
+				"Port"     => "3306",
 				"CONFIG_INVOICE_TEMPLATE" => "invoice_template_location_1.html",
 				"CONFIG_INVOICE_ITEM_TEMPLATE" => "invoice_item_template_location_1.html"
         ),
@@ -120,7 +121,8 @@ $configValues['CONFIG_LOCATIONS'] =                     array(
                 "Username" => "db_usertest",
                 "Password" => "db_passtest",
                 "Database" => "test_db1",
-                "Hostname" => "localhost"
+                "Hostname" => "localhost",
+				"Port"     => "3306"
         )
 );
 */
