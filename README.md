@@ -305,7 +305,7 @@ Helpful resources to find help and support with daloRADIUS:
 Copyright Liran Tal 2007-2019. All rights reserved.
 For release information and license, read LICENSE.
 
-[daloRADIUS](http://www.daloradius.com) version 1.1-2 stable release
+[daloRADIUS](http://www.daloradius.com) version 1.3 stable release
 by Liran Tal <liran.tal@gmail.com>,
 Miguel García <miguelvisgarcia@gmail.com>.
 
