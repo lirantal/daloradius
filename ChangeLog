@@ -1,4 +1,11 @@
-*wip* 1.1-3 BETA
+release 1.? - WIP
+	- Ternary expression fix in graph library
+	- Report fixes
+	- Fix support for multiple db locations
+
+* a mess here with releases as branches and / or tags: 1.1-2, 1.1-3, 1.1-4, 1.1-5, 1.2, 1.3 *
+
+release 1.1-3 - ?? ??? ????
 	- remove unavailable data in SUBSCRIPTION ANALYSIS view.
 	- update Portuguese language
 	- dockerfile improvements

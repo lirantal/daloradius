@@ -362,15 +362,15 @@ function userPlanInformation($username, $drawTable) {
 	empty($row['planName']) ? $planName = "unavailable" : $planName = $row['planName'];
 	empty($row['planRecurringPeriod']) ? $planRecurringPeriod = "unavailable" : $planRecurringPeriod = $row['planRecurringPeriod'];  
 	empty($row['planTimeType']) ? $planTimeType = "unavailable" : $planTimeType = $row['planTimeType'];
-	empty($row['planTimeBank']) ? $planTimeBank = "unavailable" : $planTimeBank = $row['planTimeBank'];
+	empty($row['planTimeBank']) ? $planTimeBank = 0 : $planTimeBank = $row['planTimeBank'];
 		
 	$planBandwidthUp = $row['planBandwidthUp'];
 	$planBandwidthDown = $row['planBandwidthDown'];
 	$planTrafficTotal = $row['planTrafficTotal'];
 
 
-	(isset($row['planTrafficDown'])) ? $planTrafficDown = $row['planTrafficDown'] : $planTrafficDown = "unavailable";
-	(isset($row['planTrafficUp'])) ? $planTrafficUp = $row['planTrafficUp'] : $planTrafficUp = "unavailable";
+	(isset($row['planTrafficDown'])) ? $planTrafficDown = $row['planTrafficDown'] : $planTrafficDown = 0;
+	(isset($row['planTrafficUp'])) ? $planTrafficUp = $row['planTrafficUp'] : $planTrafficUp = 0;
 
     (isset($row['Access-Period'])) ? $userLimitAccessPeriod = time2str($row['Access-Period']) : $userLimitAccessPeriod = "none";
     
@@ -379,9 +379,9 @@ function userPlanInformation($username, $drawTable) {
 		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username'";
 	$res = $dbSocket->query($sql);
 	$row = $res->fetchRow();
-    $totalTimeUsed = $row[0];
-    $totalTrafficDown = $row[1];
-    $totalTrafficUp = $row[2];
+    $totalTimeUsed = isset($row[0]) ? $row[0] : 0;
+    $totalTrafficDown = isset($row[1]) ? $row[1] : 0;
+    $totalTrafficUp = isset($row[2]) ? $row[2] : 0;
 	
     $timeDiff = ($planTimeBank - $totalTimeUsed);
     ($planTrafficDown != 0) ? $trafficDownDiff = ($planTrafficDown - $totalTrafficDown) : $trafficDownDiff = 0;
