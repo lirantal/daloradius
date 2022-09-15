@@ -189,7 +189,7 @@
 					if (!($group_priority))
 						$group_priority=0;		// if group priority wasn't set we
 										// initialize it to 0 by default
-					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." VALUES ('".
+					$sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." VALUES (NULL,'".
 						$dbSocket->escapeSimple($username)."', '".
 						$dbSocket->escapeSimple($group)."', ".
 						$dbSocket->escapeSimple($group_priority).") ";
