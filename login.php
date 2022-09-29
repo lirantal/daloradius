@@ -74,7 +74,7 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                             
                         <label for="operator_user">Username</label>
                         <input class="form-input" id="operator_user"
-                            name="operator_user" value="administrator"
+                            name="operator_user" value=""
                             type="text" tabindex="1" />
                         
                         <label for="operator_pass">Password</label>
