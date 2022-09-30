@@ -22,7 +22,6 @@
 
 include_once("library/sessions.php");
 dalo_session_start();
-dalo_session_regenerate_id();
 
 if (array_key_exists('daloradius_logged_in', $_SESSION)
     && $_SESSION['daloradius_logged_in'] !== false) {

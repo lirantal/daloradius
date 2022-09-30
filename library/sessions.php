@@ -66,6 +66,7 @@ function dalo_session_start() {
         if ($_SESSION['time'] < $now-900) {
             dalo_session_destroy();
             session_start();
+            dalo_session_regenerate_id();
         }
     } else {
         $_SESSION['time'] = $now;
