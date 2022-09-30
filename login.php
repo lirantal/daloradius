@@ -22,6 +22,7 @@
 
 include_once("library/sessions.php");
 dalo_session_start();
+dalo_session_regenerate_id();
 
 if (array_key_exists('daloradius_logged_in', $_SESSION)
     && $_SESSION['daloradius_logged_in'] !== false) {
@@ -29,6 +30,7 @@ if (array_key_exists('daloradius_logged_in', $_SESSION)
     exit;
 }
 
+// this include "exports" $langCode that can be used in this script
 include("lang/main.php");
 
 // ~ used later for rendering location select element
@@ -86,18 +88,21 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                         <select id="location" name="location" tabindex="3"
                             class="form-input"<?= ($onlyDefaultLocation) ? " disabled" : "" ?>>
                             <?php
+                                $defaultLocationFormat = '<option value="%s">%s</option>' . "\n";
                                 if ($onlyDefaultLocation) {
-                                    echo "<option value=\"default\">default</option>\n";
+                                    printf($defaultLocationFormat, "default", "default");
                                 } else {
                                     $locations = array_keys($configValues['CONFIG_LOCATIONS']);
                                     foreach ($locations as $location) {
-                                        echo "<option value=\"$location\">$location</option>\n";
+                                        printf($defaultLocationFormat, $location, $location);
                                     }
                                 }
                             ?>
                         </select>
                         <input class="form-submit" type="submit"
                             value="<?= t('text','LoginPlease') ?>" tabindex="4" />
+
+                        <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>" />
                     </form>
                     
                     <small class="form-caption"><?= t('all','daloRADIUS') ?></small>
