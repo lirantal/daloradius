@@ -24,20 +24,54 @@
  *******************************************************************************
  */
 
+// this function ("installs" and) returns a csrf token
+function dalo_csrf_token() {
+    
+    $random = (function_exists('random_bytes'))
+            ? random_bytes(32)
+            : ((function_exists('mcrypt_create_iv')) ? mcrypt_create_iv(32, MCRYPT_DEV_URANDOM)
+                                                     : openssl_random_pseudo_bytes(32));
+    $_SESSION['csrf_token'] = bin2hex($random);
+    
+    return $_SESSION['csrf_token'];
+}
+
+// this function can be used for verifying if the csrf token is valid
+function dalo_check_csrf_token($token) {
+    if (empty($token)) {
+        return false;
+    }
+
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
 // daloRADIUS session start function support timestamp management
 function dalo_session_start() {
-    ini_set('session.use_strict_mode', 0);
+    // set's the session max lifetime to 3600 seconds
+    ini_set('session.gc_maxlifetime', 3600);
+    ini_set('session.use_strict_mode', 1);
+    
+    // Change PHPSESSID for better security, remove this if set in php.ini
+    session_name('daloradius_sid');
+
+    // Secure session_set_cookie_params
+    session_set_cookie_params(0, '/', null, null, true);
+    
     session_start();
     
-    if (array_key_exists('deleted_time', $_SESSION)) {
-        $t = $_SESSION['deleted_time'];
+    $now = time();
     
+    if (array_key_exists('time', $_SESSION) && isset($_SESSION['time'])) {
         // if too old, destroy and restart
-        if (!empty($t) && $t < time()-900) {
-            session_destroy();
+        if ($_SESSION['time'] < $now-900) {
+            dalo_session_destroy();
             session_start();
+            dalo_session_regenerate_id();
         }
+    } else {
+        $_SESSION['time'] = $now;
     }
+    
 }
 
 // daloRADIUS session regenerate id function
@@ -50,7 +84,8 @@ function dalo_session_regenerate_id() {
     $session_id = (function_exists('session_create_id'))
         ? session_create_id('daloRADIUS-') : uniqid('daloRADIUS-');
     
-    $_SESSION['deleted_time'] = time();
+    $_SESSION['time'] = time();
+    
     session_commit();
     
     ini_set('session.use_strict_mode', 0);
@@ -58,6 +93,7 @@ function dalo_session_regenerate_id() {
     
     ini_set('session.use_strict_mode', 1);
     session_start();
+
 }
 
 // daloRADIUS session destroy and clean all session variables
