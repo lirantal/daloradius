@@ -15,81 +15,103 @@
  *
  *********************************************************************************************************
  * Description:
- * 		this script process some important server information and displays it
+ *         this script process some important server information and displays it
  *
- * Authors:	Liran Tal <liran@enginx.com>
- *		Carlos Cesario <carloscesario@gmail.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Carlos Cesario <carloscesario@gmail.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
-	include_once('include/management/pages_common.php');
+
+// prevent this file to be directly accessed
+$extension_file = '/library/exten-server_info.php';
+if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
+    header("Location: ../index.php");
+    exit;
+}
+
+include_once('include/management/pages_common.php');
+
+// returns system name and version
+function get_system_name_and_version() {
+    $command = "cat /etc/*release | grep ^NAME\= | cut -d'=' -f2- | tr -d '\"'";
+    exec($command, $output, $result_code);
+    if ($result_code !== 0) {
+        return "(n/d)";
+    }
+    
+    $result = $output[0];
+    $output = null;
+    $result_code = null;
+    
+    $command = "cat /etc/*release | grep ^VERSION\= | cut -d'=' -f2- | tr -d '\"'";
+    exec($command, $output, $result_code);
+    if ($result_code === 0) {
+        $result .= sprintf(", version %s", $output[0]);
+    }
+    
+    return $result;
+}
+
 
 // Display uptime system
 // @return string Return uptime system
 function uptime() {
-	$file_name = "/proc/uptime";
+    $file_name = "/proc/uptime";
 
-	$fopen_file = fopen($file_name, 'r');
-	$buffer = explode(' ', fgets($fopen_file, 4096));
-	fclose($fopen_file);
+    $fopen_file = fopen($file_name, 'r');
+    $buffer = explode(' ', fgets($fopen_file, 4096));
+    fclose($fopen_file);
 
-	$sys_ticks = trim($buffer[0]);
-	$min = $sys_ticks / 60;
-	$hours = $min / 60;
-	$days = floor($hours / 24);
-	$hours = floor($hours - ($days * 24));
-	$min = floor($min - ($days * 60 * 24) - ($hours * 60));
-	$result = "";
+    $sys_ticks = trim($buffer[0]);
+    $min = $sys_ticks / 60;
+    $hours = $min / 60;
+    $days = floor($hours / 24);
+    $hours = floor($hours - ($days * 24));
+    $min = floor($min - ($days * 60 * 24) - ($hours * 60));
+    $result = "";
 
-	if ($days != 0) {
-		if ($days > 1)
-			$result = "$days " . " days ";
-		else
-			$result = "$days " . " day ";
-	}
+    if ($days != 0) {
+        $result .= $days;
+        $result .= ($days > 1) ? " days " : " day ";
+    }
 
-	if ($hours != 0) {
-		if ($hours > 1)
-			$result .= "$hours " . " hours ";
-		else
-			$result .= "$hours " . " hour ";
-	}
+    if ($hours != 0) {
+        $result .= $hours;
+        $result .= ($hours > 1) ? " hours " : " hour ";
+    }
 
-	if ($min > 1 || $min == 0)
-		$result .= "$min " . " minutes ";
-	elseif ($min == 1)
-		$result .= "$min " . " minute ";
+    if ($min > 1 || $min == 0)
+        $result .= "$min " . " minutes ";
+    elseif ($min == 1)
+        $result .= "$min " . " minute ";
 
-	return $result;
+    return $result;
 }
 
 
 // Display hostname system
 // @return string System hostname or none
 function get_hostname() {
-	$file_name = "/proc/sys/kernel/hostname";
+    $file_name = "/proc/sys/kernel/hostname";
 
-	if ($fopen_file = fopen($file_name, 'r')) {
-		$result = trim(fgets($fopen_file, 4096));
-		fclose($fopen_file);
-	} else {
-		$result = "(none)";
-	}
+    if ($fopen_file = fopen($file_name, 'r')) {
+        $result = trim(fgets($fopen_file, 4096));
+        fclose($fopen_file);
+    } else {
+        $result = "(n/d)";
+    }
 
-	return $result;
+    return $result;
 }
 
 
 // Display currenty date/time
 // @return string Current system date/time or none
 function get_datetime() {
-	if ($today = date("F j, Y, g:i a")) {
-		$result = $today;
-	} else {
-		$result = "(none)";
-	}
-
-	return $result;
+    $today = date("F j, Y, g:i a");
+    return ($today) ? $today : "(n/d)";
 }
 
 
@@ -97,59 +119,59 @@ function get_datetime() {
 // Get System Load Average
 // @return array System Load Average
 function get_system_load() {
-	$file_name = "/proc/loadavg";
-	$result = "";
-	$output = "";
+    $file_name = "/proc/loadavg";
+    $result = "";
+    $output = "";
 
-	// get the /proc/loadavg information
-	if ($fopen_file = fopen($file_name, 'r')) {
-		$result = trim(fgets($fopen_file, 256));
-		fclose($fopen_file);
-	} else {
-		$result = "(none)";
-	}
+    // get the /proc/loadavg information
+    if ($fopen_file = fopen($file_name, 'r')) {
+        $result = trim(fgets($fopen_file, 256));
+        fclose($fopen_file);
+    } else {
+        $result = "(n/d)";
+    }
 
-	$loadavg = explode(" ", $result);
-	$output .= $loadavg[0] . " " . $loadavg[1] . " " . $loadavg[2] . "<br/>";
+    $loadavg = explode(" ", $result);
+    $output .= $loadavg[0] . " " . $loadavg[1] . " " . $loadavg[2] . "<br/>";
 
 
-	// get information the 'top' program
-	$file_name = "top -b -n1 | grep \"Tasks:\" -A1";
-	$result = "";
+    // get information the 'top' program
+    $file_name = "top -b -n1 | grep \"Tasks:\" -A1";
+    $result = "";
 
-	if ($popen_file = popen($file_name, 'r')) {
-		$result = trim(fread($popen_file, 2048));
-		pclose($popen_file);
-	} else {
-		$result = "(none)";
-	}
+    if ($popen_file = popen($file_name, 'r')) {
+        $result = trim(fread($popen_file, 2048));
+        pclose($popen_file);
+    } else {
+        $result = "(n/d)";
+    }
 
-	$result = str_replace("\n", "<br/>", $result);
-	$output .= $result;
+    $result = str_replace("\n", "<br/>", $result);
+    $output .= $result;
 
-	return $output;
+    return $output;
 }
 
 
 // Get Memory System MemTotal|MemFree
 // @return array Memory System MemTotal|MemFree
 function get_memory() {
-	$file_name = "/proc/meminfo";
-	$mem_array = array();
+    $file_name = "/proc/meminfo";
+    $mem_array = array();
 
-	$buffer = file($file_name);
+    $buffer = file($file_name);
 
-	while (list($key, $value) = each($buffer)) {
-		if (strpos($value, ':') !== false) {
-			$match_line = explode(':', $value);
-			$match_value = explode(' ', trim($match_line[1]));
-			if (is_numeric($match_value[0])) {
-				$mem_array[trim($match_line[0])] = trim($match_value[0]);
-			}
-		}
-	}
+    while (list($key, $value) = each($buffer)) {
+        if (strpos($value, ':') !== false) {
+            $match_line = explode(':', $value);
+            $match_value = explode(' ', trim($match_line[1]));
+            if (is_numeric($match_value[0])) {
+                $mem_array[trim($match_line[0])] = trim($match_value[0]);
+            }
+        }
+    }
 
-	return $mem_array;
+    return $mem_array;
 }
 
 
@@ -164,7 +186,7 @@ return $df;
 // @param decimal $value
 // @return int Memory MB
 function convert_ToMB($value) {
-	return round($value / 1024) . " MB\n";
+    return round($value / 1024) . " MB\n";
 }
 
 
@@ -172,20 +194,20 @@ function convert_ToMB($value) {
 // Get all network names devices (eth[0-9])
 // @return array Get list network name interfaces
 function get_interface_list() {
-	$devices = array();
-	$file_name = "/proc/net/dev";
+    $devices = array();
+    $file_name = "/proc/net/dev";
 
-	if ($fopen_file = fopen($file_name, 'r')) {
-		while ($buffer = fgets($fopen_file, 4096)) {
-			if (preg_match("/eth[0-9][0-9]*/i", trim($buffer), $match)) {
-				$devices[] = $match[0];
-			}
-		}
-		$devices = array_unique($devices);
-		sort($devices);
-		fclose ($fopen_file);
-	}
-	return $devices;
+    if ($fopen_file = fopen($file_name, 'r')) {
+        while ($buffer = fgets($fopen_file, 4096)) {
+            if (preg_match("/eth[0-9][0-9]*/i", trim($buffer), $match)) {
+                $devices[] = $match[0];
+            }
+        }
+        $devices = array_unique($devices);
+        sort($devices);
+        fclose ($fopen_file);
+    }
+    return $devices;
 }
 
 
@@ -194,42 +216,41 @@ function get_interface_list() {
 // @param string $ifname
 // @return string Ip address or (none)
 function get_ip_addr($ifname) {
-	$command_name = "/sbin/ifconfig $ifname";
-	$ifip = "";
+    $command_formats = array(
+        '(ip addr show %s || /sbin/ip addr show %s) | grep inet | grep -v inet6 | sed -E "s/^\s+//g" | cut -d" " -f2 | cut -d"/" -f1',
+        '(ifconfig %s || /sbin/ifconfig %s) | grep -oE "inet ([0-9]{1,3}\.?){4}" | cut -d" " -f2'
+    );
 
-	exec($command_name , $command_result);
+    foreach ($command_formats as $format) {
+        $command = sprintf($format, escapeshellarg($ifname), escapeshellarg($ifname));
+        exec($command, $output, $result_code);
+        if ($result_code === 0) {
+            return $output[0];
+        }
+    }
 
-	$ifip = implode($command_result, "\n");
-	if (preg_match("/inet addr:[0-9\.]*/i", $ifip, $match)) {
-		$match = explode(":", $match[0]);
-		return $match[1];
-	} elseif (preg_match("/inet [0-9\.]*/i", $ifip, $match)) {
-		$match = explode(" ", $match[0]);
-		return $match[1];
-	} else {
-		return "(none)";
-	}
+    return "(n/d)";
 }
 
 // Get mac address
 // @param string $ifname
 // @return string Mac address or (none)
 function get_mac_addr($ifname) {
-	$command_name = "/sbin/ifconfig $ifname";
-	$ifip = "";
+    $command_formats = array(
+        '(ip addr show %s || /sbin/ip addr show %s) | grep "link/ether" | sed -E "s/^\s+//g" | cut -d" " -f2',
+        '(ifconfig %s || /sbin/ifconfig %s) | grep "ether" | sed -E "s/^\s+//g" | cut -d" " -f2'
+    );
 
-	exec($command_name , $command_result);
+    foreach ($command_formats as $format) {
+        $command = sprintf($format, escapeshellarg($ifname), escapeshellarg($ifname));
+        exec($command, $output, $result_code);
 
-	$ifmac = implode($command_result, "\n");
-	if (preg_match("/hwaddr [0-9A-F:]*/i", $ifmac, $match)) {
-		$match = explode(" ", $match[0]);
-		return $match[1];
-	} elseif (preg_match("/ether [0-9A-F:]*/i", $ifmac, $match)) {
-		$match = explode(" ", $match[0]);
-		return $match[1];
-	} else {
-		return "(none)";
-	}
+        if ($result_code === 0 && preg_match("/^([0-9A-F]{2}\:){5}[0-9A-F]{2}$/i", $output[0])) {
+            return $output[0];
+        }
+    }
+
+    return "(n/d)";
 }
 
 
@@ -237,129 +258,109 @@ function get_mac_addr($ifname) {
 // @param string $ifname
 // @return string Netmask address or (none)
 function get_mask_addr($ifname) {
-	$command_name = "/sbin/ifconfig $ifname";
-	$ifmask = "";
-
-	exec($command_name , $command_result);
-
-	$ifmask = implode($command_result, "\n");
-	if (preg_match("/mask:[0-9\.]*/i", $ifmask, $match)) {
-		$match = explode(":", $match[0]);
-		return $match[1];
-	} elseif (preg_match("/netmask [0-9\.]*/i", $ifmask, $match)) {
-		$match = explode(" ", $match[0]);
-		return $match[1];
-	} else {
-		return "(none)";
-	}
+    $command_formats = array(
+        'echo -n "/"; (ip addr show %s || /sbin/ip addr show %s) | grep inet | grep -v inet6 | sed -E "s/^\s+//g" | cut -d" " -f2 | cut -d"/" -f2',
+        '(ifconfig %s || /sbin/ifconfig %s) | grep -oE "netmask ([0-9]{1,3}\.?){4}" | cut -d" " -f2'
+    );
+    
+    foreach ($command_formats as $format) {
+        $command = sprintf($format, escapeshellarg($ifname), escapeshellarg($ifname));
+        exec($command, $output, $result_code);
+        if ($result_code === 0) {
+            return $output[0];
+        }
+    }
+    
+    return "(n/d)";
 }
 
+// memory info
+$meminfo = get_memory();
+$memused = ($meminfo['MemTotal'] - $meminfo['MemFree']);
+
+// hdd info
+$hddfreespace = get_hdd_freespace();
+
+// network interfaces info
+$iflist = get_interface_list();
+
 ?>
 
-
-<?php
-	echo "<h3>General Information</h3>";
-?>
-
-<table class='summarySection'>
+<h3>General Information</h3>
+<table class="summarySection">
   <tr>
-    <td class='summaryKey'> Uptime </td>
-    <td class='summaryValue'><span class='sleft'><?php echo uptime(); ?></span> </td>
+    <td class="summaryKey">System distro</td>
+    <td class="summaryValue"><span class="sleft"><?= get_system_name_and_version() ?></span></td>
+  </tr>
+    
+  <tr>
+    <td class="summaryKey">Uptime</td>
+    <td class="summaryValue"><span class="sleft"><?= uptime() ?></span></td>
   </tr>
   <tr>
-    <td class='summaryKey'> System Load </td>
-    <td class='summaryValue'><span class='sleft'><?php echo get_system_load(); ?></span> </td>
+    <td class="summaryKey">System Load</td>
+    <td class="summaryValue"><span class="sleft"><?= get_system_load() ?></span></td>
   </tr>
   <tr>
-    <td class='summaryKey'> Hostname </td>
-    <td class='summaryValue'><span class='sleft'><?php echo get_hostname(); ?></span> </td>
+    <td class="summaryKey">Hostname</td>
+    <td class="summaryValue"><span class="sleft"><?= get_hostname() ?></span></td>
   </tr>
   <tr>
-    <td class='summaryKey'> Current Date </td>
-    <td class='summaryValue'><span class='sleft'><?php echo get_datetime(); ?></span> </td>
+    <td class="summaryKey">Current Date</td>
+    <td class="summaryValue"><span class="sleft"><?= get_datetime() ?></span></td>
   </tr>
 </table>
 
 
-<?php
-	echo "<h3>Memory Information</h3>";
-	$meminfo = get_memory();
-?>
-
-
-<table class='summarySection'>
+<h3>Memory Information</h3>
+<table class="summarySection">
   <tr>
-    <td class='summaryKey'> Mem. Total </td>
-    <td class='summaryValue'><span class='sleft'><?php echo convert_ToMB ($meminfo['MemTotal']); ?></span> </td>
+    <td class="summaryKey">Mem. Total</td>
+    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($meminfo['MemTotal']) ?></span></td>
   </tr>
   <tr>
-    <td class='summaryKey'> Mem. Free </td>
-    <td class='summaryValue'><span class='sleft'><?php echo convert_ToMB ($meminfo['MemFree']); ?></span> </td>
+    <td class="summaryKey">Mem. Free</td>
+    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($meminfo['MemFree']) ?></span></td>
   </tr>
   <tr>
-    <td class='summaryKey'> Mem. Used </td>
-    <td class='summaryValue'>
-		<span class='sleft'>
-			<?php
-				$memused = ($meminfo['MemTotal'] - $meminfo['MemFree']);
-				echo convert_ToMB ($memused);
-			?>
-		</span> </td>
+    <td class="summaryKey">Mem. Used</td>
+    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($memused) ?></span></td>
   </tr>
 </table>
 
 
-<?php
-	echo "<h3>Harddrive Information</h3>";
-	$hddfreespace = get_hdd_freespace();
-?>
-
-
-<table class='summarySection'>
+<h3>Harddrive Information</h3>
+<table class="summarySection">
   <tr>
-    <td class='summaryKey'> Free Drive Space </td>
-    <td class='summaryValue'><span class='sleft'><?php echo toxbyte ($hddfreespace); ?></span> </td>
+    <td class="summaryKey">Free Drive Space</td>
+    <td class="summaryValue"><span class="sleft"><?= toxbyte($hddfreespace) ?></span></td>
   </tr>
+</table>
 
+<h3>Network Interfaces</h3>
+
+<?php
+    foreach ($iflist as $ifname) {
+?>
+<table class="summarySection">    
+  <tr>
+    <td class="summaryKey">Interface</td>
+    <td class="stitle"><?= $ifname ?></td>
+  </tr>
+  <tr>
+    <td class="summaryKey">Ip</td>
+    <td class="summaryValue"><span class="sleft"><?= get_ip_addr($ifname) ?></span></td>
+  </tr>
+  <tr>
+    <td class="summaryKey">Mask</td>
+    <td class="summaryValue"><span class="sleft"><?= get_mask_addr($ifname) ?></span></td>
+  </tr>
+  <tr>
+    <td class="summaryKey">MAC address</td>
+    <td class="summaryValue"><span class="sleft"><?= get_mac_addr($ifname) ?></span></td>
+  </tr>
 </table>
 
 <?php
-	echo "<h3>Network Interfaces</h3>";
-	$iflist = get_interface_list();
-
-	foreach ($iflist as $ifname) {
-			echo "\t<table class='summarySection'>\n";
-			echo "\t<tr>\n";
-			echo "\t\t<td class='summaryKey'></td>\n";
-			echo "\t\t<td class='stitle'>\n";
-			echo "\t\t\t$ifname\n";
-			echo "\t\t</td>\n";
-			echo "\t</tr>\n";
-			echo "\t<tr>\n";
-			echo "\t<tr>\n";
-			echo "\t\t<td class='summaryKey'>\n";
-			echo "\t\t\tIp\n";
-			echo "\t\t</td>\n";
-			echo "\t\t<td class='summaryValue'>\n";
-			echo "\t\t\t".get_ip_addr($ifname)."\n";
-			echo "\t\t</td>\n";
-			echo "\t</tr>\n";
-			echo "\t<tr>\n";
-			echo "\t\t<td class='summaryKey'>\n";
-			echo "\t\t\tMask\n";
-			echo "\t\t</td>\n";
-			echo "\t\t<td class='summaryValue'>\n";
-			echo "\t\t\t".get_mask_addr($ifname)."\n";
-			echo "\t\t</td>\n";
-			echo "\t</tr>\n";
-			echo "\t<tr>\n";
-			echo "\t\t<td class='summaryKey'>\n";
-			echo "\t\t\tMAC address\n";
-			echo "\t\t<td class='summaryValue'>\n";
-			echo "\t\t\t".get_mac_addr($ifname)."\n";
-			echo "\t\t</td>\n";
-			echo "\t</tr>\n";
-		}
-
-	echo "\t</table>\n";
+    }
 ?>

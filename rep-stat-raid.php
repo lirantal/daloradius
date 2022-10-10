@@ -14,8 +14,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:     Liran Tal <liran@enginx.com>
+ *              Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -25,110 +26,84 @@
 
     include('library/check_operator_perm.php');
 
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     include('include/config/logging.php');
 
-
-?>
-
-
-<?php
-	include_once ("library/tabber/tab-layout.php");
-?>
-<?php
-
     include ("menu-reports-status.php");
-  	
-?>	
-		
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')">RAID Status
-		<h144>&#x2754;</h144></a></h2>
+      
+?>    
+        <div id="contentnorightbar">
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    RAID Status <h144>&#x2754;</h144>
+                </a>
+            </h2>
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<br/>
-		</div>
-		<br/>
-
-
-
-<div class="tabber">
-
+            <div id="helpPage" style="display:none;visibility:visible"><br></div>
+            <br>
 
 <?php
+    $failureMsg = "";
+    $error = '<strong>Error</strong> accessing RAID device information<br><br>';
+    
+    if (!file_exists('/proc/mdstat')) {
+        $failureMsg = $error;
+    } else {
+        exec("cat /proc/mdstat | awk '/md/ {print $1}'", $mdstat, $retStatus);
+        
+        if ($retStatus !== 0) {
+            $failureMsg = $error;
+        } else {
+            if (count($mdstat) > 0) {
+                include_once("library/tabber/tab-layout.php");
+                echo '<div class="tabber">';
+                foreach($mdstat as $mddevice) {
+                    printf('<div class="tabbertab" title="%s">', htmlspecialchars($mddevice, ENT_QUOTES, 'UTF-8'));
+                    
+                    $dev = "/dev/$mddevice";
+                    $cmd = sprintf("sudo /sbin/mdadm --detail %s", escapeshellarg($dev));
+                    $output = "";
+                    exec($cmd, $output);
 
-	if (!file_exists('/proc/mdstat')):
+                    echo '<table class="summarySection">';
+                    foreach($output as $line) {
+                        list($var, $val) = split(":", $line);
+                        $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8');
+                        $val = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
+                        
+                        printf('<tr><td class="summaryKey">%s</td>' .
+                               '<td class="summaryValue"><span class="sleft">%s</span></td></tr>', $var, $val); 
+                    }
+                    echo '</table>'
+                       . '</div>';
+
+                }
+                echo '</div>';
+
+            } else {
+                $failureMsg = $error;
+            }
+        }
+    }
+    
+    if (!empty($failureMsg)) {
+        include_once('include/management/actionMessages.php');
+    }
+
 ?>
-	<font color='red'><b>Error</b> accessing RAID device information:</font>
-	<br/><br/>
-
-<?php 
-	else: 
-	exec("cat /proc/mdstat  | awk '/md/ {print $1}'", $mdstat);
-
-?>
-
-	<font color='red'><b>Error</b> accessing RAID device information:</font>
-	<br/><br/>
-
-	<?php
-		foreach($mdstat as $mddevice):
-	?>
-
-			<div class="tabbertab" title="<?php echo $mddevice ?>">
-
-				<?php
-					$output = "";
-					$cmd = "sudo /sbin/mdadm --detail /dev/$mddevice";
-					exec($cmd, $output);
-				?>
-		
-				<table class='summarySection'>
-		
-					<?php
-						foreach($output as $line):
-					?>
-			
-					<?php
-						list($var, $val) = split(":", $line);
-					?>
-			
-					  <tr>
-						<td class='summaryKey'> <?php echo $var ?> </td>
-						<td class='summaryValue'><span class='sleft'> <?php echo $val ?> </span> </td>
-					  </tr>
-			
-					<?php endforeach; ?>
-		
-				</table>
-		
-			</div>
-
-	<?php endforeach; ?>
-<?php endif; ?>
-
-</div>
-
-
-
-
-		</div>
-		
-		<div id="footer">
-		
+            
+        </div>
+        
+        <div id="footer">
 <?php
-        include 'page-footer.php';
+    include('page-footer.php');
 ?>
-		
-		</div>
-		
+        </div>
+        
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>
