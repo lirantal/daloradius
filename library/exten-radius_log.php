@@ -15,66 +15,77 @@
  *
  *********************************************************************************************************
  * Description:
- *		this script displays the radius log file ofcourse
- *		proper premissions must be applied on the log file for the web
- *		server to be able to read it
+ *        this script displays the radius log file.
+ *              Of course proper premissions must be applied
+ *              on the log file for the web server to be able to read it
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:     Liran Tal <liran@enginx.com>
+ *              Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
 
-$logfile_loc = array();
-$logfile_loc[1] = '/var/log/freeradius/radius.log';
-$logfile_loc[2] = '/usr/local/var/log/radius/radius.log';
-$logfile_loc[3] = '/var/log/radius/radius.log';
+// prevent this file to be directly accessed
+$extension_file = '/library/exten-radius_log.php';
+if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
+    header("Location: ../index.php");
+    exit;
+}
+
+// possible locations for radius logs
+$logfile_loc = array(
+    '/var/log/freeradius/radius.log',
+    '/usr/local/var/log/radius/radius.log',
+    '/var/log/radius/radius.log'
+);
+
+// select one log file
+$logfile = "";
 
 foreach ($logfile_loc as $tmp) {
-	if (file_exists($tmp)) { 
-		$logfile = $tmp; 
-		break;
-	}
-}
- 
-
-if (empty($logfile)) {
-	echo "<br/><br/>
-		error reading log file: <br/><br/>
-		looked for log file in '".implode(", ", $logfile_loc)."' but couldn't find it.<br/>
-		if you know where your freeradius log file is located, set it's location in " . $_SERVER['SCRIPT_NAME'];
-	exit;
-}
-	
-
-if (is_readable($logfile) == false) {
-	echo "<br/><br/>
-		error reading log file: <u>$logfile</u> <br/><br/>
-		possible cause is file premissions or file doesn't exist.<br/>";
-} else {
-    if (file_get_contents($logfile)) {
-
-     $counter = $radiusLineCount;
-     $fileReversed = array_reverse(file($logfile));
-     foreach ($fileReversed as $line) {
-        if($counter == 0) {
-          break;
-        }
-        echo $line . "<br>";
-        $counter--;
-      }
-      // $counter = $radiusLineCount;
-      // foreach ($fileReversed as $line) {
-      //         if (preg_match("/$radiusFilter/i", $line)) {
-      //                 if ($counter == 0)
-      //                         break;
-      //                 $ret = eregi_replace("\n", "<br>", $line);
-      //                 echo $ret;
-      //                 $counter--;
-      //         }
-      // }
+    if (file_exists($tmp)) { 
+    $logfile = $tmp;
+        break;
     }
 }
 
-?>
+$logfile_enc = (!empty($logfile)) ? htmlspecialchars($logfile, ENT_QUOTES, 'UTF-8') : '(none)';
 
+// check if it is empty
+if (empty($logfile)) {
+    printf("<br><br>Error accessing log file: <strong>%s</strong>.<br><br>"
+         . "Looked for log file in <strong>%s</strong> but could not find it.<br>"
+         . "If you know where your <em>freeradius log file</em> is located, "
+         . "specify its location in <strong>%s</strong>",
+           $logfile_enc, htmlspecialchars(implode(", ", $logfile_loc), ENT_QUOTES, 'UTF-8'), $logfile_enc);
+    exit;
+}
+
+// check if it is readable
+if (is_readable($logfile) !== true) {
+    $failureMsg = sprintf("<br><br>Error reading log file: <strong>%s</strong>.<br><br>Is this file readable?<br>",
+                          $logfile_enc);
+    exit;
+}
+
+// get its content
+$logcontent = file_get_contents($logfile);
+if (!empty($logcontent)) {
+    $counter = $radiusLineCount;
+    $filter = (!empty($radiusFilter)) ? preg_quote($radiusFilter, "/") : ".+";
+    $fileReversed = array_reverse(file($logfile));
+
+    echo '<div style="font-family: monospace">';
+    foreach ($fileReversed as $line) {
+    if (preg_match("/$filter/i", $line)) {
+        if ($counter == 0) {
+            break;
+        }
+        echo nl2br(htmlspecialchars($line, ENT_QUOTES, 'UTF-8'), false);
+        $counter--;
+        }
+    }
+    echo '</div>';
+}
+
+?>

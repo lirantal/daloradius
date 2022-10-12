@@ -15,61 +15,59 @@
  *
  *********************************************************************************************************
  * Description:
- *		this script displays the daloradius log file ofcourse
- *		proper premissions must be applied on the log file for the web
- *		server to be able to read it
+ *        this script displays the daloradius log file ofcourse
+ *        proper premissions must be applied on the log file for the web
+ *        server to be able to read it
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-
-if (isset($configValues['CONFIG_LOG_FILE'])) {
-	$logfile = $configValues['CONFIG_LOG_FILE'];
-
-	if (!file_exists($logfile)) {
-
-                $failureMsg = "error reading log file: <b>$logfile</b><br/>".
-				"looked for log file in $logfile but couldn't find it.<br/>".
-				"if you know where your daloradius log file is located, set it's location in your library/daloradius.conf file";
-	} else {
-
-
-		if (is_readable($logfile) == false) {
-
-	                $failureMsg = "error reading log file: <b>$logfile</b><br/>".
-				"possible cause is file premissions or file doesn't exist.<br/>";
-
-		} else {
-		    if (file_get_contents($logfile)) {
-				$fileReversed = array_reverse(file($logfile));
-				$counter = $daloradiusLineCount;
-
-				// This doesn't take in any filter value
-				// from the forms.
-				// This takes in the log count though.
-				foreach ($fileReversed as $line) {
-					if ($counter == 0) {
-						break;
-					}
-					echo $line . "<br>";
-					$counter--;
-				}
-				// Old Code
-				// $counter = $daloradiusLineCount;
-				// foreach ($fileReversed as $line) {
-				// 	if (preg_match("/$daloradiusFilter/i", $line)) {
-				// 		if ($counter == 0)
-				// 			break;
-				// 		$ret = eregi_replace("\n", "<br>", $line);
-				// 		echo $ret;
-				// 		$counter--;
-				// 	}
-				// }
-			}
-		}
-	}
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/exten-daloradius_log.php') !== false) {
+    header("Location: ../index.php");
+    exit;
 }
 
+// check if daloradius logfile is set
+if (array_key_exists('CONFIG_LOG_FILE', $configValues) && isset($configValues['CONFIG_LOG_FILE'])) {
+
+    $logfile = $configValues['CONFIG_LOG_FILE'];
+    $logfile_enc = (!empty($logfile)) ? htmlspecialchars($logfile, ENT_QUOTES, 'UTF-8') : '(none)';
+
+    // check if file exists
+    if (!file_exists($logfile)) {
+        $failureMsg = sprintf("<br><br>Error accessing log file: <strong>%s</strong><br><br>"
+                            . "Looked for log file in <strong>%s</strong> but could not find it.<br>"
+                            . "If you know where your <em>daloradius log file</em> is located, "
+                            . "specify its location in your <strong>library/daloradius.conf.php</strong> file",
+                              $logfile_enc, $logfile_enc);
+    } else {
+        // check if it is readable
+        if (is_readable($logfile) !== true) {
+            $failureMsg = sprintf("<br><br>Error reading log file: <strong>%s</strong>.<br><br>Is this file readable?<br>",
+                                  $logfile_enc);
+        } else {
+            // get its content
+            $logcontent = file_get_contents($logfile);
+            if (!empty($logcontent)) {
+                $counter = $daloradiusLineCount;
+                $fileReversed = array_reverse(file($logfile));
+
+                echo '<div style="font-family: monospace">';
+                foreach ($fileReversed as $line) {
+                    if ($counter == 0) {
+                        break;
+                    }
+                    echo nl2br(htmlspecialchars($line, ENT_QUOTES, 'UTF-8'), false);
+                    $counter--;
+                
+                }
+                echo '</div>';
+            }
+        }
+    }
+}
 ?>

@@ -14,24 +14,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		displays a welcome page for the main index.php file
+ * Description: displays a welcome page for the main index.php file
  *
- * Authors:	Liran Tal <liran@enginx.com>
- *          Miguel García <miguelvisgarcia@gmail.com>
+ * Authors:     Liran Tal <liran@enginx.com>
+ *              Miguel García <miguelvisgarcia@gmail.com>
+ *              Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-echo "
-	<center>
-
-		<h2> daloRADIUS Web Management Server </h2>
-		<h3> ".t('all','daloRADIUSVersion')." / ".$configValues['DALORADIUS_DATE']." </h3>
-		<h4> <a href=\"mailto:liran.tal@gmail.com\"> Liran Tal </a> </h4>
-		<br/><br/><br/>
-		<img src='images/daloradius_logo.jpg' border=0 />
-	</center>
-";
-
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/exten-welcome_page.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
 ?>
+
+<div style="text-align: center">
+    <h2>daloRADIUS Web Management Server</h2>
+    <h3><?= t('all', 'daloRADIUSVersion') ?> / <?= htmlspecialchars($configValues['DALORADIUS_DATE'], ENT_QUOTES, 'UTF-8') ?></h3>
+    <h4><a href="mailto:liran.tal@gmail.com">Liran Tal</a></h4>
+    <img src="images/daloradius_logo.jpg" style="border: 0; margin-top: 50px">
+</div>
