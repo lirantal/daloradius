@@ -14,50 +14,46 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this extension creates a pie chart of online users
+ * 
+ * Description:    this extension creates a pie chart of online users
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
- */ 
-	include('checklogin.php');
+ */
 
-	include 'opendb.php';
-	include 'libchart/libchart.php';
+	include('checklogin.php');
+	include('opendb.php');
+	include('libchart/libchart.php');
 
 	header("Content-type: image/png");
 
-	$chart = new PieChart(620,320);
+	$chart = new PieChart(620, 320);
 
 	// getting total users
-	$sql = "SELECT DISTINCT(UserName) FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'];
+	$sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
 	$res = $dbSocket->query($sql);
 	$totalUsers = $res->numRows();
 
 	// get total users online
-	$sql = "SELECT DISTINCT(UserName) FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE (AcctStopTime is NULL OR AcctStopTime = '0000-00-00 00:00:00')";
+	$sql = sprintf("SELECT DISTINCT(username)
+                    FROM %s
+                    WHERE AcctStopTime IS NULL
+                       OR AcctStopTime='0000-00-00 00:00:00'", $configValues['CONFIG_DB_TBL_RADACCT']);
 	$res = $dbSocket->query($sql);
 	$totalUsersOnline = $res->numRows();
 
-	if ($totalUsers != 0) {
+    include('closedb.php');
+
+	if ($totalUsers > 0) {
 		$totalUsersOffline = $totalUsers - $totalUsersOnline;
-		if ($totalUsersOnline == 0) {
-			$chart->addPoint(new Point("$totalUsersOffline ($totalUsersOffline users offline)", "$totalUsersOffline"));
-		} else {
-			$chart->addPoint(new Point("$totalUsersOffline ($totalUsersOffline users offline)", "$totalUsersOffline"));
-			$chart->addPoint(new Point("$totalUsersOnline ($totalUsersOnline users online)", "$totalUsersOnline"));
+        $chart->addPoint(new Point("$totalUsersOffline ($totalUsersOffline users offline)", $totalUsersOffline));
+		if ($totalUsersOnline > 0) {
+			$chart->addPoint(new Point("$totalUsersOnline ($totalUsersOnline users online)", $totalUsersOnline));
 		}
 	}
 
 	$chart->setTitle("Online users");
 	$chart->render();
-
-	include 'closedb.php';
-
-
-
-
 ?>
-
-

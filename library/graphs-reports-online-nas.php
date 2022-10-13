@@ -14,36 +14,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this extension creates a pie chart of online users
+ * 
+ * Description:    this extension creates a pie chart of online users
  *
- * Authors:	Neville <nev@itsnev.co.uk>
+ * Authors:        Neville <nev@itsnev.co.uk>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
- */ 
+ */
 
-       include('checklogin.php');
+	include('checklogin.php');
+	include('opendb.php');
+	include('libchart/libchart.php');
 
-       include 'opendb.php';
-       include 'libchart/libchart.php';
+	header("Content-type: image/png");
 
-       header("Content-type: image/png");
+    $chart = new VerticalChart(500, 300);
 
-       $chart = new VerticalChart(500, 300);
+    $sql = sprintf("SELECT n.shortname, COUNT(ra.username)
+                    FROM %s AS ra LEFT JOIN %s AS n ON n.nasname=ra.nasipaddress
+                    WHERE ra.acctstoptime IS NULL OR ra.acctstoptime='0000-00-00 00:00:00'
+                    GROUP BY ra.nasipaddress",
+                   $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_RADNAS']);
 
-       $sql = "SELECT shortname,count(username) FROM
-				".$configValues['CONFIG_DB_TBL_RADACCT']." Left Join
-				".$configValues['CONFIG_DB_TBL_RADNAS']." ON nasname =
-				".$configValues['CONFIG_DB_TBL_RADACCT'].".nasipaddress WHERE (acctstoptime
-				IS NULL OR acctstoptime =  '0000-00-00 00:00:00') group by nasipaddress;";
-       $res = $dbSocket->query($sql);
-       while($row = $res->fetchRow()) {
-               $chart->addPoint(new Point("$row[0]", "$row[1]"));
-       }
-       $chart->setTitle("Online Users By NAS");
-       $chart->render();
-
-       include 'closedb.php';
-
-
+    $res = $dbSocket->query($sql);
+    while($row = $res->fetchRow()) {
+        $chart->addPoint(new Point($row[0], $row[1]));
+    }
+    
+    include('closedb.php');
+    
+    $chart->setTitle("Online users per NAS");
+    $chart->render();
 ?>
