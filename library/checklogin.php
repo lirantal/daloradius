@@ -1,6 +1,6 @@
 <?php
 /*
- *******************************************************************************
+ *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
  * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
@@ -13,21 +13,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *******************************************************************************
- * Description:
- * 		verifies a user session, valid or invalid based on the random
- *      session_id generated on dologin.php
+ *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Description:    verifies a user session, valid or invalid based on
+ *                 the random session_id generated on dologin.php
  *
- *******************************************************************************
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
  */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/checklogin.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
 
 include('sessions.php');
 dalo_session_start();
 
-if (!array_key_exists('daloradius_logged_in', $_SESSION)
-    || $_SESSION['daloradius_logged_in'] !== true) {
+if (!array_key_exists('daloradius_logged_in', $_SESSION) || $_SESSION['daloradius_logged_in'] !== true) {
     $_SESSION['daloradius_logged_in'] = false;
     header('Location: login.php');
     exit;

@@ -14,12 +14,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- * 		closes database connection
+ * Description:    closes database connection
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
-	$dbSocket->disconnect();
+ 
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/closedb.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
 
+$dbSocket->disconnect();

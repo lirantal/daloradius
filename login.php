@@ -1,6 +1,6 @@
 <?php
 /*
- *******************************************************************************
+ *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
  * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
@@ -13,11 +13,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *******************************************************************************
+ *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
- *******************************************************************************
+ *********************************************************************************************************
  */
 
 include_once("library/sessions.php");
@@ -29,7 +30,7 @@ if (array_key_exists('daloradius_logged_in', $_SESSION)
     exit;
 }
 
-// this include "exports" $langCode that can be used in this script
+// this include "exports" $langCode that can be used later in this script
 include("lang/main.php");
 
 // ~ used later for rendering location select element
@@ -38,33 +39,29 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                         && count($configValues['CONFIG_LOCATIONS']) > 0);
 
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="<?= $langCode ?>" xml:lang="<?= $langCode ?>"
-    xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<?= $langCode ?>" xml:lang="<?= $langCode ?>">
     <head>
-        <script src="library/javascript/pages_common.js"
-            type="text/javascript"></script>
-        <title>daloRADIUS</title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="css/1.css" type="text/css"
-            media="screen,projection" />
-        <link rel="stylesheet" href="css/style.css" type="text/css"
-            media="screen,projection" />
+        <title>daloRADIUS :: Login</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+        <link rel="stylesheet" href="css/1.css" media="screen">
+        <link rel="stylesheet" href="css/style.css" media="screen">
+        
+        <script src="library/javascript/pages_common.js"></script>
     </head>
 
-    <body onLoad="document.login.operator_user.focus()">
+    <body onload="document.login.operator_user.focus()">
         <div id="wrapper">
             <div id="innerwrapper">
                 <div id="header">
                     <h1>
                         <a href="index.php">
-                            <img src="images/daloradius_small.png" border="0" />
+                            <img alt="daloRADIUS logo" style="border: 0" src="images/daloradius_small.png">
                         </a>
                     </h1>
                     <h2><?= t('all','copyright1') ?></h2>
-                    <br/>
+                    <br>
                 </div><!-- #header -->
 		
         
@@ -74,14 +71,10 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                      <form class="form-box" name="login" action="dologin.php" method="post">
                             
                         <label for="operator_user">Username</label>
-                        <input class="form-input" id="operator_user"
-                            name="operator_user" value=""
-                            type="text" tabindex="1" />
+                        <input class="form-input" id="operator_user" name="operator_user" value="" type="text" tabindex="1">
                         
                         <label for="operator_pass">Password</label>
-                        <input class="form-input" id="operator_pass"
-                            name="operator_pass" value=""
-                            type="password" tabindex="2" />
+                        <input class="form-input" id="operator_pass" name="operator_pass" value="" type="password" tabindex="2">
                         
                         <label for="location">Location</label>
                         <select id="location" name="location" tabindex="3"
@@ -93,15 +86,15 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                                 } else {
                                     $locations = array_keys($configValues['CONFIG_LOCATIONS']);
                                     foreach ($locations as $location) {
+                                        $location = htmlspecialchars($location, ENT_QUOTES, 'UTF-8');
                                         printf($defaultLocationFormat, $location, $location);
                                     }
                                 }
                             ?>
                         </select>
-                        <input class="form-submit" type="submit"
-                            value="<?= t('text','LoginPlease') ?>" tabindex="4" />
+                        <input class="form-submit" type="submit" value="<?= t('text','LoginPlease') ?>" tabindex="4">
 
-                        <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>" />
+                        <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
                     </form>
                     
                     <small class="form-caption"><?= t('all','daloRADIUS') ?></small>
