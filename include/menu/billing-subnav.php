@@ -1,15 +1,50 @@
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-                                <ul id="subnav">
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/menu/billing-subnav.php') !== false) {
+    header("Location: ../../index.php");
+    exit;
+}
 
-                                                <li><a href="bill-pos.php"><em>P</em>OS</a></li>
-                                                <li><a href="bill-plans.php"><em>P</em>lans</a></li>
-                                                <li><a href="bill-rates.php"><em>R</em>ates</a></li>
-                                                <li><a href="bill-merchant.php"><em>M</em>erchant-Transactions</a></li>
-                                                <li><a href="bill-history.php"><em>B</em>illing-History</a></li>
-                                                <li><a href="bill-invoice.php"><em>I</em>nvoices</a></li>
-                                                <li><a href="bill-payments.php">Pa<em>y</em>ments</a></li>
+?>
+                <ul id="subnav">
+<?php
+$subnav_elements = array(
+                            'POS' => 'bill-pos.php',
+                            'Plans' => 'bill-plans.php',
+                            'Rates' => 'bill-rates.php',
+                            'Merchant-Transactions' => 'bill-merchant.php',
+                            'Billing-History' => 'bill-history.php',
+                            'Invoices' => 'bill-invoice.php',
+                            'Payments' => 'bill-payments.php',
+                        );
 
-                                </ul>
-								
-                </div>
 
+foreach ($subnav_elements as $label => $href) {
+    printf('<li><a href="%s" title="%s">%s</a></li>', $href, strip_tags($label), $label);
+}
+?>
+
+                </ul><!-- #subnav -->
+            </div>

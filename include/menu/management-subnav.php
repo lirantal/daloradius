@@ -1,15 +1,53 @@
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-				<ul id="subnav">
-						<li><a href="mng-users.php"><em>U</em>sers</a></li>
-						<li><a href="mng-batch.php"><em>B</em>atch Users</a></li>
-						<li><a href="mng-hs.php"><em>H</em>otspots</a></li>
-						<li><a href="mng-rad-nas.php"><em>N</em>as</a></li>
-                        <li><a href="mng-rad-usergroup.php"><em>U</em>ser-Groups</a></li>
-                        <li><a href="mng-rad-profiles.php"><em>P</em>rofiles</a></li>
-						<li><a href="mng-rad-hunt.php">HuntG<em>r</em>oups</a></li>
-						<li><a href="mng-rad-attributes.php"><em>A</em>ttributes</a></li>
-						<li><a href="mng-rad-realms.php"><em>R</em>ealms/Proxys	</a></li>
-						<li><a href="mng-rad-ippool.php"><em>I</em>P-Pool	</a></li>
-				</ul>
-		
-			</div>
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/menu/management-subnav.php') !== false) {
+    header("Location: ../../index.php");
+    exit;
+}
+
+?>
+                <ul id="subnav">
+<?php
+$subnav_elements = array(
+                            'Users' => 'mng-users.php',
+                            'Batch Users' => 'mng-batch.php',
+                            'Hotspots' => 'mng-hs.php',
+                            'Nas' => 'mng-rad-nas.php',
+                            'User-Groups' => 'mng-rad-usergroup.php',
+                            'Profiles' => 'mng-rad-profiles.php',
+                            'HuntGroups' => 'mng-rad-hunt.php',
+                            'Attributes' => 'mng-rad-attributes.php',
+                            'Realms/Proxys' => 'mng-rad-realms.php',
+                            'IP-Pool' => 'mng-rad-ippool.php'
+                        );
+
+
+foreach ($subnav_elements as $label => $href) {
+    printf('<li><a href="%s" title="%s">%s</a></li>', $href, strip_tags($label), $label);
+}
+?>
+
+                </ul><!-- #subnav -->
+            </div>
