@@ -14,128 +14,84 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this graph extension procduces a query of the overall logins 
- *		made by a particular user on a daily, monthly and yearly basis.
+ * Description:    this graph extension produces a query of the overall logins 
+ *                 made by a particular user on a daily, monthly and yearly basis.
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
 include('checklogin.php');
 
-$type = $_REQUEST['type'];
-$username = $_REQUEST['user'];
+include('opendb.php');
+include('libchart/libchart.php');
 
+$username = (array_key_exists('user', $_GET) && isset($_GET['user']))
+          ? str_replace('%', '', $_GET['user']) : "";
 
-if ($type == "daily") {
-	daily($username);
-} elseif ($type == "monthly") {
-	monthly($username);
-} elseif ($type == "yearly") {
-	yearly($username);
+$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+         in_array(strtolower($_GET['type']), array( "daily", "montly", "yearly" )))
+      ? strtolower($_GET['type']) : "daily";
+
+$is_valid = false;
+
+if (!empty($username)) {
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
+    $res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
+    
+    $is_valid = $numrows == 1;
 }
 
+$chart = new VerticalChart(800, 600);
+$limit = 48;
 
+if ($is_valid) {
 
-function daily($username) {
+    switch ($type) {
+        case "yearly":
+            $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
+                      FROM %s
+                     WHERE username='%s'
+                     GROUP BY year ORDER BY year DESC LIMIT %s";
+            break;
+        
+        case "montly":
+            $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
+                           COUNT(username) AS logins,
+                           CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                      FROM %s WHERE username='%s' GROUP BY month ORDER BY month DESC LIMIT %s";
+            break;
+            
+        default:
+        case "daily":
+            $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS logins
+                      FROM %s
+                     WHERE username='%s' AND acctstoptime>0
+                     GROUP BY day ORDER BY day DESC LIMIT %s";
+            break;
+    }
 
-	
-	include 'opendb.php';
-	include 'libchart/libchart.php';
+    $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username), $limit);
+    $res = $dbSocket->query($sql);
 
-	$username = $dbSocket->escapeSimple($username);
-	
-	header("Content-type: image/png");
+    while($row = $res->fetchRow()) {
+        $chart->addPoint(new Point($row[0], $row[1]));
+    }
 
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT UserName, count(AcctStartTime), DAY(AcctStartTime) AS Day FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' AND acctstoptime>0 GROUP BY Day;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$chart->addPoint(new Point("$row[2]", "$row[1]"));
-	}
-
-	$chart->setTitle("Total Users");
-	$chart->render();
-
-	include 'closedb.php';
-
-
+    $title = ucfirst($type) . " login/hit statistics for user $username";
+} else {
+    $title = "Please select a valid user";
 }
 
+include('closedb.php');
 
+header("Content-type: image/png");
 
-
-
-
-function monthly($username) {
-
-	
-	include 'opendb.php';
-	include 'libchart/libchart.php';
-
-	$username = $dbSocket->escapeSimple($username);
-	
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT UserName, count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' GROUP BY Month;";
-	$res = $dbSocket->query($sql);
-
-
-	while($row = $res->fetchRow()) {
-		$chart->addPoint(new Point("$row[2]", "$row[1]"));
-	}
-
-	$chart->setTitle("Total Users");
-	$chart->render();
-
-	include 'closedb.php';
-}
-
-
-
-
-
-
-
-
-function yearly($username) {
-
-
-	include 'opendb.php';
-	include 'libchart/libchart.php';
-	
-	$username = $dbSocket->escapeSimple($username);
-
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT UserName, count(AcctStartTime), YEAR(AcctStartTime) AS Year FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username' GROUP BY Year;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$chart->addPoint(new Point("$row[2]", "$row[1]"));
-	}
-
-	$chart->setTitle("Total Users");
-	$chart->render();
-
-	include 'closedb.php';
-
-}
-
-
-
-
-
+$chart->setTitle($title);
+$chart->render();
 
 ?>

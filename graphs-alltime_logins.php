@@ -1,81 +1,88 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
+	// validate (or pre-validate) parameters
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
 
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "numberoflogins";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
-	isset($_REQUEST['type']) ? $type = $_REQUEST['type'] : $type = "daily";
+    //feed the sidebar variables
+    $alltime_login_type = $type;
 
 	include_once('library/config_read.php');
+
+	include("menu-graphs.php");	
+    include_once("library/tabber/tab-layout.php");
+?>
+
+		<div id="contentnorightbar">
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro','graphsalltimelogins.php'); ?>
+                    <h144>&#x2754;</h144>
+                </a>
+            </h2>
+
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','graphsalltimelogins') ?><br></div>
+            <br>
+
+            <div class="tabber">
+                <div class="tabbertab" title="Graph">
+                    <div style="text-align: center; margin-top: 50px">
+<?php
+    $alt = ucfirst($type) . " all-time login/hit statistics";
+    $src = "library/graphs-alltime-users-login.php?type=" . $type;
+?>
+                        <img alt="<?= $alt ?>" src="<?= $src ?>">
+                    </div>
+                </div><!-- .tabbertab -->
+
+                <div class="tabbertab" title="Statistics">	
+                    <div style="margin-top: 50px">
+<?php
+    include("library/tables-alltime-users-login.php");
+?>
+                    </div>
+                </div><!-- .tabbertab -->
+            </div>
+        </div>
+
+		<div id="footer">		
+<?php
     $log = "visited page: ";
     $logQuery = "performed query of type [$type] on page: ";
-
-
+    
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-<?php	
-	include ("menu-graphs.php");	
-?>
-		
-<?php
-        include_once ("library/tabber/tab-layout.php");
-?>
-
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','graphsalltimelogins.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','graphsalltimelogins') ?>
-			<br/>
 		</div>
-		<br/>
-
-<div class="tabber">
-
-     <div class="tabbertab" title="Graph">
-        <br/>
-<?php
-        echo "<center>";
-        echo "<img src=\"library/graphs-alltime-users-login.php?type=$type\" />";
-        echo "</center>";
-?>
-	</div>
-     <div class="tabbertab" title="Statistics">	
-	<br/>
-<?php
-        include 'library/tables-alltime-users-login.php';
-?>
-	</div>
+    </div>
 </div>
-		
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
-</div>
-</div>
-
 
 </body>
 </html>

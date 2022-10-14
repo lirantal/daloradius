@@ -1,200 +1,254 @@
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
+// prevent this file to be directly accessed
+$this_file = '/menu-graphs.php';
+if (strpos($_SERVER['PHP_SELF'], $this_file) !== false) {
+    header("Location: /index.php");
+    exit;
+}
+
+include_once("lang/main.php");
+
+if (preg_match("/^\/menu\-([a-z]+)\.php$/", $this_file, $matches) !== false) {
+    $title = ucfirst($matches[1]);
+}
+
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
 <head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+    <title>daloRADIUS <?= (isset($title)) ? ":: $title" : "" ?></title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <link rel="stylesheet" href="css/1.css" media="screen">
+    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+    
+    <script src="library/javascript/pages_common.js"></script>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
 </head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 
 <body>
-<?php
-	include_once ("lang/main.php");
-?>
 
 <div id="wrapper">
-<div id="innerwrapper">
+    <div id="innerwrapper">
 
 <?php
 	$m_active = "Graphs";
-	include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/graphs-subnav.php");
+	include_once("include/menu/menu-items.php");
+	include_once("include/menu/graphs-subnav.php");
 	include_once("include/management/autocomplete.php");
-?>      
+    
+    $timeunit_options = array(
+                                "daily" => t('all','Daily'),
+                                "monthly" => t('all','Monthly'),
+                                "yearly" => t('all','Yearly')
+                             );
+    
+    $sizeunit_options = array(
+                                "megabytes" => t('all','Megabytes'),
+                                "gigabytes" => t('all','Gigabytes')
+                             );
+?>
+        <div id="sidebar">
 
+            <h2>Graphs</h2>
 
-<div id="sidebar">
+            <h3>User Graph</h3>
+            <ul class="subnav">
 
-	<h2>Graphs</h2>
-
-	<h3>User Graph</h3>
-	<ul class="subnav">
-
-		<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>
-			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo t('button','UserLogins') ?></a>
-			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
-			<input name="username" type="text" id="usernameLogins" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
-				value="<?php if (isset($overall_logins_username)) echo $overall_logins_username; ?>">
-			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo t('all','Daily') ?>
-				<option value="monthly"> <?php echo t('all','Monthly') ?>
-				<option value="yearly"> <?php echo t('all','Yearly') ?>
-			</select>
-			</form>
-		</li>
-
-
-		<li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>
-			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo t('button','UserDownloads') ?></a>
-			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
-			<input name="username" type="text" id="usernameDownloads" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
-				value="<?php if (isset($overall_download_username)) echo $overall_download_username; ?>">
-			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo t('all','Daily') ?>
-				<option value="monthly"> <?php echo t('all','Monthly') ?>
-				<option value="yearly"> <?php echo t('all','Yearly') ?>
-			</select>
-			<select class="generic" name="size" type="text">
-				<option value="megabytes"> <?php echo t('all','Megabytes') ?>
-				<option value="gigabytes"> <?php echo t('all','Gigabytes') ?>
-			</select>
-			</form>
-		</li>
-
-
-		<li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>
-			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo t('button','UserUploads') ?></a>
-			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
-			<input name="username" type="text" id="usernameUploads" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
-				value="<?php if (isset($overall_upload_username)) echo $overall_upload_username; ?>">
-			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo t('all','Daily') ?>
-				<option value="monthly"> <?php echo t('all','Monthly') ?>
-				<option value="yearly"> <?php echo t('all','Yearly') ?>
-			</select>
-			<select class="generic" name="size" type="text">
-				<option value="megabytes"> <?php echo t('all','Megabytes') ?>
-				<option value="gigabytes"> <?php echo t('all','Gigabytes') ?>
-			</select>
-			</form>
-		</li>
-
-	</ul>
-
-	<h3>Statistics</h3>
-	<ul class="subnav">
-
-
-		<li><a href="javascript:document.alltime_logins.submit();"><b>&raquo;</b>
-			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo t('button','TotalLogins') ?></a>
-			<form name="alltime_logins" action="graphs-alltime_logins.php" method="post" class="sidebar">
-			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo t('all','Daily') ?>
-				<option value="monthly"> <?php echo t('all','Monthly') ?>
-				<option value="yearly"> <?php echo t('all','Yearly') ?>
-			</select>
-			</form></li>
-
-
-
-		<li><a href="javascript:document.alltime_traffic_compare.submit();"><b>&raquo;</b>
-			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo t('button','TotalTraffic') ?></a>
-			<form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="post" 
-				class="sidebar">
-			<select class="generic" name="type" type="text">
-				<option value="daily"> <?php echo t('all','Daily') ?>
-				<option value="monthly"> <?php echo t('all','Monthly') ?>
-				<option value="yearly"> <?php echo t('all','Yearly') ?>
-			</select>
-			<select class="generic" name="size" type="text">
-				<option value="megabytes"> <?php echo t('all','Megabytes') ?>
-				<option value="gigabytes"> <?php echo t('all','Gigabytes') ?>
-			</select>
-			</form></li>
-			
-			
-		<li><a href="javascript:document.logged_users.submit();"><b>&raquo;</b>
-			<img src='images/icons/graphsGeneral.gif' border='0'>
-			<?php echo t('button','LoggedUsers') ?></a>
-			<form name="logged_users" action="graphs-logged_users.php" method="post" class="sidebar">
-			<?php echo t('graphs','Day'); ?>:</br>
-			<?php $d = date("j"); ?>
-			<select class="generic" name="day" type="text">
-				<?php 
-					$i = 1;
-					while ($i<32):
-				?>
-					<option value="<?php echo $i ?>" <?php if($d == $i) echo "selected" ?> > <?php echo $i ?> </option>
-				<?php $i++; 	?>
-				<?php endwhile; ?>
-			</select>
-			<?php echo t('graphs','Month'); ?>:</br>
-			<?php $m = date("M"); ?>
-			<select class="generic" name="month" type="text">
-				<option value="jan" <?php if ($m == 'Jan') echo "selected" ?>> <?php echo t('graphs','Jan')?> </option>
-				<option value="feb" <?php if ($m == 'Feb') echo "selected" ?>> <?php echo t('graphs','Feb')?> </option>
-				<option value="mar" <?php if ($m == 'Mar') echo "selected" ?>> <?php echo t('graphs','Mar')?> </option>
-				<option value="apr" <?php if ($m == 'Apr') echo "selected" ?>> <?php echo t('graphs','Apr')?> </option>
-				<option value="may" <?php if ($m == 'May') echo "selected" ?>> <?php echo t('graphs','May')?> </option>
-				<option value="jun" <?php if ($m == 'Jun') echo "selected" ?>> <?php echo t('graphs','Jun')?> </option>
-				<option value="jul" <?php if ($m == 'Jul') echo "selected" ?>> <?php echo t('graphs','Jul')?> </option>
-				<option value="aug" <?php if ($m == 'Aug') echo "selected" ?>> <?php echo t('graphs','Aug')?> </option>
-				<option value="sep" <?php if ($m == 'Sep') echo "selected" ?>> <?php echo t('graphs','Sep')?> </option>
-				<option value="oct" <?php if ($m == 'Oct') echo "selected" ?>> <?php echo t('graphs','Oct')?> </option>
-				<option value="nov" <?php if ($m == 'Nov') echo "selected" ?>> <?php echo t('graphs','Nov')?> </option>
-				<option value="dec" <?php if ($m == 'Dec') echo "selected" ?>> <?php echo t('graphs','Dec')?> </option>
-			</select>
-			<?php echo t('graphs','Year'); ?>:</br>
-			<select class="generic" name="year" type="text">
-				<?php
-					for($i = 0; $i <= 10; $i++) {
-						$myDate = date('Y', mktime(0, 0, 0, 1, 1, (date('Y')-$i) ));
-						echo "<option value='$myDate'>$myDate</option>";
-					}
-				?>
-			</select>
-
-	</ul>
-
-	<br/><br/>
-	
-	
-
-</div>
-
+                <li>
+                    <a href="javascript:document.overall_logins.submit();">
+                        <b>&raquo;</b><img style="border: 0" src="images/icons/graphsGeneral.gif"><?= t('button','UserLogins') ?>
+                    </a>
+                    <form name="overall_logins" action="graphs-overall_logins.php" method="GET" class="sidebar">
+                        <input name="username" type="text" id="usernameLogins"
+                            <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
+                            tooltipText="<?= t('Tooltip','Username'); ?><br>"
+                            value="<?= (isset($overall_logins_username)) ? $overall_logins_username : "" ?>">
+                        
+                        <select class="generic" name="type">
 <?php
-        include_once("include/management/autocomplete.php");
-
-        if ($autoComplete) {
-                echo "<script type=\"text/javascript\">
-                      autoComEdit = new DHTMLSuite.autoComplete();
-                      autoComEdit.add('usernameLogins','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-
-                      autoComEdit = new DHTMLSuite.autoComplete();
-                      autoComEdit.add('usernameDownloads','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-
-                      autoComEdit = new DHTMLSuite.autoComplete();
-                      autoComEdit.add('usernameUploads','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-                      </script>";
-        }
+    foreach ($timeunit_options as $value => $label) {
+        $selected = (isset($overall_logins_type) && $overall_logins_type == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
 ?>
 
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
+                        </select>
+                    </form>
+                </li>
+
+                <li>
+                    <a href="javascript:document.overall_download.submit();">
+                        <b>&raquo;</b><img style="border: 0" src="images/icons/graphsGeneral.gif"><?= t('button','UserDownloads') ?>
+                    </a>
+                    <form name="overall_download" action="graphs-overall_download.php" method="GET" class="sidebar">
+                        <input name="username" type="text" id="usernameDownloads"
+                            <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
+                            tooltipText="<?= t('Tooltip','Username'); ?><br>"
+                            value="<?= (isset($overall_download_username)) ? $overall_download_username : "" ?>">
+
+                        <select class="generic" name="type">
+<?php
+    foreach ($timeunit_options as $value => $label) {
+        $selected = (isset($overall_download_type) && $overall_download_type == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
+?>
+
+                        </select>
+
+                        <select class="generic" name="size">
+<?php
+    foreach ($sizeunit_options as $value => $label) {
+        $selected = (isset($overall_download_size) && $overall_download_size == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
+?>
+
+                        </select>
+                    </form>
+                </li>
+
+                <li>
+                    <a href="javascript:document.overall_upload.submit();">
+                        <b>&raquo;</b><img style="border: 0" src="images/icons/graphsGeneral.gif">
+                        <?= t('button','UserUploads') ?>
+                    </a>
+                    <form name="overall_upload" action="graphs-overall_upload.php" method="GET" class="sidebar">
+                        <input name="username" type="text" id="usernameUploads"
+                            <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
+                            tooltipText="<?= t('Tooltip','Username'); ?><br>"
+                            value="<?= (isset($overall_upload_username)) ? $overall_upload_username : "" ?>">
+                    
+                        <select class="generic" name="type">
+<?php
+    foreach ($timeunit_options as $value => $label) {
+        $selected = (isset($overall_upload_type) && $overall_upload_type == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
+?>
+
+                        </select>
+
+                        <select class="generic" name="size">
+<?php
+    foreach ($sizeunit_options as $value => $label) {
+        $selected = (isset($overall_upload_size) && $overall_upload_size == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
+?>
+
+                        </select>
+                    </form>
+                </li>
+                
+            </ul>
+
+            <h3>Statistics</h3>
+            <ul class="subnav">
+                <li>
+                    <a href="javascript:document.alltime_logins.submit();">
+                        <b>&raquo;</b><img style="border: 0" src="images/icons/graphsGeneral.gif">
+                        <?= t('button','TotalLogins') ?>
+                    </a>
+                    <form name="alltime_logins" action="graphs-alltime_logins.php" method="GET" class="sidebar">
+                        <select class="generic" name="type">
+<?php
+    foreach ($timeunit_options as $value => $label) {
+        $selected = (isset($alltime_login_type) && $alltime_login_type == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
+?>
+
+                        </select>
+                    </form>
+                </li>
+
+                <li>
+                    <a href="javascript:document.alltime_traffic_compare.submit();">
+                        <b>&raquo;</b><img style="border: 0" src="images/icons/graphsGeneral.gif">
+                        <?= t('button','TotalTraffic') ?>
+                    </a>
+                    <form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="GET" class="sidebar">
+                        <select class="generic" name="type">
+<?php
+    foreach ($timeunit_options as $value => $label) {
+        $selected = (isset($traffic_compare_type) && $traffic_compare_type == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
+?>
+
+                        </select>
+
+                        <select class="generic" name="size">
+<?php
+    foreach ($sizeunit_options as $value => $label) {
+        $selected = (isset($traffic_compare_size) && $traffic_compare_size == $value) ? "selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+    }
+?>
+
+                        </select>
+                    </form>
+                </li>
+
+                <li>
+                    <a href="javascript:document.logged_users.submit();">
+                        <b>&raquo;</b><img style="border: 0" src="images/icons/graphsGeneral.gif">
+                        <?= t('button','LoggedUsers') ?>
+                    </a>
+                    <form name="logged_users" action="graphs-logged_users.php" method="GET" class="sidebar">
+                        <input type="date" name="logged_users_on_date" max="<?= date("Y-m-d") ?>"
+                            value="<?= (isset($logged_users_on_date)) ? $logged_users_on_date : date("Y-m-d") ?>">
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+<script>
+<?php
+    if ($autoComplete) {
+?>
+
+    var autoComEditElements = ["usernameLogins","usernameDownloads","usernameUploads"];
+    for (var i = 0; i < autoComEditElements.length; i++) {
+        var autoComEdit = new DHTMLSuite.autoComplete();
+        autoComEdit.add(autoComEditElements[i],
+                        'include/management/dynamicAutocomplete.php',
+                        '_small',
+                        'getAjaxAutocompleteUsernames');
+    }
+    
+<?php
+    }
+?>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
+
 </script>

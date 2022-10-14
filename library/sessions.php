@@ -1,7 +1,6 @@
 <?php
-
 /*
- *******************************************************************************
+ *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
  * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
@@ -14,15 +13,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *******************************************************************************
- * Description:
- *      a bit of custom session management to prevent some XSS stuff
+ *********************************************************************************************************
+ * 
+ * Description:    a bit of custom session management to prevent some XSS stuff
  *
- * Author:
- *      Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
- *******************************************************************************
+ *********************************************************************************************************
  */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/sessions.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
 
 // this function ("installs" and) returns a csrf token
 function dalo_csrf_token() {
@@ -47,8 +51,10 @@ function dalo_check_csrf_token($token) {
 
 // daloRADIUS session start function support timestamp management
 function dalo_session_start() {
-    // set's the session max lifetime to 3600 seconds
-    ini_set('session.gc_maxlifetime', 3600);
+    $session_max_lifetime = 3600;
+    
+    // set's the session max lifetime
+    ini_set('session.gc_maxlifetime', $session_max_lifetime);
     ini_set('session.use_strict_mode', 1);
     
     // Change PHPSESSID for better security, remove this if set in php.ini
@@ -63,7 +69,7 @@ function dalo_session_start() {
     
     if (array_key_exists('time', $_SESSION) && isset($_SESSION['time'])) {
         // if too old, destroy and restart
-        if ($_SESSION['time'] < $now-900) {
+        if ($_SESSION['time'] < $now-$session_max_lifetime) {
             dalo_session_destroy();
             session_start();
             dalo_session_regenerate_id();

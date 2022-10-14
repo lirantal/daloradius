@@ -15,10 +15,19 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Description:    open database connection
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/opendb.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
 
 	include(dirname(__FILE__) . '/config_read.php');
 	include(dirname(__FILE__) . '/tableConventions.php');

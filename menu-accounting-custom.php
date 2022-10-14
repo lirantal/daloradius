@@ -1,190 +1,188 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-custom.php') !== false) {
+    header("Location: /index.php");
+    exit;
+}
+
+include_once("lang/main.php");
+
+$options = array(
+                    "RadAcctId",
+                    "AcctSessionId",
+                    "AcctUniqueId",
+                    "UserName",
+                    "Realm",
+                    "NASIPAddress",
+                    "NASPortId",
+                    "NASPortType",
+                    "AcctStartTime",
+                    "AcctStopTime",
+                    "AcctSessionTime",
+                    "AcctAuthentic",
+                    "ConnectInfo_start",
+                    "ConnectInfo_stop",
+                    "AcctInputOctets",
+                    "AcctOutputOctets",
+                    "CalledStationId",
+                    "CallingStationId",
+                    "AcctTerminateCause",
+                    "ServiceType",
+                    "FramedProtocol",
+                    "FramedIPAddress",
+                    "AcctStartDelay",
+                    "AcctStopDelay"
+                );
+
+$options_checked = array("UserName", "Realm", "NASIPAddress", "AcctStartTime", "AcctStopTime", "AcctSessionTime",
+                         "AcctInputOctets", "AcctOutputOctets", "CalledStationId", "CallingStationId",
+                         "AcctTerminateCause", "FramedIPAddress");
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
+<head>
+    <title>daloRADIUS :: Accounting / Custom Query</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <link rel="stylesheet" href="css/1.css" media="screen">
+    <link rel="stylesheet" href="library/js_date/datechooser.css">
+    <!--[if lte IE 6.5]>
+    <link rel="stylesheet" href="library/js_date/select-free.css">
+    <![endif]-->
+    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+
+    <script src="library/js_date/date-functions.js"></script>
+    <script src="library/js_date/datechooser.js"></script>
+    <script src="library/javascript/pages_common.js"></script>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
 </head>
-<script src="library/js_date/date-functions.js" type="text/javascript"></script>
-<script src="library/js_date/datechooser.js" type="text/javascript"></script>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 
 <body>
-
-<?php
-    include_once ("lang/main.php");
-?>
-
 <div id="wrapper">
-<div id="innerwrapper">
+    <div id="innerwrapper">
 
 <?php
 	$m_active = "Accounting";
-	include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/accounting-subnav.php");
+	include_once("include/menu/menu-items.php");
+	include_once("include/menu/accounting-subnav.php");
+    
+    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
+    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
+    
 ?>	
 		<div id="sidebar">
+            <h2>Accounting</h2>
+            
+            <h3>Custom Query</h3>
+            <ul class="subnav">
+            
+                <li>
+                    <form name="acctcustomquery" action="acct-custom-query.php" method="get" class="sidebar">
+                        <input class="sidebutton" type="submit" name="submit" value="<?= t('button','ProcessQuery') ?>" tabindex="1">
+                        <br><br>
+                        
+                        <h109><?= t('button','BetweenDates') ?></h109><br>
+                        
+                        <input name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date') ?><br>" tabindex="2"
+                            value="<?= (isset($accounting_custom_startdate)) ? $accounting_custom_startdate : date("Y-m-01") ?>">
+                        
+                        <img src="library/js_date/calendar.gif" onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
+                        <?= $chooserSpan ?>
+
+                        <input name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date') ?><br>" tabindex="3"
+                            value="<?= (isset($accounting_custom_enddate)) ? $accounting_custom_enddate : date("Y-m-t") ?>">
+                        
+                        <img src="library/js_date/calendar.gif" onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
+                        <?= $chooserSpan ?>
+                        <br><br>
 		
-				<h2>Accounting</h2>
-				
-				<h3>Custom Query</h3>
-				<ul class="subnav">
+                        <h109><?= t('button','Where') ?></h109><br>
+                        <div style="text-aling: center">
+                            <select name="fields" size="1" class="generic">
+<?php
+    foreach ($options as $option) {
+        printf('<option value="%s">%s</option>', $option, $option);
+    }
+?>
 
-	<form name="acctcustomquery" action="acct-custom-query.php" method="get" class="sidebar">
+                            </select>
 
-	<input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
-	<br/><br/>	
+                            <select name="operator" size="1" class="generic">
+                                <option value="=">Equals</option>
+                                <option value="LIKE">Contains</option>
+                            </select>
+                        </div>
+                        
+                        <input type="text" name="where_field" tooltipText="<?= t('Tooltip','Filter') ?><br>"
+                            value="<?= (isset($accounting_custom_value)) ? $accounting_custom_value : "" ?>">
+                        <br><br>
+                        
+                        <h109><?= t('button','AccountingFieldsinQuery') ?></h109><br>
+<?php
+    foreach ($options as $option) {
+        $checked = in_array($option, $options_checked) ? ' checked' : '';
+        printf('<input type="checkbox" name="sqlfields[]" value="%s"%s><h109>%s<h109><br>', $option, $checked, $option);
+    }
+?>
 
-	<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
-	
+                        Select:
+                        <a class="table" href="javascript:SetChecked(1,'sqlfields[]','acctcustomquery')">All</a>
+                        <a class="table" href="javascript:SetChecked(0,'sqlfields[]','acctcustomquery')">None</a>
+                        <br><br>
+                        
+                        <h109><?= t('button','OrderBy') ?><h109><br>
+                        <div style="text-aling: center">
+                            <select name="orderBy" size="1">
+<?php
+    foreach ($options as $option) {
+        printf('<option value="%s">%s</option>', $option, $option);
+    }
+?>
 
-                                                        <input name="startdate" type="text" id="startdate" 
-                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
-value="<?php if (isset($accounting_custom_startdate)) echo $accounting_custom_startdate;
-						else echo date("Y-m-01"); ?>">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+                            </select>
 
-                                                        <input name="enddate" type="text" id="enddate" 
-                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
-value="<?php if (isset($accounting_custom_enddate)) echo $accounting_custom_enddate;
-						else echo date("Y-m-t"); ?>">
-<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
-
-
-		<br/><br/>
-		<h109><?php echo t('button','Where'); ?></h109> <br/>
-			<center>
-			<select name="fields" size="1" class="generic" >
-				<option value="RadAcctId"> RadAcctId </option>
-				<option value="AcctSessionId"> AcctSessionId </option>
-				<option value="AcctUniqueId"> AcctUniqueId </option>
-				<option value="UserName"> UserName </option>
-				<option value="Realm"> Realm </option>
-				<option value="NASIPAddress"> NASIPAddress </option>
-				<option value="NASPortId"> NASPortId </option>
-				<option value="NASPortType"> NASPortType</option>
-				<option value="AcctStartTime"> AcctStartTime </option>
-				<option value="AcctStopTime"> AcctStopTime </option>
-				<option value="AcctSessionTime"> AcctSessionTime </option>
-				<option value="AcctAuthentic"> AcctAuthentic </option>
-				<option value="ConnectInfo_start"> ConnectInfo_start </option>
-				<option value="ConnectInfo_stop"> ConnectInfo_stop </option>
-				<option value="AcctInputOctets"> AcctInputOctets </option>
-				<option value="AcctOutputOctets"> AcctOutputOctets </option>
-				<option value="CalledStationId"> CalledStationId </option>
-				<option value="CallingStationId"> CallingStationId </option>
-				<option value="AcctTerminateCause"> AcctTerminateCause </option>
-				<option value="ServiceType"> ServiceType </option>
-				<option value="FramedProtocol"> FramedProtocol </option>
-				<option value="FramedIPAddress"> FramedIPAddress </option>
-				<option value="AcctStartDelay"> AcctStartDelay </option>
-				<option value="AcctStopDelay"> AcctStopDelay </option>
-			</select>
-
-			<select name="operator" size="1" class="generic" >
-				<option value="="> Equals </option>
-				<option value="LIKE"> Contains </option>
-			</select>
-			</center>
-		<input type="text" name="where_field" 
-                                tooltipText='<?php echo t('Tooltip','Filter'); ?> <br/>'
-			value="<?php if (isset($accounting_custom_value)) echo $accounting_custom_value; ?>" />
-
-		<br/><br/>
-		<h109><?php echo t('button','AccountingFieldsinQuery'); ?></h109><br/>
-		<input type="checkbox" name="sqlfields[]" value="RadAcctId" /> <h109> RadAcctId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctSessionId" /> <h109> AcctSessionId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctUniqueId" /> <h109> AcctUniqueId</h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="UserName" checked /> <h109> UserName </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="Realm" checked /> <h109> Realm</h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="NASIPAddress" checked /> <h109> NASIPAddress </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="NASPortId" /> <h109> NASPortId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="NASPortType" /> <h109> NASPortType </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctStartTime" checked /> <h109> AcctStartTime </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctStopTime" checked /> <h109> AcctStopTime </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctSessionTime" checked /> <h109> AcctSessionTime </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctAuthentic" /> <h109> AcctAuthentic </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_start" /> <h109> ConnectInfo_start </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="ConnectInfo_stop" /> <h109> ConnectInfo_stop </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctInputOctets" checked /> <h109> AcctInputOctets </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctOutputOctets" checked /> <h109> AcctOutputOctets </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="CalledStationId" checked /> <h109> CalledStationId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="CallingStationId" checked /> <h109> CallingStationId </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctTerminateCause" checked /> <h109> AcctTerminateCause </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="ServiceType" /> <h109> ServiceType </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="FramedProtocol" /> <h109> FramedProtocol </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="FramedIPAddress" checked /> <h109> FramedIPAddress </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctStartDelay" /> <h109> AcctStartDelay </h109> <br/>
-		<input type="checkbox" name="sqlfields[]" value="AcctStopDelay" /> <h109> AcctStopDelay </h109> <br/>
-		Select:
-		<a class="table" href="javascript:SetChecked(1,'sqlfields[]','acctcustomquery')">All</a>
-		<a class="table" href="javascript:SetChecked(0,'sqlfields[]','acctcustomquery')">None</a>
-		<br/><br/>
-		<h109><?php echo t('button','OrderBy') ?><h109> <br/>
-			<center>
-			<select name="orderBy" size="1">
-				<option value="RadAcctId"> RadAcctId </option>
-				<option value="AcctSessionId"> AcctSessionId </option>
-				<option value="AcctUniqueId"> AcctUniqueId </option>
-				<option value="UserName"> UserName </option>
-				<option value="Realm"> Realm </option>
-				<option value="NASIPAddress"> NASIPAddress </option>
-				<option value="NASPortId"> NASPortId </option>
-				<option value="NASPortType"> NASPortType</option>
-				<option value="AcctStartTime"> AcctStartTime </option>
-				<option value="AcctStopTime"> AcctStopTime </option>
-				<option value="AcctSessionTime"> AcctSessionTime </option>
-				<option value="AcctAuthentic"> AcctAuthentic </option>
-				<option value="ConnectInfo_start"> ConnectInfo_start </option>
-				<option value="ConnectInfo_stop"> ConnectInfo_stop </option>
-				<option value="AcctInputOctets"> AcctInputOctets </option>
-				<option value="AcctOutputOctets"> AcctOutputOctets </option>
-				<option value="CalledStationId"> CalledStationId </option>
-				<option value="CallingStationId"> CallingStationId </option>
-				<option value="AcctTerminateCause"> AcctTerminateCause </option>
-				<option value="ServiceType"> ServiceType </option>
-				<option value="FramedProtocol"> FramedProtocol </option>
-				<option value="FramedIPAddress"> FramedIPAddress </option>
-				<option value="AcctStartDelay"> AcctStartDelay </option>
-				<option value="AcctStopDelay"> AcctStopDelay </option>
-			</select>
-
-			<select name="orderType" size="1">
-				<option value="ASC"> Ascending </option>
-				<option value="DESC"> Descending </option>
-			</select>
-			</center>
-
-
-	<br/>
-	<input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
-	</form></li>
-				
-
-
-				</ul>
-				
-				<br/><br/>
-				
-				
-				
-		
+                            <select name="orderType" size="1">
+                                <option value="ASC">Ascending</option>
+                                <option value="DESC">Descending</option>
+                            </select>
+                        </div>
+                        <br>
+                        
+                        <input class="sidebutton" type="submit" name="submit" value="<?= t('button','ProcessQuery') ?>">
+                    </form>
+                </li>
+            </ul>
+            <br><br>
 		</div>
 
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
