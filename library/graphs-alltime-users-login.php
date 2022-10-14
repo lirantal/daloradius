@@ -14,118 +14,68 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this graph extension procduces a query of the overall logins 
+ * 
+ * Description:    this graph extension procduces a query of the overall logins.
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:	       Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
 include('checklogin.php');
 
-$type = $_REQUEST['type'];
+// validate parameters
+$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+         in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+      ? strtolower($_GET['type']) : "daily";
 
-if ($type == "daily") {
-	daily();
-} elseif ($type == "monthly") {
-	monthly();
-} elseif ($type == "yearly") {
-	yearly();
+include('opendb.php');
+include('libchart/libchart.php');
+
+$chart = new VerticalChart(800, 600);
+
+switch ($type) {
+    case "yearly":
+        $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(username) AS numberoflogins
+                  FROM %s GROUP BY year ORDER BY year DESC LIMIT 48";
+        break;
+        
+    case "monthly":
+        $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
+                       COUNT(username) AS numberoflogins,
+                       CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                  FROM %s GROUP BY month ORDER BY month DESC LIMIT 48";
+        break;
+        
+    default:
+    case "daily":
+        $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS numberoflogins
+                  FROM %s GROUP BY day ORDER BY day DESC LIMIT 48";
+        break;
 }
 
+$sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT']);
 
+$res = $dbSocket->query($sql);
 
-function daily() {
+$numrows = $res->numRows();
 
-	
-	include 'opendb.php';
-	include 'libchart/libchart.php';
+if ($numrows > 0) {
+    while($row = $res->fetchRow()) {
+        list($time_unit, $count) = $row;
+        $chart->addPoint(new Point($time_unit, $count));
+    }
 
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT count(AcctStartTime), DAY(AcctStartTime) AS Day from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." group by Day;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$chart->addPoint(new Point("$row[1]", "$row[0]"));
-	}
-
-	$chart->setTitle("Alltime Login records based on Daily distribution");
-	$chart->render();
-
-	include 'closedb.php';
-
-
+    $title = sprintf("Alltime login records based on a %s distribution", $type);
+} else {
+    $title = "No login(s) found";
 }
 
+include('closedb.php');
 
-
-
-
-
-function monthly() {
-
-	
-	include 'opendb.php';
-	include 'libchart/libchart.php';
-
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT count(AcctStartTime), MONTHNAME(AcctStartTime) AS Month from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." group by Month;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$chart->addPoint(new Point("$row[1]", "$row[0]"));
-	}
-
-	$chart->setTitle("Alltime Login records based on Monthly distribution");
-	$chart->render();
-
-	include 'closedb.php';
-}
-
-
-
-
-
-
-
-
-function yearly() {
-
- 
-	include 'opendb.php';
-	include 'libchart/libchart.php';
-
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT count(AcctStartTime), YEAR(AcctStartTime) AS Year from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." group by Year;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$chart->addPoint(new Point("$row[1]", "$row[0]"));
-	}
-
-	$chart->setTitle("Alltime Login records based on Yearily distribution");
-	$chart->render();
-
-	include 'closedb.php';
-
-}
-
-
-
-
-
+header("Content-type: image/png");
+$chart->setTitle($title);
+$chart->render();
 
 ?>
