@@ -14,269 +14,220 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		 this graph extension procduces a query of the overall logins made by a particular user on a daily, monthly and yearly basis.
+ * Description:    this graph extension procduces a query of the overall
+ *                 logins made by a particular user on a daily, monthly
+ *                 and yearly basis.
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:	       Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-if ($type == "daily") {
-	daily($username, $orderBy, $orderType);
-} elseif ($type == "monthly") {
-	monthly($username, $orderBy, $orderType);
-} elseif ($type == "yearly") {
-	yearly($username, $orderBy, $orderType);
+// prevent this file to be directly accessed
+$extension_file = '/library/tables-overall-users-login.php';
+if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
+    header("Location: ../index.php");
+    exit;
 }
 
+// validating type and username
+$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+         in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+      ? strtolower($_GET['type']) : "daily";
 
-function daily($username, $orderBy, $orderType) {
+$username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+          ? str_replace('%', '', $_GET['username']) : "";
+$username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-	include 'opendb.php';
+// whenever possible we use a whitelist approach
+$orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+              in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+           ? strtolower($_GET['orderType']) : "asc";
 
-	$sql = "SELECT UserName, count(AcctStartTime) as logins, DAY(AcctStartTime) AS Day from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' AND acctstoptime>0  group by Day ORDER BY $orderBy $orderType;";
-	$res = $dbSocket->query($sql);
+$is_valid = false;
 
-	$total_logins = 0;		// initialize variables
-	$count = 0;			
+// used for presentation purpose
+$label_param = array();
+$label_param['day'] = "Day of month";
+$label_param['month'] = "Month of year";
+$label_param['year'] = "Year";
 
-	$array_logins = array();
-	$array_days = array();
 
-	$user = "";
-	while($row = $res->fetchRow()) {
+include('opendb.php');
+include('include/management/pages_common.php');
+include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                      // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-		// The table that is being procuded is in the format of:
-		// +----------+----------------------+------+
-		// | UserName | count(AcctStartTime) | Day  |
-		// +----------+----------------------+------+
-
-		$user = $row[0];	// username
-		$logins = $row[1];	// total logins on that specific day
-		$day = $row[2];		// day of the month [1-31]
-
-		$total_logins = $total_logins + $logins;
-		$count = $count + 1;
-
-		array_push($array_logins, "$logins");
-		array_push($array_days, "$day");
-
-	}
-	
-	echo "<br/> <center> <h4>Logins/Hits statistics for user $user</h4> <br/> </center> ";
-
-	echo "<br/><br/>";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-				<th colspan='10'>Logins/Hits statistics</th>
-			</tr>
-		</thead>
-			";
-	echo "<thread> <tr>
-					<th scope='col'> Username </th>
-					<th scope='col'> Logins/Hits count
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=logins&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=logins&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> Day of month
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=desc\"> < </a>
-					</th>
-			</tr> </thread>";
-
-	$i=0;
-	foreach ($array_days as $a_day) {
-		echo "<tr>
-				<td> $user </td>
-				<td> $array_logins[$i] </td>
-				<td> $a_day </td>
-		</tr>";
-		$i++;
-	}
-
-	echo "<tr> <td> </td> <td> <b> $total_logins </b> </td> </tr>";
-	echo "</table>";
-
-	include 'closedb.php';
+if (!empty($username)) {
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
+    $res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
+    
+    $is_valid = $numrows == 1;
 }
 
+if ($is_valid) {    
+    switch ($type) {
+        case "yearly":
+            $selected_param = "year";
+            $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                        in_array(strtolower($_GET['orderBy']), array( "logins", "year" )))
+                     ? strtolower($_GET['orderBy']) : "year";
+        
+            $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
+                      FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY year";
+            break;
+        
+        case "monthly":
+            $selected_param = "month";
+            $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                        in_array(strtolower($_GET['orderBy']), array( "logins", "month" )))
+                     ? strtolower($_GET['orderBy']) : "month";
 
-
-
-
-function monthly($username, $orderBy, $orderType) {
-
-	
-	include 'library/opendb.php';
-
-	$sql = "SELECT UserName, count(AcctStartTime) as logins, MONTHNAME(AcctStartTime) AS Month from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Month ORDER BY $orderBy $orderType;";
-	$res = $dbSocket->query($sql);
-
-	$total_logins = 0;		// initialize variables
-	$count = 0;			
-
-	$array_logins = array();
-	$array_months = array();
-
-	$user = "";
-
-	while($row = $res->fetchRow()) {
-
-		// The table that is being procuded is in the format of:
-		// +----------+----------------------+--------+
-		// | UserName | count(AcctStartTime) | Month  |
-		// +----------+----------------------+--------+
-
-		$user = $row[0];	// username
-		$logins = $row[1];	// total logins on that specific month
-		$month = $row[2];		// Month of year [1-12]
-
-		$total_logins = $total_logins + $logins;
-		$count = $count + 1;
-
-		array_push($array_logins, "$logins");
-		array_push($array_months, "$month");
-
+            $sql = "SELECT CONCAT(MONTHNAME(AcctStartTime), ' (', YEAR(AcctStartTime), ')'),
+                           COUNT(AcctStartTime) AS logins,
+                           CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                      FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY month";
+            break;
+            
+        default:
+        case "daily":
+            $selected_param = "day";
+            $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                        in_array(strtolower($_GET['orderBy']), array( "logins", "day" )))
+                     ? strtolower($_GET['orderBy']) : "day";
+            $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(AcctStartTime) AS logins
+                      FROM %s WHERE username='%s' AND AcctStopTime>0
+                     GROUP BY day";
+            break;
+    }
+    
+    $sql = sprintf($sql . " ORDER BY %s %s", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                             $dbSocket->escapeSimple($username), $orderBy, $orderType);
+    $res = $dbSocket->query($sql);
+    
+    $numrows = $res->numRows();
+    
+    if ($numrows > 0) {
+        $total_data = 0;
+        while ($row = $res->fetchRow()) {
+            $total_data += intval($row[1]);
         }
+        
+        $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        
+        /* START - Related to pages_numbering.php */
+        $maxPage = ceil($numrows/$rowsPerPage);
+        /* END */
+        
+        $partial_query_string = sprintf("&type=%s&username=%s", $type, $username_enc);
+        
+        $cols = array( 
+                       $selected_param => $label_param[$selected_param],
+                       "logins" => "Logins/hits count"
+                     );
+        $colspan = count($cols);
+        $half_colspan = intdiv($colspan, 2);
+?>
 
-        echo "<br/> <center> <h4>Logins/Hits statistics for user $user</h4> <br/> </center> ";
-
-        echo "<br/><br/>";
-
-
-        echo "<table border='0' class='table1'>\n";
-        echo "
-			<thead>
-				<tr>
-					<th colspan='10'>Logins/Hits statistics</th>
-				</tr>
-			</thead>
-                ";
-        echo "<thread> <tr>
-					<th scope='col'> Username </th>
-					<th scope='col'> Logins/Hits count
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=logins&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=logins&orderType=desc\"> < </a>
-					</th>
-					<th scope='col'> Month of year
-					<br/>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=month&orderType=asc\"> > </a>
-					<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=month&orderType=desc\"> < </a>
-					</th>
-			</tr> </thread>";
-
-        $i=0;
-        foreach ($array_months as $a_month) {
-			echo "<tr>
-					<td> $user </td>
-					<td> $array_logins[$i] </td>
-					<td> $a_month </td>
-                </tr>";
-			$i++;
+<div style="text-align: center; margin-top: 50px">
+    <h4><?= ucfirst($type) . " login/hit statistics for user <em>$username_enc</em>" ?></h4>
+    <br>
+    <table border="0" class="table1">
+        <thead>
+            <tr>
+<?php
+        if ($maxPage > 1) {
+            printf('<td style="background-color: white; text-align: right" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo "</td>";
         }
+?>
+            </tr>
+            
+            <tr>
+<?php
+        foreach ($cols as $label => $caption) {
+            
+            if (is_int($label)) {
+                $ordering_controls = "";
+            } else {
+                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
+                $href_asc = sprintf($href_format, $label, "asc");
+                $href_desc = sprintf($href_format, $label, "desc");
+                
+                $title_format = "order by %s, sort %s";
+                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
+                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
+                
+                $a_format = '<a title="%s" class="novisit" href="%s"><img src="%s" alt="%s"></a>';
+                
+                $ordering_controls = sprintf($a_format, $title_asc, $href_asc, 'images/icons/arrow_up.png', '^')
+                                   . sprintf($a_format, $title_desc, $href_desc, 'images/icons/arrow_down.png', 'v');
 
-	echo "<tr> <td> </td> <td> <b> $total_logins </b> </td> </tr>";
+            }
+            
+            echo "<th>" . $caption . $ordering_controls . "</th>";
+        }
+?>
+            </tr>
+        </thead>
+        
+        <tbody>
+<?php
+    
+        $per_page_data = 0;
+        while ($row = $res->fetchRow()) {
+            $data = intval($row[1]);
+            
+            echo "<tr>"
+               . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
+               . "<td>" . $data . "</td>"
+               . "</tr>";
+            $per_page_data += $data;
+        }
+?>
+        </tbody>
+        
+       <tfoot>
+            <tr>
+                <th style="background-color: white" scope="col" colspan="<?= ($colspan % 2 === 0) ? $half_colspan : $half_colspan + 1 ?>">
+                    <?= ($maxPage > 1) ? setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) : ""?>
+                </th>
 
-	echo "</table>";
+                <th scope="col" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+<?php
+                    echo "<strong>$per_page_data</strong> " . $short_size[$size];
+                    if ($maxPage > 1) {
+                        echo " out of <strong>$total_data</strong> " . $short_size[$size];
+                    }
+?>
+                </th>
+            </tr>
+        </tfoot>
+        
+    </table>
+</div>
 
-	include 'library/closedb.php';
+<?php
+
+    } else {
+        // $numrows <= 0
+        $failureMsg = "No login(s) found for this user";
+    }
+    
+} else {
+    // username not valid
+    $failureMsg = "You must provide a valid username";
 }
 
-
-
-
-
-
-
-
-function yearly($username, $orderBy, $orderType) {
-
-	include 'opendb.php';
-
-
-	$sql = "SELECT UserName, count(AcctStartTime) as logins, YEAR(AcctStartTime) AS Year from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where username='$username' group by Year ORDER BY $orderBy $orderType;";
-	$res = $dbSocket->query($sql);
-
-	$total_logins = 0;		// initialize variables
-	$count = 0;			
-
-	$array_logins = array();
-	$array_years = array();
-
-	$user = "";
-
-	while($row = $res->fetchRow()) {
-		// The table that is being procuded is in the format of:
-		// +----------+----------------------+-------+
-		// | UserName | count(AcctStartTime) | Year  |
-		// +----------+----------------------+-------+
-
-		$user = $row[0];	// username
-		$logins = $row[1];	// total logins on that specific month
-		$year = $row[2];	// Year
-
-		$total_logins = $total_logins + $logins;
-		$count = $count + 1;
-
-		array_push($array_logins, "$logins");
-		array_push($array_years, "$year");
-
-	}
-
-	echo "<br/> <center> <h4>Logins/Hits statistics for user $user</h4> <br/> </center> ";
-
-	echo "<br/><br/>";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-							<tr>
-							<th colspan='10'>Logins/Hits statistics</th>
-							</tr>
-					</thead>
-			";
-
-	echo "<thread> <tr>
-				<th scope='col'> Username </th>
-				<th scope='col'> Logins/Hits count
-				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=logins&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=logins&orderType=desc\"> < </a>
-				</th>
-				<th scope='col'> Year
-				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=desc\"> < </a>
-				</th>
-		</tr> </thread>";
-		
-	$i=0;
-	foreach ($array_years as $a_year) {
-		echo "<tr>
-				<td> $user </td>
-				<td> $array_logins[$i] </td>
-				<td> $a_year </td>
-		</tr>";
-		$i++;
-	}
-
-
-	echo "<tr> <td> </td> <td> <b> $total_logins </b> </td> </tr>";
-
-	echo "</table>";
-
-	include 'closedb.php';
+if (!empty($failureMsg)) {
+    include_once("include/management/actionMessages.php");
 }
 
+include('closedb.php');
 
 ?>

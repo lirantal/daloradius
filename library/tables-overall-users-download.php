@@ -14,257 +14,236 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this graph extension procduces a query of the alltime downloads made by all users on a daily, monthly and yearly basis.
+ * Description:    this graph extension produces a query of the alltime downloads
+ *                 made by all users on a daily, monthly and yearly basis.
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:	       Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
-
-if ($type == "daily") {
-	daily($username, $orderBy, $orderType);
-} elseif ($type == "monthly") {
-	monthly($username, $orderBy, $orderType);
-} elseif ($type == "yearly") {
-	yearly($username, $orderBy, $orderType);
+// prevent this file to be directly accessed
+$extension_file = '/library/tables-overall-users-download.php';
+if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
+    header("Location: ../index.php");
+    exit;
 }
 
+$username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+          ? str_replace('%', '', $_GET['username']) : "";
+$username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
+$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
 
-function daily($username, $orderBy, $orderType) {
+$size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
+         in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
+      ? strtolower($_GET['size']) : "megabytes";
 
-	include 'opendb.php';
+// whenever possible we use a whitelist approach
+$orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+              in_array($_GET['orderType'], array( "desc", "asc" )))
+           ? $_GET['orderType'] : "asc";
 
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, day(AcctStartTime) AS day, UserName from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' AND acctstoptime>0 AND AcctStartTime>DATE_SUB(curdate(),INTERVAL (DAY(curdate())-1) DAY) AND AcctStartTime< now() group by day ORDER BY $orderBy $orderType;";
+// used for presentation purpose
+$label_param = array();
+$label_param['day'] = "Day of month";
+$label_param['month'] = "Month of year";
+$label_param['year'] = "Year";
 
+$size_division = array("gigabytes" => 1073741824, "megabytes" => 1048576);
+$short_size = array("gigabytes" => "GBs", "megabytes" => "MBs");
 
-	$res = $dbSocket->query($sql);
+$is_valid = false;
 
-	$total_downloads = 0;		// initialize variables
-	$count = 0;			
+include('opendb.php');
+include('include/management/pages_common.php');
+include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                      // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-	$array_downloads = array();
-	$array_days = array();
-
-	while($row = $res->fetchRow()) {
-
-		// The table that is being procuded is in the format of:
-		// +--------+------+
-		// | Download | Day  |
-		// +--------+------+
-
-		$downloads = floor($row[0]/1024/1024);	// total downloads on that specific day
-		$day = $row[1];		// day of the month [1-31]
-
-		$total_downloads = $total_downloads + $downloads;
-		$count = $count + 1;
-
-		array_push($array_downloads, "$downloads");
-		array_push($array_days, "$day");
-
-	}
-
-	// creating the table:
-	echo "<br/><br/>";
-        echo "<table border='0' class='table1'>\n";
-        echo "
-			<thead>
-				<tr>
-					<th colspan='10'>All-time Download statistics</th>
-				</tr>
-			</thead>
-		";
-        echo "<thread> <tr>
-				<th scope='col'> Downloads count in MB
-				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=downloads&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=downloads&orderType=desc\"> < </a>
-				</th>
-				<th scope='col'> Day of month
-				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=daily&orderBy=day&orderType=desc\"> < </a>
-				</th>
-		</tr> </thread>";
-
-	$i=0;
-	foreach ($array_days as $a_day) {
-		echo "<tr>
-				<td> $array_downloads[$i] </td>
-				<td> $a_day </td>
-		</tr>";
-		$i++;
-	}
-
-	echo "<tr> <td> <b> $total_downloads </b> </td> </tr>";
-	echo "</table>";
-
-	include 'library/closedb.php';
+if (!empty($username)) {
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
+    $res = $dbSocket->query($sql);
+	$numrows = $res->numRows();
+    
+    $is_valid = $numrows == 1;
 }
 
-
-
-
-
-function monthly($username, $orderBy, $orderType) {
-
-	include 'opendb.php';
+if ($is_valid) {
+          
+    switch ($type) {
+        case "yearly":
+            $selected_param = "year";
+            $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                        in_array(strtolower($_GET['orderBy']), array( "downloads", "year" )))
+                     ? strtolower($_GET['orderBy']) : "downloads";
+                     
+            $sql = "SELECT YEAR(AcctStartTime) AS year, SUM(AcctOutputOctets) AS downloads
+                      FROM %s
+                     WHERE username='%s' AND AcctStopTime>0
+                     GROUP BY year";
+            break;
         
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, monthname(AcctStartTime) AS month, UserName from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by month ORDER BY $orderBy $orderType;";
-	$res = $dbSocket->query($sql);
+        case "monthly":
+            $selected_param = "month";
+            $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                        in_array(strtolower($_GET['orderBy']), array( "downloads", "month" )))
+                     ? strtolower($_GET['orderBy']) : "downloads";
 
-	$total_downloads = 0;		// initialize variables
-	$count = 0;			
+            $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
+                           SUM(AcctOutputOctets) AS downloads,
+                           CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                      FROM %s WHERE username='%s' AND AcctStopTime>0
+                     GROUP BY month";
+            
+            break;
+        
+        default:
+        case "daily":
+            $selected_param = "day";
+            $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                        in_array(strtolower($_GET['orderBy']), array( "downloads", "day" )))
+                     ? strtolower($_GET['orderBy']) : "downloads";
 
-	$array_downloads = array();
-	$array_months = array();
+            $sql = "SELECT DATE(AcctStartTime) AS day, SUM(AcctOutputOctets) AS downloads
+                      FROM %s
+                     WHERE username='%s' AND AcctStopTime>0
+                     GROUP BY day";
+            break;
+    }
+    
+    $sql = sprintf($sql . " ORDER BY %s %s", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                             $dbSocket->escapeSimple($username), $orderBy, $orderType);
+    
+    $res = $dbSocket->query($sql);
 
-	while($row = $res->fetchRow()) {
+    $numrows = $res->numRows();
 
-		// The table that is being procuded is in the format of:
-		// +--------+--------+
-		// | Download | Month  |
-		// +--------+--------+
+    if ($numrows > 0) {
+        $total_data = 0;
+        while ($row = $res->fetchRow()) {
+            $total_data += intval($row[1]);
+        }
+        
+        $total_data = number_format((float)($total_data / $size_division[$size]), 3, ".", "");
+        
+        $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        
+        /* START - Related to pages_numbering.php */
+        $maxPage = ceil($numrows/$rowsPerPage);
+        /* END */
+        
+        $partial_query_string = sprintf("&type=%s&size=%s&username=%s", $type, $size, $username_enc);
+        
+        $cols = array( 
+                       $selected_param => $label_param[$selected_param],
+                       "downloads" => "Downloads count in " . $size
+                     );
+        $colspan = count($cols);
+        $half_colspan = intdiv($colspan, 2);
+?>
 
-		$downloads = floor($row[0]/1024/1024);	// total downloads on that specific month
-		$month = $row[1];	// Month of year [1-12]
+<div style="text-align: center; margin-top: 50px">
+    
+    <h4><?= sprintf("%s of traffic in download %s produced by user %s", $size, $type, $username) ?></h4>
+    <br>
+    <table border="0" class="table1">
+        <thead>
+            <tr>
+<?php
+        if ($maxPage > 1) {
+            printf('<td style="background-color: white; text-align: right" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo "</td>";
+        }
+?>
+            </tr>
+            
+            <tr>
+<?php
+        foreach ($cols as $label => $caption) {
+            
+            if (is_int($label)) {
+                $ordering_controls = "";
+            } else {
+                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
+                $href_asc = sprintf($href_format, $label, "asc");
+                $href_desc = sprintf($href_format, $label, "desc");
+                
+                $title_format = "order by %s, sort %s";
+                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
+                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
+                
+                $a_format = '<a title="%s" class="novisit" href="%s"><img src="%s" alt="%s"></a>';
+                
+                $ordering_controls = sprintf($a_format, $title_asc, $href_asc, 'images/icons/arrow_up.png', '^')
+                                   . sprintf($a_format, $title_desc, $href_desc, 'images/icons/arrow_down.png', 'v');
 
-		$total_downloads = $total_downloads + $downloads;
-		$count = $count + 1;
+            }
+            
+            echo "<th>" . $caption . $ordering_controls . "</th>";
+        }
+?>
+            </tr>
+        </thead>
+        
+        <tbody>
+<?php
+    
+        $per_page_data = 0;
+        while ($row = $res->fetchRow()) {
+            $data = intval($row[1]);
+            $per_page_data += $data;
+            
+            echo "<tr>"
+               . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
+               . "<td>" . number_format((float)($data / $size_division[$size]), 3, ".", "") . " " . $short_size[$size] . "</td>"
+               . "</tr>";
+            
+        }
+        $per_page_data = number_format((float)($per_page_data / $size_division[$size]), 3, ".", "");
+?>
+        </tbody>
 
-		array_push($array_downloads, "$downloads");
-		array_push($array_months, "$month");
-	}
+        <tfoot>
+            <tr>
+                <th style="background-color: white" scope="col" colspan="<?= ($colspan % 2 === 0) ? $half_colspan : $half_colspan + 1 ?>">
+                    <?= ($maxPage > 1) ? setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) : ""?>
+                </th>
 
-	// creating the table:
-	echo "<br/><br/>";
+                <th scope="col" style="text-transform: none" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+<?php
+                    echo "<strong>$per_page_data</strong> " . $short_size[$size];
+                    if ($maxPage > 1) {
+                        echo " out of <strong>$total_data</strong> " . $short_size[$size];
+                    }
+?>
+                </th>
+            </tr>
+        </tfoot>
+        
+    </table>
+</div>
 
-	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-				<th colspan='10'>All-time Download statistics</th>
-			</tr>
-		</thead>
-	";
-	
-	echo "<thread> <tr>
-			<th scope='col'> Downloads count in MB
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=downloads&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=downloads&orderType=desc\"> < </a>
-			</th>
-			<th scope='col'> Month of year
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=month&orderType=asc\"> > </a>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=monthly&orderBy=month&orderType=desc\"> < </a>
-			</th>
-		</tr> </thread>
-	";
-
-	$i=0;
-	foreach ($array_months as $a_month) {
-		echo "<tr>
-			<td> $array_downloads[$i] </td>
-			<td> $a_month </td>
-		</tr>";
-		$i++;
-	}
-
-
-	echo "<tr> <td> <b> $total_downloads </b> </td> </tr>";
-	echo "</table>";
-
-	include 'library/closedb.php';
+<?php
+    } else {
+        // $numrows <= 0
+        $failureMsg = "No download(s) found for this user";
+    }
+    
+} else {
+    // username not valid
+    $failureMsg = "You must provide a valid username";
 }
 
-
-
-
-
-
-
-
-function yearly($username, $orderBy, $orderType) {
-
-	include 'opendb.php';
-
-	$sql = "SELECT sum(AcctOutputOctets) as Downloads, year(AcctStartTime) AS year, UserName from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." where UserName='$username' group by year ORDER BY $orderBy $orderType;";
-
-	$res = $dbSocket->query($sql);
-
-	$total_downloads = 0;		// initialize variables
-	$count = 0;			
-
-	$array_downloads = array();
-	$array_years = array();
-
-	while($row = $res->fetchRow()) {
-
-		// The table that is being procuded is in the format of:
-		// +--------+-------+
-		// | Download | Year  |
-		// +--------+-------+
-
-		$downloads = floor($row[0]/1024/1024);	// total downloads on that specific month
-		$year = $row[1];	// Year
-
-		$total_downloads = $total_downloads + $downloads;
-		$count = $count + 1;
-
-		array_push($array_downloads, "$downloads");
-		array_push($array_years, "$year");
-
- 	}
-
-	echo "<br/><br/>";
-	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-				<th colspan='10'>All-Time Download statistics</th>
-			</tr>
-		</thead>
-	";
-
-	echo "<thread> <tr>
-				<th scope='col'> Downloads count in MB
-				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=downloads&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=downloads&orderType=desc\"> < </a>
-				</th>
-				<th scope='col'> Year
-				<br/>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=asc\"> > </a>
-				<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&type=yearly&orderBy=year&orderType=desc\"> < </a>
-				</th>
-		</tr> </thread>
-	";
-
-
-	$i=0;
-	foreach ($array_years as $a_year) {
-		echo "<tr>
-			<td> $array_downloads[$i] </td>
-			<td> $a_year </td>
-		</tr>";
-
-		$i++;
-	}
-
-
-	echo "<tr> <td> <b> $total_downloads </b> </td> </tr>";
-	echo "</table>";
-
-	include 'closedb.php';
+if (!empty($failureMsg)) {
+    include_once("include/management/actionMessages.php");
 }
 
-
-
+include('closedb.php');
 
 ?>

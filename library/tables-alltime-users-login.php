@@ -53,19 +53,19 @@ switch ($type) {
     case "yearly":
         $selected_param = "year";
         $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "numberoflogins", "year" )))
+                    in_array(strtolower($_GET['orderBy']), array( "logins", "year" )))
                  ? strtolower($_GET['orderBy']) : "year";
-        $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(username) AS numberoflogins
+        $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(username) AS logins
                  FROM %s GROUP BY year ORDER BY %s %s";
         break;
     
     case "monthly":
         $selected_param = "month";
         $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "numberoflogins", "month" )))
+                    in_array(strtolower($_GET['orderBy']), array( "logins", "month" )))
                  ? strtolower($_GET['orderBy']) : "month";
         $sql = "SELECT CONCAT(MONTHNAME(AcctStartTime), ' (', YEAR(AcctStartTime), ')'),
-                       COUNT(username) AS numberoflogins,
+                       COUNT(username) AS logins,
                        CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
                   FROM %s GROUP BY month ORDER BY %s %s";
         break;
@@ -74,9 +74,9 @@ switch ($type) {
     case "daily":
         $selected_param = "day";
         $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "numberoflogins", "day" )))
+                    in_array(strtolower($_GET['orderBy']), array( "logins", "day" )))
                  ? strtolower($_GET['orderBy']) : "day";
-        $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS numberoflogins
+        $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS logins
                 FROM %s GROUP BY day ORDER BY %s %s";
         break;
 }
@@ -88,9 +88,9 @@ $numrows = $res->numRows();
 
 if ($numrows > 0) {
     
-    $total_logins = 0;
+    $total_data = 0;
     while ($row = $res->fetchRow()) {
-        $total_logins += intval($row[1]);
+        $total_data += intval($row[1]);
     }
     
     $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
@@ -100,28 +100,30 @@ if ($numrows > 0) {
     $maxPage = ceil($numrows/$rowsPerPage);
     /* END */
     
-    $partial_query_string = "&type=$selected_param";
+    $partial_query_string = sprintf("&type=%s", $type);
     
     $cols = array( 
                    $selected_param => $label_param[$selected_param],
-                   "numberoflogins" => "Number of logins/hits"
+                   "logins" => "Logins/hits count"
                  );
     $colspan = count($cols);
     $half_colspan = intdiv($colspan, 2);
     
 ?>
 <div style="text-align: center; margin-top: 50px">
-    <h4>All-time Logins/Hits statistics</h4>
+    <h4><?= ucfirst($type) . " all-time login/hit statistics" ?></h4>
     <br>
     <table border="0" class="table1">
         <thead>
+            <tr>
 <?php
     if ($maxPage > 1) {
-        printf('<th colspan="%s">', $colspan);
+        printf('<td style="background-color: white; text-align: right" colspan="%s">go to page: ', $colspan);
         setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-        echo "</th>";
+        echo "</td>";
     }
 ?>
+            </tr>
             <tr>
 <?php
     foreach ($cols as $label => $caption) {
@@ -153,32 +155,32 @@ if ($numrows > 0) {
         <tbody>
 <?php
     
-    $per_page_logins = 0;
+    $per_page_data = 0;
     while ($row = $res->fetchRow()) {
-        $logins = intval($row[1]);
+        $data = intval($row[1]);
         
         echo "<tr>"
            . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
-           . "<td>" . $logins . "</td>"
+           . "<td>" . $data . "</td>"
            . "</tr>";
-        $per_page_logins += $logins;
+        $per_page_data += $data;
     }
 ?>
         </tbody>
         
         <tfoot>
             <tr>
-<?php
-    if ($maxPage > 1) {
-?>
-                <th scope="col" colspan="<?= ($colspan % 2 === 0) ? $half_colspan : $half_colspan + 1 ?>">
-                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) ?>
+                <th style="background-color: white" scope="col" colspan="<?= ($colspan % 2 === 0) ? $half_colspan : $half_colspan + 1 ?>">
+                    <?= ($maxPage > 1) ? setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) : "" ?>
                 </th>
-<?php
-    }
-?>
+
                 <th scope="col" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
-                    <?= "<strong>$per_page_logins</strong> out of <strong>$total_logins</strong>" ?>
+<?php
+                    echo "<strong>$per_page_data</strong> " . $short_size[$size];
+                    if ($maxPage > 1) {
+                        echo " out of <strong>$total_data</strong> " . $short_size[$size];
+                    }
+?>
                 </th>
             </tr>
         </tfoot>

@@ -34,28 +34,29 @@ include('opendb.php');
 include('libchart/libchart.php');
 
 $chart = new VerticalChart(800, 600);
+$limit = 48;
 
 switch ($type) {
     case "yearly":
         $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(username) AS numberoflogins
-                  FROM %s GROUP BY year ORDER BY year DESC LIMIT 48";
+                  FROM %s GROUP BY year ORDER BY year DESC LIMIT %s";
         break;
         
     case "monthly":
         $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
                        COUNT(username) AS numberoflogins,
                        CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
-                  FROM %s GROUP BY month ORDER BY month DESC LIMIT 48";
+                  FROM %s GROUP BY month ORDER BY month DESC LIMIT %s";
         break;
         
     default:
     case "daily":
         $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS numberoflogins
-                  FROM %s GROUP BY day ORDER BY day DESC LIMIT 48";
+                  FROM %s GROUP BY day ORDER BY day DESC LIMIT %s";
         break;
 }
 
-$sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT']);
+$sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $limit);
 
 $res = $dbSocket->query($sql);
 
@@ -66,8 +67,7 @@ if ($numrows > 0) {
         list($time_unit, $count) = $row;
         $chart->addPoint(new Point($time_unit, $count));
     }
-
-    $title = sprintf("Alltime login records based on a %s distribution", $type);
+    $title = ucfirst($type) . " all-time login/hit statistics";
 } else {
     $title = "No login(s) found";
 }

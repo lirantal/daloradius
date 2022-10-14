@@ -31,6 +31,7 @@
              in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
           ? strtolower($_GET['type']) : "daily";
 
+    //feed the sidebar variables
     $alltime_login_type = $type;
 
 	include_once('library/config_read.php');
@@ -53,18 +54,21 @@
             <div class="tabber">
                 <div class="tabbertab" title="Graph">
                     <div style="text-align: center; margin-top: 50px">
-                        <img src="library/graphs-alltime-users-login.php?type=<?= $type ?>">
+<?php
+    $alt = ucfirst($type) . " all-time login/hit statistics";
+    $src = "library/graphs-alltime-users-login.php?type=" . $type;
+?>
+                        <img alt="<?= $alt ?>" src="<?= $src ?>">
                     </div>
-                </div>
-                
+                </div><!-- .tabbertab -->
+
                 <div class="tabbertab" title="Statistics">	
                     <div style="margin-top: 50px">
 <?php
     include("library/tables-alltime-users-login.php");
 ?>
                     </div>
-                </div>
-                
+                </div><!-- .tabbertab -->
             </div>
         </div>
 

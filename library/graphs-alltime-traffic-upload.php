@@ -14,141 +14,67 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this graph extension procduces a query of the alltime uploads
+ * 
+ * Description:    this graph extension produces a query of the alltime uploads.
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:	       Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
 include('checklogin.php');
 
-$type = $_REQUEST['type'];
-$size = $_REQUEST['size'];
-switch ($size) {
-	case "gigabytes":
-		$sizeDivision = "1073741824"; 
-		break;
-	case "megabytes":
-		$sizeDivision = "1048576";
-		break;
-	default:
-		$sizeDivision = "1048576";
-		break;
+// validate parameters
+$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+         in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+      ? strtolower($_GET['type']) : "daily";
+
+$size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
+         in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
+      ? strtolower($_GET['size']) : "megabytes";
+
+// used for presentation purpose
+$size_division = array("gigabytes" => 1073741824, "megabytes" => 1048576);
+
+include('opendb.php');
+include('libchart/libchart.php');
+
+$chart = new VerticalChart(800, 600);
+$limit = 24;
+
+switch ($type) {
+    case "yearly":
+        $sql = "SELECT YEAR(AcctStartTime) AS year, SUM(AcctInputOctets) AS uploads
+                  FROM %s GROUP BY year ORDER BY year DESC LIMIT %s";
+        break;
+    
+    case "monthly":
+        $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
+                       SUM(AcctInputOctets) AS uploads,
+                       CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                  FROM %s GROUP BY month ORDER BY month DESC LIMIT %s";
+        break;
+        
+    default:
+    case "daily":
+        $sql = "SELECT DATE(AcctStartTime) AS day, SUM(AcctInputOctets) AS uploads
+                  FROM %s GROUP BY day ORDER BY day DESC LIMIT %s";
+        break;
 }
 
-if ($type == "daily") {
-	daily();
-} elseif ($type == "monthly") {
-	monthly();
-} elseif ($type == "yearly") {
-	yearly();
+$sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $limit);
+$res = $dbSocket->query($sql);
+while ($row = $res->fetchRow()) {
+    $label = number_format((float)($row[1] / $size_division[$size]), 3, ".", "");
+    $chart->addPoint(new Point($row[0], $label));
 }
 
+include('closedb.php');
 
+$title = ucfirst($type) . " all-time upload traffic (in " . $size . ") statistics";
 
-function daily() {
-
-	global $sizeDivision;
-	global $size;
-	
-	include 'opendb.php';
-	include 'libchart/libchart.php';
-
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT sum(AcctInputOctets) as Uploads, day(AcctStartTime) AS day from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." group by day;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$uploads = floor($row[0]/$sizeDivision);
-		$chart->addPoint(new Point("$row[1]", "$uploads"));
-	}
-
-
-	$chart->setTitle("Alltime Uploads based on Daily distribution ($size)");
-	$chart->render();
-
-	include 'closedb.php';
-
-
-}
-
-
-
-
-
-
-function monthly() {
-
-	global $sizeDivision;
-	global $size;
-
-	include 'opendb.php';
-	include 'libchart/libchart.php';
-
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT sum(AcctInputOctets) as Uploads, MONTHNAME(AcctStartTime) AS month from ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." group by month;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$uploads = floor($row[0]/$sizeDivision);
-		$chart->addPoint(new Point("$row[1]", "$uploads"));
-	}
-
-
-	$chart->setTitle("Alltime Uploads based on Monthly distribution ($size)");
-	$chart->render();
-
-	include 'closedb.php';
-}
-
-
-
-
-
-
-
-
-function yearly() {
-
-	global $sizeDivision;
-	global $size;
-
-	include 'opendb.php';
-	include 'libchart/libchart.php';
-
-	header("Content-type: image/png");
-
-	$chart = new VerticalChart(680,500);
-
-	$sql = "SELECT sum(AcctInputOctets) as Uploads, year(AcctStartTime) AS year from ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." group by year;";
-	$res = $dbSocket->query($sql);
-
-	while($row = $res->fetchRow()) {
-		$uploads = floor($row[0]/$sizeDivision);
-		$chart->addPoint(new Point("$row[1]", "$uploads"));
-	}
-
-	$chart->setTitle("Alltime Uploads based on Yearily distribution ($size)");
-	$chart->render();
-
-	include 'closedb.php';
-
-}
-
-
-
-
-
+$chart->setTitle($title);
+$chart->render();
 
 ?>
