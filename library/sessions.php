@@ -46,7 +46,12 @@ function dalo_check_csrf_token($token) {
         return false;
     }
 
-    return hash_equals($_SESSION['csrf_token'], $token);
+    // this should provide backward compatibility with PHP < 5.6.0
+    $result = (function_exists('hash_equals'))
+            ? hash_equals($_SESSION['csrf_token'], $token)
+            : $_SESSION['csrf_token'] === $token;
+
+    return $result;
 }
 
 // daloRADIUS session start function support timestamp management
