@@ -29,17 +29,19 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-users.php') !== false) {
 
 include_once("lang/main.php");
 
+$m_active = "Management";
+
 ?>
-<script src="library/javascript/rounded-corners.js"></script>
-<script src="library/javascript/form-field-tooltip.js"></script>
-<link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
 
 <body>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
+    <link rel="stylesheet" tabindex="" href="css/form-field-tooltip.css" media="screen">
+    
     <div id="wrapper">
         <div id="innerwrapper">
 
 <?php
-    $m_active = "Management";
     include_once("include/menu/menu-items.php");
 	include_once("include/menu/management-subnav.php");
     include_once("include/management/autocomplete.php");
@@ -51,49 +53,49 @@ include_once("lang/main.php");
                 <h3>Users Management</h3>
                 <ul class="subnav">
                     <li>
-                        <a title="<?= t('button','ListUsers') ?>" href="mng-list-all.php">
+                        <a title="<?= t('button','ListUsers') ?>" tabindex="1" href="mng-list-all.php">
                             <b>&raquo;</b><img style="margin-right:5px; border:0" src="images/icons/userList.gif"><?= t('button','ListUsers') ?>
                         </a>
                     </li>
                     
                     <li>
-                        <a title="<?= t('button','NewUser') ?>" href="mng-new.php">
+                        <a title="<?= t('button','NewUser') ?>" tabindex="2" href="mng-new.php">
                             <b>&raquo;</b><img style="margin-right:5px; border:0" src="images/icons/userNew.gif"><?= t('button','NewUser') ?>
                         </a>
                     </li>
                     
                     <li>
-                        <a title="<?= t('button','NewUserQuick') ?>" href="mng-new-quick.php">
+                        <a title="<?= t('button','NewUserQuick') ?>" tabindex="3" href="mng-new-quick.php">
                             <b>&raquo;</b><img style="margin-right:5px; border:0" src="images/icons/userNew.gif"><?= t('button','NewUserQuick') ?>
                         </a>
                     </li>
                     
                     <li>
-                        <a title="<?= t('button','EditUser') ?>" href="javascript:document.mngedit.submit();">
+                        <a title="<?= t('button','EditUser') ?>" tabindex="4" href="javascript:document.mngedit.submit();">
                             <b>&raquo;</b><img style="margin-right:5px; border:0" src="images/icons/userEdit.gif"><?= t('button','EditUser') ?>
                         </a>
                         
                         <form name="mngedit" action="mng-edit.php" method="GET" class="sidebar">
                             <input name="username" type="text" id="usernameEdit" autocomplete="off"
-                                tooltipText="<?= t('Tooltip','Username'); ?> <br>"
+                                tooltipText="<?= t('Tooltip','Username'); ?> <br>" tabindex="5"
                                 value="<?= (isset($edit_username)) ? $edit_username : "" ?>">
                         </form>
                     </li>
                     
                     <li>
-                        <a title="<?= t('button','SearchUsers') ?>" href="javascript:document.mngsearch.submit();">
+                        <a title="<?= t('button','SearchUsers') ?>" tabindex="6" href="javascript:document.mngsearch.submit();">
                             <b>&raquo;</b><img style="margin-right:5px; border:0" src="images/icons/userSearch.gif"><?= t('button','SearchUsers') ?>
                         </a>
                         
                         <form name="mngsearch" action="mng-search.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="usernameSearch" autocomplete="off"
+                            <input name="username" type="text" id="usernameSearch" autocomplete="off" tabindex="7"
                                 tooltipText="<?= t('Tooltip','Username') . "<br>" . t('Tooltip','UsernameWildcard'); ?>"
                                 value="<?= (isset($search_username)) ? $search_username : "" ?>">
                         </form>
                     </li>
                     
                     <li>
-                        <a title="<?= t('button','RemoveUsers') ?>" href="mng-del.php">
+                        <a title="<?= t('button','RemoveUsers') ?>" tabindex="8" href="mng-del.php">
                             <b>&raquo;</b><img style="margin-right:5px; border:0" src="images/icons/userRemove.gif"><?= t('button','RemoveUsers') ?>
                         </a>
                     </li>
@@ -104,15 +106,12 @@ include_once("lang/main.php");
                 <h3>Extended Capabilities</h3>
                 <ul class="subnav">
                     <li>
-                        <a title="<?= t('button','ImportUsers') ?>" href="mng-import-users.php">
+                        <a title="<?= t('button','ImportUsers') ?>" tabindex="9" href="mng-import-users.php">
                             <b>&raquo;</b><img style="margin-right:5px; border:0" src="images/icons/userNew.gif"><?= t('button','ImportUsers') ?>
                         </a>
                     </li>
-                </ul>
-		
-                <br><br>
-            </div>
-
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->
 
 <script>
 <?php

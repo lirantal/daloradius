@@ -29,11 +29,13 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-maintenance.php') !== false) 
 
 include_once("lang/main.php");
 
+$m_active = "Accounting";
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
 <head>
-    <title>daloRADIUS :: Accounting / Maintenance</title>
+    <title>daloRADIUS :: <?= $m_active ?></title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
     <link rel="stylesheet" href="css/1.css" media="screen">
@@ -52,9 +54,14 @@ include_once("lang/main.php");
         <div id="innerwrapper">
 
 <?php
-	$m_active = "Accounting";
+	
 	include_once("include/menu/menu-items.php");
 	include_once("include/menu/accounting-subnav.php");
+    
+    $menu_elements = array(
+                            "acct-maintenance-cleanup.php" => t('button','CleanupStaleSessions'),
+                            "acct-maintenance-delete.php" => t('button','DeleteAccountingRecords'),
+                          );
 ?>
 
             <div id="sidebar">
@@ -62,16 +69,14 @@ include_once("lang/main.php");
 	
                 <h3>Maintenance</h3>
                 <ul class="subnav">
-                    <li>
-                        <a title="<?= t('button','CleanupStaleSessions') ?>" href="acct-maintenance-cleanup.php">
-                            <b>&raquo;</b><?= t('button','CleanupStaleSessions') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= t('button','DeleteAccountingRecords') ?>" href="acct-maintenance-delete.php">
-                            <b>&raquo;</b><?= t('button','DeleteAccountingRecords') ?>
-                        </a>
-                    </li>
-                </ul>
-                <br><br>
+<?php
+                $tabindex = 1;
+                foreach ($menu_elements as $href => $caption) {
+                    printf('<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b>%s</a></li>',
+                           $href, strip_tags($caption), $tabindex, $caption);
+                    $tabindex++;
+}
+?>
+
+                </ul><!-- .subnav -->
             </div><!-- #sidebar -->

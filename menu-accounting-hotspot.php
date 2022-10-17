@@ -29,18 +29,20 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-hotspot.php') !== false) {
 
 include_once("lang/main.php");
 
+$m_active = "Accounting";
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
 <head>
-    <title>daloRADIUS :: Accounting / Hotspots </title>
+    <title>daloRADIUS :: <?= $m_active ?></title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
     <link rel="stylesheet" href="css/1.css" media="screen">
     <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
     <link rel="stylesheet" href="library/js_date/datechooser.css">
     <!--[if lte IE 6.5]>
-    <link rel="stylesheet" href="library/js_date/select-free.css"/>
+    <link rel="stylesheet" href="library/js_date/select-free.css">
     <![endif]-->
 
     <script src="library/js_date/date-functions.js"></script>
@@ -57,7 +59,6 @@ include_once("lang/main.php");
         <div id="innerwrapper">
 
 <?php
-	$m_active = "Accounting";
 	include_once("include/menu/menu-items.php");
 	include_once("include/menu/accounting-subnav.php");
 ?>
@@ -81,12 +82,12 @@ include_once("lang/main.php");
     $numrows = $res->numRows();
     
     if ($numrows > 0) {
-        echo '<select name="hotspot" size="3">';
+        echo '<select name="hotspot" size="3" class="generic">';
         while ($row = $res->fetchRow()) {
             $name_enc = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
             printf('<option value="%s">%s</option>', $name_enc, $name_enc);
         }
-        echo '</select>';
+        echo '</select><!-- .generic -->';
     }
 	include('library/closedb.php');
 	
@@ -99,7 +100,5 @@ include_once("lang/main.php");
                             <b>&raquo;</b><?= t('button','HotspotsComparison') ?>
                         </a>
                     </li>
-                </ul>
-			
-                <br><br>
-            </div>
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->

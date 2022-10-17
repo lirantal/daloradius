@@ -29,11 +29,13 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-reports-hb.php') !== false) {
 
 include_once("lang/main.php");
 
+$m_active = "Reports";
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
 <head>
-    <title>daloRADIUS :: Heartbeat</title>
+    <title>daloRADIUS :: <?= $m_active ?></title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     
     <link rel="stylesheet" href="css/1.css" media="screen">
@@ -50,8 +52,7 @@ include_once("lang/main.php");
         <div id="innerwrapper">
 
 <?php
-	$m_active = "Reports";
-    include_once("include/menu/menu-items.php");
+	include_once("include/menu/menu-items.php");
 	include_once("include/menu/reports-subnav.php");
 ?>      
 
@@ -61,12 +62,10 @@ include_once("lang/main.php");
                 <h3>Dashboard</h3>
                 <ul class="subnav">
                     <li>
-                        <a title="<?= strip_tags(t('button','Dashboard')) ?>" href="rep-hb-dashboard.php">
+                        <a tabindex="1" title="<?= strip_tags(t('button','Dashboard')) ?>" href="rep-hb-dashboard.php">
                             <b>&raquo;</b><?= t('button','Dashboard') ?>
                         </a>
                     </li>
-                </ul>
-                
-                <br><br>
-            </div>
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->
 
