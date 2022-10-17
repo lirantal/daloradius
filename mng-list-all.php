@@ -66,11 +66,11 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnglistall.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mnglistall.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mnglistall'] ?>
+					<?php echo t('helpPage','mnglistall') ?>
 					<br/>
 				</div>
 					<div id="returnMessages">
@@ -205,26 +205,26 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['Name']."</a>
+		".t('all','Name')."</a>
 		</th>
 		
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderType\">
-		".$l['all']['Password']."</a>
+		".t('all','Password')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
-		".$l['title']['Groups']."</a>
+		".t('title','Groups')."</a>
 		</th>
 		</tr> </thread>";
 
@@ -245,8 +245,9 @@
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 
 
-		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".$row[0]."');";
-		$content =  '<a class="toolTip" href="mng-edit.php?username='.$row[0].'">'.$l['Tooltip']['UserEdit'].'</a>';
+		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".urlencode($row[0])."');";
+		$content =  '<a class="toolTip" href="mng-edit.php?username='.urlencode($row[0]).'">'.t('Tooltip','UserEdit').'</a>';
+
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => $js,

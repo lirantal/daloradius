@@ -22,10 +22,10 @@
 *********************************************************************************************************
 */
 
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
-$l['all']['daloRADIUSVersion'] = "version 0.9-9";
-$l['all']['copyright1'] = "RADIUS は <a href=\"http://www.enginx.com\">Enginx</a>によって管理、レポート、アカウンティング、課金されています。";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
+$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "version " . $configValues['DALORADIUS_VERSION'];
+$l['all']['copyright1'] = "RADIUS は <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>によって管理、レポート、アカウンティング、課金されています。";
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "プール名";
 $l['all']['CalledStationId'] = "呼び出されたステーションID";
@@ -82,6 +82,8 @@ $l['all']['Daily'] = "日";
 $l['all']['Weekly'] = "週";
 $l['all']['Monthly'] = "月";
 $l['all']['Yearly'] = "年";
+
+$l['all']['Month'] = "月";
 
 $l['all']['RemoveRadacctRecords'] = "アカウンティングレポート削除";
 
@@ -671,6 +673,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "値を指�
 $l['Tooltip']['usernameTooltip'] = "ユーザがシステムに接続できる<br/>&nbsp;&nbsp;&nbsp;
 正確なユーザ名を入力してください";
 
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";
 $l['Tooltip']['passwordTooltip'] = "パスワードはシステムによっては大文字小文字を区別しますので、特別な措置が必要です";
 
 $l['Tooltip']['groupTooltip'] = "ユーザはこのグループに追加されます。<br/>&nbsp;&nbsp;&nbsp;
@@ -1559,10 +1562,10 @@ Huntgroup-Name := \"%{sql:select groupname from radhuntgroup where nasipaddress=
 <i> What this does is perform a lookup in the radhuntgroup table using the ip-address as a key to return the huntgroup name. It then adds an attribute/value pair to the request where the name of the attribute is Huntgroup-Name and it's value is whatever was returned from the SQL query. If the query did not find anything then the value is the empty string. </i>";
 
 
-+$l['helpPage']['mngradhuntdel'] = "データベスからハントグループエントリを削除するには、ハントグループの IP/ホスト とポートIDを入力しなければなりません";
-+$l['helpPage']['mngradhuntnew'] = "";
-+$l['helpPage']['mngradhuntlist'] = "";
-+$l['helpPage']['mngradhuntedit'] = "";
+$l['helpPage']['mngradhuntdel'] = "データベスからハントグループエントリを削除するには、ハントグループの IP/ホスト とポートIDを入力しなければなりません";
+$l['helpPage']['mngradhuntnew'] = "";
+$l['helpPage']['mngradhuntlist'] = "";
+$l['helpPage']['mngradhuntedit'] = "";
 
 $l['helpPage']['mnghsdel'] = "データベースからホットスポットを削除するには、ホットスポットの名前を入力しなければなりません<br/>";
 

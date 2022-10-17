@@ -107,11 +107,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorsdel.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configoperatorsdel.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configoperatorsdel'] ?>
+					<?php echo t('helpPage','configoperatorsdel') ?>
 					<br/>
 				</div>
                 <?php
@@ -134,7 +134,7 @@
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
 	</fieldset>
 

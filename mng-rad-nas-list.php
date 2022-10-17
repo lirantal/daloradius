@@ -56,11 +56,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnaslist.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradnaslist.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradnaslist'] ?>
+					<?php echo t('helpPage','mngradnaslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -125,66 +125,66 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['NasID']."</a>
+		".t('all','NasID')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=$orderType\">
-		".$l['all']['NasIPHost']."</a>
+		".t('all','NasIPHost')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=$orderType\">
-		".$l['all']['NasShortname']."</a>
+		".t('all','NasShortname')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=$orderType\">
-		".$l['all']['NasType']."</a>
+		".t('all','NasType')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=$orderType\">
-		".$l['all']['NasPorts']."</a>
+		".t('all','NasPorts')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
-		".$l['all']['NasSecret']."</a>
+		".t('all','NasSecret')."</a>
 		<br/>
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
-                ".$l['all']['NasVirtualServer']."</a>
+                ".t('all','NasVirtualServer')."</a>
                 <br/>
                 </th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=$orderType\">
-		".$l['all']['NasCommunity']."</a>
+		".t('all','NasCommunity')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=$orderType\">
-		".$l['all']['NasDescription']."</a>
+		".t('all','NasDescription')."</a>
 		<br/>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
                                 <td> <input type='checkbox' name='nashost[]' value='$row[1]'> $row[0] </td>
-                                <td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
+                                <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-nas-edit.php?nashost=$row[1]'>".$l['Tooltip']['EditNAS']."</a>
-                                        <a class='toolTip' href='mng-rad-nas-del.php?nashost=$row[1]'>".$l['Tooltip']['RemoveNAS']."</a>
+                                        <a class='toolTip' href='mng-rad-nas-edit.php?nashost=$row[1]'>".t('Tooltip','EditNAS')."</a>
+                                        <a class='toolTip' href='mng-rad-nas-del.php?nashost=$row[1]'>".t('Tooltip','RemoveNAS')."</a>
                                         <br/>\"
                                         >$row[1]</a></td>
 				<td> $row[2] </td>

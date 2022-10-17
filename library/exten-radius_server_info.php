@@ -15,41 +15,43 @@
  *
  *********************************************************************************************************
  * Description:
- *		this script runs a check to see if freeradius is up and running
-*		the check is done by looking for a 'radius' process listening
-*		on any socket interface. clumsy, but that's what we got for now
+ *        this script uses pgrep to check if services stored
+ *              in $services_to_check are running
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *              Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
-function check_service($sname) {
-	if ($sname != '') {
-		system("pgrep ".escapeshellarg($sname)." >/dev/null 2>&1", $ret_service);
-		if ($ret_service == 0) {
-			return "Enabled";
-		} else {
-			return "Disabled";
-		}
-	} else {
-		return "no service name";
-	}
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/exten-radius_server_info.php') !== false) {
+    header("Location: ../index.php");
+    exit;
 }
 
+// given the $service_name, this function returns "Running" if that service is running
+function check_service($service_name) {
+    if (empty($service_name)) {
+        return "no service name";
+    }
+
+    $command = sprintf("pgrep %s", escapeshellarg($service_name));
+    exec($command, $output, $result_code);
+    return ($result_code === 0) ? "Running" : "Not running";
+}
+
+$services_to_check = array("FreeRADIUS", "MySQL", "MariaDB");
+
 ?>
 
+<h3>Service Status</h3>
+<table class="summarySection">
 <?php
-	echo "<h3>Service Status</h3>";
+    $format = '<tr><td class="summaryKey">%s</td><td class="summaryValue"><span class="sleft">%s'
+            . "</span></td></tr>\n";
+    foreach ($services_to_check as $service_name) {
+        printf($format, $service_name, check_service(strtolower($service_name)));
+    }
 ?>
-
-<table class='summarySection'>
-  <tr>
-    <td class='summaryKey'> Radius </td>
-    <td class='summaryValue'><span class='sleft'><?php echo check_service("radius"); ?></span> </td>
-  </tr>
-  <tr>
-    <td class='summaryKey'> Mysql </td>
-    <td class='summaryValue'><span class='sleft'><?php echo check_service("mysql");  ?></span> </td>
-  </tr>
 </table>

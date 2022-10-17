@@ -23,7 +23,7 @@
 	<h3>Attributes Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.mngradattributeslist.submit();"><b>&raquo;</b><?php echo $l['button']['ListAttributesforVendor'] ?>
+		<li><a href="javascript:document.mngradattributeslist.submit();"><b>&raquo;</b><?php echo t('button','ListAttributesforVendor') ?>
 			</a>
                         <form name="mngradattributeslist" action="mng-rad-attributes-list.php" method="get" class="sidebar">
                         <?php
@@ -33,27 +33,24 @@
 			</form>
 		</li>
 
-		<li><a href="mng-rad-attributes-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewVendorAttribute'] ?></a></li>
-		<li><a href="javascript:document.mngradattributesedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditVendorAttribute'] ?></a>
+		<li><a href="mng-rad-attributes-new.php" tabindex=2><b>&raquo;</b><?php echo t('button','NewVendorAttribute') ?></a></li>
+		<li><a href="javascript:document.mngradattributesedit.submit();" tabindex=3 ><b>&raquo;</b><?php echo t('button','EditVendorAttribute') ?></a>
 			<form name="mngradattributesedit" action="mng-rad-attributes-edit.php" method="get" class="sidebar">
 			<input name="vendor" type="text" id="vendornameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['VendorName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','VendorName'); ?> <br/>'
 				value="<?php if (isset($vendor)) echo $vendor ?>" tabindex=4>
 			<input name="attribute" type="text" id="attributenameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				value="<?php if (isset($attribute)) echo $attribute  ?>" tabindex=5>
 			</form></li>
-		<li><a href="javascript:document.mngradattributessearch.submit();" tabindex=6 ><b>&raquo;</b><?php echo $l['button']['SearchVendorAttribute'] ?></a>
+		<li><a href="javascript:document.mngradattributessearch.submit();" tabindex=6 ><b>&raquo;</b><?php echo t('button','SearchVendorAttribute') ?></a>
 			<form name="mngradattributessearch" action="mng-rad-attributes-search.php" method="get" class="sidebar">
 			<input name="attribute" type="text" id="attributenameSearch" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				value="<?php if (isset($attribute)) echo $attribute ?>" tabindex=7>
 			</form></li>
-		<li><a href="mng-rad-attributes-del.php" tabindex=8><b>&raquo;</b><?php echo $l['button']['RemoveVendorAttribute'] ?></a></li>
-		<li><a href="mng-rad-attributes-import.php" tabindex=8><b>&raquo;</b><?php echo $l['button']['ImportVendorDictionary'] ?></a></li>
+		<li><a href="mng-rad-attributes-del.php" tabindex=8><b>&raquo;</b><?php echo t('button','RemoveVendorAttribute') ?></a></li>
+		<li><a href="mng-rad-attributes-import.php" tabindex=8><b>&raquo;</b><?php echo t('button','ImportVendorDictionary') ?></a></li>
 		
 	</ul>
 

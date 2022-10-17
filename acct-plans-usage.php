@@ -64,10 +64,10 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctplans.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctplans.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['acctplans'] ?>
+			<?php echo t('helpPage','acctplans') ?>
 			<br/>
 		</div>
 		<br/>
@@ -207,26 +207,26 @@
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=planname&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanName']."</a>
+		".t('all','PlanName')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=sessiontime&orderType=$orderTypeNextPage\">
-		".$l['all']['UsedTime']."</a>
+		".t('all','UsedTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=plantimebank&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalTime']."</a>
+		".t('all','TotalTime')."</a>
 		</th>
 		<th scope='col'> 
 		<br/>
-		".$l['all']['TotalTraffic']." (".$l['all']['Bytes'].")</a>
+		".t('all','TotalTraffic')." (".t('all','Bytes').")</a>
 		</th>
                 </tr> </thread>";
 
@@ -239,12 +239,11 @@
 			$percFormatted = "$perc";
 			
 		printqn("<tr>
-                        <td> <a class='tablenovisit' href='javascript:return;'
-						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");
-                                        javascript:__displayTooltip();'
+                        <td> <a class='tablenovisit' href='#'
+						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");return false;'
                                 tooltipText='
 								<a class=\"toolTip\" href=\"bill-pos-edit.php?username={$row['username']}\">
-	                                        {$l['Tooltip']['UserEdit']}</a>
+	                                        ".t('Tooltip','UserEdit')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerUserInfo\">

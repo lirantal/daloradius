@@ -52,23 +52,23 @@
 
 		foreach ($itemsArray as $value) {
 
-			list($poolname, $ipaddress) = preg_split('\|\|', $value);
+			list($poolnamex, $ipaddress) = preg_split('/\|\|/', $value);
 
-			if ( (trim($poolname) != "") && (trim($ipaddress) != "") ) {
+			if ( (trim($poolnamex) != "") && (trim($ipaddress) != "") ) {
 
 				include 'library/opendb.php';
 
-				$allPoolNames .= $poolname . ", ";
+				$allPoolNames .= $poolnamex . ", ";
 				$allIPAddresses .= $ipaddress .", ";
 
 				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL']." WHERE ".
-					" pool_name='".$dbSocket->escapeSimple($poolname)."' AND".
+					" pool_name='".$dbSocket->escapeSimple($poolnamex)."' AND".
 					" framedipaddress='".$dbSocket->escapeSimple($ipaddress)."'";
 				$res = $dbSocket->query($sql);
 				$logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolname</b> from database";
-				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolname] on page: ";
+				$successMsg .= "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolnamex</b> from database <br>";
+				$logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolnamex] on page: ";
 
 				include 'library/closedb.php';
 
@@ -106,11 +106,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradippooldel.php'] ?>
-		:: <?php if (isset($poolname)) { echo $poolname; } ?><h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradippooldel.php') ?>
+		:: <?php if (isset($poolname)) { echo $poolname; } ?><h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradippooldel'] ?>
+			<?php echo t('helpPage','mngradippooldel') ?>
 			<br/>
 		</div>
 <?php
@@ -122,21 +122,21 @@
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['IPPoolInfo'] ?> </h302>
+			<h302> <?php echo t('title','IPPoolInfo') ?> </h302>
 			<br/>
 
-			<label for='poolname' class='form'><?php echo $l['all']['PoolName'] ?></label>
+			<label for='poolname' class='form'><?php echo t('all','PoolName') ?></label>
 			<input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
 			<br />
 
-			<label for='ipaddress' class='form'><?php echo $l['all']['IPAddress'] ?></label>
+			<label for='ipaddress' class='form'><?php echo t('all','IPAddress') ?></label>
 			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
 			<br />
 
 			<br/><br/>
 			<hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

@@ -33,7 +33,7 @@ include_once ("lang/main.php");
 		<h3>Log Files</h3>
 
 			<li><a href="javascript:document.daloradius_log.submit();"><b>&raquo;</b>
-			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['daloRADIUSLog'] ?></a>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo t('button','daloRADIUSLog') ?></a>
                         <form name="daloradius_log" action="rep-logs-daloradius.php" method="get" class="sidebar">
 	                        <select class="generic" name="daloradiusLineCount" type="text">
 					<?php if (isset($daloradiusLineCount)) {
@@ -68,7 +68,7 @@ include_once ("lang/main.php");
                         </form></li>
 
 			<li><a href="javascript:document.radius_log.submit();"><b>&raquo;</b>
-			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['RadiusLog'] ?></a>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo t('button','RadiusLog') ?></a>
                         <form name="radius_log" action="rep-logs-radius.php" method="get" class="sidebar">
 	                        <select class="generic" name="radiusLineCount" type="text">
 					<?php if (isset($radiusLineCount)) {
@@ -102,7 +102,7 @@ include_once ("lang/main.php");
                         </form></li>
 
 			<li><a href="javascript:document.system_log.submit();"><b>&raquo;</b>
-			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['SystemLog'] ?></a>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo t('button','SystemLog') ?></a>
                         <form name="system_log" action="rep-logs-system.php" method="get" class="sidebar">
 	                        <select class="generic" name="systemLineCount" type="text">
 					<?php if (isset($systemLineCount)) {
@@ -119,14 +119,13 @@ include_once ("lang/main.php");
                                         <option value="1000"> 1000 Lines </option>
                                 </select>
 	                        <input type="text" name="systemFilter" 
-	                                onClick='javascript:__displayTooltip();'
-	                                tooltipText='<?php echo $l['Tooltip']['Filter']; ?> <br/>'
+	                                tooltipText='<?php echo t('Tooltip','Filter'); ?> <br/>'
 					value="<?php if (isset($systemFilter)) echo $systemFilter; ?>" />
                         </form></li>
 
 
 			<li><a href="javascript:document.boot_log.submit();"><b>&raquo;</b>
-			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo $l['button']['BootLog'] ?></a>
+			<img src='images/icons/reportsLogs.png' border='0'>&nbsp;<?php echo t('button','BootLog') ?></a>
                         <form name="boot_log" action="rep-logs-boot.php" method="get" class="sidebar">
 	                        <select class="generic" name="bootLineCount" type="text">
 					<?php if (isset($bootLineCount)) {
@@ -143,8 +142,7 @@ include_once ("lang/main.php");
                                         <option value="1000"> 1000 Lines </option>
                                 </select>
 	                        <input type="text" name="bootFilter" 
-	                                onClick='javascript:__displayTooltip();'
-	                                tooltipText='<?php echo $l['Tooltip']['Filter']; ?> <br/>'
+	                                tooltipText='<?php echo t('Tooltip','Filter'); ?> <br/>'
 					value="<?php if (isset($bootFilter)) echo $bootFilter; ?>" />
                         </form></li>
 
@@ -152,8 +150,8 @@ include_once ("lang/main.php");
 
 	
 	<br/><br/>
-	<h2>Search</h2>
-	<input name="" type="text" value="Search" />
+	
+	
 	
 
 </div>

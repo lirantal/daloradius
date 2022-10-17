@@ -31,7 +31,7 @@
 	<ul class="subnav">
 
 		<li><a href="javascript:document.overall_logins.submit();"><b>&raquo;</b>
-			<?php echo $l['button']['UserLogins'] ?></a>
+			<?php echo t('button','UserLogins') ?></a>
 			<form name="overall_logins" action="graphs-overall_logins.php" method="post" class="sidebar">
 			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
@@ -43,7 +43,7 @@
 
 
 		<li><a href="javascript:document.overall_download.submit();"><b>&raquo;</b>
-			<?php echo $l['button']['UserDownloads'] ?></a>
+			<?php echo t('button','UserDownloads') ?></a>
 			<form name="overall_download" action="graphs-overall_download.php" method="post" class="sidebar">
 			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
@@ -55,7 +55,7 @@
 
 
 		<li><a href="javascript:document.overall_upload.submit();"><b>&raquo;</b>
-			<?php echo $l['button']['UserUploads'] ?></a>
+			<?php echo t('button','UserUploads') ?></a>
 			<form name="overall_upload" action="graphs-overall_upload.php" method="post" class="sidebar">
 			<select class="generic" name="type" type="text">
 				<option value="daily"> Daily
@@ -68,8 +68,8 @@
 	</ul>
 
 	<br/><br/>
-	<h2>Search</h2>
-	<input name="" type="text" value="Search" />
+	
+	
 
 </div>
 

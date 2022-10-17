@@ -123,11 +123,11 @@ function verifyPassword(passwordStr1, passwordStr2) {
 ?>		
 	<div id="contentnorightbar">
 
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['prefpasswordedit.php'] ?>
-		:: <?php if (isset($login)) { echo $login; } ?><h144>+</h144></a></h2>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','prefpasswordedit.php') ?>
+		:: <?php if (isset($login)) { echo $login; } ?><h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['prefpasswordedit'] ?>
+			<?php echo t('helpPage','prefpasswordedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -138,26 +138,26 @@ function verifyPassword(passwordStr1, passwordStr2) {
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['ChangePassword']; ?> </h302>
+			<h302> <?php echo t('title','ChangePassword'); ?> </h302>
 			<br/>
 
 			<ul>
 
 
 			<li class='fieldset'>
-			<label for='currentpassword' class='form'><?php echo $l['all']['CurrentPassword'] ?></label>
+			<label for='currentpassword' class='form'><?php echo t('all','CurrentPassword') ?></label>
 			<input name='currentpassword' type='password' id='currentpassword' value='<?php echo $currentpassword ?>' 
 				tabindex=101 />
 			</li>
 
 			<li class='fieldset'>
-			<label for='newpassword' class='form'><?php echo $l['all']['NewPassword'] ?></label>
+			<label for='newpassword' class='form'><?php echo t('all','NewPassword') ?></label>
 			<input name='newpassword' type='password' id='newpassword' value='<?php echo $newpassword ?>' 
 				tabindex=101 />
 			</li>
 
 			<li class='fieldset'>
-			<label for='verifypassword' class='form'><?php echo $l['all']['VerifyPassword'] ?></label>
+			<label for='verifypassword' class='form'><?php echo t('all','VerifyPassword') ?></label>
 			<input name='verifypassword' type='password' id='verifypassword' value='<?php echo $verifypassword ?>' 
 				tabindex=101 />
 			</li>
@@ -167,7 +167,7 @@ function verifyPassword(passwordStr1, passwordStr2) {
 			<li class='fieldset'>
 			<br/>
 			<hr><br/>
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
 					class='button' onClick="return verifyPassword('newpassword','verifypassword');" />
 		</li>
 

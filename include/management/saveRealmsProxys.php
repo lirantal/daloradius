@@ -80,7 +80,7 @@ if ($fileFlag == 1) {
                                 if ($row['ldflag'])
                                         fwrite($realmsFd, "\tldflag = " .$row['ldflag']. "\n");
                                 if ($row['nostrip'])
-                                        fwrite($realmsFd, "\tnostrip = " .$row['nostrip']. "\n");
+                                        fwrite($realmsFd, "\tnostrip\n");
                                 if ($row['hints'])
                                         fwrite($realmsFd, "\thints = " .$row['hints']. "\n");
                                 if ($row['notrealm'])

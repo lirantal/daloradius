@@ -102,11 +102,11 @@
 
 	<div id="contentnorightbar">
 	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasdel.php'] ?>
-		:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradnasdel.php') ?>
+		:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>&#x2754;</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradnasdel'] ?>
+			<?php echo t('helpPage','mngradnasdel') ?>
 			<br/>
 		</div>
 		<?php
@@ -118,17 +118,17 @@
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['NASInfo'] ?> </h302>
+			<h302> <?php echo t('title','NASInfo') ?> </h302>
 			<br/>
 
-			<label for='nashost' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
+			<label for='nashost' class='form'><?php echo t('all','NasIPHost') ?></label>
 			<input name='nashost' type='text' id='nashost' value='' tabindex=100 />
 			<br />
 
 			<br/><br/>
 			<hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

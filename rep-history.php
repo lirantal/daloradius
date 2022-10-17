@@ -48,11 +48,11 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['rephistory.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','rephistory.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['rephistory'] ?>
+			<?php echo t('helpPage','rephistory') ?>
 			<br/>
 		</div>
 		<br/>
@@ -116,32 +116,32 @@
         echo "<thread> <tr>
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=section&orderType=$orderTypeNextPage\">
-		".$l['all']['Section']." 
+		".t('all','Section')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=item&orderType=$orderTypeNextPage\">
-		".$l['all']['Item']." 
+		".t('all','Item')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationdate&orderType=$orderTypeNextPage\">
-		".$l['all']['CreationDate']." 
+		".t('all','CreationDate')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationby&orderType=$orderTypeNextPage\">
-		".$l['all']['CreationBy']." 
+		".t('all','CreationBy')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updatedate&orderType=$orderTypeNextPage\">
-		".$l['all']['UpdateDate']." 
+		".t('all','UpdateDate')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=updateby&orderType=$orderTypeNextPage\">
-		".$l['all']['UpdateBy']." 
+		".t('all','UpdateBy')." 
 		</th>
         </tr> </thread>";
 

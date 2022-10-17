@@ -117,11 +117,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergroupdel.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradusergroupdel.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradusergroupdel'] ?>
+			<?php echo t('helpPage','mngradusergroupdel') ?>
 			<br/>
 		</div>
 		<?php
@@ -133,7 +133,7 @@
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+                <h302> <?php echo t('title','GroupInfo') ?> </h302>
                 <br/>
 
                 <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
@@ -141,12 +141,12 @@
                 <ul>
 
                 <li class='fieldset'>
-                <label for='username' class='form'><?php echo $l['all']['Username'] ?></label>
+                <label for='username' class='form'><?php echo t('all','Username') ?></label>
                 <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
                 </li>
 
                 <li class='fieldset'>
-                <label for='group' class='form'><?php echo $l['all']['Groupname'] ?></label>
+                <label for='group' class='form'><?php echo t('all','Groupname') ?></label>
                 <input name='group' type='text' id='group' value='<?php echo $group ?>' tabindex=101 />
                 <?php
                         include 'include/management/populate_selectbox.php';
@@ -154,7 +154,7 @@
                 ?>
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                        <?php echo t('Tooltip','groupTooltip') ?>
                 </div>
                 </li>
 
@@ -162,7 +162,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
 		</ul>

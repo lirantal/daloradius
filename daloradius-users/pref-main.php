@@ -35,11 +35,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['prefmain.php'];?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','prefmain.php');?>
+		<h144>&#x2754;</h144></a></h2>
 	
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['prefmain'] ?>
+			<?php echo t('helpPage','prefmain') ?>
 			<br/>
 		</div>
 		<br/>

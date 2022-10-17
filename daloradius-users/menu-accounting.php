@@ -41,7 +41,7 @@
 	<h3>Users Accounting</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo $l['button']['DateAccounting'] ?><a>
+		<li><a href="javascript:document.acctdate.submit();"><b>&raquo;</b><?php echo t('button','DateAccounting') ?><a>
 			<form name="acctdate" action="acct-date.php" method="get" class="sidebar">
 			<input name="startdate" type="text" id="startdate" 
 				value="<?php if (isset($accounting_date_startdate)) echo $accounting_date_startdate;
@@ -66,8 +66,8 @@
 	</ul>
 
 	<br/><br/>
-	<h2>Search</h2>
-	<input name="" type="text" value="Search" />
+	
+	
 
 </div>
 

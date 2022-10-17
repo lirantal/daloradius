@@ -58,11 +58,11 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configoperatorslist.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configoperatorslist.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configoperatorslist'] ?>
+					<?php echo t('helpPage','configoperatorslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -122,21 +122,21 @@
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['ID']. " 
+		".t('all','ID'). " 
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['Username']." 
+		".t('all','Username')." 
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\">
 			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".$l['all']['Password']." 
+		".t('all','Password')." 
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\">
 			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
 		</th>
@@ -167,7 +167,7 @@
 		echo "<tr>
 			<td> <input type='checkbox' name='operator_username[]' value='$row[1]'>$row[0]</td>
 			<td> <a class='tablenovisit' href='config-operators-edit.php?operator_username=$row[1]' title='".
-			$l['Tooltip']['UserEdit']."'>$row[1]</a> </td>
+			t('Tooltip','UserEdit')."'>$row[1]</a> </td>
 			";
                 if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
                         echo "<td>[Password is hidden]</td>";

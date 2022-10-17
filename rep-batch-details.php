@@ -51,11 +51,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['repbatchdetails.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','repbatchdetails.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['repbatchdetails'] ?>
+			<?php echo t('helpPage','repbatchdetails') ?>
 			<br/>
 		</div>
 
@@ -162,43 +162,43 @@
 		
 			<thread> <tr>
 			<th scope='col'> 
-			".$l['all']['BatchName']."
+			".t('all','BatchName')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['HotSpot']."
+			".t('all','HotSpot')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['BatchStatus']."
+			".t('all','BatchStatus')."
 			</th>
 			
 			<th scope='col'> 
-			".$l['all']['TotalUsers']."
+			".t('all','TotalUsers')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['ActiveUsers']."
+			".t('all','ActiveUsers')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['PlanName']."
+			".t('all','PlanName')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['PlanCost']."
+			".t('all','PlanCost')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['BatchCost']."
+			".t('all','BatchCost')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['CreationDate']."
+			".t('all','CreationDate')."
 			</th>
 	
 			<th scope='col'> 
-			".$l['all']['CreationBy']."
+			".t('all','CreationBy')."
 			</th>
 	
 			</tr> </thread>";
@@ -223,11 +223,11 @@
 					<td>";
 	
 			printqn("
-					<a class='tablenovisit' href='javascript:return;'
-						onClick='javascript:__displayTooltip();'
+					<a class='tablenovisit' href='#'
+						onclick='javascript:return false;'
 						tooltipText='
 									<div id=\"divContainerUserInfo\">
-										<b>{$l['all']['batchDescription']}</b>:<br/><br/>
+										<b>".t('all','batchDescription')."</b>:<br/><br/>
 										{$row['batch_description']}
 									</div>
 									<br/>
@@ -412,15 +412,15 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['BatchName']."</a>
+		".t('all','BatchName')."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['Username']."
+		".t('all','Username')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['StartTime']."
+		".t('all','StartTime')."
 		</th>
 
 		</tr> </thread>";

@@ -26,10 +26,10 @@
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
-$l['all']['daloRADIUSVersion'] = "version 0.9-9";
-$l['all']['copyright1'] = "RADIUS Management, Reporting, Accounting and Billing by <a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>
+$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "version " . $configValues['DALORADIUS_VERSION'];
+$l['all']['copyright1'] = "RADIUS Management, Reporting, Accounting and Billing by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "Azonosító";
 $l['all']['PoolName'] = "Készlet neve";
@@ -246,24 +246,7 @@ $l['all']['billingplans'] = "billing plans";
 $l['all']['billinghistory'] = "billing history";
 $l['all']['billinginfo'] = "billing user info";
 
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
+$l['all']['Month'] = "Hónap";
 
 $l['all']['PaymentDate'] = "Payment Date";
 $l['all']['PaymentStatus'] = "Payment Status";
@@ -462,6 +445,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you spec
 
 $l['Tooltip']['usernameTooltip'] = "The exact username as the user<br/>&nbsp;&nbsp;&nbsp;
 					will use to connect to the system";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
 $l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in<br/>&nbsp;&nbsp;&nbsp;
 					certain systems so take extra care";
 $l['Tooltip']['groupTooltip'] = "The user will be added to this group.<br/>&nbsp;&nbsp;&nbsp;

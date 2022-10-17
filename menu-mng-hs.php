@@ -22,24 +22,23 @@
 	<h3>Hotspots Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-hs-list.php"><b>&raquo;</b><?php echo $l['button']['ListHotspots'] ?></a></li>
-		<li><a href="mng-hs-new.php"><b>&raquo;</b><?php echo $l['button']['NewHotspot'] ?></a></li>
-		<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditHotspot'] ?><a>
+		<li><a href="mng-hs-list.php"><b>&raquo;</b><?php echo t('button','ListHotspots') ?></a></li>
+		<li><a href="mng-hs-new.php"><b>&raquo;</b><?php echo t('button','NewHotspot') ?></a></li>
+		<li><a href="javascript:document.mnghsedit.submit();""><b>&raquo;</b><?php echo t('button','EditHotspot') ?><a>
 			<form name="mnghsedit" action="mng-hs-edit.php" method="get" class="sidebar">
 			<input name="name" type="text"  id="hotspotEdit" autocomplete="off"
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['HotspotName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','HotspotName'); ?> <br/>'
 				value="<?php if (isset($edit_hotspotname)) echo $edit_hotspotname; ?>" tabindex=3>
 			</form></li>
 			
-		<li><a href="mng-hs-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveHotspot'] ?></a></li>
+		<li><a href="mng-hs-del.php"><b>&raquo;</b><?php echo t('button','RemoveHotspot') ?></a></li>
 		
 	</ul>
 	
 	<br/><br/>
-	<h2>Search</h2>
 	
-	<input name="" type="text" value="Search" tabindex=4 />
+	
+	
 
 </div>
 

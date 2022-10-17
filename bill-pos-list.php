@@ -66,11 +66,11 @@
 
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billposlist.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billposlist.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
                 <div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['billposlist'] ?>
+			<?php echo t('helpPage','billposlist') ?>
 			<br/>
 		</div>
 
@@ -185,31 +185,31 @@
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=contactperson&orderType=$orderTypeNextPage\">
-		".$l['ContactInfo']['ContactPerson']."</a>
+		".t('ContactInfo','ContactPerson')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=company&orderType=$orderTypeNextPage\">
-		".$l['ContactInfo']['Company']."</a>
+		".t('ContactInfo','Company')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['Password']."
+		".t('all','Password')."
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planname&orderType=$orderTypeNextPage\">
-		".$l['ContactInfo']['PlanName']."</a>
+		".t('ContactInfo','PlanName')."</a>
 		</th>
 
 		</tr> </thread>";
@@ -231,12 +231,11 @@
 			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
 		
 		printqn("
-			<a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".urlencode($row['username'])."\");
-					javascript:__displayTooltip();'
+			<a class='tablenovisit' href='#'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=".urlencode($row['username'])."\");return false;'
                                 tooltipText='
 	                                <a class=\"toolTip\" href=\"bill-pos-edit.php?username=".urlencode($row['username'])."\">
-						{$l['Tooltip']['UserEdit']}</a>
+						".t('Tooltip','UserEdit')."</a>
 					<br/><br/>
 
 					<div id=\"divContainerUserInfo\">

@@ -124,11 +124,11 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymentsnew.php'] ?>
-	<h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','paymentsnew.php') ?>
+	<h144>&#x2754;</h144></a></h2>
 	
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['paymentsnew'] ?>
+		<?php echo t('helpPage','paymentsnew') ?>
 		<br/>
 	</div>
 	<?php
@@ -139,28 +139,28 @@
 
 <div class="tabber">
 
-	<div class="tabbertab" title="<?php echo $l['title']['PaymentInfo']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','PaymentInfo'); ?>">
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['PaymentInfo']; ?> </h302>
+		<h302> <?php echo t('title','PaymentInfo'); ?> </h302>
 		<br/>
 
 		<ul>
 
 		<li class='fieldset'>
-		<label for='name' class='form'><?php echo $l['all']['PaymentInvoiceID'] ?></label>
+		<label for='name' class='form'><?php echo t('all','PaymentInvoiceID') ?></label>
 		<input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentInvoiceTooltip')" /> 
 		
 		<div id='paymentInvoiceTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['paymentInvoiceTooltip'] ?>
+			<?php echo t('Tooltip','paymentInvoiceTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-   		<label for='payment_amount' class='form'><?php echo $l['all']['PaymentAmount'] ?></label>
+   		<label for='payment_amount' class='form'><?php echo t('all','PaymentAmount') ?></label>
    		<input class='integer5len' name='payment_amount' type='text' id='payment_amount' value='000.00' tabindex=103 />
                    <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('payment_amount','increment')" />
                    <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('payment_amount','decrement')"/>
@@ -168,17 +168,17 @@
    
    		<div id='amountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
    			<img src='images/icons/comment.png' alt='Tip' border='0' />
-   			<?php echo $l['Tooltip']['amountTooltip'] ?>
+   			<?php echo t('Tooltip','amountTooltip') ?>
    		</div>
    		</li>
 
-		<label for='payment_date' class='form'><?php echo $l['all']['PaymentDate']?></label>
+		<label for='payment_date' class='form'><?php echo t('all','PaymentDate')?></label>
    		<input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
    		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
    		<li class='fieldset'>
-   		<label for='payment_type_id' class='form'><?php echo $l['all']['PaymentType']?></label>
+   		<label for='payment_type_id' class='form'><?php echo t('all','PaymentType')?></label>
    		<?php
    		        include_once('include/management/populate_selectbox.php');
    		        populate_payment_type_id("Select Payment Type", "payment_type_id");
@@ -186,25 +186,25 @@
    		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentTypeIdTooltip')" />
    		<div id='paymentTypeIdTooltip'  style='display:none;visibility:visible' class='ToolTip'>
    			<img src='images/icons/comment.png' alt='Tip' border='0' />
-   			<?php echo $l['Tooltip']['paymentTypeIdTooltip'] ?>
+   			<?php echo t('Tooltip','paymentTypeIdTooltip') ?>
    		</div>
    		</li>
 
 		<li class='fieldset'>
-		<label for='payment_notes' class='form'><?php echo $l['all']['PaymentNotes'] ?></label>
+		<label for='payment_notes' class='form'><?php echo t('all','PaymentNotes') ?></label>
 		<textarea name='payment_notes'  class='form' tabindex=101 ></textarea>
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentNotesTooltip')" /> 
 		
 		<div id='paymentNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['paymentNotesTooltip'] ?>
+			<?php echo t('Tooltip','paymentNotesTooltip') ?>
 		</div>
 		</li>
 	
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>
@@ -213,7 +213,7 @@
 	</div>
 
 
-	<div class="tabbertab" title="<?php echo $l['title']['Optional']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','Optional'); ?>">
 
 <fieldset>
 
@@ -225,19 +225,19 @@
         <br/>
 
         <br/>
-        <label for='creationdate' class='form'><?php echo $l['all']['CreationDate'] ?></label>
+        <label for='creationdate' class='form'><?php echo t('all','CreationDate') ?></label>
         <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
         <br/>
 
-        <label for='creationby' class='form'><?php echo $l['all']['CreationBy'] ?></label>
+        <label for='creationby' class='form'><?php echo t('all','CreationBy') ?></label>
         <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
         <br/>
 
-        <label for='updatedate' class='form'><?php echo $l['all']['UpdateDate'] ?></label>
+        <label for='updatedate' class='form'><?php echo t('all','UpdateDate') ?></label>
         <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
         <br/>
 
-        <label for='updateby' class='form'><?php echo $l['all']['UpdateBy'] ?></label>
+        <label for='updateby' class='form'><?php echo t('all','UpdateBy') ?></label>
         <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
         <br/>
 
@@ -245,7 +245,7 @@
         <br/><br/>
         <hr><br/>
 
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
                 class='button' />
 
 </fieldset>

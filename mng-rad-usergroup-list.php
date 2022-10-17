@@ -57,11 +57,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradusergrouplist'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradusergrouplist') ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo $l['helpPage']['mngradusergrouplist'] ?>
+			<?php echo t('helpPage','mngradusergrouplist') ?>
 			<br/>
 		</div>	
 		<br/>
@@ -150,22 +150,22 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=firstname&orderType=$orderTypeNextPage\">
-                ".$l['all']['Name']."</a>
+                ".t('all','Name')."</a>
                 </th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
-		".$l['all']['Groupname']."</a>
+		".t('all','Groupname')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=priority&orderType=$orderTypeNextPage\">
-		".$l['all']['Priority']."</a>
+		".t('all','Priority')."</a>
 		</th>
 
 	</tr> </thread>";
@@ -175,12 +175,12 @@
 		echo "<tr>
 			<td> <input type='checkbox' name='usergroup[]' value='$row[0]||$row[1]'> $row[0] </td>
 			<td> $row[3] $row[4] </td>
-			<td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
+			<td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['EditUserGroup']."</a>
+                                        <a class='toolTip' href='mng-rad-usergroup-edit.php?username=$row[0]&group=$row[1]'>".t('Tooltip','EditUserGroup')."</a>
 					<br/>
-                                        <a class='toolTip' href='mng-rad-usergroup-list-user.php?username=$row[0]&group=$row[1]'>".$l['Tooltip']['ListUserGroups']."</a>
+                                        <a class='toolTip' href='mng-rad-usergroup-list-user.php?username=$row[0]&group=$row[1]'>".t('Tooltip','ListUserGroups')."</a>
                                         <br/>\"
 					>$row[1]</a></td>
 				<td> $row[2] </td>

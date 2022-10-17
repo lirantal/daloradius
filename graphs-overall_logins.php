@@ -1,92 +1,103 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
 
-
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "username";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
- 
-
-	$username = $_REQUEST['username'];
-	$type = $_REQUEST['type'];
-
-
+    // validate (or pre-validate) parameters
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
+    
+    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+              ? str_replace('%', '', $_GET['username']) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
 	//feed the sidebar variables
-	$overall_logins_username = $username;
+	$overall_logins_username = $username_enc;
+    $overall_logins_type = $type;
 
 	include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logQuery = "performed query for user [$username] of type [$type] on page: ";
-
-
-?>
-
-<?php	
-	include ("menu-graphs.php");	
-?>
-
-<?php
-        include_once ("library/tabber/tab-layout.php");
+    
+    include("menu-graphs.php");
+    include_once("library/tabber/tab-layout.php");
 ?>
 		
 		
 		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['graphsoveralllogins.php']; ?>
-		<h144>+</h144></a></h2>
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro','graphsoveralllogins.php') ?>
+                    <h144>&#x2754;</h144>
+                </a>
+            </h2>
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['graphsoveralllogins'] ?>
-			<br/>
-		</div>
-		<br/>
-
-<div class="tabber">
-
-     <div class="tabbertab" title="Graph">
-        <br/>
-
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','graphsoveralllogins') ?><br></div>
+            <br>
 <?php
-	echo "<center>";
-	echo "<img src=\"library/graphs-overall-users-login.php?type=$type&user=$username\" />";
-	echo "</center>";
+    if (!empty($username)) {
+        $src = sprintf("library/graphs-overall-users-login.php?type=%s&user=%s", $type, $username_enc);
+        $alt = ucfirst($type) . " login/hit statistics for user " . $username_enc;
+        
 ?>
-	</div>
-	<div class="tabbertab" title="Statistics">
-	<br/>
-
+            <div class="tabber">
+                <div class="tabbertab" title="Graph">
+                    <div style="text-align: center; margin-top: 50px">
+                        <img alt="<?= $alt ?>" src="<?= $src ?>">
+                    </div>
+                </div>
+	
+                <div class="tabbertab" title="Statistics">
+                    <div style="margin-top: 50px">
 <?php
-	include 'library/tables-overall-users-login.php';
+        include("library/tables-overall-users-login.php");
 ?>
-
-	</div>
-</div>		
-
-
+                    </div>
+                </div>
+            </div>
 <?php
-	include('include/config/logging.php');
+    } else {
+        $failureMsg = "You must provide a valid username";
+        include_once("include/management/actionMessages.php");
+    }
 ?>
+        </div>
 
-		</div>
-		
 		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+<?php
+    $log = "visited page: ";
+    if (!empty($username)) {
+        $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    }
+
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-		
 		</div>
-		
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

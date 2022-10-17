@@ -92,19 +92,19 @@ echo "
                 <input disabled type='text' value='"; if (isset($operator_lastlogin)) 
 			echo $operator_lastlogin; echo "' />
 	        <br/>
-	        <label for='creationdate' class='form'>".$l['all']['CreationDate']."</label>
+	        <label for='creationdate' class='form'>".t('all','CreationDate')."</label>
 	        <input disabled type='text' value='"; if (isset($operator_creationdate)) 
 			echo $operator_creationdate; echo "' />
 	        <br/>
-	        <label for='creationby' class='form'>".$l['all']['CreationBy']."</label>
+	        <label for='creationby' class='form'>".t('all','CreationBy')."</label>
 	        <input disabled type='text' value='"; if (isset($operator_creationby)) 
 			echo $operator_creationby; echo "' />
 	        <br/>
-                <label for='updatedate' class='form'>".$l['all']['UpdateDate']."</label>
+                <label for='updatedate' class='form'>".t('all','UpdateDate')."</label>
                 <input disabled type='text' value='"; if (isset($operator_updatedate))
                         echo $operator_updatedate; echo "' />
                 <br/>
-                <label for='updateby' class='form'>".$l['all']['UpdateBy']."</label>
+                <label for='updateby' class='form'>".t('all','UpdateBy')."</label>
                 <input disabled type='text' value='"; if (isset($operator_updateby))
                         echo $operator_updateby; echo "' />
                 <br/>
@@ -112,7 +112,7 @@ echo "
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='".$l['buttons']['apply']."' class='button' />
+                <input type='submit' name='submit' value='".t('buttons','apply')."' class='button' />
 
         </fieldset>
 

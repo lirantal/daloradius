@@ -98,11 +98,11 @@
 		
 		<div id="contentnorightbar">
 		
-			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmaintdisconnectuser.php'] ?>
-			<h144>+</h144> </a></h2>
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configmaintdisconnectuser.php') ?>
+			<h144>&#x2754;</h144> </a></h2>
 
 			<div id="helpPage" style="display:none;visibility:visible" >
-				<?php echo $l['helpPage']['configmaintdisconnectuser'] ?>
+				<?php echo t('helpPage','configmaintdisconnectuser') ?>
 				<br/>
 			</div>
 		<?php
@@ -113,7 +113,7 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
 
 
 	<fieldset>
@@ -121,20 +121,19 @@
 		<h302> Settings </h302>
 		<br/>
 
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <label for='username' class='form'><?php echo t('all','Username')?></label>
                 <input name="username" type="text" id="usernameEdit" autocomplete="off"
-				onClick='javascript:__displayTooltip();' 
-				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
 				value="<?php if (isset($username)) echo $username; ?>" tabindex=100>
 		 <br />
-		<label for='packettype' class='form'><?php echo $l['all']['PacketType'] ?></label>
+		<label for='packettype' class='form'><?php echo t('all','PacketType') ?></label>
                 <select name='packettype' id='packettype' class='form' tabindex=101 >
 			<option value="disconnect"> PoD - Packet of Disconnect </option>
 			<option value="coa"> CoA - Change of Authorization &nbsp;</option>
                 </select>
                 <br/>
 
-                <label for='nasaddr' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
+                <label for='nasaddr' class='form'><?php echo t('all','NasIPHost') ?></label>
                 <input name='nasaddr' type='hidden' id='nasaddr' value='<?php echo $nasaddr ?>' tabindex=102 />
 
 		<select onChange="javascript:setStringTextMulti(this.id,'nasaddr','nassecret')" id='naslist' tabindex=103 
@@ -148,14 +147,10 @@
 
 	if ($autoComplete) {
 		echo "<script type=\"text/javascript\">
-			/** Making usernameEdit interactive **/
-	              autoComEdit = new DHTMLSuite.autoComplete();
-	              autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-
-			/** Making usernameSearch interactive **/
-	              autoComSearch = new DHTMLSuite.autoComplete();
-	              autoComSearch.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-	              </script>";
+				/** Making usernameEdit interactive **/
+				autoComEdit = new DHTMLSuite.autoComplete();
+				autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+				</script>";
 	} 
 ?>
 
@@ -181,7 +176,7 @@
                 <br/>
 
                 <input name='nassecret' type='hidden' type='hidden' id='nassecret' value='' tabindex=104 />
-                <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?></label>
+                <label for='nasport' class='form'><?php echo t('all','NasPorts') ?></label>
                 <input name='nasport' type='hidden' id='nasport' value='3799' tabindex=106 />
 		<select onChange="javascript:setStringText(this.id,'nasport')" id='nasportlist' tabindex=107 
 			class='form'>
@@ -191,7 +186,7 @@
 		</select>
                 <br/>
 
-		<label for='customattributes' class='form'><?php echo $l['all']['customAttributes'] ?></label>
+		<label for='customattributes' class='form'><?php echo t('all','customAttributes') ?></label>
 		<textarea class='form' name='customattributes'><?php echo $customAttributes; ?></textarea>
 
 
@@ -199,46 +194,46 @@
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['button']['DisconnectUser'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('button','DisconnectUser') ?>' class='button' />
 
         </fieldset>
 
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Advanced']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Advanced'); ?>">
 
         <fieldset>
 
                 <h302> Advanced </h302>
                 <br/>
 
-                <label for='debug' class='form'><?php echo $l['all']['Debug'] ?></label>
+                <label for='debug' class='form'><?php echo t('all','Debug') ?></label>
                 <select name='debug' id='debug' class='form' tabindex=106 >
                         <option value="yes"> Yes </option>
                         <option value="no"> No </option>
                 </select>
                 <br/>
 
-                <label for='timeout' class='form'><?php echo $l['all']['Timeout'] ?></label>
+                <label for='timeout' class='form'><?php echo t('all','Timeout') ?></label>
                 <input class="integer" name='timeout' type='text' id='timeout' value='3' tabindex=107 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('timeout','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('timeout','decrement')"/>   
                 <br/>
 
-                <label for='retries' class='form'><?php echo $l['all']['Retries'] ?></label>
+                <label for='retries' class='form'><?php echo t('all','Retries') ?></label>
                 <input class="integer" name='retries' type='text' id='retries' value='3' tabindex=108 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('retries','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('retries','decrement')"/>   
                 <br/>
 
-                <label for='count' class='form'><?php echo $l['all']['Count'] ?></label>
+                <label for='count' class='form'><?php echo t('all','Count') ?></label>
                 <input class="integer" name='count' type='text' id='count' value='1' tabindex=109 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('count','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('count','decrement')"/>   
                 <br/>
 
-                <label for='requests' class='form'><?php echo $l['all']['Requests'] ?></label>
+                <label for='requests' class='form'><?php echo t('all','Requests') ?></label>
                 <input class="integer" name='requests' type='text' id='requests' value='3' tabindex=110 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('requests','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('requests','decrement')"/>   
@@ -247,7 +242,7 @@
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['button']['DisconnectUser'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('button','DisconnectUser') ?>' class='button' />
 
         </fieldset>
 

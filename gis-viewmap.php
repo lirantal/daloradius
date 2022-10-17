@@ -21,11 +21,11 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['gisviewmap.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','gisviewmap.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['gisviewmap'] ?>
+			<?php echo t('helpPage','gisviewmap') ?>
 			<br/>
 		</div>
 		<br/>
@@ -39,106 +39,39 @@
 <script type="text/javascript">
 
 function load() {
- if (GBrowserIsCompatible()) {
-        map = new GMap2(document.getElementById("map"));
+	var map = L.map('map').setView([51.505, -0.09], 13);
+	var group = L.featureGroup().addTo(map);
 
-
-map.addControl(new GMapTypeControl());
-map.addControl(new GLargeMapControl());
-map.addControl(new GScaleControl());
-map.addControl(new GOverviewMapControl());
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-
-map.setCenter(new GLatLng(0, 0), 1, G_HYBRID_MAP);
-
-map.openInfoWindow(map.getCenter(),
-	document.createTextNode("<?php echo $l['messages']['gisviewwelcome']; ?>"));
-
-
-
-// Create our "tiny" marker icon
-var iconRed = new GIcon();
-iconRed.image = "//labs.google.com/ridefinder/images/mm_20_red.png";
-iconRed.shadow = "//labs.google.com/ridefinder/images/mm_20_shadow.png";
-iconRed.iconSize = new GSize(12, 20);
-iconRed.shadowSize = new GSize(22, 20);
-iconRed.iconAnchor = new GPoint(6, 20);
-iconRed.infoWindowAnchor = new GPoint(5, 1);
-
-
-var iconBlue = new GIcon();
-iconBlue.image = "//labs.google.com/ridefinder/images/mm_20_blue.png";
-iconBlue.shadow = "//labs.google.com/ridefinder/images/mm_20_shadow.png";
-iconBlue.iconSize = new GSize(12, 20);
-iconBlue.shadowSize = new GSize(22, 20);
-iconBlue.iconAnchor = new GPoint(6, 20);
-iconBlue.infoWindowAnchor = new GPoint(5, 1);
-
-
-      // ==================================================
-      // A function to create a tabbed marker and set up the event window
-      // This version accepts a variable number of tabs, passed in the arrays htmls[] and labels[]
-      function createTabbedMarker(point,htmls,labels) {
-        var marker = new GMarker(point);
-        GEvent.addListener(marker, "click", function() {
-          // adjust the width so that the info window is large enough for this many tabs
-          if (htmls.length > 2) {
-            htmls[0] = '<div style="width:'+htmls.length*88+'px">' + htmls[0] + '</div>';
-          }
-          var tabs = [];
-          for (var i=0; i<htmls.length; i++) {
-            tabs.push(new GInfoWindowTab(labels[i],htmls[i]));
-          }
-          marker.openInfoWindowTabsHtml(tabs);
-        });
-        return marker;
-      }
-      // ========================
-
-
-function createMarker(point,html) {
-        var marker = new GMarker(point, iconRed);
-        GEvent.addListener(marker, "click", function() {
-          map.setCenter(point, 4);
-          marker.openInfoWindowHtml(html);
-        });
-        return marker;
-}
-
+	L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+		subdomains: 'abcd',
+		maxZoom: 20
+	}).addTo(map);
 
 <?php
 
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
+	$sql = "SELECT id,name,mac,geocode FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE geocode > ''";
 	$res = $dbSocket->query($sql);
 	$logDebugSQL = "";
 	$logDebugSQL .= $sql . "\n";
 
 	while($row = $res->fetchRow()) {
+		// Now, create a simple popup.
+		// The original program provided a tabbed popup.
                 echo "
-		var point_$row[0] = new GLatLng($row[3]);
-
-		// original createMarker function which creates a simple marker
-		// var marker_$row[0] = createMarker(point_$row[0], '$row[1]');
-
-		// the new function provides a tabbed marker to be created 
-
-
-		var marker_$row[0] = createTabbedMarker(point_$row[0], ['<b> Hotspot Name: </b> $row[1] <br/> \
+		L.marker([$row[3]]).addTo(group)
+			.bindTooltip('$row[1]')
+			.bindPopup('<b> Hotspot Name: </b> $row[1] <br/> \
 					<b> Mac Addr: </b> $row[2] <br/> \
-					 <b> Geo Loc: </b> $row[3] <br/>', '<a href=acct-hotspot-compare.php> Hotspot Comparison </a> \
-					<br/> <a href=acct-hotspot-accounting.php?hotspot=$row[1]> Hotspot Statistics </a> <br/> '], ['Info','Statistics']);
-
-
-		map.addOverlay(marker_$row[0]);
+					<b> Geo Loc: </b> $row[3] <br/> \
+					<a href=acct-hotspot-compare.php> Hotspot Comparison </a> \
+					<br/> <a href=acct-hotspot-accounting.php?hotspot=$row[1]> Hotspot Statistics </a> <br/>')
                         ";
-
 
         }
 ?>
+	map.fitBounds(group.getBounds());
 
-
- }
 }
 
 </script>

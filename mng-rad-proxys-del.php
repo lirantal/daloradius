@@ -103,11 +103,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradproxysdel.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradproxysdel.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradproxysdel'] ?>
+			<?php echo t('helpPage','mngradproxysdel') ?>
 			<br/>
 		</div>
 		<?php   
@@ -119,17 +119,17 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['ProxyInfo'] ?> </h302>
+		<h302> <?php echo t('title','ProxyInfo') ?> </h302>
 		<br/>
 
-			<label for='proxyname' class='form'><?php echo $l['all']['ProxyName'] ?></label>
+			<label for='proxyname' class='form'><?php echo t('all','ProxyName') ?></label>
 			<input name='proxyname[]' type='text' id='proxyname' value='<?php echo $proxyname ?>' tabindex=100 />
 			<br/>
 
 			<br/><br/>
 			<hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=1000  class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000  class='button' />
 
 	</fieldset>
 

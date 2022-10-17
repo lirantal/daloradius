@@ -50,11 +50,11 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['repusername.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','repusername.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['repusername']." ".$username ?>
+			<?php echo t('helpPage','repusername')." ".$username ?>
 			<br/>
 		</div>
 		<br/>
@@ -78,33 +78,33 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>".$l['captions']['radcheckrecords']."</th>
+                                <th colspan='10'>".t('captions','radcheckrecords')."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>
-                        <th scope='col'> ".$l['all']['ID']."
+                        <th scope='col'> ".t('all','ID')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Username']."
+                        <th scope='col'> ".t('all','Username')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Attribute']."
+                        <th scope='col'> ".t('all','Attribute')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Value']."
+                        <th scope='col'> ".t('all','Value')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Action']." </th>
+                        <th scope='col'> ".t('all','Action')." </th>
                 </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
@@ -112,8 +112,8 @@
                         <td> $row[1] </td>
                         <td> $row[2] </td>
                         <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l['all']['edit']." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".$l['all']['del']." </a>
+                        <td> <a href='mng-edit.php?username=$row[1]'> ".t('all','edit')." </a> 
+	                     <a href='mng-del.php?username=$row[1]'> ".t('all','del')." </a>
 			     </td>
                 </tr>";
         }
@@ -132,41 +132,41 @@
         echo "
                         <thead>
                                 <tr>
-                                <th colspan='10'>".$l['captions']['radreplyrecords']."</th>
+                                <th colspan='10'>".t('captions','radreplyrecords')."</th>
                                 </tr>
                         </thead>
                 ";
 
         echo "<thread> <tr>                        
-                        <th scope='col'> ".$l['all']['ID']."
+                        <th scope='col'> ".t('all','ID')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Username']."
+                        <th scope='col'> ".t('all','Username')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Attribute']."
+                        <th scope='col'> ".t('all','Attribute')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Value']."
+                        <th scope='col'> ".t('all','Value')."
 						<br/>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
 						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
 						</th>
-                        <th scope='col'> ".$l['all']['Action']." </th>                </tr> </thread>";
+                        <th scope='col'> ".t('all','Action')." </th>                </tr> </thread>";
 	while($row = $res->fetchRow()) {
                 echo "<tr>
                         <td> $row[0] </td>
                         <td> $row[1] </td>
                         <td> $row[2] </td>
                         <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".$l['all']['edit']." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".$l['all']['del']." </a>
+                        <td> <a href='mng-edit.php?username=$row[1]'> ".t('all','edit')." </a> 
+	                     <a href='mng-del.php?username=$row[1]'> ".t('all','del')." </a>
 			     </td>
                 </tr>";
         }

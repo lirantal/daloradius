@@ -250,7 +250,7 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
  */
 function populate_groups($defaultOption = "Select Group", $elementName = "", $cssClass = "form", $mode = "", $defaultOptionValue = "") {
 
-	echo "<select onChange=\"javascript:setStringText(this.id,'group')\" id='usergroup' $mode
+	echo "<select onChange=\"javascript:setStringText(this.id,'usergroup')\" id='usergroup' $mode
 			name='$elementName' class='$cssClass' tabindex=105 />
 			<option value='$defaultOptionValue'>$defaultOption</option>
 			<option value=''></option>";
@@ -391,7 +391,26 @@ function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $css
 
 }
 
+/*
+ * populate_passwordTypes
+ * creates a select box and populates it with all supported password types
+ * 
+ * $elementName   - the string used for the select element's name='' value
+ * $cssClass	  - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
+ *
+ */
+function populate_password_types($elementName = "", $cssClass = "form", $mode = "") {
 
+	echo "<select $mode
+			name='$elementName' class='$cssClass' tabindex=105 />
+			<option value='Cleartext-Password'>Cleartext-Password</option>
+			<option value='User-Password'>User-Password</option>
+			<option value='Crypt-Password'>Crypt-Password</option>
+			<option value='MD5-Password'>MD5-Password</option>
+			<option value='SHA1-Password'>SHA1-Password</option>
+			<option value='CHAP-Password'>CHAP-Password</option>
+			</select>";
+}
 
 
 

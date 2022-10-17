@@ -31,11 +31,11 @@
 
 		<li><a href="config-maint-test-user.php"><b>&raquo;</b>
 			<img src='images/icons/configMaintenance.png' border='0'>
-			<?php echo $l['button']['TestUserConnectivity'] ?></a>
+			<?php echo t('button','TestUserConnectivity') ?></a>
 		</li>
 		<li><a href="config-maint-disconnect-user.php"><b>&raquo;</b>
 			<img src='images/icons/configMaintenance.png' border='0'>
-			<?php echo $l['button']['DisconnectUser'] ?></a>
+			<?php echo t('button','DisconnectUser') ?></a>
 		</li>
 		
 	</ul>

@@ -92,10 +92,10 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['paymenttypesdel.php'] ?>
-	:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','paymenttypesdel.php') ?>
+	:: <?php if (isset($paymentname)) { echo $paymentname; } ?><h144>&#x2754;</h144></a></h2>
 
-	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo $l['helpPage']['paymenttypesdel'] ?>
+	<div id="helpPage" style="display:none;visibility:visible" >		<?php echo t('helpPage','paymenttypesdel') ?>
 		<br/>
 	</div>
 	<?php
@@ -107,17 +107,17 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['PayTypeInfo'] ?> </h302>
+		<h302> <?php echo t('title','PayTypeInfo') ?> </h302>
 		<br/>
 
-		<label for='paymentname' class='form'><?php echo $l['all']['PayTypeName'] ?></label>
+		<label for='paymentname' class='form'><?php echo t('all','PayTypeName') ?></label>
 		<input name='paymentname[]' type='text' id='paymentname' value='<?php echo $paymentname ?>' tabindex=100 />
 		<br/>
 
 		<br/><br/>
 		<hr><br/>
 
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=1000 
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
 			class='button' />
 
 	</fieldset>

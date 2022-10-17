@@ -58,11 +58,11 @@
 
 	<div id="contentnorightbar">
 	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplylist.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradgroupreplylist.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradgroupreplylist'] ?>
+			<?php echo t('helpPage','mngradgroupreplylist') ?>
 			<br/>
 		</div>
 		<br/>
@@ -120,32 +120,32 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
-		".$l['all']['Groupname']."</a>
+		".t('all','Groupname')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
-		".$l['all']['Attribute']."</a>
+		".t('all','Attribute')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=$orderTypeNextPage\">
-		".$l['all']['Operator']."</a>
+		".t('all','Operator')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=$orderTypeNextPage\">
-		".$l['all']['Value']."</a>
+		".t('all','Value')."</a>
 		</th>
 
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 			<td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
-				<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
+				<a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]'>".$l['Tooltip']['EditGroup']."</a>
+                                        <a class='toolTip' href='mng-rad-groupreply-edit.php?groupname=$row[0]&value=$row[3]&attribute=$row[1]'>".t('Tooltip','EditGroup')."</a>
                                         <br/>\"
 				>$row[0]</a></td>
 			<td> $row[1] </td>

@@ -32,8 +32,8 @@
 	isset($_GET['usernameLastConnect']) ? $usernameLastConnect = $_GET['usernameLastConnect'] : $usernameLastConnect = "%";
 	isset($_GET['radiusreply']) ? $radiusReply = $_GET['radiusreply'] : $radiusReply = "Any";
 
-	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = date("Y-01-01");
-	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = date("Y-m-t");
+	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = date("Y-m-01");
+	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = date( "Y-m-01",mktime (0,0,0,date('n')+1,1,date('Y')));
 	
 	include_once('library/config_read.php');
     $log = "visited page: ";
@@ -48,11 +48,11 @@
 ?>		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replastconnect.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','replastconnect.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replastconnect'] ?>
+			<?php echo t('helpPage','replastconnect') ?>
 			<br/>
 		</div>
 		<br/>
@@ -66,19 +66,28 @@
 	$radiusReplySQL = "";
 	if ($radiusReply <> "Any") $radiusReplySQL = " AND (".$configValues['CONFIG_DB_TBL_RADPOSTAUTH'].".reply = '$radiusReply') ";
 	
-	if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
-		$tableSetting['postauth']['user'] = 'username';
-		$tableSetting['postauth']['date'] = 'authdate';
-	} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
-		$tableSetting['postauth']['user'] = 'user';
-		$tableSetting['postauth']['date'] = 'date';
+	// setting table-related parameters first
+	switch($configValues['FREERADIUS_VERSION']) {
+		case '1' :
+			$tableSetting['postauth']['user'] = 'user';
+			$tableSetting['postauth']['date'] = 'date';
+			break;
+		case '2' :
+			// down
+		case '3' :
+			// down
+		default  :
+			$tableSetting['postauth']['user'] = 'username';
+			$tableSetting['postauth']['date'] = 'authdate';
+			break;
 	}
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".
-					$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL ".
-					" AND (".$tableSetting['postauth']['date']." >='$startdate' AND ".$tableSetting['postauth']['date']." <='$enddate') ";
-        $_SESSION['reportType'] = "reportsLastConnectionAttempts";
+	
+	// setup php session variables for exporting
+	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+	$_SESSION['reportQuery'] = " WHERE (".$tableSetting['postauth']['user']." LIKE '".
+				$dbSocket->escapeSimple($usernameLastConnect)."%') $radiusReplySQL ".
+				" AND (".$tableSetting['postauth']['date']." >='$startdate' AND ".$tableSetting['postauth']['date']." <='$enddate') ";
+	$_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
 	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
 	$sql = "SELECT ".
@@ -169,22 +178,22 @@
         echo "<thread> <tr>
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=".$tableSetting['postauth']['user']."&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']." 
+		".t('all','Username')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=pass&orderType=$orderTypeNextPage\">
-		".$l['all']['Password']." 
+		".t('all','Password')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=".$tableSetting['postauth']['date']."&orderType=$orderTypeNextPage\">
-		".$l['all']['StartTime']." 
+		".t('all','StartTime')." 
 		</th>
 
                 <th scope='col'>
                 <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?usernameLastConnect=$usernameLastConnect&startdate=$startdate&enddate=$enddate&orderBy=reply&orderType=$orderTypeNextPage\">
-		".$l['all']['RADIUSReply']." 
+		".t('all','RADIUSReply')." 
 		</th>
 
         </tr> </thread>";

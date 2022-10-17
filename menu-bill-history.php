@@ -37,10 +37,10 @@
 
         <form name="billhistory" action="bill-history-query.php" method="get" class="sidebar">
 
-        <input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+        <input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
 	<br/><br/>
 
-		<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
+		<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
 
                         <input name="startdate" type="text" id="startdate"
                                 value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
@@ -62,11 +62,11 @@
 			<br/><br/>
 
 
-		<h109><?php echo $l['all']['Username']; ?></h109> <br/>
+		<h109><?php echo t('all','Username'); ?></h109> <br/>
                         <input name="username" type="text"
                                 value="<?php if (isset($billing_history_username)) echo $billing_history_username; else echo "*"; ?>">
 
-		<h109><?php echo $l['all']['BillAction']; ?></h109> <br/>
+		<h109><?php echo t('all','BillAction'); ?></h109> <br/>
                         <select name="billaction" size="1">
                                 <option value="<?php if (isset($billing_history_billaction)) echo $billing_history_billaction; else echo "%"; ?>">
                                         <?php if (isset($billing_history_billaction)) echo $billing_history_billaction; else echo "Any"; ?>
@@ -79,31 +79,31 @@
 
 
                 <br/><br/>
-                <h109><?php echo $l['button']['AccountingFieldsinQuery']; ?></h109><br/>
-                <input type="checkbox" name="sqlfields[]" value="id" /> <h109> <?php echo $l['all']['ID']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo $l['all']['Username']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="planId" checked /> <h109><?php echo $l['all']['PlanId']; ?> </h109> <br/>
+                <h109><?php echo t('button','AccountingFieldsinQuery'); ?></h109><br/>
+                <input type="checkbox" name="sqlfields[]" value="id" /> <h109> <?php echo t('all','ID'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo t('all','Username'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="planId" checked /> <h109><?php echo t('all','PlanId'); ?> </h109> <br/>
 
-                <input type="checkbox" name="sqlfields[]" value="billAmount"  checked /> <h109><?php echo $l['all']['BillAmount']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="billAction"  checked /> <h109><?php echo $l['all']['BillAction']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="billPerformer"  checked /> <h109><?php echo $l['all']['BillPerformer']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="billReason"  /> <h109><?php echo $l['all']['BillReason']; ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="billAmount"  checked /> <h109><?php echo t('all','BillAmount'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="billAction"  checked /> <h109><?php echo t('all','BillAction'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="billPerformer"  checked /> <h109><?php echo t('all','BillPerformer'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="billReason"  /> <h109><?php echo t('all','BillReason'); ?> </h109> <br/>
 
-                <input type="checkbox" name="sqlfields[]" value="paymentmethod"  checked /> <h109><?php echo $l['ContactInfo']['PaymentMethod']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="cash"  /> <h109><?php echo $l['ContactInfo']['Cash']; ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="paymentmethod"  checked /> <h109><?php echo t('ContactInfo','PaymentMethod'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="cash"  /> <h109><?php echo t('ContactInfo','Cash'); ?> </h109> <br/>
 
-                <input type="checkbox" name="sqlfields[]" value="creditcardname"  /> <h109><?php echo $l['ContactInfo']['CreditCardName']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="creditcardnumber"  /> <h109><?php echo $l['ContactInfo']['CreditCardNumber']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="creditcardverification"  /> <h109><?php echo $l['ContactInfo']['CreditCardVerificationNumber']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="creditcardtype"  /> <h109><?php echo $l['ContactInfo']['CreditCardType']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="creditcardexp"  /> <h109><?php echo $l['ContactInfo']['CreditCardExpiration']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="coupon"  /> <h109><?php echo $l['all']['Coupon']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="discount"  /> <h109><?php echo $l['all']['Discount']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="notes"  /> <h109><?php echo $l['ContactInfo']['Notes']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="creationdate"  /> <h109><?php echo $l['all']['CreationDate']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="creationby"  /> <h109><?php echo $l['all']['CreationBy']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="updatedate"  /> <h109><?php echo $l['all']['UpdateDate']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="updateby"  /> <h109><?php echo $l['all']['UpdateBy']; ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="creditcardname"  /> <h109><?php echo t('ContactInfo','CreditCardName'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="creditcardnumber"  /> <h109><?php echo t('ContactInfo','CreditCardNumber'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="creditcardverification"  /> <h109><?php echo t('ContactInfo','CreditCardVerificationNumber'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="creditcardtype"  /> <h109><?php echo t('ContactInfo','CreditCardType'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="creditcardexp"  /> <h109><?php echo t('ContactInfo','CreditCardExpiration'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="coupon"  /> <h109><?php echo t('all','Coupon'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="discount"  /> <h109><?php echo t('all','Discount'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="notes"  /> <h109><?php echo t('ContactInfo','Notes'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="creationdate"  /> <h109><?php echo t('all','CreationDate'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="creationby"  /> <h109><?php echo t('all','CreationBy'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="updatedate"  /> <h109><?php echo t('all','UpdateDate'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="updateby"  /> <h109><?php echo t('all','UpdateBy'); ?> </h109> <br/>
 
                 Select:
                 <a class="table" href="javascript:SetChecked(1,'sqlfields[]','billhistory')">All</a>
@@ -111,7 +111,7 @@
 
 
                 <br/><br/>
-                <h109><?php echo $l['button']['OrderBy'] ?><h109> <br/>
+                <h109><?php echo t('button','OrderBy') ?><h109> <br/>
                         <center>
                         <select name="orderBy" size="1">
                                 <option value="id"> Id </option>
@@ -126,7 +126,7 @@
                         </center>
 
         <br/>
-        <input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+        <input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
 
 
 
@@ -136,9 +136,9 @@
 
 
                                 <br/><br/>
-                                <h2>Search</h2>
+                                
 
-			<input name="" type="text" value="Search" tabindex=4 />
+			
 
                 </div>
 

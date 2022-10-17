@@ -1,46 +1,72 @@
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/menu-reports-hb.php') !== false) {
+    header("Location: /index.php");
+    exit;
+}
+
+include_once("lang/main.php");
+
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
 <head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
+    <title>daloRADIUS :: Heartbeat</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    
+    <link rel="stylesheet" href="css/1.css" media="screen">
+    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+    
+    <script src="library/javascript/pages_common.js"></script>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
+
 </head>
 
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
- 
 <body>
-<?php
-include_once ("lang/main.php");
-?>
-
-<div id="wrapper">
-<div id="innerwrapper">
+    <div id="wrapper">
+        <div id="innerwrapper">
 
 <?php
 	$m_active = "Reports";
-    include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/reports-subnav.php");
+    include_once("include/menu/menu-items.php");
+	include_once("include/menu/reports-subnav.php");
 ?>      
 
-<div id="sidebar">
-
-	<h2>Heartbeat</h2>
-		<ul class="subnav">
-
-		<h3>Dashboard</h3>
-
-			<li><a href="rep-hb-dashboard.php"><b>&raquo;</b><?php echo $l['button']['Dashboard'] ?></a></li>
-
-		</ul>
-
-	
-	<br/><br/>
-	<h2>Search</h2>
-	<input name="" type="text" value="Search" />
-	
-
-</div>
+            <div id="sidebar">
+                <h2>Heartbeat</h2>
+                
+                <h3>Dashboard</h3>
+                <ul class="subnav">
+                    <li>
+                        <a title="<?= strip_tags(t('button','Dashboard')) ?>" href="rep-hb-dashboard.php">
+                            <b>&raquo;</b><?= t('button','Dashboard') ?>
+                        </a>
+                    </li>
+                </ul>
+                
+                <br><br>
+            </div>
 

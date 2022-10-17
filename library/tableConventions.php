@@ -24,10 +24,17 @@
 // Syntax:
 // $row['TABLE']['FIELD'] = 'mysql';
 
-if (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '2')) {
-	$row['postauth']['user'] = 'username';
-	$row['postauth']['date'] = 'authdate';
-} elseif (isset($configValues['FREERADIUS_VERSION']) && ($configValues['FREERADIUS_VERSION'] == '1')) {
-	$row['postauth']['user'] = 'user';
-	$row['postauth']['date'] = 'date';
+switch($configValues['FREERADIUS_VERSION']) {
+	case '1' :
+		$row['postauth']['user'] = 'user';
+		$row['postauth']['date'] = 'date';
+		break;
+	case '2' :
+		// down
+	case '3' :
+		// down
+	default  :
+		$row['postauth']['user'] = 'username';
+		$row['postauth']['date'] = 'authdate';
+		break;
 }

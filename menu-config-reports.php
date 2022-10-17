@@ -30,7 +30,7 @@
 	<ul class="subnav">
 
 		<li><a href="config-reports-dashboard.php"><b>&raquo;</b>
-			<?php echo $l['button']['DashboardSettings'] ?></a>
+			<?php echo t('button','DashboardSettings') ?></a>
 		</li>
 
 		

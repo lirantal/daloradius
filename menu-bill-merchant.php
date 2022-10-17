@@ -37,10 +37,10 @@
 
         <form name="billpaypaltransactions" action="bill-merchant-transactions.php" method="get" class="sidebar">
 
-        <input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+        <input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
 	<br/><br/>
 
-		<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
+		<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
 
                         <input name="startdate" type="text" id="startdate"
                                 value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
@@ -61,7 +61,7 @@
                                 style="display: none; visibility: hidden; width: 160px;"></div>
 			<br/><br/>
 
-		<h109><?php echo $l['all']['VendorType']; ?></h109> <br/>
+		<h109><?php echo t('all','VendorType'); ?></h109> <br/>
                         <select name="vendor_type" size="1">
                                 <option value="<?php if (isset($billing_paypal_vendor_type)) echo $billing_paypal_vendor_type; else echo "%"; ?>">
                                         <?php if (isset($billing_paypal_vendor_type)) echo $billing_paypal_vendor_type; else echo "Any"; ?>
@@ -73,12 +73,12 @@
                         </select>
 			<br/><br/>
 
-		<h109><?php echo $l['all']['PayerEmail']; ?></h109> <br/>
+		<h109><?php echo t('all','PayerEmail'); ?></h109> <br/>
                         <input name="payer_email" type="text"
                                 value="<?php if (isset($billing_paypal_payeremail)) echo $billing_paypal_payeremail; else echo "*"; ?>">
 			<br/>
 
-		<h109><?php echo $l['all']['PaymentStatus']; ?></h109> <br/>
+		<h109><?php echo t('all','PaymentStatus'); ?></h109> <br/>
                         <select name="payment_status" size="1">
                                 <option value="<?php if (isset($billing_paypal_paymentstatus)) echo $billing_paypal_paymentstatus; else echo "%"; ?>">
                                         <?php if (isset($billing_paypal_paymentstatus)) echo $billing_paypal_paymentstatus; else echo "Any"; ?>
@@ -100,42 +100,42 @@
 
 
                 <br/><br/><br/>
-                <h109><?php echo $l['button']['AccountingFieldsinQuery']; ?></h109><br/>
-                <input type="checkbox" name="sqlfields[]" value="id" /> <h109> <?php echo $l['all']['ID']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo $l['all']['Username']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="password"  /> <h109><?php echo $l['all']['Password']; ?></h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="txnId"  /> <h109><?php echo $l['all']['TxnId']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="planId"  /> <h109><?php echo $l['all']['PlanId']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="quantity"  /> <h109><?php echo $l['all']['Quantity']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="business_email"  /> <h109><?php echo $l['all']['ReceiverEmail']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="business_id"  /> <h109><?php echo $l['all']['Business']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_tax" /> <h109><?php echo $l['all']['Tax']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_cost" checked /> <h109><?php echo $l['all']['Cost']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_fee" checked /> <h109><?php echo $l['all']['TransactionFee']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_total"  /> <h109><?php echo $l['all']['TotalCost']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_currency" checked /> <h109><?php echo $l['all']['PaymentCurrency']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="first_name" checked /> <h109><?php echo $l['all']['FirstName']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="last_name" checked /> <h109><?php echo $l['all']['LastName']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_email" checked /> <h109><?php echo $l['all']['PayerEmail']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_name"  /> <h109><?php echo $l['all']['AddressRecipient']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_street"  /> <h109><?php echo $l['all']['Street']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_country" checked /> <h109><?php echo $l['all']['Country']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_country_code"  /> <h109><?php echo $l['all']['CountryCode']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_city" checked /> <h109><?php echo $l['all']['City']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_state" checked /> <h109><?php echo $l['all']['State']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_zip"  /> <h109><?php echo $l['all']['Zip']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_date" checked /> <h109><?php echo $l['all']['PaymentDate']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_status" checked /> <h109><?php echo $l['all']['PaymentStatus']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_status" /> <h109><?php echo $l['all']['PayerStatus']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_address_status" /> <h109><?php echo $l['all']['PaymentAddressStatus']; ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="vendor_type" checked /> <h109><?php echo $l['all']['VendorType']; ?> </h109> <br/>
+                <h109><?php echo t('button','AccountingFieldsinQuery'); ?></h109><br/>
+                <input type="checkbox" name="sqlfields[]" value="id" /> <h109> <?php echo t('all','ID'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo t('all','Username'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="password"  /> <h109><?php echo t('all','Password'); ?></h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="txnId"  /> <h109><?php echo t('all','TxnId'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="planId"  /> <h109><?php echo t('all','PlanId'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="quantity"  /> <h109><?php echo t('all','Quantity'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="business_email"  /> <h109><?php echo t('all','ReceiverEmail'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="business_id"  /> <h109><?php echo t('all','Business'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_tax" /> <h109><?php echo t('all','Tax'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_cost" checked /> <h109><?php echo t('all','Cost'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_fee" checked /> <h109><?php echo t('all','TransactionFee'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_total"  /> <h109><?php echo t('all','TotalCost'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_currency" checked /> <h109><?php echo t('all','PaymentCurrency'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="first_name" checked /> <h109><?php echo t('all','FirstName'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="last_name" checked /> <h109><?php echo t('all','LastName'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_email" checked /> <h109><?php echo t('all','PayerEmail'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_address_name"  /> <h109><?php echo t('all','AddressRecipient'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_address_street"  /> <h109><?php echo t('all','Street'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_address_country" checked /> <h109><?php echo t('all','Country'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_address_country_code"  /> <h109><?php echo t('all','CountryCode'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_address_city" checked /> <h109><?php echo t('all','City'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_address_state" checked /> <h109><?php echo t('all','State'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_address_zip"  /> <h109><?php echo t('all','Zip'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_date" checked /> <h109><?php echo t('all','PaymentDate'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_status" checked /> <h109><?php echo t('all','PaymentStatus'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payer_status" /> <h109><?php echo t('all','PayerStatus'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="payment_address_status" /> <h109><?php echo t('all','PaymentAddressStatus'); ?> </h109> <br/>
+                <input type="checkbox" name="sqlfields[]" value="vendor_type" checked /> <h109><?php echo t('all','VendorType'); ?> </h109> <br/>
                 Select:
                 <a class="table" href="javascript:SetChecked(1,'sqlfields[]','billpaypaltransactions')">All</a>
                 <a class="table" href="javascript:SetChecked(0,'sqlfields[]','billpaypaltransactions')">None</a>
 
 
                 <br/><br/>
-                <h109><?php echo $l['button']['OrderBy'] ?><h109> <br/>
+                <h109><?php echo t('button','OrderBy') ?><h109> <br/>
                         <center>
                         <select name="orderBy" size="1">
                                 <option value="id"> Id </option>
@@ -150,7 +150,7 @@
                         </center>
 
         <br/>
-        <input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['ProcessQuery'] ?>" tabindex=3 />
+        <input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
 
 
 
@@ -160,9 +160,9 @@
 
 
                                 <br/><br/>
-                                <h2>Search</h2>
+                                
 
-			<input name="" type="text" value="Search" tabindex=4 />
+			
 
                 </div>
 

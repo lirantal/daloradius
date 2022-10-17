@@ -50,11 +50,11 @@
 		
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctactive.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctactive.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 				
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['acctactive'] ?>
+					<?php echo t('helpPage','acctactive') ?>
 					<br/>
 				</div>
 				<br/>
@@ -113,22 +113,22 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
-		".$l['all']['Username']."</a>
+		".t('all','Username')."</a>
 		</th>
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
-		".$l['all']['Attribute']."</a>
+		".t('all','Attribute')."</a>
 		</th>
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=$orderTypeNextPage\">
-		".$l['all']['MaxTimeExpiration']."</a>
+		".t('all','MaxTimeExpiration')."</a>
 		</th>
 		<th scope='col'>
 		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=$orderTypeNextPage\">
-		".$l['all']['UsedTime']."</a>
+		".t('all','UsedTime')."</a>
 		</th>
-		<th scope='col'> ".$l['all']['Status']." </th>
-		<th scope='col'> ".$l['all']['Usage']." </th>
+		<th scope='col'> ".t('all','Status')." </th>
+		<th scope='col'> ".t('all','Usage')." </th>
 		</tr> </thread>";
 	
 	while($row = $res->fetchRow()) {
@@ -148,12 +148,11 @@
 		}
 
                 printqn("<tr>
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
-                                        javascript:__displayTooltip();'
+                        <td> <a class='tablenovisit' href='#'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");return false;'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-                                                {$l['Tooltip']['UserEdit']}</a>
+                                                ".t('Tooltip','UserEdit')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerUserInfo\">

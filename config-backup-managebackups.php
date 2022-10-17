@@ -90,7 +90,7 @@
 
 			include 'library/opendb.php';
 
-			$rollBackQuery = preg_split("\n\n\n", $fileRollback);	// when we created the backup file we splitted every table INSERT INTO
+			$rollBackQuery = preg_split("/\n\n\n/", $fileRollback);	// when we created the backup file we splitted every table INSERT INTO
 										// entry with a tripple newline (\n\n\n) 3 bytes characteres and so to insert
 										// these again we split into an array each INSERT query because Pear DB
 										// can't handle multiple INSERTs in a concatenated string
@@ -166,10 +166,10 @@
 
 		<div id="contentnorightbar">
 
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configbackupmanagebackups.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configbackupmanagebackups.php') ?>
+				<h144>&#x2754;</h144></a></h2>
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configbackupmanagebackups'] ?>
+					<?php echo t('helpPage','configbackupmanagebackups') ?>
 					<br/>
 				</div>
                 <?php
@@ -230,11 +230,11 @@
 				echo "</td>";
 
 				echo "<td>";
-					echo "<a class='tablenovisit' href='?file=$file&action=download' >".$l['all']['Download']."</a>";
+					echo "<a class='tablenovisit' href='?file=$file&action=download' >".t('all','Download')."</a>";
 
 					echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
-					echo "<a class='tablenovisit' href='#' onClick=\"javascript:backupRollback('$file');\">".$l['all']['Rollback']."</a>";
+					echo "<a class='tablenovisit' href='#' onClick=\"javascript:backupRollback('$file');\">".t('all','Rollback')."</a>";
 				echo "</td>";
 
 				}

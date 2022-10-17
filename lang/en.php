@@ -22,10 +22,10 @@
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
-$l['all']['daloRADIUSVersion'] = "version 0.9-9";
-$l['all']['copyright1'] = "RADIUS Management, Reporting, Accounting and Billing by <a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>
+$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "version " . $configValues['DALORADIUS_VERSION'];
+$l['all']['copyright1'] = "RADIUS Management, Reporting, Accounting and Billing by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Pool Name";
@@ -90,6 +90,8 @@ $l['all']['Daily'] = "Daily";
 $l['all']['Weekly'] = "Weekly";
 $l['all']['Monthly'] = "Monthly";
 $l['all']['Yearly'] = "Yearly";
+
+$l['all']['Month'] = "Month";
 
 $l['all']['RemoveRadacctRecords'] = "Remove Accounting Records";
 
@@ -438,6 +440,7 @@ $l['Tooltip']['InvoiceEdit'] = "Edit Invoice";
 $l['Tooltip']['invoiceTypeTooltip'] = "";
 $l['Tooltip']['invoiceStatusTooltip'] = "";
 $l['Tooltip']['invoiceID'] = "Type the invoice id";
+$l['Tooltip']['user_idTooltip'] = "User id";
 
 $l['Tooltip']['amountTooltip'] = "";
 $l['Tooltip']['taxTooltip'] = "";
@@ -601,6 +604,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you spec
 
 $l['Tooltip']['usernameTooltip'] = "The exact username as the user<br/>&nbsp;&nbsp;&nbsp;
 					will use to connect to the system";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
 $l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in<br/>&nbsp;&nbsp;&nbsp;
 					certain systems so take extra care";
 $l['Tooltip']['groupTooltip'] = "The user will be added to this group.<br/>&nbsp;&nbsp;&nbsp;
@@ -866,7 +870,8 @@ $l['title']['IPPoolInfo'] = "IP-Pool Info";
 
 $l['title']['BusinessInfo'] = "Business Info";
 
-$l['title']['CleanupRecords'] = "Cleanup Records";
+$l['title']['CleanupRecordsByUsername'] = "By Username";
+$l['title']['CleanupRecordsByDate'] = "By Date";
 $l['title']['DeleteRecords'] = "Delete Records";
 
 $l['title']['RealmInfo'] = "Realm Info";
@@ -1404,10 +1409,10 @@ update request {
 <i> What this does is perform a lookup in the radhuntgroup table using the ip-address as a key to return the huntgroup name. It then adds an attribute/value pair to the request where the name of the attribute is Huntgroup-Name and it's value is whatever was returned from the SQL query. If the query did not find anything then the value is the empty string. </i>";
 
 
-+$l['helpPage']['mngradhuntdel'] = "To remove a huntgroup entry from the database you must provide the ip/host and port id of the huntgroup";
-+$l['helpPage']['mngradhuntnew'] = "";
-+$l['helpPage']['mngradhuntlist'] = "";
-+$l['helpPage']['mngradhuntedit'] = "";
+$l['helpPage']['mngradhuntdel'] = "To remove a huntgroup entry from the database you must provide the ip/host and port id of the huntgroup";
+$l['helpPage']['mngradhuntnew'] = "";
+$l['helpPage']['mngradhuntlist'] = "";
+$l['helpPage']['mngradhuntedit'] = "";
 
 $l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
 $l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
@@ -1718,7 +1723,14 @@ $l['helpPage']['acctmaintenance'] = "
 	except for a supervised administrator access to this page.
 <br/>
 ";
-$l['helpPage']['acctmaintenancecleanup'] = "";
+$l['helpPage']['acctmaintenancecleanup'] = "
+<h200><b>Cleanup Stale Sessions</b></h200> - Cleanup Stale Sessions by username or date.<br/><br/>
+	A stale session occurs when a user connection remains as active in FreeRADIUS (so, in daloRADIUS), but it does not exists in the NAS.
+	This is normally caused by a lost disconnect message from the NAS to FreeRADIUS.</br></br>
+	You have two choices to cleanup stale sessions, use them with caution:<br/>
+	&nbsp;&bullet; By Username: This option will <b>CLOSE</b> all opened sessions for a username in the FreeRADIUS database.<br/>
+	&nbsp;&bullet; By Date: This option will <b>DELETE</b> all opened sessions older than a date in the FreeRADIUS database.<br/>	
+";
 $l['helpPage']['acctmaintenancedelete'] = "";
 
 

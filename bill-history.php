@@ -22,7 +22,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['billhistorymain.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo t('Intro','billhistorymain.php') ?></a></h2>
 
 
 <?php

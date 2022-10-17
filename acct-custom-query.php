@@ -58,11 +58,11 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctcustomquery.php']?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctcustomquery.php')?>
+		<h144>&#x2754;</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['acctcustomquery'] ?>
+			<?php echo t('helpPage','acctcustomquery') ?>
 			<br/>
 		</div>
 		<br/>
@@ -135,7 +135,7 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='25'>".$l['all']['Records']."</th>
+							<th colspan='25'>".t('all','Records')."</th>
 							</tr>
 
                                                         <tr>

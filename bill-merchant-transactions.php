@@ -67,11 +67,11 @@
 
 		<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billpaypaltransactions.php']?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billpaypaltransactions.php')?>
+		<h144>&#x2754;</h144></a></h2>
 				
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['billpaypaltransactions'] ?>
+			<?php echo t('helpPage','billpaypaltransactions') ?>
 			<br/>
 		</div>
 		<br/>
@@ -161,7 +161,7 @@
 	echo "
 					<thead>
 							<tr>
-							<th colspan='25'>".$l['all']['Records']."</th>
+							<th colspan='25'>".t('all','Records')."</th>
 							</tr>
 
                                                         <tr>
@@ -184,88 +184,88 @@
 		switch($value) {
 
 		case "id":
-			$title = $l['all']['ID'];
+			$title = t('all','ID');
 			break;
 		case "username":
-			$title = $l['all']['Username'];
+			$title = t('all','Username');
 			break;
 		case "password":
-			$title = $l['all']['Password'];
+			$title = t('all','Password');
 			break;
 		case "txnId":
-			$title = $l['all']['TxnId'];
+			$title = t('all','TxnId');
 			break;
 		case "planId":
-			$title = $l['all']['PlanId'];
+			$title = t('all','PlanId');
 			break;
 		case "quantity":
-			$title = $l['all']['Quantity'];
+			$title = t('all','Quantity');
 			break;
 		case "business_email":
-			$title = $l['all']['ReceiverEmail'];
+			$title = t('all','ReceiverEmail');
 			break;
 		case "business_id":
-			$title = $l['all']['Business'];
+			$title = t('all','Business');
 			break;
 		case "payment_tax":
-			$title = $l['all']['Tax'];
+			$title = t('all','Tax');
 			break;
 		case "payment_cost":
-			$title = $l['all']['Cost'];
+			$title = t('all','Cost');
 			break;
 		case "payment_fee":
-			$title = $l['all']['TransactionFee'];
+			$title = t('all','TransactionFee');
 			break;
 		case "payment_total":
-			$title = $l['all']['TotalCost'];
+			$title = t('all','TotalCost');
 			break;
 		case "payment_currency":
-			$title = $l['all']['PaymentCurrency'];
+			$title = t('all','PaymentCurrency');
 			break;
 		case "first_name":
-			$title = $l['all']['FirstName'];
+			$title = t('all','FirstName');
 			break;
 		case "last_name":
-			$title = $l['all']['LastName'];
+			$title = t('all','LastName');
 			break;
 		case "payer_email":
-			$title = $l['all']['PayerEmail'];
+			$title = t('all','PayerEmail');
 			break;
 		case "payer_address_name":
-			$title = $l['all']['AddressRecipient'];
+			$title = t('all','AddressRecipient');
 			break;
 		case "payer_address_street":
-			$title = $l['all']['Street'];
+			$title = t('all','Street');
 			break;
 		case "payer_address_country":
-			$title = $l['all']['Country'];
+			$title = t('all','Country');
 			break;
 		case "payer_address_country_code":
-			$title = $l['all']['CountryCode'];
+			$title = t('all','CountryCode');
 			break;
 		case "payer_address_city":
-			$title = $l['all']['City'];
+			$title = t('all','City');
 			break;
 		case "payer_address_state":
-			$title = $l['all']['State'];
+			$title = t('all','State');
 			break;
 		case "payer_address_zip":
-			$title = $l['all']['Zip'];
+			$title = t('all','Zip');
 			break;
 		case "payment_date":
-			$title = $l['all']['PaymentDate'];
+			$title = t('all','PaymentDate');
 			break;
 		case "payment_status":
-			$title = $l['all']['PaymentStatus'];
+			$title = t('all','PaymentStatus');
 			break;
 		case "payer_status":
-			$title = $l['all']['PayerStatus'];
+			$title = t('all','PayerStatus');
 			break;
 		case "vendor_type":
-			$title = $l['all']['VendorType'];
+			$title = t('all','VendorType');
 			break;
 		case "payment_address_status":
-			$title = $l['all']['PaymentAddressStatus'];
+			$title = t('all','PaymentAddressStatus');
 			break;
 		default:
 			$title = $value;

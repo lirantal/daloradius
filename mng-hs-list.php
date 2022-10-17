@@ -60,11 +60,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghslist.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mnghslist.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mnghslist'] ?>
+					<?php echo t('helpPage','mnghslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -126,27 +126,27 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=name&orderType=$orderTypeNextPage\">
-		".$l['all']['HotSpot']."</a>
+		".t('all','HotSpot')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=mac&orderType=$orderTypeNextPage\">
-		".$l['ContactInfo']['OwnerName']."</a>
+		".t('ContactInfo','OwnerName')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderTypeNextPage\">
-		".$l['ContactInfo']['Company']."</a>
+		".t('ContactInfo','Company')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=geocode&orderType=$orderTypeNextPage\">
-		 ".$l['ContactInfo']['HotspotType']."</a>
+		 ".t('ContactInfo','HotspotType')."</a>
 		</th>
 
 	</tr> </thread>";
@@ -154,15 +154,14 @@
 		printqn("<tr>
                                 <td> <input type='checkbox' name='name[]' value='$row[1]'> $row[0] </td>
 
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");
-                                        javascript:__displayTooltip();'
+                        <td> <a class='tablenovisit' href='#'
+                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");return false;'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
-                                                {$l['Tooltip']['HotspotEdit']}</a>
+                                                ".t('Tooltip','HotspotEdit')."</a>
                                         &nbsp;
                                         <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
-                                                {$l['all']['Compare']}</a>
+                                                ".t('all','Compare')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerHotspotInfo\">

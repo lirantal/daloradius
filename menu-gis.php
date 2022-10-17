@@ -5,13 +5,13 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <?php
-	include "library/googlemaps.php";
+	include "library/leaflet.php";
 ?>
 </head>
 
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
 <script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<body onload="load()" onunload="GUnload()">
+<body onload="load()">
 
 <?php
 	include_once ("lang/main.php");
@@ -32,14 +32,14 @@
 	
 	<h3>GIS Mapping</h3>
 	<ul class="subnav">
-		<li><a href="gis-viewmap.php"><b>&raquo;</b><?php echo $l['button']['ViewMAP'] ?></a></li>
-		<li><a href="gis-editmap.php"><b>&raquo;</b><?php echo $l['button']['EditMAP'] ?></a></li>		
+		<li><a href="gis-viewmap.php"><b>&raquo;</b><?php echo t('button','ViewMAP') ?></a></li>
+		<li><a href="gis-editmap.php"><b>&raquo;</b><?php echo t('button','EditMAP') ?></a></li>		
 	</ul>
 
 	<h3>Settings</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.gisregister.submit();"/><b>&raquo;</b><?php echo $l['button']['RegisterGoogleMapsAPI']?>
+		<li><a href="javascript:document.gisregister.submit();"/><b>&raquo;</b><?php echo t('button','RegisterGoogleMapsAPI')?>
 			</a>
 			<form name="gisregister" action="gis-main.php" method="get" class="sidebar">
 			<input name="code" type="text">
@@ -49,8 +49,8 @@
 	</ul>
 	
 	<br/><br/>
-	<h2>Search</h2>
+	
 
-	<input name="" type="text" value="Search" />
+	
 
 </div>

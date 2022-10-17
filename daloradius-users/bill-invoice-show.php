@@ -115,11 +115,11 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billinvoiceedit.php'] ?>
-	<h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billinvoiceedit.php') ?>
+	<h144>&#x2754;</h144></a></h2>
 	
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billinvoicesedit'] ?>
+		<?php echo t('helpPage','billinvoicesedit') ?>
 		<br/>
 	</div>
 	<?php
@@ -128,11 +128,11 @@
 
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-	<div class="tabbertab" title="<?php echo $l['title']['Invoice']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','Invoice'); ?>">
 	<fieldset>
 
 		<h2> Invoice Details </h2>
-		<h302> <?php echo $l['title']['Invoice']; ?> </h302>
+		<h302> <?php echo t('title','Invoice'); ?> </h302>
 
 		<ul>
 
@@ -144,38 +144,38 @@
 		<br/><br/>
 
 		<li class='fieldset'>
-		<label for='' class='form'><?php echo $l['all']['TotalBilled']?></label>
+		<label for='' class='form'><?php echo t('all','TotalBilled')?></label>
 		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalbilled']?>' tabindex=101 />
 		</li>
 		
 		<li class='fieldset'>
-		<label for='' class='form'><?php echo $l['all']['TotalPayed']?></label>
+		<label for='' class='form'><?php echo t('all','TotalPayed')?></label>
 		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['totalpayed']?>' tabindex=101 />
 		</li>
 		
 		<li class='fieldset'>
-		<label for='' class='form'><?php echo $l['all']['Balance']?></label>
+		<label for='' class='form'><?php echo t('all','Balance')?></label>
 		<input name='' type='text' disabled id='' value='<?php echo (float) ($invoiceDetails['totalpayed'] - $invoiceDetails['totalbilled'])?>' tabindex=101 />
 		</li>
 		
 		<li class='fieldset'>
-		<label for='' class='form'><?php echo $l['all']['InvoiceStatus']?></label>
+		<label for='' class='form'><?php echo t('all','InvoiceStatus')?></label>
 		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['status']?>' tabindex=101 />
 		</li>
 		
 		<li class='fieldset'>
-		<label for='' class='form'><?php echo $l['all']['InvoiceType']?></label>
+		<label for='' class='form'><?php echo t('all','InvoiceType')?></label>
 		<input name='' type='text' disabled id='' value='<?php echo $invoiceDetails['type']?>' tabindex=101 />
 		</li>
 
 		<br/>
 
-		<label for='invoice_date' class='form'><?php echo $l['all']['Date']?></label>		
+		<label for='invoice_date' class='form'><?php echo t('all','Date')?></label>		
 		<input disabled value='<?php echo $invoiceDetails['date']?>' id='invoice_date' name='invoice_date'  tabindex=108 />
 		<br/>
 
 
-		<label for='invoice_notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
+		<label for='invoice_notes' class='form'><?php echo t('ContactInfo','Notes')?></label>
 		<textarea disabled class='form' name='invoice_notes' ><?php echo $invoiceDetails['notes']?></textarea>
 
 		<li class='fieldset'>
@@ -194,11 +194,11 @@
 
 
 			
-	<div class="tabbertab" title="<?php echo $l['title']['Items']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','Items'); ?>">
 	<fieldset>
 
 		<h2> Item Listing </h2>
-		<h302> <?php echo $l['title']['Items']; ?> </h302>
+		<h302> <?php echo t('title','Items'); ?> </h302>
 
 		<input type="hidden" value="0" id="counter" />
 

@@ -23,10 +23,10 @@
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
-$l['all']['daloRADIUSVersion'] = "版本 0.9-9";
-$l['all']['copyright1'] = "RADIUS 管理、报告、会计和账单<a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of Produced by SanDuo Chinese language pack</a>.";
+$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "版本 " . $configValues['DALORADIUS_VERSION'];
+$l['all']['copyright1'] = "RADIUS 管理、报告、会计和账单<a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by Liran Tal of Produced by SanDuo Chinese language pack</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "IP地址名称";
 $l['all']['CalledStationId'] = "被叫号码";
@@ -90,6 +90,8 @@ $l['all']['Daily'] = "每日";
 $l['all']['Weekly'] = "每周";
 $l['all']['Monthly'] = "每月";
 $l['all']['Yearly'] = "每年";
+
+$l['all']['Month'] = "月";
 
 $l['all']['RemoveRadacctRecords'] = "删除账单记录";
 
@@ -599,6 +601,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "如果指�
 
 $l['Tooltip']['usernameTooltip'] = "准确的用户名，用户将<br/>&nbsp;&nbsp;&nbsp;
 					用来连接系统";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
 $l['Tooltip']['passwordTooltip'] = "密码实例包含在系统里<br/>&nbsp;&nbsp;&nbsp;
 					所以要格外小心";
 $l['Tooltip']['groupTooltip'] = "用户将被添加到这个组<br/>&nbsp;&nbsp;&nbsp;
@@ -1404,10 +1407,10 @@ update request {
 <i> 这是使用IP地址作为回报huntgroup名字中的一个重要radhuntgroup表中执行查找。然后添加一个属性/值对该请求的属性名称是huntgroup的名字和它的值就是从SQL查询返回的。如果查询没有发现任何值是空字符串。 </i>";
 
 
-+$l['helpPage']['mngradhuntdel'] = "从数据库中删除组条目必须提供的ip /主机和端口id";
-+$l['helpPage']['mngradhuntnew'] = "";
-+$l['helpPage']['mngradhuntlist'] = "";
-+$l['helpPage']['mngradhuntedit'] = "";
+$l['helpPage']['mngradhuntdel'] = "从数据库中删除组条目必须提供的ip /主机和端口id";
+$l['helpPage']['mngradhuntnew'] = "";
+$l['helpPage']['mngradhuntlist'] = "";
+$l['helpPage']['mngradhuntedit'] = "";
 
 $l['helpPage']['mnghsdel'] = "从数据库中删除一个热点必须提供热点的名称<br/>";
 $l['helpPage']['mnghsedit'] = "您可以编辑以下细节热点<br/>";

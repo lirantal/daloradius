@@ -15,64 +15,53 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-	include ("library/checklogin.php");
-	$operator = $_SESSION['operator_user'];
+    include("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	isset($_GET['daloradiusLineCount']) ? $daloradiusLineCount = $_GET['daloradiusLineCount'] : $daloradiusLineCount = 50;
-	isset($_GET['daloradiusFilter']) ? $daloradiusFilter = $_GET['daloradiusFilter'] : $daloradiusFilter = ".";
+    // parameter validation
+    $daloradiusLineCount = (array_key_exists('daloradiusLineCount', $_GET) && isset($_GET['daloradiusLineCount']) &&
+                            intval($_GET['daloradiusLineCount']) > 0)
+                         ? intval($_GET['daloradiusLineCount']) : 50;
 
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	$logQuery = "performed query on page: ";
-	include('include/config/logging.php');
+    include_once('library/config_read.php');
+    $log = "visited page: ";
+    include('include/config/logging.php');
 
-?>
+    include("menu-reports-logs.php");
 
-<?php
+?>    
 
-    include ("menu-reports-logs.php");
-  	
-?>	
+    <div id="contentnorightbar">
+        <h2 id="Intro">
+            <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                <?= t('Intro','replogsdaloradius.php') ?> :: <?= $daloradiusLineCount . " Lines Count " ?>
+                <h144>&#x2754;</h144>
+            </a>
+        </h2>
 
-
-	<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogsdaloradius.php']; ?>
-		:: <?php if (isset($daloradiusLineCount)) { echo $daloradiusLineCount . " Lines Count "; } ?>
-		   <?php if (isset($daloradiusFilter)) { echo " with filter set to " . $daloradiusFilter; } ?>
-		<h144>+</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replogsdaloradius'] ?>
-			<br/>
-		</div>
+        <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','replogsdaloradius') ?><br></div>
 
 <?php
-	include 'library/exten-daloradius_log.php';
+    include('library/exten-daloradius_log.php');
+    include_once('include/management/actionMessages.php');
 ?>
+        </div>
 
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
-
-	</div>
-	
-	<div id="footer">
-	
+        <div id="footer">
 <?php
-	include 'page-footer.php';
+    include('page-footer.php');
 ?>
-
-	</div>
-
-</div>
+        </div>
+        
+    </div>
 </div>
 
 

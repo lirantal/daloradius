@@ -164,11 +164,11 @@
 
 	<div id="contentnorightbar">
 
-			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradnasedit.php'] ?>
-			:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>+</h144></a></h2>
+			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradnasedit.php') ?>
+			:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>&#x2754;</h144></a></h2>
 
 			<div id="helpPage" style="display:none;visibility:visible" >
-				<?php echo $l['helpPage']['mngradnasedit'] ?>
+				<?php echo t('helpPage','mngradnasedit') ?>
 				<br/>
 			</div>
 			<?php
@@ -179,24 +179,24 @@
 			
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['NASInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','NASInfo'); ?>">
 		<input type="hidden" value="<?php echo $nashost ?>" name="nashostold" />
 
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['NASInfo'] ?> </h302>
+                <h302> <?php echo t('title','NASInfo') ?> </h302>
                 <br/>
 
-                <label for='nashost' class='form'><?php echo $l['all']['NasIPHost'] ?></label>
+                <label for='nashost' class='form'><?php echo t('all','NasIPHost') ?></label>
                 <input name='nashost' type='text' id='nashost' value='<?php echo $nashost ?>' tabindex=100 />
                 <br />
 
-                <label for='nassecret' class='form'><?php echo $l['all']['NasSecret'] ?></label>
+                <label for='nassecret' class='form'><?php echo t('all','NasSecret') ?></label>
                 <input name='nassecret' type='text' id='nassecret' value='<?php echo $nassecret ?>' tabindex=101 />
                 <br />
 
-                <label for='nastype' class='form'><?php echo $l['all']['NasType'] ?></label>
+                <label for='nastype' class='form'><?php echo t('all','NasType') ?></label>
                 <input name='nastype' type='text' id='nastype' value='<?php echo $nastype ?>' tabindex=102 />
                 <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
                         <option value="">Select Type...</option>
@@ -216,7 +216,7 @@
                 <br />
 
 
-                <label for='nasname' class='form'><?php echo $l['all']['NasShortname'] ?></label>
+                <label for='nasname' class='form'><?php echo t('all','NasShortname') ?></label>
                 <input name='nasname' type='text' id='nasname' value='<?php echo $nasname ?>' tabindex=104 />
                 <br />
 
@@ -225,7 +225,7 @@
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 
@@ -233,29 +233,29 @@
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['NASAdvanced'] ?> </h302>
+                <h302> <?php echo t('title','NASAdvanced') ?> </h302>
                 <br/>
 
-                <label for='nasports' class='form'><?php echo $l['all']['NasPorts'] ?></label>
+                <label for='nasports' class='form'><?php echo t('all','NasPorts') ?></label>
                 <input name='nasports' type='text' id='nasports' value='<?php echo $nasports ?>' tabindex=105 />
                 <br />
 
-                <label for='nascommunity' class='form'><?php echo $l['all']['NasCommunity'] ?></label>
+                <label for='nascommunity' class='form'><?php echo t('all','NasCommunity') ?></label>
                 <input name='nascommunity' type='text' id='nascommunity' value='<?php echo $nascommunity ?>' tabindex=106 />
                 <br />
 
-                <label for='nasvirtualserver' class='form'><?php echo $l['all']['NasVirtualServer'] ?></label>
+                <label for='nasvirtualserver' class='form'><?php echo t('all','NasVirtualServer') ?></label>
                 <input name='nasvirtualserver' type= 'text' id='nasvirtualserver' value='<?php echo $nasvirtualserver ?>' tabindex=107 >
                 <br />
 
-                <label for='nasdescription' class='form'><?php echo $l['all']['NasDescription'] ?></label>
+                <label for='nasdescription' class='form'><?php echo t('all','NasDescription') ?></label>
 	        <textarea class='form' name='nasdescription' id='nasdescription' tabindex=108 ><?php echo $nasdescription ?></textarea>
                 <br />
 
                 <br/><br/>
                 <hr><br/>
 
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

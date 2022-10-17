@@ -58,11 +58,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billplanslist.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billplanslist.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['billplanslist'] ?>
+					<?php echo t('helpPage','billplanslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -125,17 +125,17 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planid&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanId']."</a>
+		".t('all','PlanId')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planname&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanName']."</a>
+		".t('all','PlanName')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=plantype&orderType=$orderTypeNextPage\">
-		".$l['all']['PlanType']."</a>
+		".t('all','PlanType')."</a>
 		</th>
 	</tr> </thread>";
 
@@ -143,11 +143,11 @@
 		printqn("<tr>
                         <td> <input type='checkbox' name='planName[]' value='$row[1]'> $row[0] </td>
 
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:__displayTooltip();'
+                        <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"bill-plans-edit.php?planName=$row[1]\">
-                                                {$l['button']['EditPlan']}</a>
+                                                ".t('button','EditPlan')."</a>
                                         <br/><br/>'
                                 >$row[1]</a>
                         </td>

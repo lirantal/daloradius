@@ -277,7 +277,7 @@
 					" address, city, state, country, zip, ".
 					" paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
 					" notes, changeuserbillinfo, ".
-					" lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
+					" `lead`, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
 					" creationdate, creationby, updatedate, updateby) ".
 					" VALUES (0, '".$dbSocket->escapeSimple($planName)."', 
 					'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
@@ -468,11 +468,11 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billposnew.php'] ?>
-	<h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billposnew.php') ?>
+	<h144>&#x2754;</h144></a></h2>
 	
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billposnew'] ?>
+		<?php echo t('helpPage','billposnew') ?>
 		<br/>
 	</div>
 	<?php
@@ -483,11 +483,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','AccountInfo'); ?>">
 
 	<fieldset>
 
-                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+                <h302> <?php echo t('title','AccountInfo'); ?> </h302>
 
                 <ul>
 
@@ -497,7 +497,7 @@
 				
                 <div id='UserContainer'>
                 <li class='fieldset'>
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <label for='username' class='form'><?php echo t('all','Username')?></label>
                 <input name='username' type='text' id='username' value='' tabindex=100 />
                 <input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8,<?php
 				echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
@@ -505,12 +505,12 @@
 
                 <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['usernameTooltip'] ?>
+                        <?php echo t('Tooltip','usernameTooltip') ?>
                 </div>
                 </li>
 
                 <li class='fieldset'>
-                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
+                <label for='password' class='form'><?php echo t('all','Password')?></label>
                 <input name='password' type='text' id='password' value=''
                         <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101 />
                 <input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8,<?php
@@ -519,7 +519,7 @@
 
                 <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['passwordTooltip'] ?>
+                        <?php echo t('Tooltip','passwordTooltip') ?>
                 </div>
                 </li>
                 </div>
@@ -527,7 +527,7 @@
 
 
 		<li class='fieldset'>
-		<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+		<label for='planName' class='form'><?php echo t('all','PlanName') ?></label>
                 <?php
                        populate_plans("Select Plan","planName","form");
                 ?>
@@ -535,13 +535,13 @@
 		
 		<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['planNameTooltip'] ?>
+			<?php echo t('Tooltip','planNameTooltip') ?>
 		</div>
 		</li>
 	
 
                 <li class='fieldset'>
-                <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
+                <label for='profile' class='form'><?php echo t('all','Profile')?></label>
                 <?php
                         populate_groups("Select Profile","profiles[]");
                 ?>
@@ -556,12 +556,12 @@
 
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                        <?php echo t('Tooltip','groupTooltip') ?>
                 </div>
                 </li>
 
 		<li class='fieldset'>
-		<label for='userupdate' class='form'><?php echo $l['all']['SendWelcomeNotification']?></label>
+		<label for='userupdate' class='form'><?php echo t('all','SendWelcomeNotification')?></label>
 		<input type='checkbox' class='form' name='notificationWelcome' value='1' checked/>
 	        <br/>
 		</li>
@@ -570,7 +570,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>
@@ -580,31 +580,31 @@
 	</div>
 
 
-        <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userinfo.php');
         ?>
         </div>
 
-        <div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userbillinfo.php');
         ?>
         </div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Advanced']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Advanced'); ?>">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+                <h302> <?php echo t('title','AccountInfo'); ?> </h302>
 
                 <ul>
 
                 <li class='fieldset'>
-                <label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
+                <label for='passwordType' class='form'><?php echo t('all','PasswordType')?> </label>
                 <select class='form' tabindex=102 name='passwordType' >
                         <option value='Cleartext-Password'>Cleartext-Password</option>
                         <option value='User-Password'>User-Password</option>
@@ -618,7 +618,7 @@
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 
 		</ul>

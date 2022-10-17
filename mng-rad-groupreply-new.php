@@ -128,7 +128,6 @@
 <title>daloRADIUS</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/auto-complete.css" media="screen" type="text/css">
 <link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
 <!--[if lte IE 6.5]>
 <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
@@ -149,11 +148,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupreplynew.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradgroupreplynew.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradgroupreplynew'] ?>
+			<?php echo t('helpPage','mngradgroupreplynew') ?>
 			<br/>
 		</div>
 		<?php
@@ -165,17 +164,17 @@
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['GroupInfo'] ?> </h302>
+			<h302> <?php echo t('title','GroupInfo') ?> </h302>
 			<br/>
 
-			<label for='groupname' class='form'><?php echo $l['all']['Groupname'] ?></label>
+			<label for='groupname' class='form'><?php echo t('all','Groupname') ?></label>
 			<input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
 			<br />
 
 			<br/><br/>
 			<hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 

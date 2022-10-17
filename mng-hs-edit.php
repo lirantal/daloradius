@@ -153,11 +153,11 @@
 ?>		
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsedit.php'] ?>
-		:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
+		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mnghsedit.php') ?>
+		:: <?php if (isset($name)) { echo $name; } ?><h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mnghsedit'] ?>
+			<?php echo t('helpPage','mnghsedit') ?>
 			<br/>
 		</div>
 		<?php
@@ -168,47 +168,47 @@
 
 <div class="tabber">
 
-	<div class="tabbertab" title="<?php echo $l['title']['HotspotInfo']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','HotspotInfo'); ?>">
 
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['HotspotInfo']; ?> </h302>
+		<h302> <?php echo t('title','HotspotInfo'); ?> </h302>
 		<br/>
 
 		<ul>
 
 			<li class='fieldset'>
-			<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
+			<label for='name' class='form'><?php echo t('all','HotSpotName') ?></label>
 			<input disabled name='name' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
 			</li>
 
 			<li class='fieldset'>
-			<label for='macaddress' class='form'><?php echo $l['all']['MACAddress'] ?></label>
+			<label for='macaddress' class='form'><?php echo t('all','MACAddress') ?></label>
 			<input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
 			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotMacaddressTooltip')" /> 
 			
 			<div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 				<img src='images/icons/comment.png' alt='Tip' border='0' />
-				<?php echo $l['Tooltip']['hotspotMacaddressTooltip'] ?>
+				<?php echo t('Tooltip','hotspotMacaddressTooltip') ?>
 			</div>
 			</li>
 
 			<li class='fieldset'>
-			<label for='geocode' class='form'><?php echo $l['all']['Geocode'] ?></label>
+			<label for='geocode' class='form'><?php echo t('all','Geocode') ?></label>
 			<input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
 			<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('geocodeTooltip')" /> 
 			
 			<div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 				<img src='images/icons/comment.png' alt='Tip' border='0' />
-				<?php echo $l['Tooltip']['geocodeTooltip'] ?>
+				<?php echo t('Tooltip','geocodeTooltip') ?>
 			</div>
 			</li>
 
 			<li class='fieldset'>
 			<br/>
 			<hr><br/>
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
 				class='button' />
 			</li>
 
@@ -220,7 +220,7 @@
 
 </div>
 
-<div class="tabbertab" title="<?php echo $l['title']['ContactInfo']; ?>">
+<div class="tabbertab" title="<?php echo t('title','ContactInfo'); ?>">
 
 <?php
 	include_once('include/management/contactinfo.php');

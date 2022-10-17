@@ -58,11 +58,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billrateslist.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billrateslist.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['billrateslist'] ?>
+					<?php echo t('helpPage','billrateslist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -124,22 +124,22 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']."</a>
+		".t('all','ID')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ratename&orderType=$orderTypeNextPage\">
-		".$l['all']['RateName']."</a>
+		".t('all','RateName')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ratetype&orderType=$orderTypeNextPage\">
-		".$l['all']['RateType']."</a>
+		".t('all','RateType')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ratecost&orderType=$orderTypeNextPage\">
-		".$l['all']['RateCost']."</a>
+		".t('all','RateCost')."</a>
 		</th>
 
 	</tr> </thread>";
@@ -147,12 +147,12 @@
 		printqn("<tr>
                         <td> <input type='checkbox' name='ratename[]' value='$row[1]'> $row[0] </td>
 
-                        <td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
+                        <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
-                                        <a class='toolTip' href='bill-rates-edit.php?ratename=$row[1]'>".$l['Tooltip']['EditRate']."</a>
+                                        <a class='toolTip' href='bill-rates-edit.php?ratename=$row[1]'>".t('Tooltip','EditRate')."</a>
 					<br/>
-                                        <a class='toolTip' href='bill-rates-del.php?ratename=$row[1]'>".$l['Tooltip']['RemoveRate']."</a>
+                                        <a class='toolTip' href='bill-rates-del.php?ratename=$row[1]'>".t('Tooltip','RemoveRate')."</a>
                                         <br/><br/>\"
                               >$row[1]</a>
                         </td>

@@ -22,10 +22,10 @@
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
-$l['all']['daloRADIUSVersion'] = "versi&oacute;n 0.9-9";
-$l['all']['copyright1'] = "Administraci&oacute;n RADIUS, Reportes, Conteo y Facturaci&oacute;n desarrollado por <a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>
+$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "versi&oacute;n " . $configValues['DALORADIUS_VERSION'];
+$l['all']['copyright1'] = "Administraci&oacute;n RADIUS, Reportes, Conteo y Facturaci&oacute;n desarrollado por <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Pool Name";
@@ -243,25 +243,7 @@ $l['all']['billingplans'] = "Planes de facturaci&oacute;n";
 $l['all']['billinghistory'] = "Hist&oacute;rico de cobros";
 $l['all']['billinginfo'] = "Informaci&oacute;n de facturaci&oacute;n del usuario";
 
-
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
-$l['all'][''] = "";
+$l['all']['Month'] = "Mes";
 
 $l['all']['PaymentDate'] = "Fecha de pago";
 $l['all']['PaymentStatus'] = "Estado del pago";
@@ -427,6 +409,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Si especifi
 
 
 $l['Tooltip']['usernameTooltip'] = "El nombre de usuario con el que<br/>&nbsp;&nbsp;&nbsp; se conectar&aacute; al sistema";
+$l['Tooltip']['passwordTypeTooltip'] = "Tipo de contrase&ntilde;a utilizado para autenticar al usuario en Radius.";
 $l['Tooltip']['passwordTooltip'] = "Las contrase&ntilde;as son sensibles<br/>&nbsp;&nbsp;&nbsp; a las may&uacute;sculas y min&uacute;sculas en algunos sistemas";
 $l['Tooltip']['groupTooltip'] = "El usuario ser&aacute; agregado a este grupo.<br/>&nbsp;&nbsp;&nbsp; Cuando se asigna un grupo a un usuario <br/>&nbsp;&nbsp;&nbsp;el usuario est&aacute; sujeto a los atributos de ese grupo.";
 $l['Tooltip']['macaddressTooltip'] = "Ejemplo: 00-AA-BB-CC-DD-EE<br/>&nbsp;&nbsp;&nbsp;El formato de la direcci&oacute;n MAC debe ser <br/>&nbsp;&nbsp;&nbsp;igual al que env&iacute;a el NAS. La mayor&iacute;a de las veces no lleva<br/>&nbsp;&nbsp;&nbsp;separadores.";

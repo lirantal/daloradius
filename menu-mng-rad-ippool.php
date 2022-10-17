@@ -22,20 +22,18 @@
 	<h3>IP Pools</h3>
 	<ul class="subnav">
 	
-		<li><a href="mng-rad-ippool-list.php" tabindex=1><b>&raquo;</b><?php echo $l['button']['ListIPPools'] ?></a></li>
-		<li><a href="mng-rad-ippool-new.php" tabindex=2><b>&raquo;</b><?php echo $l['button']['NewIPPool'] ?></a></li>
-		<li><a href="javascript:document.mngradippooledit.submit();" tabindex=3 ><b>&raquo;</b><?php echo $l['button']['EditIPPool'] ?></a>
+		<li><a href="mng-rad-ippool-list.php" tabindex=1><b>&raquo;</b><?php echo t('button','ListIPPools') ?></a></li>
+		<li><a href="mng-rad-ippool-new.php" tabindex=2><b>&raquo;</b><?php echo t('button','NewIPPool') ?></a></li>
+		<li><a href="javascript:document.mngradippooledit.submit();" tabindex=3 ><b>&raquo;</b><?php echo t('button','EditIPPool') ?></a>
 			<form name="mngradippooledit" action="mng-rad-ippool-edit.php" method="get" class="sidebar">
 			<input name="poolname" type="text" 
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['PoolName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','PoolName'); ?> <br/>'
 				value="<?php if (isset($poolname)) echo $poolname ?>" tabindex=4>
 			<input name="ipaddressold" type="text" 
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['IPAddress']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','IPAddress'); ?> <br/>'
 				value="<?php if (isset($ipaddressold)) echo $ipaddressold  ?>" tabindex=4>
 			</form></li>
-		<li><a href="mng-rad-ippool-del.php" tabindex=5><b>&raquo;</b><?php echo $l['button']['RemoveIPPool'] ?></a></li>
+		<li><a href="mng-rad-ippool-del.php" tabindex=5><b>&raquo;</b><?php echo t('button','RemoveIPPool') ?></a></li>
 		
 	</ul>
 

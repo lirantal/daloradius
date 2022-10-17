@@ -57,11 +57,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradprofiles.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradprofiles.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 
 				<div id="helpPage" style="display:none;visibility:visible" >				
-					<?php echo $l['helpPage']['mngradprofileslist'] ?>
+					<?php echo t('helpPage','mngradprofileslist') ?>
 					<br/>
 				</div>	
 				<br/>
@@ -165,12 +165,12 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
-		".$l['all']['Groupname']."</a>
+		".t('all','Groupname')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=users&orderType=$orderTypeNextPage\">
-		".$l['all']['TotalUsers']."</a>
+		".t('all','TotalUsers')."</a>
 		</th>
 
 	</tr> </thread>";
@@ -179,10 +179,10 @@
         foreach($data as $row){
 		echo "<tr>
 			<td> <input type='checkbox' name='profile[]' value='$row[0]'>
-				<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
+				<a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-profiles-edit.php?profile=$row[0]'>".$l['Tooltip']['EditProfile']."</a>
+                                        <a class='toolTip' href='mng-rad-profiles-edit.php?profile=$row[0]'>".t('Tooltip','EditProfile')."</a>
                                         <br/>\"
 				>$row[0]</a></td>
 			<td>$row[1]</td>

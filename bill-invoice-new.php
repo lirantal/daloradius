@@ -255,11 +255,11 @@ function removeTableRow(rowCounter) {
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billinvoicenew.php'] ?>
-	<h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billinvoicenew.php') ?>
+	<h144>&#x2754;</h144></a></h2>
 	
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billinvoicesnew'] ?>
+		<?php echo t('helpPage','billinvoicesnew') ?>
 		<br/>
 	</div>
 	<?php
@@ -270,11 +270,11 @@ function removeTableRow(rowCounter) {
 
 <div class="tabber">
 
-	<div class="tabbertab" title="<?php echo $l['title']['Invoice']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','Invoice'); ?>">
 		
 	<fieldset>
 
-		<h302> <?php echo $l['title']['Invoice']; ?> </h302>
+		<h302> <?php echo t('title','Invoice'); ?> </h302>
 
 		<ul>
 		
@@ -287,7 +287,7 @@ function removeTableRow(rowCounter) {
 		<br/>
 
 		<li class='fieldset'>
-		<label for='invoice_status_id' class='form'><?php echo $l['all']['InvoiceStatus']?></label>
+		<label for='invoice_status_id' class='form'><?php echo t('all','InvoiceStatus')?></label>
 		<?php
 		        include_once('include/management/populate_selectbox.php');
 		        populate_invoice_status_id("Select Status", "invoice_status_id", 'form', '', 1);
@@ -295,12 +295,12 @@ function removeTableRow(rowCounter) {
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('invoice_status_id')" />
 		<div id='invoiceStatusTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['invoiceStatusTooltip'] ?>
+			<?php echo t('Tooltip','invoiceStatusTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='invoice_type_id' class='form'><?php echo $l['all']['InvoiceType']?></label>
+		<label for='invoice_type_id' class='form'><?php echo t('all','InvoiceType')?></label>
 		<?php
 		        include_once('include/management/populate_selectbox.php');
 		        populate_invoice_type_id("Select Type", "invoice_type_id");
@@ -308,37 +308,37 @@ function removeTableRow(rowCounter) {
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('invoice_type_id')" />
 		<div id='invoiceTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['invoiceTypeTooltip'] ?>
+			<?php echo t('Tooltip','invoiceTypeTooltip') ?>
 		</div>
 		</li>
 
 
 		<li class='fieldset'>
-		<label for='user_id' class='form'><?php echo $l['all']['UserId'] ?></label>
+		<label for='user_id' class='form'><?php echo t('all','UserId') ?></label>
 		<input name='user_id' type='text' id='user_id' value='<?php echo $user_id ?>' tabindex=101 />
 		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('user_idTooltip')" /> 
 		
 		<div id='user_idTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['user_idTooltip'] ?>
+			<?php echo t('Tooltip','user_idTooltip') ?>
 		</div>
 		</li>
 
 
 
-		<label for='invoice_date' class='form'><?php echo $l['all']['Date']?></label>		
+		<label for='invoice_date' class='form'><?php echo t('all','Date')?></label>		
 		<input value='' id='invoice_date' name='invoice_date'  tabindex=108 />
 		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan_invoicedate', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
 		<br/>
 
-		<label for='invoice_notes' class='form'><?php echo $l['ContactInfo']['Notes']?></label>
+		<label for='invoice_notes' class='form'><?php echo t('ContactInfo','Notes')?></label>
 		<textarea class='form' name='invoice_notes' ></textarea>
 
 
 		<li class='fieldset'>
 		<br/>
 		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 		</li>
 		
 		</ul>
@@ -347,10 +347,10 @@ function removeTableRow(rowCounter) {
 	<div id="chooserSpan_invoicedate" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 	</div>
 
-	<div class="tabbertab" title="<?php echo $l['title']['Items']; ?>">
+	<div class="tabbertab" title="<?php echo t('title','Items'); ?>">
 	<fieldset>
 
-		<h302> <?php echo $l['title']['Items']; ?> </h302>
+		<h302> <?php echo t('title','Items'); ?> </h302>
 		<input type='button' name='addItem' value='Add Item'
 			onclick="javascript:addTableRow();" class='button'>
 		<br/>

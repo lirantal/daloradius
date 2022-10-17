@@ -61,11 +61,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradgroupchecksearch.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradgroupchecksearch.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngradgroupchecksearch'] ?>
+			<?php echo t('helpPage','mngradgroupchecksearch') ?>
 			<br/>
 		</div>
 		<br/>
@@ -125,22 +125,22 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
-		".$l['all']['Groupname']."</a>
+		".t('all','Groupname')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
-		".$l['all']['Attribute']."</a>
+		".t('all','Attribute')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=$orderTypeNextPage\">
-		".$l['all']['Operator']."</a>
+		".t('all','Operator')."</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=$orderTypeNextPage\">
-		".$l['all']['Value']."</a>
+		".t('all','Value')."</a>
 		</th>
 
 	</tr> </thread>";

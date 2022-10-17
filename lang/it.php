@@ -15,17 +15,17 @@
  *
  *********************************************************************************************************
  * Description:
- *		Italian language file
+ *		Italian language file94
  *
  * Authors:	Alessandro Rendina <ale@seleneinformatica.it>
  *
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS 0.9-9";
-$l['all']['daloRADIUSVersion'] = "versione 0.9-9";
-$l['all']['copyright1'] = "Rapporti, Fatturazione e Gestione Radius by <a href=\"http://www.enginx.com\">Enginx</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007 by Liran Tal of <a href=\"http://www.enginx.com\">Enginx</a> <br/>
+$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
+$l['all']['daloRADIUSVersion'] = "versione " . $configValues['DALORADIUS_VERSION'];
+$l['all']['copyright1'] = "Rapporti, Fatturazione e Gestione Radius by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
+$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
 Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Nome Pool";
@@ -205,6 +205,7 @@ $l['all']['operators'] = "operators";
 $l['all']['rates'] = "rates";
 $l['all']['hotspots'] = "hotspots";
 
+$l['all']['Month'] = "Mese";
 
 $l['all']['BusinessName'] = "Nome Lavoro";
 $l['all']['BusinessPhone'] = "Telefono Lavoro";
@@ -311,6 +312,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specific
 
 $l['Tooltip']['usernameTooltip'] = "Il nome utente esatto<br/>&nbsp;&nbsp;&nbsp;
 					così come l'utente userà connettersi al sistema";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
 $l['Tooltip']['passwordTooltip'] = "Le password sono sensibili alle maiuscole<br/>&nbsp;&nbsp;&nbsp;
 					in certi sistemi. Prestare attenzione";
 $l['Tooltip']['groupTooltip'] = "L'utente verrà aggiunto a questo gruppo.<br/>&nbsp;&nbsp;&nbsp;

@@ -30,13 +30,12 @@
 	<h3>Invoice Management</h3>
 	<ul class="subnav">
 	
-		<li><a href="javascript:document.invoicelist.submit();"><b>&raquo;</b><?php echo $l['button']['ListInvoices'] ?></a>
+		<li><a href="javascript:document.invoicelist.submit();"><b>&raquo;</b><?php echo t('button','ListInvoices') ?></a>
 		
 			<form name="invoicelist" action="bill-invoice-list.php" method="get" class="sidebar">
             	<input name="username" type="text" id="invoiceUsername" 
                 autocomplete='off'
-                onClick='javascript:__displayTooltip();'
-				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
                 value="<?php if (isset($edit_invoiceUsername)) echo $edit_invoiceUsername; ?>" tabindex=3>
                 
 			<?php
@@ -48,24 +47,22 @@
 			</form>
 		
 		</li>
-		<li><a href="javascript:document.invoicenew.submit();"><b>&raquo;</b><?php echo $l['button']['NewInvoice'] ?></a>
+		<li><a href="javascript:document.invoicenew.submit();"><b>&raquo;</b><?php echo t('button','NewInvoice') ?></a>
 		<form name="invoicenew" action="bill-invoice-new.php" method="get" class="sidebar">
             	<input name="username" type="text" id="invoiceUsernameNew" 
                 autocomplete='off'
-                onClick='javascript:__displayTooltip();'
-				tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+				tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
                 value="<?php if (isset($edit_invoiceUsername)) echo $edit_invoiceUsername; ?>" tabindex=3>
 		</form>
 		</li>
-		<li><a href="javascript:document.billinvoiceedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditInvoice'] ?><a>
+		<li><a href="javascript:document.billinvoiceedit.submit();""><b>&raquo;</b><?php echo t('button','EditInvoice') ?><a>
 			<form name="billinvoiceedit" action="bill-invoice-edit.php" method="get" class="sidebar">
 			<input name="invoice_id" type="text" id="invoiceIdEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['invoiceID']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','invoiceID'); ?> <br/>'
 				value="<?php if (isset($edit_invoiceid)) echo $edit_invoiceid; ?>" tabindex=3>
 			</form></li>
 			
-		<li><a href="bill-invoice-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveInvoice'] ?></a></li>
+		<li><a href="bill-invoice-del.php"><b>&raquo;</b><?php echo t('button','RemoveInvoice') ?></a></li>
 		
 	</ul>
 	
@@ -77,19 +74,17 @@
 		
 			<form name="billinvoicereport" action="bill-invoice-report.php" method="get" class="sidebar">
 			
-				<h109><?php echo $l['button']['BetweenDates']; ?></h109> <br/>
+				<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
 				
 				<input name="startdate" type="text" id="startdate" 
-			                                onClick='javascript:__displayTooltip();'
-			                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+			                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 					value="<?php if (isset($billinvoice_startdate)) echo $billinvoice_startdate;
 									else echo date("Y-m-01"); ?>">
 				<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
 				<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 			
 				<input name="enddate" type="text" id="enddate" 
-			                                onClick='javascript:__displayTooltip();'
-			                                tooltipText='<?php echo $l['Tooltip']['Date']; ?> <br/>'
+			                                tooltipText='<?php echo t('Tooltip','Date'); ?> <br/>'
 					value="<?php if (isset($billinvoice_enddate)) echo $billinvoice_enddate;
 									else echo date("Y-m-t"); ?>">
 				<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
@@ -104,13 +99,12 @@
 			
 				
 				<input name="username" type="text" id="usernameEdit" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['Username']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
                                 value="<?php if (isset($billinvoice_username) && $billinvoice_username != '%') echo $billinvoice_username; ?>" tabindex=1>
 				
 				
 					<br/>
-				<input class="sidebutton" type="submit" name="submit" value="<?php echo $l['button']['GenerateReport'] ?>" tabindex=3 />
+				<input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','GenerateReport') ?>" tabindex=3 />
 				
 			</form></li>
 					
@@ -118,9 +112,9 @@
 	
 	
 	<br/><br/>
-	<h2>Search</h2>
 	
-	<input name="" type="text" value="Search" tabindex=4 />
+	
+	
 
 </div>
 

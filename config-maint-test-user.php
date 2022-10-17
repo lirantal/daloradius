@@ -83,11 +83,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configmainttestuser.php'] ?>
-				<h144>+</h144> </a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configmainttestuser.php') ?>
+				<h144>&#x2754;</h144> </a></h2>
 
 		                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configmainttestuser'] ?>
+					<?php echo t('helpPage','configmainttestuser') ?>
 					<br/>
 				</div>
                 <?php
@@ -98,38 +98,38 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
 
         <fieldset>
 
                 <h302> Test User Connectivity </h302>
                 <br/>
 
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <label for='username' class='form'><?php echo t('all','Username')?></label>
                 <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
                 <br />
 
 
-                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
+                <label for='password' class='form'><?php echo t('all','Password')?></label>
                 <input name='password' type='text' id='password' value='<?php echo $password ?>' tabindex=101 />
                 <br />
 
-                <label for='radius' class='form'><?php echo $l['all']['RadiusServer'] ?>
+                <label for='radius' class='form'><?php echo t('all','RadiusServer') ?>
 			</label>
                 <input name='radius' type='text' id='radius' value='<?php echo $radius ?>' tabindex=102 />
                 <br />
 
-                <label for='radiusport' class='form'><?php echo $l['all']['RadiusPort'] ?>
+                <label for='radiusport' class='form'><?php echo t('all','RadiusPort') ?>
 			</label>
                 <input name='radiusport' type='text' id='radiusport' value='<?php echo $radiusport ?>' tabindex=103 />
                 <br />
 
-                <label for='nasport' class='form'><?php echo $l['all']['NasPorts'] ?>
+                <label for='nasport' class='form'><?php echo t('all','NasPorts') ?>
 			</label>
                 <input name='nasport' type='text' id='nasport' value='<?php echo $nasport ?>' tabindex=104 />
                 <br />
 
-                <label for='secret' class='form'><?php echo $l['all']['NasSecret'] ?>
+                <label for='secret' class='form'><?php echo t('all','NasSecret') ?>
 			</label>
                 <input name='secret' type='text' id='secret' value='<?php echo $secret ?>' tabindex=105 />
                 <br />
@@ -144,45 +144,45 @@
 	</div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Advanced']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Advanced'); ?>">
 
 	<fieldset>
 
                 <h302> Advanced </h302>
                 <br/>
 
-                <label for='debug' class='form'><?php echo $l['all']['Debug'] ?></label>
+                <label for='debug' class='form'><?php echo t('all','Debug') ?></label>
                 <select name='debug' id='debug' class='form' tabindex=106 >
                         <option value="yes"> Yes </option>
                         <option value="no"> No </option>
                 </select>
                 <br/>
 
-                <label for='timeout' class='form'><?php echo $l['all']['Timeout'] ?></label>
+                <label for='timeout' class='form'><?php echo t('all','Timeout') ?></label>
                 <input class="integer" name='timeout' type='text' id='timeout' value='3' tabindex=107 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('timeout','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('timeout','decrement')"/>
                 <br/>
 
-                <label for='retries' class='form'><?php echo $l['all']['Retries'] ?></label>
+                <label for='retries' class='form'><?php echo t('all','Retries') ?></label>
                 <input class="integer" name='retries' type='text' id='retries' value='3' tabindex=108 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('retries','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('retries','decrement')"/>
                 <br/>
 
-                <label for='count' class='form'><?php echo $l['all']['Count'] ?></label>
+                <label for='count' class='form'><?php echo t('all','Count') ?></label>
                 <input class="integer" name='count' type='text' id='count' value='1' tabindex=109 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('count','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('count','decrement')"/>
                 <br/>
 
-                <label for='requests' class='form'><?php echo $l['all']['Requests'] ?></label>
+                <label for='requests' class='form'><?php echo t('all','Requests') ?></label>
                 <input class="integer" name='requests' type='text' id='requests' value='3' tabindex=110 />
                 <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('requests','increment')" />
                 <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('requests','decrement')"/>
                 <br/>
 
-                <label for='dictionaryPath' class='form'><?php echo $l['all']['RADIUSDictionaryPath'] ?></label>
+                <label for='dictionaryPath' class='form'><?php echo t('all','RADIUSDictionaryPath') ?></label>
                 <input name='dictionaryPath' type='text' id='dictionaryPath' value='<?php echo $dictionaryPath ?>' tabindex=111 />
                 <br />
 

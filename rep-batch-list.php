@@ -47,11 +47,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['repbatchlist.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','repbatchlist.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['repbatchlist'] ?>
+			<?php echo t('helpPage','repbatchlist') ?>
 			<br/>
 		</div>
 
@@ -198,45 +198,45 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['BatchName']."</a>
+		".t('all','BatchName')."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['HotSpot']."
+		".t('all','HotSpot')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['BatchStatus']."
+		".t('all','BatchStatus')."
 		</th>
 		
 		<th scope='col'> 
-		".$l['all']['TotalUsers']."
+		".t('all','TotalUsers')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['ActiveUsers']."
+		".t('all','ActiveUsers')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PlanName']."
+		".t('all','PlanName')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['PlanCost']."
+		".t('all','PlanCost')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['BatchCost']."
+		".t('all','BatchCost')."
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationdate&orderType=$orderType\">
-		".$l['all']['CreationDate']."</a>
+		".t('all','CreationDate')."</a>
 		</th>
 
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=creationby&orderType=$orderType\">
-		".$l['all']['CreationBy']."</a>
+		".t('all','CreationBy')."</a>
 		</th>
 
 		</tr> </thread>";
@@ -261,14 +261,14 @@
 				<td>";
 
 		printqn("
-				<a class='tablenovisit' href='javascript:return;'
-					onClick='javascript:__displayTooltip();'
+				<a class='tablenovisit' href='#'
+					onclick='javascript:return false;'
 					tooltipText='
 					<a class=\"toolTip\" href=\"rep-batch-details.php?batch_name={$row['batch_name']}\">
-						{$l['Tooltip']['BatchDetails']}</a>
+						".t('Tooltip','BatchDetails')."</a>
 						<br/><br/>
 								<div id=\"divContainerUserInfo\">
-									<b>{$l['all']['batchDescription']}</b>:<br/><br/>
+									<b>".t('all','batchDescription')."</b>:<br/><br/>
 									{$row['batch_description']}
 								</div>
 								<br/>

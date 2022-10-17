@@ -7,6 +7,9 @@
 
         <input type='button' onclick="self.location='config-maint-disconnect-user.php?username=<?php 
 		echo $username ?>'" value='Disconnect User' class='button'/>
+		
+		<input type='button' onclick="self.location='acct-maintenance-cleanup.php?username=<?php 
+		echo $username ?>'" value='Cleanup Stale Sessions' class='button'/>
 
         <input type='button' onclick="self.location='acct-username.php?username=<?php echo $username ?>'" value='Accounting' class='button'/>
 

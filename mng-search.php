@@ -62,8 +62,8 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngsearch.php']; ?>
-		:: <?php if (isset($username)) { echo $username; } ?><h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngsearch.php'); ?>
+		:: <?php if (isset($username)) { echo $username; } ?><h144>&#x2754;</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
 			<?php echo "searched for user $username" ?><br/>
@@ -141,12 +141,12 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=$orderTypeNextPage\">
-		".$l['all']['ID']. "</a>
+		".t('all','ID'). "</a>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=Username&orderType=$orderTypeNextPage\">
-	 	".$l['all']['Username']."</a>
+	 	".t('all','Username')."</a>
 		</th>
 
 		<th scope='col'> 
@@ -163,20 +163,19 @@
 		
 		printqn("<tr>
 			<td> <input type='checkbox' name='username[]' value='$row[0]'> $row[2] </td>
-                        <td> $img <a class='tablenovisit' href='javascript:return;'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");
-                                        javascript:__displayTooltip();'
+                        <td> $img <a class='tablenovisit' href='#'
+                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");return false;'
                                 tooltipText='
                                         <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-	                                        {$l['Tooltip']['UserEdit']}</a>
+	                                        ".t('Tooltip','UserEdit')."</a>
                                         &nbsp
 					<br/>
 					<a class=\"toolTip\" href=\"config-maint-test-user.php?username=$row[0]&password=$row[1]\">
-						{$l['all']['TestUser']}</a>
+						".t('all','TestUser')."</a>
 					&nbsp
 					<br/>
 					 <a class=\"toolTip\" href=\"acct-username.php?username=$row[0]\">
-						{$l['all']['Accounting']}</a>
+						".t('all','Accounting')."</a>
                                         <br/><br/>
 
                                         <div id=\"divContainerUserInfo\">

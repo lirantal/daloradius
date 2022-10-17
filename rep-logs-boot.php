@@ -15,65 +15,62 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-        isset($_GET['bootLineCount']) ? $bootLineCount = $_GET['bootLineCount'] : $bootLineCount = 50;
-        isset($_GET['bootFilter']) ? $bootFilter = $_GET['bootFilter'] : $bootFilter = ".";
+    // parameter validation
+    $bootLineCount = (array_key_exists('bootLineCount', $_GET) && isset($_GET['bootLineCount']) &&
+                      intval($_GET['bootLineCount']) > 0)
+                   ? intval($_GET['bootLineCount']) : 50;
 
+    // preg quoted before usage
+    $bootFilter = (array_key_exists('bootFilter', $_GET) && isset($_GET['bootFilter']))
+                ? $_GET['bootFilter'] : "";
 
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
-    $logQuery = "performed query on page: ";
     include('include/config/logging.php');
 
+    include("menu-reports-logs.php");
+      
+?>    
+    <div id="contentnorightbar">
+        <h2 id="Intro">
+            <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                <?= t('Intro','replogsboot.php') ?> :: <?= $bootLineCount . " Lines Count " ?>
+<?php 
+    if (!empty($bootFilter) && $bootFilter !== '.+') {
+        echo " with filter set to " . htmlspecialchars($bootFilter, ENT_QUOTES, 'UTF-8');
+    }
 ?>
+                <h144>&#x2754;</h144>
+            </a>
+        </h2>
+
+        <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage', 'replogsboot') ?><br></div>
+        <br>
 
 <?php
+    include('library/exten-boot_log.php');
+    include_once('include/management/actionMessages.php');
+?>
+        </div>
 
-    include ("menu-reports-logs.php");
-  	
-?>	
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogsboot.php']; ?>
-                :: <?php if (isset($bootLineCount)) { echo $bootLineCount . " Lines Count "; } ?>
-                   <?php if (isset($bootFilter)) { echo " with filter set to " . $bootFilter; } ?>
-		<h144>+</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replogsboot'] ?>
-			<br/>
-		</div>
-		<br/>
-
+        <div id="footer">
 <?php
-	include 'library/exten-boot_log.php';
+    include('page-footer.php');
 ?>
-
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
-
-
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-		
-		</div>
-		
-</div>
+        </div>
+        
+    </div>
 </div>
 
 

@@ -31,18 +31,17 @@
 	
 	<ul class="subnav">
 	
-		<li><a href="config-operators-list.php"><b>&raquo;</b><?php echo $l['button']['ListOperators'] ?></a></li>
-		<li><a href="config-operators-new.php"><b>&raquo;</b><?php echo $l['button']['NewOperator'] ?></a></li>
-		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo $l['button']['EditOperator'] ?></a>
+		<li><a href="config-operators-list.php"><b>&raquo;</b><?php echo t('button','ListOperators') ?></a></li>
+		<li><a href="config-operators-new.php"><b>&raquo;</b><?php echo t('button','NewOperator') ?></a></li>
+		<li><a href="javascript:document.mngedit.submit();""><b>&raquo;</b><?php echo t('button','EditOperator') ?></a>
 			<form name="mngedit" action="config-operators-edit.php" method="get" class="sidebar">
 			<input name="operator_username" type="text"
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['OperatorName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','OperatorName'); ?> <br/>'
 				/>
 			</form>
 		</li>
 
-		<li><a href="config-operators-del.php"><b>&raquo;</b><?php echo $l['button']['RemoveOperator'] ?></a></li>
+		<li><a href="config-operators-del.php"><b>&raquo;</b><?php echo t('button','RemoveOperator') ?></a></li>
 	
 	</ul>
 

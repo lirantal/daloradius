@@ -13,8 +13,10 @@
 
     function writeGoogleMapsCode($googleMapsCode) {
 		$myfile = "library/googlemaps.php";
+	    
+	    	$sanitizedGoogleMapsCode = preg_replace("/[^-a-zA-Z0-9]+/", "", $googleMapsCode);
 		if ($fh = fopen($myfile, 'w') ) {
-			$strCode = "<script src='//maps.google.com/maps?file=api&amp;v=3&amp;key=" . $googleMapsCode . 
+			$strCode = "<script src='//maps.google.com/maps?file=api&amp;v=3&amp;key=" . $sanitizedGoogleMapsCode . 
 						"' type='text/javascript'></script>";
 			fwrite($fh, $strCode);
 			fclose($fh);
@@ -37,11 +39,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['gismain.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','gismain.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['gismain'] ?>
+			<?php echo t('helpPage','gismain') ?>
 			<br/>
 		</div>
 		<?php

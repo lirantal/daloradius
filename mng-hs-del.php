@@ -91,11 +91,11 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mnghsdel.php'] ?>
-	:: <?php if (isset($name)) { echo $name; } ?><h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mnghsdel.php') ?>
+	:: <?php if (isset($name)) { echo $name; } ?><h144>&#x2754;</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['mnghsdel'] ?>
+		<?php echo t('helpPage','mnghsdel') ?>
 		<br/>
 	</div>
 	<?php
@@ -107,17 +107,17 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['HotspotRemoval'] ?> </h302>
+		<h302> <?php echo t('title','HotspotRemoval') ?> </h302>
 		<br/>
 
-		<label for='name' class='form'><?php echo $l['all']['HotSpotName'] ?></label>
+		<label for='name' class='form'><?php echo t('all','HotSpotName') ?></label>
 		<input name='name[]' type='text' id='name' value='<?php echo $name ?>' tabindex=100 autocomplete="off" />
 		<br/>
 
 		<br/><br/>
 		<hr><br/>
 
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=1000 
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
 			class='button' />
 
 	</fieldset>

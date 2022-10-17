@@ -159,11 +159,11 @@
 			
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configdb.php']; ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configdb.php'); ?>
+				<h144>&#x2754;</h144></a></h2>
 
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configdb'] ?>
+					<?php echo t('helpPage','configdb') ?>
 					<br/>
 				</div>
                 <?php
@@ -174,17 +174,17 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['Settings']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
 
         <fieldset>
 
-                <h302><?php echo $l['title']['Settings']; ?></h302>
+                <h302><?php echo t('title','Settings'); ?></h302>
 		<br/>
 
 		<ul>
 
                 <li class='fieldset'>
-                <label for='config_dbengine' class='form'><?php echo $l['all']['DBEngine']?></label>
+                <label for='config_dbengine' class='form'><?php echo t('all','DBEngine')?></label>
 		<select class='form' name="config_dbengine">
 			<option value="<?php echo $configValues['CONFIG_DB_ENGINE'] ?>"> <?php echo $configValues['CONFIG_DB_ENGINE'] ?> </option>
 			<option value=""></option>
@@ -204,34 +204,34 @@
 		</li>
 
 		<li class='fieldset'>
-		<label for='config_dbhost' class='form'><?php echo $l['all']['DatabaseHostname'] ?></label>
+		<label for='config_dbhost' class='form'><?php echo t('all','DatabaseHostname') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_DB_HOST'] ?>" name="config_dbhost" />
 		</li>
 		
 		<li class='fieldset'>
-		<label for='config_dbport' class='form'><?php echo $l['all']['DatabasePort'] ?></label>
+		<label for='config_dbport' class='form'><?php echo t('all','DatabasePort') ?></label>
 		<input type='text' value="<?php echo $configValues['CONFIG_DB_PORT'] ?>" name="config_dbport" />
 		</li>
 
 		<li class='fieldset'>
-		<label for='config_dbuser' class='form'><?php echo $l['all']['DatabaseUser'] ?></label>
+		<label for='config_dbuser' class='form'><?php echo t('all','DatabaseUser') ?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_USER'] ?>" name="config_dbuser" />
 		</li>
 
 		<li class='fieldset'>
-		<label for='config_dbpass' class='form'><?php echo $l['all']['DatabasePass'] ?></label>
+		<label for='config_dbpass' class='form'><?php echo t('all','DatabasePass') ?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_PASS'] ?>" name="config_dbpass" />
 		</li>
 
 		<li class='fieldset'>
-		<label for='db_name' class='form'><?php echo  $l['all']['DatabaseName'] ?></label>
+		<label for='db_name' class='form'><?php echo  t('all','DatabaseName') ?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_NAME'] ?>" name="config_dbname" />
 		</li>
 
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
                 </ul>
@@ -240,177 +240,177 @@
 
 	</div>
 
-     <div class="tabbertab" title="<?php echo $l['title']['DatabaseTables']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','DatabaseTables'); ?>">
 
 		<fieldset>
 
-                <h302><?php echo $l['title']['DatabaseTables']; ?></h302>
+                <h302><?php echo t('title','DatabaseTables'); ?></h302>
 		<br/>
 
 		<ul>
 
 		<li class='fieldset'>
-                <label for='config_dbtbl_radcheck' class='form'><?php echo $l['all']['radcheck']?></label>
+                <label for='config_dbtbl_radcheck' class='form'><?php echo t('all','radcheck')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADCHECK'] ?>" name="config_dbtbl_radcheck"/>
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_radreply' class='form'><?php echo $l['all']['radreply']?></label>
+                <label for='config_dbtbl_radreply' class='form'><?php echo t('all','radreply')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADREPLY'] ?>" name="config_dbtbl_radreply" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_radgroupreply' class='form'><?php echo $l['all']['radgroupreply']?></label>
+                <label for='config_dbtbl_radgroupreply' class='form'><?php echo t('all','radgroupreply')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADGROUPREPLY'] ?>" name="config_dbtbl_radgroupreply" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_radgroupcheck' class='form'><?php echo $l['all']['radgroupcheck']?></label>
+                <label for='config_dbtbl_radgroupcheck' class='form'><?php echo t('all','radgroupcheck')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADGROUPCHECK'] ?>" name="config_dbtbl_radgroupcheck" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_usergroup' class='form'><?php echo $l['all']['usergroup']?></label>
+                <label for='config_dbtbl_usergroup' class='form'><?php echo t('all','usergroup')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ?>" name="config_dbtbl_usergroup" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_radacct' class='form'><?php echo $l['all']['radacct']?></label>
+                <label for='config_dbtbl_radacct' class='form'><?php echo t('all','radacct')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADACCT'] ?>" name="config_dbtbl_radacct" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_nas' class='form'><?php echo $l['all']['nas']?></label>
+                <label for='config_dbtbl_nas' class='form'><?php echo t('all','nas')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADNAS'] ?>" name="config_dbtbl_nas" />
 		</li>
 
 
 				 <li class='fieldset'>
-                <label for='config_dbtbl_hunt' class='form'><?php echo $l['all']['hunt']?></label>
+                <label for='config_dbtbl_hunt' class='form'><?php echo t('all','hunt')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADHG'] ?>" name="config_dbtbl_hunt" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_radpostauth' class='form'><?php echo $l['all']['radpostauth']?></label>
+                <label for='config_dbtbl_radpostauth' class='form'><?php echo t('all','radpostauth')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADPOSTAUTH'] ?>" name="config_dbtbl_radpostauth" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_radippool' class='form'><?php echo $l['all']['radippool']?></label>
+                <label for='config_dbtbl_radippool' class='form'><?php echo t('all','radippool')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_RADIPPOOL'] ?>" name="config_dbtbl_radippool" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_userinfo' class='form'><?php echo $l['all']['userinfo']?></label>
+                <label for='config_dbtbl_userinfo' class='form'><?php echo t('all','userinfo')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOUSERINFO'] ?>" name="config_dbtbl_userinfo" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_dictionary' class='form'><?php echo $l['all']['dictionary']?></label>
+                <label for='config_dbtbl_dictionary' class='form'><?php echo t('all','dictionary')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALODICTIONARY'] ?>" name="config_dbtbl_dictionary" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_realms' class='form'><?php echo $l['all']['realms']?></label>
+                <label for='config_dbtbl_realms' class='form'><?php echo t('all','realms')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOREALMS'] ?>" name="config_dbtbl_realms" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_proxys' class='form'><?php echo $l['all']['proxys']?></label>
+                <label for='config_dbtbl_proxys' class='form'><?php echo t('all','proxys')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOPROXYS'] ?>" name="config_dbtbl_proxys" />
 		</li>
 
 				<li class='fieldset'>
-                <label for='config_dbtbl_billingmerchant' class='form'><?php echo $l['all']['billingmerchant']?></label>
+                <label for='config_dbtbl_billingmerchant' class='form'><?php echo t('all','billingmerchant')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] ?>" name="config_dbtbl_billingmerchant" />
 		</li>
 		
                 <li class='fieldset'>
-                <label for='config_dbtbl_billingpaypal' class='form'><?php echo $l['all']['billingpaypal']?></label>
+                <label for='config_dbtbl_billingpaypal' class='form'><?php echo t('all','billingpaypal')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] ?>" name="config_dbtbl_billingpaypal" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_billingplans' class='form'><?php echo $l['all']['billingplans']?></label>
+                <label for='config_dbtbl_billingplans' class='form'><?php echo t('all','billingplans')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] ?>" name="config_dbtbl_billingplans" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_rates' class='form'><?php echo $l['all']['billingrates']?></label>
+                <label for='config_dbtbl_rates' class='form'><?php echo t('all','billingrates')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] ?>" name="config_dbtbl_rates" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_billinghistory' class='form'><?php echo $l['all']['billinghistory']?></label>
+                <label for='config_dbtbl_billinghistory' class='form'><?php echo t('all','billinghistory')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] ?>" name="config_dbtbl_billinghistory" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_billinginfo' class='form'><?php echo $l['all']['billinginfo']?></label>
+                <label for='config_dbtbl_billinginfo' class='form'><?php echo t('all','billinginfo')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] ?>" name="config_dbtbl_billinginfo" />
 		</li>
 
 		<li class='fieldset'>
-        <label for='config_dbtbl_billinginvoice' class='form'><?php echo $l['all']['Invoice']?></label>
+        <label for='config_dbtbl_billinginvoice' class='form'><?php echo t('all','Invoice')?></label>
         <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'] ?>" name="config_dbtbl_billinginvoice" />
         </li>
 
 		<li class='fieldset'>
-        <label for='config_dbtbl_billinginvoice_items' class='form'><?php echo $l['all']['InvoiceItems']?></label>
+        <label for='config_dbtbl_billinginvoice_items' class='form'><?php echo t('all','InvoiceItems')?></label>
         <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'] ?>" name="config_dbtbl_billinginvoice_items" />
         </li>
         
         <li class='fieldset'>
-        <label for='config_dbtbl_billinginvoice_status' class='form'><?php echo $l['all']['InvoiceStatus']?></label>
+        <label for='config_dbtbl_billinginvoice_status' class='form'><?php echo t('all','InvoiceStatus')?></label>
         <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'] ?>" name="config_dbtbl_billinginvoice_status" />
         </li>
         
         <li class='fieldset'>
-        <label for='config_dbtbl_billinginvoice_type' class='form'><?php echo $l['all']['InvoiceType']?></label>
+        <label for='config_dbtbl_billinginvoice_type' class='form'><?php echo t('all','InvoiceType')?></label>
         <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] ?>" name="config_dbtbl_billinginvoice_type" />
         </li>
 
 		<li class='fieldset'>
-        <label for='config_dbtbl_payment_type' class='form'><?php echo $l['all']['payment_type']?></label>
+        <label for='config_dbtbl_payment_type' class='form'><?php echo t('all','payment_type')?></label>
         <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] ?>" name="config_dbtbl_payment_type" />
         </li>
 
         <li class='fieldset'>
-        <label for='config_dbtbl_payments' class='form'><?php echo $l['all']['payments']?></label>
+        <label for='config_dbtbl_payments' class='form'><?php echo t('all','payments')?></label>
         <input value="<?php echo $configValues['CONFIG_DB_TBL_DALOPAYMENTS'] ?>" name="config_dbtbl_payments" />
         </li>
 
 
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_operators' class='form'><?php echo $l['all']['operators']?></label>
+                <label for='config_dbtbl_operators' class='form'><?php echo t('all','operators')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATORS'] ?>" name="config_dbtbl_operators" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_operators_acl' class='form'><?php echo $l['all']['operators_acl']?></label>
+                <label for='config_dbtbl_operators_acl' class='form'><?php echo t('all','operators_acl')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'] ?>" name="config_dbtbl_operators_acl" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_operators_acl_files' class='form'><?php echo $l['all']['operators_acl_files']?></label>
+                <label for='config_dbtbl_operators_acl_files' class='form'><?php echo t('all','operators_acl_files')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'] ?>" name="config_dbtbl_operators_acl_files" />
 		</li>
 
                 <li class='fieldset'>
-                <label for='config_dbtbl_hotspots' class='form'><?php echo $l['all']['hotspots']?></label>
+                <label for='config_dbtbl_hotspots' class='form'><?php echo t('all','hotspots')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] ?>" name="config_dbtbl_hotspots" />
 		</li>
 		
                 <li class='fieldset'>
-                <label for='config_dbtbl_node' class='form'><?php echo $l['all']['node']?></label>
+                <label for='config_dbtbl_node' class='form'><?php echo t('all','node')?></label>
 		<input value="<?php echo $configValues['CONFIG_DB_TBL_DALONODE'] ?>" name="config_dbtbl_node" />
 		</li>
 
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
                 </ul>

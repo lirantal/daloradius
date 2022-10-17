@@ -24,7 +24,7 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#"><?php echo $l['Intro']['billinvoice.php'] ?></a></h2>
+				<h2 id="Intro"><a href="#"><?php echo t('Intro','billinvoice.php') ?></a></h2>
 
 
 <?php

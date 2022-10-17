@@ -16,6 +16,7 @@
  *********************************************************************************************************
  *
  * Authors:	Liran Tal <liran@enginx.com>
+ *          Miguel García <miguelvisgarcia@gmail.com>
  *
  *********************************************************************************************************
  */
@@ -68,245 +69,276 @@
 	isset($_POST['node']) ? $dalonodeTable = $_POST['node'] : $dalonodeTable = 'yes';
 
 	if (isset($_POST['submit'])) {
+		
+		$filePrefix = "backup";
+		$fileDate = date("Ymd-His");
+		$filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA']."/backup/";
+		$fileName = $filePath.$filePrefix."-".$fileDate.".sql";
+		
+		$fileError = false;
 
-		include 'library/opendb.php';
-		$backupQuery = "";
-
-		$sqlQuery = "";
-		$isError = 0;
-
-		foreach($_POST as $element=>$value) {
-
-			if ($element == "submit")
-				continue;
-
-			switch ($element) {
-				case "radacct":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADACCT'];
-					break;
-				case "radreply":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-					break;
-				case "radcheck":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-					break;
-				case "radusergroup":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADUSERGROUP'];
-					break;
-				case "radgroupreply":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
-					break;
-				case "radgroupcheck":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-					break;
-				case "radpostauth":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADPOSTAUTH'];
-					break;
-				case "ippool":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADIPPOOL'];
-					break;
-				case "radhuntgroup":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADHG'];
-					break;
-				case "nas":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_RADNAS'];
-					break;
-				case "hotspots":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'];
-					break;
-				case "operators":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS'];
-					break;
-				case "billing_rates":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'];
-					break;
-				case "billingpaypal":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'];
-					break;
-				case "userinfo":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOUSERINFO'];
-					break;
-				case "dictionary":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALODICTIONARY'];
-					break;
-				case "realms":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOREALMS'];
-					break;
-				case "proxys":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOPROXYS'];
-					break;
-
-				case "billing_history":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'];
-					break;
-				case "billing_plans":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'];
-					break;
-				case "billing_merchant":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'];
-					break;
-				case "userbillinfo":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'];
-					break;
-				case "operators_acl":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'];
-					break;
-				case "operators_acl_files":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'];
-					break;
-				case "batch_history":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'];
-					break;
-				case "billing_plans_profiles":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'];
-					break;
-				case "invoice":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'];
-					break;
-				case "invoice_items":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'];
-					break;
-				case "invoice_status":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'];
-					break;
-				case "invoice_type":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'];
-					break;
-				case "payment":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOPAYMENTS'];
-					break;
-				case "payment_type":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'];
-					break;
-				case "node":
-					if ($value == "yes")
-						$table = $configValues['CONFIG_DB_TBL_DALONODE'];
-					break;
-
-
+		if ( (file_exists($filePath)) && (is_writable($filePath)) ) {
+			$fh = fopen($fileName, "w");
+			
+			if($fh === false) {
+				$fileError = true;
 			}
+		} else {		
+			$fileError = true;
+		}
+		
+		if($fileError) {
+			$failureMsg = "Failed creating backup due to directory/file permissions, check that the webserver user has access ".
+							"to create the following file: <b>$fileName</b>";
+			$logAction .= "Failed creating backup due to directory/file permissions on page: ";
+		}
+		else {
 
-			if (isset($table)) {
+			include 'library/opendb.php';
+			
+			$dbError = false;
 
-				$sqlTableQuery = "INSERT INTO $table (";
-	
-				$colLength = 0;
+			foreach($_POST as $element=>$value) {
 
-				$sql = "SELECT * FROM $table";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				if (DB::isError ($res)) {
-					$isError++;
-					break;
-				}
-
-				if ($res->numRows() == 0)
+				if ($element == "submit")
 					continue;
 
-				$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-				foreach($row as $key=>$value) {				// $key is the table field and $value is the field's value
-					$sqlTableQuery .= "$key, ";
-					$colLength++;
-				}
-	
-				$sqlTableQuery = substr($sqlTableQuery,0,-2);
-				$sqlTableQuery .= ") VALUES ";
-	
-				$sql = "SELECT * FROM $table";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+				switch ($element) {
+					case "radacct":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADACCT'];
+						break;
+					case "radreply":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+						break;
+					case "radcheck":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+						break;
+					case "radusergroup":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADUSERGROUP'];
+						break;
+					case "radgroupreply":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
+						break;
+					case "radgroupcheck":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+						break;
+					case "radpostauth":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADPOSTAUTH'];
+						break;
+					case "ippool":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADIPPOOL'];
+						break;
+					case "radhuntgroup":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADHG'];
+						break;
+					case "nas":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_RADNAS'];
+						break;
+					case "hotspots":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'];
+						break;
+					case "operators":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS'];
+						break;
+					case "billing_rates":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'];
+						break;
+					case "billingpaypal":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'];
+						break;
+					case "userinfo":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOUSERINFO'];
+						break;
+					case "dictionary":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALODICTIONARY'];
+						break;
+					case "realms":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOREALMS'];
+						break;
+					case "proxys":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOPROXYS'];
+						break;
 
-				if (DB::isError ($res)) {
-					$isError++;
-					break;
+					case "billing_history":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'];
+						break;
+					case "billing_plans":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'];
+						break;
+					case "billing_merchant":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'];
+						break;
+					case "userbillinfo":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'];
+						break;
+					case "operators_acl":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'];
+						break;
+					case "operators_acl_files":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'];
+						break;
+					case "batch_history":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'];
+						break;
+					case "billing_plans_profiles":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'];
+						break;
+					case "invoice":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'];
+						break;
+					case "invoice_items":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'];
+						break;
+					case "invoice_status":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'];
+						break;
+					case "invoice_type":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'];
+						break;
+					case "payment":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOPAYMENTS'];
+						break;
+					case "payment_type":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'];
+						break;
+					case "node":
+						if ($value == "yes")
+							$table = $configValues['CONFIG_DB_TBL_DALONODE'];
+						break;
 				}
-	
-				$i = 0;
-				$currRow = "";
-	
-				while($row = $res->fetchRow()) {
-	
-					$currRow = " (";
-					for ($i = 0; $i < $colLength; $i++) {
-						$currRow .= "'$row[$i]',";
+
+				if (isset($table)) {
+
+					$sql = "SELECT * FROM $table LIMIT 1";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+
+					if (DB::isError ($res)) {
+						$dbError = true;
+						break;
 					}
-					$currRow = substr($currRow,0,-1);
-					$currRow .= ")";
-					$sqlTableQuery .= "$currRow,";
+
+					if ($res->numRows() == 0)
+						continue;
+					
+					$sqlTableQuery = "INSERT INTO $table (";
+		
+					$colLength = 0;
+
+					$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+					
+					foreach($row as $key=>$value) {				// $key is the table field and $value is the field's value
+						if($colLength > 0) {
+							$sqlTableQuery .= ",";
+						}
+						
+						$sqlTableQuery .= "$key";
+											
+						$colLength++;
+					}
+
+					$sqlTableQuery .= ") VALUES ";
+		
+					$sql = "SELECT * FROM $table";
+					$res = $dbSocket->query($sql);
+					$logDebugSQL .= $sql . "\n";
+
+					if (DB::isError ($res)) {
+						$dbError = true;
+						break;
+					}
+					
+					$numRow = 0;
+		
+					while($row = $res->fetchRow()) {
+		
+						$currRow = "(";
+						
+						for ($i = 0; $i < $colLength; $i++) {
+							if($i > 0) {
+								$currRow .= ",";
+							}
+							
+							$currRow .= "'$row[$i]'";
+						}
+						
+						$currRow .= ")";
+						
+						if($numRow > 0) {
+							$sqlTableQuery .= ",";
+						}
+						
+						$sqlTableQuery .= "$currRow";
+						
+						$numRow++;
+					}
+		
+					$sqlTableQuery .= ";\n\n\n";
+
+					if(fwrite($fh, $sqlTableQuery) === false) {
+						$fileError = true;
+						break;
+					}
+					
+					unset($sqlTableQuery);
 				}
-	
-				$sqlTableQuery = substr($sqlTableQuery,0,-1);
-				$sqlTableQuery .= ";\n\n\n";
-				$sqlQuery .= $sqlTableQuery;
+
+				unset($table);
+			}
+			
+			if(fclose($fh) === false) {
+				$fileError = true;
 			}
 
-			unset($table);
-
-		}
-
-
-		if ($isError > 0) {
-			$failureMsg = "Failed creating backup due to database error, check your database settings";
-			$logAction .= "Failed creating backup due to database error on page: ";
-		} else {
-
-
-			$filePrefix = "backup";
-			$fileDate = date("Ymd-His");
-			$filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA']."/backup/";
-			$fileName = $filePath.$filePrefix."-".$fileDate.".sql";
-
-			if ( (file_exists($filePath)) && (is_writable($filePath)) ) {
-				$fh = fopen($fileName, "w");
-				fwrite($fh, "$sqlQuery");
-				fclose($fh);
-
+			if ($dbError) {
+				$failureMsg = "Failed creating backup due to database error, check your database settings";
+				$logAction .= "Failed creating backup due to database error on page: ";
+			}
+			else if ($fileError) {
+				unlink($fileName);
+				
+				$failureMsg = "Failed creating backup due to file write error, check your disk space";
+				$logAction .= "Failed creating backup due to file write error on page: ";
+			}
+			else {
 				$successMsg = "Successfully created backup";
 				$logAction .= "Successfully created backup file [$fileName] on page: ";
-			} else {
-				$failureMsg = "Failed creating backup due to directory/file permissions, check that the webserver user has access ".
-						"to create the following file: <b>$fileName</b>";
-				$logAction .= "Failed creating backup due to directory/file permissions on page: ";
 			}
+		
+			include 'library/closedb.php';
 		}
-	
-
-
-		include 'library/closedb.php';
-
 	}
 
 			
@@ -330,10 +362,10 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['configbackupcreatebackups.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configbackupcreatebackups.php') ?>
+				<h144>&#x2754;</h144></a></h2>
                 <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['configbackupcreatebackups'] ?>
+					<?php echo t('helpPage','configbackupcreatebackups') ?>
 					<br/>
 				</div>
                 <?php
@@ -344,11 +376,11 @@
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['FreeRADIUSTables']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','FreeRADIUSTables'); ?>">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['Backups']; ?> </h302>
+                <h302> <?php echo t('title','Backups'); ?> </h302>
 		<br/>
 
                 <label class='form'>Select database tables to backup:</label>
@@ -448,7 +480,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
 		</ul>
@@ -456,11 +488,11 @@
 
 	</div>
 
-     <div class="tabbertab" title="<?php echo $l['title']['daloRADIUSTables']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','daloRADIUSTables'); ?>">
 
         <fieldset>
 
-                <h302> <?php echo $l['title']['Backups']; ?> </h302>
+                <h302> <?php echo t('title','Backups'); ?> </h302>
 		<br/>
 
                 <label class='form'>Select databases tables to backup:</label>
@@ -734,7 +766,7 @@
                 <li class='fieldset'>
                 <br/>
                 <hr><br/>
-                <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
                 </li>
 
                 </ul>

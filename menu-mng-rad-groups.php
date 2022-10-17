@@ -24,37 +24,34 @@
 
 		<li><a href="mng-rad-groupreply-list.php"><b>&raquo;</b>
 			<img src='images/icons/groupsList.png' border='0'>
-			<?php echo $l['button']['ListGroupReply'] ?></a></li>
+			<?php echo t('button','ListGroupReply') ?></a></li>
 		<li><a href="javascript:document.mngradgroupreplysearch.submit();""><b>&raquo;</b>
 			<img src='images/icons/groupsList.png' border='0'>
-			<?php echo $l['button']['SearchGroupReply'] ?><a>
+			<?php echo t('button','SearchGroupReply') ?><a>
 			<form name="mngradgroupreplysearch" action="mng-rad-groupreply-search.php" method="get" 
 				class="sidebar">
 			<input name="groupname" type="text" 
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
 			</form></li>
 
 		<li><a href="mng-rad-groupreply-new.php"><b>&raquo;</b>
 			<img src='images/icons/groupsAdd.png' border='0'>
-			<?php echo $l['button']['NewGroupReply'] ?></a></li>
+			<?php echo t('button','NewGroupReply') ?></a></li>
 		<li><a href="javascript:document.mngradgrprplyedit.submit();""><b>&raquo;</b>
 			<img src='images/icons/groupsEdit.png' border='0'>
-			<?php echo $l['button']['EditGroupReply'] ?><a>
+			<?php echo t('button','EditGroupReply') ?><a>
 			<form name="mngradgrprplyedit" action="mng-rad-groupreply-edit.php" method="get" class="sidebar">
 			<input name="groupname" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				/>
 			<input name="attribute" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				/>
 			</form></li>
 		<li><a href="mng-rad-groupreply-del.php"><b>&raquo;</b>
 			<img src='images/icons/groupsRemove.png' border='0'>
-			<?php echo $l['button']['RemoveGroupReply'] ?></a></li>
+			<?php echo t('button','RemoveGroupReply') ?></a></li>
 		
 	</ul>
 
@@ -63,37 +60,34 @@
 
 		<li><a href="mng-rad-groupcheck-list.php"><b>&raquo;</b>
 			<img src='images/icons/groupsList.png' border='0'>
-			<?php echo $l['button']['ListGroupCheck'] ?></a></li>
+			<?php echo t('button','ListGroupCheck') ?></a></li>
 		<li><a href="javascript:document.mngradgroupchecksearch.submit();""><b>&raquo;</b>
 			<img src='images/icons/groupsList.png' border='0'>
-			<?php echo $l['button']['SearchGroupCheck'] ?><a>
+			<?php echo t('button','SearchGroupCheck') ?><a>
 			<form name="mngradgroupchecksearch" action="mng-rad-groupcheck-search.php" method="get" 
 				class="sidebar">
 			<input name="groupname" type="text" 
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				value="<?php if (isset($search_groupname)) echo $search_groupname; ?>" tabindex=2>
 			</form></li>
 
 		<li><a href="mng-rad-groupcheck-new.php"><b>&raquo;</b>
 			<img src='images/icons/groupsAdd.png' border='0'>
-			<?php echo $l['button']['NewGroupCheck'] ?></a></li>
+			<?php echo t('button','NewGroupCheck') ?></a></li>
 		<li><a href="javascript:document.mngradgrpchkedit.submit();""><b>&raquo;</b>
 			<img src='images/icons/groupsEdit.png' border='0'>
-			<?php echo $l['button']['EditGroupCheck'] ?><a>
+			<?php echo t('button','EditGroupCheck') ?><a>
 			<form name="mngradgrpchkedit" action="mng-rad-groupcheck-edit.php" method="get" class="sidebar">
 			<input name="groupname" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['GroupName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','GroupName'); ?> <br/>'
 				/>
 			<input name="attribute" type="text" value=""
-                                onClick='javascript:__displayTooltip();'
-                                tooltipText='<?php echo $l['Tooltip']['AttributeName']; ?> <br/>'
+                                tooltipText='<?php echo t('Tooltip','AttributeName'); ?> <br/>'
 				/>
 			</form></li>
 		<li><a href="mng-rad-groupcheck-del.php"><b>&raquo;</b>
 			<img src='images/icons/groupsRemove.png' border='0'>
-			<?php echo $l['button']['RemoveGroupCheck'] ?></a></li>
+			<?php echo t('button','RemoveGroupCheck') ?></a></li>
 		
 	</ul>
 

@@ -34,50 +34,50 @@
     isset($_POST['reassignplanprofiles']) ? $reassignplanprofiles = $_POST['reassignplanprofiles'] : $reassignplanprofiles = "";
     
 
-        isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
-        isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
-        isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
-        isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
-        isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
-        isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
-        isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
-        isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
-        isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
-        isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
-        isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
-        isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
-        isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
-        isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
-        isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
-        isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
-        isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
-        isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
-        isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
-        isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
-        isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
-        isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
-        isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
-		isset($_POST['bi_nextinvoicedue']) ? $bi_nextinvoicedue = $_POST['bi_nextinvoicedue'] : $bi_nextinvoicedue = "";
-		isset($_POST['bi_billdue']) ? $bi_billdue = $_POST['bi_billdue'] : $bi_billdue = "";
-        isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
-        isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
-        isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
-        isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
+    isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
+    isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
+    isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
+    isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
+    isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
+    isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
+    isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
+    isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
+    isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
+    isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
+    isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
+    isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
+    isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
+    isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
+    isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
+    isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
+    isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+    isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
+    isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
+    isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
+    isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
+    isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
+    isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
+	isset($_POST['bi_nextinvoicedue']) ? $bi_nextinvoicedue = $_POST['bi_nextinvoicedue'] : $bi_nextinvoicedue = "";
+	isset($_POST['bi_billdue']) ? $bi_billdue = $_POST['bi_billdue'] : $bi_billdue = "";
+    isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
+    isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
+    isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
+    isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
 
-        isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
-        isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
-        isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
-        isset($_POST['department']) ? $department = $_POST['department'] : $department = "";
-        isset($_POST['company']) ? $company = $_POST['company'] : $company = "";
-        isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone = "";
-        isset($_POST['homephone']) ? $homephone = $_POST['homephone'] :  $homephone = "";
-        isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
-        isset($_POST['address']) ? $address = $_POST['address'] : $address = "";
-        isset($_POST['city']) ? $city = $_POST['city'] : $city = "";
-        isset($_POST['state']) ? $state = $_POST['state'] : $state = "";
-        isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
-        isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
-        isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
+    isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
+    isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
+    isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
+    isset($_POST['department']) ? $department = $_POST['department'] : $department = "";
+    isset($_POST['company']) ? $company = $_POST['company'] : $company = "";
+    isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone = "";
+    isset($_POST['homephone']) ? $homephone = $_POST['homephone'] :  $homephone = "";
+    isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
+    isset($_POST['address']) ? $address = $_POST['address'] : $address = "";
+    isset($_POST['city']) ? $city = $_POST['city'] : $city = "";
+    isset($_POST['state']) ? $state = $_POST['state'] : $state = "";
+    isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
+    isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
+    isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
 	isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
 	isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
 
@@ -256,7 +256,7 @@
                                         " address, city, state, country, zip, ".
                                         " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
                                         " notes, changeuserbillinfo, ".
-	                                " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
+	                                " `lead`, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
                                         " creationdate, creationby, updatedate, updateby) ".
                                         " VALUES (0, '".$dbSocket->escapeSimple($planName)."',
                                         '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
@@ -461,7 +461,7 @@
                " address, city, state, country, zip, ".
                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
                " notes, changeuserbillinfo, ".
-               " lead, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
+               " `lead`, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
                " creationdate, creationby, updatedate, updateby FROM ".
                 $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
                 " WHERE UserName='".
@@ -502,10 +502,10 @@
         $bi_faxinvoice = $row['faxinvoice'];
         $bi_emailinvoice = $row['emailinvoice'];
         $bi_changeuserbillinfo = $row['changeuserbillinfo'];
-        $ui_creationdate = $row['creationdate'];
-        $ui_creationby = $row['creationby'];
-        $ui_updatedate = $row['updatedate'];
-        $ui_updateby = $row['updateby'];
+        $bi_creationdate = $row['creationdate'];
+        $bi_creationby = $row['creationby'];
+        $bi_updatedate = $row['updatedate'];
+        $bi_updateby = $row['updateby'];
 
 
 	include 'library/closedb.php';
@@ -588,11 +588,11 @@ function refillSessionTraffic() {
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billposedit.php'] ?>
-	<h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billposedit.php') ?>
+	<h144>&#x2754;</h144></a></h2>
 	
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billposedit'] ?>
+		<?php echo t('helpPage','billposedit') ?>
 		<br/>
 	</div>
 	<?php
@@ -608,7 +608,7 @@ function refillSessionTraffic() {
 
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','AccountInfo'); ?>">
 
 	<fieldset>
 
@@ -616,32 +616,32 @@ function refillSessionTraffic() {
 					include_once('include/management/populate_selectbox.php');
 				?>
 				
-                <h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+                <h302> <?php echo t('title','AccountInfo'); ?> </h302>
 
                 <ul>
 
                 <div id='UserContainer'>
                 <li class='fieldset'>
-                <label for='username' class='form'><?php echo $l['all']['Username']?></label>
+                <label for='username' class='form'><?php echo t('all','Username')?></label>
 				<input name='username' type='hidden' value='<?php if (isset($username)) echo $username ?>' />
                 <input name='username' type='text' id='username' value='<?php if (isset($username)) echo $username ?>' disabled tabindex=100 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
 
                 <div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['usernameTooltip'] ?>
+                        <?php echo t('Tooltip','usernameTooltip') ?>
                 </div>
                 </li>
 
                 <li class='fieldset'>
-                <label for='password' class='form'><?php echo $l['all']['Password']?></label>
+                <label for='password' class='form'><?php echo t('all','Password')?></label>
                 <input name='password' type='text' id='password' value='<?php if (isset($user_password)) echo $user_password ?>'
                         <?php if (isset($hiddenPassword)) echo $hiddenPassword ?> disabled tabindex=101 />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
 
                 <div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['passwordTooltip'] ?>
+                        <?php echo t('Tooltip','passwordTooltip') ?>
                 </div>
                 </li>
                 </div>
@@ -649,7 +649,7 @@ function refillSessionTraffic() {
 
 
 				<li class='fieldset'>
-				<label for='planName' class='form'><?php echo $l['all']['PlanName'] ?></label>
+				<label for='planName' class='form'><?php echo t('all','PlanName') ?></label>
 				<input name='oldplanName' type='hidden' value='<?php if (isset($bi_planname)) echo $bi_planname ?>' />
 		                <?php
 		                       populate_plans("$bi_planname","planName","form", NULL, $bi_planname);
@@ -658,20 +658,20 @@ function refillSessionTraffic() {
 				
 				<div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 					<img src='images/icons/comment.png' alt='Tip' border='0' />
-					<?php echo $l['Tooltip']['planNameTooltip'] ?>
+					<?php echo t('Tooltip','planNameTooltip') ?>
 				</div>
 				</li>
 	
 
                 <div id='UserContainer'>
                 <li class='fieldset'>
-                <label for='reassignplanprofiles' class='form'><?php echo $l['button']['ReAssignPlanProfiles'] ?></label>
+                <label for='reassignplanprofiles' class='form'><?php echo t('button','ReAssignPlanProfiles') ?></label>
 				<input name='reassignplanprofiles' type='checkbox' value='1' />
                 <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('reassignplanprofiles')" />
 
                 <div id='reassignplanprofiles'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['reassignplanprofiles'] ?>
+                        <?php echo t('Tooltip','reassignplanprofiles') ?>
                 </div>
                 </li>
 		
@@ -698,7 +698,7 @@ function refillSessionTraffic() {
 				
 			<br/>		
 			
-			<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=10000 class='button' />
+			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 
 		</li>
 
@@ -709,23 +709,23 @@ function refillSessionTraffic() {
 	</div>
 
 
-        <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userinfo.php');
         ?>
         </div>
 
-        <div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userbillinfo.php');
         ?>
         </div>
 
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['Profiles']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','Profiles'); ?>">
 
 <?php
         include 'library/opendb.php';
@@ -745,7 +745,7 @@ function refillSessionTraffic() {
         <li class='fieldset'>
 
                 <li class='fieldset'>
-                <label for='profile' class='form'><?php echo $l['all']['Profile']?></label>
+                <label for='profile' class='form'><?php echo t('all','Profile')?></label>
                 <?php
                         populate_groups("Select Profile","newgroups[]");
                 ?>
@@ -760,7 +760,7 @@ function refillSessionTraffic() {
 
                 <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo $l['Tooltip']['groupTooltip'] ?>
+                        <?php echo t('Tooltip','groupTooltip') ?>
                 </div>
                 </li>
 
@@ -768,7 +768,7 @@ function refillSessionTraffic() {
 
         <br/>
         <hr><br/>
-        <input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' class='button' />
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
         </li>
 
         </ul>
@@ -781,7 +781,7 @@ function refillSessionTraffic() {
 
 
 
-        <div class="tabbertab" title="<?php echo $l['title']['Invoices']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','Invoices'); ?>">
         <?php
                 include_once('include/management/userBilling.php');
                 userInvoicesStatus($user_id, 1);

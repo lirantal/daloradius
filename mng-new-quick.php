@@ -306,11 +306,11 @@
 
 	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngnewquick.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngnewquick.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['mngnewquick'] ?>
+			<?php echo t('helpPage','mngnewquick') ?>
 			<br/>
 		</div>
 		<?php
@@ -320,17 +320,17 @@
 		<form name="newuser" action="mng-new-quick.php" method="post" >
 <div class="tabber">
 
-     <div class="tabbertab" title="<?php echo $l['title']['AccountInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','AccountInfo'); ?>">
 
         <fieldset>
 
-			<h302> <?php echo $l['title']['AccountInfo']; ?> </h302>
+			<h302> <?php echo t('title','AccountInfo'); ?> </h302>
 			<br/>
 		
 		<ul>
 
 		<li class='fieldset'>
-		<label for='username' class='form'><?php echo $l['all']['Username']?></label>
+		<label for='username' class='form'><?php echo t('all','Username')?></label>
 		<input name='username' type='text' id='username' value='' tabindex=100  />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8,<?php
 		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
@@ -338,12 +338,12 @@
 
 		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['usernameTooltip'] ?>
+			<?php echo t('Tooltip','usernameTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='password' class='form'><?php echo $l['all']['Password']?></label>
+		<label for='password' class='form'><?php echo t('all','Password')?></label>
 		<input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword)) 
 			echo $hiddenPassword ?> tabindex=101 />
 		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8,<?php
@@ -352,12 +352,12 @@
 
 		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['passwordTooltip'] ?>
+			<?php echo t('Tooltip','passwordTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
-		<label for='passwordType' class='form'><?php echo $l['all']['PasswordType']?> </label>
+		<label for='passwordType' class='form'><?php echo t('all','PasswordType')?> </label>
 		<select class='form' tabindex=102 name='passwordType' >
 			<option value='Cleartext-Password'>Cleartext-Password</option>
 			<option value='User-Password'>User-Password</option>
@@ -370,7 +370,7 @@
 		</li>
 
 		<li class='fieldset'>
-		<label for='group' class='form'><?php echo $l['all']['Group']?></label>
+		<label for='group' class='form'><?php echo t('all','Group')?></label>
 		<?php   
 			include_once 'include/management/populate_selectbox.php';
 			populate_groups("Select Groups","groups[]");
@@ -387,14 +387,14 @@
 
 		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
 			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo $l['Tooltip']['groupTooltip'] ?>
+			<?php echo t('Tooltip','groupTooltip') ?>
 		</div>
 		</li>
 
 		<li class='fieldset'>
 		<br/>
                 <hr><br/>
-		<input type="submit" name="submit" value="<?php echo $l['buttons']['apply']?>" 
+		<input type="submit" name="submit" value="<?php echo t('buttons','apply')?>" 
 			onclick = "javascript:small_window(document.newuser.username.value, 
 			document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 class='button' />
 		</li>
@@ -405,23 +405,23 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['Attributes']; ?> </h302>
+		<h302> <?php echo t('title','Attributes'); ?> </h302>
 	<br/>
 
-		<label for='simultaneoususe' class='form'><?php echo $l['all']['SimultaneousUse']?></label>
+		<label for='simultaneoususe' class='form'><?php echo t('all','SimultaneousUse')?></label>
 		<input name='simultaneoususe' type='text' value='' tabindex=106 />
 		<br/>
 
-		<label for='framedipaddress' class='form'><?php echo $l['all']['FramedIPAddress']?></label>
+		<label for='framedipaddress' class='form'><?php echo t('all','FramedIPAddress')?></label>
 		<input name='framedipaddress' type='text' value='' tabindex=107 />
 		<br/>
 
-		<label for='expiration' class='form'><?php echo $l['all']['Expiration']?></label>		
+		<label for='expiration' class='form'><?php echo t('all','Expiration')?></label>		
 		<input value='' id='expiration' name='expiration'  tabindex=108 />
 		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'd M Y', false);">
 		<br/>
 
-		<label for='sessiontimeout' class='form'><?php echo $l['all']['SessionTimeout']?></label>
+		<label for='sessiontimeout' class='form'><?php echo t('all','SessionTimeout')?></label>
 		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=109 />
 		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0" class='form' >
 			<option value="1">calculate time</option>
@@ -434,7 +434,7 @@
 		</select>
 		<br/>
 
-		<label for='idletimeout' class='form'><?php echo $l['all']['IdleTimeout']?></label>
+		<label for='idletimeout' class='form'><?php echo t('all','IdleTimeout')?></label>
 		<input value='' id='idletimeout' name='idletimeout'  tabindex=110 />
 		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1" class='form' >
 			<option value="1">calculate time</option>
@@ -448,7 +448,7 @@
 		<br/>
 
 		<label for='maxallsession' class='form'><?php 
-			echo $l['all']['MaxAllSession'] ?></label>
+			echo t('all','MaxAllSession') ?></label>
 		<input value='' id='maxallsession' name='maxallsession'  tabindex=111 />
 		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2" class='form' >
 			<option value="1">calculate time</option>
@@ -469,10 +469,10 @@
         </div>
 
 
-     <div class="tabbertab" title="<?php echo $l['title']['UserInfo']; ?>">
+     <div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
 
         <?php
-		$customApplyButton = "<input type=\"submit\" name=\"submit\" value=\"".$l['buttons']['apply']."\"
+		$customApplyButton = "<input type=\"submit\" name=\"submit\" value=\"".t('buttons','apply')."\"
 		                        onclick = \"javascript:small_window(document.newuser.username.value,
 		                        document.newuser.password.value, document.newuser.maxallsession.value);\" tabindex=10000
 		                        class='button' />";
@@ -484,9 +484,9 @@
 
 
 
-        <div class="tabbertab" title="<?php echo $l['title']['BillingInfo']; ?>">
+        <div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
         <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".$l['buttons']['apply']." class='button' />";
+                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userbillinfo.php');
         ?>
         </div>

@@ -50,11 +50,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['rephbdashboard.php']; ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','rephbdashboard.php'); ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['rephbdashboard'] ?>
+			<?php echo t('helpPage','rephbdashboard') ?>
 			<br/>
 		</div>
 
@@ -171,47 +171,47 @@
 	echo "<thread> <tr>
 		<th scope='col'> 
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['HotSpot']."</a>
+		".t('all','HotSpot')."</a>
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['Firmware']."
+		".t('all','Firmware')."
 		</th>
 		
 		<th scope='col'> 
-		".$l['all']['WanIface']."
+		".t('all','WanIface')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['LanIface']."
+		".t('all','LanIface')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['WifiIface']."
+		".t('all','WifiIface')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['Uptime']."
+		".t('all','Uptime')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['CPU']."
+		".t('all','CPU')."
 		</th>
 		
 		<th scope='col'> 
-		".$l['all']['Memfree']."
+		".t('all','Memfree')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['BandwidthUp']."
+		".t('all','BandwidthUp')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['BandwidthDown']."
+		".t('all','BandwidthDown')."
 		</th>
 
 		<th scope='col'> 
-		".$l['all']['CheckinTime']."
+		".t('all','CheckinTime')."
 		</th>
 
 		</tr> </thread>";
@@ -221,8 +221,8 @@
 		
 		
 		//$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".$row[0]."');";
-		$content =  '<a class="toolTip" href="mng-hs-edit.php?name='.$row['hotspotname'].'">'.$l['Tooltip']['HotspotEdit'].'</a>';
-		$content .= '<br/><br/><b>'.$l['all']['NASMAC'].':</b> '.$row['mac'];
+		$content =  '<a class="toolTip" href="mng-hs-edit.php?name='.$row['hotspotname'].'">'.t('Tooltip','HotspotEdit').'</a>';
+		$content .= '<br/><br/><b>'.t('all','NASMAC').':</b> '.$row['mac'];
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -245,14 +245,14 @@
 			";
 					
 					
-		$content = '<b>'.$l['all']['WanIface'].":</b> ".$row['wan_iface'].
+		$content = '<b>'.t('all','WanIface').":</b> ".$row['wan_iface'].
 					"<br/>".
-					'<b>'.$l['all']['WanMAC'].":</b> ".$row['wan_mac'].
+					'<b>'.t('all','WanMAC').":</b> ".$row['wan_mac'].
 					"<br/>".
-					'<b>'.$l['all']['WanIP'].":</b> ".$row['wan_ip'].
+					'<b>'.t('all','WanIP').":</b> ".$row['wan_ip'].
 					"<br/>".
-					'<b>'.$l['all']['WanGateway'].":</b> ".$row['wan_ip'];
-		$value = '<b>'.$l['all']['WanIP'].":</b> ".$row['wan_ip'];
+					'<b>'.t('all','WanGateway').":</b> ".$row['wan_ip'];
+		$value = '<b>'.t('all','WanIP').":</b> ".$row['wan_ip'];
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -265,12 +265,12 @@
 				
 		
 		
-		$content = $l['all']['LanIface'].":</b> ".$row['lan_iface'].
+		$content = t('all','LanIface').":</b> ".$row['lan_iface'].
 						"<br/><b>".
-					$l['all']['LanMAC'].":</b> ".$row['lan_mac'].
+					t('all','LanMAC').":</b> ".$row['lan_mac'].
 						"<br/><b>".
-					$l['all']['LanIP'].":</b> ".$row['lan_ip'];
-		$value = '<b>'.$l['all']['LanIP'].":</b> ".$row['lan_ip'];
+					t('all','LanIP').":</b> ".$row['lan_ip'];
+		$value = '<b>'.t('all','LanIP').":</b> ".$row['lan_ip'];
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',
@@ -283,20 +283,20 @@
 				
 		
 
-		$content = $l['all']['WifiIface'].":</b> ".$row['wifi_iface'].
+		$content = t('all','WifiIface').":</b> ".$row['wifi_iface'].
 						"<br/><b>".
-					$l['all']['WifiMAC'].":</b> ".$row['wifi_mac'].
+					t('all','WifiMAC').":</b> ".$row['wifi_mac'].
 						"<br/><b>".
-					$l['all']['WifiIP'].":</b> ".$row['wifi_ip'].
+					t('all','WifiIP').":</b> ".$row['wifi_ip'].
 						"<br/><b>".
-					$l['all']['WifiSSID'].":</b> ".$row['wifi_ssid'].
+					t('all','WifiSSID').":</b> ".$row['wifi_ssid'].
 						"<br/><b>".
-					$l['all']['WifiKey'].":</b> ".$row['wifi_key'].
+					t('all','WifiKey').":</b> ".$row['wifi_key'].
 						"<br/><b>".
-					$l['all']['WifiChannel'].":</b> ".$row['wifi_channel'];
-		$value = '<b>'.$l['all']['WifiSSID'].":</b> ".$row['wifi_ssid'].
+					t('all','WifiChannel').":</b> ".$row['wifi_channel'];
+		$value = '<b>'.t('all','WifiSSID').":</b> ".$row['wifi_ssid'].
 					"<br/><b>".
-					$l['all']['WifiKey'].":</b> ".$row['wifi_key'];
+					t('all','WifiKey').":</b> ".$row['wifi_key'];
 		$str = addToolTipBalloon(array(
 									'content' => $content,
 									'onClick' => '',

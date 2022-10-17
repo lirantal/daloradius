@@ -57,11 +57,11 @@
 	
 	<div id="contentnorightbar">
 	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradproxys.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradproxys.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 
 		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo $l['helpPage']['mngradproxyslist'] ?>
+			<?php echo t('helpPage','mngradproxyslist') ?>
 			<br/>
 		</div>	
 		<br/>
@@ -118,16 +118,16 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=proxyname&orderType=$orderType\">
-		".$l['all']['ProxyName']."</a>
+		".t('all','ProxyName')."</a>
 		</th>
 	</tr> </thread>";
 	while($row = $res->fetchRow()) {
 		echo "<tr>
 			<td> <input type='checkbox' name='proxyname[]' value='$row[1]'>
-				<a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
+				<a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-proxys-edit.php?proxyname=$row[1]'>".$l['Tooltip']['EditProxy']."</a>
+                                        <a class='toolTip' href='mng-rad-proxys-edit.php?proxyname=$row[1]'>".t('Tooltip','EditProxy')."</a>
                                         <br/>\"
 				>$row[1]</a></td>
 		</tr>";

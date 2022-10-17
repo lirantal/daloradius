@@ -15,66 +15,62 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-        isset($_GET['systemLineCount']) ? $systemLineCount = $_GET['systemLineCount'] : $systemLineCount = 50;
-        isset($_GET['systemFilter']) ? $systemFilter = $_GET['systemFilter'] : $systemFilter = ".";
+    // parameter validation
+    $systemLineCount = (array_key_exists('systemLineCount', $_GET) && isset($_GET['systemLineCount']) &&
+                        intval($_GET['systemLineCount']) > 0)
+                     ? intval($_GET['systemLineCount']) : 50;
 
-	include_once('library/config_read.php');
+    // preg quoted before usage
+    $systemFilter = (array_key_exists('systemFilter', $_GET) && isset($_GET['systemFilter']))
+                  ? $_GET['systemFilter'] : "";
+
+    include_once('library/config_read.php');
     $log = "visited page: ";
-    $logQuery = "performed query on page: ";
     include('include/config/logging.php');
 
+    include ("menu-reports-logs.php");      
+?>    
+        <div id="contentnorightbar">
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro', 'replogssystem.php'); ?> :: <?= $systemLineCount . " Lines Count" ?>
+<?php 
+    if (!empty($systemFilter)) {
+        echo " with filter set to " . htmlspecialchars($systemFilter, ENT_QUOTES, 'UTF-8');
+    }
 ?>
+                    <h144>&#x2754;</h144>
+                </a>
+            </h2>
+            
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage', 'replogssystem') ?><br></div>
+            <br>
 
 <?php
-
-    include ("menu-reports-logs.php");
-  	
-?>	
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['replogssystem.php']; ?>
-                :: <?php if (isset($systemLineCount)) { echo $systemLineCount . " Lines Count "; } ?>
-                   <?php if (isset($systemFilter)) { echo " with filter set to " . $systemFilter; } ?>
-		<h144>+</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['replogssystem'] ?>
-			<br/>
-		</div>
-		<br/>
-
+    include('library/exten-syslog_log.php');
+    include_once('include/management/actionMessages.php');
+?>
+        </div>
+        
+        <div id="footer">
 <?php
-	include 'library/exten-syslog_log.php';
+    include('page-footer.php');
 ?>
+        </div>
 
-                <?php
-                        include_once('include/management/actionMessages.php');
-                ?>
-
-
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-		
-		</div>
-		
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

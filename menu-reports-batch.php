@@ -35,18 +35,17 @@ include_once ("lang/main.php");
 		<h3>List</h3>
 
 			<li>
-				<a href="rep-batch-list.php"><b>&raquo;</b><?php echo $l['button']['BatchHistory'] ?></a>
+				<a href="rep-batch-list.php"><b>&raquo;</b><?php echo t('button','BatchHistory') ?></a>
 
 			</li>
 			
 			
 			
 			<li>
-				<a href="javascript:document.batch_name_details.submit();"><b>&raquo;</b><?php echo $l['button']['BatchDetails'] ?></a>
+				<a href="javascript:document.batch_name_details.submit();"><b>&raquo;</b><?php echo t('button','BatchDetails') ?></a>
 				<form name="batch_name_details" action="rep-batch-details.php" method="get" class="sidebar">
 				<input name="batch_name" type="text" id="batchNameDetails" <?php if ($autoComplete) echo "autocomplete='off'"; ?>
-									onClick='javascript:__displayTooltip();'
-									tooltipText='<?php echo $l['Tooltip']['BatchName']; ?>'
+									tooltipText='<?php echo t('Tooltip','BatchName'); ?>'
 					value="<?php if (isset($batch_name_details)) echo $batch_name_details; ?>">
 				</form>
 			</li>
@@ -55,8 +54,8 @@ include_once ("lang/main.php");
 
 	
 	<br/><br/>
-	<h2>Search</h2>
-	<input name="" type="text" value="Search" />
+	
+	
 	
 
 </div>

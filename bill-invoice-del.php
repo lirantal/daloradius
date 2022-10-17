@@ -96,11 +96,11 @@
 
 <div id="contentnorightbar">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['billinvoicedel.php'] ?>
-	:: <?php if (isset($invoice_id)) { echo $invoice_id; } ?><h144>+</h144></a></h2>
+	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billinvoicedel.php') ?>
+	:: <?php if (isset($invoice_id)) { echo $invoice_id; } ?><h144>&#x2754;</h144></a></h2>
 
 	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo $l['helpPage']['billinvoicedel'] ?>
+		<?php echo t('helpPage','billinvoicedel') ?>
 		<br/>
 	</div>
 	<?php
@@ -112,17 +112,17 @@
 
 	<fieldset>
 
-		<h302> <?php echo $l['title']['InvoiceRemoval'] ?> </h302>
+		<h302> <?php echo t('title','InvoiceRemoval') ?> </h302>
 		<br/>
 
-		<label for='invoice_id' class='form'><?php echo $l['all']['InvoiceID'] ?></label>
+		<label for='invoice_id' class='form'><?php echo t('all','InvoiceID') ?></label>
 		<input name='invoice_id[]' type='text' id='invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 autocomplete="off" />
 		<br/>
 
 		<br/><br/>
 		<hr><br/>
 
-		<input type='submit' name='submit' value='<?php echo $l['buttons']['apply'] ?>' tabindex=1000 
+		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
 			class='button' />
 
 	</fieldset>

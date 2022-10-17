@@ -1,3 +1,51 @@
+release 1.? - WIP
+	- Ternary expression fix in graph library
+	- Report fixes
+	- Fix support for multiple db locations
+
+* a mess here with releases as branches and / or tags: 1.1-2, 1.1-3, 1.1-4, 1.1-5, 1.2, 1.3 *
+
+release 1.1-3 - ?? ??? ????
+	- remove unavailable data in SUBSCRIPTION ANALYSIS view.
+	- update Portuguese language
+	- dockerfile improvements
+	- dockerfile-freeradius and init-freeradius.sh
+	- fix regex query for rollback
+	- fix mysql directory in dockerfile
+	- fix MAC validation in new user (requires PHP v5.5)
+	- fix load of language file
+	- mark Romanian language files as broken
+
+release 1.1-2 - 08 Aug 2019
+    - syntax fix in language translations
+	- set right column names for table radpostauth in FreeRADIUS v3
+
+release 1.1-1 - 28 Jul 2019
+    - fix memory overflow on database backups
+	- added daloRADIUS version date to configuration
+	- improve the documentation a bit
+
+release 1.1-0 - 19 Jun 2019
+    - fix SQL syntax errors when using the column 'lead' with MySQL 8.0.2+
+    - fix SQL query for last connection attempts where FreeRADIUS is v3
+    - add freeradius-utils and cron to Dockerfile
+    - remove "default" location if multiple locations are set
+	- add select box for password types in Batch Add Users option
+	- stylish ToolTip boxes
+
+release 1.0-1 - 24 Mar 2019
+	- fixed SQL error when target value is empty when adding profiles, show error message instead
+
+release 1.0-0 - 06 Mar 2019
+	- small fixes here and there (tooltips, autocomplete, ...)
+	. added new translation function to avoid PHP warnings on missing keys
+	- added install requirements in documentation
+	- added some user interface improvements
+	- added cleanup stale sessions by username, closing the record in the FreeRADIUS database
+	- added new optional billing style (new data variables and templates)
+	- improved PHP 7 support
+	- and a lot more
+
 release 0.9-9 - 27 May 2011
 	- added linux os heartbeat script
 	- added new monitoring script for heartbeat nodes with email notifications, also update default crontab script

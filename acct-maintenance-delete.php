@@ -101,11 +101,11 @@
 
 	<div id="contentnorightbar">
 		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['acctmaintenancedelete.php'] ?>
-		<h144>+</h144></a></h2>
+		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctmaintenancedelete.php') ?>
+		<h144>&#x2754;</h144></a></h2>
 		
 		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo $l['helpPage']['acctmaintenancedelete'] ?>
+			<?php echo t('helpPage','acctmaintenancedelete') ?>
 			<br/>
 		</div>
 		<?php
@@ -115,20 +115,20 @@
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
         <fieldset>
 
-			<h302> <?php echo $l['title']['DeleteRecords'] ?> </h302>
+			<h302> <?php echo t('title','DeleteRecords') ?> </h302>
 			<br/>
 
-			<label for='username' class='form'><?php echo $l['all']['Username']?></label>
+			<label for='username' class='form'><?php echo t('all','Username')?></label>
 			<input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
 			<br />
 
-			<label for='startdate' class='form'><?php echo $l['all']['StartingDate']?></label>
+			<label for='startdate' class='form'><?php echo t('all','StartingDate')?></label>
 			<input name='startdate' type='text' id='startdate' value='<?php echo $startdate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
 			"showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
 			<br />
 
-			<label for='enddate' class='form'><?php echo $l['all']['EndingDate']?></label>
+			<label for='enddate' class='form'><?php echo t('all','EndingDate')?></label>
 			<input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
 			<img src="library/js_date/calendar.gif" onclick=
 			"showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
@@ -136,7 +136,7 @@
 
 			<br/><br/>
 			<hr><br/>
-			<input type="submit" name="submit" value="<?php echo $l['buttons']['apply'] ?>" tabindex=1000 class='button' />
+			<input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 class='button' />
 
 	</fieldset>
 

@@ -56,11 +56,11 @@
 		
 		<div id="contentnorightbar">
 		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo $l['Intro']['mngradhuntlist.php'] ?>
-				<h144>+</h144></a></h2>
+				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradhuntlist.php') ?>
+				<h144>&#x2754;</h144></a></h2>
 				
 				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo $l['helpPage']['mngradhuntlist'] ?>
+					<?php echo t('helpPage','mngradhuntlist') ?>
 					<br/>
 				</div>
 				<br/>
@@ -125,25 +125,25 @@
 	echo "<thread> <tr>
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".$l['all']['HgID']."</a>
+		".t('all','HgID')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderType\">
-		".$l['all']['HgIPHost']."</a>
+		".t('all','HgIPHost')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderType\">
-		".$l['all']['HgGroupName']."</a>
+		".t('all','HgGroupName')."</a>
 		<br/>
 		</th>
 
 		<th scope='col'>
 		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasportid&orderType=$orderType\">
-		".$l['all']['HgPortId']."</a>
+		".t('all','HgPortId')."</a>
 		<br/>
 		</th>
 
@@ -151,11 +151,11 @@
 	while($row = $res->fetchRow()) {
 		echo "<tr>
                                 <td> <input type='checkbox' name='nashost[]' value='$row[2]||$row[3]'> $row[0] </td>
-                                <td> <a class='tablenovisit' href='javascript:return;'
-                                onclick=\"javascript:__displayTooltip();\"
+                                <td> <a class='tablenovisit' href='#'
+								onclick='javascript:return false;'
                                 tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-hunt-edit.php?nasipaddress=$row[2]&nasportid=$row[3]'>".$l['Tooltip']['EditHG']."</a>
-                                        <a class='toolTip' href='mng-rad-hunt-del.php?nasipaddress=$row[2]&nasportid=$row[3]'>".$l['Tooltip']['RemoveHG']."</a>
+                                        <a class='toolTip' href='mng-rad-hunt-edit.php?nasipaddress=$row[2]&nasportid=$row[3]'>".t('Tooltip','EditHG')."</a>
+                                        <a class='toolTip' href='mng-rad-hunt-del.php?nasipaddress=$row[2]&nasportid=$row[3]'>".t('Tooltip','RemoveHG')."</a>
                                         <br/>\"
                                         >$row[2]</a></td>
 				<td> $row[1] </td>
