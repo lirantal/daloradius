@@ -117,7 +117,7 @@
 		 ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username
 		LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." disabled
 		 ON disabled.username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username AND disabled.groupname = 'daloRADIUS-Disabled-Users' 
- 		WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=userinfo.username) AND Attribute IN ('Cleartext-Password', 'Auth-Type','User-Password', 
+ 		WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username) AND Attribute IN ('Cleartext-Password', 'Auth-Type','User-Password', 
  			'Crypt-Password', 'MD5-Password', 'SMD5-Password', 'SHA-Password', 'SSHA-Password', 'NT-Password', 'LM-Password', 'SHA1-Password', 'CHAP-Password', 
  			'NS-MTA-MD5-Password') GROUP by ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
 	$res = $dbSocket->query($sql);
