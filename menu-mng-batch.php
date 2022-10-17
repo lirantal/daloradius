@@ -28,26 +28,29 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-batch.php') !== false) {
 }
 
 include_once("lang/main.php");
+
+$m_active = "Management";
+
 ?>
-<script src="library/javascript/rounded-corners.js"></script>
-<script src="library/javascript/form-field-tooltip.js"></script>
-<link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
 
 <body>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
+    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+    
     <div id="wrapper">
         <div id="innerwrapper">
 
 <?php
-    $m_active = "Management";
     include_once("include/menu/menu-items.php");
 	include_once("include/menu/management-subnav.php");
     include_once("include/management/autocomplete.php");
 
-$subnav_elements = array(
-                            "mng-batch-list.php" => array(t('button','ListBatches'), "images/icons/userList.gif"),
-                            "mng-batch-add.php" => array(t('button','BatchAddUsers'), "images/icons/userNew.gif"),
-                            "mng-batch-del.php" => array(t('button','RemoveBatch'), "images/icons/userRemove.gif")
-                        );
+    $menu_elements = array(
+        "mng-batch-list.php" => array(t('button','ListBatches'), "images/icons/userList.gif"),
+        "mng-batch-add.php" => array(t('button','BatchAddUsers'), "images/icons/userNew.gif"),
+        "mng-batch-del.php" => array(t('button','RemoveBatch'), "images/icons/userRemove.gif")
+    );
 ?>
 
             <div id="sidebar">
@@ -56,17 +59,17 @@ $subnav_elements = array(
                 <h3>Batch Management</h3>
                 <ul class="subnav">
 <?php
-foreach ($subnav_elements as $href => $items) {
-    list($label, $src) = $items;
-    printf('<li><a href="%s" title="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>',
-           $href, strip_tags($label), $src, $label);
-}
+                $tabindex = 1;
+                foreach ($menu_elements as $href => $items) {
+                    list($caption, $src) = $items;
+                    printf('<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>',
+                           $href, strip_tags($caption), $tabindex, $src, $caption);
+                    $tabindex++;
+                }
 ?>
 
-                </ul><!-- .subnav -->
-                
-                <br><br>
-            </div>
+               </ul><!-- .subnav -->
+            </div><!-- #sidebar -->
 
 <?php
     if ($autoComplete) {

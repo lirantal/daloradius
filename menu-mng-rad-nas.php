@@ -29,17 +29,19 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-nas.php') !== false) {
 
 include_once("lang/main.php");
 
+$m_active = "Management";
+
 ?>
-<script src="library/javascript/rounded-corners.js"></script>
-<script src="library/javascript/form-field-tooltip.js"></script>
-<link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
 
 <body>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
+    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+    
     <div id="wrapper">
         <div id="innerwrapper">
 
 <?php
-    $m_active = "Management";
     include_once("include/menu/menu-items.php");
 	include_once("include/menu/management-subnav.php");
     include_once("include/management/autocomplete.php");
@@ -79,8 +81,8 @@ include_once("lang/main.php");
                             <b>&raquo;</b><?= t('button','RemoveNAS') ?>
                         </a>
                     </li>
-                </ul>
-            </div>
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->
 
 <script>
 <?php

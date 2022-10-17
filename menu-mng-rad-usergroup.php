@@ -29,17 +29,19 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-usergroup.php') !== false) {
 
 include_once("lang/main.php");
 
+$m_active = "Management";
+
 ?>
-<script src="library/javascript/rounded-corners.js"></script>
-<script src="library/javascript/form-field-tooltip.js"></script>
-<link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
 
 <body>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
+    <link rel="stylesheet" tabindex="" href="css/form-field-tooltip.css" media="screen">
+    
     <div id="wrapper">
         <div id="innerwrapper">
 
 <?php
-    $m_active = "Management";
     include_once("include/menu/menu-items.php");
 	include_once("include/menu/management-subnav.php");
     include_once("include/management/autocomplete.php");
@@ -52,46 +54,47 @@ include_once("lang/main.php");
                 <ul class="subnav">
 
                     <li>
-                        <a title="<?= strip_tags(t('button','ListUserGroup')) ?>" href="mng-rad-usergroup-list.php">
+                        <a title="<?= strip_tags(t('button','ListUserGroup')) ?>" tabindex="1" href="mng-rad-usergroup-list.php">
                             <b>&raquo;</b><?= t('button','ListUserGroup') ?>
                         </a>
                     </li>
                         
                     <li>
-                        <a title="<?= strip_tags(t('button','ListUsersGroup')) ?>" href="javascript:document.mngradusrgrplist.submit();">
+                        <a title="<?= strip_tags(t('button','ListUsersGroup')) ?>" tabindex="2" href="javascript:document.mngradusrgrplist.submit();">
                             <b>&raquo;</b><?= t('button','ListUsersGroup') ?>
                         <a>
                         <form name="mngradusrgrplist" action="mng-rad-usergroup-list-user.php" method="GET" class="sidebar">
                             <input name="username" type="text" id="usernameList" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','Username'); ?><br>" value="<?= (isset($usernameList)) ? $usernameList : "" ?>">
+                                tooltipText="<?= t('Tooltip','Username'); ?><br>"
+                                tabindex="3" value="<?= (isset($usernameList)) ? $usernameList : "" ?>">
                         </form>
                     </li>
 
                     <li>
-                        <a title="<?= strip_tags(t('button','NewUserGroup')) ?>" href="mng-rad-usergroup-new.php">
+                        <a title="<?= strip_tags(t('button','NewUserGroup')) ?>" tabindex="4" href="mng-rad-usergroup-new.php">
                             <b>&raquo;</b><?= t('button','NewUserGroup') ?>
                         </a>
                     </li>
                     
                     <li>
-                        <a title="<?= strip_tags(t('button','EditUserGroup')) ?>" href="javascript:document.mngradusrgrpedit.submit();">
+                        <a title="<?= strip_tags(t('button','EditUserGroup')) ?>" tabindex="5" href="javascript:document.mngradusrgrpedit.submit();">
                             <b>&raquo;</b><?= t('button','EditUserGroup') ?>
                         </a>
                         <form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="GET" class="sidebar">
                             <input name="username" type="text" value="" id="usernameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','Username'); ?><br>">
+                                tooltipText="<?= t('Tooltip','Username'); ?><br>" tabindex="6">
                             <input name="group" type="text" value="" id="groupnameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','GroupName'); ?><br>">
+                                tooltipText="<?= t('Tooltip','GroupName'); ?><br>" tabindex="7">
                         </form>
                     </li>
 
                     <li>
-                        <a title="<?= strip_tags(t('button','RemoveUserGroup')) ?>" href="mng-rad-usergroup-del.php">
+                        <a title="<?= strip_tags(t('button','RemoveUserGroup')) ?>" tabindex="8" href="mng-rad-usergroup-del.php">
                             <b>&raquo;</b><?= t('button','RemoveUserGroup') ?>
                         </a>
                     </li>
-                </ul>
-            </div>
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->
 
 <script>
 <?php

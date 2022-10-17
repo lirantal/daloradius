@@ -1,57 +1,92 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
- 
-<body>
 <?php
-include_once ("lang/main.php");
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/menu-mng-batch.php') !== false) {
+    header("Location: /index.php");
+    exit;
+}
+
+include_once("lang/main.php");
+
+$m_active = "Reports";
+
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
+<head>
+    <title>daloRADIUS :: <?= $m_active ?></title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    
+    <link rel="stylesheet" href="css/1.css" media="screen">
+    <script src="library/javascript/pages_common.js"></script>
+</head>
 
-<div id="wrapper">
-<div id="innerwrapper">
+<body>
+    <div id="wrapper">
+        <div id="innerwrapper">
 
 <?php
-	$m_active = "Reports";
-    include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/reports-subnav.php");
+    include_once("include/menu/menu-items.php");
+	include_once("include/menu/reports-subnav.php");
+    
+    $status_menu_elements = array(
+        "rep-stat-server.php" => array(t('button','ServerStatus'), "images/icons/reportsStatus.png"),
+        "rep-stat-services.php" => array(t('button','ServicesStatus'), "images/icons/reportsStatus.png")
+    );
+    
+    $peripherals_menu_elements = array(
+        "rep-stat-cron.php" => array("CRON Status", "images/icons/reportsStatus.png"),
+        "rep-stat-ups.php" => array("UPS Status", "images/icons/reportsStatus.png"),
+        "rep-stat-raid.php" => array("RAID Status", "images/icons/reportsStatus.png")
+    );
+    $element_format = '<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>';
 ?>      
 
-<div id="sidebar">
+            <div id="sidebar">
+                <h2>Status</h2>
+                
+                <h3>Status</h3>
+                <ul class="subnav">
+<?php
+                $tabindex = 1;
+                foreach ($status_menu_elements as $href => $items) {
+                    list($caption, $src) = $items;
+                    printf($element_format, $href, strip_tags($caption), $tabindex, $src, $caption);
+                    $tabindex++;
+                }
+?>
+                </ul><!-- .subnav -->
 
-	<h2>Status</h2>
-		<ul class="subnav">
-
-		<h3>Status</h3>
-
-			<li><a href="rep-stat-server.php"><b>&raquo;</b>
-				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;<?php echo t('button','ServerStatus') ?></a></li>
-			<li><a href="rep-stat-services.php"><b>&raquo;</b>
-				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;<?php echo t('button','ServicesStatus') ?></a></li>
-
-		</ul>
-
-		<ul class="subnav">
-		<h3>Extended Peripherals</h3>
-
-			<li><a href="rep-stat-cron.php"><b>&raquo;</b>
-				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;CRON Status</a></li>
-			<li><a href="rep-stat-ups.php"><b>&raquo;</b>
-				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;UPS Status</a></li>
-			<li><a href="rep-stat-raid.php"><b>&raquo;</b>
-				<img src='images/icons/reportsStatus.png' border='0'>&nbsp;RAID Status</a></li>
-				
-
-		</ul>
-		
-		
-	<br/><br/>
-	
-	
-	
-
-</div>
+                <h3 style="margin-top: 20px">Extended Peripherals</h3>
+                <ul class="subnav">
+<?php
+$tabindex = count($status_menu_elements) + 1;
+foreach ($peripherals_menu_elements as $href => $items) {
+    list($caption, $src) = $items;
+    printf($element_format, $href, strip_tags($caption), $tabindex, $src, $caption);
+    $tabindex++;
+}
+?>
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->

@@ -195,8 +195,6 @@
             
             $ordering_controls = sprintf($a_format, $title_asc, $href_asc, 'images/icons/arrow_up.png', '^')
                                . sprintf($a_format, $title_desc, $href_desc, 'images/icons/arrow_down.png', 'v');
-
-
         }
         
         echo "<th>" . $caption . $ordering_controls . "</th>";

@@ -1,168 +1,228 @@
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/menu-bill-merchant.php') !== false) {
+    header("Location: /index.php");
+    exit;
+}
+
+include_once("lang/main.php");
+
+$m_active = "Billing";
+
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
+    <head>
+        <title>daloRADIUS :: <?= $m_active ?></title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        
+        <link rel="stylesheet" href="css/1.css" media="screen">
+        <link rel="stylesheet" href="library/js_date/datechooser.css">
+        <!--[if lte IE 6.5]>
+        <link rel="stylesheet" href="library/js_date/select-free.css">
+        <![endif]-->
 
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
-</head>
+        <script src="library/js_date/date-functions.js"></script>
+        <script src="library/js_date/datechooser.js"></script>
+        <script src="library/javascript/pages_common.js"></script>
+    </head>
 
-<script src="library/js_date/date-functions.js" type="text/javascript"></script>
-<script src="library/js_date/datechooser.js" type="text/javascript"></script>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-
-<body>
-<?php
-    include_once ("lang/main.php");
-?>
-<div id="wrapper">
-<div id="innerwrapper">
+    <body>
+        <div id="wrapper">
+            <div id="innerwrapper">
 
 <?php
-    $m_active = "Billing";
-    include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/billing-subnav.php");
+    include_once("include/menu/menu-items.php");
+	include_once("include/menu/billing-subnav.php");
+    
+    $checkboxes = array(
+                            "id" => t('all','ID'),
+                            "username" => t('all','Username'),
+                            "password"  => t('all','Password'),
+                            "txnId"  => t('all','TxnId'),
+                            "planName" => t('all','PlanName'),
+                            "planId"  => t('all','PlanId'),
+                            "quantity"  => t('all','Quantity'),
+                            "business_email"  => t('all','ReceiverEmail'),
+                            "business_id"  => t('all','Business'),
+                            "payment_tax" => t('all','Tax'),
+                            "payment_cost"  => t('all','Cost'),
+                            "payment_fee" => t('all','TransactionFee'),
+                            "payment_total" => t('all','TotalCost'),
+                            "payment_currency" => t('all','PaymentCurrency'),
+                            "first_name" => t('all','FirstName'),
+                            "last_name" => t('all','LastName'),
+                            "payer_email" => t('all','PayerEmail'),
+                            "payer_address_name"  => t('all','AddressRecipient'),
+                            "payer_address_street"  => t('all','Street'),
+                            "payer_address_country" => t('all','Country'),
+                            "payer_address_country_code"  => t('all','CountryCode'),
+                            "payer_address_city" => t('all','City'),
+                            "payer_address_state" => t('all','State'),
+                            "payer_address_zip"  => t('all','Zip'),
+                            "payment_date" => t('all','PaymentDate'),
+                            "payment_status" => t('all','PaymentStatus'),
+                            "payer_status" => t('all','PayerStatus'),
+                            "payment_address_status" => t('all','PaymentAddressStatus'),
+                            "vendor_type" => t('all','VendorType')
+                       );
+    $checkboxes_checked = array(
+                                "username",
+                                "planName",
+                                "payment_fee",
+                                "payment_total",
+                                "payment_currency",
+                                "first_name",
+                                "last_name",
+                                "payer_email",
+                                "payer_address_country",
+                                "payer_address_city",
+                                "payer_address_state",
+                                "payment_date",
+                                "payment_status",
+                                "vendor_type"
+                               );
+
+    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
+    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>
 
-<div id="sidebar">
-
-                                <h2>Billing</h2>
-
-                                <h3>Track PayPal Transactions</h3>
-	<ul class="subnav">
-
-        <form name="billpaypaltransactions" action="bill-merchant-transactions.php" method="get" class="sidebar">
-
-        <input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
-	<br/><br/>
-
-		<h109><?php echo t('button','BetweenDates'); ?></h109> <br/>
-
-                        <input name="startdate" type="text" id="startdate"
-                                value="<?php if (isset($billing_date_startdate)) echo $billing_date_startdate;
-                        else echo date("Y-m-01"); ?>">
-
-                        <img src="library/js_date/calendar.gif"
-                                onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-                        <div id="chooserSpan" class="dateChooser select-free"
-                                style="display: none; visibility: hidden;       width: 160px;"></div>
-
-                        <input name="enddate" type="text" id="enddate"
-                                value="<?php if (isset($billing_date_enddate)) echo $billing_date_enddate;
-                                else echo date("Y-m-t"); ?>">
-
-                        <img src="library/js_date/calendar.gif"
-                                onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d', false);">
-                        <div id="chooserSpan" class="dateChooser select-free"
-                                style="display: none; visibility: hidden; width: 160px;"></div>
-			<br/><br/>
-
-		<h109><?php echo t('all','VendorType'); ?></h109> <br/>
-                        <select name="vendor_type" size="1">
-                                <option value="<?php if (isset($billing_paypal_vendor_type)) echo $billing_paypal_vendor_type; else echo "%"; ?>">
-                                        <?php if (isset($billing_paypal_vendor_type)) echo $billing_paypal_vendor_type; else echo "Any"; ?>
-                                </option>
-				<option value=""></option>
-				<option value="%">Any</option>
-				<option value="PayPal">PayPal</option>
-				<option value="2Checkout">2Checkout</option>
-                        </select>
-			<br/><br/>
-
-		<h109><?php echo t('all','PayerEmail'); ?></h109> <br/>
-                        <input name="payer_email" type="text"
-                                value="<?php if (isset($billing_paypal_payeremail)) echo $billing_paypal_payeremail; else echo "*"; ?>">
-			<br/>
-
-		<h109><?php echo t('all','PaymentStatus'); ?></h109> <br/>
-                        <select name="payment_status" size="1">
-                                <option value="<?php if (isset($billing_paypal_paymentstatus)) echo $billing_paypal_paymentstatus; else echo "%"; ?>">
-                                        <?php if (isset($billing_paypal_paymentstatus)) echo $billing_paypal_paymentstatus; else echo "Any"; ?>
-                                </option>
-				<option value=""></option>
-				<option value="Completed">Completed</option>
-				<option value="Denied">Denied</option>
-				<option value="Expired">Expired</option>
-				<option value="Failed">Failed</option>
-				<option value="In-Progress">In-Progress</option>
-				<option value="Pending">Pending</option>
-				<option value="Processed">Processed</option>
-				<option value="Refunded">Refunded</option>
-				<option value="Reversed">Reversed</option>
-				<option value="Canceled-Reversal">Canceled-Reversal</option>
-				<option value="Voided">Voided</option>
-                        </select>
-			<br/><br/>
-
-
-                <br/><br/><br/>
-                <h109><?php echo t('button','AccountingFieldsinQuery'); ?></h109><br/>
-                <input type="checkbox" name="sqlfields[]" value="id" /> <h109> <?php echo t('all','ID'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="username" checked /> <h109><?php echo t('all','Username'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="password"  /> <h109><?php echo t('all','Password'); ?></h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="txnId"  /> <h109><?php echo t('all','TxnId'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="planId"  /> <h109><?php echo t('all','PlanId'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="quantity"  /> <h109><?php echo t('all','Quantity'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="business_email"  /> <h109><?php echo t('all','ReceiverEmail'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="business_id"  /> <h109><?php echo t('all','Business'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_tax" /> <h109><?php echo t('all','Tax'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_cost" checked /> <h109><?php echo t('all','Cost'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_fee" checked /> <h109><?php echo t('all','TransactionFee'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_total"  /> <h109><?php echo t('all','TotalCost'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_currency" checked /> <h109><?php echo t('all','PaymentCurrency'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="first_name" checked /> <h109><?php echo t('all','FirstName'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="last_name" checked /> <h109><?php echo t('all','LastName'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_email" checked /> <h109><?php echo t('all','PayerEmail'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_name"  /> <h109><?php echo t('all','AddressRecipient'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_street"  /> <h109><?php echo t('all','Street'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_country" checked /> <h109><?php echo t('all','Country'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_country_code"  /> <h109><?php echo t('all','CountryCode'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_city" checked /> <h109><?php echo t('all','City'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_state" checked /> <h109><?php echo t('all','State'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_address_zip"  /> <h109><?php echo t('all','Zip'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_date" checked /> <h109><?php echo t('all','PaymentDate'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_status" checked /> <h109><?php echo t('all','PaymentStatus'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payer_status" /> <h109><?php echo t('all','PayerStatus'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="payment_address_status" /> <h109><?php echo t('all','PaymentAddressStatus'); ?> </h109> <br/>
-                <input type="checkbox" name="sqlfields[]" value="vendor_type" checked /> <h109><?php echo t('all','VendorType'); ?> </h109> <br/>
-                Select:
-                <a class="table" href="javascript:SetChecked(1,'sqlfields[]','billpaypaltransactions')">All</a>
-                <a class="table" href="javascript:SetChecked(0,'sqlfields[]','billpaypaltransactions')">None</a>
-
-
-                <br/><br/>
-                <h109><?php echo t('button','OrderBy') ?><h109> <br/>
-                        <center>
-                        <select name="orderBy" size="1">
-                                <option value="id"> Id </option>
-                                <option value="username"> username </option>
-                                <option value="txnId"> txnId </option>
-			</select>
-
-                        <select name="orderType" size="1">
-                                <option value="ASC"> Ascending </option>
-                                <option value="DESC"> Descending </option>
-                        </select>
-                        </center>
-
-        <br/>
-        <input class="sidebutton" type="submit" name="submit" value="<?php echo t('button','ProcessQuery') ?>" tabindex=3 />
-
-
-
-                        </form></li>
-
-		</ul>
-
-
-                                <br/><br/>
+                <div id="sidebar">
+                    <h2>Billing</h2>
+                    
+                    <h3>Track PayPal Transactions</h3>
+                    <ul class="subnav">
+                        <li>
+                            <form name="billpaypaltransactions" action="bill-merchant-transactions.php" method="GET" class="sidebar">
+                                <input class="sidebutton" type="submit" name="submit" value="<?= t('button','ProcessQuery') ?>">
                                 
+                                <br><br>
+                                
+                                <h109><?= t('button','BetweenDates'); ?></h109><br>
+                                
+                                <label style="user-select: none" for="startdate"
+                                    onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
+                                    <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
+                                    Start Date
+                                </label>
+                                <input name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
+                                    value="<?= (isset($billing_date_startdate)) ? $billing_date_startdate : date("Y-m-01") ?>">
+                                <?= $chooserSpan ?>
+                        
+                                <label style="user-select: none" for="enddate"
+                                    onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
+                                    <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
+                                    End Date
+                                </label>
+                                <input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
+                                    value="<?= (isset($billing_date_enddate)) ? $billing_date_enddate : date("Y-m-t") ?>">
+                                <?= $chooserSpan ?>
 
+                                <br><br>
+
+                                <h109><?= t('all','VendorType'); ?></h109><br>
+                                <select name="vendor_type" size="1">
+                                    <option value="<?= (isset($billing_paypal_vendor_type)) ? $billing_paypal_vendor_type : "%" ?>">
+                                        <?= (isset($billing_paypal_vendor_type)) ? $billing_paypal_vendor_type : "Any" ?>
+                                    </option>
+                                    <option value=""></option>
+                                    <option value="%">Any</option>
+                                    <option value="PayPal">PayPal</option>
+                                    <option value="2Checkout">2Checkout</option>
+                                </select>
+                                
+                                <h109><?= t('all','PayerEmail'); ?></h109><br>
+                                <input name="payer_email" type="text"
+                                    value="<?= (isset($billing_paypal_payeremail)) ? $billing_paypal_payeremail : "*" ?>">
 			
+                                <br><br>
 
-                </div>
+                                <h109><?= t('all','PaymentStatus'); ?></h109><br>
+                                <select name="payment_status" size="1">
+                                    <option value="<?= (isset($billing_paypal_paymentstatus)) ? $billing_paypal_paymentstatus : "%" ?>">
+                                        <?= (isset($billing_paypal_paymentstatus)) ? $billing_paypal_paymentstatus : "Any" ?>
+                                    </option>
+                                    <option value=""></option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Denied">Denied</option>
+                                    <option value="Expired">Expired</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="In-Progress">In-Progress</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Processed">Processed</option>
+                                    <option value="Refunded">Refunded</option>
+                                    <option value="Reversed">Reversed</option>
+                                    <option value="Canceled-Reversal">Canceled-Reversal</option>
+                                    <option value="Voided">Voided</option>
+                                </select>
 
+                                <br><br>
+
+                                <h109><?= t('button','AccountingFieldsinQuery'); ?></h109><br>
+<?php
+                                foreach ($checkboxes as $value => $caption) {
+                                    $checked = in_array($value, $checkboxes_checked) ? ' checked' : '';
+                                    printf('<input type="checkbox" name="sqlfields[]" value="%s"%s><h109>%s</h109><br>',
+                                           $value, $checked, $caption);
+                                }
+?>
+                                <br><h109>Select:</h109>
+                                <a class="table" href="javascript:SetChecked(1,'sqlfields[]','billpaypaltransactions')">All</a>
+                                <a class="table" href="javascript:SetChecked(0,'sqlfields[]','billpaypaltransactions')">None</a>
+
+                                <br><br>
+                                
+                                <h109><?= t('button','OrderBy') ?></h109><br>
+                                
+                                <div style="text-align: center">
+                                    <select name="orderBy" size="1">
+                                        <option value="id"> Id </option>
+                                        <option value="username"> username </option>
+                                        <option value="txnId"> txnId </option>
+                                    </select>
+
+                                    <select name="orderType" size="1">
+                                        <option value="ASC"> Ascending </option>
+                                        <option value="DESC"> Descending </option>
+                                    </select>
+                                </div>
+
+                                <br><br>
+                                
+                                <input class="sidebutton" type="submit" name="submit" value="<?= t('button','ProcessQuery') ?>">
+
+                            </form>
+                        </li>
+
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->
+
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
+</script>

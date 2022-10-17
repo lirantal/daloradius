@@ -29,11 +29,13 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-plans.php') !== false) {
 
 include_once("lang/main.php");
 
+$m_active = "Accounting";
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
 <head>
-    <title>daloRADIUS :: Accounting / Plans</title>
+    <title>daloRADIUS :: <?= $m_active ?></title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="css/1.css" media="screen">
     <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
@@ -56,10 +58,12 @@ include_once("lang/main.php");
         <div id="innerwrapper">
 
 <?php
-	$m_active = "Accounting";
 	include_once("include/menu/menu-items.php");
 	include_once("include/menu/accounting-subnav.php");
 	include_once("include/management/autocomplete.php");
+    
+    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
+    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>	
 
             <div id="sidebar">
@@ -68,39 +72,42 @@ include_once("lang/main.php");
                 <h3>Accounting</h3>
                 <ul class="subnav">
                     <li>
-                        <a href="javascript:document.acctdate.submit();">
+                        <a title="<?= strip_tags(t('button','PlanUsage')) ?>" href="javascript:document.acctdate.submit();">
                             <b>&raquo;</b><?= t('button','PlanUsage') ?>
                         </a>
-                        <form name="acctdate" action="acct-plans-usage.php" method="get" class="sidebar">
+                        <form name="acctdate" action="acct-plans-usage.php" method="GET" class="sidebar">
                             <input name="username" type="text" id="usernamePlan"
                                 <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                                 tooltipText='<?= t('Tooltip','Username'); ?>'
                                 value="<?= (isset($accounting_plan_username)) ? $accounting_plan_username : "" ?>">
                             
-                            <input name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date'); ?>"
+                            <label style="user-select: none" for="startdate"
+                                onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
+                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
+                                Start Date
+                            </label>
+                            <input name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date'); ?>"
                                 value="<?= (isset($accounting_plan_startdate)) ? $accounting_plan_startdate: date("Y-m-01") ?>">
-                            
-                            <img src="library/js_date/calendar.gif"
-                                onclick="showChooser(this, 'startdate', 'chooserSpan', 1950, <?= date('Y', time()) ?>, 'Y-m-d', false);">
-                            <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+                            <?= $chooserSpan ?>
 
-                            <input name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date'); ?>"
+                            <label style="user-select: none" for="enddate"
+                                onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
+                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
+                                End Date
+                            </label>
+                            <input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date'); ?>"
                                 value="<?= (isset($accounting_plan_enddate)) ? $accounting_plan_enddate : date("Y-m-t") ?>">
-
-                            <img src="library/js_date/calendar.gif" 
-                                onclick="showChooser(this, 'enddate', 'chooserSpan', 1950, <?= date('Y', time()) ?>, 'Y-m-d', false);">
-                            <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+                            <?= $chooserSpan ?>
 
                             <br><br>
 <?php   
-				include('include/management/populate_selectbox.php');
-				populate_plans("Select Plan", "planname", "generic");
+                            include('include/management/populate_selectbox.php');
+                            populate_plans("Select Plan", "planname", "generic");
 ?>
+                        </form>
                     </li>
-                </form>
-            </ul>
-            <br><br>
-        </div>
+                </ul><!-- .subnav -->
+            </div><!-- #sidebar -->
 
 <script>
 <?php
