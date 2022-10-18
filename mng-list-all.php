@@ -15,7 +15,8 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -27,246 +28,306 @@
 
 	// set session's page variable
 	$_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-	
 
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-	
 	include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-
+    
+    include_once("lang/main.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
 <head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
+    <title>daloRADIUS :: <?= t('Intro','mnglistall.php') ?></title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+    <link rel="stylesheet" href="css/1.css" media="screen">
+    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+    <link rel="stylesheet" href="library/js_date/datechooser.css">
+    <!--[if lte IE 6.5]>
+    <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css">
+    <![endif]-->
+    
+    <script src="library/javascript/pages_common.js"></script>
+    <script src="library/javascript/rounded-corners.js"></script>
+    <script src="library/javascript/form-field-tooltip.js"></script>
 
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
+    <script src="library/javascript/ajax.js"></script>
+    <script src="library/javascript/ajaxGeneric.js"></script>
 </head>
 
 <?php
+    include("menu-mng-users.php");
+    
+    $cols = array(
+                    "id" => t('all','ID'),
+                    t('all','Name'),
+                    "username" => t('all','Username'),
+                 );
 
-    include ("menu-mng-users.php");
+    if (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes") {
+        $cols[] = t('all','Password');
+    } else {
+        $cols["auth"] = t('all','Password');
+    }
+    
+    $cols[] = t('title','Groups');
 
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
 ?>
 
 		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mnglistall.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-				
-                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','mnglistall') ?>
-					<br/>
-				</div>
-					<div id="returnMessages">
-					</div>
-				<br/>
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro','mnglistall.php') ?>
+                    <h144>&#x2754;</h144>
+                </a>
+            </h2>
+            
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mnglistall') ?><br></div>
+            <div id="returnMessages"></div>
+            <br>
 
 <?php
 
-	include 'include/management/pages_common.php';
-	include 'library/opendb.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
+	// setup php session variables for exporting
+	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
+	$_SESSION['reportQuery'] = "";
+	$_SESSION['reportType'] = "usernameListGeneric";
 
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
-        $_SESSION['reportQuery'] = " WHERE UserName LIKE '%'";
-        $_SESSION['reportType'] = "usernameListGeneric";
-
-	$orderBy = $dbSocket->escapeSimple($orderBy);
-	$orderType = $dbSocket->escapeSimple($orderType);
+    // we use this simplified query just to initialize $numrows
+    $sql0 = sprintf("SELECT COUNT(DISTINCT(username)) AS username
+                       FROM %s
+                      WHERE attribute='Auth-Type' OR attribute LIKE '%%-Password'", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $res = $dbSocket->query($sql0);
+    $numrows = $res->fetchrow()[0];
+    
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        $maxPage = ceil($numrows/$rowsPerPage);
+        /* END */
         
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute FROM 
-		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username 
-		WHERE (Attribute='Auth-Type') or (Attribute LIKE '%-Password') GROUP BY UserName";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-
-
-	/* we are searching for both kind of attributes for the password, being User-Password, the more
-	   common one and the other which is Password, this is also done for considerations of backwards
-	   compatibility with version 0.7        */
-
-	$sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADCHECK'].".username),".$configValues['CONFIG_DB_TBL_RADCHECK'].".value,
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".id,".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".groupname as groupname, attribute, ".
-		$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".firstname, ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".lastname
-		, IFNULL(disabled.username,0) as disabled
-		 FROM  
-		".$configValues['CONFIG_DB_TBL_RADCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." ON 
-		".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].".username
- 		LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']."
-		 ON ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username
-		LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." disabled
-		 ON disabled.username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username AND disabled.groupname = 'daloRADIUS-Disabled-Users' 
- 		WHERE (".$configValues['CONFIG_DB_TBL_RADCHECK'].".username=".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].".username) AND Attribute IN ('Cleartext-Password', 'Auth-Type','User-Password', 
- 			'Crypt-Password', 'MD5-Password', 'SMD5-Password', 'SHA-Password', 'SSHA-Password', 'NT-Password', 'LM-Password', 'SHA1-Password', 'CHAP-Password', 
- 			'NS-MTA-MD5-Password') GROUP by ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-	echo "<form name='listallusers' method='get' action='mng-del.php' >";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-							<tr>
-							<th colspan='10' align='left'> 
-				Select:
-				<a class=\"table\" href=\"javascript:SetChecked(1,'username[]','listallusers')\">All</a> 
-				<a class=\"table\" href=\"javascript:SetChecked(0,'username[]','listallusers')\">None</a>
-			<br/>
-				<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallusers\",\"mng-del.php\")' />
-				<input class='button' type='button' value='Disable' onClick='javascript:disableCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
-				<input class='button' type='button' value='Enable' onClick='javascript:enableCheckbox(\"listallusers\",\"include/management/userOperations.php\")' />
-	  	              <input class='button' type='button' value='CSV Export'onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"/>
-
-				<br/><br/>
-		";
-
-
-	/* drawing the number links */
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-	echo "
-			</th>
-			</tr>
-			</thead>
-			";
-	  $curOrderType = $orderType;
-        if ($orderType == "asc") {
-                $orderType = "desc";
-        } else  if ($orderType == "desc") {
-                $orderType = "asc";
+        # sql1 get id, username, password, firstname and lastname
+        $sql1 = sprintf("SELECT DISTINCT(rc.username) AS username, rc.value AS auth, rc.id AS id, ui.firstname, ui.lastname
+                           FROM %s AS rc, %s AS ui
+                          WHERE rc.username=ui.username
+                            AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')
+                          ORDER BY %s %s LIMIT %s, %s",
+                        $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                        $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql1);
+        $logDebugSQL = "$sql1;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+        // init $records and $usernamelist arrays
+        $records = array();
+        $usernamelist = array();
+        
+        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            // we start storing data...
+            // the enable flag is initialized to true
+            // and the groups list is empty
+            $this_username = $row['username'];
+            
+            $records[$this_username] = array(
+                'auth' => $row['auth'],
+                'id' => intval($row['id']),
+                'fullname' => $row['firstname'] . " " . $row['lastname'],
+                'enabled' => true,
+                'groups' => array()
+            );
+            // in the same pass we init the $usernamelist
+            $usernamelist[] = sprintf("'%s'", $dbSocket->escapeSimple($this_username));
         }
-	
-	echo "<thread> <tr>
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".t('all','ID')."</a>
-		</th>
+        
+        // with this second query we retrieve user status (enabled/disabled) and user groups list
+        $sql2 = sprintf("SELECT username, groupname FROM %s WHERE username IN (%s)",
+                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'], implode(", ", $usernamelist));
+        $res = $dbSocket->query($sql2);
+        $logDebugSQL .= "$sql2;\n";
 
-		<th scope='col'> 
-		".t('all','Name')."</a>
-		</th>
-		
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=$orderType\">
-		".t('all','Username')."</a>
-		</th>
+        // foreach user we update the enabled flag and the grouplist
+        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            $this_username = $row['username'];
+            $this_groupname = $row['groupname'];
 
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=$orderType\">
-		".t('all','Password')."</a>
-		</th>
-
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Groupname&orderType=$orderType\">
-		".t('title','Groups')."</a>
-		</th>
-		</tr> </thread>";
-
-	while($row = $res->fetchRow()) {
-
-		printqn("
-			<td> <input type='checkbox' name='username[]' value='$row[0]'>$row[2]</td>
-			<td>$row[5] $row[6]</td>
-			<td> 
-		");
-
-
-		if ($row[7] !== '0')
-			echo "<img title='user is disabled' src='images/icons/userStatusDisabled.gif' alt='[disabled]'>";
-		else
-			echo "<img title='user is enabled' src='images/icons/userStatusActive.gif' alt='[enabled]'>";
-
-
-		$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".urlencode($row[0])."');";
-		$content =  '<a class="toolTip" href="mng-edit.php?username='.urlencode($row[0]).'">'.t('Tooltip','UserEdit').'</a>';
-		$str = addToolTipBalloon(array(
-									'content' => $content,
-									'onClick' => $js,
-									'value' => $row[0],
-									'divId' => 'divContainerUserInfo',
-		
-							));
-							
-		echo "$str </td>";
-		
-		if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
-			echo "<td>[Password is hidden]</td>";
-		} else {
-			echo "<td>$row[1]</td>";
-		}
-		echo "
-			<td>$row[3]</td>
-		</tr>";
-	}
-	
-	echo "
-					<tfoot>
-							<tr>
-							<th colspan='10' align='left'> 
-	";
-	setupLinks($pageNum, $maxPage, $orderBy, $curOrderType);
-	echo "							</th>
-							</tr>
-					</tfoot>
-		";
-
-	echo "</table>";
-	echo "</form>";
-
-	include 'library/closedb.php';
-	
+            if ($this_groupname === 'daloRADIUS-Disabled-Users') {
+                $records[$this_username]['enabled'] = false;
+            } else {
+                array_push($records[$this_username]['groups'],
+                           htmlspecialchars($this_groupname, ENT_QUOTES, 'UTF-8'));
+            }
+        }
 ?>
 
+<form name="listallusers" method="GET" action="mng-del.php">
 
+    <table border="0" class="table1">
+        <thead>
+            <tr style="background-color: white">
+                <td style="text-align: left" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+                    <input class="button" type="button" value="CSV Export"
+                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
+                </td>
+            
+<?php
+    if ($maxPage > 1) {
+        
+        printf('<td style="text-align: right" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+        setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+        echo '</td>';
+    }
+?>
+            </tr>
+
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+                    Select:
+                    <a title="Select All" class="table" href="javascript:SetChecked(1,'username[]','listallusers')">All</a> 
+                    <a title="Select None" class="table" href="javascript:SetChecked(0,'username[]','listallusers')">None</a>
+                    <br>
+                    <input class="button" type="button" value="Delete"
+                        onclick="javascript:removeCheckbox('listallusers','mng-del.php')">
+                    <input class="button" type="button" value="Disable"
+                        onclick="javascript:disableCheckbox('listallusers','include/management/userOperations.php')">
+                    <input class="button" type="button" value="Enable"
+                        onclick="javascript:enableCheckbox('listallusers','include/management/userOperations.php')">
+                </th>
+            </tr>
+            <tr>
+<?php
+
+        foreach ($cols as $param => $caption) {
+            echo '<th scope="col">' . $caption;
+
+            if (!is_int($param)) {
+                $href_format = "?orderBy=%s&orderType=%s";
+                $href_asc = sprintf($href_format, $param, "asc");
+                $href_desc = sprintf($href_format, $param, "desc");
+                
+                $title_format = "order by %s, sort %s";
+                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
+                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
+                
+                printf('<a title="%s" class="novisit" href="%s"><img src="images/icons/arrow_up.png" alt="^"></a>', $title_asc, $href_asc);
+                printf('<a title="%s" class="novisit" href="%s"><img src="images/icons/arrow_down.png" alt="v"></a>', $title_desc, $href_desc);
+            }
+            echo "</th>";
+
+        }
+?>
+            </tr>
+            
+        </thead>
+
+        <tbody>
+<?php
+        foreach ($records as $username => $data) {
+            $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+            
+            $img = (!$data['enabled'])
+                 ? '<img title="user is disabled" src="images/icons/userStatusDisabled.gif" alt="[disabled]">'
+                 : '<img title="user is enabled" src="images/icons/userStatusActive.gif" alt="[enabled]">';
+            
+            $auth = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes")
+                  ? "[Password is hidden]" : htmlspecialchars($data['auth'], ENT_QUOTES, 'UTF-8');
+            
+            $fullname = htmlspecialchars($data['fullname'], ENT_QUOTES, 'UTF-8');
+            $grouplist = implode("<br>", $data['groups']);
+            $id = $data['id'];
+            
+            $js = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
+                        . "'divContainerUserInfo','username=%s');", $username);
+            $content = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>',
+                               urlencode($username), t('Tooltip','UserEdit'));
+            $str = addToolTipBalloon(array(
+                                            'content' => $content,
+                                            'onClick' => $js,
+                                            'value' => $username,
+                                            'divId' => 'divContainerUserInfo'
+                                          ));
+?>
+            <tr>
+                <td><input type="checkbox" name="username[]" value="<?= $username ?>"><?= $id ?></td>
+                <td><?= "$fullname" ?></td>
+                <td><?= "$img $str" ?></td>
+                <td><?= $auth ?></td>
+                <td><?= $grouplist ?></td>
+            </tr>
+<?php
+        } 
+?>
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th scope="col" colspan="<?= $colspan ?>">
+<?php
+                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
+                    if ($maxPage > 1) {
+                        echo " out of <strong>$numrows</strong>";
+                    }
+?>
+                </th>
+            </tr>
 
 <?php
-	include('include/config/logging.php');
+        if ($maxPage > 1) {
+?>
+            <tr>
+                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
+                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType) ?>
+                </th>
+            </tr>
+<?php
+        }
+?>
+        </tfoot>
+
+    </table>
+</form>
+
+<?php
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
 ?>
 				
 		</div>
 		
 		<div id="footer">
-		
 <?php
-        include 'page-footer.php';
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-		
 		</div>
-		
-</div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
+<script>
 	var tooltipObj = new DHTMLgoodies_formTooltip();
 	tooltipObj.setTooltipPosition('right');
 	tooltipObj.setPageBgColor('#EEEEEE');
@@ -276,4 +337,3 @@
 
 </body>
 </html>
- 
