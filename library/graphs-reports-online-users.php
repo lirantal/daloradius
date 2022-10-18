@@ -29,7 +29,7 @@
 
 	header("Content-type: image/png");
 
-	$chart = new PieChart(620, 320);
+	$chart = new PieChart(640, 480);
 
 	// getting total users
 	$sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);

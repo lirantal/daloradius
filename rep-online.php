@@ -36,18 +36,25 @@
     $usernameOnline = $username_enc;
     
     include("menu-reports.php");
+
 ?>
 
 <!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css">
+<link rel="stylesheet" href="library/js_date/select-free.css">
 <![endif]-->
 <script src="library/js_date/date-functions.js"></script>
 <script src="library/js_date/datechooser.js"></script>
+<script src="library/javascript/ajax.js"></script>
+<script src="library/javascript/ajaxGeneric.js"></script>
 <?php
 
     include_once("library/tabber/tab-layout.php");
 
-    // these three variable can be used for validation an presentation purpose
+    // the array $cols has multiple purposes:
+    // - its keys (when non-numerical) can be used
+    //   - for validating user input
+    //   - for table ordering purpose
+    // - its value can be used for table headings presentation
     $cols = array(
                    'username' => t('all','Username'),
                    t('all','Name'),
@@ -148,74 +155,96 @@
         $maxPage = ceil($numrows/$rowsPerPage);
         /* END */
         
-        $partial_query_string = (!empty($username_enc) ? "&usernameOnline=$username_enc" : "");
+        $per_page_numrows = $res->numRows();
+        
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
+        $partial_query_string = (!empty($username_enc) ? "&usernameOnline=" . urlencode($username_enc) : "");
 ?>
 <form name="usersonline" method="GET">
     <table border="0" class="table1">
         <thead>
-            <tr>
+            <tr style="background-color: white">
 <?php
-
-    $split_header = $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes" && $maxPage > 1;
-
-    if ($split_header) {
-        printf('<th colspan="%d">', (($colspan % 2 === 0) ? $half_colspan : $half_colspan + 1));
+    // page numbers are shown only if there is more than one page
+    if ($maxPage > 1) {
+        
+        printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
         setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-        echo "</th>";
+        echo '</td>';
     }
 ?>
-                <th colspan="<?= ($split_header) ? $half_colspan : $colspan ?>" style="text-align: right">
+                <td style="text-align: right" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+                    <input class="button" type="button" value="CSV Export"
+                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
+                </td>
+            </tr>
+
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
                     Select:
                     <a title="Select All" class="table" href="javascript:SetChecked(1,'clearSessionsUsers[]','usersonline')">All</a>
                     <a title="Select None" class="table" href="javascript:SetChecked(0,'clearSessionsUsers[]','usersonline')">None</a>
                     <br>
                     <input class="button" type="button" value="<?= t('button','ClearSessions') ?>"
                         onclick="javascript:removeCheckbox('usersonline','mng-del.php')">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
                 </th>
             </tr>
+
             <tr>
 <?php
 
-    foreach ($cols as $label => $caption) {
-        
-        if (is_int($label)) {
-            $ordering_controls = "";
-        } else {
-            $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
-            $href_asc = sprintf($href_format, $label, "asc");
-            $href_desc = sprintf($href_format, $label, "desc");
+        // a standard way of creating table headings
+        foreach ($cols as $param => $caption) {
             
-            $title_format = "order by %s, sort %s";
-            $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
-            $title_desc = sprintf($title_format, strip_tags($caption), "descending");
+            if (is_int($param)) {
+                $ordering_controls = "";
+            } else {
+                $title_format = "order by %s, sort %s";
+                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
+                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
+
+                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
+                $href_asc = sprintf($href_format, $param, "asc");
+                $href_desc = sprintf($href_format, $param, "desc");
+
+                $img_format = '<img src="%s" alt="%s">';
+                $img_asc = sprintf($img_format, 'images/icons/arrow_up.png', '^');
+                $img_desc = sprintf($img_format, 'images/icons/arrow_down.png', 'v');
+
+                $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
+                $disabled_a_format = '<a title="%s" role="link" aria-disabled="true">%s</a>';
+
+                if ($orderBy == $param) {
+                    if ($orderType == "asc") {
+                        $link_asc = sprintf($disabled_a_format, $title_asc, $img_asc);
+                        $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
+                    } else {
+                        $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
+                        $link_desc = sprintf($disabled_a_format, $title_desc, $img_desc);
+                    }
+                } else {
+                    $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
+                    $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
+                }
+                
+                $ordering_controls = $link_asc . $link_desc;
+            }
             
-            $a_format = '<a title="%s" class="novisit" href="%s"><img src="%s" alt="%s"></a>';
-            
-            $ordering_controls = sprintf($a_format, $title_asc, $href_asc, 'images/icons/arrow_up.png', '^')
-                               . sprintf($a_format, $title_desc, $href_desc, 'images/icons/arrow_down.png', 'v');
+            echo "<th>" . $caption . $ordering_controls . "</th>";
         }
-        
-        echo "<th>" . $caption . $ordering_controls . "</th>";
-    }
 ?>
             </tr>
         </thead>
 
         <tbody>
 <?php
-        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
         
             $this_username = htmlspecialchars($row['username'], ENT_QUOTES, 'UTF-8');
             $this_framedip = htmlspecialchars($row['framedipaddress'], ENT_QUOTES, 'UTF-8');
             $this_nasip = htmlspecialchars($row['nasipaddress'], ENT_QUOTES, 'UTF-8');
             $this_sessionid = htmlspecialchars($row['sessionid'], ENT_QUOTES, 'UTF-8');
-            
-            $tooltip_disconnect_href = sprintf("config-maint-disconnect-user.php?username=%s&nasaddr=%s"
-                                             . "&customattributes=Acct-Session-Id=%s,Framed-IP-Address=%s",
-                                               $this_username, $this_nasip, $this_sessionid, $this_framedip);
-        
             
             $name = htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8')
                   . "<br>"
@@ -231,16 +260,26 @@
             $upload = htmlspecialchars(toxbyte($row['upload']), ENT_QUOTES, 'UTF-8');
             $download = htmlspecialchars(toxbyte($row['download']), ENT_QUOTES, 'UTF-8');
             $traffic = toxbyte($row['upload'] + $row['download']);
+            
+            // tooltip and ajax stuff
+            $custom_attributes = sprintf("Acct-Session-Id=%s,Framed-IP-Address=%s", $this_sessionid, $this_framedip);
+            $tooltip_disconnect_href = sprintf("config-maint-disconnect-user.php?username=%s&nasaddr=%s&customattributes=%s",
+                                               urlencode($this_username), urlencode($this_nasip), urlencode($custom_attributes));
+            $li_style = 'margin: 7px auto';
+            $tooltip = '<ul style="list-style-type: none">'
+                     . sprintf('<li style="%s"><a class="toolTip" href="mng-edit.php?username=%s">%s</a></li>',
+                               $li_style, urlencode($this_username), t('Tooltip','UserEdit'))
+                     . sprintf('<li style="%s"><a class="toolTip" href="%s">%s</a></li>',
+                               $li_style, $tooltip_disconnect_href, t('all','Disconnect'))
+                     . '</ul>'
+                     . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
+            $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
+                             . "'divContainerUserInfo','username=%s');", urlencode($this_username));
 ?>
             <tr>
                 <td>
-                    <input type="checkbox" name="clearSessionsUsers[]"
-                        value="<?= "$this_username||$starttime" ?>">
-                    <a class="tablenovisit" href="#" onclick="javascript:return false;"
-                        tooltipText="
-                            <a class='toolTip' href='mng-edit.php?username=<?= $this_username ?>'><?= t('Tooltip','UserEdit') ?></a>
-                            &nbsp;
-                            <a class='toolTip' href='<?= $tooltip_disconnect_href ?>'><?= t('all','Disconnect') ?></a>">
+                    <input type="checkbox" name="clearSessionsUsers[]" value="<?= "$this_username||$starttime" ?>">
+                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltip ?>'>
                         <?= $this_username ?>
                     </a>
                 </td>
@@ -270,26 +309,31 @@
 ?>
         </tbody>
 
-
         <tfoot>
             <tr>
-                <th style="text-align: left" colspan="<?= ($maxPage > 1) ? (($colspan % 2 === 0) ? $half_colspan : $half_colspan + 1) : $colspan ?>">
-                    #<?= $numrows ?> record(s) shown
-                </th>
+                <th scope="col" colspan="<?= $colspan ?>">
 <?php
-    if ($maxPage > 1) {
+                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
+                    if ($maxPage > 1) {
+                        echo " out of <strong>$numrows</strong>";
+                    }
 ?>
-                <th style="text-align: right" colspan="<?= $half_colspan ?>">
-                    <?php
-                        setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-                    ?>
                 </th>
-<?php
-    }
-?>
             </tr>
-        </tfoot>
 
+<?php
+        // page navigation controls are shown only if there is more than one page
+        if ($maxPage > 1) {
+?>
+            <tr>
+                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
+                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) ?>
+                </th>
+            </tr>
+<?php
+        }
+?>
+        </tfoot>
 
     </table>
 </form>    
@@ -304,15 +348,15 @@
 ?>
                 </div>
 
-                <div class="tabbertab" style="text-align: center" title="Graph">
-                    <img src="library/graphs-reports-online-users.php">
+                <div class="tabbertab" style="text-align: center" title="Online users">
+                    <img src="library/graphs-reports-online-users.php" alt="Online users">
                 </div>
     
-                <div class="tabbertab" style="text-align: center" title="Online Nas">
-                    <img src="library/graphs-reports-online-nas.php">
+                <div class="tabbertab" style="text-align: center" title="Online NAS">
+                    <img src="library/graphs-reports-online-nas.php" alt="Online NAS">
                 </div>
             </div>        
-        </div>
+        </div><!-- #contentnorightbar -->
         
         <div id="footer">
 <?php
@@ -328,7 +372,7 @@
     include('include/config/logging.php');
     include('page-footer.php');
 ?>
-        </div>        
+        </div><!-- #footer -->       
     </div>
 </div>
 

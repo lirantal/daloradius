@@ -29,11 +29,11 @@
 
 	header("Content-type: image/png");
 
-    $chart = new VerticalChart(500, 300);
+    $chart = new VerticalChart(640, 480);
 
-    $sql = sprintf("SELECT n.shortname, COUNT(ra.username)
-                    FROM %s AS ra LEFT JOIN %s AS n ON n.nasname=ra.nasipaddress
-                    WHERE ra.acctstoptime IS NULL OR ra.acctstoptime='0000-00-00 00:00:00'
+    $sql = sprintf("SELECT n.shortname, COUNT(DISTINCT(ra.username))
+                    FROM %s AS ra, %s AS n
+                    WHERE n.nasname=ra.nasipaddress AND (ra.acctstoptime IS NULL OR ra.acctstoptime='0000-00-00 00:00:00')
                     GROUP BY ra.nasipaddress",
                    $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_RADNAS']);
 

@@ -32,6 +32,7 @@
 	include_once('library/config_read.php');
     
     include_once("lang/main.php");
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
@@ -43,7 +44,7 @@
     <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
     <link rel="stylesheet" href="library/js_date/datechooser.css">
     <!--[if lte IE 6.5]>
-    <link rel="stylesheet" type="text/css" href="library/js_date/select-free.css">
+    <link rel="stylesheet" href="library/js_date/select-free.css">
     <![endif]-->
     
     <script src="library/javascript/pages_common.js"></script>
@@ -57,6 +58,11 @@
 <?php
     include("menu-mng-users.php");
     
+    // the array $cols has multiple purposes:
+    // - its keys (when non-numerical) can be used
+    //   - for validating user input
+    //   - for table ordering purpose
+    // - its value can be used for table headings presentation
     $cols = array(
                     "id" => t('all','ID'),
                     t('all','Name'),
@@ -182,19 +188,19 @@
     <table border="0" class="table1">
         <thead>
             <tr style="background-color: white">
-                <td style="text-align: left" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-                </td>
-            
 <?php
+    // page numbers are shown only if there is more than one page
     if ($maxPage > 1) {
-        
-        printf('<td style="text-align: right" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+        printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
         setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
         echo '</td>';
     }
 ?>
+                <td style="text-align: right" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+                    <input class="button" type="button" value="CSV Export"
+                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
+                </td>
+
             </tr>
 
             <tr>
@@ -214,23 +220,44 @@
             <tr>
 <?php
 
+        // a standard way of creating table headings
         foreach ($cols as $param => $caption) {
-            echo '<th scope="col">' . $caption;
-
-            if (!is_int($param)) {
-                $href_format = "?orderBy=%s&orderType=%s";
-                $href_asc = sprintf($href_format, $param, "asc");
-                $href_desc = sprintf($href_format, $param, "desc");
-                
+            
+            if (is_int($param)) {
+                $ordering_controls = "";
+            } else {
                 $title_format = "order by %s, sort %s";
                 $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
                 $title_desc = sprintf($title_format, strip_tags($caption), "descending");
-                
-                printf('<a title="%s" class="novisit" href="%s"><img src="images/icons/arrow_up.png" alt="^"></a>', $title_asc, $href_asc);
-                printf('<a title="%s" class="novisit" href="%s"><img src="images/icons/arrow_down.png" alt="v"></a>', $title_desc, $href_desc);
-            }
-            echo "</th>";
 
+                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
+                $href_asc = sprintf($href_format, $param, "asc");
+                $href_desc = sprintf($href_format, $param, "desc");
+
+                $img_format = '<img src="%s" alt="%s">';
+                $img_asc = sprintf($img_format, 'images/icons/arrow_up.png', '^');
+                $img_desc = sprintf($img_format, 'images/icons/arrow_down.png', 'v');
+
+                $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
+                $disabled_a_format = '<a title="%s" role="link" aria-disabled="true">%s</a>';
+
+                if ($orderBy == $param) {
+                    if ($orderType == "asc") {
+                        $link_asc = sprintf($disabled_a_format, $title_asc, $img_asc);
+                        $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
+                    } else {
+                        $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
+                        $link_desc = sprintf($disabled_a_format, $title_desc, $img_desc);
+                    }
+                } else {
+                    $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
+                    $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
+                }
+                
+                $ordering_controls = $link_asc . $link_desc;
+            }
+            
+            echo "<th>" . $caption . $ordering_controls . "</th>";
         }
 ?>
             </tr>
@@ -253,21 +280,23 @@
             $grouplist = implode("<br>", $data['groups']);
             $id = $data['id'];
             
-            $js = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
-                        . "'divContainerUserInfo','username=%s');", $username);
+            // tooltip and ajax stuff
+            $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
+                             . "'divContainerUserInfo','username=%s');", urlencode($username));
             $content = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>',
                                urlencode($username), t('Tooltip','UserEdit'));
-            $str = addToolTipBalloon(array(
-                                            'content' => $content,
-                                            'onClick' => $js,
-                                            'value' => $username,
-                                            'divId' => 'divContainerUserInfo'
-                                          ));
+            $arr = array(
+                            'content' => $content,
+                            'onClick' => $onclick,
+                            'value' => urlencode($username),
+                            'divId' => 'divContainerUserInfo'
+                        );
+            $tooltip = addToolTipBalloon($arr);
 ?>
             <tr>
                 <td><input type="checkbox" name="username[]" value="<?= $username ?>"><?= $id ?></td>
                 <td><?= "$fullname" ?></td>
-                <td><?= "$img $str" ?></td>
+                <td><?= "$img $tooltip" ?></td>
                 <td><?= $auth ?></td>
                 <td><?= $grouplist ?></td>
             </tr>
@@ -289,6 +318,7 @@
             </tr>
 
 <?php
+        // page navigation controls are shown only if there is more than one page
         if ($maxPage > 1) {
 ?>
             <tr>
@@ -313,7 +343,7 @@
     include('library/closedb.php');
 ?>
 				
-		</div>
+		</div><!-- #contentnorightbar -->
 		
 		<div id="footer">
 <?php
@@ -323,7 +353,7 @@
     include('include/config/logging.php');
     include('page-footer.php');
 ?>
-		</div>
+		</div><!-- #footer -->
     </div>
 </div>
 
