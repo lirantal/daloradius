@@ -219,10 +219,10 @@ function toggleShowDiv(idName) {
 	for(i=0;i<divs.length;i++) {
 		if (divs[i].id.match(idName)) {
 			if (document.getElementById) {							// compatible with IE5 and NS6
-				if (divs[i].style.display=="inline")
+				if (divs[i].style.display=="block")
 					divs[i].style.display="none";
 				else
-	 				divs[i].style.display="inline";
+	 				divs[i].style.display="block";
 			} else if (document.layers) {							// compatible with Netscape 4
 				if (document.layers[divs[i]].display=='visible')
 					document.layers[divs[i]].display = 'hidden';

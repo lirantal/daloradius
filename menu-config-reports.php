@@ -27,20 +27,9 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-config-reports.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
-
 $m_active = "Config";
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-<head>
-    <title>daloRADIUS :: <?= $m_active ?></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-    <link rel="stylesheet" href="css/1.css" media="screen">
-    <script src="library/javascript/pages_common.js"></script>
-</head>
 
 <body>
     <div id="wrapper">

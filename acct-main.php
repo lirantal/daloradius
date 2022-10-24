@@ -14,57 +14,45 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
+
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	
-	include_once('library/config_read.php');
+    
+    include_once('library/config_read.php');
     $log = "visited page: ";
+    
+    include("menu-accounting.php");
 
 ?>
+        <div id="contentnorightbar">
+        
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro','acctmain.php') ?><h144>&#x2754;</h144>
+                </a>
+            </h2>
+                
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','acctmain') ?><br></div>
+            <br>
 
+        </div>
+        
+        <div id="footer">
+    
 <?php
-	
-	include("menu-accounting.php");
-	
-?>
-		
-		
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctmain.php');?>
-		<h144>&#x2754;</h144></a></h2>
-				
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','acctmain') ?>
-			<br/>
-		</div>
-		<br/>
-
-<?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
 
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
+        </div>
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

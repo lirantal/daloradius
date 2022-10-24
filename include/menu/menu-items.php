@@ -37,14 +37,14 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/menu-items.php') !== false) {
                     Location: <strong><?= htmlspecialchars($_SESSION['location_name'], ENT_QUOTES, 'UTF-8') ?></strong>.
                 </span>
                 
-                <span id="sep">&nbsp;</span>
+                <span class="sep">&nbsp;</span>
                 
                 <form action="mng-search.php" method="GET">
                     <input name="username" value="" placeholder="<?= t('button','SearchUsers') ?>"
                         title="<?= strip_tags(t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard')) ?>">
                 </form>
 
-                <span id="sep">&nbsp;</span>
+                <span class="sep">&nbsp;</span>
                 
                 <h1>
                     <a title="<?= strip_tags(t('menu','Home')) ?>" href="index.php">

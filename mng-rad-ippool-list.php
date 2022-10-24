@@ -15,230 +15,207 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	
-	include('library/check_operator_perm.php');
+
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','mngradippoollist.php');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-mng-rad-ippool.php");
+    
+    $cols = array(
+                    "id" => t('all','ID'),
+                    "pool_name" => t('all','PoolName'),
+                    "framedipaddress" => t('all','IPAddress'),
+                    "nasipaddress" => t('all','NASIPAddress'),
+                    "CalledStationId" => t('all','CalledStationId'),
+                    "CallingStationID" => t('all','CallingStationID'),
+                    "expiry_time" => t('all','ExpiryTime'),
+                    "username" => t('all','Username'),
+                    "pool_key" => t('all','PoolKey')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "desc";
+?>
+
+        <div id="contentnorightbar">
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro','mngradippoollist.php') ?><h144>&#x2754;</h144>
+                </a>
+            </h2>
+        
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mngradippoollist') ?><br></div>
+            <br>
 
 
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+<?php
 
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
 
+    // we use this simplified query just to initialize $numrows
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+    $res = $dbSocket->query($sql);
+    $numrows = $res->fetchrow()[0];
 
-	include_once('library/config_read.php');
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
+        $sql = sprintf("SELECT id, pool_name, framedipaddress, nasipaddress, calledstationid,
+                               callingstationid, expiry_time, username, pool_key
+                          FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL = "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+?>
+<form name="listall" method="GET" action="mng-rad-ippool-del.php">
+
+    <table border="0" class="table1">
+        <thead>
+
+<?php
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>' . '</tr>';
+        }
+?>
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('poolname[]', 'mng-rad-ippool-del.php')
+?>
+                </th>
+            </tr>
+
+            <tr>
+<?php
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
+?>
+            </tr>
+            
+        </thead>
+        
+        <tbody>
+<?php
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($id, $pool_name, $framedipaddress, $nasipaddress, $calledstationid,
+                 $callingstationid, $expiry_time, $username, $pool_key) = $row;
+            
+            // tooltip stuff
+            $li_style = 'margin: 7px auto';
+            $tooltipText = '<ul style="list-style-type: none">'
+                     . sprintf('<li style="%s">', $li_style)
+                     . sprintf('<a class="toolTip" href="mng-rad-ippool-edit.php?poolname=%s&ipaddressold=%s">%s</a></li>',
+                               urlencode($poolname), urlencode($framedipaddress), t('Tooltip','EditIPAddress'))
+                     . sprintf('<li style="%s">', $li_style)
+                     . sprintf('<a class="toolTip" href="mng-rad-ippool-del.php?poolname=%s&ipaddress=%s">%s</a></li>',
+                               urlencode($poolname), urlencode($framedipaddress), t('Tooltip','RemoveIPAddress'))
+                     . '</ul>';
+                     
+            $onclick = 'javascript:return false;';
+            
+            echo "<tr>";
+            printf('<td><input type="checkbox" name="poolname[]" value="%s||%s">%s</td>',
+                   urlencode($poolname), urlencode($framedipaddress), $id);
+            printf("<td>%s</td>", $pool_name);
+            printf('<td><a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a></td>", $onclick, $tooltipText, $framedipaddress);
+            
+            // simply print remaining row elements
+            for ($i = 3; $i < $rowlen; $i++) {
+                printf("<td>%s</td>", $row[$i]);
+            }
+            
+            echo "</tr>";
+        }
+?>        
+        </tbody>
+        
+<?php
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+?>
+        
+    </table>
+
+<?php
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
+?>
+
+</div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
 
-
-
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
-<?php
-	include ("menu-mng-rad-ippool.php");
-?>
-
-	<div id="contentnorightbar">
-	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradippoollist.php') ?>
-		<h144>&#x2754;</h144></a></h2>
-		
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngradippoollist') ?>
-			<br/>
-		</div>
-		<br/>
-
-
-<?php
-
-	include 'library/opendb.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-	//orig: used as method to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL'];
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-
-	$numrows = $res->numRows();
-
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL'].
-			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-
-	echo "<form name='listallippool' method='post' action='mng-rad-ippool-del.php'>";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-			<th colspan='10' align='left'>
-
-			Select:
-			<a class=\"table\" href=\"javascript:SetChecked(1,'poolname[]','listallippool')\">All</a>
-			<a class=\"table\" href=\"javascript:SetChecked(0,'poolname[]','listallippool')\">None</a>
-			<br/>
-			<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallippool\",\"mng-rad-ippool-del.php\")' />
-			<br/><br/>
-	";
-
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-	echo "	</th></tr>
-			</thead>
-	";
-
-	if ($orderType == "asc") {
-		$orderType = "desc";
-	} else  if ($orderType == "desc") {
-		$orderType = "asc";
-	}
-
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".t('all','ID')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pool_name&orderType=$orderType\">
-		".t('all','PoolName')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=$orderType\">
-		".t('all','IPAddress')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderType\">
-		".t('all','NASIPAddress')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=CalledStationId&orderType=$orderType\">
-		".t('all','CalledStationId')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=CallingStationID&orderType=$orderType\">
-		".t('all','CallingStationID')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=expiry_time&orderType=$orderType\">
-		".t('all','ExpiryTime')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderType\">
-		".t('all','Username')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=pool_key&orderType=$orderType\">
-		".t('all','PoolKey')."</a>
-		<br/>
-		</th>
-	</tr> </thread>";
-	while($row = $res->fetchRow()) {
-		echo "<tr>
-                                <td> <input type='checkbox' name='poolname[]' value='$row[1]||$row[2]'> $row[0] </td>
-				<td> $row[1] </td>
-                                <td> <a class='tablenovisit' href='#'
-								onclick='javascript:return false;'
-                                tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-ippool-edit.php?poolname=$row[1]&ipaddressold=$row[2]'>".t('Tooltip','EditIPAddress')."</a>
-					<br/>
-                                        <a class='toolTip' href='mng-rad-ippool-del.php?poolname=$row[1]&ipaddress=$row[2]'>".t('Tooltip','RemoveIPAddress')."</a>
-                                        <br/>\"
-                                        >$row[2]</a></td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
-				<td> $row[5] </td>
-				<td> $row[6] </td>
-				<td> $row[7] </td>
-				<td> $row[8] </td>
-		</tr>";
-	}
-
-	echo "
-		<tfoot>
-				<tr>
-				<th colspan='10' align='left'>
-	";
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-	echo "
-			</th>
-			</tr>
-		</tfoot>
-	";
-
-
-	echo "</table></form>";
-
-	include 'library/closedb.php';
-?>
-
-
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-	</div>
-	
-	<div id="footer">
-	
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
+        </div><!-- #footer -->
+    </div>
 </div>
 
-<script type="text/javascript">
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
 
 </body>

@@ -15,52 +15,50 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
-
-    include ("library/checklogin.php");
+ 
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-        
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-	
-?>
-		
-<?php
+    include_once('library/config_read.php');
+    
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-    include ("menu-config-reports.php");
+    // print HTML prologue
+    $title = t('Intro','configmain.php');
+    $help = t('helpPage','configmain');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-config-reports.php");
 
 ?>
-		
-		
-		<div id="contentnorightbar">
-		
-			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configmain.php') ?>
-			<h144>&#x2754;</h144></a></h2>
                 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','configmain') ?>
-					<br/>
-				</div>
-				<br/>
-
-		</div>
-
-		<div id="footer">
+        <div id="contentnorightbar">
 
 <?php
-        include 'page-footer.php';
+    print_title_and_help($title, $help);
 ?>
 
-		</div>
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    $log = "visited page: ";
 
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

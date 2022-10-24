@@ -27,6 +27,16 @@
     include('library/check_operator_perm.php');
 
     include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','replastconnect.php');
+    $help = t('helpPage','replastconnect');
+    
+    print_html_prologue($title, $langCode);
 
     // setting table-related parameters first
     switch($configValues['FREERADIUS_VERSION']) {
@@ -95,22 +105,12 @@
 
 ?>        
     <div id="contentnorightbar">
-        
-        <h2 id="Intro">
-            <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                <?= t('Intro','replastconnect.php') ?>
-                <h144>&#x2754;</h144>
-            </a>
-        </h2>
-
-        <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','replastconnect') ?><br></div>
-        <br>
 
 <?php
+    print_title_and_help($title, $help);
 
+    include('include/management/pages_common.php');
     include('library/opendb.php');
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
     // pa is a placeholder in the SQL statements below
     // except for $usernameLastConnect, which has been only partially escaped,
@@ -144,16 +144,23 @@
     $numrows = $res->numRows();
     
     if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+        
         $sql .= sprintf(" ORDER BY pa.%s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
 
-        /* START - Related to pages_numbering.php */
-        $maxPage = ceil($numrows/$rowsPerPage);
-        /* END */
-    
         $per_page_numrows = $res->numRows();
-        
+
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_params = array();
@@ -178,7 +185,7 @@
             <tr style="background-color: white">
 <?php
         // page numbers are shown only if there is more than one page
-        if ($maxPage > 1) {
+        if ($drawNumberLinks) {
             printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
             setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
             echo '</td>';
@@ -188,46 +195,7 @@
             
             <tr>
 <?php
-
-        // a standard way of creating table headings
-        foreach ($cols as $param => $caption) {
-            
-            if (is_int($param)) {
-                $ordering_controls = "";
-            } else {
-                $title_format = "order by %s, sort %s";
-                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
-                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
-
-                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
-                $href_asc = sprintf($href_format, $param, "asc");
-                $href_desc = sprintf($href_format, $param, "desc");
-
-                $img_format = '<img src="%s" alt="%s">';
-                $img_asc = sprintf($img_format, 'images/icons/arrow_up.png', '^');
-                $img_desc = sprintf($img_format, 'images/icons/arrow_down.png', 'v');
-
-                $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
-                $disabled_a_format = '<a title="%s" role="link" aria-disabled="true">%s</a>';
-
-                if ($orderBy == $param) {
-                    if ($orderType == "asc") {
-                        $link_asc = sprintf($disabled_a_format, $title_asc, $img_asc);
-                        $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                    } else {
-                        $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                        $link_desc = sprintf($disabled_a_format, $title_desc, $img_desc);
-                    }
-                } else {
-                    $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                    $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                }
-                
-                $ordering_controls = $link_asc . $link_desc;
-            }
-            
-            echo "<th>" . $caption . $ordering_controls . "</th>";
-        }
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
 ?>
             </tr>
         </thead>
@@ -257,31 +225,10 @@
 ?>
         </tbody>
 
-        <tfoot>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>">
 <?php
-                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
-                    if ($maxPage > 1) {
-                        echo " out of <strong>$numrows</strong>";
-                    }
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
-                </th>
-            </tr>
-
-<?php
-        // page navigation controls are shown only if there is more than one page
-        if ($maxPage > 1) {
-?>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
-                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) ?>
-                </th>
-            </tr>
-<?php
-        }
-?>
-        </tfoot>
 
     </table>
 <?php

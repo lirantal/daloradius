@@ -14,188 +14,157 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    //~ include('library/check_operator_perm.php');
 
-
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
-	
-	if (isset($_REQUEST['username']))
-		$username = $_REQUEST['username'];
-
-	include_once('library/config_read.php');
+    // validate this parameter before including menu
+    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+                    ? str_replace("%", "", $_GET['username']) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    
+    include_once('library/config_read.php');
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] on page: ";
+    $logDebugSQL = "";
 
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','repusername.php');
+    $help = t('helpPage','repusername') . " " . $username_enc;
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-reports.php");
+    
+    $cols = array(
+                    'id' => t('all','ID'),
+                    'username' => t('all','Username'),
+                    'attribute' => t('all','Attribute'),
+                    'op',
+                    'value' => t('all','Value'),
+                    t('all','Action')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+
+    // validating user passed parameters
+
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($cols)))
+             ? $_GET['orderBy'] : array_keys($cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
 
 ?>
 
-<?php
-
-    include ("menu-reports.php");
-
-?>
-
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','repusername.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-				
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','repusername')." ".$username ?>
-			<br/>
-		</div>
-		<br/>
-
-
+        <div id="contentnorightbar">
 
 <?php
+    print_title_and_help($title, $help);
 
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+    
+    $arr = array();
+
+    $sql = sprintf("SELECT id, username, attribute, op, value FROM %s WHERE username='%s' ORDER BY %s %s", 
+                   $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username), $orderBy, $orderType);
+    $arr[] = array( 
+                    'sql' => $sql,
+                    'caption' => t('captions','radcheckrecords')
+                  );
+    
+    $sql = sprintf("SELECT id, username, attribute, op, value FROM %s WHERE username='%s' ORDER BY %s %s", 
+                   $configValues['CONFIG_DB_TBL_RADREPLY'], $dbSocket->escapeSimple($username), $orderBy, $orderType);
+    $arr[] = array( 
+                    'sql' => $sql,
+                    'caption' => t('captions','radreplyrecords')
+                  );
+    
+    $total_numrows = 0;
+    foreach ($arr as $item) {
+        $res = $dbSocket->query($item['sql']);
+        $logDebugSQL .= $item['sql'] . ";\n";
         
-        include 'library/opendb.php';
-
-	// table to display the radcheck information per the $username
-
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".$dbSocket->escapeSimple($username)."'  ORDER BY $orderBy $orderType;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= "";
-	$logDebugSQL .= $sql . "\n";
-
-        echo "<table border='0' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".t('captions','radcheckrecords')."</th>
-                                </tr>
-                        </thead>
-                ";
-
-        echo "<thread> <tr>
-                        <th scope='col'> ".t('all','ID')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Username')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Attribute')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Value')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Action')." </th>
-                </tr> </thread>";
-	while($row = $res->fetchRow()) {
-                echo "<tr>
-                        <td> $row[0] </td>
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".t('all','edit')." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".t('all','del')." </a>
-			     </td>
-                </tr>";
-        }
-        echo "</table>";
-	echo "<br/><br/>";
-
-
-	
-	
-	// table to display the radreply information per the $username
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE UserName='".$dbSocket->escapeSimple($username)."'  ORDER BY $orderBy $orderType;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-        echo "<table border='0' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".t('captions','radreplyrecords')."</th>
-                                </tr>
-                        </thead>
-                ";
-
-        echo "<thread> <tr>                        
-                        <th scope='col'> ".t('all','ID')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=id&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Username')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=username&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Attribute')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=attribute&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Value')."
-						<br/>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=asc\"> > </a>
-						<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&orderBy=value&orderType=desc\"> < </a>
-						</th>
-                        <th scope='col'> ".t('all','Action')." </th>                </tr> </thread>";
-	while($row = $res->fetchRow()) {
-                echo "<tr>
-                        <td> $row[0] </td>
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td> $row[4] </td>
-                        <td> <a href='mng-edit.php?username=$row[1]'> ".t('all','edit')." </a> 
-	                     <a href='mng-del.php?username=$row[1]'> ".t('all','del')." </a>
-			     </td>
-                </tr>";
-        }
-        echo "</table>";
-
-
-        include 'library/closedb.php';
+        $numrows = $res->numRows();
+        
+        if ($numrows > 0) {
 ?>
-
-
-
+<h3 style="margin-top: 10px"><?= $item['caption'] ?></h3>
+<table border="0" class="table1">
+    <thead>
+        <tr>
 <?php
-	include('include/config/logging.php');
+            printTableHead($cols, $orderBy, $orderType);
 ?>
-				
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+        </tr>
+    </thead>
+
+    <tbody>
+<?php
+            while ($row = $res->fetchRow()) {
+                $rowlen = count($row);
+                
+                echo "<tr>";
+                for ($i = 0; $i < $rowlen; $i++) {
+                    printf("<td>%s</td>", htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8'));
+                }
+                
+                $this_username = htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8');
+                printf('<td><a href="mng-edit.php?username=%s">%s</a>&nbsp;<a href="mng-del.php?username=%s">%s</a></td>',
+                       urlencode($this_username), t('all','edit'), urlencode($this_username), t('all','del'));
+                echo "</tr>";
+            }
 ?>
+    </tbody>
+</table>
+<?php
 
-		
-		</div>
-		
-</div>
-</div>
+        }
+        
+        $total_numrows += $numrows;
+    }
+    
+    include('library/closedb.php');
 
+    if ($total_numrows == 0) {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+?>
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    $log = "visited page: ";
+    $logQuery = "performed query for [$orderBy";
+    if (!empty($limit)) {
+        $logQuery .= " : $limit";
+    }
+    $logQuery .= "] on page: ";
+
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+        
+    </div>
+</div>
 
 </body>
 </html>
