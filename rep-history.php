@@ -21,12 +21,22 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
     
     include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','rephistory.php');
+    $help = t('helpPage','rephistory');
+    
+    print_html_prologue($title, $langCode);
     
     include ("menu-reports.php");
 
@@ -54,22 +64,13 @@
                ? strtolower($_GET['orderType']) : "asc";
 ?>
         <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','rephistory.php'); ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
-            
-            <div id="helpPage" style="display:none;visibility:visible" ><?= t('helpPage','rephistory') ?><br></div>
-            <br>
 
 <?php
 
+    print_title_and_help($title, $help);
+
     include('include/management/pages_common.php');
     include('library/opendb.php');
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
     // we use this convenient way to build our SQL query
     $sql_piece_format = "SELECT '%s' AS section, %s AS item, creationdate, creationby, updatedate, updateby FROM %s";
@@ -90,23 +91,31 @@
     $numrows = $res->numRows();
 
     if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+
+        // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-
-        /* START - Related to pages_numbering.php */
-        $maxPage = ceil($numrows/$rowsPerPage);
-        /* END */
         
         $per_page_numrows = $res->numRows();
 ?>
-  
+
           <table border="0" class="table1">
             <thead>
                 <tr style="background-color: white">
 <?php
         // page numbers are shown only if there is more than one page
-        if ($maxPage > 1) {
+        if ($drawNumberLinks) {
             printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
             setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
             echo '</td>';
@@ -115,59 +124,20 @@
                 </tr>
                 <tr>
 <?php
-
-        // a standard way of creating table headings
-        foreach ($cols as $param => $caption) {
-            
-            if (is_int($param)) {
-                $ordering_controls = "";
-            } else {
-                $title_format = "order by %s, sort %s";
-                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
-                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
-
-                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
-                $href_asc = sprintf($href_format, $param, "asc");
-                $href_desc = sprintf($href_format, $param, "desc");
-
-                $img_format = '<img src="%s" alt="%s">';
-                $img_asc = sprintf($img_format, 'images/icons/arrow_up.png', '^');
-                $img_desc = sprintf($img_format, 'images/icons/arrow_down.png', 'v');
-
-                $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
-                $disabled_a_format = '<a title="%s" role="link" aria-disabled="true">%s</a>';
-
-                if ($orderBy == $param) {
-                    if ($orderType == "asc") {
-                        $link_asc = sprintf($disabled_a_format, $title_asc, $img_asc);
-                        $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                    } else {
-                        $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                        $link_desc = sprintf($disabled_a_format, $title_desc, $img_desc);
-                    }
-                } else {
-                    $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                    $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                }
-                
-                $ordering_controls = $link_asc . $link_desc;
-            }
-            
-            echo "<th>" . $caption . $ordering_controls . "</th>";
-        }
+        printTableHead($cols, $orderBy, $orderType);
 ?>
                 </tr>
             </thead>
             
             <tbody>
 <?php
-            while ($row = $res->fetchRow()) {
-                $section = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-                $item = htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8');
-                $creationdate = htmlspecialchars($row[2], ENT_QUOTES, 'UTF-8');
-                $creationby = htmlspecialchars($row[3], ENT_QUOTES, 'UTF-8');
-                $updatedate = htmlspecialchars($row[4], ENT_QUOTES, 'UTF-8');
-                $updateby = htmlspecialchars($row[5], ENT_QUOTES, 'UTF-8');
+        while ($row = $res->fetchRow()) {
+            $section = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+            $item = htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8');
+            $creationdate = htmlspecialchars($row[2], ENT_QUOTES, 'UTF-8');
+            $creationby = htmlspecialchars($row[3], ENT_QUOTES, 'UTF-8');
+            $updatedate = htmlspecialchars($row[4], ENT_QUOTES, 'UTF-8');
+            $updateby = htmlspecialchars($row[5], ENT_QUOTES, 'UTF-8');
 ?>
                 <tr>
                     <td><?= $section ?></td>
@@ -178,35 +148,14 @@
                     <td><?= $updateby ?></td>
                 </tr>
 <?php
-            }
+        }
 ?>
             </tbody>
             
-            <tfoot>
-                <tr>
-                    <th scope="col" colspan="<?= $colspan ?>">
 <?php
-                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
-                    if ($maxPage > 1) {
-                        echo " out of <strong>$numrows</strong>";
-                    }
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
-                    </th>
-                </tr>
-
-<?php
-        // page navigation controls are shown only if there is more than one page
-        if ($maxPage > 1) {
-?>
-                <tr>
-                    <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
-                        <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType) ?>
-                    </th>
-                </tr>
-<?php
-        }
-?>
-            </tfoot>
             
         </table>
 <?php

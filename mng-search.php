@@ -24,27 +24,22 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-	include_once('library/config_read.php');
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
     include_once("lang/main.php");
-	
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-<head>
-    <title>daloRADIUS :: Management</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     
-    <link rel="stylesheet" href="css/1.css" media="screen">
-    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
     
-    <script src="library/javascript/pages_common.js"></script>
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
-    <script src="library/javascript/ajax.js"></script>
-    <script src="library/javascript/ajaxGeneric.js"></script>
-</head>
-<?php
+    $title = t('Intro','mngsearch.php');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
 
     // we partially strip some character and
     // leave validation/escaping to other functions used later in the script
@@ -58,8 +53,8 @@
     //feed the sidebar variables
     $search_username = $username_enc;
 
-	include ("menu-mng-users.php");
-	
+    include ("menu-mng-users.php");
+    
     // these three variable can be used for validation an presentation purpose
     $cols = array(
                    'id' => t('all','ID'),
@@ -82,9 +77,9 @@
                ? strtolower($_GET['orderType']) : "desc";
 ?>
 
-	<div id="contentnorightbar">
-		
-		<h2 id="Intro">
+    <div id="contentnorightbar">
+        
+        <h2 id="Intro">
             <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
 <?php 
     echo t('Intro','mngsearch.php');
@@ -95,8 +90,8 @@
                 <h144>&#x2754;</h144>
             </a>
         </h2>
-		
-		<div id="helpPage" style="display:none;visibility:visible">
+        
+        <div id="helpPage" style="display:none;visibility:visible">
 <?php
             if (!empty($username_enc)) {
                 echo "looked for user $username_enc";
@@ -112,8 +107,6 @@
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
     $sql_WHERE = array();
     if (!empty($username)) {
@@ -127,10 +120,10 @@
                    sprintf("ui.mobilephone LIKE '%s%%'", $dbSocket->escapeSimple($username)));
     }
 
-	// setup php session variables for exporting
-	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
-	$_SESSION['reportQuery'] = sprintf(" WHERE username LIKE '%s%%'", $dbSocket->escapeSimple($username));
-	$_SESSION['reportType'] = "usernameListGeneric";
+    // setup php session variables for exporting
+    $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
+    $_SESSION['reportQuery'] = sprintf(" WHERE username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+    $_SESSION['reportType'] = "usernameListGeneric";
 
     $sql_format = "SELECT DISTINCT(ui.username) AS username,
                           CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
@@ -143,19 +136,29 @@
     $sql .= " GROUP BY username";
     
     $res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
+    $numrows = $res->numRows();
     
     if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
         $sql .= " ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
         $res = $dbSocket->query($sql);
-        $logDebugSQL = $sql . "\n";
-        
-        /* START - Related to pages_numbering.php */
-        $maxPage = ceil($numrows/$rowsPerPage);
-        /* END */
+        $logDebugSQL = "$sql;\n";
         
         $per_page_numrows = $res->numRows();
         
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = (!empty($username_enc) ? "&usernameOnline=" . urlencode($username_enc) : "");
 ?>
         
@@ -164,13 +167,13 @@
         <thead>
             <tr style="background-color: white">
 <?php
-    if ($maxPage > 1) {
-        printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-        setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-        echo '</td>';
-    }
+        if ($drawNumberLinks) {
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo '</td>';
+        }
 ?>
-                <td style="text-align: right" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
                     <input class="button" type="button" value="CSV Export"
                         onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
                 </td>
@@ -178,39 +181,16 @@
             
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
-                    Select:
-                    <a title="Select All" class="table" href="javascript:SetChecked(1,'username[]','searchusers')">All</a>
-                    <a title="Select None" class="table" href="javascript:SetChecked(0,'username[]','searchusers')">None</a>
-                    <br>
-                    <input class="button" type="button" value="Delete"
-                        onclick="javascript:removeCheckbox('searchusers','mng-del.php')">
+<?php
+        printTableFormControls('username[]', 'mng-del.php', 'searchusers');
+?>
                 </th>
             </tr>
             
             <tr>
 <?php
-
-    foreach ($cols as $param => $caption) {
-        
-        if (is_int($param)) {
-            $ordering_controls = "";
-        } else {
-            $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
-            $href_asc = sprintf($href_format, $param, "asc");
-            $href_desc = sprintf($href_format, $param, "desc");
-            
-            $title_format = "order by %s, sort %s";
-            $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
-            $title_desc = sprintf($title_format, strip_tags($caption), "descending");
-            
-            $a_format = '<a title="%s" class="novisit" href="%s"><img src="%s" alt="%s"></a>';
-            
-            $ordering_controls = sprintf($a_format, $title_asc, $href_asc, 'images/icons/arrow_up.png', '^')
-                               . sprintf($a_format, $title_desc, $href_desc, 'images/icons/arrow_down.png', 'v');
-        }
-        
-        echo "<th>" . $caption . $ordering_controls . "</th>";
-    }
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
 ?>
             </tr>
         </thead>
@@ -266,30 +246,11 @@
 ?>
         </tbody>
 
-        <tfoot>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>">
 <?php
-                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
-                    if ($maxPage > 1) {
-                        echo " out of <strong>$numrows</strong>";
-                    }
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
-                </th>
-            </tr>
-
-<?php
-        if ($maxPage > 1) {
-?>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
-                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) ?>
-                </th>
-            </tr>
-<?php
-        }
-?>
-        </tfoot>
 
     </table>
 </form>
@@ -303,9 +264,9 @@
     include('library/closedb.php');
 ?>
 
-		</div>
+        </div><!-- #contentnorightbar -->
 
-		<div id="footer">
+        <div id="footer">
 
 <?php
     $log = "visited page: ";
@@ -318,20 +279,20 @@
     $logQuery .= "on page: ";
 
     include('include/config/logging.php');
-	include('page-footer.php');
+    include('page-footer.php');
 ?>
 
 
-		</div>
+        </div><!-- #footer -->
     </div>
 </div>
 
 <script>
-	var tooltipObj = new DHTMLgoodies_formTooltip();
-	tooltipObj.setTooltipPosition('right');
-	tooltipObj.setPageBgColor('#EEEEEE');
-	tooltipObj.setTooltipCornerSize(15);
-	tooltipObj.initFormFieldTooltip();
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
 
 </body>

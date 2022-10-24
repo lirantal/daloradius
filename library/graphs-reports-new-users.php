@@ -44,15 +44,23 @@
     header("Content-type: image/png");
 
     $chart = new VerticalChart(800, 600);
+    $limit = 24;
+
+    $sql_WHERE_pieces = array();
+    if (!empty($enddate)) {
+        $sql_WHERE_pieces[] = sprintf("CreationDate <= '%s'", $dbSocket->escapeSimple($enddate));
+    }
+    
+    if (!empty($startdate)) {
+        $sql_WHERE_pieces[] = sprintf("CreationDate >= '%s'", $dbSocket->escapeSimple($startdate));
+    }
+
+    $sql_WHERE = (count($sql_WHERE_pieces) > 0) ? " WHERE " . implode(" AND ", $sql_WHERE_pieces) : "";
 
     $sql = sprintf("SELECT COUNT(*), CONCAT(YEAR(CreationDate), ' ', LEFT(MONTHNAME(CreationDate), 3)) AS period,
                            CAST(CONCAT(YEAR(CreationDate), '-', MONTH(CreationDate), '-01') AS DATE) AS month
-                      FROM %s
-                     WHERE CreationDate BETWEEN '%s' AND '%s'
-                     GROUP BY month
-                     ORDER BY month", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                                      $dbSocket->escapeSimple($startdate),
-                                      $dbSocket->escapeSimple($enddate));
+                      FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
+                 . $sql_WHERE . " GROUP BY month ORDER BY month";
     $res = $dbSocket->query($sql);
 
     while ($row = $res->fetchRow()) {

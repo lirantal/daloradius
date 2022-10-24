@@ -33,20 +33,25 @@
                     ? str_replace("%", "", $_GET['usernameOnline']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
+    // feed the sidebar
     $usernameOnline = $username_enc;
     
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','reponline.php');
+    $help = t('helpPage','reponline');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
+    
     include("menu-reports.php");
-
-?>
-
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" href="library/js_date/select-free.css">
-<![endif]-->
-<script src="library/js_date/date-functions.js"></script>
-<script src="library/js_date/datechooser.js"></script>
-<script src="library/javascript/ajax.js"></script>
-<script src="library/javascript/ajaxGeneric.js"></script>
-<?php
 
     include_once("library/tabber/tab-layout.php");
 
@@ -85,16 +90,10 @@
 ?>
 
         <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','reponline.php'); ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
-                
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','reponline'); ?><br></div>
-            <br>
 
+<?php
+    print_title_and_help($title, $help);
+?>
 
             <div class="tabber">
                 <div class="tabbertab" title="Statistics">
@@ -103,11 +102,7 @@
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-    // setup php session variables for exporting
-    
     // ra is a placeholder in the SQL statements below
     // except for $usernameLastConnect, which has been only partially escaped,
     // all other query parameters have been validated earlier.
@@ -116,6 +111,7 @@
         $sql_WHERE .= sprintf(" AND ra.username LIKE '%s%%' ", $dbSocket->escapeSimple($username));
     }
     
+    // setup php session variables for exporting
     $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
     $_SESSION['reportQuery'] = $sql_WHERE;
     $_SESSION['reportType'] = "reportsOnlineUsers";
@@ -147,13 +143,21 @@
     $numrows = $res->numRows();
     
     if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
         $sql .= sprintf(" ORDER BY ra.%s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-        
-        /* START - Related to pages_numbering.php */
-        $maxPage = ceil($numrows/$rowsPerPage);
-        /* END */
         
         $per_page_numrows = $res->numRows();
         
@@ -166,15 +170,15 @@
         <thead>
             <tr style="background-color: white">
 <?php
-    // page numbers are shown only if there is more than one page
-    if ($maxPage > 1) {
-        
-        printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-        setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-        echo '</td>';
-    }
+        // page numbers are shown only if needed
+        if ($drawNumberLinks) {
+            
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo '</td>';
+        }
 ?>
-                <td style="text-align: right" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
                     <input class="button" type="button" value="CSV Export"
                         onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
                 </td>
@@ -193,46 +197,7 @@
 
             <tr>
 <?php
-
-        // a standard way of creating table headings
-        foreach ($cols as $param => $caption) {
-            
-            if (is_int($param)) {
-                $ordering_controls = "";
-            } else {
-                $title_format = "order by %s, sort %s";
-                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
-                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
-
-                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
-                $href_asc = sprintf($href_format, $param, "asc");
-                $href_desc = sprintf($href_format, $param, "desc");
-
-                $img_format = '<img src="%s" alt="%s">';
-                $img_asc = sprintf($img_format, 'images/icons/arrow_up.png', '^');
-                $img_desc = sprintf($img_format, 'images/icons/arrow_down.png', 'v');
-
-                $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
-                $disabled_a_format = '<a title="%s" role="link" aria-disabled="true">%s</a>';
-
-                if ($orderBy == $param) {
-                    if ($orderType == "asc") {
-                        $link_asc = sprintf($disabled_a_format, $title_asc, $img_asc);
-                        $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                    } else {
-                        $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                        $link_desc = sprintf($disabled_a_format, $title_desc, $img_desc);
-                    }
-                } else {
-                    $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                    $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                }
-                
-                $ordering_controls = $link_asc . $link_desc;
-            }
-            
-            echo "<th>" . $caption . $ordering_controls . "</th>";
-        }
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
 ?>
             </tr>
         </thead>
@@ -309,31 +274,10 @@
 ?>
         </tbody>
 
-        <tfoot>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>">
 <?php
-                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
-                    if ($maxPage > 1) {
-                        echo " out of <strong>$numrows</strong>";
-                    }
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
-                </th>
-            </tr>
-
-<?php
-        // page navigation controls are shown only if there is more than one page
-        if ($maxPage > 1) {
-?>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
-                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) ?>
-                </th>
-            </tr>
-<?php
-        }
-?>
-        </tfoot>
 
     </table>
 </form>    

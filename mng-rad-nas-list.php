@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,235 +15,202 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	
-	include('library/check_operator_perm.php');
 
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+    // print HTML prologue
+    $title = t('Intro','mngradnaslist.php');
+    
+    print_html_prologue($title, $langCode);
+    
+    include("menu-mng-rad-nas.php");
+    
+    $cols = array(
+                    'id' => t('all','NasID'),
+                    'nasname' => t('all','NasIPHost'),
+                    'shortname' => t('all','NasShortname'),
+                    'type' => t('all','NasType'),
+                    'ports' => t('all','NasPorts'),
+                    'secret' => t('all','NasSecret'),
+                    'server' => t('all','NasVirtualServer'),
+                    'community' => t('all','NasCommunity'),
+                    'description' => t('all','NasDescription'),
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
+?>
+        
+        <div id="contentnorightbar">
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro','mngradnaslist.php') ?><h144>&#x2754;</h144>
+                </a>
+            </h2>
+                
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mngradnaslist') ?><br></div>
+            <br>
 
+<?php
 
-	include_once('library/config_read.php');
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+
+    // we use this simplified query just to initialize $numrows
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
+    $res = $dbSocket->query($sql);
+    $numrows = $res->fetchrow()[0];
+
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
+        $sql = sprintf("SELECT id, nasname, shortname, type, ports, secret, server, community, description
+                          FROM %s ORDER BY %s %s LIMIT %s, %s", $configValues['CONFIG_DB_TBL_RADNAS'],
+                                                                $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL = "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+?>
+<form name="listall" method="POST" action="mng-rad-nas-del.php">
+    <table border="0" class="table1">
+        <thead>
+<?php
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>' . '</tr>';
+        }
+?>
+
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('nashost[]', 'mng-rad-nas-del.php')
+?>
+                </th>
+            </tr>
+
+<?php
+        // second line of table header
+        echo "<tr>";
+        printTableHead($cols, $orderBy, $orderType);
+        echo "</tr>";
+?>  
+        </thead>
+        
+        <tbody>
+<?php
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($id, $nasname, $shortname, $type, $ports, $secret, $server, $community, $description) = $row;
+            
+            $li_style = 'margin: 7px auto';
+            $tooltipText = '<ul style="list-style-type: none">'
+                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-edit.php?nashost=%s">%s</a></li>',
+                                   $li_style, urlencode($nasname), t('Tooltip','EditNAS'))
+                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-del.php?nashost=%s">%s</a></li>',
+                                   $li_style, urlencode($nasname), t('Tooltip','RemoveNAS'))
+                         . '</ul>';
+            $onclick = sprintf('javascript:return false;');
+?>
+            <tr>
+                <td><input type="checkbox" name="nashost[]" value="<?= $nasname ?>"><?= $id ?></td>
+                <td>
+                    <a class="tablenovisit" href="#" onclick='<?= $onclick ?>' tooltipText='<?= $tooltipText ?>'>
+                        <?= $nasname ?>
+                    </a>
+                </td>
+<?php
+            // simply print remaining row elements
+            for ($i = 2; $i < $rowlen; $i++) {
+                echo "<td>" . $row[$i] . "</td>";
+            }
+?>
+            </tr>
+<?php
+        }
+?>
+        </tbody>
+<?php
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+?>
+    </table>
+</form>
+
+<?php
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
+?>
+                
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
 
-
-
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
-<?php
-	include ("menu-mng-rad-nas.php");
-?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradnaslist.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','mngradnaslist') ?>
-					<br/>
-				</div>
-				<br/>
-
-
-<?php
-
-        
-	include 'library/opendb.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS'];
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-
-	$numrows = $res->numRows();
-
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS']." ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-
-        echo "<form name='listallnas' method='post' action='mng-rad-nas-del.php'>";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-
-                                Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'nashost[]','listallnas')\">All</a>
-
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'nashost[]','listallnas')\">None</a>
-                        <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listallnas\",\"mng-rad-nas-del.php\")' />
-                                <br/><br/>
-
-
-                ";
-
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-        echo " </th></tr>
-                                        </thead>
-
-                        ";
-
-        if ($orderType == "asc") {
-                $orderType = "desc";
-        } else  if ($orderType == "desc") {
-                $orderType = "asc";
-        }
-
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".t('all','NasID')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasname&orderType=$orderType\">
-		".t('all','NasIPHost')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=shortname&orderType=$orderType\">
-		".t('all','NasShortname')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=type&orderType=$orderType\">
-		".t('all','NasType')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=ports&orderType=$orderType\">
-		".t('all','NasPorts')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
-		".t('all','NasSecret')."</a>
-		<br/>
-		</th>
-
-                <th scope='col'>
-                <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=secret&orderType=$orderType\">
-                ".t('all','NasVirtualServer')."</a>
-                <br/>
-                </th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=community&orderType=$orderType\">
-		".t('all','NasCommunity')."</a>
-		<br/>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=description&orderType=$orderType\">
-		".t('all','NasDescription')."</a>
-		<br/>
-		</th>
-	</tr> </thread>";
-	while($row = $res->fetchRow()) {
-		echo "<tr>
-                                <td> <input type='checkbox' name='nashost[]' value='$row[1]'> $row[0] </td>
-                                <td> <a class='tablenovisit' href='#'
-								onclick='javascript:return false;'
-                                tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-nas-edit.php?nashost=$row[1]'>".t('Tooltip','EditNAS')."</a>
-                                        <a class='toolTip' href='mng-rad-nas-del.php?nashost=$row[1]'>".t('Tooltip','RemoveNAS')."</a>
-                                        <br/>\"
-                                        >$row[1]</a></td>
-				<td> $row[2] </td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
-				<td> $row[5] </td>
-				<td> $row[6] </td>
-				<td> $row[7] </td>
-               <td> $row[8] </td>
-
-		</tr>";
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
-
-
-	echo "</table>";
-	echo "</form>";
-
-	include 'library/closedb.php';
-?>
-
-
-
-
-<?php
-	include('include/config/logging.php');
-?>
-			
-	</div>
-	
-	<div id="footer">
-	
-							<?php
-	include 'page-footer.php';
-?>
-
-		
-		</div>
-		
-</div>
+        </div><!-- #footer -->
+    </div>
 </div>
 
-<script type="text/javascript">
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
 
 </body>

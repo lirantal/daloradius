@@ -14,56 +14,55 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue   
+    $title = t('Intro','repbatch.php');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-reports-batch.php");
+    
     $log = "visited page: ";
-
-
 ?>
+        <div id="contentnorightbar">
+            <h2 id="Intro">
+                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
+                    <?= t('Intro','repbatch.php'); ?><h144>&#x2754;</h144>
+                </a>
+            </h2>
 
+            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','repbatch') ?><br></div>
+            <br>
 <?php
-
-    include ("menu-reports-batch.php");
-
+    include('include/config/logging.php');
 ?>
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','repbatch.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','repbatch') ?>
-			<br/>
-		</div>
-		<br/>
-
-
-
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+        
 <?php
-	include('include/config/logging.php');
+    include('page-footer.php');
 ?>
 
-		</div>
-		
-		<div id="footer">
-		
-<?php
-	include('page-footer.php');
-?>
-
-		
-		</div>
-		
-</div>
+        
+        </div><!-- #footer -->
+    </div>
 </div>
 
 

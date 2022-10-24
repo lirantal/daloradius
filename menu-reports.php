@@ -33,31 +33,14 @@ $m_active = "Reports";
 
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-<head>
-    <title>daloRADIUS :: <?= $m_active ?></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-    <link rel="stylesheet" href="css/1.css" media="screen">
-    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
-    <link rel="stylesheet" href="library/js_date/datechooser.css">
-
-    <script src="library/js_date/date-functions.js"></script>
-    <script src="library/js_date/datechooser.js"></script>
-    <script src="library/javascript/pages_common.js"></script>
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
-</head>
-
 <body>
 
     <div id="wrapper">
         <div id="innerwrapper">
 
 <?php
-	include_once("include/menu/menu-items.php");
-	include_once("include/menu/reports-subnav.php");
+    include_once("include/menu/menu-items.php");
+    include_once("include/menu/reports-subnav.php");
     include_once("include/management/autocomplete.php");
     
     $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
@@ -66,34 +49,34 @@ $m_active = "Reports";
 
             <div id="sidebar">
                 <h2>Reports</h2>
-				
-				<h3>Users Reports</h3>
-				<ul class="subnav">
+                
+                <h3>Users Reports</h3>
+                <ul class="subnav">
                     <li>
                         <a title="<?= strip_tags(t('button','OnlineUsers')) ?>" href="javascript:document.reponline.submit();">
                             <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsOnlineUsers.gif">
-							<?= t('button','OnlineUsers') ?>
+                            <?= t('button','OnlineUsers') ?>
                         </a>
-							
+                            
                         <form name="reponline" action="rep-online.php" method="get" class="sidebar">
                             <input name="usernameOnline" type="text" id="usernameOnline"
                                 <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                                 tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
-								value="<?= (isset($usernameOnline)) ? $usernameOnline : "" ?>" tabindex="1">
+                                value="<?= (isset($usernameOnline)) ? $usernameOnline : "" ?>" tabindex="1">
                         </form>
-                    </li>							
+                    </li>                            
 
                     <li>
                         <a title="<?= t('button','LastConnectionAttempts') ?>" href="javascript:document.replastconnect.submit();">
                             <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsLastConnection.png">
-							<?= t('button','LastConnectionAttempts') ?>
+                            <?= t('button','LastConnectionAttempts') ?>
                         </a>
                         
                         <form name="replastconnect" action="rep-lastconnect.php" method="GET" class="sidebar">
                             <input name="usernameLastConnect" type="text" id="usernameLastConnect"
                                 <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                                 tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
-								value="<?= (isset($usernameLastConnect)) ? $usernameLastConnect : "" ?>" tabindex="2">
+                                value="<?= (isset($usernameLastConnect)) ? $usernameLastConnect : "" ?>" tabindex="2">
                             
                             <select class="generic" name="radiusreply" tabindex="3">
                                 <option value="Any">Any</option>
@@ -110,8 +93,8 @@ $m_active = "Reports";
                             </label>
                             <input name="startdate" type="text" id="startdate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="4">
-							<?= $chooserSpan ?>
-							
+                            <?= $chooserSpan ?>
+                            
                             <br>
                             
                             <label style="user-select: none" for="enddate_lastconnect"
@@ -120,7 +103,7 @@ $m_active = "Reports";
                                 End Date
                             </h4>
                             <input name="enddate" type="text" id="enddate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
-								value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="5">
+                                value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="5">
                             <?= $chooserSpan ?>
                         </form>
                     </li>
@@ -131,33 +114,33 @@ $m_active = "Reports";
                             <?= t('button','NewUsers') ?>
                         </a>
 
-						<form name="repnewusers" action="rep-newusers.php" method="GET" class="sidebar">
+                        <form name="repnewusers" action="rep-newusers.php" method="GET" class="sidebar">
                             <label style="user-select: none" for="startdate"
                                 onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
                                 <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
                                 Start Date
                             </label>
-							<input name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
+                            <input name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-01-01") ?>" tabindex="6">
-							<?= $chooserSpan ?>
-							
+                            <?= $chooserSpan ?>
+                            
                             <br>
                             
-							<label style="user-select: none" for="enddate"
+                            <label style="user-select: none" for="enddate"
                                 onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
                                 <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
                                 End Date
                             </label>
-							<input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
-								value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="7">
-							<?= $chooserSpan ?>
- 						</form>
+                            <input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
+                                value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="7">
+                            <?= $chooserSpan ?>
+                         </form>
                     </li>
-					
+                    
                     <li>
                         <a title="<?= strip_tags(t('button','TopUser')) ?>" href="javascript:document.topusers.submit();"><b>&raquo;</b>
-							<img style="border: 0; margin-right: 5px" src="images/icons/reportsTopUsers.png">
-							<?= t('button','TopUser') ?>
+                            <img style="border: 0; margin-right: 5px" src="images/icons/reportsTopUsers.png">
+                            <?= t('button','TopUser') ?>
                         </a>
                         
                         <form name="topusers" action="rep-topusers.php" method="GET" class="sidebar">
@@ -166,7 +149,7 @@ $m_active = "Reports";
                             
                             <h4>Username Filter</h4>
                             <input name="username" type="text" id="username" value="<?= (isset($username)) ? $username : "" ?>" tabindex="9">
-			
+            
                             <label style="user-select: none" for="startdate_topuser"
                                 onclick="<?= sprintf($showChooser_format, "startdate_topuser", date('Y', time())) ?>">
                                 <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
@@ -175,7 +158,7 @@ $m_active = "Reports";
                             <input name="startdate" type="text" id="startdate_topuser" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="10">
                             <?= $chooserSpan ?>
-			
+            
                             <label style="user-select: none" for="enddate_topuser"
                                 onclick="<?= sprintf($showChooser_format, "enddate_topuser", date('Y', time())) ?>">
                                 <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
@@ -187,17 +170,17 @@ $m_active = "Reports";
 
                             <h4>Report By</h4>
                             <select class="generic" name="orderBy" type="text" tabindex="12">
-								<option value="Time">Time</option>
+                                <option value="Time">Time</option>
                                 <option value="Download">Download (bytes)</option>
                                 <option value="Upload">Upload (bytes)</option>
-							</select>
+                            </select>
                         </form>
                     </li>
 
                     <li>
                         <a title="<?= strip_tags(t('button','History')) ?>" href="rep-history.php">
                             <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsHistory.png">
-							<?= t('button','History') ?>
+                            <?= t('button','History') ?>
                         </a>
                     </li>
                 </ul><!-- .subnav -->

@@ -21,41 +21,31 @@
  *********************************************************************************************************
  */
  
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	// set session's page variable
-	$_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     
     include_once("lang/main.php");
-
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-<head>
-    <title>daloRADIUS :: <?= t('Intro','mnglistall.php') ?></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-    <link rel="stylesheet" href="css/1.css" media="screen">
-    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
-    <link rel="stylesheet" href="library/js_date/datechooser.css">
-    <!--[if lte IE 6.5]>
-    <link rel="stylesheet" href="library/js_date/select-free.css">
-    <![endif]-->
     
-    <script src="library/javascript/pages_common.js"></script>
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
+    include("library/layout.php");
 
-    <script src="library/javascript/ajax.js"></script>
-    <script src="library/javascript/ajaxGeneric.js"></script>
-</head>
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','mnglistall.php');
+    $help = t('helpPage','mnglistall');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
 
-<?php
     include("menu-mng-users.php");
     
     // the array $cols has multiple purposes:
@@ -93,29 +83,19 @@
                ? strtolower($_GET['orderType']) : "asc";
 ?>
 
-		<div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','mnglistall.php') ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
-            
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mnglistall') ?><br></div>
-            <div id="returnMessages"></div>
-            <br>
-
+        <div id="contentnorightbar">
 <?php
+
+    print_title_and_help($title, $help);
+    echo '<div id="returnMessages"></div>';
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-	// setup php session variables for exporting
-	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
-	$_SESSION['reportQuery'] = "";
-	$_SESSION['reportType'] = "usernameListGeneric";
+    // setup php session variables for exporting
+    $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
+    $_SESSION['reportQuery'] = "";
+    $_SESSION['reportType'] = "usernameListGeneric";
 
     // we use this simplified query just to initialize $numrows
     $sql0 = sprintf("SELECT COUNT(DISTINCT(username)) AS username
@@ -126,10 +106,18 @@
     
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        $maxPage = ceil($numrows/$rowsPerPage);
-        /* END */
         
-        # sql1 get id, username, password, firstname and lastname
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+
+        // we execute and log the actual query
+        // sql1 get id, username, password, firstname and lastname
         $sql1 = sprintf("SELECT DISTINCT(rc.username) AS username, rc.value AS auth, rc.id AS id, ui.firstname, ui.lastname
                            FROM %s AS rc, %s AS ui
                           WHERE rc.username=ui.username
@@ -183,20 +171,20 @@
         }
 ?>
 
-<form name="listallusers" method="GET" action="mng-del.php">
+<form name="listall" method="GET" action="mng-del.php">
 
     <table border="0" class="table1">
         <thead>
             <tr style="background-color: white">
 <?php
-    // page numbers are shown only if there is more than one page
-    if ($maxPage > 1) {
-        printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-        setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-        echo '</td>';
-    }
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>';
+        }
 ?>
-                <td style="text-align: right" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
                     <input class="button" type="button" value="CSV Export"
                         onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
                 </td>
@@ -205,60 +193,20 @@
 
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
-                    Select:
-                    <a title="Select All" class="table" href="javascript:SetChecked(1,'username[]','listallusers')">All</a> 
-                    <a title="Select None" class="table" href="javascript:SetChecked(0,'username[]','listallusers')">None</a>
-                    <br>
-                    <input class="button" type="button" value="Delete"
-                        onclick="javascript:removeCheckbox('listallusers','mng-del.php')">
+<?php
+        printTableFormControls('username[]', 'mng-del.php')
+?>
                     <input class="button" type="button" value="Disable"
-                        onclick="javascript:disableCheckbox('listallusers','include/management/userOperations.php')">
+                        onclick="javascript:disableCheckbox('listall','include/management/userOperations.php')">
                     <input class="button" type="button" value="Enable"
-                        onclick="javascript:enableCheckbox('listallusers','include/management/userOperations.php')">
+                        onclick="javascript:enableCheckbox('listall','include/management/userOperations.php')">
                 </th>
             </tr>
+
             <tr>
 <?php
-
-        // a standard way of creating table headings
-        foreach ($cols as $param => $caption) {
-            
-            if (is_int($param)) {
-                $ordering_controls = "";
-            } else {
-                $title_format = "order by %s, sort %s";
-                $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
-                $title_desc = sprintf($title_format, strip_tags($caption), "descending");
-
-                $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
-                $href_asc = sprintf($href_format, $param, "asc");
-                $href_desc = sprintf($href_format, $param, "desc");
-
-                $img_format = '<img src="%s" alt="%s">';
-                $img_asc = sprintf($img_format, 'images/icons/arrow_up.png', '^');
-                $img_desc = sprintf($img_format, 'images/icons/arrow_down.png', 'v');
-
-                $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
-                $disabled_a_format = '<a title="%s" role="link" aria-disabled="true">%s</a>';
-
-                if ($orderBy == $param) {
-                    if ($orderType == "asc") {
-                        $link_asc = sprintf($disabled_a_format, $title_asc, $img_asc);
-                        $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                    } else {
-                        $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                        $link_desc = sprintf($disabled_a_format, $title_desc, $img_desc);
-                    }
-                } else {
-                    $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
-                    $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
-                }
-                
-                $ordering_controls = $link_asc . $link_desc;
-            }
-            
-            echo "<th>" . $caption . $ordering_controls . "</th>";
-        }
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
 ?>
             </tr>
             
@@ -305,31 +253,11 @@
 ?>
         </tbody>
 
-        <tfoot>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>">
 <?php
-                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
-                    if ($maxPage > 1) {
-                        echo " out of <strong>$numrows</strong>";
-                    }
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
-                </th>
-            </tr>
-
-<?php
-        // page navigation controls are shown only if there is more than one page
-        if ($maxPage > 1) {
-?>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
-                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType) ?>
-                </th>
-            </tr>
-<?php
-        }
-?>
-        </tfoot>
 
     </table>
 </form>
@@ -342,10 +270,10 @@
     
     include('library/closedb.php');
 ?>
-				
-		</div><!-- #contentnorightbar -->
-		
-		<div id="footer">
+                
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -353,16 +281,16 @@
     include('include/config/logging.php');
     include('page-footer.php');
 ?>
-		</div><!-- #footer -->
+        </div><!-- #footer -->
     </div>
 </div>
 
 <script>
-	var tooltipObj = new DHTMLgoodies_formTooltip();
-	tooltipObj.setTooltipPosition('right');
-	tooltipObj.setPageBgColor('#EEEEEE');
-	tooltipObj.setTooltipCornerSize(15);
-	tooltipObj.initFormFieldTooltip();
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
 
 </body>
