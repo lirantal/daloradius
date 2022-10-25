@@ -83,6 +83,7 @@
 			<option value="es_VE"> Spanish - Venezuelan </option>
 			<option value="pt_br"> Portuguese - Brazilian </option>
 			<option value="ja"> Japanese </option>
+			<option value="tr"> Türkçe </option>
 		</select>
 		</li>
 
