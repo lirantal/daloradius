@@ -37,13 +37,13 @@ $l['all']['PoolKey'] = "Pool Key";
 /* Vendor Attributes related translation                                        */
 /********************************************************************************/
 $l['all']['Dictionary'] = "Dictionary";
-$l['all']['VendorID'] = "Vendor ID";
-$l['all']['VendorName'] = "Vendor Name";
-$l['all']['VendorAttribute'] = "Vendor Attribute";
-$l['all']['RecommendedOP'] = "Recommended OP";
-$l['all']['RecommendedTable'] = "Recommended Table";
-$l['all']['RecommendedTooltip'] = "Recommended Tooltip";
-$l['all']['RecommendedHelper'] = "Recommended Helper";
+$l['all']['VendorID'] = "Satıcı No";
+$l['all']['VendorName'] = "Satıcı Adı";
+$l['all']['VendorAttribute'] = "Satıcı Özellikleri";
+$l['all']['RecommendedOP'] = "Önerilen OP";
+$l['all']['RecommendedTable'] = "Önerilen Tablo";
+$l['all']['RecommendedTooltip'] = "Önerilen İpucu";
+$l['all']['RecommendedHelper'] = "Önerilen Yardımcı";
 /********************************************************************************/
 
 $l['all']['CSVData'] = "CSV-formatted data";
@@ -61,12 +61,12 @@ $l['all']['DashboardDelayHard'] = "Time in minutes to consider a 'hard' delay li
 
 
 
-$l['all']['SendWelcomeNotification'] = "Send Welcome Notification";
-$l['all']['SMTPServerAddress'] = "SMTP Server Address";
-$l['all']['SMTPServerPort'] = "SMTP Server Port";
-$l['all']['SMTPServerFromEmail'] = "From Email Address";
+$l['all']['SendWelcomeNotification'] = "Hoş Geldiniz Bildirimi Gönder";
+$l['all']['SMTPServerAddress'] = "SMTP Sunucu Adresi";
+$l['all']['SMTPServerPort'] = "SMTP Sunucu Bağlantı Noktası";
+$l['all']['SMTPServerFromEmail'] = "E-posta Adresinden";
 
-$l['all']['customAttributes'] = "Custom Attributes";
+$l['all']['customAttributes'] = "Özel Nitelikler";
 
 $l['all']['UserType'] = "Kullanıcı Tipi";
 
@@ -136,8 +136,8 @@ $l['all']['WifiMAC'] = "Wifi MAC";
 $l['all']['WifiIP'] = "Wifi IP";
 
 $l['all']['WifiSSID'] = "Wifi SSID";
-$l['all']['WifiKey'] = "Wifi Key";
-$l['all']['WifiChannel'] = "Wifi Channel";
+$l['all']['WifiKey'] = "Wifi Şifresi";
+$l['all']['WifiChannel'] = "Wifi Kanalı";
 
 $l['all']['CheckinTime'] = "Last Checked-In";
 
@@ -155,7 +155,7 @@ $l['all']['NasShortname'] = "NAS Shortname";
 $l['all']['NasType'] = "NAS Tipi";
 $l['all']['NasPorts'] = "NAS Portları";
 $l['all']['NasSecret'] = "NAS Gizli Anahtarı";
-$l['all']['NasVirtualServer'] = "NAS Virtual Server";
+$l['all']['NasVirtualServer'] = "NAS Sanal Sunucu";
 $l['all']['NasCommunity'] = "NAS Community";
 $l['all']['NasDescription'] = "NAS Açıklama";
 $l['all']['PacketType'] = "Paket Tipi";
@@ -658,39 +658,39 @@ $l['button']['DashboardSettings'] = "Dashboard Settings";
 
 $l['button']['GenerateReport'] = "Generate Report";
 
-$l['button']['ListPayTypes'] = "List Payment Types";
-$l['button']['NewPayType'] = "New Payment Type";
-$l['button']['EditPayType'] = "Edit Payment Type";
-$l['button']['RemovePayType'] = "Remove Payment Type";
-$l['button']['ListPayments'] = "List Payments";
-$l['button']['NewPayment'] = "New Payment";
-$l['button']['EditPayment'] = "Edit Payment";
-$l['button']['RemovePayment'] = "Remove Payment";
+$l['button']['ListPayTypes'] = "Ödeme Türlerini Listele";
+$l['button']['NewPayType'] = "Yeni Ödeme Türü";
+$l['button']['EditPayType'] = "Ödeme Türünü Düzenle";
+$l['button']['RemovePayType'] = "Ödeme Türünü Kaldır";
+$l['button']['ListPayments'] = "Ödemeleri Listele";
+$l['button']['NewPayment'] = "Yeni Ödeme";
+$l['button']['EditPayment'] = "Ödemeyi Düzenle";
+$l['button']['RemovePayment'] = "Ödemeyi Kaldır";
 
 $l['button']['NewUsers'] = "New Users";
 
-$l['button']['ClearSessions'] = "Clear Sessions";
-$l['button']['Dashboard'] = "Dashboard";
-$l['button']['MailSettings'] = "Mail Settings";
+$l['button']['ClearSessions'] = "Oturumları Temizle";
+$l['button']['Dashboard'] = "Kontrol Paneli";
+$l['button']['MailSettings'] = "E-posta Ayarları";
 
 $l['button']['Batch'] = "Batch";
 $l['button']['BatchHistory'] = "Batch History";
 $l['button']['BatchDetails'] = "Batch Details";
 
-$l['button']['ListRates'] = "List Rates";
-$l['button']['NewRate'] = "New Rate";
-$l['button']['EditRate'] = "Edit Rate";
-$l['button']['RemoveRate'] = "Remove Rate";
+$l['button']['ListRates'] = "Ücret Listesi";
+$l['button']['NewRate'] = "Yeni Ücret";
+$l['button']['EditRate'] = "Ücreti Düzenle";
+$l['button']['RemoveRate'] = "Ücreti Temizle";
 
-$l['button']['ListPlans'] = "List Plans";
-$l['button']['NewPlan'] = "New Plan";
-$l['button']['EditPlan'] = "Edit Plan";
-$l['button']['RemovePlan'] = "Remove Plan";
+$l['button']['ListPlans'] = "Liste Planları";
+$l['button']['NewPlan'] = "Yeni Plan";
+$l['button']['EditPlan'] = "Planı Düzenle";
+$l['button']['RemovePlan'] = "Planı Kaldır";
 
-$l['button']['ListInvoices'] = "List Invoices";
-$l['button']['NewInvoice'] = "New Invoice";
-$l['button']['EditInvoice'] = "Edit Invoice";
-$l['button']['RemoveInvoice'] = "Remove Invoice";
+$l['button']['ListInvoices'] = "Faturaları Listele";
+$l['button']['NewInvoice'] = "Yeni Fatura";
+$l['button']['EditInvoice'] = "Faturayı Düzenle";
+$l['button']['RemoveInvoice'] = "Faturayı Kaldır";
 
 $l['button']['ListRealms'] = "List Realms";
 $l['button']['NewRealm'] = "New Realm";
@@ -754,78 +754,78 @@ $l['button']['NewUserGroup'] = "New User-Group Mappings";
 $l['button']['EditUserGroup'] = "Edit User-Group Mappings";
 $l['button']['RemoveUserGroup'] = "Remove User-Group Mappings";
 
-$l['button']['ListProfiles'] = "List Profiles";
-$l['button']['NewProfile'] = "New Profile";
-$l['button']['EditProfile'] = "Edit Profile";
-$l['button']['DuplicateProfile'] = "Duplicate Profile";
-$l['button']['RemoveProfile'] = "Remove Profile";
+$l['button']['ListProfiles'] = "Profilleri Listele";
+$l['button']['NewProfile'] = "Yeni Profil";
+$l['button']['EditProfile'] = "Profili Düzenle";
+$l['button']['DuplicateProfile'] = "Yinelenen Profil";
+$l['button']['RemoveProfile'] = "Profili Kaldır";
 
-$l['button']['ListGroupReply'] = "List Group Reply Mappings";
-$l['button']['SearchGroupReply'] = "Search Group Reply";
-$l['button']['NewGroupReply'] = "New Group Reply Mapping";
-$l['button']['EditGroupReply'] = "Edit Group Reply Mapping";
-$l['button']['RemoveGroupReply'] = "Remove Group Reply Mapping";
+$l['button']['ListGroupReply'] = "Grup Yanıt Eşlemelerini Listele";
+$l['button']['SearchGroupReply'] = "Grup Yanıtını Ara";
+$l['button']['NewGroupReply'] = "Yeni Grup Yanıt Eşlemesi";
+$l['button']['EditGroupReply'] = "Grup Yanıt Eşlemesini Düzenle";
+$l['button']['RemoveGroupReply'] = "Grup Yanıt Eşlemesini Kaldır";
 
-$l['button']['ListGroupCheck'] = "List Group Check Mappings";
-$l['button']['SearchGroupCheck'] = "Search Group Check";
-$l['button']['NewGroupCheck'] = "New Group Check Mapping";
-$l['button']['EditGroupCheck'] = "Edit Group Check Mapping";
-$l['button']['RemoveGroupCheck'] = "Remove Group Check Mapping";
+$l['button']['ListGroupCheck'] = "Grup Kontrol Eşlemelerini Listele";
+$l['button']['SearchGroupCheck'] = "Arama Grubu Kontrolü";
+$l['button']['NewGroupCheck'] = "Yeni Grup Kontrol Eşlemesi";
+$l['button']['EditGroupCheck'] = "Grup Kontrol Eşlemesini Düzenle";
+$l['button']['RemoveGroupCheck'] = "Grup Kontrolü Eşlemesini Kaldır";
 
 $l['button']['UserAccounting'] = "User Accounting";
 $l['button']['IPAccounting'] = "IP Accounting";
 $l['button']['NASIPAccounting'] = "NAS IP Accounting";
-$l['button']['NASIPAccountingOnlyActive'] = "Show only active";
+$l['button']['NASIPAccountingOnlyActive'] = "Yalnızca aktifleri göster";
 $l['button']['DateAccounting'] = "Date Accounting";
-$l['button']['AllRecords'] = "All Records";
-$l['button']['ActiveRecords'] = "Active Records";
+$l['button']['AllRecords'] = "Tüm Kayıtlar";
+$l['button']['ActiveRecords'] = "Aktif Kayıtlar";
 
 $l['button']['PlanUsage'] = "Plan Usage";
 
-$l['button']['OnlineUsers'] = "Online Users";
-$l['button']['LastConnectionAttempts'] = "Last Connection Attempts";
-$l['button']['TopUser'] = "Top User";
-$l['button']['History'] = "History";
+$l['button']['OnlineUsers'] = "Çevrimiçi Kullanıcılar";
+$l['button']['LastConnectionAttempts'] = "Son Bağlantı Denemeleri";
+$l['button']['TopUser'] = "En İyi Kullanıcı";
+$l['button']['Geçmiş'] = "Geçmiş";
 
-$l['button']['ServerStatus'] = "Server Status";
-$l['button']['ServicesStatus'] = "Services Status";
+$l['button']['ServerStatus'] = "Sunucu Durumu";
+$l['button']['ServicesStatus'] = "Servis Durumu";
 
 $l['button']['daloRADIUSLog'] = "daloRADIUS Log";
 $l['button']['RadiusLog'] = "Radius Log";
 $l['button']['SystemLog'] = "System Log";
 $l['button']['BootLog'] = "Boot Log";
 
-$l['button']['UserLogins'] = "User Logins";
-$l['button']['UserDownloads'] = "User Downloads";
-$l['button']['UserUploads'] = "User Uploads";
-$l['button']['TotalLogins'] = "Total Logins";
-$l['button']['TotalTraffic'] = "Total Traffic";
-$l['button']['LoggedUsers'] = "Logged Users";
+$l['button']['UserLogins'] = "Kullanıcı Girişleri";
+$l['button']['UserDownloads'] = "Kullanıcı İndirmeleri";
+$l['button']['UserUploads'] = "Kullanıcı Yüklemeleri";
+$l['button']['TotalLogins'] = "Toplam Giriş Sayısı";
+$l['button']['TotalTraffic'] = "Toplam Trafik";
+$l['button']['LoggedUsers'] = "Kayıtlı Kullanıcılar";
 
 $l['button']['ViewMAP'] = "View MAP";
 $l['button']['EditMAP'] = "Edit MAP";
 $l['button']['RegisterGoogleMapsAPI'] = "RegisterGoogleMaps API";
 
-$l['button']['UserSettings'] = "User Settings";
-$l['button']['DatabaseSettings'] = "Database Settings";
-$l['button']['LanguageSettings'] = "Language Settings";
-$l['button']['LoggingSettings'] = "Logging Settings";
-$l['button']['InterfaceSettings'] = "Interface Settings";
+$l['button']['UserSettings'] = "Kullanıcı Ayarları";
+$l['button']['DatabaseSettings'] = "Veritabanı Ayarları";
+$l['button']['LanguageSettings'] = "Dil Ayarları";
+$l['button']['LoggingSettings'] = "Günlük Ayarları";
+$l['button']['InterfaceSettings'] = "Arayüz Ayarları";
 
 $l['button']['ReAssignPlanProfiles'] = "Re-Assign Plan Profiles";
 
-$l['button']['TestUserConnectivity'] = "Test User Connectivity";
-$l['button']['DisconnectUser'] = "Disconnect User";
+$l['button']['TestUserConnectivity'] = "Kullanıcı Bağlantısını Test Et";
+$l['button']['DisconnectUser'] = "Kullanıcı Bağlantısını Kes";
 
-$l['button']['ManageBackups'] = "Manage Backups";
-$l['button']['CreateBackups'] = "Create Backups";
+$l['button']['ManageBackups'] = "Yedeklemeleri Yönet";
+$l['button']['CreateBackups'] = "Yedekleme Oluştur";
 
-$l['button']['ListOperators'] = "List Operators";
-$l['button']['NewOperator'] = "New Operator";
-$l['button']['EditOperator'] = "Edit Operator";
-$l['button']['RemoveOperator'] = "Remove Operator";
+$l['button']['ListOperators'] = "Yöneticileri Listele";
+$l['button']['NewOperator'] = "Yeni Yönetici";
+$l['button']['EditOperator'] = "Yönetici Düzenle";
+$l['button']['RemoveOperator'] = "Yönetici Kaldır";
 
-$l['button']['ProcessQuery'] = "Process Query";
+$l['button']['ProcessQuery'] = "İşlem Sorgusu";
 
  
  
@@ -837,33 +837,33 @@ $l['button']['ProcessQuery'] = "Process Query";
  * The text related to all the title headers in captions,tables and tabbed layout text
  ************************************************************************************/
 
-$l['title']['ImportUsers'] = "Import Users";
+$l['title']['ImportUsers'] = "Kullanıcıları İçe Aktar";
 
 
-$l['title']['Dashboard'] = "Dashboard";
-$l['title']['DashboardAlerts'] = "Alerts";
+$l['title']['Dashboard'] = "Kontrol Paneli";
+$l['title']['DashboardAlerts'] = "Alarmlar";
 
-$l['title']['Invoice'] = "Invoice";
-$l['title']['Invoices'] = "Invoices";
-$l['title']['InvoiceRemoval'] = "Invoice Removal";
-$l['title']['Payments'] = "Payments";
-$l['title']['Items'] = "Items";
+$l['title']['Fatura'] = "Fatura";
+$l['title']['Faturalar'] = "Faturalar";
+$l['title']['InvoiceRemoval'] = "Fatura Kaldırma";
+$l['title']['Ödemeler'] = "Ödemeler";
+$l['title']['Items'] = "Öğeler";
 
-$l['title']['PayTypeInfo'] = "Payment Type Information";
-$l['title']['PaymentInfo'] = "Payment Information";
+$l['title']['PayTypeInfo'] = "Ödeme Türü Bilgileri";
+$l['title']['PaymentInfo'] = "Ödeme Bilgileri";
 
  
-$l['title']['RateInfo'] = "Rate Information";
-$l['title']['PlanInfo'] = "Plan Information";
-$l['title']['TimeSettings'] = "Time Settings";
-$l['title']['BandwidthSettings'] = "Bandwidth Settings";
-$l['title']['PlanRemoval'] = "Plan Removal";
+$l['title']['RateInfo'] = "Oran Bilgileri";
+$l['title']['PlanInfo'] = "Ücret Bilgileri";
+$l['title']['TimeSettings'] = "Zaman Ayarları";
+$l['title']['BandwidthSettings'] = "Bant Genişliği Ayarları";
+$l['title']['PlanRemoval'] = "Plan Kaldırma";
 
 $l['title']['BatchRemoval'] = "Batch Removal";
 
-$l['title']['Backups'] = "Backups";
-$l['title']['FreeRADIUSTables'] = "FreeRADIUS Tables";
-$l['title']['daloRADIUSTables'] = "daloRADIUS Tables";
+$l['title']['Backups'] = "Yedekler";
+$l['title']['FreeRADIUSTables'] = "FreeRADIUS Tabloları";
+$l['title']['daloRADIUSTables'] = "daloRADIUS Tabloları";
 
 $l['title']['IPPoolInfo'] = "IP-Pool Info";
 
@@ -904,18 +904,18 @@ $l['title']['ContactInfo'] = "Contact Info";
 
 $l['title']['Plan'] = "Plan";
 
-$l['title']['Profile'] = "Profile";
-$l['title']['Groups'] = "Groups";
-$l['title']['RADIUSCheck'] = "Check Attributes";
-$l['title']['RADIUSReply'] = "Reply Attributes";
+$l['title']['Profile'] = "Profil";
+$l['title']['Gruplar'] = "Gruplar";
+$l['title']['RADIUSCheck'] = "Özellikleri Kontrol Et";
+$l['title']['RADIUSReply'] = "Yanıt Özellikleri";
 
-$l['title']['Settings'] = "Settings";
-$l['title']['DatabaseSettings'] = "Database Settings";
-$l['title']['DatabaseTables'] = "Database Tables";
-$l['title']['AdvancedSettings'] = "Advanced Settings";
+$l['title']['Ayarlar'] = "Ayarlar";
+$l['title']['DatabaseSettings'] = "Veritabanı Ayarları";
+$l['title']['DatabaseTables'] = "Veritabanı Tabloları";
+$l['title']['AdvancedSettings'] = "Gelişmiş Ayarlar";
 
-$l['title']['Advanced'] = "Advanced";
-$l['title']['Optional'] = "Optional";
+$l['title']['Gelişmiş'] = "Gelişmiş";
+$l['title']['Opsiyonel'] = "Opsiyonel";
 
 /* ********************************************************************************** */
 
@@ -923,21 +923,21 @@ $l['title']['Optional'] = "Optional";
  * Graphs 
  * General graphing text
  ************************************************************************************/
-$l['graphs']['Day'] = "Day";
-$l['graphs']['Month'] = "Month";
-$l['graphs']['Year'] = "Year";
-$l['graphs']['Jan'] = "January";
-$l['graphs']['Feb'] = "February";
-$l['graphs']['Mar'] = "March";
-$l['graphs']['Apr'] = "April";
-$l['graphs']['May'] = "May";
-$l['graphs']['Jun'] = "June";
-$l['graphs']['Jul'] = "July";
-$l['graphs']['Aug'] = "August";
-$l['graphs']['Sep'] = "September";
-$l['graphs']['Oct'] = "October";
-$l['graphs']['Nov'] = "November";
-$l['graphs']['Dec'] = "December";
+$l['graphs']['Day'] = "Gün";
+$l['graphs']['Month'] = "Ay";
+$l['graphs']['Year'] = "Yıl";
+$l['graphs']['Jan'] = "Ocak";
+$l['graphs']['Feb'] = "Şubat";
+$l['graphs']['Mar'] = "Mart";
+$l['graphs']['Apr'] = "Nisan";
+$l['graphs']['May'] = "Mayıs";
+$l['graphs']['Jun'] = "Haziran";
+$l['graphs']['Jul'] = "Temmuz";
+$l['graphs']['Aug'] = "Ağustos";
+$l['graphs']['Sep'] = "Eylül";
+$l['graphs']['Oct'] = "Ekim";
+$l['graphs']['Nov'] = "Kasım";
+$l['graphs']['Dec'] = "Aralık";
 
 
 /* ********************************************************************************** */
@@ -947,8 +947,8 @@ $l['graphs']['Dec'] = "December";
  * General text information that is used through-out the pages
  ************************************************************************************/
 
-$l['text']['LoginRequired'] = "Login Required";
-$l['text']['LoginPlease'] = "Login Please";
+$l['text']['LoginRequired'] = "Giriş Gerekli";
+$l['text']['LoginPlease'] = "Lütfen Giriş Yapın";
 
 /* ********************************************************************************** */
 
@@ -959,69 +959,69 @@ $l['text']['LoginPlease'] = "Login Please";
  * Related to all contact info text, user info, hotspot owner contact information etc
  ************************************************************************************/
 
-$l['ContactInfo']['FirstName'] = "First Name";
-$l['ContactInfo']['LastName'] = "Last Name";
-$l['ContactInfo']['Email'] = "Email";
-$l['ContactInfo']['Department'] = "Department";
-$l['ContactInfo']['WorkPhone'] = "Work Phone";
-$l['ContactInfo']['HomePhone'] = "Home Phone";
-$l['ContactInfo']['Phone'] = "Phone";
-$l['ContactInfo']['MobilePhone'] = "Mobile Phone";
-$l['ContactInfo']['Notes'] = "Notes";
-$l['ContactInfo']['EnableUserUpdate'] = "Enable User Update";
-$l['ContactInfo']['EnablePortalLogin'] = "Enable User Portal Login";
-$l['ContactInfo']['PortalLoginPassword'] = "User Portal Login Password";
+$l['ContactInfo']['FirstName'] = "Ad";
+$l['ContactInfo']['LastName'] = "Soyadı";
+$l['ContactInfo']['Email'] = "E-posta";
+$l['ContactInfo']['Department'] = "Departman";
+$l['ContactInfo']['WorkPhone'] = "İş Telefonu";
+$l['ContactInfo']['HomePhone'] = "Ev Telefonu";
+$l['ContactInfo']['Phone'] = "Telefon";
+$l['ContactInfo']['MobilePhone'] = "Cep Telefonu";
+$l['ContactInfo']['Notes'] = "Notlar";
+$l['ContactInfo']['EnableUserUpdate'] = "Kullanıcı Güncellemesini Etkinleştir";
+$l['ContactInfo']['EnablePortalLogin'] = "Kullanıcı Portalı Oturum Açmayı Etkinleştir";
+$l['ContactInfo']['PortalLoginPassword'] = "Kullanıcı Portalı Giriş Parolası";
 
-$l['ContactInfo']['OwnerName'] = "Owner Name";
-$l['ContactInfo']['OwnerEmail'] = "Owner Email";
-$l['ContactInfo']['ManagerName'] = "Manager Name";
-$l['ContactInfo']['ManagerEmail'] = "Manager Email";
-$l['ContactInfo']['Company'] = "Company";
-$l['ContactInfo']['Address'] = "Address";
-$l['ContactInfo']['City'] = "City";
-$l['ContactInfo']['State'] = "State";
-$l['ContactInfo']['Country'] = "Country";
-$l['ContactInfo']['Zip'] = "Zip";
-$l['ContactInfo']['Phone1'] = "Phone 1";
-$l['ContactInfo']['Phone2'] = "Phone 2";
-$l['ContactInfo']['HotspotType'] = "Hotspot Type";
-$l['ContactInfo']['CompanyWebsite'] = "Company Website";
-$l['ContactInfo']['CompanyPhone'] = "Company Phone";
-$l['ContactInfo']['CompanyEmail'] = "Company Email";
-$l['ContactInfo']['CompanyContact'] = "Company Contact";
+$l['ContactInfo']['OwnerName'] = "Sahip Adı";
+$l['ContactInfo']['OwnerEmail'] = "Sahip E-postası";
+$l['ContactInfo']['ManagerName'] = "Yönetici Adı";
+$l['ContactInfo']['ManagerEmail'] = "Yönetici E-postası";
+$l['ContactInfo']['Company'] = "Şirket";
+$l['ContactInfo']['Address'] = "Adres";
+$l['ContactInfo']['City'] = "İl";
+$l['ContactInfo']['State'] = "İlçe";
+$l['ContactInfo']['Country'] = "Ülke";
+$l['ContactInfo']['Zip'] = "Posta Kodu";
+$l['ContactInfo']['Phone1'] = "Telefon";
+$l['ContactInfo']['Phone2'] = "Telefon";
+$l['ContactInfo']['HotspotType'] = "Hotspot Tipi";
+$l['ContactInfo']['CompanyWebsite'] = "Şirket Web Sitesi";
+$l['ContactInfo']['CompanyPhone'] = "Şirket Telefonu";
+$l['ContactInfo']['CompanyEmail'] = "Şirket E-postası";
+$l['ContactInfo']['CompanyContact'] = "Şirket İletişim";
 
-$l['ContactInfo']['PlanName'] = "Plan Name";
-$l['ContactInfo']['ContactPerson'] = "Contact Person";
-$l['ContactInfo']['PaymentMethod'] = "Payment Method";
-$l['ContactInfo']['Cash'] = "Cash";
-$l['ContactInfo']['CreditCardNumber'] = "Credit Card Number";
-$l['ContactInfo']['CreditCardName'] = "Credit Card Name";
-$l['ContactInfo']['CreditCardVerificationNumber'] = "Credit Card Verification Number";
-$l['ContactInfo']['CreditCardType'] = "Credit Card Type";
-$l['ContactInfo']['CreditCardExpiration'] = "Credit Card Expiration";
+$l['ContactInfo']['PlanName'] = "Plan Adı";
+$l['ContactInfo']['ContactPerson'] = "İrtibat Kişisi";
+$l['ContactInfo']['PaymentMethod'] = "Ödeme Yöntemi";
+$l['ContactInfo']['Cash'] = "Nakit";
+$l['ContactInfo']['CreditCardNumber'] = "Kart Numarası";
+$l['ContactInfo']['CreditCardName'] = "Kart Sahibi";
+$l['ContactInfo']['CreditCardVerificationNumber'] = "CVC";
+$l['ContactInfo']['CreditCardType'] = "Kredi Kartı Türü";
+$l['ContactInfo']['CreditCardExpiration'] = "Son Kullanma";
 
 /* ********************************************************************************** */
 
-$l['Intro']['configdashboard.php'] = "Dashbard Settings";
+$l['Giriş']['configdashboard.php'] = "Kontrol Paneli Ayarları";
 
 
 
-$l['Intro']['paymenttypesmain.php'] = "Payment Types Page";
-$l['Intro']['paymenttypesdel.php'] = "Delete Payment Type entry";
-$l['Intro']['paymenttypesedit.php'] = "Edit Payment Type Details";
-$l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
-$l['Intro']['paymenttypesnew.php'] = "New Payment Type entry";
-$l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
-$l['Intro']['paymentslist.php'] = "Payments Table";
-$l['Intro']['paymentsmain.php'] = "Payments Page";
-$l['Intro']['paymentsdel.php'] = "Delete Payment entry";
-$l['Intro']['paymentsedit.php'] = "Edit Payment Details";
-$l['Intro']['paymentsnew.php'] = "New Payment entry";
+$l['Giriş']['paymenttypesmain.php'] = "Ödeme Türleri Sayfası";
+$l['Intro']['paymenttypesdel.php'] = "Ödeme Türü Girişini Silin";
+$l['Intro']['paymenttypesedit.php'] = "Ödeme Türü Ayrıntılarını Düzenle";
+$l['Intro']['paymenttypeslist.php'] = "Ödeme Türleri Tablosu";
+$l['Intro']['paymenttypesnew.php'] = "Yeni Ödeme Tipi";
+$l['Intro']['paymenttypeslist.php'] = "Ödeme Türleri Tablosu";
+$l['Giriş']['paymentslist.php'] = "Ödeme Tablosu";
+$l['Giriş']['paymentsmain.php'] = "Ödeme Sayfası";
+$l['Intro']['paymentsdel.php'] = "Ödeme Girişini Sil";
+$l['Intro']['paymentsedit.php'] = "Ödeme Ayrıntılarını Düzenle";
+$l['Intro']['paymentsnew.php'] = "Yeni Ödeme";
 
-$l['Intro']['billhistorymain.php'] = "Billing History";
-$l['Intro']['msgerrorpermissions.php'] = "Error";
+$l['Giriş']['billhistorymain.php'] = "Fatura Geçmişi";
+$l['Giriş']['msgerrorpermissions.php'] = "Hata";
 
-$l['Intro']['repnewusers.php'] = "Listing New Users";
+$l['Intro']['repnewusers.php'] = "Yeni Kullanıcı Listeleme";
 
 $l['Intro']['mngradproxys.php'] = "Proxys Management";
 $l['Intro']['mngradproxysnew.php'] = "New Proxy";
@@ -1074,36 +1074,36 @@ $l['Intro']['billpaypaltransactions.php'] = "PayPal Transactions Page";
 
 $l['Intro']['billhistoryquery.php'] = "Billing History";
 
-$l['Intro']['billinvoice.php'] = "Billing Invoices";
-$l['Intro']['billinvoicedel.php'] = "Delete Invoices entry";
-$l['Intro']['billinvoiceedit.php'] = "Edit Invoice";
-$l['Intro']['billinvoicelist.php'] = "List Invoices";
-$l['Intro']['billinvoicereport.php'] = "Invoices Report";
-$l['Intro']['billinvoicenew.php'] = "New Invoice";
+$l['Giriş']['billinvoice.php'] = "Satış Faturaları";
+$l['Intro']['billinvoicedel.php'] = "Fatura Sil";
+$l['Intro']['billinvoiceedit.php'] = "Faturayı Düzenle";
+$l['Giriş']['billinvoicelist.php'] = "Faturaları Listele";
+$l['Giriş']['billinvoicereport.php'] = "Fatura Raporu";
+$l['Giriş']['billinvoicenew.php'] = "Yeni Fatura";
 
-$l['Intro']['billplans.php'] = "Billing Plans Page";
-$l['Intro']['billplansdel.php'] = "Delete Plan entry";
-$l['Intro']['billplansedit.php'] = "Edit Plan Details";
-$l['Intro']['billplanslist.php'] = "Plans Table";
-$l['Intro']['billplansnew.php'] = "New Plan entry";
+$l['Giriş']['billplans.php'] = "Faturalandırma Planları Sayfası";
+$l['Intro']['billplansdel.php'] = "Plan Sil";
+$l['Intro']['billplansedit.php'] = "Plan Ayrıntılarını Düzenle";
+$l['Giriş']['billplanslist.php'] = "Plan Tablosu";
+$l['Giriş']['billplansnew.php'] = "Yeni Plan Girişi";
 
-$l['Intro']['billpos.php'] = "Billing Point of Sales Page";
-$l['Intro']['billposdel.php'] = "Delete User";
-$l['Intro']['billposedit.php'] = "Edit User";
-$l['Intro']['billposlist.php'] = "List Users";
-$l['Intro']['billposnew.php'] = "New User";
+$l['Giriş']['billpos.php'] = "Faturalandırma Satış Noktası Sayfası";
+$l['Giriş']['billposdel.php'] = "Kullanıcıyı Sil";
+$l['Intro']['billposedit.php'] = "Kullanıcıyı Düzenle";
+$l['Giriş']['billposlist.php'] = "Kullanıcıları Listele";
+$l['Giriş']['billposnew.php'] = "Yeni Kullanıcı";
 
 $l['Intro']['giseditmap.php'] = "Edit MAP Mode";
 $l['Intro']['gismain.php'] = "GIS Mapping";
 $l['Intro']['gisviewmap.php'] = "View MAP Mode";
 
-$l['Intro']['graphmain.php'] = "Usage Graphs";
-$l['Intro']['graphsalltimetrafficcompare.php'] = "Total Traffic Comparison Usage";
-$l['Intro']['graphsalltimelogins.php'] = "Total Logins";
-$l['Intro']['graphsloggedusers.php'] = "Logged Users";
-$l['Intro']['graphsoveralldownload.php'] = "User Downlads";
-$l['Intro']['graphsoveralllogins.php'] = "User Logins";
-$l['Intro']['graphsoverallupload.php'] = "User Uploads";
+$l['Giriş']['graphmain.php'] = "Kullanım Grafikleri";
+$l['Intro']['graphsalltimetrafficcompare.php'] = "Toplam Trafik Karşılaştırma Kullanımı";
+$l['Intro']['graphsalltimelogins.php'] = "Toplam Oturum Açma Sayısı";
+$l['Giriş']['graphslogggedusers.php'] = "Kayıtlı Kullanıcılar";
+$l['Intro']['graphsoveralldownload.php'] = "Kullanıcı İndirmeleri";
+$l['Intro']['graphsoveralllogins.php'] = "Kullanıcı Girişleri";
+$l['Intro']['graphsoverallupload.php'] = "Kullanıcı Yüklemeleri";
 
 $l['Intro']['rephistory.php'] = "Action History";
 $l['Intro']['replastconnect.php'] = "Last Connection Attempts";
@@ -1123,27 +1123,27 @@ $l['Intro']['repbatchlist.php'] = "Batch Users List";
 $l['Intro']['repbatchdetails.php'] = "Batch Details";
 
 $l['Intro']['rephsall.php'] = "Hotspots Listing";
-$l['Intro']['repmain.php'] = "Reports Page";
-$l['Intro']['repstatus.php'] = "Status Page";
-$l['Intro']['reptopusers.php'] = "Top Users";
-$l['Intro']['repusername.php'] = "Users Listing";
+$l['Giriş']['repmain.php'] = "Raporlar Sayfası";
+$l['Giriş']['repstatus.php'] = "Durum Sayfası";
+$l['Giriş']['reptopusers.php'] = "En İyi Kullanıcılar";
+$l['Giriş']['repusername.php'] = "Kullanıcı Listesi";
 
 $l['Intro']['mngbatch.php'] = "Create batch users";
 $l['Intro']['mngbatchdel.php'] = "Delete batch sessions";
 
-$l['Intro']['mngdel.php'] = "Remove User";
-$l['Intro']['mngedit.php'] = "Edit User Details";
-$l['Intro']['mnglistall.php'] = "Users Listing";
-$l['Intro']['mngmain.php'] = "Users and Hotspots Management";
-$l['Intro']['mngbatch.php'] = "Batch Users Management";
-$l['Intro']['mngnew.php'] = "New User";
-$l['Intro']['mngnewquick.php'] = "Quick User Add";
-$l['Intro']['mngsearch.php'] = "User Search";
+$l['Intro']['mngdel.php'] = "Kullanıcıyı Kaldır";
+$l['Intro']['mngedit.php'] = "Kullanıcı Ayrıntılarını Düzenle";
+$l['Intro']['mnglistall.php'] = "Kullanıcı Listesi";
+$l['Intro']['mngmain.php'] = "Kullanıcılar ve Erişim Noktaları Yönetimi";
+$l['Giriş']['mngbatch.php'] = "Toplu Kullanıcı Yönetimi";
+$l['Giriş']['mngnew.php'] = "Yeni Kullanıcı";
+$l['Giriş']['mngnewquick.php'] = "Hızlı Kullanıcı Ekleme";
+$l['Giriş']['mngsearch.php'] = "Kullanıcı Arama";
 
-$l['Intro']['mnghsdel.php'] = "Remove Hotspots";
-$l['Intro']['mnghsedit.php'] = "Edit Hotspots Details";
-$l['Intro']['mnghslist.php'] = "List Hotspots";
-$l['Intro']['mnghsnew.php'] = "New Hotspot";
+$l['Intro']['mnghsdel.php'] = "Hotspot Sil";
+$l['Intro']['mnghsedit.php'] = "Hotspots Düzenle";
+$l['Intro']['mnghslist.php'] = "Hotspot Listesi";
+$l['Intro']['mnghsnew.php'] = "Yeni Hotspot";
 
 $l['Intro']['mngradusergroupdel.php'] = "Remove User-Group Mapping";
 $l['Intro']['mngradusergroup.php'] = "User-Group Configuration";
@@ -1170,14 +1170,14 @@ $l['Intro']['mngradhuntlist.php'] = "HuntGroup Listing in Database";
 $l['Intro']['mngradhuntedit.php'] = "Edit HuntGroup Record";
 $l['Intro']['mngradhuntdel.php'] = "Remove HuntGroup Record";
 
-$l['Intro']['mngradprofiles.php'] = "Profiles Configuration";
-$l['Intro']['mngradprofilesedit.php'] = "Edit Profiles";
-$l['Intro']['mngradprofilesduplicate.php'] = "Duplicate Profiles";
-$l['Intro']['mngradprofilesdel.php'] = "Delete Profiles";
-$l['Intro']['mngradprofileslist.php'] = "List Profiles";
-$l['Intro']['mngradprofilesnew.php'] = "New Profile";
+$l['Intro']['mngradprofiles.php'] = "Profil Ayarları";
+$l['Intro']['mngradprofilesedit.php'] = "Profilleri Düzenle";
+$l['Intro']['mngradprofilesduplicate.php'] = "Benzer Profiller";
+$l['Intro']['mngradprofilesdel.php'] = "Profilleri Sil";
+$l['Intro']['mngradprofileslist.php'] = "Profilleri Listele";
+$l['Giriş']['mngradprofilesnew.php'] = "Yeni Profil";
 
-$l['Intro']['mngradgroups.php'] = "Groups Configuration";
+$l['Intro']['mngradgroups.php'] = "Grup Ayarları";
 
 $l['Intro']['mngradgroupreplynew.php'] = "New Group Reply Mapping";
 $l['Intro']['mngradgroupreplylist.php'] = "Group Reply Mapping in Database";
@@ -1191,34 +1191,34 @@ $l['Intro']['mngradgroupcheckedit.php'] = "Edit Group Check Mapping for Group:";
 $l['Intro']['mngradgroupcheckdel.php'] = "Remove Group Check Mapping";
 $l['Intro']['mngradgroupchecksearch.php'] = "Search Group Check Mapping";
 
-$l['Intro']['configuser.php'] = "User Configuration";
-$l['Intro']['configmail.php'] = "Mail Configuration";
+$l['Giriş']['configuser.php'] = "Kullanıcı Ayarları";
+$l['Giriş']['configmail.php'] = "E-posta Ayarları";
 
-$l['Intro']['configdb.php'] = "Database Configuration";
-$l['Intro']['configlang.php'] = "Language Configuration";
-$l['Intro']['configlogging.php'] = "Logging Configuration";
-$l['Intro']['configinterface.php'] = "Web Interface Configuration";
-$l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
-$l['Intro']['configmain.php'] = "Database Configuration";
-$l['Intro']['configmaint.php'] = "Maintenance";
-$l['Intro']['configmaintdisconnectuser.php'] = "Disconnect User";
-$l['Intro']['configbusiness.php'] = "Business Details";
-$l['Intro']['configbusinessinfo.php'] = "Business Information";
-$l['Intro']['configbackup.php'] = "Backup";
-$l['Intro']['configbackupcreatebackups.php'] = "Create Backups";
-$l['Intro']['configbackupmanagebackups.php'] = "Manage Backups";
+$l['Giriş']['configdb.php'] = "Veritabanı Ayarları";
+$l['Giriş']['configlang.php'] = "Dil Ayarları";
+$l['Intro']['configlogging.php'] = "Loglama Ayarları";
+$l['Intro']['configinterface.php'] = "Arayüz Ayarları";
+$l['Intro']['configmainttestuser.php'] = "Kullanıcı Bağlantısını Test Et";
+$l['Giriş']['configmain.php'] = "Veritabanı Yapılandırması";
+$l['Giriş']['configmaint.php'] = "Bakım";
+$l['Intro']['configmaintdisconnectuser.php'] = "Kullanıcı Bağlantısını Kes";
+$l['Giriş']['configbusiness.php'] = "İş Ayrıntıları";
+$l['Giriş']['configbusinessinfo.php'] = "İş Bilgileri";
+$l['Giriş']['configbackup.php'] = "Yedekleme";
+$l['Intro']['configbackupcreatebackups.php'] = "Yedekleme Oluştur";
+$l['Intro']['configbackupmanagebackups.php'] = "Yedeklemeleri Yönet";
 
-$l['Intro']['configoperators.php'] = "Operators Configuration";
-$l['Intro']['configoperatorsdel.php'] = "Remove Operator";
-$l['Intro']['configoperatorsedit.php'] = "Edit Operator Settings";
-$l['Intro']['configoperatorsnew.php'] = "New Operator";
-$l['Intro']['configoperatorslist.php'] = "Operators Listing";
+$l['Giriş']['configoperators.php'] = "Operatör Ayarları";
+$l['Intro']['configoperatorsdel.php'] = "Yönetici Kaldır";
+$l['Intro']['configoperatorsedit.php'] = "Yönetici Düzenle";
+$l['Giriş']['configoperatorsnew.php'] = "Yeni Yönetici";
+$l['Intro']['configoperatorslist.php'] = "Yönetici Listesi";
 
-$l['Intro']['login.php'] = "Login";
+$l['Giriş']['login.php'] = "Giriş";
 
-$l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
-$l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
-$l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
+$l['captions']['providebillratetodel'] = "Kaldırmak istediğiniz ücret giriş türünü belirtin";
+$l['captions']['detailsofnewrate'] = "Yeni fiyat için aşağıdaki bilgileri doldurabilirsiniz";
+$l['captions']['filldetailsofnewrate'] = "Yeni fiyat girişi için ayrıntıları aşağıya girin";
 
 /* **********************************************************************************
  * Help Pages Info 
@@ -1227,7 +1227,7 @@ $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rat
  * page, basically your expanded tool-tip.
  ************************************************************************************/
 
-$l['helpPage']['configdashboard'] = "Dashboard Settings";
+$l['helpPage']['configdashboard'] = "Kontrol Paneli Ayarları";
 
 
 $l['helpPage']['repnewusers'] = "The following table lists new users created each month.";
