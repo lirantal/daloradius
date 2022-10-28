@@ -23,27 +23,32 @@
  *********************************************************************************************************
  */
 
-	include('checklogin.php');
-	include('opendb.php');
-	include('libchart/libchart.php');
+    include('checklogin.php');
 
-	header("Content-type: image/png");
+    include('opendb.php');
+    include('libchart/libchart.php');
 
     $chart = new VerticalChart(640, 480);
 
     $sql = sprintf("SELECT n.shortname, COUNT(DISTINCT(ra.username))
-                    FROM %s AS ra, %s AS n
-                    WHERE n.nasname=ra.nasipaddress AND (ra.acctstoptime IS NULL OR ra.acctstoptime='0000-00-00 00:00:00')
-                    GROUP BY ra.nasipaddress",
+                      FROM %s AS ra, %s AS n
+                     WHERE n.nasname = ra.nasipaddress
+                       AND (ra.acctstoptime IS NULL OR ra.acctstoptime = '0000-00-00 00:00:00')
+                     GROUP BY ra.nasipaddress",
                    $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_RADNAS']);
 
     $res = $dbSocket->query($sql);
     while($row = $res->fetchRow()) {
-        $chart->addPoint(new Point($row[0], $row[1]));
+        $value = intval($row[1]);
+        $label = strval($row[0]);
+
+        $point = new Point($label, $value);
+        $chart->addPoint($point);
     }
     
     include('closedb.php');
     
+    header("Content-type: image/png");
     $chart->setTitle("Online users per NAS");
     $chart->render();
 ?>

@@ -23,37 +23,45 @@
  *********************************************************************************************************
  */
 
-	include('checklogin.php');
-	include('opendb.php');
-	include('libchart/libchart.php');
+    include('checklogin.php');
 
-	header("Content-type: image/png");
+    include('opendb.php');
+    include('libchart/libchart.php');
 
-	$chart = new PieChart(640, 480);
+    $chart = new PieChart(640, 480);
 
-	// getting total users
-	$sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
-	$res = $dbSocket->query($sql);
-	$totalUsers = $res->numRows();
+    // getting total users
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $res = $dbSocket->query($sql);
+    $totalUsers = $res->numRows();
 
-	// get total users online
-	$sql = sprintf("SELECT DISTINCT(username)
+    // get total users online
+    $sql = sprintf("SELECT DISTINCT(username)
                     FROM %s
                     WHERE AcctStopTime IS NULL
-                       OR AcctStopTime='0000-00-00 00:00:00'", $configValues['CONFIG_DB_TBL_RADACCT']);
-	$res = $dbSocket->query($sql);
-	$totalUsersOnline = $res->numRows();
+                       OR AcctStopTime = '0000-00-00 00:00:00'", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+    $totalUsersOnline = $res->numRows();
 
     include('closedb.php');
 
-	if ($totalUsers > 0) {
-		$totalUsersOffline = $totalUsers - $totalUsersOnline;
-        $chart->addPoint(new Point("$totalUsersOffline ($totalUsersOffline users offline)", $totalUsersOffline));
-		if ($totalUsersOnline > 0) {
-			$chart->addPoint(new Point("$totalUsersOnline ($totalUsersOnline users online)", $totalUsersOnline));
-		}
-	}
+    if ($totalUsers > 0) {
+        $totalUsersOffline = $totalUsers - $totalUsersOnline;
+        
+        $label1 = sprintf("%s (%s users offline)", $totalUsersOffline, $totalUsersOffline);
+        $value1 = intval($totalUsersOffline);
+        $point1 = new Point($label1, $value1);
+        $chart->addPoint($point1);
+        
+        if ($totalUsersOnline > 0) {
+            $label2 = sprintf("%s (%s users online)", $totalUsersOnline, $totalUsersOnline);
+            $value2 = intval($totalUsersOnline);
+            $point2 = new Point($label2, $value2);
+            $chart->addPoint($point2);
+        }
+    }
 
-	$chart->setTitle("Online users");
-	$chart->render();
+    header("Content-type: image/png");
+    $chart->setTitle("Online users");
+    $chart->render();
 ?>

@@ -64,7 +64,11 @@
     $res = $dbSocket->query($sql);
 
     while ($row = $res->fetchRow()) {
-        $chart->addPoint(new Point($row[1], $row[0]));
+        $value = intval($row[0]);
+        $label = strval($row[1]);
+
+        $point = new Point($label, $value);
+        $chart->addPoint($point);
     }
 
     include('closedb.php');

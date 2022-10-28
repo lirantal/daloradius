@@ -14,43 +14,43 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this extension creates a pie chart of the comparison of hotspots per unique users
+ * 
+ * Description:    this extension creates a pie chart of
+ *                 the comparison of hotspots per unique users
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-	include('checklogin.php');
+    include('checklogin.php');
 
-	include 'opendb.php';
-	include 'libchart/libchart.php';
+    include('opendb.php');
+    include('libchart/libchart.php');
 
-	header("Content-type: image/png");
+    $chart = new PieChart(800, 600);
 
-	$chart = new PieChart(620,320);
+    $sql = sprintf("SELECT hs.name, COUNT(DISTINCT(UserName)), COUNT(radacctid),
+                           AVG(AcctSessionTime), SUM(AcctSessionTime)
+                      FROM %s AS ra, %s AS hs
+                     WHERE ra.calledstationid = hs.mac
+                     GROUP BY hs.name", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                        $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    $res = $dbSocket->query($sql);
 
-	// getting total downloads of days in a month
-	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			".name, count(distinct(UserName)), count(radacctid), avg(AcctSessionTime), sum(AcctSessionTime) FROM ".
-			$configValues['CONFIG_DB_TBL_RADACCT']." JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			" ON (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid LIKE ".
-			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) GROUP BY ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name;";
-	$res = $dbSocket->query($sql);
+    while ($row = $res->fetchRow()) {
+        $label = sprintf("%s (%s users)", $row[0], $row[2]);
+        $value = intval($row[2]);
+        
+        $point = new Point($label, $value);
+        $chart->addPoint($point);
+    }
 
-	while($row = $res->fetchRow()) {
-		$chart->addPoint(new Point("$row[0] ($row[2] users)", "$row[2]"));
-	}
-
-	$chart->setTitle("Distribution of Hits (Logins) per Hotspot");
-	$chart->render();
-
-	include 'closedb.php';
-
-
-
+    include('closedb.php');
+    
+    header("Content-type: image/png");
+    $chart->setTitle("Distribution of Hits (Logins) per Hotspot");
+    $chart->render();
 
 ?>
-
-
