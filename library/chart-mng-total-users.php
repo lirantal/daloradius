@@ -14,38 +14,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		this extension is used to count all the records (or table entries) in the radcheck table
+ * 
+ * Description:    this extension is used to count all the records
+ *                 (or table entries) in the radcheck table
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
-include ("checklogin.php");
-include 'opendb.php';
+    include('checklogin.php');
 
-include "libchart/libchart.php";
+    include('opendb.php');
+    include('libchart/libchart.php');
 
-header("Content-type: image/png");
+    $chart = new VerticalChart(640, 480);
 
-$chart = new VerticalChart(500,250);
+    $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $res = $dbSocket->query($sql);
+    
+    $value = intval($res->fetchrow()[0]);
+    $label = "Users";
+    
+    $point = new Point($label, $value);
+    $chart->addPoint($point);
+    
+    include('closedb.php');
 
-$sql = "SELECT COUNT(DISTINCT(UserName)) from ".$configValues['CONFIG_DB_TBL_RADCHECK'].";";
-$res = $dbSocket->query($sql);
-
-$array_users = array();
-
-while($row = $res->fetchRow()) {
-	$chart->addPoint(new Point("Users", "$row[0]"));
-}
-
-$chart->setTitle("Total Users");
-$chart->render();
-
-include 'closedb.php';
-
+    header("Content-type: image/png");
+    $chart->setTitle("Total Users");
+    $chart->render();
 
 ?>
-
-

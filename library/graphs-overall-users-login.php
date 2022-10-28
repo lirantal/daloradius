@@ -23,75 +23,79 @@
  *********************************************************************************************************
  */
  
-include('checklogin.php');
+    include('checklogin.php');
 
-include('opendb.php');
-include('libchart/libchart.php');
+    include('opendb.php');
+    include('libchart/libchart.php');
 
-$username = (array_key_exists('user', $_GET) && isset($_GET['user']))
-          ? str_replace('%', '', $_GET['user']) : "";
+    $username = (array_key_exists('user', $_GET) && isset($_GET['user']))
+              ? str_replace('%', '', $_GET['user']) : "";
 
-$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
-         in_array(strtolower($_GET['type']), array( "daily", "montly", "yearly" )))
-      ? strtolower($_GET['type']) : "daily";
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "montly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
 
-$is_valid = false;
+    $is_valid = false;
 
-if (!empty($username)) {
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username='%s'",
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
-    $res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-    
-    $is_valid = $numrows == 1;
-}
-
-$chart = new VerticalChart(800, 600);
-$limit = 48;
-
-if ($is_valid) {
-
-    switch ($type) {
-        case "yearly":
-            $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
-                      FROM %s
-                     WHERE username='%s'
-                     GROUP BY year ORDER BY year DESC LIMIT %s";
-            break;
+    if (!empty($username)) {
+        $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username='%s'",
+                       $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
+        $res = $dbSocket->query($sql);
+        $numrows = $res->numRows();
         
-        case "montly":
-            $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
-                           COUNT(username) AS logins,
-                           CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
-                      FROM %s WHERE username='%s' GROUP BY month ORDER BY month DESC LIMIT %s";
-            break;
+        $is_valid = $numrows == 1;
+    }
+
+    $chart = new VerticalChart(800, 600);
+    $limit = 48;
+
+    if ($is_valid) {
+
+        switch ($type) {
+            case "yearly":
+                $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
+                          FROM %s
+                         WHERE username='%s'
+                         GROUP BY year ORDER BY year DESC LIMIT %s";
+                break;
             
-        default:
-        case "daily":
-            $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS logins
-                      FROM %s
-                     WHERE username='%s' AND acctstoptime>0
-                     GROUP BY day ORDER BY day DESC LIMIT %s";
-            break;
+            case "montly":
+                $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
+                               COUNT(username) AS logins,
+                               CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                          FROM %s WHERE username='%s' GROUP BY month ORDER BY month DESC LIMIT %s";
+                break;
+                
+            default:
+            case "daily":
+                $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS logins
+                          FROM %s
+                         WHERE username='%s' AND acctstoptime>0
+                         GROUP BY day ORDER BY day DESC LIMIT %s";
+                break;
+        }
+
+        $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username), $limit);
+        $res = $dbSocket->query($sql);
+
+        while ($row = $res->fetchRow()) {
+            $value = intval($row[1]);
+            $label = strval($row[0]);
+
+            $point = new Point($label, $value);
+            $chart->addPoint($point);
+        }
+
+        $title = ucfirst($type) . " login/hit statistics for user $username";
+    } else {
+        $title = "Please select a valid user";
     }
 
-    $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username), $limit);
-    $res = $dbSocket->query($sql);
+    include('closedb.php');
 
-    while($row = $res->fetchRow()) {
-        $chart->addPoint(new Point($row[0], $row[1]));
-    }
+    header("Content-type: image/png");
 
-    $title = ucfirst($type) . " login/hit statistics for user $username";
-} else {
-    $title = "Please select a valid user";
-}
-
-include('closedb.php');
-
-header("Content-type: image/png");
-
-$chart->setTitle($title);
-$chart->render();
+    $chart->setTitle($title);
+    $chart->render();
 
 ?>
