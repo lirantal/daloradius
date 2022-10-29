@@ -27,9 +27,10 @@
     include('checklogin.php');
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
     $chart = new PieChart(800, 600);
+    $dataSet = new XYDataSet();
 
     $sql = sprintf("SELECT hs.name, COUNT(DISTINCT(UserName)), COUNT(radacctid),
                            AVG(AcctSessionTime), SUM(AcctSessionTime)
@@ -44,13 +45,14 @@
         $value = intval($row[3]);
         
         $point = new Point($label, $value);
-        $chart->addPoint($point);
+        $dataSet->addPoint($point);
     }
 
     include('closedb.php');
     
     header("Content-type: image/png");
     $chart->setTitle("Distribution of Time usage per Hotspot");
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>

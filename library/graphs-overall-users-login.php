@@ -26,7 +26,7 @@
     include('checklogin.php');
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
     $username = (array_key_exists('user', $_GET) && isset($_GET['user']))
               ? str_replace('%', '', $_GET['user']) : "";
@@ -46,7 +46,8 @@
         $is_valid = $numrows == 1;
     }
 
-    $chart = new VerticalChart(800, 600);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
     $limit = 48;
 
     if ($is_valid) {
@@ -83,7 +84,7 @@
             $label = strval($row[0]);
 
             $point = new Point($label, $value);
-            $chart->addPoint($point);
+            $dataSet->addPoint($point);
         }
 
         $title = ucfirst($type) . " login/hit statistics for user $username";
@@ -94,8 +95,8 @@
     include('closedb.php');
 
     header("Content-type: image/png");
-
     $chart->setTitle($title);
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>

@@ -14,11 +14,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
  * Description:    this extension is used to count all the records
  *                 (or table entries) in the radcheck table
  *
- * Authors:        Liran Tal <liran@enginx.com>
+ * Authors:	       Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
@@ -27,23 +26,24 @@
     include('checklogin.php');
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
-    $chart = new VerticalChart(640, 480);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
 
     $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
     $res = $dbSocket->query($sql);
-    
-    $value = intval($res->fetchrow()[0]);
-    $label = "Users";
-    
+
+    $label = "users";
+    $value = intval($res->fetchRow()[0]);
     $point = new Point($label, $value);
-    $chart->addPoint($point);
-    
+    $dataSet->addPoint($point);
+
     include('closedb.php');
 
     header("Content-type: image/png");
     $chart->setTitle("Total Users");
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>

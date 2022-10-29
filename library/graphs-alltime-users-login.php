@@ -31,9 +31,10 @@
           ? strtolower($_GET['type']) : "daily";
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
-    $chart = new VerticalChart(800, 600);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
     $limit = 48;
 
     switch ($type) {
@@ -68,7 +69,7 @@
             $label = strval($row[0]);
             
             $point = new Point($label, $value);
-            $chart->addPoint($point);
+            $dataSet->addPoint($point);
         }
         $title = ucfirst($type) . " all-time login/hit statistics";
     } else {
@@ -79,6 +80,7 @@
 
     header("Content-type: image/png");
     $chart->setTitle($title);
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>
