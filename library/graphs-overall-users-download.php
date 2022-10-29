@@ -46,7 +46,7 @@
 
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
     $is_valid = false;
 
@@ -59,7 +59,8 @@
         $is_valid = $numrows == 1;
     }
 
-    $chart = new VerticalChart(800, 600);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
     $limit = 48;
 
     if ($is_valid) {
@@ -100,7 +101,7 @@
             $label = strval($row[0]);
 
             $point = new Point($label, $value);
-            $chart->addPoint($point);
+            $dataSet->addPoint($point);
         }
 
         $title = sprintf("%s of traffic in download %s produced by user %s", $size, $type, $username);
@@ -113,6 +114,7 @@
 
     header("Content-type: image/png");
     $chart->setTitle($title);
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>

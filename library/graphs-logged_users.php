@@ -53,36 +53,40 @@ if (empty($day)) {
 
 function graph_day($day,$month,$year) {
 
-    include 'opendb.php';
-    include 'libchart/libchart.php';
+    include('opendb.php');
+    include('libchart/classes/libchart.php');
     
     header("Content-type: image/png");
 
-    $chart = new VerticalChart(800, 600);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
 
     for ($i=0; $i < 24; $i++) { //24 hours a day
         $date = "$year-$month-$day $i:00:00";
         $sql = "select count(radacctid) from radacct where (acctstarttime <= '$date' and acctstoptime >= '$date') or (acctstarttime <= '$date' and acctsessiontime = 0 and acctinputoctets = 0 and acctoutputoctets = 0);";
         $result = $dbSocket->query($sql);
         $row = $result->fetchRow();
-        $chart->addPoint(new Point("$i","$row[0]"));
+        $dataSet->addPoint(new Point("$i","$row[0]"));
         if (($i > date("G")) and ($day == date("j"))) {
             break;
         }
     }
     $chart->setTitle("Logged users by hour on $day/$month/$year");
+    $chart->setDataSet($dataSet);
     $chart->render();
 
-    include 'closedb.php';
+    include('closedb.php');
 }
 
 function graph_month($month,$year) {
-    include 'opendb.php';
-    include 'libchart/libchart.php';
+
+    include('opendb.php');
+    include('libchart/classes/libchart.php');
 
     header("Content-type: image/png");
 
-    $chart = new VerticalChart(800, 600);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
 
     $lastDay = date("d", mktime(0, 0, 0, $month+1 , 0, date("Y")));
 
@@ -103,13 +107,14 @@ function graph_month($month,$year) {
         }
     }
     for ($i=1;$i<=$lastDay;$i++) {
-        $chart->addPoint(new Point("$i - Min",$measure[$i]['min']));
-        $chart->addPoint(new Point("$i - Max",$measure[$i]['max']));
+        $dataSet->addPoint(new Point("$i - Min",$measure[$i]['min']));
+        $dataSet->addPoint(new Point("$i - Max",$measure[$i]['max']));
     }
     $chart->setTitle("Logged users by month");
+    $chart->setDataSet($dataSet);
     $chart->render();
 
-    include 'closedb.php';
+    include('closedb.php');
 }
 
 ?>

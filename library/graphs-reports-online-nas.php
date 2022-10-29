@@ -26,9 +26,10 @@
     include('checklogin.php');
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
-    $chart = new VerticalChart(640, 480);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
 
     $sql = sprintf("SELECT n.shortname, COUNT(DISTINCT(ra.username))
                       FROM %s AS ra, %s AS n
@@ -43,12 +44,13 @@
         $label = strval($row[0]);
 
         $point = new Point($label, $value);
-        $chart->addPoint($point);
+        $dataSet->addPoint($point);
     }
     
     include('closedb.php');
     
     header("Content-type: image/png");
     $chart->setTitle("Online users per NAS");
+    $chart->setDataSet($dataSet);
     $chart->render();
 ?>

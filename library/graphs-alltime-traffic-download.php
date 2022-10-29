@@ -38,9 +38,10 @@
     $size_division = array("gigabytes" => 1073741824, "megabytes" => 1048576);
 
     include('opendb.php');
-    include('libchart/libchart.php');
-
-    $chart = new VerticalChart(800, 600);
+    include('libchart/classes/libchart.php');
+    
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
     $limit = 24;
 
     switch ($type) {
@@ -66,19 +67,21 @@
     $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $limit);
     $res = $dbSocket->query($sql);
     while ($row = $res->fetchRow()) {
-        //~ $value = number_format((float)($row[1] / $size_division[$size]), 3, ".", "");
+        //~ $value = number_format(floatval($row[1] / $size_division[$size]), 3, ".", "");
         $value = intdiv($row[1], $size_division[$size]);
         $label = strval($row[0]);
         
         $point = new Point($label, $value);
-        $chart->addPoint($point);
+        $dataSet->addPoint($point);
     }
 
     include('closedb.php');
 
     $title = ucfirst($type) . " all-time download traffic (in " . $size . ") statistics";
 
+    header("Content-type: image/png");
     $chart->setTitle($title);
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>

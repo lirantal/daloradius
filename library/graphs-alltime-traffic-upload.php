@@ -38,9 +38,10 @@
     $size_division = array("gigabytes" => 1073741824, "megabytes" => 1048576);
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
-    $chart = new VerticalChart(800, 600);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
     $limit = 24;
 
     switch ($type) {
@@ -71,14 +72,16 @@
         $label = strval($row[0]);
         
         $point = new Point($label, $value);
-        $chart->addPoint($point);
+        $dataSet->addPoint($point);
     }
 
     include('closedb.php');
 
     $title = ucfirst($type) . " all-time upload traffic (in " . $size . ") statistics";
 
+    header("Content-type: image/png");
     $chart->setTitle($title);
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>

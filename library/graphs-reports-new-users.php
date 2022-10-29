@@ -39,11 +39,10 @@
              ? $_GET['enddate'] : "";
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
-    header("Content-type: image/png");
-
-    $chart = new VerticalChart(800, 600);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
     $limit = 24;
 
     $sql_WHERE_pieces = array();
@@ -68,12 +67,14 @@
         $label = strval($row[1]);
 
         $point = new Point($label, $value);
-        $chart->addPoint($point);
+        $dataSet->addPoint($point);
     }
 
     include('closedb.php');
 
+    header("Content-type: image/png");
     $chart->setTitle("monthly number of new users");
+    $chart->setDataSet($dataSet);
     $chart->render();
 
 ?>

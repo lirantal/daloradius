@@ -26,9 +26,10 @@
     include('checklogin.php');
 
     include('opendb.php');
-    include('libchart/libchart.php');
+    include('libchart/classes/libchart.php');
 
-    $chart = new PieChart(640, 480);
+    $chart = new VerticalBarChart(800, 600);
+	$dataSet = new XYDataSet();
 
     // getting total users
     $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
@@ -48,20 +49,21 @@
     if ($totalUsers > 0) {
         $totalUsersOffline = $totalUsers - $totalUsersOnline;
         
-        $label1 = sprintf("%s (%s users offline)", $totalUsersOffline, $totalUsersOffline);
+        $label1 = "offline users";
         $value1 = intval($totalUsersOffline);
         $point1 = new Point($label1, $value1);
-        $chart->addPoint($point1);
+        $dataSet->addPoint($point1);
         
         if ($totalUsersOnline > 0) {
-            $label2 = sprintf("%s (%s users online)", $totalUsersOnline, $totalUsersOnline);
+            $label2 = "online users";
             $value2 = intval($totalUsersOnline);
             $point2 = new Point($label2, $value2);
-            $chart->addPoint($point2);
+            $dataSet->addPoint($point2);
         }
     }
 
     header("Content-type: image/png");
-    $chart->setTitle("Online users");
+    $chart->setTitle("online/offline users");
+    $chart->setDataSet($dataSet);
     $chart->render();
 ?>
