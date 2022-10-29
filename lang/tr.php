@@ -58,6 +58,9 @@ $l['all']['DashboardSecretKey'] = "Kontrol Paneli Gizli Anahtarı";
 $l['all']['DashboardDebug'] = "Debug";
 $l['all']['DashboardDelaySoft'] = "Time in minutes to consider a 'soft' delay limit";
 $l['all']['DashboardDelayHard'] = "Time in minutes to consider a 'hard' delay limit";
+$l['all']['DashboardDebug'] = "Hata Ayıklama";
+$l['all']['DashboardDelaySoft'] = "'soft' bir gecikme limitini dikkate almak için dakika cinsinden süre";
+$l['all']['DashboardDelayHard'] = "'hard' bir gecikme limitini dikkate almak için dakika cinsinden süre";
 
 
 
@@ -70,8 +73,8 @@ $l['all']['customAttributes'] = "Özel Nitelikler";
 
 $l['all']['UserType'] = "Kullanıcı Tipi";
 
-$l['all']['BatchName'] = "Batch Name";
-$l['all']['BatchStatus'] = "Batch Status";
+$l['all']['BatchName'] = "Toplu İş Adı";
+$l['all']['BatchStatus'] = "Toplu İş Durumu";
 
 $l['all']['Users'] = "Kullancılar";
 
@@ -102,17 +105,17 @@ $l['all']['EndingDate'] = "Bitiş Tarihi";
 
 $l['all']['Realm'] = "Realm";
 $l['all']['RealmName'] = "Realm Name";
-$l['all']['RealmSecret'] = "Realm Secert";
-$l['all']['AuthHost'] = "Auth Host";
-$l['all']['AcctHost'] = "Acct Host";
+$l['all']['RealmSecret'] = "Realm Secret";
+$l['all']['AuthHost'] = "Yetki Sunucusu";
+$l['all']['AcctHost'] = "Muhasebe Sunucusu";
 $l['all']['Ldflag'] = "ldflag";
 $l['all']['Nostrip'] = "nostrip";
 $l['all']['Notrealm'] = "notrealm";
-$l['all']['Hints'] = "hints";
+$l['all']['Hints'] = "ipuçları";
 
 $l['all']['Proxy'] = "Proxy";
 $l['all']['ProxyName'] = "Proxy Name";
-$l['all']['ProxySecret'] = "Proxy Secert";
+$l['all']['ProxySecret'] = "Proxy Secret";
 $l['all']['DeadTime'] = "Dead Time";
 $l['all']['RetryDelay'] = "Retry Delay";
 $l['all']['RetryCount'] = "Retry Count";
@@ -269,14 +272,14 @@ $l['all']['DatabaseUser'] = "Veritabanı Kullanıcı Adı";
 $l['all']['DatabasePass'] = "Veritabanı Şifresi";
 $l['all']['DatabaseName'] = "Veritabanı Adı";
 
-$l['all']['PrimaryLanguage'] = "Primary Language";
+$l['all']['PrimaryLanguage'] = "Birincil Dil";
 
-$l['all']['PagesLogging'] = "Logging of Pages (page visits)";
-$l['all']['QueriesLogging'] = "Logging of Queries (reports and graphs)";
-$l['all']['ActionsLogging'] = "Logging of Actions (form submits)";
-$l['all']['FilenameLogging'] = "Logging filename (full path)";
-$l['all']['LoggingDebugOnPages'] = "Logging of Debug info on pages";
-$l['all']['LoggingDebugInfo'] = "Logging of Debug Info";
+$l['all']['PagesLogging'] = "Sayfaların Günlüğü (sayfa ziyaretleri)";
+$l['all']['QueriesLogging'] = "Sorguların Günlüğü (raporlar ve grafikler)";
+$l['all']['ActionsLogging'] = "İşlem Günlüğü (form gönderimleri)";
+$l['all']['FilenameLogging'] = "Dosya adını günlüğe kaydetme (tam yol)";
+$l['all']['LoggingDebugOnPages'] = "Sayfalardaki Hata Ayıklama bilgilerinin günlüğe kaydedilmesi";
+$l['all']['LoggingDebugInfo'] = "Hata Ayıklama Bilgilerinin Günlüğü";
 
 $l['all']['PasswordHidden'] = "Enable Password Hiding (asterisk will be shown)";
 $l['all']['TablesListing'] = "Rows/Records per Tables Listing page";
@@ -286,19 +289,19 @@ $l['all']['AjaxAutoComplete'] = "Enable Ajax Auto-Complete";
 $l['all']['RadiusServer'] = "Radius Server";
 $l['all']['RadiusPort'] = "Radius Port";
 
-$l['all']['UsernamePrefix'] = "Username Prefix";
+$l['all']['UsernamePrefix'] = "Kullanıcı Adı Öneki";
 
-$l['all']['batchName'] = "Batch Id/Name";
-$l['all']['batchDescription'] = "Batch Description";
+$l['all']['batchName'] = "Toplu İş No/Ad";
+$l['all']['batchDescription'] = "Toplu İş Açıklama Description";
 
-$l['all']['NumberInstances'] = "Number of instances to create";
-$l['all']['UsernameLength'] = "Length of username string";
-$l['all']['PasswordLength'] = "Length of password string";
+$l['all']['NumberInstances'] = "Oluşturulacak örnek sayısı";
+$l['all']['UsernameLength'] = "Kullanıcı adı dizisinin uzunluğu";
+$l['all']['PasswordLength'] = "Parola dizesinin uzunluğu";
 
-$l['all']['Expiration'] = "Expiration";
+$l['all']['Expiration'] = "Sona Erme";
 $l['all']['MaxAllSession'] = "Max-All-Session";
-$l['all']['SessionTimeout'] = "Session Timeout";
-$l['all']['IdleTimeout'] = "Idle Timeout";
+$l['all']['SessionTimeout'] = "Oturum Zaman Aşımı";
+$l['all']['IdleTimeout'] = "Boşta Kalma Zaman Aşımı";
 
 $l['all']['DBEngine'] = "DB Engine";
 $l['all']['radcheck'] = "radcheck";
@@ -327,14 +330,13 @@ $l['all']['billingplans'] = "billing plans";
 $l['all']['billinghistory'] = "billing history";
 $l['all']['billinginfo'] = "billing user info";
 
-
-$l['all']['CreateIncrementingUsers'] = "Create Incrementing Users";
-$l['all']['CreateRandomUsers'] = "Create Random Users";
-$l['all']['StartingIndex'] = "Starting Index";
-$l['all']['EndingIndex'] = "Ending Index";
-$l['all']['RandomChars'] = "Allowed Random Characters";
+$l['all']['CreateIncrementingUsers'] = "Artan Kullanıcılar Oluştur";
+$l['all']['CreateRandomUsers'] = "Rastgele Kullanıcılar Oluştur";
+$l['all']['StartingIndex'] = "Başlangıç Dizini";
+$l['all']['EndingIndex'] = "Bitiş Dizini";
+$l['all']['RandomChars'] = "İzin Verilen Rastgele Karakterler";
 $l['all']['Memfree'] = "Memory Free";
-$l['all']['Uptime'] = "Uptime";
+$l['all']['Çalışma Süresi'] = "Çalışma Süresi";
 $l['all']['BandwidthUp'] = "Bandwidth Up";
 $l['all']['BandwidthDown'] = "Bandwidth Down";
 
@@ -366,60 +368,57 @@ $l['all']['PlanCost'] = "Plan Maliyeti";
 $l['all']['PlanSetupCost'] = "Plan Kurulum Maliyeti";
 $l['all']['PlanTax'] = "Plan Vergisi";
 $l['all']['PlanCurrency'] = "Plan Para Birimi";
-$l['all']['PlanGroup'] = "Plan Profile (Group)";
-$l['all']['PlanType'] = "Plan Type";
-$l['all']['PlanName'] = "Plan Name";
+$l['all']['PlanGroup'] = "Plan Profil (Grup)";
+$l['all']['PlanType'] = "Plan Türü";
+$l['all']['PlanName'] = "Plan Adı";
 $l['all']['PlanId'] = "Plan Id";
 
-$l['all']['UserId'] = "User Id";
+$l['all']['UserId'] = "Kullanıcı Id";
 
-$l['all']['Invoice'] = "Invoice";
-$l['all']['InvoiceID'] = "Invoice ID";
-$l['all']['InvoiceItems'] = "Invoice Items";
-$l['all']['InvoiceStatus'] = "Invoice Status";
+$l['all']['Invoice'] = "Fatura";
+$l['all']['InvoiceID'] = "Fatura No";
+$l['all']['InvoiceItems'] = "Fatura Kalemleri";
+$l['all']['InvoiceStatus'] = "Fatura Durumu";
 
-$l['all']['InvoiceType'] = "Invoice Type";
-$l['all']['Amount'] = "Amount";
-$l['all']['Total'] = "Total";
-$l['all']['TotalInvoices'] = "Total Invoices";
+$l['all']['InvoiceType'] = "Fatura Türü";
+$l['all']['Amount'] = "Miktar";
+$l['all']['Total'] = "Toplam";
+$l['all']['TotalInvoices'] = "Toplam Fatura Sayısı";
 
-$l['all']['PayTypeName'] = "Payment Type Name";
-$l['all']['PayTypeNotes'] = "Payment Type Description";
-$l['all']['payment_type'] = "payment types";
-$l['all']['payments'] = "payments";
-$l['all']['PaymentId'] = "Payment ID";
-$l['all']['PaymentInvoiceID'] = "Invoice ID";
-$l['all']['PaymentAmount'] = "Amount";
-$l['all']['PaymentDate'] = "Date";
-$l['all']['PaymentType'] = "Payment Type";
-$l['all']['PaymentNotes'] = "Payment Notes";
+$l['all']['PayTypeName'] = "Ödeme Türü Adı";
+$l['all']['PayTypeNotes'] = "Ödeme Türü Açıklaması";
+$l['all']['payment_type'] = "ödeme türleri";
+$l['all']['payments'] = "ödemeler";
+$l['all']['PaymentId'] = "Ödeme Kimliği";
+$l['all']['PaymentInvoiceID'] = "Fatura No";
+$l['all']['PaymentAmount'] = "Miktar";
+$l['all']['PaymentDate'] = "Tarih";
+$l['all']['PaymentType'] = "Ödeme Türü";
+$l['all']['PaymentNotes'] = "Ödeme Notları";
 
+$l['all']['Quantity'] = "Miktar";
+$l['all']['ReceiverEmail'] = "Alıcı E-postası";
+$l['all']['Business'] = "İş";
+$l['all']['Tax'] = "Vergi";
+$l['all']['MaCostliyet'] = "Maliyet";
+$l['all']['TotalCost'] = "Toplam Maliyet";
+$l['all']['TransactionFee'] = "İşlem Ücreti";
+$l['all']['PaymentCurrency'] = "Ödeme Para Birimi";
+$l['all']['AddressRecipient'] = "Adres Alıcısı";
+$l['all']['Street'] = "Sokak";
+$l['all']['Country'] = "Ülke";
+$l['all']['CountryCode'] = "Ülke Kodu";
+$l['all']['City'] = "Şehir";
+$l['all']['State'] = "Devlet";
+$l['all']['Zip'] = "Posta Kodu";
 
-
-
-$l['all']['Quantity'] = "Quantity";
-$l['all']['ReceiverEmail'] = "Receiver Email";
-$l['all']['Business'] = "Business";
-$l['all']['Tax'] = "Tax";
-$l['all']['Cost'] = "Cost";
-$l['all']['TotalCost'] = "Total Cost";
-$l['all']['TransactionFee'] = "Transaction Fee";
-$l['all']['PaymentCurrency'] = "Payment Currency";
-$l['all']['AddressRecipient'] = "Address Recipient";
-$l['all']['Street'] = "Street";
-$l['all']['Country'] = "Country";
-$l['all']['CountryCode'] = "Country Code";
-$l['all']['City'] = "City";
-$l['all']['State'] = "State";
-$l['all']['Zip'] = "Zip";
-
-$l['all']['BusinessName'] = "Business Name";
-$l['all']['BusinessPhone'] = "Business Phone";
-$l['all']['BusinessAddress'] = "Business Address";
-$l['all']['BusinessWebsite'] = "Business Website";
-$l['all']['BusinessEmail'] = "Business Email";
-$l['all']['BusinessContactPerson'] = "Business Contact Person";
-$l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
+$l['all']['BusinessName'] = "İşletme Adı";
+$l['all']['BusinessPhone'] = "İş Telefonu";
+$l['all']['BusinessAddress'] = "İş Adresi";
+$l['all']['BusinessWebsite'] = "İş Web Sitesi";
+$l['all']['BusinessEmail'] = "İş E-postası";
+$l['all']['BusinessContactPerson'] = "İş İlgili Kişisi";
+$l['all']['DBPasswordEncryption'] = "DB Parola Şifreleme Türü";
 
 
 /* **********************************************************************************
@@ -427,66 +426,59 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
  * Helper information such as tooltip text for mouseover events and popup tooltips
  ************************************************************************************/
 
-$l['Tooltip']['batchNameTooltip'] = "Provide an identifier name for this batch creation";
-$l['Tooltip']['batchDescriptionTooltip'] = "Provide general description regarding this batch creation";
+$l['Tooltip']['batchNameTooltip'] = "Bu toplu oluşturma için bir tanımlayıcı adı sağlayın";
+$l['Tooltip']['batchDescriptionTooltip'] = "Bu toplu oluşturmayla ilgili genel açıklama sağlayın";
 
-$l['Tooltip']['hotspotTooltip'] = "Choose the hotspot name of which this batch instance is associated with";
+$l['Tooltip']['hotspotTooltip'] = "Bu toplu iş örneğinin ilişkilendirildiği etkin nokta adını seçin";
 
-$l['Tooltip']['startingIndexTooltip'] = "Provide the starting index from which to create the user";
-$l['Tooltip']['planTooltip'] = "Select a plan to associate the user with";
+$l['Tooltip']['startingIndexTooltip'] = "Kullanıcının oluşturulacağı başlangıç dizinini sağlayın";
+$l['Tooltip']['planTooltip'] = "Kullanıcıyı ilişkilendirmek için bir plan seçin";
 
-$l['Tooltip']['InvoiceEdit'] = "Edit Invoice";
+$l['Tooltip']['InvoiceEdit'] = "Faturayı Düzenle";
 $l['Tooltip']['invoiceTypeTooltip'] = "";
 $l['Tooltip']['invoiceStatusTooltip'] = "";
-$l['Tooltip']['invoiceID'] = "Type the invoice id";
-$l['Tooltip']['user_idTooltip'] = "User id";
+$l['Tooltip']['invoiceID'] = "Fatura no yazın";
+$l['Tooltip']['user_idTooltip'] = "Kullanıcı No";
 
 $l['Tooltip']['amountTooltip'] = "";
 $l['Tooltip']['taxTooltip'] = "";
 
-$l['Tooltip']['PayTypeName'] = "Type the Payment Type name";
-$l['Tooltip']['EditPayType'] = "Edit Payment Type";
-$l['Tooltip']['RemovePayType'] = "Remove Payment Type";
-$l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>
-                                        to describe the purpose of the payment";
-$l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>
-                                        the operation of the payment type";
-$l['Tooltip']['EditPayment'] = "Edit Payment";
-$l['Tooltip']['PaymentId'] = "The Payment Id";
-$l['Tooltip']['RemovePayment'] = "Remove Payment";
-$l['Tooltip']['paymentInvoiceTooltip'] = "The invoice related to this payment";
+$l['Tooltip']['PayTypeName'] = "Ödeme Türü adını yazın";
+$l['Tooltip']['EditPayType'] = "Ödeme Türünü Düzenle";
+$l['Tooltip']['RemovePayType'] = "Ödeme Türünü Kaldır";
+$l['Tooltip']['paymentTypeTooltip'] = "Ödemenin amacını açıklayan ödeme türü kolay adı";
+$l['Tooltip']['paymentTypeNotesTooltip'] = "Ödeme türünün işleyişini açıklamak için ödeme türü açıklaması";
+$l['Tooltip']['EditPayment'] = "Ödemeyi Düzenle";
+$l['Tooltip']['PaymentId'] = "Ödeme No";
+$l['Tooltip']['RemovePayment'] = "Ödemeyi Kaldır";
+$l['Tooltip']['paymentInvoiceTooltip'] = "Bu ödemeyle ilgili fatura";
 
 
-
-$l['Tooltip']['Username'] = "Type the Username";
-$l['Tooltip']['BatchName'] = "Type the Batch name";
-$l['Tooltip']['UsernameWildcard'] = "Hint: you may use the char * or % to specify a wildcard";
-$l['Tooltip']['HotspotName'] = "Type the Hotspot name";
-$l['Tooltip']['NasName'] = "Type the NAS name";
-$l['Tooltip']['GroupName'] = "Type the Group name";
-$l['Tooltip']['AttributeName'] = "Type the Attribute name";
-$l['Tooltip']['VendorName'] = "Type the Vendor name";
-$l['Tooltip']['PoolName'] = "Type the Pool name";
-$l['Tooltip']['IPAddress'] = "Type the IP address";
-$l['Tooltip']['Filter'] = "Type a filter, can be any alpha numeric string. Leave empty to match anything. ";
-$l['Tooltip']['Date'] = "Type the date <br/> example: 1982-06-04 (Y-M-D)";
-$l['Tooltip']['RateName'] = "Type the Rate name";
-$l['Tooltip']['OperatorName'] = "Type the Operator name";
-$l['Tooltip']['BillingPlanName'] = "Type the Billing Plan name";
-$l['Tooltip']['PlanName'] = "Type the plan name";
+$l['Tooltip']['Username'] = "Kullanıcı Adını Yazın";
+$l['Tooltip']['BatchName'] = "Parti adını yazın";
+$l['Tooltip']['UsernameWildcard'] = "İpucu: joker karakter belirtmek için * veya % karakterini kullanabilirsiniz";
+$l['Tooltip']['HotspotName'] = "Hotspot adını yazın";
+$l['Tooltip']['NasName'] = "NAS adını yazın";
+$l['Tooltip']['GroupName'] = "Grup adını yazın";
+$l['Tooltip']['AttributeName'] = "Özellik adını yazın";
+$l['Tooltip']['VendorName'] = "Satıcı adını yazın";
+$l['Tooltip']['PoolName'] = "Havuz adını yazın";
+$l['Tooltip']['IPAddress'] = "IP adresini yazın";
+$l['Tooltip']['Filter'] = "Bir filtre yazın, herhangi bir alfa sayısal dize olabilir. Herhangi bir şeyle eşleşmek için boş bırakın.";
+$l['Tooltip']['Date'] = "Tarihi yazın <br/> örneği: 1982-06-04 (E-M-D)";
+$l['Tooltip']['RateName'] = "Fiyat adını yazın";
+$l['Tooltip']['OperatorName'] = "Operatör adını yazın";
+$l['Tooltip']['BillingPlanName'] = "Faturalandırma Planı adını yazın";
+$l['Tooltip']['PlanName'] = "Plan adını yazın";
 
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";
 
-$l['Tooltip']['rateNameTooltip'] = "The rate friendly name,<br/>
-					to describe the purpose of the rate";
-$l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br/>
-					the operation of the rate";
-$l['Tooltip']['rateCostTooltip'] = "The rate cost amount";
+$l['Tooltip']['rateNameTooltip'] = "Fiyatın amacını açıklamak için oran kısa ad";
+$l['Tooltip']['rateTypeTooltip'] = "Fiyatın işleyişini açıklamak için oran tipi";
+$l['Tooltip']['rateCostTooltip'] = "Ücret maliyeti tutarı";
+$l['Tooltip']['planNameTooltip'] = "Planın adı. Bu, planın özelliklerini anlatan kolay bir addır";
 
-$l['Tooltip']['planNameTooltip'] = "The Plan's name. This is<br/>
-					a friendly name describing the
-					characeristics of the plan";
 $l['Tooltip']['planIdTooltip'] = "";
 $l['Tooltip']['planTimeTypeTooltip'] = "";
 $l['Tooltip']['planTimeBankTooltip'] = "";
@@ -507,10 +499,10 @@ $l['Tooltip']['planTaxTooltip'] = "";
 $l['Tooltip']['planCurrencyTooltip'] = "";
 $l['Tooltip']['planGroupTooltip'] = "";
 
-$l['Tooltip']['EditIPPool'] = "Edit IP-Pool";
-$l['Tooltip']['RemoveIPPool'] = "Remove IP-Pool";
-$l['Tooltip']['EditIPAddress'] = "Edit IP Address";
-$l['Tooltip']['RemoveIPAddress'] = "Remove IP Address";
+$l['Tooltip']['EditIPPool'] = "IP-Pool Düzenle";
+$l['Tooltip']['RemoveIPPool'] = "IP-Pool Sil";
+$l['Tooltip']['EditIPAddress'] = "IP Adres Düzenle";
+$l['Tooltip']['RemoveIPAddress'] = "IP Adres Sil";
 
 $l['Tooltip']['BusinessNameTooltip'] = "";
 $l['Tooltip']['BusinessPhoneTooltip'] = "";
@@ -572,25 +564,25 @@ $l['Tooltip']['AttributeEdit'] = "Edit Attribute";
 
 $l['Tooltip']['BatchDetails'] = "Batch Details";
 
-$l['Tooltip']['UserEdit'] = "Edit User";
-$l['Tooltip']['HotspotEdit'] = "Edit Hotspot";
-$l['Tooltip']['EditNAS'] = "Edit NAS";
-$l['Tooltip']['RemoveNAS'] = "Remove NAS";
-$l['Tooltip']['EditHG'] = "Edit HuntGroup";
-$l['Tooltip']['RemoveHG'] = "Remove HuntGroup";
-$l['Tooltip']['hgNasIpAddress'] = "Type the Host/Ip address";
-$l['Tooltip']['hgGroupName'] = "Type the Groupname for the NAS";
-$l['Tooltip']['hgNasPortId'] = "Type the Nas Port Id";
-$l['Tooltip']['EditUserGroup'] = "Edit User Group";
-$l['Tooltip']['ListUserGroups'] = "List User Groups";
-$l['Tooltip']['DeleteUserGroup'] = "Delete User Group Association";
+$l['Tooltip']['UserEdit'] = "Kullanıcıyı Düzenle";
+$l['Tooltip']['HotspotEdit'] = "Hotspot Düzenle";
+$l['Tooltip']['EditNAS'] = "NAS Düzenle";
+$l['Tooltip']['RemoveNAS'] = "NAS Kaldır";
+$l['Tooltip']['EditHG'] = "HuntGroup Düzenle";
+$l['Tooltip']['RemoveHG'] = "HuntGroup Kaldır";
+$l['Tooltip']['hgNasIpAddress'] = "Host/Ip adresini yazın";
+$l['Tooltip']['hgGroupName'] = "NAS için Grup Adını yazın";
+$l['Tooltip']['hgNasPortId'] = "Nas portunu yazın";
+$l['Tooltip']['EditUserGroup'] = "Kullanıcı Grubunu Düzenle";
+$l['Tooltip']['ListUserGroups'] = "Kullanıcı Gruplarını Listele";
+$l['Tooltip']['DeleteUserGroup'] = "Kullanıcı Grubu İlişkisini Sil";
 
-$l['Tooltip']['EditProfile'] = "Edit Profile";
+$l['Tooltip']['EditProfile'] = "Profili Düzenle";
 
-$l['Tooltip']['EditRealm'] = "Edit Realm";
-$l['Tooltip']['EditProxy'] = "Edit Proxy";
+$l['Tooltip']['EditRealm'] = "Alamı Düzenle";
+$l['Tooltip']['EditProxy'] = "Proxy Düzenle";
 
-$l['Tooltip']['EditGroup'] = "Edit Group";
+$l['Tooltip']['EditGroup'] = "Grubu Düzenle";
 
 $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "If you specify value then only the single record that matches both the groupname and the specific value which you have specified will be removed. If you omit the value then all records for that particular groupname will be removed!";
 
@@ -1179,17 +1171,17 @@ $l['Giriş']['mngradprofilesnew.php'] = "Yeni Profil";
 
 $l['Intro']['mngradgroups.php'] = "Grup Ayarları";
 
-$l['Intro']['mngradgroupreplynew.php'] = "New Group Reply Mapping";
-$l['Intro']['mngradgroupreplylist.php'] = "Group Reply Mapping in Database";
-$l['Intro']['mngradgroupreplyedit.php'] = "Edit Group Reply Mapping for Group:";
-$l['Intro']['mngradgroupreplydel.php'] = "Remove Group Reply Mapping";
-$l['Intro']['mngradgroupreplysearch.php'] = "Search Group Reply Mapping";
+$l['Intro']['mngradgroupreplynew.php'] = "Yeni Grup Yanıt Eşlemesi";
+$l['Intro']['mngradgroupreplylist.php'] = "Veritabanında Grup Yanıt Eşlemesi";
+$l['Intro']['mngradgroupreplyedit.php'] = "Grup için Grup Yanıt Eşlemesini Düzenle:";
+$l['Intro']['mngradgroupreplydel.php'] = "Grup Yanıt Eşlemesini Kaldır";
+$l['Intro']['mngradgroupreplysearch.php'] = "Arama Grubu Yanıt Eşlemesi";
 
-$l['Intro']['mngradgroupchecknew.php'] = "New Group Check Mapping";
-$l['Intro']['mngradgroupchecklist.php'] = "Group Check Mapping in Database";
-$l['Intro']['mngradgroupcheckedit.php'] = "Edit Group Check Mapping for Group:";
-$l['Intro']['mngradgroupcheckdel.php'] = "Remove Group Check Mapping";
-$l['Intro']['mngradgroupchecksearch.php'] = "Search Group Check Mapping";
+$l['Intro']['mngradgroupchecknew.php'] = "Yeni Grup Kontrol Eşlemesi";
+$l['Intro']['mngradgroupchecklist.php'] = "Veritabanında Grup Kontrol Eşlemesi";
+$l['Intro']['mngradgroupcheckedit.php'] = "Grup için Grup Kontrol Eşlemesini Düzenle:";
+$l['Intro']['mngradgroupcheckdel.php'] = "Grup Kontrol Eşlemesini Kaldır";
+$l['Intro']['mngradgroupchecksearch.php'] = "Arama Grubu Kontrol Eşlemesi";
 
 $l['Giriş']['configuser.php'] = "Kullanıcı Ayarları";
 $l['Giriş']['configmail.php'] = "E-posta Ayarları";
@@ -1501,14 +1493,14 @@ Requests -  Send 'num' packets from a file in parallel <br/>
 
 
 ";
-$l['helpPage']['configoperatorsdel'] = "To remove an operator from the database you must provide the username.";
-$l['helpPage']['configoperatorsedit'] = "Edit the operator user details below";
-$l['helpPage']['configoperatorsnew'] = "You may fill below details for a new operator user addition to database";
-$l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
-$l['helpPage']['configoperators'] = "Operators Configuration";
-$l['helpPage']['configbackup'] = "Perform Backup";
-$l['helpPage']['configbackupcreatebackups'] = "Create Backups";
-$l['helpPage']['configbackupmanagebackups'] = "Manage Backups";
+$l['helpPage']['configoperatorsdel'] = "Veritabanından bir operatörü kaldırmak için kullanıcı adını sağlamalısınız.";
+$l['helpPage']['configoperatorsedit'] = "Operatör kullanıcı ayrıntılarını aşağıda düzenleyin";
+$l['helpPage']['configoperatorsnew'] = "Veritabanına eklenen yeni operatör kullanıcısı için aşağıdaki bilgileri doldurabilirsiniz";
+$l['helpPage']['configoperatorslist'] = "Veritabanındaki tüm Operatörleri listeleme";
+$l['helpPage']['configoperators'] = "Operatör Yapılandırması";
+$l['helpPage']['configbackup'] = "Yedekleme Yap";
+$l['helpPage']['configbackupcreatebackups'] = "Yedekleme Oluştur";
+$l['helpPage']['configbackupmanagebackups'] = "Yedeklemeleri Yönet";
 
 
 $l['helpPage']['graphmain'] = "
