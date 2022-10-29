@@ -103,7 +103,7 @@ $l['all']['EndingDate'] = "Ending Date";
 
 $l['all']['Realm'] = "Realm";
 $l['all']['RealmName'] = "Realm Name";
-$l['all']['RealmSecret'] = "Realm Secert";
+$l['all']['RealmSecret'] = "Realm Secret";
 $l['all']['AuthHost'] = "Auth Host";
 $l['all']['AcctHost'] = "Acct Host";
 $l['all']['Ldflag'] = "ldflag";
@@ -113,7 +113,7 @@ $l['all']['Hints'] = "hints";
 
 $l['all']['Proxy'] = "Proxy";
 $l['all']['ProxyName'] = "Proxy Name";
-$l['all']['ProxySecret'] = "Proxy Secert";
+$l['all']['ProxySecret'] = "Proxy Secret";
 $l['all']['DeadTime'] = "Dead Time";
 $l['all']['RetryDelay'] = "Retry Delay";
 $l['all']['RetryCount'] = "Retry Count";
