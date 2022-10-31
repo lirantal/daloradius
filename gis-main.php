@@ -1,73 +1,91 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
-	
-	if (isset($_REQUEST["submit"])) {
-		$googleMapsCode = $_REQUEST['code'];
-		writeGoogleMapsCode($googleMapsCode);
-	}
+    
+    if (array_key_exists('submit', $_POST) && isset($_POST['submit'])) {
+        $myfile = "library/googlemaps.php";
+        
+        $default_failureMsg = sprintf("Error: could not open the file for reading or writing: <strong>%s</strong>", $myfile)
+                            . "<br>Check file permissions. The file should be readable and writable by the webserver's user/group";
+        
+        
+        if (array_key_exists('code', $_POST) && isset($_POST['code']) &&
+            preg_match('/[a-zA-Z0-9_-]+/', $_POST['code']) !== false) {
+        
+            
+            
+            if (is_readable($myfile) && is_writable($myfile)) {
+                $old_contents = file_get_contents($myfile);
+                $replacement = sprintf('<script src="//maps.google.com/maps?file=api&v=3&key=%s"></script>', $_POST['code']);
+                $new_contents = preg_replace('/<script.*<\/script>/si', $replacement, $old_contents);
+                
+                if ($new_contents !== $old_contents) {
+                    if (file_put_contents($myfile, $new_contents) !== false) {
+                        $successMsg = "Successfully updated GoogleMaps API Registration code";
+                    } else {
+                        $failureMsg = $default_failureMsg;
+                    }
+                }
 
-    function writeGoogleMapsCode($googleMapsCode) {
-		$myfile = "library/googlemaps.php";
-	    
-	    	$sanitizedGoogleMapsCode = preg_replace("/[^-a-zA-Z0-9]+/", "", $googleMapsCode);
-		if ($fh = fopen($myfile, 'w') ) {
-			$strCode = "<script src='//maps.google.com/maps?file=api&amp;v=3&amp;key=" . $sanitizedGoogleMapsCode . 
-						"' type='text/javascript'></script>";
-			fwrite($fh, $strCode);
-			fclose($fh);
-
-			$successMsg = "Successfully updated GoogleMaps API Registration code";
-		} else {
-			$failureMsg = "Error: could not open the file for writing: <b> $myfile </b>
-			<br/> Check file permissions. The file should be writable by the webserver's user/group";
-		}
+            } else {
+                $failureMsg = $default_failureMsg;
+            }
+        }
     }
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
+    // print HTML prologue
+    $title = t('Intro','gismain.php');
+    $help = t('helpPage','gismain');
+
+    print_html_prologue($title, $langCode);
+    
+    include ("menu-gis.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    include_once('include/management/actionMessages.php');
 ?>
 
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	
-	include ("menu-gis.php");
-	
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-
-	<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','gismain.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','gismain') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-		
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

@@ -41,7 +41,7 @@
     include('libchart/classes/libchart.php');
 
     $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
+    $dataSet = new XYDataSet();
     $limit = 24;
 
     switch ($type) {
@@ -67,7 +67,6 @@
     $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $limit);
     $res = $dbSocket->query($sql);
     while ($row = $res->fetchRow()) {
-        //~ $value = number_format((float)($row[1] / $size_division[$size]), 3, ".", "");
         $value = intdiv($row[1], $size_division[$size]);
         $label = strval($row[0]);
         

@@ -39,20 +39,23 @@
 
     include_once('library/config_read.php');
 	
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','graphsloggedusers.php');
+    $help = t('helpPage','graphsloggedusers');
+    
+    print_html_prologue($title, $langCode);
+    
 	include("menu-graphs.php");
-    include_once ("library/tabber/tab-layout.php");
+    include_once("library/tabber/tab-layout.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
 ?>
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','graphsloggedusers.php'); ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
-            
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','graphsloggedusers') ?><br></div>
-            <br>
 
             <div class="tabber">
                 <div class="tabbertab" title="Graph (day)">
@@ -83,7 +86,7 @@
     include('page-footer.php');
 ?>
 
-		</div>
+		</div><!-- #footer -->
     </div>
 </div>
 

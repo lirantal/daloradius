@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,7 +15,8 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -23,52 +24,40 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
- 
-<?php
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-	include ("menu-mng-users.php");
-	
-?>		
+    // print HTML prologue
+    $title = t('Intro','mngmain.php');
+    $help = "";
+    
+    print_html_prologue($title, $langCode);
 
-	<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#"><?php echo t('Intro','mngmain.php') ?></a></h2>
-		<p>
-			<table><center><br/>
-			<img src="library/chart-mng-total-users.php" />
-			</table></center>
-		</p>
+    include("menu-mng-users.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-
-<?php
-	include('include/config/logging.php');
 ?>
 
-		</div>
+            <div style="text-align: center">
+                <img alt="Total Users" src="library/chart-mng-total-users.php">
+            </div>
 
-		<div id="footer">
-		
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include 'page-footer.php';
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-
-		</div>
-
-</div>
+        </div><!-- #footer -->
+    </div>
 </div>
 
 </body>
 </html>
-

@@ -33,37 +33,38 @@
 
     include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','replogsdaloradius.php') . " :: $daloradiusLineCount Lines Count";
+    $help = t('helpPage','replogsdaloradius');
+    
+    print_html_prologue($title, $langCode);
 
     include("menu-reports-logs.php");
 
 ?>    
 
     <div id="contentnorightbar">
-        <h2 id="Intro">
-            <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                <?= t('Intro','replogsdaloradius.php') ?> :: <?= $daloradiusLineCount . " Lines Count " ?>
-                <h144>&#x2754;</h144>
-            </a>
-        </h2>
-
-        <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','replogsdaloradius') ?><br></div>
-
 <?php
+    print_title_and_help($title, $help);
+
     include('library/exten-daloradius_log.php');
     include_once('include/management/actionMessages.php');
 ?>
-        </div>
-
+        </div><!-- #contentnorightbar -->
+        
         <div id="footer">
 <?php
+    include('include/config/logging.php');
     include('page-footer.php');
 ?>
-        </div>
-        
+        </div><!-- #footer -->
     </div>
 </div>
-
 
 </body>
 </html>

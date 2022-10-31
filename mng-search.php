@@ -53,6 +53,12 @@
     //feed the sidebar variables
     $search_username = $username_enc;
 
+    if (!empty($username_enc)) {
+        $title .=  " :: " . $username_enc;
+    }
+
+    $help = (!empty($username_enc)) ? "looked for user $username_enc" : "no user specified";
+
     include ("menu-mng-users.php");
     
     // these three variable can be used for validation an presentation purpose
@@ -78,33 +84,9 @@
 ?>
 
     <div id="contentnorightbar">
-        
-        <h2 id="Intro">
-            <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-<?php 
-    echo t('Intro','mngsearch.php');
-    if (!empty($username_enc)) {
-        echo " :: " . $username_enc;
-    }
-?>
-                <h144>&#x2754;</h144>
-            </a>
-        </h2>
-        
-        <div id="helpPage" style="display:none;visibility:visible">
-<?php
-            if (!empty($username_enc)) {
-                echo "looked for user $username_enc";
-            } else {
-                echo "no user specified";
-            }
-?>
-            <br>
-        </div>
-        <br>
 
 <?php
-
+    print_title_and_help($title, $help);
     include('library/opendb.php');
     include('include/management/pages_common.php');
 

@@ -33,6 +33,7 @@
 
     // print HTML prologue
     $title = t('Intro','mngradprofiles.php');
+    $help = t('helpPage','mngradprofileslist');
     
     print_html_prologue($title, $langCode);
     
@@ -56,19 +57,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
-?>
-        
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','mngradprofiles.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mngradprofileslist') ?><br></div>
-            <br>
-
-<?php
+               
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');

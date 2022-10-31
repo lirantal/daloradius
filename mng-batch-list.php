@@ -24,6 +24,11 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     include_once("lang/main.php");
@@ -37,6 +42,7 @@
     );
     
     $title = t('Intro','mngbatchlist.php');
+    $help = t('helpPage','mngbatchlist');
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
@@ -67,19 +73,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
-?>    
 
-
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#"  onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','mngbatchlist.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mngbatchlist') ?><br></div>
-
-<?php
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -127,10 +123,11 @@
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
         
-        $per_page_numrows = $res->numRows();
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-batch-del.php";
 ?>
-
-<form name="listall" method="GET" action="mng-batch-del.php">
+<form name="listall" method="POST" action="<?= $action ?>">
 
     <table border="0" class="table1">
         <thead>
@@ -153,7 +150,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('batch_id[]', 'mng-batch-del.php')
+        printTableFormControls('batch_id[]', $action);
 ?>
                 </th>
             </tr>
@@ -243,9 +240,6 @@
         
         <div id="footer">
 <?php
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

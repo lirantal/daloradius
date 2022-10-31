@@ -21,39 +21,42 @@
  *********************************************************************************************************
  */
 
-include("library/checklogin.php");
-$operator = $_SESSION['operator_user'];
+    include("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
 
-include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-// validate parameters
-$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
-         in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
-      ? strtolower($_GET['type']) : "daily";
+    // validate parameters
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
 
-$size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
-         in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
-      ? strtolower($_GET['size']) : "megabytes";
+    $size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
+             in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
+          ? strtolower($_GET['size']) : "megabytes";
 
-$traffic_compare_type = $type;
-$traffic_compare_size = $size;
+    $traffic_compare_type = $type;
+    $traffic_compare_size = $size;
 
-include_once('library/config_read.php');
+    include_once('library/config_read.php');
 
-include("menu-graphs.php");	
-include_once("library/tabber/tab-layout.php");
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','graphsalltimetrafficcompare.php');
+    $help = t('helpPage','graphsalltimetrafficcompare');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-graphs.php");	
+    include_once("library/tabber/tab-layout.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
 ?>
-
-		<div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','graphsalltimetrafficcompare.php'); ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
-            
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','graphsalltimetrafficcompare') ?><br></div>
-            <br>
 
             <div class="tabber">
                 <div class="tabbertab" title="Download Graph">
@@ -75,8 +78,8 @@ include_once("library/tabber/tab-layout.php");
                         <img alt="<?= $upload_alt ?>" src="<?= $upload_src ?>">
                     </div>
                 </div>
-            </div>
-        </div>
+            </div><!-- .tabber -->
+        </div><!-- #contentnorightbar -->
 
 		<div id="footer">		
 <?php
@@ -86,7 +89,7 @@ include_once("library/tabber/tab-layout.php");
     include('include/config/logging.php');
     include('page-footer.php');
 ?>
-		</div>
+		</div><!-- #footer -->
     </div>
 </div>
 

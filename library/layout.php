@@ -15,8 +15,7 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Authors:    Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -42,7 +41,9 @@ const DEFAULT_COMMON_JS = array(
 );
 
 // this function can be used for printing the HTML prologue
-function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=array(),
+function print_html_prologue($title, $lang='en',
+                             $extra_css=array(), $extra_js=array(),
+                             $inline_extra_css="", $inline_extra_js="",
                              $common_css=DEFAULT_COMMON_CSS, $common_js=DEFAULT_COMMON_JS) {
 ?>
 
@@ -58,10 +59,18 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
         printf('<link rel="stylesheet" href="%s" />' . "\n", $href);
     }
     
+    if (!empty($inline_extra_css)) {
+        echo "<style>" . $inline_extra_css . "</style>" . "\n";
+    }
+    
     $js = array_merge($common_js, $extra_js);
     foreach ($js as $src) {
         printf('<script src="%s"></script>' . "\n", $src);
     }
+    
+    if (!empty($inline_extra_js)) {
+        echo "<script>" . $inline_extra_js . "</script>" . "\n";
+    } 
 ?>
 </head>
 
@@ -69,18 +78,40 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
 }
 
 // this function can be used for printing pages title and help
-function print_title_and_help($title, $help) {
+function print_title_and_help($title, $help="") {
+    $h2 = (!empty($help))
+        ? sprintf('<a href="#" onclick="javascript:toggleShowDiv(' . "'helpPage'" . ')">%s<h144>&#x2754;</h144></a>', $title)
+        : $title;
 ?>
     <h2 id="Intro" style="margin-bottom: 10px">
-        <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-            <?= $title ?> <h144>&#x2754;</h144>
-        </a>
+        <?= $h2 ?>
     </h2><!-- #Intro -->
-                
-    <div id="helpPage" style="display:none; margin-bottom: 20px">
-        <?= $help ?>
-    </div><!-- #helpPage -->
 
 <?php
-}
+    if (!empty($help)) {
 ?>
+        <div id="helpPage" style="display:none; margin-bottom: 20px">
+            <?= $help ?>
+        </div><!-- #helpPage -->
+<?php
+    }
+}
+
+
+// prints a select field as a element of a list
+function print_select_as_list_elem($name, $label, $options, $selected_value) {
+    echo '<li class="fieldset">';
+    printf('<label for="%s" class="form">%s</label>', $name, $label);
+    printf('<select class="form" name="%s" id="%s">', $name, $name);
+    foreach ($options as $key => $elem) {
+        $value = htmlspecialchars(
+                                  ((!is_int($key)) ? $key : $elem),
+                                  ENT_QUOTES, 'UTF-8');
+        
+        $caption = htmlspecialchars($elem, ENT_QUOTES, 'UTF-8');
+        $selected = ($selected_value === $value) ? " selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $caption);
+    }
+    echo '</select>';
+    echo '</li>';
+}

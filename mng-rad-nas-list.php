@@ -32,6 +32,7 @@
 
     // print HTML prologue
     $title = t('Intro','mngradnaslist.php');
+    $help = t('helpPage','mngradnaslist');
     
     print_html_prologue($title, $langCode);
     
@@ -62,19 +63,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
-?>
-        
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','mngradnaslist.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-                
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mngradnaslist') ?><br></div>
-            <br>
-
-<?php
+               
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -180,6 +171,7 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
     </table>
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
 </form>
 
 <?php

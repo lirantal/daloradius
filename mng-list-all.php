@@ -81,11 +81,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
-?>
 
-        <div id="contentnorightbar">
-<?php
 
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     echo '<div id="returnMessages"></div>';
 
@@ -102,6 +100,7 @@
                        FROM %s
                       WHERE attribute='Auth-Type' OR attribute LIKE '%%-Password'", $configValues['CONFIG_DB_TBL_RADCHECK']);
     $res = $dbSocket->query($sql0);
+    $logDebugSQL .= "$sql0;\n";
     $numrows = $res->fetchrow()[0];
     
     if ($numrows > 0) {
@@ -242,7 +241,10 @@
             $tooltip = addToolTipBalloon($arr);
 ?>
             <tr>
-                <td><input type="checkbox" name="username[]" value="<?= $username ?>"><?= $id ?></td>
+                <td>
+                    <input type="checkbox" name="username[]" id="<?= "checkbox$id" ?>" value="<?= $username ?>">
+                    <label for="<?= "checkbox$id" ?>"><?= $id ?></label>
+                    </td>
                 <td><?= "$fullname" ?></td>
                 <td><?= "$img $tooltip" ?></td>
                 <td><?= $auth ?></td>

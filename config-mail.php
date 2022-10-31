@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,7 +15,8 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -23,121 +24,86 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
-
-    include ("library/config_read.php");
+    include_once("lang/main.php");
 
     if (isset($_REQUEST['submit'])) {
 
-		if (isset($_REQUEST['config_mail_smtpaddr']))
-			$configValues['CONFIG_MAIL_SMTPADDR'] = $_REQUEST['config_mail_smtpaddr'];
-		
-		if (isset($_REQUEST['config_mail_smtpport']))
-			$configValues['CONFIG_MAIL_SMTPPORT'] = $_REQUEST['config_mail_smtpport'];
-			
-		if (isset($_REQUEST['config_mail_smtp_fromemail']))
-			$configValues['CONFIG_MAIL_SMTPFROM'] = $_REQUEST['config_mail_smtp_fromemail'];
-		
+        if (isset($_REQUEST['config_mail_smtpaddr']))
+            $configValues['CONFIG_MAIL_SMTPADDR'] = $_REQUEST['config_mail_smtpaddr'];
+        
+        if (isset($_REQUEST['config_mail_smtpport']))
+            $configValues['CONFIG_MAIL_SMTPPORT'] = $_REQUEST['config_mail_smtpport'];
+            
+        if (isset($_REQUEST['config_mail_smtp_fromemail']))
+            $configValues['CONFIG_MAIL_SMTPFROM'] = $_REQUEST['config_mail_smtp_fromemail'];
+        
         include ("library/config_write.php");
-    }	
+    }    
 
-	
-?>		
-		
-<?php
-    include ("menu-config.php");
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','configmail.php');
+    $help = t('helpPage','configmail');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-config.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    include_once('include/management/actionMessages.php');
+
 ?>
 
+<form name="mailsettings" method="POST">
+    <fieldset>
+        <h302><?= t('title','Settings'); ?></h302>
+        
+        <br/>
+
+        <ul>
+
+            <li class="fieldset">
+                <label for="config_mail_smtpaddr" class="form"><?= t('all','SMTPServerAddress') ?></label>
+                <input type="text" value="<?= $configValues['CONFIG_MAIL_SMTPADDR'] ?>" name="config_mail_smtpaddr">
+            </li>
+
+            <li class="fieldset">
+                <label for="config_mail_smtpport" class="form"><?= t('all','SMTPServerPort') ?></label>
+                <input type="number" min="0" max="65535" value="<?= $configValues['CONFIG_MAIL_SMTPPORT'] ?>" name="config_mail_smtpport">
+            </li>
+
+            <li class="fieldset">
+                <label for="config_mail_smtp_fromemail" class="form"><?= t('all','SMTPServerFromEmail') ?></label>
+                <input type="text" value="<?= $configValues['CONFIG_MAIL_SMTPFROM'] ?>" name="config_mail_smtp_fromemail">
+            </li>
+
+
+            <li class="fieldset">
+                <br/><hr><br/>
+                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
+            </li>
+        </ul>
+    </fieldset>
+</form>
+
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-        include_once ("library/tabber/tab-layout.php");
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-		
-			
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configmail.php'); ?>
-				<h144>&#x2754;</h144></a></h2>
-
-                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','configmail') ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-
-				<form name="mailsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-<div class="tabber">
-
-     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
-
-        <fieldset>
-
-                <h302><?php echo t('title','Settings'); ?></h302>
-		<br/>
-
-		<ul>
-
-		<li class='fieldset'>
-		<label for='config_mail_smtpaddr' class='form'><?php echo t('all','SMTPServerAddress') ?></label>
-		<input type='text' value="<?php echo $configValues['CONFIG_MAIL_SMTPADDR'] ?>" name="config_mail_smtpaddr" />
-		</li>
-
-		<li class='fieldset'>
-		<label for='config_mail_smtpport' class='form'><?php echo t('all','SMTPServerPort') ?></label>
-		<input type='text' value="<?php echo $configValues['CONFIG_MAIL_SMTPPORT'] ?>" name="config_mail_smtpport" />
-		</li>
-
-		<li class='fieldset'>
-		<label for='config_mail_smtp_fromemail' class='form'><?php echo t('all','SMTPServerFromEmail') ?></label>
-		<input type='text' value="<?php echo $configValues['CONFIG_MAIL_SMTPFROM'] ?>" name="config_mail_smtp_fromemail" />
-		</li>
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-		</li>
-
-		</ul>
-	
-	</fieldset>
-
-	</div>
-
+        </div><!-- #footer -->
+    </div>
 </div>
-
-
-				</form>
-
-	
-				<br/><br/>
-
-
-
-
-
-
-		</div>
-		
-		<div id="footer">
-		
-<?php
-        include 'page-footer.php';
-?>
-		
-		</div>
-		
-</div>
-</div>
-
 
 </body>
 </html>

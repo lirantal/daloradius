@@ -23,10 +23,12 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	
-	include('library/check_operator_perm.php');
+    
+    include('library/check_operator_perm.php');
 
-	// validate (or pre-validate) parameters
+    // validate (or pre-validate) parameters
+    $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
+    
     $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
              in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
           ? strtolower($_GET['type']) : "daily";
@@ -39,45 +41,61 @@
               ? str_replace('%', '', $_GET['username']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-	//feed the sidebar variables
-	$overall_upload_username = $username_enc;
-	$overall_upload_type = $type;
-	$overall_upload_size = $size;
+    //feed the sidebar variables
+    $overall_upload_username = $username_enc;
+    $overall_upload_type = $type;
+    $overall_upload_size = $size;
 
     include_once('library/config_read.php');
 
-	include("menu-graphs.php");
-    include_once ("library/tabber/tab-layout.php");
-?>
+    // init logging variables
+    $log = "visited page: ";
+    if (!empty($username)) {
+        $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    }
 
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-		<div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','graphsoverallupload.php'); ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
-            
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','graphsoverallupload') ?><br></div>
-            <br>
-<?php
+    // print HTML prologue
+    $title = t('Intro','graphsoverallupload.php');
+    $help = t('helpPage','graphsoverallupload');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-graphs.php");
+    include_once("library/tabber/tab-layout.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
     if (!empty($username)) {
         $src = sprintf("library/graphs-overall-users-upload.php?type=%s&size=%s&user=%s", $type, $size, $username_enc);
         $alt = sprintf("%s of traffic in upload %s produced by %s", $size, $type, $username_enc);
 ?>
 
             <div class="tabber">
-                <div class="tabbertab" title="Graph">
+                <div id="graph" class="tabbertab" title="Graph">
                     <div style="text-align: center; margin-top: 50px">
                         <img alt="<?= $alt ?>" src="<?= $src ?>">
                     </div>
                 </div>
 
-                <div class="tabbertab" title="Statistics">
+                <div id="stats" class="tabbertab" title="Statistics">
                     <div style="margin-top: 50px">
 <?php
         include("library/tables-overall-users-upload.php");
+        
+        if ($goto_stats) {
+?>
+            <script>
+                window.addEventListener('load', function() {
+                    document.querySelector('a[title="Statistics"]').click();
+                });
+            </script>
+<?php  
+        }
 ?>
                     </div>
                 </div>
@@ -90,17 +108,12 @@
 ?>
         </div>
 
-		<div id="footer">		
+        <div id="footer">        
 <?php
-    $log = "visited page: ";
-    if (!empty($username)) {
-        $logQuery = "performed query for user [$username] of type [$type] on page: ";
-    }
-    
     include('include/config/logging.php');
     include('page-footer.php');
 ?>
-		</div>
+        </div>
     </div>
 </div>
 

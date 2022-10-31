@@ -38,13 +38,13 @@
     );
     
     $title = t('Intro','mnghslist.php');
+    $help = t('helpPage','mnghslist');
     
     print_html_prologue($title, $langCode, array(), $extra_js);
     
     include("menu-mng-hs.php");
     
     $cols = array(
-                    'id' => t('all','ID'),
                     'name' => t('all','HotSpot'),
                     'owner' => t('ContactInfo','OwnerName'),
                     'company' => t('ContactInfo','Company'),
@@ -65,20 +65,9 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
     
-?>
-        
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','mnghslist.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-                
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mnghslist') ?><br></div>
-            <br>
-
-
-<?php
+    // start printing content
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -101,15 +90,19 @@
         /* END */
                      
         // we execute and log the actual query
-        $sql = "SELECT id, name, owner, company, type FROM %s ORDER BY %s %s LIMIT %s, %s";
+        $sql = "SELECT name, owner, company, type FROM %s ORDER BY %s %s LIMIT %s, %s";
         $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
                              $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
         
         $per_page_numrows = $res->numRows();
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-hs-del.php";
 ?>
-<form name="listall" method="POST" action="mng-hs-del.php">
+<form name="listall" method="POST" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
             
@@ -121,11 +114,11 @@
             setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
             echo '</td>' . '</tr>';
         }
-?>          
+?>
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('name[]', 'mng-hs-del.php')
+        printTableFormControls('name[]', $action);
 ?>
                 </th>
             </tr>
@@ -140,6 +133,7 @@
         
         <tbody>
 <?php
+        $count = 1;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -148,7 +142,7 @@
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
         
-            list($id, $name, $owner, $company, $type) = $row;
+            list($name, $owner, $company, $type) = $row;
             
             $li_style = 'margin: 7px auto';
             $tooltipText = '<ul style="list-style-type: none">'
@@ -163,21 +157,24 @@
             
 ?>
             <tr>
-                <td><input type="checkbox" name="name[]" value="<?= $name ?>"><?= $id ?></td>
                 <td>
-                    <a class="tablenovisit" href="#" onclick='<?= $onclick ?>' tooltipText='<?= $tooltipText ?>'>
-                        <?= $name ?>
-                    </a>
+                    <input type="checkbox" name="name[]" value="<?= $name ?>" id="<?= "checkbox-$count" ?>">
+                    <label for="<?= "checkbox-$count" ?>">
+                        <a class="tablenovisit" href="#" onclick='<?= $onclick ?>' tooltipText='<?= $tooltipText ?>'>
+                            <?= $name ?>
+                        </a>
+                    </label>
                 </td>
 <?php
             // simply print remaining row elements
-            for ($i = 2; $i < $rowlen; $i++) {
+            for ($i = 1; $i < $rowlen; $i++) {
                 echo "<td>" . $row[$i] . "</td>";
             }
 ?>
             </tr>
 <?php
-    }
+            $count++;
+        }
 ?>
         </tbody>
 <?php
@@ -186,6 +183,7 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
     </table>
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
 </form>
 
 <?php

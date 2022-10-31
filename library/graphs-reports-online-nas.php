@@ -29,7 +29,7 @@
     include('libchart/classes/libchart.php');
 
     $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
+    $dataSet = new XYDataSet();
 
     $sql = sprintf("SELECT n.shortname, COUNT(DISTINCT(ra.username))
                       FROM %s AS ra, %s AS n

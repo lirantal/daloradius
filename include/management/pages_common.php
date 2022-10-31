@@ -441,11 +441,10 @@ function printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks,
 /* prints common controls needed when listing records */
 function printTableFormControls($setChecked_param, $removeCheckbox_filename, $form_name='listall') {
 ?>
-    Select:
-    <a title="Select All" class="table" href="javascript:SetChecked(1,'<?= $setChecked_param ?>','<?= $form_name ?>')">All</a> 
-    <a title="Select None" class="table" href="javascript:SetChecked(0,'<?= $setChecked_param ?>','<?= $form_name ?>')">None</a>
-    <br>
-    <input class="button" type="button" value="Delete" onclick="javascript:removeCheckbox('<?= $form_name ?>','<?= $removeCheckbox_filename ?>')">
+    <a title="Select All" class="table" href="javascript:SetChecked(1,'<?= $setChecked_param ?>','<?= $form_name ?>')">Select All</a> 
+    <a title="Select None" class="table" href="javascript:SetChecked(0,'<?= $setChecked_param ?>','<?= $form_name ?>')">Select None</a>
+    <input class="button delete" type="button" value="Delete"
+        onclick="javascript:removeCheckbox('<?= $form_name ?>','<?= $removeCheckbox_filename ?>')">
 <?php    
 }
 ?>

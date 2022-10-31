@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,7 +15,8 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -23,127 +24,95 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
+    include_once("lang/main.php");
 
-    include ("library/config_read.php");
+    $valid_encrypt_methods = array(
+                                    "cleartext" => "cleartext",
+                                    "crypt" => "unix crypt",
+                                    "md5" => "md5",
+                                  );
 
-    if (isset($_REQUEST['submit'])) {
+    $allowed_random_chars_regex = "^[a-zA-Z0-9_]+$";
 
-		if (isset($_REQUEST['config_user_allowedrandomchars'])) {
-			$config_user_allowedrandomchars = str_replace('\'', '', $_REQUEST['config_user_allowedrandomchars']);
-			$config_user_allowedrandomchars = str_replace('"', '', $config_user_allowedrandomchars);
-			$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = $config_user_allowedrandomchars;
-		}
-		
-		// this should probably move to some other page at some point
-		if (isset($_REQUEST['config_db_pass_encrypt']))
-			$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = $_REQUEST['config_db_pass_encrypt'];
-		
-        include ("library/config_write.php");
-    }	
+    if (array_key_exists('submit', $_POST) && isset($_POST['submit'])) {
+        
+        // this should probably move to some other page at some point
+        if (array_key_exists('CONFIG_DB_PASSWORD_ENCRYPTION', $_POST) &&
+            isset($_POST['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
+            in_array(strtolower($_POST['CONFIG_DB_PASSWORD_ENCRYPTION']), array_keys($valid_encrypt_methods))) {
+            $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = strtolower($_POST['CONFIG_DB_PASSWORD_ENCRYPTION']);
+        }
+        
+        
 
-	
-?>		
-		
-<?php
+        if (array_key_exists('CONFIG_USER_ALLOWEDRANDOMCHARS', $_POST) && isset($_POST['CONFIG_USER_ALLOWEDRANDOMCHARS']) &&
+            preg_match($allowed_random_chars_regex, $_POST['CONFIG_USER_ALLOWEDRANDOMCHARS']) !== false) {
+            $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = $_POST['CONFIG_USER_ALLOWEDRANDOMCHARS'];
+        }
+        
+        include("library/config_write.php");
+    }    
+
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','configuser.php');
+    $help = t('helpPage','configuser');
+    
+    print_html_prologue($title, $langCode);
+
     include ("menu-config.php");
-?>
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
+    include_once('include/management/actionMessages.php');
+?>        
+        
+<form name="usersettings" method="POST">
+
+    <fieldset>
+        <h302><?= t('title','Settings'); ?></h302>
+        
+        <br>
+
+        <ul>
 
 <?php
-        include_once ("library/tabber/tab-layout.php");
+        print_select_as_list_elem('CONFIG_DB_PASSWORD_ENCRYPTION',
+                                  t('all','DBPasswordEncryption'),
+                                  $valid_encrypt_methods,
+                                  $configValues['CONFIG_DB_PASSWORD_ENCRYPTION']);
 ?>
-		
-			
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configuser.php'); ?>
-				<h144>&#x2754;</h144></a></h2>
 
-                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','configuser') ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
+            <li class="fieldset">
+                <label for="CONFIG_USER_ALLOWEDRANDOMCHARS" class="form"><?= t('all','RandomChars') ?></label>
+                <input type="text" name="CONFIG_USER_ALLOWEDRANDOMCHARS" id="CONFIG_USER_ALLOWEDRANDOMCHARS"
+                    value="<?= htmlspecialchars($configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'], ENT_QUOTES, 'UTF-8') ?>"
+                    pattern="<?= $allowed_random_chars_regex ?>">
+            </li>
 
-				<form name="usersettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+            <li class="fieldset">
+                <br/><hr><br/>
+                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
+            </li>
+        </ul>
+    </fieldset>
+</form>
 
-<div class="tabber">
-
-     <div class="tabbertab" title="<?php echo t('title','Settings'); ?>">
-
-        <fieldset>
-
-                <h302><?php echo t('title','Settings'); ?></h302>
-		<br/>
-
-		<ul>
-
-		<li class='fieldset'>
-		<label for='' class='form'><?php echo t('all','DBPasswordEncryption')?></label>
-		<select class='form' name="config_db_pass_encrypt">
-			<option value="<?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?>"> <?php echo $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] ?> </option>
-			<option value=""></option>
-			<option value="cleartext">cleartext</option>
-			<option value="crypt">unix crypt</option>
-			<option value="md5">md5</option>
-		</select>
-		</li>
-		
-
-		<li class='fieldset'>
-		<label for='config_user_allowedrandomchars' class='form'><?php echo t('all','RandomChars') ?></label>
-		<input type='text' value="<?php echo htmlentities($configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']) ?>" name="config_user_allowedrandomchars" />
-		</li>
-
-
-
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-		</li>
-
-		</ul>
-	
-	</fieldset>
-
-	</div>
-
-</div>
-
-
-				</form>
-
-	
-				<br/><br/>
-
-
-
-
-
-
-		</div>
-		
-		<div id="footer">
-		
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-        include 'page-footer.php';
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-		
-		</div>
-		
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

@@ -15,399 +15,258 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
 
-	include ("library/checklogin.php");
-	$operator = $_SESSION['operator_user'];
+    include ("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
 
-	//include('library/check_operator_perm.php');
+    //include('library/check_operator_perm.php');
+
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+    
+    // soft and hard delay (seconds)
+    $softDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] * 60;
+    $hardDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] * 60;
+
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','rephbdashboard.php');
+    $help = t('helpPage','rephbdashboard');
+    
+    print_html_prologue($title, $langCode);
+    
+    include("menu-reports-hb.php");
+    
+      // the array $cols has multiple purposes:
+    // - its keys (when non-numerical) can be used
+    //   - for validating user input
+    //   - for table ordering purpose
+    // - its value can be used for table headings presentation
+    $cols = array(
+                    'id' => t('all','HotSpot'),
+                    t('all','Firmware'),
+                    t('all','WanIface'),
+                    t('all','LanIface'),
+                    t('all','WifiIface'),
+                    t('all','Uptime'),
+                    t('all','CPU'),
+                    t('all','Memfree'),
+                    t('all','BandwidthUp'),
+                    t('all','BandwidthDown'),
+                    t('all','CheckinTime')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
 
 
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "time";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "desc";
+    $sql = sprintf("SELECT hs.name AS hotspotname, no.wan_iface, no.wan_ip, no.wan_mac, no.wan_gateway, no.wifi_iface,
+                           no.wifi_ip, no.wifi_mac, no.wifi_ssid, no.wifi_key, no.wifi_channel, no.lan_iface,
+                           no.lan_mac, no.lan_ip, no.uptime, no.memfree, no.cpu, no.wan_bup, no.wan_bdown, no.firmware,
+                           no.firmware_revision, no.mac, no.time
+                      FROM %s AS no LEFT JOIN %s AS hs ON hs.mac=no.mac", $configValues['CONFIG_DB_TBL_DALONODE'],
+                                                                          $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    $res = $dbSocket->query($sql);
+    $numrows = $res->numRows();
 
-
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	$logQuery = "performed query on page: ";
-	$logDebugSQL = "";
-	
-	$softDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'];
-	$hardDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'];
-
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
+        $sql .= sprintf(" ORDER BY hs.%s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL = "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
 ?>
 
+    <table border="0" class="table1">
+        <thead>
+            <tr style="background-color: white">
 <?php
-
-    include ("menu-reports-hb.php");
-  	
-?>	
-
-
-	<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#"  onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','rephbdashboard.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','rephbdashboard') ?>
-			<br/>
-		</div>
-
-
-<?php
-
-	include 'include/management/pages_common.php';
-	include 'library/opendb.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT ".
-			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspotname,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_iface,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_ip,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_gateway,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_iface,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_ip,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_ssid,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_key,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_channel,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".lan_iface,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".lan_mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".lan_ip,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".uptime,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".memfree,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".cpu,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_bup,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_bdown,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".firmware,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".firmware_revision,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".time ".
-			" FROM ".$configValues['CONFIG_DB_TBL_DALONODE'].
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac = ".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".mac) ";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-	$logDebugSQL .= $sql . "\n";
-
-
-	$sql = "SELECT ".
-			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspotname,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_iface,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_ip,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_gateway,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_iface,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_ip,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_ssid,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_key,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wifi_channel,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".lan_iface,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".lan_mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".lan_ip,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".uptime,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".memfree,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_bup,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".wan_bdown,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".firmware,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".firmware_revision,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".mac,".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".time, ".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".cpu ".
-			" FROM ".$configValues['CONFIG_DB_TBL_DALONODE'].
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac = ".
-			$configValues['CONFIG_DB_TBL_DALONODE'].".mac) ".
-			//" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-			" LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-	echo "<form name='listallusers' method='get' action='mng-del.php' >";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-							<tr>
-							<th colspan='11' align='left'> 
-
-							<br/><br/>
-		";
-
-
-	/* drawing the number links */
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-	echo "
-			</th>
-			</tr>
-			</thead>
-			";
-	  $curOrderType = $orderType;
-        if ($orderType == "asc") {
-                $orderType = "desc";
-        } else  if ($orderType == "desc") {
-                $orderType = "asc";
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>';
         }
-	
-	echo "<thread> <tr>
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderType\">
-		".t('all','HotSpot')."</a>
-		</th>
-
-		<th scope='col'> 
-		".t('all','Firmware')."
-		</th>
-		
-		<th scope='col'> 
-		".t('all','WanIface')."
-		</th>
-
-		<th scope='col'> 
-		".t('all','LanIface')."
-		</th>
-
-		<th scope='col'> 
-		".t('all','WifiIface')."
-		</th>
-
-		<th scope='col'> 
-		".t('all','Uptime')."
-		</th>
-
-		<th scope='col'> 
-		".t('all','CPU')."
-		</th>
-		
-		<th scope='col'> 
-		".t('all','Memfree')."
-		</th>
-
-		<th scope='col'> 
-		".t('all','BandwidthUp')."
-		</th>
-
-		<th scope='col'> 
-		".t('all','BandwidthDown')."
-		</th>
-
-		<th scope='col'> 
-		".t('all','CheckinTime')."
-		</th>
-
-		</tr> </thread>";
-
-	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-
-		
-		
-		//$js = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=".$row[0]."');";
-		$content =  '<a class="toolTip" href="mng-hs-edit.php?name='.$row['hotspotname'].'">'.t('Tooltip','HotspotEdit').'</a>';
-		$content .= '<br/><br/><b>'.t('all','NASMAC').':</b> '.$row['mac'];
-		$str = addToolTipBalloon(array(
-									'content' => $content,
-									'onClick' => '',
-									'value' => '<b>'.$row['hotspotname'].'</b>',
-									'divId' => '',
-		
-							));
-
-		echo "
-			<tr>
-				<td>
-					$str
-				</td>
-			
-				<td>".
-					$row['firmware']."
-					<br/>".
-					$row['firmware_revision']."
-				</td>
-			";
-					
-					
-		$content = '<b>'.t('all','WanIface').":</b> ".$row['wan_iface'].
-					"<br/>".
-					'<b>'.t('all','WanMAC').":</b> ".$row['wan_mac'].
-					"<br/>".
-					'<b>'.t('all','WanIP').":</b> ".$row['wan_ip'].
-					"<br/>".
-					'<b>'.t('all','WanGateway').":</b> ".$row['wan_ip'];
-		$value = '<b>'.t('all','WanIP').":</b> ".$row['wan_ip'];
-		$str = addToolTipBalloon(array(
-									'content' => $content,
-									'onClick' => '',
-									'value' => $value,
-									'divId' => '',
-		
-							));
-							
-		echo "<td> $str </td>";
-				
-		
-		
-		$content = t('all','LanIface').":</b> ".$row['lan_iface'].
-						"<br/><b>".
-					t('all','LanMAC').":</b> ".$row['lan_mac'].
-						"<br/><b>".
-					t('all','LanIP').":</b> ".$row['lan_ip'];
-		$value = '<b>'.t('all','LanIP').":</b> ".$row['lan_ip'];
-		$str = addToolTipBalloon(array(
-									'content' => $content,
-									'onClick' => '',
-									'value' => $value,
-									'divId' => '',
-		
-							));
-							
-		echo "<td> $str </td>";
-				
-		
-
-		$content = t('all','WifiIface').":</b> ".$row['wifi_iface'].
-						"<br/><b>".
-					t('all','WifiMAC').":</b> ".$row['wifi_mac'].
-						"<br/><b>".
-					t('all','WifiIP').":</b> ".$row['wifi_ip'].
-						"<br/><b>".
-					t('all','WifiSSID').":</b> ".$row['wifi_ssid'].
-						"<br/><b>".
-					t('all','WifiKey').":</b> ".$row['wifi_key'].
-						"<br/><b>".
-					t('all','WifiChannel').":</b> ".$row['wifi_channel'];
-		$value = '<b>'.t('all','WifiSSID').":</b> ".$row['wifi_ssid'].
-					"<br/><b>".
-					t('all','WifiKey').":</b> ".$row['wifi_key'];
-		$str = addToolTipBalloon(array(
-									'content' => $content,
-									'onClick' => '',
-									'value' => $value,
-									'divId' => '',
-		
-							));
-							
-		echo "<td> $str </td>";
-	
-		
-		// calculate time delay
-		$currTime = time(); 
-		$checkinTime = strtotime($row['time']);
-		if ($currTime - $checkinTime >= (60*$hardDelay)) {
-
-			// this is hard delay
-			$delayColor = 'red';
-			
-		} elseif ( 
-			($currTime - $checkinTime >= (60*$softDelay))
-			&& ($currTime - $checkinTime < (60*$hardDelay))
-			)
-		{
-
-			// this is soft delay
-			$delayColor = 'orange';
-			
-		} else {
-			
-			// this is no delay at all, meaning not above 5 minutes delay
-			$delayColor = 'green';
-		}
-			
-		echo "
-				<td>".
-					time2str($row['uptime'])."
-				</td>
-
-				<td>".
-					$row['cpu']."
-				</td>
-				
-				<td>".
-					$row['memfree']."
-				</td>
-
-				<td>".
-					toxbyte($row['wan_bup'])."
-				</td>
-
-				<td>".
-					toxbyte($row['wan_bdown'])."
-				</td>
-
-				<td> <font color='$delayColor'> ".
-					$row['time']."
-					</font>
-				</td>
-				
-			</tr>
-		";
-
-	}
-	
-	echo "
-					<tfoot>
-							<tr>
-							<th colspan='11' align='left'> 
-	";
-	setupLinks($pageNum, $maxPage, $orderBy, $curOrderType);
-	echo "							</th>
-							</tr>
-					</tfoot>
-		";
-
-	echo "</table>";
-	echo "</form>";
-
-	include 'library/closedb.php';
-	
 ?>
 
+            </tr>
+            <tr>
+<?php
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
+?>
+            </tr>
+            
+        </thead>
+        
+        <tbody>
+<?php
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            $rowlen = count($row);
+            
+            // escape row elements
+            foreach ($row as $field => $value) {
+                $row[$field] = htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8');
+            }
+
+            $content = array();
+            $value = array();
+            $format = '<b>%s</b>: %s'; 
+
+            // first tooltip balloon
+            $content[0] = sprintf('<a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a><br/><br/><b>%s:</b> %s',
+                                  $row['hotspotname'], t('Tooltip','HotspotEdit'), t('all','NASMAC'), $row['mac']);
+            $value[0]   = sprintf('<b>%s</b><br>', $row['hotspotname']);
+            
+            // second tooltip balloon
+            $content[1] = sprintf($format, t('all','WanIface'), $row['wan_iface'])
+                        . sprintf($format, t('all','WanMAC'), $row['wan_mac'])
+                        . sprintf($format, t('all','WanIP'), $row['wan_ip'])
+                        . sprintf($format, t('all','WanGateway'), $row['wan_ip']);
+                        
+            $value[1]   = sprintf($format, t('all','WanIP'), $row['wan_ip']);
+            
+            // third tooltip balloon
+            $content[2] = sprintf($format, t('all','LanIface'), $row['lan_iface'])
+                        . sprintf($format, t('all','LanMAC'), $row['lan_mac'])
+                        . sprintf($format, t('all','LanIP'), $row['lan_ip']);
+                        
+            $value[2]   = sprintf($format, t('all','LanIP'), $row['lan_ip']);
+
+            // fourth tooltip balloon
+            $content[3] = sprintf($format, t('all','WifiIface'), $row['wifi_iface'])
+                        . sprintf($format, t('all','WifiMAC'), $row['wifi_mac'])
+                        . sprintf($format, t('all','WifiIP'), $row['wifi_ip'])
+                        . sprintf($format, t('all','WifiSSID'), $row['wifi_ssid'])
+                        . sprintf($format, t('all','WifiKey'), $row['wifi_key'])
+                        . sprintf($format, t('all','WifiChannel'), $row['wifi_channel']);
+
+            $value[3]   = sprintf($format, t('all','WifiSSID'), $row['wifi_ssid'])
+                        . sprintf($format, t('all','WifiKey'), $row['wifi_key']);
+
+            // create tooltip balloons
+            $tooltip = array();
+            for ($i = 0; $i <= count($content); $i++) {
+                $param = array(
+                                'content' => $content[$i],
+                                'onClick' => '',
+                                'value' => $value[$i],
+                                'divId' => '',
+                              );
+                $tooltip[] = addToolTipBalloon($param);
+            }
+            
+            // calculate time delay
+            // delta is given by <current time> - <check-in time>
+            $delta = time() - strtotime($row['time']);
+            
+            if ($delta >= $hardDelay) {
+                // this is hard delay
+                $delayColor = 'red';
+            } elseif ($delta >= $softDelay && $delta < $hardDelay) {
+                // this is soft delay
+                $delayColor = 'orange';
+            } else {
+                // this is no delay at all, meaning not above 5 minutes delay
+                $delayColor = 'green';
+            }
+?>
+
+        <tr>
+            <td><?= $tooltip[0] ?></td>
+            <td><?= $row['firmware'] . "<br/>" . $row['firmware_revision'] ?></td>
+            <td><?= $tooltip[1] ?></td>
+            <td><?= $tooltip[2] ?></td>
+            <td><?= $tooltip[3] ?></td>
+            <td><?= time2str($row['uptime']) ?></td>
+            <td><?= $row['cpu'] ?></td>
+            <td><?= $row['memfree'] ?></td>
+            <td><?= toxbyte($row['wan_bup']) ?></td>
+            <td><?= toxbyte($row['wan_bdown']) ?></td>
+            <td><span style="color: <?= $delayColor ?>"><?= $row['time'] ?></span></td>
+        </tr>
+
+<?php
+        }
+?>
+         </tbody>
+
+<?php
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+?>
+
+    </table>
 
 
 <?php
-	include('include/config/logging.php');
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
 ?>
-
-
-</div>
-	
-	<div id="footer">
-	
+                
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include 'page-footer.php';
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-	</div>
-
-</div>
+        </div><!-- #footer -->
+    </div>
 </div>
 
-<script type="text/javascript">
-	var tooltipObj = new DHTMLgoodies_formTooltip();
-	tooltipObj.setTooltipPosition('right');
-	tooltipObj.setPageBgColor('#EEEEEE');
-	tooltipObj.setTooltipCornerSize(15);
-	tooltipObj.initFormFieldTooltip();
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
-
 
 </body>
 </html>

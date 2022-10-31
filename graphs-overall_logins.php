@@ -24,9 +24,11 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
     // validate (or pre-validate) parameters
+    $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
+    
     $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
              in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
           ? strtolower($_GET['type']) : "daily";
@@ -35,28 +37,34 @@
               ? str_replace('%', '', $_GET['username']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-	//feed the sidebar variables
-	$overall_logins_username = $username_enc;
+    //feed the sidebar variables
+    $overall_logins_username = $username_enc;
     $overall_logins_type = $type;
 
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     
-    include("menu-graphs.php");
-    include_once("library/tabber/tab-layout.php");
-?>
-		
-		
-		<div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','graphsoveralllogins.php') ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
+    // init logging variables
+    $log = "visited page: ";
+    if (!empty($username)) {
+        $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    }
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','graphsoveralllogins') ?><br></div>
-            <br>
-<?php
+    // print HTML prologue
+    $title = t('Intro','graphsoveralllogins.php');
+    $help = t('helpPage','graphsoveralllogins');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-graphs.php");
+    include_once ("library/tabber/tab-layout.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
     if (!empty($username)) {
         $src = sprintf("library/graphs-overall-users-login.php?type=%s&user=%s", $type, $username_enc);
         $alt = ucfirst($type) . " login/hit statistics for user " . $username_enc;
@@ -68,11 +76,21 @@
                         <img alt="<?= $alt ?>" src="<?= $src ?>">
                     </div>
                 </div>
-	
+    
                 <div class="tabbertab" title="Statistics">
                     <div style="margin-top: 50px">
 <?php
         include("library/tables-overall-users-login.php");
+        
+        if ($goto_stats) {
+?>
+                        <script>
+                            window.addEventListener('load', function() {
+                                document.querySelector('a[title="Statistics"]').click();
+                            });
+                        </script>
+<?php
+        }
 ?>
                     </div>
                 </div>
@@ -85,17 +103,12 @@
 ?>
         </div>
 
-		<div id="footer">
+        <div id="footer">
 <?php
-    $log = "visited page: ";
-    if (!empty($username)) {
-        $logQuery = "performed query for user [$username] of type [$type] on page: ";
-    }
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>
-		</div>
+        </div>
     </div>
 </div>
 

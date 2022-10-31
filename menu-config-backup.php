@@ -32,23 +32,14 @@ include_once("lang/main.php");
 $m_active = "Config";
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-<head>
-    <title>daloRADIUS :: <?= $m_active ?></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-    <link rel="stylesheet" href="css/1.css" media="screen">
-    <script src="library/javascript/pages_common.js"></script>
-</head>
 
 <body>
     <div id="wrapper">
         <div id="innerwrapper">
 
 <?php
-	include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/config-subnav.php");
+    include_once ("include/menu/menu-items.php");
+    include_once ("include/menu/config-subnav.php");
     
     $menu_elements = array(
         "config-backup-managebackups.php" => array(t('button','ManageBackups'), "images/icons/configMaintenance.png"),

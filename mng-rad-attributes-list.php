@@ -43,6 +43,7 @@
     );
     
     $title = t('Intro','mngradattributeslist.php');
+    $help = t('helpPage','mngradattributeslist');
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
@@ -67,19 +68,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
-?>
-        
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','mngradattributeslist.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-                
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mngradattributeslist') ?><br></div>
-            <br>
-
-<?php
+               
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -121,8 +112,12 @@
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = (!empty($vendor))
                               ? "&vendor=" . urlencode(htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8')) : "";
+                              
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-attributes-del.php";
 ?>
-<form name="listall" method="POST" action="mng-rad-attributes-del.php">
+<form name="listall" method="POST" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
 <?php
@@ -138,7 +133,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('vendor[]', 'mng-rad-attributes-del.php')
+        printTableFormControls('vendor[]', $action);
 ?>
                 </th>
             </tr>

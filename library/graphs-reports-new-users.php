@@ -42,7 +42,7 @@
     include('libchart/classes/libchart.php');
 
     $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
+    $dataSet = new XYDataSet();
     $limit = 24;
 
     $sql_WHERE_pieces = array();
