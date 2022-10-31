@@ -17,7 +17,7 @@
  * Description:    this graph extension procduces a query of the alltime logins
  *                 made by all users on a daily, monthly and yearly basis.
  *
- * Authors:	       Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
@@ -30,24 +30,23 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
     exit;
 }
 
+$orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+              in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+           ? strtolower($_GET['orderType']) : "asc";
+
+$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
+
 // used for presentation purpose
 $label_param = array();
 $label_param['day'] = "Day of month";
 $label_param['month'] = "Month of year";
 $label_param['year'] = "Year";
 
-$orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-              in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-           ? strtolower($_GET['orderType']) : "asc";
-
-$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
-         in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
-      ? strtolower($_GET['type']) : "daily";
-
 include('opendb.php');
 include('include/management/pages_common.php');
-include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                      // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+
 
 switch ($type) {
     case "yearly":
@@ -87,6 +86,25 @@ $res = $dbSocket->query($sql);
 $numrows = $res->numRows();
 
 if ($numrows > 0) {
+    // $cols is needed only if $numwrows > 0
+    $cols = array( 
+                   $selected_param => $label_param[$selected_param],
+                   "logins" => "Logins/hits count"
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+    
+    /* START - Related to pages_numbering.php */
+    
+    // when $numrows is set, $maxPage is calculated inside this include file
+    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+    
+    // here we decide if page numbers should be shown
+    $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+    
+    /* END */
+    
     
     $total_data = 0;
     while ($row = $res->fetchRow()) {
@@ -95,66 +113,40 @@ if ($numrows > 0) {
     
     $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
     $res = $dbSocket->query($sql);
+    $logDebugSQL = "$sql;\n";
     
-    /* START - Related to pages_numbering.php */
-    $maxPage = ceil($numrows/$rowsPerPage);
-    /* END */
+    $per_page_numrows = $res->numRows();
     
-    $partial_query_string = sprintf("&type=%s", $type);
-    
-    $cols = array( 
-                   $selected_param => $label_param[$selected_param],
-                   "logins" => "Logins/hits count"
-                 );
-    $colspan = count($cols);
-    $half_colspan = intdiv($colspan, 2);
-    
+    // the partial query is built starting from user input
+    // and for being passed to setupNumbering and setupLinks functions
+    $partial_query_string = sprintf("&type=%s&goto_stats=true", $type);
+
 ?>
+
 <div style="text-align: center; margin-top: 50px">
     <h4><?= ucfirst($type) . " all-time login/hit statistics" ?></h4>
     <br>
     <table border="0" class="table1">
         <thead>
-            <tr>
 <?php
-    if ($maxPage > 1) {
-        printf('<td style="background-color: white; text-align: right" colspan="%s">go to page: ', $colspan);
+    // page numbers are shown only if there is more than one page
+    if ($drawNumberLinks) {
+        echo '<tr style="background-color: white">';
+        printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
         setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-        echo "</td>";
+        echo '</td>' . '</tr>';
     }
+    
+    // second line of table header
+    echo "<tr>";
+    printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+    echo "</tr>";
 ?>
-            </tr>
-            <tr>
-<?php
-    foreach ($cols as $label => $caption) {
-        
-        if (is_int($label)) {
-            $ordering_controls = "";
-        } else {
-            $href_format = "?orderBy=%s&orderType=%s" . $partial_query_string;
-            $href_asc = sprintf($href_format, $label, "asc");
-            $href_desc = sprintf($href_format, $label, "desc");
-            
-            $title_format = "order by %s, sort %s";
-            $title_asc = sprintf($title_format, strip_tags($caption), "ascending");
-            $title_desc = sprintf($title_format, strip_tags($caption), "descending");
-            
-            $a_format = '<a title="%s" class="novisit" href="%s"><img src="%s" alt="%s"></a>';
-            
-            $ordering_controls = sprintf($a_format, $title_asc, $href_asc, 'images/icons/arrow_up.png', '^')
-                               . sprintf($a_format, $title_desc, $href_desc, 'images/icons/arrow_down.png', 'v');
-
-        }
-        
-        echo "<th>" . $caption . $ordering_controls . "</th>";
-    }
-?>
-            </tr>
         </thead>
 
         <tbody>
 <?php
-    
+        
     $per_page_data = 0;
     while ($row = $res->fetchRow()) {
         $data = intval($row[1]);
@@ -170,19 +162,39 @@ if ($numrows > 0) {
         
         <tfoot>
             <tr>
-                <th style="background-color: white" scope="col" colspan="<?= ($colspan % 2 === 0) ? $half_colspan : $half_colspan + 1 ?>">
-                    <?= ($maxPage > 1) ? setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string) : "" ?>
-                </th>
-
-                <th scope="col" colspan="<?= ($maxPage > 1) ? $half_colspan : $colspan ?>">
+            
+                <th scope="col" colspan="<?= $half_colspan + ($colspan % 2) ?>">
 <?php
-                    echo "<strong>$per_page_data</strong> " . $short_size[$size];
-                    if ($maxPage > 1) {
-                        echo " out of <strong>$total_data</strong> " . $short_size[$size];
+                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
+                    if ($drawNumberLinks) {
+                        echo " out of <strong>$numrows</strong>";
                     }
 ?>
                 </th>
+                
+                <th scope="col" colspan="<?= $half_colspan ?>">
+<?php
+                    echo "<strong>$per_page_data</strong> login(s)";
+                    if ($drawNumberLinks) {
+                        echo " out of <strong>$total_data</strong> login(s)";
+                    }
+?>
+                </th>
+                
             </tr>
+
+<?php
+        // page navigation controls are shown only if there is more than one page
+        if ($drawNumberLinks) {
+?>
+            <tr>
+                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
+                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string); ?>
+                </th>
+            </tr>
+<?php
+        }
+?>
         </tfoot>
 
     </table>
@@ -196,5 +208,4 @@ if ($numrows > 0) {
 }
 
 include('closedb.php');
-
 ?>

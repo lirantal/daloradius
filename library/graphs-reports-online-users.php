@@ -29,7 +29,7 @@
     include('libchart/classes/libchart.php');
 
     $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
+    $dataSet = new XYDataSet();
 
     // getting total users
     $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);

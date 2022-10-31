@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,191 +15,196 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
+    include_once('library/config_read.php');
     
-
-
-	include_once('library/config_read.php');
+    // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
-	
-?>
+    $logDebugSQL = "";
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
-<?php
-	include ("menu-bill-plans.php");
-?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billplanslist.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','billplanslist') ?>
-					<br/>
-				</div>
-				<br/>
-
-
-<?php
-
-        
-	include 'library/opendb.php';
-	include 'include/management/pages_common.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT planId, planName, planType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'];
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-
-	$sql = "SELECT planId, planName, planType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-	
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
+    include_once("lang/main.php");
     
-	echo "<form name='listbillplans' method='post' action='bill-plans-del.php'>";
+    include("library/layout.php");
 
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-                                Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'planName[]','listbillplans')\">All</a> 
-                                
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'planName[]','listbillplans')\">None</a>
-	                 <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listbillplans\",\"bill-plans-del.php\")' />
-                                <br/><br/>
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','billplanslist.php');
+    $help = t('helpPage','billplanslist');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
 
-        ";
+    include("menu-bill-plans.php");
 
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+    $cols = array(
+                    "planid" => t('all','PlanId'),
+                    "planname" => t('all','PlanName'),
+                    "plantype" => t('all','PlanType')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
-        echo " </th></tr>
-                                        </thead>
-
-                        ";
-
-        if ($orderType == "asc") {
-                $orderTypeNextPage = "desc";
-        } else  if ($orderType == "desc") {
-                $orderTypeNextPage = "asc";
-        }
-
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planid&orderType=$orderTypeNextPage\">
-		".t('all','PlanId')."</a>
-		</th>
-
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=planname&orderType=$orderTypeNextPage\">
-		".t('all','PlanName')."</a>
-		</th>
-
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=plantype&orderType=$orderTypeNextPage\">
-		".t('all','PlanType')."</a>
-		</th>
-	</tr> </thread>";
-
-	while($row = $res->fetchRow()) {
-		printqn("<tr>
-                        <td> <input type='checkbox' name='planName[]' value='$row[1]'> $row[0] </td>
-
-                        <td> <a class='tablenovisit' href='#'
-								onclick='javascript:return false;'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"bill-plans-edit.php?planName=$row[1]\">
-                                                ".t('button','EditPlan')."</a>
-                                        <br/><br/>'
-                                >$row[1]</a>
-                        </td>
-
-				<td> $row[2] </td>
-		</tr>");
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
 
 
-	echo "</table>";
-        echo "</form>";
+    // start printing content
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-	include 'library/closedb.php';
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+
+    // we use this simplified query just to initialize $numrows
+    $sql = sprintf("SELECT COUNT(planId) FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
+    $res = $dbSocket->query($sql);
+    $numrows = $res->fetchrow()[0];
+    
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+        
+        $sql = sprintf("SELECT planId, planName, planType FROM %s ORDER BY %s %s LIMIT %s, %s",
+                       $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "bill-plans-del.php";
 ?>
-				
-						
+
+<form name="listall" method="POST" action="<?= $action ?>">
+    <table border="0" class="table1">
+        <thead>
+            
 <?php
-	include('include/config/logging.php');
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>' . '</tr>';
+        }
+?>          
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('planName[]', $action);
 ?>
-		
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+                </th>
+            </tr>
+            
+            <tr>
+<?php
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
+?>           
+            </tr>
+        </thead>
+        
+        <tbody>
+<?php
+        $count = 1;
+        while ($row = $res->fetchRow()) {
+            
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+        
+            list($planId, $planName, $planType) = $row;
+            
+            $tooltipText = sprintf('<a class="toolTip" href="bill-plans-edit.php?planName=%s">%s</a>',
+                                   urlencode($planName), t('button','EditPlan'));
+            $onclick = 'javascript:return false;';
 ?>
+            <tr>
+                <td>
+                    <input type="checkbox" name="planName[]" value="<?= $planName ?>" id="<?= "checkbox-$count" ?>">
+                    <label for="<?= "checkbox-$count" ?>">
+                        <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
+                            <?= $planId ?>
+                        </a>
+                    </label>
+                </td>
+                <td><?= $planName ?></td>
+                <td><?= $planType ?></td>
+            </tr>
+<?php
+            $count++;
+        }
+?>
+        </tbody>
+        
+<?php
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+?>
+    </table>
 
-		
-		</div>
-		
-</div>
+</form>
+
+<?php
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
+?>
+                
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+    </div>
 </div>
 
-<script type="text/javascript">
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
 
 </body>

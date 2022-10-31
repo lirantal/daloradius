@@ -32,22 +32,6 @@ include_once("lang/main.php");
 $m_active = "Graphs";
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-<head>
-    <title>daloRADIUS :: <?= $m_active ?></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-    <link rel="stylesheet" href="css/1.css" media="screen">
-    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
-    <link rel="stylesheet" href="library/js_date/datechooser.css">
-
-    <script src="library/js_date/date-functions.js"></script>
-    <script src="library/js_date/datechooser.js"></script>
-    <script src="library/javascript/pages_common.js"></script>
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
-</head>
 
 <body>
 
@@ -85,7 +69,7 @@ $m_active = "Graphs";
                         <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/graphsGeneral.gif"><?= t('button','UserLogins') ?>
                     </a>
                     <form name="overall_logins" action="graphs-overall_logins.php" method="GET" class="sidebar">
-                        <input tabindex="2" name="username" type="text" id="usernameLogins"
+                        <input tabindex="2" name="username" type="text" id="usernameLogins" list="usernames"
                             <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                             tooltipText="<?= t('Tooltip','Username'); ?><br>"
                             value="<?= (isset($overall_logins_username)) ? $overall_logins_username : "" ?>">
@@ -93,8 +77,8 @@ $m_active = "Graphs";
                         <select tabindex="3" class="generic" name="type">
 <?php
                         foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($overall_logins_type) && $overall_logins_type == $value) ? "selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
+                            $selected = (isset($overall_logins_type) && $overall_logins_type == $value) ? " selected" : "";
+                            printf('<option value="%s"%s>%s</option>' . "\n", $value, $selected, $label);
                         }
 ?>
 
@@ -115,7 +99,7 @@ $m_active = "Graphs";
                         <select tabindex="6" class="generic" name="type">
 <?php
                         foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($overall_download_type) && $overall_download_type == $value) ? "selected" : "";
+                            $selected = (isset($overall_download_type) && $overall_download_type == $value) ? " selected" : "";
                             printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
                         }
 ?>
@@ -125,7 +109,7 @@ $m_active = "Graphs";
                         <select tabindex="7" class="generic" name="size">
 <?php
                         foreach ($sizeunit_options as $value => $label) {
-                            $selected = (isset($overall_download_size) && $overall_download_size == $value) ? "selected" : "";
+                            $selected = (isset($overall_download_size) && $overall_download_size == $value) ? " selected" : "";
                             printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
                         }
 ?>
@@ -148,7 +132,7 @@ $m_active = "Graphs";
                         <select tabindex="10" class="generic" name="type">
 <?php
                         foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($overall_upload_type) && $overall_upload_type == $value) ? "selected" : "";
+                            $selected = (isset($overall_upload_type) && $overall_upload_type == $value) ? " selected" : "";
                             printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
                         }
 ?>
@@ -158,7 +142,7 @@ $m_active = "Graphs";
                         <select tabindex="10" class="generic" name="size">
 <?php
                         foreach ($sizeunit_options as $value => $label) {
-                            $selected = (isset($overall_upload_size) && $overall_upload_size == $value) ? "selected" : "";
+                            $selected = (isset($overall_upload_size) && $overall_upload_size == $value) ? " selected" : "";
                             printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
                         }
 ?>
@@ -180,7 +164,7 @@ $m_active = "Graphs";
                         <select tabindex="12" class="generic" name="type">
 <?php
                         foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($alltime_login_type) && $alltime_login_type == $value) ? "selected" : "";
+                            $selected = (isset($alltime_login_type) && $alltime_login_type == $value) ? " selected" : "";
                             printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
                         }
 ?>
@@ -198,7 +182,7 @@ $m_active = "Graphs";
                         <select tabindex="14" class="generic" name="type">
 <?php
                         foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($traffic_compare_type) && $traffic_compare_type == $value) ? "selected" : "";
+                            $selected = (isset($traffic_compare_type) && $traffic_compare_type == $value) ? " selected" : "";
                             printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
                         }
 ?>
@@ -208,7 +192,7 @@ $m_active = "Graphs";
                         <select tabindex="15" class="generic" name="size">
 <?php
                         foreach ($sizeunit_options as $value => $label) {
-                            $selected = (isset($traffic_compare_size) && $traffic_compare_size == $value) ? "selected" : "";
+                            $selected = (isset($traffic_compare_size) && $traffic_compare_size == $value) ? " selected" : "";
                             printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
                         }
 ?>

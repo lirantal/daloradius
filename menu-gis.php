@@ -32,18 +32,8 @@ include_once("lang/main.php");
 $m_active = "Gis";
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-<head>
-    <title>daloRADIUS :: <?= $m_active ?></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    
-    <?php include("library/leaflet.php"); ?>
-    <link rel="stylesheet" href="css/1.css" media="screen">
-    <script src="library/javascript/pages_common.js"></script>
-</head>
 
-<body onload="load()">
+<body>
     <div id="wrapper">
         <div id="innerwrapper">
 
@@ -76,8 +66,8 @@ $m_active = "Gis";
                         <a title="<?= t('button','RegisterGoogleMapsAPI') ?>" href="javascript:document.gisregister.submit();" tabindex="3">
                             <b>&raquo;</b><?= t('button','RegisterGoogleMapsAPI')?>
                         </a>
-                        <form name="gisregister" action="gis-main.php" method="get" class="sidebar">
-                            <input name="code" type="text" tabindex="4">
+                        <form name="gisregister" action="gis-main.php" method="POST" class="sidebar">
+                            <input name="code" type="text" tabindex="4" pattern="[a-zA-Z0-9_-]+">
                             <input class="sidebutton" name="submit" type="submit" value="Register code" tabindex="5">
                         </form>
                     </li>

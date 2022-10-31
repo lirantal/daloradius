@@ -58,9 +58,9 @@ $m_active = "Reports";
                             <?= t('button','OnlineUsers') ?>
                         </a>
                             
-                        <form name="reponline" action="rep-online.php" method="get" class="sidebar">
+                        <form name="reponline" action="rep-online.php" method="GET" class="sidebar">
                             <input name="usernameOnline" type="text" id="usernameOnline"
-                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
+                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?> placeholder="<?= t('all','Username') ?>"
                                 tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
                                 value="<?= (isset($usernameOnline)) ? $usernameOnline : "" ?>" tabindex="1">
                         </form>
@@ -74,7 +74,7 @@ $m_active = "Reports";
                         
                         <form name="replastconnect" action="rep-lastconnect.php" method="GET" class="sidebar">
                             <input name="usernameLastConnect" type="text" id="usernameLastConnect"
-                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
+                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?> placeholder="<?= t('all','Username') ?>"
                                 tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
                                 value="<?= (isset($usernameLastConnect)) ? $usernameLastConnect : "" ?>" tabindex="2">
                             
@@ -84,8 +84,6 @@ $m_active = "Reports";
                                 <option value="Access-Reject">Access-Reject</option>
                             </select>
                             
-                            <br>
-                            
                             <label style="user-select: none" for="startdate_lastconnect"
                                 onclick="<?= sprintf($showChooser_format, "startdate_lastconnect", date('Y', time())) ?>">
                                 <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
@@ -94,8 +92,6 @@ $m_active = "Reports";
                             <input name="startdate" type="text" id="startdate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="4">
                             <?= $chooserSpan ?>
-                            
-                            <br>
                             
                             <label style="user-select: none" for="enddate_lastconnect"
                                 onclick="<?= sprintf($showChooser_format, "enddate_lastconnect", date('Y', time())) ?>">
@@ -124,8 +120,6 @@ $m_active = "Reports";
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-01-01") ?>" tabindex="6">
                             <?= $chooserSpan ?>
                             
-                            <br>
-                            
                             <label style="user-select: none" for="enddate"
                                 onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
                                 <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
@@ -147,8 +141,9 @@ $m_active = "Reports";
                             <input type="number" class="generic" name="limit" max="1000" min="1"
                                 value="<?= (isset($limit) && intval($limit) > 0) ? $limit : "50" ?>" tabindex="8">
                             
-                            <h4>Username Filter</h4>
-                            <input name="username" type="text" id="username" value="<?= (isset($username)) ? $username : "" ?>" tabindex="9">
+                            <label for="usernameFilter">Username Filter</label>
+                            <input name="username" type="text" id="usernameFilter" value="<?= (isset($username)) ? $username : "" ?>"
+                                 placeholder="<?= t('all','Username') ?>" tabindex="9">
             
                             <label style="user-select: none" for="startdate_topuser"
                                 onclick="<?= sprintf($showChooser_format, "startdate_topuser", date('Y', time())) ?>">
@@ -168,8 +163,8 @@ $m_active = "Reports";
                                 value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="11">
                             <?= $chooserSpan ?>
 
-                            <h4>Report By</h4>
-                            <select class="generic" name="orderBy" type="text" tabindex="12">
+                            <label for="orderBy"><?= t('button','OrderBy') ?></label>
+                            <select class="generic" id="orderBy" name="orderBy" type="text" tabindex="12">
                                 <option value="Time">Time</option>
                                 <option value="Download">Download (bytes)</option>
                                 <option value="Upload">Upload (bytes)</option>

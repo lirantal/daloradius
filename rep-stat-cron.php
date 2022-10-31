@@ -56,27 +56,30 @@
         exec($exec);
     }
     
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = "CRON Status";
+    $help = "";
+    
+    print_html_prologue($title, $langCode);
+    
     include ("menu-reports-status.php");
     
 ?>        
     <div id="contentnorightbar">
-    
-        <h2 id="Intro">
-            <a href="#" onclick="javascript:toggleShowDiv('helpPage')">CRON Status
-                <h144>&#x2754;</h144>
-            </a>
-            </h2>
+<?php
+    print_title_and_help($title, $help);
+?>    
 
-            <div id="helpPage" style="display:none;visibility:visible"><br></div>
-            <br>
-
+        <div style="margin: 20px auto">
             <h3>CRON Entries</h3>
-            <a href="?cmd=enable">Enable CRON</a>
+            <a title="Enable CRON" href="?cmd=enable">Enable CRON</a>
             &nbsp;
-            <a href="?cmd=disable">Disable CRON</a>
-
-            <br>
-            <br>
+            <a title="Disable CRON" href="?cmd=disable">Disable CRON</a>
+        </div>
 
 <?php
     $failureMsg = "";

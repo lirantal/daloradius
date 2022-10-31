@@ -25,6 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
+    
     include_once('library/config_read.php');
     include_once("lang/main.php");
     
@@ -32,10 +38,11 @@
 
     // print HTML prologue
     $title = t('Intro','mngradrealms.php');
+    $help = t('helpPage','mngradrealmslist');
     
     print_html_prologue($title, $langCode);
 
-	include("menu-mng-rad-realms.php");
+    include("menu-mng-rad-realms.php");
     
     $cols = array(
                     "realmname" => t('all','RealmName'),
@@ -58,19 +65,10 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
-?>
 
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','mngradrealms.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','mngradrealmslist') ?><br></div>
-            <br>
-
-<?php
+    // start printing content
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -78,6 +76,7 @@
     // we use this simplified query just to initialize $numrows
     $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALOREALMS']);
     $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
     $numrows = $res->fetchrow()[0];
 
     if ($numrows > 0) {
@@ -99,12 +98,16 @@
                           FROM %s", $configValues['CONFIG_DB_TBL_DALOREALMS']);
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
+        $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-realms-del.php";
 ?>
 
-<form name="listall" method="GET" action="mng-rad-realms-del.php">
+<form name="listall" method="POST" action="<?= $action ?>">
 
     <table border="0" class="table1">
         <thead>
@@ -121,7 +124,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('realmname[]', 'mng-rad-realms-del.php')
+        printTableFormControls('realmname[]', $action)
 ?>
                 </th>
             </tr>
@@ -154,8 +157,7 @@
                                    urlencode($realmname), t('Tooltip','EditRealm'));
         
             echo "<tr>";
-            printf('<td><input type="checkbox" name="realmname[]" value="%s">',
-                   urlencode($realmname));
+            printf('<td><input type="checkbox" name="realmname[]" value="%s">', $realmname);
             printf('<a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a></td>",
                    $onclick, $tooltipText, $realmname);
             
@@ -175,6 +177,8 @@
 ?>
         
     </table>
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+</form>
 
 <?php
     } else {
@@ -185,13 +189,10 @@
     include('library/closedb.php');
 ?>
 
-</div><!-- #contentnorightbar -->
+        </div><!-- #contentnorightbar -->
         
         <div id="footer">
 <?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

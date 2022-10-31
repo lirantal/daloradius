@@ -15,53 +15,44 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
-
-	include_once('library/config_read.php');
+        
+    include_once('library/config_read.php');
     $log = "visited page: ";
-	
+
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','configbackup.php');
+    $help = t('helpPage','configbackup');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-config-backup.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 ?>
-		
+
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-
-    include ("menu-config-backup.php");
-
-?>		
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configbackup.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-                
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','configbackup') ?>
-					<br/>
-				</div>
-				<br/>
-
-<?php
-	include('include/config/logging.php');
-?>				
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-		
-		</div>
-		
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

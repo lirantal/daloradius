@@ -15,155 +15,154 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-
-	isset($_REQUEST['nashost']) ? $nashost = $_REQUEST['nashost'] : $nashost = "";
-
-	$logAction = "";
-	$logDebugSQL = "";
-
-	$showRemoveDiv = "block";
-
-        if (isset($_REQUEST['nashost'])) {
-
-		$allNASs = "";
-
-		/* since the foreach loop will report an error/notice of undefined variable $value because
-                   it is possible that the $nashost is not an array, but rather a simple GET request
-                   with just some value, in this case we check if it's not an array and convert it to one with
-                   a NULL 2nd element
-		*/
-
-		if (!is_array($nashost))
-			$nashost = array($nashost, NULL);
-
-		foreach ($nashost as $variable=>$value) {
-
-			if (trim($variable) != "") {
-
-			include 'library/opendb.php';
-
-			$nashost = $value;
-			$allNASs .= $nashost . ", ";
-			//echo "nas: $nashost <br/>";
-
-
-			// delete all attributes associated with a username
-			$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].
-					" WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
-
-			$successMsg = "Deleted all NASs from database: <b> $allNASs </b>";
-			$logAction .= "Successfully deleted nas(s) [$allNASs] on page: ";
-				
-			include 'library/closedb.php';
-
-			}  else {
-				$failureMsg = "No nas ip/host was entered, please specify a nas ip/host to remove from database";
-				$logAction .= "Failed deleting empty nas on page: ";
-			} //if trim
-
-		} //foreach
-
-		$showRemoveDiv = "none";
-	} 
-
-	include_once('library/config_read.php');
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
     $log = "visited page: ";
 
-	
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-
-
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-</head>
- 
- 
-<?php
-	include ("menu-mng-rad-nas.php");
-?>
-
-	<div id="contentnorightbar">
-	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradnasdel.php') ?>
-		:: <?php if (isset($nashost)) { echo $nashost; } ?><h144>&#x2754;</h144></a></h2>
-		
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngradnasdel') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-
-		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-        <fieldset>
-
-			<h302> <?php echo t('title','NASInfo') ?> </h302>
-			<br/>
-
-			<label for='nashost' class='form'><?php echo t('all','NasIPHost') ?></label>
-			<input name='nashost' type='text' id='nashost' value='' tabindex=100 />
-			<br />
-
-			<br/><br/>
-			<hr><br/>
-
-			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
-        </fieldset>
-
-		</form>
-		</div>
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-<?php
-        include_once("include/management/autocomplete.php");
-
-        if ($autoComplete) {
-                echo "<script type=\"text/javascript\">
-                      autoComEdit = new DHTMLSuite.autoComplete();
-                      autoComEdit.add('nashost','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteNASHost');
-                      </script>";
+    include('library/opendb.php');
+    
+    // init field_name and values (all, valid and to delete)
+    $field_name = 'nashost';
+    $db_field_name = 'nasname';
+    
+    $valid_values = array();
+    
+    $sql = sprintf("SELECT DISTINCT(%s) FROM %s", $db_field_name, $configValues['CONFIG_DB_TBL_RADNAS']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    while ($row = $res->fetchRow()) {
+        $valid_values[] = $row[0];
+    }
+    
+    if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+    
+        $values = array();
+        $deleted_values = array();
+        
+        // validate values
+        if (array_key_exists($field_name, $_POST) && isset($_POST[$field_name])) {
+            
+            $tmp = (!is_array($_POST[$field_name])) ? array($_POST[$field_name]) : $_POST[$field_name];
+            foreach ($tmp as $value) {
+                if (in_array($value, $valid_values)) {
+                    $values[] = $value;
+                }
+            }
         }
+        
+        // use valid values for updating db,
+        // update deleted_values as a valid value has been removed
+        if (count($values) > 0) {
+            foreach ($values as $value) {
+                $sql = sprintf("DELETE FROM %s WHERE %s='%s'", $configValues['CONFIG_DB_TBL_RADNAS'],
+                                                               $db_field_name, $dbSocket->escapeSimple($value));
+                $result = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if ($result > 0) {
+                    $deleted_values[] = $value;
+                }
+            }
+        }
+        
+        $success = $_SERVER['REQUEST_METHOD'] == 'POST' && count($values) > 0 && count($deleted_values) > 0;
 
+        // present results
+        if ($success) {
+            $tmp = array();
+            foreach ($deleted_values as $deleted_value) {
+                $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
+            }
+            
+            $successMsg = sprintf("Deleted NAS(s): <strong>%s</strong>", implode(", ", $tmp));
+            $logAction .= sprintf("Successfully deleted NAS(s) [%s] on page: ", implode(", ", $deleted_values));
+        } else {
+            $failureMsg = "no NAS hostname/IP(s) or invalid NAS hostname/IP(s) have been entered";
+            $logAction .= sprintf("Failed deleting NAS(s) [%s] on page: ", implode(", ", $valid_values));
+        }
+        
+        include('library/closedb.php');
+
+    } else {
+        $success = false;
+        $failureMsg = sprintf("CSRF token error");
+        $logAction .= sprintf("CSRF token error on page: ");
+    }
+
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // print HTML prologue
+    
+    $title = t('Intro','mngradnasdel.php');
+    $help = t('helpPage','mngradnasdel');
+    
+    print_html_prologue($title, $langCode);
+
+    include ("menu-mng-rad-nas.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+        include_once('include/management/actionMessages.php');
+    }
+    
+    if (!$success) {
 ?>
+            <form method="POST">
+                <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+                <fieldset>
+                    <h302><?= t('title','NASInfo') ?></h302>
+                    
+                    <br>
+
+                    <label for="<?= "$field_name-id" ?>" class="form"><?= t('all','NasIPHost') ?></label>
+                    <input list="<?= "$field_name-list" ?>" name="<?= $field_name . "[]" ?>"
+                        type="text" id="<?= "$field_name-id" ?>" tabindex="101">
+<?php
+        if (count($valid_values) > 0) {
+            printf('<datalist id="%s">', "$field_name-list");
+            foreach ($valid_values as $value) {
+                printf('<option value="%s"></option>', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+            }
+            echo '</datalist>';
+        }
+?>
+
+                </fieldset>
+                
+                
+                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" tabindex="102" class="button">
+
+            </form>
+<?php
+    }
+?>
+</div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+    </div>
+</div>
 
 </body>
 </html>

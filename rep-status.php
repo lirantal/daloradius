@@ -20,52 +20,41 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
         
 	include_once('library/config_read.php');
     $log = "visited page: ";
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
+    // print HTML prologue
+    $title = t('Intro','repstatus.php');
+    $help = t('helpPage','repstatus');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-reports-status.php");
 
 ?>
-
-<?php
-
-    include ("menu-reports-status.php");
-
-?>
-		
 		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','repstatus.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-			
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','repstatus') ?>
-			<br/>
-		</div>	
-		<br/>
-
-
-
 <?php
-	include('include/config/logging.php');
+    print_title_and_help($title, $help);
+?>
+		
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    include_once('include/config/logging.php');
+    include('page-footer.php');
 ?>
 
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

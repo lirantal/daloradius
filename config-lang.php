@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -14,107 +14,90 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
 
-    include ("library/config_read.php");
+    // validating values
+    $valid_values = array(
+                            "en" => "English", 
+                            "ru" => "Russian", 
+                            "hu" => "Hungarian", 
+                            "it" => "Italian", 
+                            "es_VE" => "Spanish - Venezuelan", 
+                            "pt_br" => "Portuguese - Brazilian", 
+                            "ja" => "Japanese"
+                         );
 
-    if (isset($_REQUEST['submit'])) {
-
-		if (isset($_REQUEST['config_lang']))
-			$configValues['CONFIG_LANG'] = $_REQUEST['config_lang'];
-			
-            include ("library/config_write.php");
+    if (array_key_exists('submit', $_POST) && isset($_POST['submit'])) {
+        if (array_key_exists('CONFIG_LANG', $_POST) &&
+            isset($_POST['CONFIG_LANG']) &&
+            in_array(strtolower($_POST['CONFIG_LANG']), array_keys($valid_values))) {
+            
+            $configValues['CONFIG_LANG'] = $_POST['CONFIG_LANG'];
+            include("library/config_write.php");
+        }
     }
-	
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-	
-?>		
+    // print HTML prologue
+    $title = t('Intro','configlang.php');
+    $help = t('helpPage','configlang');
+    
+    print_html_prologue($title, $langCode);
 
-<?php
+    include("menu-config.php");
 
-    include ("menu-config.php");
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-?>		
-		
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configlang.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','configlang') ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-
-				<form name="langsettings" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-        <fieldset>
-
-                <h302> <?php echo t('title','Settings'); ?> </h302>
-                <br/>
-
-                <ul>
-
-
-                <li class='fieldset'>
-                <label for='config_lan' class='form'><?php echo t('all','PrimaryLanguage')?></label>
-		<select name="config_lang" class='form'>
-			<option value="en"> English </option>
-			<option value="ru"> Russian </option>
-			<option value="hu"> Hungarian </option>
-			<option value="it"> Italian </option>
-			<option value="es_VE"> Spanish - Venezuelan </option>
-			<option value="pt_br"> Portuguese - Brazilian </option>
-			<option value="ja"> Japanese </option>
-		</select>
-		</li>
-
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-                </li>
-
-                </ul>
-
-        </fieldset>
-
-				</form>
-
-	
-				<br/><br/>
-				
-
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+    include_once('include/management/actionMessages.php');
 ?>
-		
-		</div>
-		
-</div>
-</div>
 
+<form name="langsettings" method="POST">
+    <fieldset>
+        <h302><?= t('title','Settings') ?></h302>
+        <br>
+
+        <ul>
+<?php
+            print_select_as_list_elem('CONFIG_LANG', t('all','PrimaryLanguage'), $valid_values, $configValues['CONFIG_LANG']);
+?>
+        
+            <li class="fieldset">
+                <br>
+                <hr>
+                <br>
+                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
+            </li>
+        </ul>
+    </fieldset>
+</form>
+
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+    </div>
+</div>
 
 </body>
 </html>

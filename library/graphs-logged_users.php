@@ -59,7 +59,7 @@ function graph_day($day,$month,$year) {
     header("Content-type: image/png");
 
     $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
+    $dataSet = new XYDataSet();
 
     for ($i=0; $i < 24; $i++) { //24 hours a day
         $date = "$year-$month-$day $i:00:00";
@@ -86,7 +86,7 @@ function graph_month($month,$year) {
     header("Content-type: image/png");
 
     $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
+    $dataSet = new XYDataSet();
 
     $lastDay = date("d", mktime(0, 0, 0, $month+1 , 0, date("Y")));
 

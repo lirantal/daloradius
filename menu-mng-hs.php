@@ -32,10 +32,6 @@ include_once("lang/main.php");
 ?>
 
 <body>
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
-    <link rel="stylesheet" tabindex="" href="css/form-field-tooltip.css" media="screen">
-    
     <div id="wrapper">
         <div id="innerwrapper">
 

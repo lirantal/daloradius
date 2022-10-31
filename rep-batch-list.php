@@ -34,6 +34,7 @@
 
     // print HTML prologue   
     $title = t('Intro','repbatchlist.php');
+    $help = t('helpPage','repbatchlist');
     
     print_html_prologue($title, $langCode);
     
@@ -69,18 +70,10 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
-?>
-
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','repbatchlist.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','repbatchlist') ?><br></div>
-
-<?php
+               
+    // start printing content
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');

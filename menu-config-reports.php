@@ -34,10 +34,10 @@ $m_active = "Config";
 <body>
     <div id="wrapper">
         <div id="innerwrapper">
-		
+        
 <?php
-	include_once ("include/menu/menu-items.php");
-	include_once ("include/menu/config-subnav.php");
+    include_once ("include/menu/menu-items.php");
+    include_once ("include/menu/config-subnav.php");
 ?>      
 
             <div id="sidebar">

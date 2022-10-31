@@ -31,20 +31,24 @@
     $logQuery = "performed query on page: ";
     include('include/config/logging.php');
 
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = "UPS Status";
+    $help = "";
+    
+    print_html_prologue($title, $langCode);
+
     include("menu-reports-status.php");
       
 ?>
         <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    UPS Status <h144>&#x2754;</h144>
-                </a>
-            </h2>
-
-            <div id="helpPage" style="display:none;visibility:visible"><br></div>
-            <br>
-
 <?php
+
+    print_title_and_help($title, $help);
+
     exec("which apcaccess || command -v apcaccess", $output, $retStatus);
 
     $failureMsg = "";

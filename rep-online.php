@@ -36,24 +36,42 @@
     // feed the sidebar
     $usernameOnline = $username_enc;
     
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for ";
+    if (!empty($username)) {
+         $logQuery .= "username(s) starting with [$username] ";
+    } else {
+        $logQuery .= "all usernames ";
+    }
+    $logQuery .= "on page: ";
+    
     include_once("lang/main.php");
     
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabber stuff
+        "library/tabber/tab-css2.css"
+    );
+    
     $extra_js = array(
         "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js"
+        "library/javascript/ajaxGeneric.js",
+        // js tabber stuff
+        "library/tabber/tabber.js"
     );
+    
+    // inline css tabber stuff
+    $inline_extra_css = ".tabber{display:none;}";    
     
     $title = t('Intro','reponline.php');
     $help = t('helpPage','reponline');
     
-    print_html_prologue($title, $langCode, array(), $extra_js);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js, $inline_extra_css);
     
     include("menu-reports.php");
-
-    include_once("library/tabber/tab-layout.php");
 
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
@@ -87,11 +105,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
-?>
 
-        <div id="contentnorightbar">
 
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 ?>
 
@@ -155,7 +171,7 @@
         /* END */
                      
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY ra.%s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
         
@@ -304,15 +320,6 @@
         
         <div id="footer">
 <?php
-    $log = "visited page: ";
-    $logQuery = "performed query for ";
-    if (!empty($username)) {
-         $logQuery .= "username(s) starting with [$username] ";
-    } else {
-        $logQuery .= "all usernames ";
-    }
-    $logQuery .= "on page: ";
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

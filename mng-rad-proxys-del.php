@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,151 +15,163 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-	include ("library/checklogin.php");
-	$operator = $_SESSION['operator_user'];
+    include("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	isset($_REQUEST['proxyname']) ? $proxynameArray = $_REQUEST['proxyname'] : $proxynameArray = "";
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
+    $log = "visited page: ";
 
-	$logAction = "";
-	$logDebugSQL = "";
+    include('library/opendb.php');
+    
+    // init field_name and values (all, valid and to delete)
+    $field_name = 'proxyname';
+    
+    $valid_values = array();
+    
+    $sql = sprintf("SELECT DISTINCT(%s) FROM %s", $field_name, $configValues['CONFIG_DB_TBL_DALOPROXYS']);
+    $res = $dbSocket->query($sql);
+    
+    while ($row = $res->fetchRow()) {
+        $valid_values[] = $row[0];
+    }
+    
+    if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+    
+        $values = array();
+        $deleted_values = array();
+        
+        // validate values
+        if (array_key_exists($field_name, $_POST) && isset($_POST[$field_name])) {
+            
+            $tmp = (!is_array($_POST[$field_name])) ? array($_POST[$field_name]) : $_POST[$field_name];
+            foreach ($tmp as $value) {
+                if (in_array($value, $valid_values)) {
+                    $values[] = $value;
+                }
+            }
+        }
+        
+        // use valid values for updating db,
+        // update deleted_values as a valid value has been removed
+        if (count($values) > 0) {
+            $flag = (array_key_exists('CONFIG_FILE_RADIUS_PROXY', $configValues) &&
+                     isset($configValues['CONFIG_FILE_RADIUS_PROXY']));
+                     
+            $filenameRealmsProxys = ($flag) ? $configValues['CONFIG_FILE_RADIUS_PROXY'] : "";
+            $fileFlag = ($flag) ? 1 : 0;
+            
+            foreach ($values as $value) {
+                $sql = sprintf("DELETE FROM %s WHERE %s='%s'", $configValues['CONFIG_DB_TBL_DALOPROXYS'],
+                                                               $field_name, $dbSocket->escapeSimple($value));
+                $result = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if ($result > 0) {
+                    $deleted_values[] = $value;
+                }
+            }
+            
+            /*******************************************************************/
+            /* enumerate from database all proxy entries */
+            include_once('include/management/saveRealmsProxys.php');
+            /*******************************************************************/
+        }
 
-	$showRemoveDiv = "block";
 
-	if (isset($_REQUEST['proxyname'])) {
+        $success = $_SERVER['REQUEST_METHOD'] == 'POST' && count($values) > 0 && count($deleted_values) > 0;
 
-		if (!is_array($proxynameArray))
-			$proxynameArray = array($proxynameArray, NULL);
+        // present results
+        if ($success) {
+            $tmp = array();
+            foreach ($deleted_values as $deleted_value) {
+                $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
+            }
+            
+            $successMsg = sprintf("Deleted proxy(s): <strong>%s</strong>", implode(", ", $tmp));
+            $logAction .= sprintf("Successfully deleted proxy(s) [%s] on page: ", implode(", ", $deleted_values));
+        } else {
+            $failureMsg = "no proxy or invalid proxy was entered, please specify a valid proxy name to remove from database";
+            $logAction .= sprintf("Failed deleting proxy(s) [%s] on page: ", implode(", ", $valid_values));
+        }
+    } else {
+        $success = false;
+        $failureMsg = sprintf("CSRF token error");
+        $logAction .= sprintf("CSRF token error on page: ");
+    }
+    
+    include('library/closedb.php');
 
-		$allProxys = "";
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
 
-		include 'library/opendb.php';
+    // print HTML prologue
+    
+    $title = t('Intro','mngradproxysdel.php');
+    $help = t('helpPage','mngradproxysdel');
+    
+    print_html_prologue($title, $langCode);
 
-		if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
-			$filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-			$fileFlag = 1;
-		} else {
-			$filenameRealmsProxys = "";
-			$fileFlag = 0;
-		}
+    include("menu-mng-rad-realms.php");
+    
+    echo '<div id="contentnorightbar">';
 
-		foreach ($proxynameArray as $variable=>$value) {
-			if (trim($value) != "") {
+    print_title_and_help($title, $help);
+    
+    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+        include_once('include/management/actionMessages.php');
+    }
+    
+    if (!$success) {
+?>
+            <form method="POST">
+                <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+                <fieldset>
+                    <h302><?= t('title','ProxyInfo') ?></h302>
+                    
+                    <br>
 
-				$proxyname = $value;
-				$allProxys .= $proxyname . ", ";
-
-				// delete all proxys
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS'].
-					" WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-				
-				$successMsg = "Deleted proxy(s): <b> $allProxys </b>";
-				$logAction .= "Successfully deleted proxy(s) [$allProxys] on page: ";
-				
-			} else { 
-				$failureMsg = "no proxy was entered, please specify a proxy name to remove from database";
-				$logAction .= "Failed deleting proxy(s) [$allProxys] on page: ";
-			}
-
-		} //foreach
-
-		/*******************************************************************/
-		/* enumerate from database all proxy entries */
-		include_once('include/management/saveRealmsProxys.php');
-		/*******************************************************************/
-
-		include 'library/closedb.php';
-
-		$showRemoveDiv = "none";
-	} 
-
-
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-
+                    <label for="<?= "$field_name-id" ?>" class="form"><?= t('all','ProxyName') ?></label>
+                    <input list="<?= "$field_name-list" ?>" name="<?= $field_name . "[]" ?>"
+                        type="text" id="<?= "$field_name-id" ?>" tabindex="101">
+<?php
+        if (count($valid_values) > 0) {
+            printf('<datalist id="%s">', "$field_name-list");
+            foreach ($valid_values as $value) {
+                printf('<option value="%s"></option>', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+            }
+            echo '</datalist>';
+        }
+?>
+                </fieldset>
+                
+                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" tabindex="102" class="button">
+                
+            </form>
+<?php
+    }
 ?>
 
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+         </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include ("menu-mng-rad-realms.php");	
-?>		
-
-	<div id="contentnorightbar">
-
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradproxysdel.php') ?>
-		<h144>&#x2754;</h144></a></h2>
-		
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngradproxysdel') ?>
-			<br/>
-		</div>
-		<?php   
-			include_once('include/management/actionMessages.php');
-		?>
-
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-	<fieldset>
-
-		<h302> <?php echo t('title','ProxyInfo') ?> </h302>
-		<br/>
-
-			<label for='proxyname' class='form'><?php echo t('all','ProxyName') ?></label>
-			<input name='proxyname[]' type='text' id='proxyname' value='<?php echo $proxyname ?>' tabindex=100 />
-			<br/>
-
-			<br/><br/>
-			<hr><br/>
-
-			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000  class='button' />
-
-	</fieldset>
-
-	</form>
-	</div>
-
-
-<?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>
-
-
-
-
-

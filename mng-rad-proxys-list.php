@@ -15,167 +15,197 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-
-
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "ProxyName";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
-
-
-	include_once('library/config_read.php');
+    include('library/check_operator_perm.php');
+    
+    // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
+    
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
+    // print HTML prologue
+    $title = t('Intro','mngradproxys.php');
+    $help = t('helpPage','mngradproxyslist');
+    
+    print_html_prologue($title, $langCode);
 
+    include("menu-mng-rad-realms.php");
+    
+    $cols = array(
+                    "proxyname" => t('all','ProxyName'),
+                    "creationdate" => t('all','CreationDate'),
+                    "creationby" => t('all','CreationBy'),
+                    "updatedate" => t('all','UpdateDate'), 
+                    "updateby" => t('all','UpdateBy')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "desc";
+  
+    // start printing content
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+
+    // we use this simplified query just to initialize $numrows
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    $numrows = $res->fetchrow()[0];
+
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+        
+        //~ id, proxyname, retry_delay, retry_count, dead_time, default_fallback, creationdate, creationby, updatedate, updateby, 
+
+        // we execute and log the actual query
+        $sql = sprintf("SELECT proxyname, creationdate, creationby, updatedate, updateby
+                          FROM %s", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
-</head>
+
+<form name="listall" method="POST" action="mng-rad-proxys-del.php">
+
+    <table border="0" class="table1">
+        <thead>
+
+<?php
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>' . '</tr>';
+        }
+?>
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('proxyname[]', 'mng-rad-proxys-del.php')
+?>
+                </th>
+            </tr>
+
+            <tr>
+<?php
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
+?>
+            </tr>
+            
+        </thead>
+        
+        <tbody>
+<?php
+        $count = 1;
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+        
+            list($proxyname, $creationdate, $creationby, $updatedate, $updateby) = $row;
+            
+            // tooltip stuff
+            $onclick = 'javascript:return false;';
+        
+            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-proxys-edit.php?proxyname=%s">%s</a>',
+                                   urlencode($proxyname), t('Tooltip','EditProxy'));
+        
+            echo "<tr>";
+            printf('<td><input type="checkbox" name="proxyname[]" value="%s" id="checkbox%s">', $proxyname, $count);
+            printf('<label for="checkbox%s">', $count);
+            printf('<a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a>",
+                   $onclick, $tooltipText, $proxyname);
+            echo "</label></td>";
+            
+            // simply print remaining row elements
+            for ($i = 1; $i < $rowlen; $i++) {
+                printf("<td>%s</td>", $row[$i]);
+            }
+            
+            echo "</tr>";
+            
+            $count++;
+        }
+?>
+        </tbody>
+<?php
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+?>
+        
+    </table>
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+</form>
  
- 
 <?php
-	include ("menu-mng-rad-realms.php");
-?>
-	
-	<div id="contentnorightbar">
-	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradproxys.php') ?>
-		<h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo t('helpPage','mngradproxyslist') ?>
-			<br/>
-		</div>	
-		<br/>
-
-<?php
-
-	include 'library/opendb.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." ";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS'].
-		" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-	
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-        echo "<form name='listproxys' method='post' action='mng-rad-proxys-del.php'>";
-	
-	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-			<th colspan='10' align='left'>
-
-			Select:
-			<a class=\"table\" href=\"javascript:SetChecked(1,'proxyname[]','listproxys')\">All</a>
-			<a class=\"table\" href=\"javascript:SetChecked(0,'proxyname[]','listproxys')\">None</a>
-			<br/>
-			<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listproxys\",\"mng-rad-proxys-del.php\")' />
-			<br/><br/>
-	";
-
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-	echo "	</th></tr>
-			</thead>
-	";
-
-	if ($orderType == "asc") {
-		$orderType = "desc";
-	} else  if ($orderType == "desc") {
-		$orderType = "asc";
-	}
-
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=proxyname&orderType=$orderType\">
-		".t('all','ProxyName')."</a>
-		</th>
-	</tr> </thread>";
-	while($row = $res->fetchRow()) {
-		echo "<tr>
-			<td> <input type='checkbox' name='proxyname[]' value='$row[1]'>
-				<a class='tablenovisit' href='#'
-								onclick='javascript:return false;'
-                                tooltipText=\"
-                                        <a class='toolTip' href='mng-rad-proxys-edit.php?proxyname=$row[1]'>".t('Tooltip','EditProxy')."</a>
-                                        <br/>\"
-				>$row[1]</a></td>
-		</tr>";
-	}
-
-	echo "
-		<tfoot>
-			<tr>
-			<th colspan='10' align='left'>
-	";
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-	echo "
-			</th>
-			</tr>
-		</tfoot>
-	";
-
-
-	echo "</table></form>";
-
-	include 'library/closedb.php';
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
 ?>
 
-
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-		</div>
-	
-		<div id="footer">
-	
-<?php
-	include 'page-footer.php';
-?>
-
-	
-		</div>
-	
-</div>
+        </div><!-- #footer -->
+    </div>
 </div>
 
-<script type="text/javascript">
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
 </script>
 
 </body>

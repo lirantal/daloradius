@@ -47,7 +47,7 @@
     }
 
     $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
+    $dataSet = new XYDataSet();
     $limit = 48;
 
     if ($is_valid) {
