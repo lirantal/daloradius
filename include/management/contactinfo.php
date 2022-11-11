@@ -1,105 +1,107 @@
 <?php
-/*********************************************************************
-* Name: userinfo.php
-* Author: Liran tal <liran.tal@gmail.com>
-*********************************************************************/
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/management/contactinfo.php') !== false) {
+    header("Location: ../../index.php");
+    exit;
+}
+
+$input_descriptors1 = array();
+$input_descriptors1[] = array( "name" => "ownername", "caption" => t('ContactInfo','OwnerName'),
+                               "type" => "text", "value" => ((isset($owner)) ? $owner : ""), );
+$input_descriptors1[] = array( "name" => "emailowner", "caption" => t('ContactInfo','OwnerEmail'),
+                               "type" => "text", "value" => ((isset($email_owner)) ? $email_owner : "") , );
+$input_descriptors1[] = array( "name" => "managername", "caption" => t('ContactInfo','ManagerName'),
+                               "type" => "text", "value" => ((isset($manager)) ? $manager : "") , );
+$input_descriptors1[] = array( "name" => "emailmanager", "caption" => t('ContactInfo','ManagerEmail'),
+                               "type" => "text", "value" => ((isset($email_manager)) ? $email_manager : "") , );
+$input_descriptors1[] = array( "name" => "company", "caption" => t('ContactInfo','Company'),
+                               "type" => "text", "value" => ((isset($company)) ? $company : "") , );
+$input_descriptors1[] = array( "name" => "address", "caption" => t('ContactInfo','Address'),
+                               "type" => "textarea", "content" => ((isset($address)) ? $address : ""), );                               
+$input_descriptors1[] = array( "name" => "phone1", "caption" => t('ContactInfo','Phone1'),
+                               "type" => "text", "value" => ((isset($phone1)) ? $phone1 : "") , );
+$input_descriptors1[] = array( "name" => "phone2", "caption" => t('ContactInfo','Phone2'),
+                               "type" => "text", "value" => ((isset($phone2)) ? $phone2 : "") , );
+$input_descriptors1[] = array( "name" => "hotspot_type", "caption" => t('ContactInfo','HotspotType'),
+                               "type" => "text", "value" => ((isset($hotspot_type)) ? $hotspot_type : "") , );
+$input_descriptors1[] = array( "name" => "companywebsite", "caption" => t('ContactInfo','CompanyWebsite'),
+                               "type" => "text", "value" => ((isset($companywebsite)) ? $companywebsite : "") , );
+$input_descriptors1[] = array( "name" => "companyemail", "caption" => t('ContactInfo','CompanyEmail'),
+                               "type" => "text", "value" => ((isset($companyemail)) ? $companyemail : "") , );
+$input_descriptors1[] = array( "name" => "companyphone", "caption" => t('ContactInfo','CompanyPhone'),
+                               "type" => "text", "value" => ((isset($companyphone)) ? $companyphone : "") , );
+$input_descriptors1[] = array( "name" => "companycontact", "caption" => t('ContactInfo','CompanyContact'),
+                               "type" => "text", "value" => ((isset($companycontact)) ? $companycontact : "") , );
+
+$input_descriptors2 = array();
+$input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
+                               'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
+$input_descriptors2[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
+                               'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
+$input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
+                               'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
+$input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
+                               'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+
+$button_descriptor = array(
+                            "type" => "submit",
+                            "name" => "submit",
+                            "value" => t('buttons','apply')
+                          );
+
 ?>
 
 <fieldset>
+    <h302>Contact Info</h302>
+    <h301>Contact Info</h301>
 
-	<h302> Contact Info </h302>
-	<br/>
+    <ul>
+<?php
 
-	<label for='ownername' class='form'><?php echo t('ContactInfo','OwnerName') ?></label>
-	<input name='owner' type='text' id='owner' value='<?php if (isset($owner)) echo $owner; ?>' 
-		tabindex=300 />
-	<br/>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
 
-	<label for='emailowner' class='form'><?php echo t('ContactInfo','OwnerEmail') ?></label>
-	<input name='email_owner' type='text' id='email_owner' value='<?php if (isset($email_owner)) echo $email_owner; ?>'
-		tabindex=301 />
-	<br/>
-
-	<label for='managername' class='form'><?php echo t('ContactInfo','ManagerName') ?></label>
-	<input name='manager' type='text' id='manager' value='<?php if (isset($manager)) echo $manager; ?>'
-		tabindex=302 />
-	<br/>
-
-	<label for='emailmanager' class='form'><?php echo t('ContactInfo','ManagerEmail') ?></label>
-	<input name='email_manager' type='text' id='email_manager' value='<?php if (isset($email_manager)) echo $email_manager; ?>'
-		tabindex=303 />
-	<br/>
-
-	<label for='company' class='form'><?php echo t('ContactInfo','Company') ?></label>
-	<input name='company' type='text' id='company' value='<?php if (isset($company)) echo $company; ?>'
-		tabindex=304 />
-	<br/>
-
-	<label for='address' class='form'><?php echo t('ContactInfo','Address') ?></label>
-        <textarea class='form' name='address' value='<?php if (isset($address)) echo $address; ?>' tabindex=305 ></textarea>
-	<br/>
-
-	<label for='phone1' class='form'><?php echo t('ContactInfo','Phone1') ?></label>
-	<input name='phone1' type='text' id='phone1' value='<?php if (isset($phone1)) echo $phone1; ?>'
-		tabindex=306 />
-	<br/>
-
-	<label for='phone2' class='form'><?php echo t('ContactInfo','Phone2') ?></label>
-	<input name='phone2' type='text' id='phone2' value='<?php if (isset($phone2)) echo $phone2; ?>'
-		tabindex=307 />
-	<br/>
-
-	<label for='hotspot_type' class='form'><?php echo t('ContactInfo','HotspotType') ?></label>
-	<input name='hotspot_type' type='text' id='hotspot_type' value='<?php if (isset($hotspot_type)) echo $hotspot_type; ?>'
-		tabindex=308 />
-	<br/>
-
-	<label for='companywebsite' class='form'><?php echo t('ContactInfo','CompanyWebsite') ?></label>
-	<input name='companywebsite' type='text' id='companywebsite' value='<?php if (isset($companywebsite)) echo $companywebsite; ?>'
-		tabindex=309 />
-	<br/>
-
-	<label for='companyemail' class='form'><?php echo t('ContactInfo','CompanyEmail') ?></label>
-	<input name='companyemail' type='text' id='companyemail' value='<?php if (isset($companyemail)) echo $companyemail; ?>'
-		tabindex=310 />
-	<br/>
-
-	<label for='companyphone' class='form'><?php echo t('ContactInfo','CompanyPhone') ?></label>
-	<input name='companyphone' type='text' id='companyphone' value='<?php if (isset($companyphone)) echo $companyphone; ?>'
-		tabindex=311 />
-	<br/>
-
-	<label for='companycontact' class='form'><?php echo t('ContactInfo','CompanyContact') ?></label>
-	<input name='companycontact' type='text' id='companycontact' value='<?php if (isset($companycontact)) echo $companycontact; ?>'
-		tabindex=312 />
-	<br/>
-
-        <br/>
-        <h301> Other </h301>
-        <br/>
-
-        <br/>
-        <label for='creationdate' class='form'><?php echo t('all','CreationDate') ?></label>
-        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
-        <br/>
-
-        <label for='creationby' class='form'><?php echo t('all','CreationBy') ?></label>
-        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
-        <br/>
-
-        <label for='updatedate' class='form'><?php echo t('all','UpdateDate') ?></label>
-        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
-        <br/>
-
-        <label for='updateby' class='form'><?php echo t('all','UpdateBy') ?></label>
-        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
-        <br/>
-
-
-        <br/><br/>
-        <hr><br/>
-
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-		class='button' />
-
+?>
+    </ul>
 </fieldset>
+
+<fieldset>
+    <h302>Other</h302>
+    <h301>Other</h301>
+    <ul>
+<?php
+
+    foreach ($input_descriptors2 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+
+?>
+    </ul>
+</fieldset>
+
+<?php
+    print_form_component($button_descriptor);
+?>

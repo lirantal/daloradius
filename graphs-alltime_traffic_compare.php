@@ -35,6 +35,9 @@
              in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
           ? strtolower($_GET['size']) : "megabytes";
 
+    $log = "visited page: ";
+    $logQuery = "performed query of type [$type] and size [$size] on page: ";
+
     $traffic_compare_type = $type;
     $traffic_compare_size = $size;
 
@@ -45,47 +48,61 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','graphsalltimetrafficcompare.php');
     $help = t('helpPage','graphsalltimetrafficcompare');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-graphs.php");	
-    include_once("library/tabber/tab-layout.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
+    // set navbar stuff
+    $navbuttons = array(
+                          'Download-tab' => "Download Graph",
+                          'Upload-tab' => "Upload Graph",
+                       );
+                       
+    print_tab_navbuttons($navbuttons);
+    
 ?>
 
-            <div class="tabber">
-                <div class="tabbertab" title="Download Graph">
-                    <div style="text-align: center; margin-top: 50px;">
+            
+            <div class="tabcontent" id="Download-tab" style="display: block">
+                <div style="text-align: center; margin-top: 50px;">
 <?php
     $download_src = sprintf("library/graphs-alltime-traffic-download.php?type=%s&size=%s", $type, $size);
     $download_alt = sprintf("%s all-time download traffic (in %s) statistics", ucfirst($type), $size);
 ?>
-                        <img alt="<?= $download_alt ?>" src="<?= $download_src ?>">
-                    </div>
+                    <img alt="<?= $download_alt ?>" src="<?= $download_src ?>">
                 </div>
-     
-                <div class="tabbertab" title="Upload Graph">
-                    <div style="text-align: center; margin-top: 50px">
+            </div>
+ 
+            <div class="tabcontent" id="Upload-tab">
+                <div style="text-align: center; margin-top: 50px">
 <?php
     $upload_src = sprintf("library/graphs-alltime-traffic-upload.php?type=%s&size=%s", $type, $size);
     $upload_alt = sprintf("%s all-time upload traffic (in %s) statistics", ucfirst($type), $size);
 ?>
-                        <img alt="<?= $upload_alt ?>" src="<?= $upload_src ?>">
-                    </div>
+                    <img alt="<?= $upload_alt ?>" src="<?= $upload_src ?>">
                 </div>
-            </div><!-- .tabber -->
+            </div>
+            
         </div><!-- #contentnorightbar -->
 
 		<div id="footer">		
 <?php
-    $log = "visited page: ";
-    $logQuery = "performed query of type [$type] and size [$size] on page: ";
-    
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

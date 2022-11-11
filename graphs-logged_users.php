@@ -37,6 +37,10 @@
     $day = $match[3];
     $year = $match[1];
 
+    $log = "visited page: ";
+    $logQuery = "performed query on the following interval  [$day - $month - $year] on page: ";
+
+
     include_once('library/config_read.php');
 	
     include_once("lang/main.php");
@@ -44,44 +48,55 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','graphsloggedusers.php');
     $help = t('helpPage','graphsloggedusers');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
 	include("menu-graphs.php");
-    include_once("library/tabber/tab-layout.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-
+    
+    // set navbar stuff
+    $navbuttons = array(
+                          'Daily-tab' => "Graph (day)",
+                          'Monthly-tab' => "Graph (month)",
+                       );
+                       
+    print_tab_navbuttons($navbuttons);
+    
 ?>
 
-            <div class="tabber">
-                <div class="tabbertab" title="Graph (day)">
-                    <div style="text-align: center; margin-top: 50px;">
-                        <img src="library/graphs-logged_users.php?day=<?= $day ?>&month=<?=$month ?>&year=<?= $year ?>">
-                    </div>
+            <div class="tabcontent" id="Daily-tab" style="display: block">
+                <div style="text-align: center; margin-top: 50px;">
+                    <img src="library/graphs-logged_users.php?day=<?= $day ?>&month=<?=$month ?>&year=<?= $year ?>">
                 </div>
-
-            
-            
-                <div class="tabbertab" title="Graph (month)">
-                    <div style="text-align: center; margin-top: 50px;">
-                        <img src="library/graphs-logged_users.php?month=<?=$month ?>&year=<?= $year ?>">
-                    </div>
-                </div>
-            
             </div>
 
-        </div>
+        
+        
+            <div class="tabcontent" id="Monthly-tab">
+                <div style="text-align: center; margin-top: 50px;">
+                    <img src="library/graphs-logged_users.php?month=<?=$month ?>&year=<?= $year ?>">
+                </div>
+            </div>
+            
+        </div><!-- #contentnorightbar -->
 		
         <div id="footer">
 		
 <?php
-    $log = "visited page: ";
-    $logQuery = "performed query on the following interval  [$day - $month - $year] on page: ";
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

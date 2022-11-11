@@ -15,800 +15,725 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-	include ("library/checklogin.php");
-	$operator = $_SESSION['operator_user'];
-	
-	include('library/check_operator_perm.php');
+    include("library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+    
+    include('library/check_operator_perm.php');
 
-	// declaring variables
-	$logAction = "";
-	$logDebugSQL = "";
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
-	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
-	isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
-	isset($_POST['groups']) ? $groups = $_POST['groups'] : $groups = "";
-	isset($_POST['authType']) ? $authType = $_POST['authType'] : $authType = "";
+    // we import validation facilities
+    include_once("library/validation.php");
 
-	isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
-	isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
-	isset($_POST['passwordType']) ? $passwordtype = $_POST['passwordType'] : $passwordtype = "";
+    // TODO validate user input
+    $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
+              ? trim(str_replace("%", "", $_POST['username'])) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-	isset($_POST['macaddress']) ? $macaddress = $_POST['macaddress'] : $macaddress = "";
-	isset($_POST['pincode']) ? $pincode = $_POST['pincode'] : $pincode = "";
+    isset($_POST['authType']) ? $authType = $_POST['authType'] : $authType = "";
 
-	isset($_POST['group_macaddress']) ? $group_macaddress = $_POST['group_macaddress'] : $group_macaddress = "";
-	isset($_POST['group_pincode']) ? $group_pincode = $_POST['group_pincode'] : $group_pincode = "";
+    $password = (array_key_exists('password', $_POST) && isset($_POST['password'])) ? $_POST['password'] : "";
+    $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
+                     in_array($_POST['passwordType'], $valid_passwordTypes)) ? $_POST['passwordType'] : "";
+    
+    $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
+                   filter_var(trim($_POST['macaddress']), FILTER_VALIDATE_MAC)) ? trim($_POST['macaddress']) : "";
+                   
+    $pincode = (array_key_exists('pincode', $_POST) && isset($_POST['pincode'])) ? trim($_POST['pincode']) : "";
 
+    // this can be used for all authTypes
+    $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
 
-	isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
-	isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
-	isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
-	isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
-	isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
-	isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
-	isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
-	isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
-	isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
-	isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
-	isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
-	isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
-	isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
-	isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
-	isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
-	isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
-	isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
+    // billing info variables
+    $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
+    $bi_company = (array_key_exists('bi_company', $_POST) && isset($_POST['bi_company'])) ? $_POST['bi_company'] : "";
+    $bi_email = (array_key_exists('bi_email', $_POST) && isset($_POST['bi_email'])) ? $_POST['bi_email'] : "";
+    $bi_phone = (array_key_exists('bi_phone', $_POST) && isset($_POST['bi_phone'])) ? $_POST['bi_phone'] : "";
+    $bi_address = (array_key_exists('bi_address', $_POST) && isset($_POST['bi_address'])) ? $_POST['bi_address'] : "";
+    $bi_city = (array_key_exists('bi_city', $_POST) && isset($_POST['bi_city'])) ? $_POST['bi_city'] : "";
+    $bi_state = (array_key_exists('bi_state', $_POST) && isset($_POST['bi_state'])) ? $_POST['bi_state'] : "";
+    $bi_country = (array_key_exists('bi_country', $_POST) && isset($_POST['bi_country'])) ? $_POST['bi_country'] : "";
+    $bi_zip = (array_key_exists('bi_zip', $_POST) && isset($_POST['bi_zip'])) ? $_POST['bi_zip'] : "";
+    $bi_paymentmethod = (array_key_exists('bi_paymentmethod', $_POST) && isset($_POST['bi_paymentmethod'])) ? $_POST['bi_paymentmethod'] : "";
+    $bi_cash = (array_key_exists('bi_cash', $_POST) && isset($_POST['bi_cash'])) ? $_POST['bi_cash'] : "";
+    $bi_creditcardname = (array_key_exists('bi_creditcardname', $_POST) && isset($_POST['bi_creditcardname'])) ? $_POST['bi_creditcardname'] : "";
+    $bi_creditcardnumber = (array_key_exists('bi_creditcardnumber', $_POST) && isset($_POST['bi_creditcardnumber'])) ? $_POST['bi_creditcardnumber'] : "";
+    $bi_creditcardverification = (array_key_exists('bi_creditcardverification', $_POST) && isset($_POST['bi_creditcardverification'])) ? $_POST['bi_creditcardverification'] : "";
+    $bi_creditcardtype = (array_key_exists('bi_creditcardtype', $_POST) && isset($_POST['bi_creditcardtype'])) ? $_POST['bi_creditcardtype'] : "";
+    $bi_creditcardexp = (array_key_exists('bi_creditcardexp', $_POST) && isset($_POST['bi_creditcardexp'])) ? $_POST['bi_creditcardexp'] : "";
+    $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
+    
     isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
     isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
     isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
     isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
     isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
     isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
-	isset($_POST['bi_nextinvoicedue']) ? $bi_nextinvoicedue = $_POST['bi_nextinvoicedue'] : $bi_nextinvoicedue = "";
-	isset($_POST['bi_billdue']) ? $bi_billdue = $_POST['bi_billdue'] : $bi_billdue = "";
+    isset($_POST['bi_nextinvoicedue']) ? $bi_nextinvoicedue = $_POST['bi_nextinvoicedue'] : $bi_nextinvoicedue = "";
+    isset($_POST['bi_billdue']) ? $bi_billdue = $_POST['bi_billdue'] : $bi_billdue = "";
     isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
     isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
     isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
-	isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
+    
+    $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
 
-	isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
-	isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
-	isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
-	isset($_POST['department']) ? $department = $_POST['department'] : $department = "";
-	isset($_POST['company']) ? $company = $_POST['company'] : $company = "";
-	isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone = "";
-	isset($_POST['homephone']) ? $homephone = $_POST['homephone'] :  $homephone = "";
-	isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
-	isset($_POST['address']) ? $ui_address = $_POST['address'] : $ui_address = "";
-	isset($_POST['city']) ? $ui_city = $_POST['city'] : $ui_city = "";
-	isset($_POST['state']) ? $ui_state = $_POST['state'] : $ui_state = "";
-	isset($_POST['country']) ? $country = $_POST['country'] : $country = "";
-	isset($_POST['zip']) ? $ui_zip = $_POST['zip'] : $ui_zip = "";
-	isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
-	isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
-	
-	isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
-	isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
-	
-	isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";		
-
-
-	function addGroups($dbSocket, $username, $groups) {
-
-		global $logDebugSQL;
-		global $configValues;
-
-		// insert usergroup mapping
-		if (isset($groups)) {
-
-			foreach ($groups as $group) {
-
-				if (trim($group) != "") {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-						" VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
-			}
-		}
-	}
+    $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
+    $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
+    $email = (array_key_exists('email', $_POST) && isset($_POST['email'])) ? $_POST['email'] : "";
+    $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? $_POST['department'] : "";
+    $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? $_POST['company'] : "";
+    $workphone = (array_key_exists('workphone', $_POST) && isset($_POST['workphone'])) ? $_POST['workphone'] : "";
+    $homephone = (array_key_exists('homephone', $_POST) && isset($_POST['homephone'])) ? $_POST['homephone'] : "";
+    $mobilephone = (array_key_exists('mobilephone', $_POST) && isset($_POST['mobilephone'])) ? $_POST['mobilephone'] : "";
+    $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? $_POST['address'] : "";
+    $city = (array_key_exists('city', $_POST) && isset($_POST['city'])) ? $_POST['city'] : "";
+    $state = (array_key_exists('state', $_POST) && isset($_POST['state'])) ? $_POST['state'] : "";
+    $country = (array_key_exists('country', $_POST) && isset($_POST['country'])) ? $_POST['country'] : "";
+    $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
+    $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
+    $ui_changeuserinfo = (array_key_exists('changeuserinfo', $_POST) && isset($_POST['changeuserinfo'])) ? $_POST['changeuserinfo'] : "0";
+    $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
+    $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
+    
+    isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";        
 
 
-	function addUserInfo($dbSocket, $username) {
+    function addGroups($dbSocket, $username, $groups) {
 
-		global $firstname;
-		global $lastname;
-		global $email;
-		global $department;
-		global $company;
-		global $workphone;
-		global $homephone;
-		global $mobilephone;
-		global $ui_address;
-		global $ui_city;
-		global $ui_state;
-		global $ui_country;
-		global $ui_zip;
-		global $notes;
-		global $ui_changeuserinfo;
-		global $ui_PortalLoginPassword;
-		global $ui_enableUserPortalLogin;
-		
-		global $logDebugSQL;
-		global $configValues;
+        global $logDebugSQL;
+        global $configValues;
 
-		$currDate = date('Y-m-d H:i:s');
-		$currBy = $_SESSION['operator_user'];
+        // insert usergroup mapping
+        // check if any group should be added
+        if (count($groups) > 0) {
+            foreach ($groups as $group) {
+                $group = trim($group);
+                
+                if (empty($group)) {
+                    continue;
+                }
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-				" WHERE username='".$dbSocket->escapeSimple($username)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-
-		// if there were no records for this user present in the userinfo table
-		if ($res->numRows() == 0) {
-			// insert user information table
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-				" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-				" mobilephone, address, city, state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
-				" VALUES (0, 
-				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
-				$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
-				$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
-				$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-				$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
-				$dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
-				$dbSocket->escapeSimple($ui_country)."', '".
-				$dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
-				$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
-				$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
-				"', '$currDate', '$currBy', NULL, NULL)";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
-		} //FIXME:
-		  //if the user already exist in userinfo then we should somehow alert the user
-		  //that this has happened and the administrator/operator will take care of it
-
-	}
+                $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
+                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                               $dbSocket->escapeSimple($username),
+                               $dbSocket->escapeSimple($group));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+            }
+        }
+    }
 
 
+    function addUserInfo($dbSocket, $username) {
 
-	function addUserBillInfo($dbSocket, $username) {
+        global $firstname;
+        global $lastname;
+        global $email;
+        global $department;
+        global $company;
+        global $workphone;
+        global $homephone;
+        global $mobilephone;
+        global $address;
+        global $city;
+        global $state;
+        global $country;
+        global $zip;
+        global $notes;
+        global $ui_changeuserinfo;
+        global $ui_PortalLoginPassword;
+        global $ui_enableUserPortalLogin;
+        
+        global $logDebugSQL;
+        global $configValues;
 
-		global $bi_contactperson;
-		global $bi_company;
-		global $bi_email;
-		global $bi_phone;
-		global $bi_address;
-		global $bi_city;
-		global $bi_state;
-		global $bi_country;
-		global $bi_zip;
-		global $bi_paymentmethod;
-		global $bi_cash;
-		global $bi_creditcardname;
-		global $bi_creditcardnumber;
-		global $bi_creditcardexp;
-		global $bi_creditcardverification;
-		global $bi_creditcardtype;
-		global $bi_notes;
+        $currDate = date('Y-m-d H:i:s');
+        $currBy = $_SESSION['operator_user'];
+
+        // insert userinfo
+        $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
+                       $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($username));
+        $res = $dbSocket->query($sql);
+        $userinfoExist = intval($res->fetchrow()[0]) > 0;
+        $logDebugSQL .= "$sql;\n";
+        
+        // if there were no records for this user present in the userinfo table
+        if (!$userinfoExist) {
+            // insert user information table
+            $sql = sprintf("INSERT INTO %s (id, username, firstname, lastname, email, department, company,
+                                            workphone, homephone,  mobilephone, address, city, state, country,
+                                            zip, notes, changeuserinfo, portalloginpassword, enableportallogin,
+                                            creationdate, creationby, updatedate, updateby) 
+                                   VALUES (0, '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s', 
+                                           '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s', '%s',
+                                           '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                                               $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($firstname),
+                                                               $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($email),
+                                                               $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company),
+                                                               $dbSocket->escapeSimple($workphone), $dbSocket->escapeSimple($homephone),
+                                                               $dbSocket->escapeSimple($mobilephone), $dbSocket->escapeSimple($address),
+                                                               $dbSocket->escapeSimple($city), $dbSocket->escapeSimple($state),
+                                                               $dbSocket->escapeSimple($country), $dbSocket->escapeSimple($zip),
+                                                               $dbSocket->escapeSimple($notes), $dbSocket->escapeSimple($ui_changeuserinfo),
+                                                               $dbSocket->escapeSimple($ui_PortalLoginPassword),
+                                                               $dbSocket->escapeSimple($ui_enableUserPortalLogin),
+                                                               $dbSocket->escapeSimple($currDate), $dbSocket->escapeSimple($currBy));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+            return true;
+        }
+        
+        return false;
+
+    }
+
+
+
+    function addUserBillInfo($dbSocket, $username) {
+
+        global $bi_contactperson;
+        global $bi_company;
+        global $bi_email;
+        global $bi_phone;
+        global $bi_address;
+        global $bi_city;
+        global $bi_state;
+        global $bi_country;
+        global $bi_zip;
+        global $bi_paymentmethod;
+        global $bi_cash;
+        global $bi_creditcardname;
+        global $bi_creditcardnumber;
+        global $bi_creditcardexp;
+        global $bi_creditcardverification;
+        global $bi_creditcardtype;
+        global $bi_notes;
         global $bi_lead;
         global $bi_coupon;
         global $bi_ordertaker;
         global $bi_billstatus;
         global $bi_lastbill;
         global $bi_nextbill;
-		global $bi_nextinvoicedue;
-		global $bi_billdue;
+        global $bi_nextinvoicedue;
+        global $bi_billdue;
         global $bi_postalinvoice;
         global $bi_faxinvoice;
         global $bi_emailinvoice;
-		global $bi_changeuserbillinfo;
-		global $logDebugSQL;
-		global $configValues;
+        global $bi_changeuserbillinfo;
+        global $logDebugSQL;
+        global $configValues;
 
-		$currDate = date('Y-m-d H:i:s');
-		$currBy = $_SESSION['operator_user'];
+        $currDate = date('Y-m-d H:i:s');
+        $currBy = $_SESSION['operator_user'];
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-				" WHERE username='".$dbSocket->escapeSimple($username)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
+        // insert user billing info
+        $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
+                       $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $dbSocket->escapeSimple($username));
+        $res = $dbSocket->query($sql);
+        $userbillinfoExits = $res->fetchrow()[0];
+        $logDebugSQL .= "$sql;\n";
+        
+        if (!$userbillinfoExits) {
+            // insert user billing information table
+            $sql = sprintf("INSERT INTO %s (id, username, contactperson, company, email, phone, address,
+                                            city, state, country, zip, paymentmethod, cash, creditcardname,
+                                            creditcardnumber, creditcardverification, creditcardtype,
+                                            creditcardexp, notes, changeuserbillinfo, creationdate,
+                                            creationby, updatedate, updateby)
+                                   VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+                                           '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+                                           NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                                         $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($bi_contactperson),
+                                                         $dbSocket->escapeSimple($bi_company), $dbSocket->escapeSimple($bi_email),
+                                                         $dbSocket->escapeSimple($bi_phone), $dbSocket->escapeSimple($bi_address),
+                                                         $dbSocket->escapeSimple($bi_city), $dbSocket->escapeSimple($bi_state),
+                                                         $dbSocket->escapeSimple($bi_country), $dbSocket->escapeSimple($bi_zip),
+                                                         $dbSocket->escapeSimple($bi_paymentmethod), $dbSocket->escapeSimple($bi_cash),
+                                                         $dbSocket->escapeSimple($bi_creditcardname),
+                                                         $dbSocket->escapeSimple($bi_creditcardnumber), 
+                                                         $dbSocket->escapeSimple($bi_creditcardverification),
+                                                         $dbSocket->escapeSimple($bi_creditcardtype),
+                                                         $dbSocket->escapeSimple($bi_creditcardexp), $dbSocket->escapeSimple($bi_notes),
+                                                         $dbSocket->escapeSimple($bi_changeuserbillinfo), $currDate, $currBy);
+            
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+            return true;
+        }
+        
+        return false;
 
-		// if there were no records for this user present in the userbillinfo table
-		if ($res->numRows() == 0) {
-			// insert user billing information table
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-				" (id, username, contactperson, company, email, phone, ".
-				" address, city, state, country, zip, ".
-				" paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
-				" notes, changeuserbillinfo, ".
-                                " `lead`, coupon, ordertaker, billstatus, lastbill, nextbill, nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, ".
-				" creationdate, creationby, updatedate, updateby) ".
-				" VALUES (0, 
-				'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
-				$dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
-				$dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
-				$dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
-				$dbSocket->escapeSimple($bi_country)."', '".
-				$dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
-				$dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
-				$dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
-				$dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
-				$dbSocket->escapeSimple($bi_notes)."', '".
-				$dbSocket->escapeSimple($bi_changeuserbillinfo)."', '".
-                $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
-                $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
-                $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
-                $dbSocket->escapeSimple($bi_nextinvoicedue)."', '".$dbSocket->escapeSimple($bi_billdue)."', '".
-                $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
-                $dbSocket->escapeSimple($bi_emailinvoice).
-				"', '$currDate', '$currBy', NULL, NULL)";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
-		} //FIXME:
-		  //if the user already exist in userinfo then we should somehow alert the user
-		  //that this has happened and the administrator/operator will take care of it
-
-	}
+    }
 
 
-	function addAttributes($dbSocket, $username) {
-		
-		global $logDebugSQL;
-		global $configValues;
+    function addAttributes($dbSocket, $username) {
+        
+        global $logDebugSQL;
+        global $configValues;
 
-		foreach($_POST as $element=>$field) { 
+        $skipList = array( "authType", "username", "password", "passwordType", "groups",
+                           "macaddress", "pincode", "submit", "firstname", "lastname", "email",
+                           "department", "company", "workphone", "homephone", "mobilephone", "address", "city",
+                           "state", "country", "zip", "notes", "bi_contactperson", "bi_company", "bi_email", "bi_phone",
+                           "bi_address", "bi_city", "bi_state", "bi_country", "bi_zip", "bi_paymentmethod", "bi_cash",
+                           "bi_creditcardname", "bi_creditcardnumber", "bi_creditcardverification", "bi_creditcardtype",
+                           "bi_creditcardexp", "bi_notes", "bi_lead", "bi_coupon", "bi_ordertaker", "bi_billstatus",
+                           "bi_lastbill", "bi_nextbill", "bi_nextinvoicedue", "bi_billdue", "bi_postalinvoice", "bi_faxinvoice",
+                           "bi_emailinvoice", "changeUserBillInfo", "changeUserInfo", "copycontact", "portalLoginPassword",
+                           "enableUserPortalLogin"
+                         );
 
-			// switch case to rise the flag for several $attribute which we do not
-			// wish to process (ie: do any sql related stuff in the db)
-			switch ($element) {
+        $result = 0;
 
-				case "authType":
-				case "username":
-				case "password":
-				case "passwordType":
-				case "groups":
-				case "group_macaddress":
-				case "group_pincode":
-				case "macaddress":
-				case "pincode":
-				case "submit":
-				case "firstname":
-				case "lastname":
-				case "email":
-				case "department":
-				case "company":
-				case "workphone":
-				case "homephone":
-				case "mobilephone":
-				case "address":
-				case "city":
-				case "state":
-				case "country":
-				case "zip":
-				case "notes":
-				case "bi_contactperson":
-				case "bi_company":
-				case "bi_email":
-				case "bi_phone":
-				case "bi_address":
-				case "bi_city":
-				case "bi_state":
-				case "bi_country":
-				case "bi_zip":
-				case "bi_paymentmethod":
-				case "bi_cash":
-				case "bi_creditcardname":
-				case "bi_creditcardnumber":
-				case "bi_creditcardverification":
-				case "bi_creditcardtype":
-				case "bi_creditcardexp":
-				case "bi_notes":
-				case "bi_lead":
-				case "bi_coupon":
-				case "bi_ordertaker":
-				case "bi_billstatus":
-				case "bi_lastbill":
-				case "bi_nextbill":
-				case "bi_nextinvoicedue":
-				case "bi_billdue":
-				case "bi_postalinvoice":
-				case "bi_faxinvoice":
-				case "bi_emailinvoice":
-				case "changeUserBillInfo":
-				case "changeUserInfo":
-				case "copycontact":
-				case "portalLoginPassword":
-				case "enableUserPortalLogin":
-					$skipLoopFlag = 1;	// if any of the cases above has been met we set a flag
-								// to skip the loop (continue) without entering it as
-								// we do not want to process this $attribute in the following
-								// code block
-					break;
-			}
-	
-			if ($skipLoopFlag == 1) {
-				$skipLoopFlag = 0;              // resetting the loop flag
-				continue;
-			}
+        foreach ($_POST as $element => $field) {
 
-			if (isset($field[0]))
-				$attribute = $field[0];
-			if (isset($field[1]))
-				$value = $field[1];
-			if (isset($field[2]))
-				$op = $field[2];
-			if (isset($field[3]))
-				$table = $field[3];
+            // we skip several attributes (contained in the $skipList array)
+            // which we do not wish to process (ie: do any sql related stuff in the db)
+            if (in_array($element, $skipList)) {
+                continue;
+            }
+            
+            // we need $field to be exactly an array with 4 fields:
+            // $attribute, $value, $op, $table
+            if (!is_array($field) || count($field) != 4) {
+                continue;
+            }
+            
+            // we trim all array values
+            foreach ($field as $i => $v) {
+                $field[$i] = trim($v);
+            }
+            
+            list($attribute, $value, $op, $table) = $field;
+            
+            // value and attribute are required
+            if (empty($value) || empty($attribute)) {
+                    continue;
+            }
 
-			if ( isset($table) && ($table == 'check') )
-				$table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-			if ( isset($table) && ($table == 'reply') )
-				$table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+            // we only accept valid ops
+            if (!in_array($op, $valid_ops)) {
+                continue;
+            }
 
-			if ( (isset($field)) && (!isset($field[1])) )
-				continue;
-	
-			$sql = "INSERT INTO $table (id,Username,Attribute,op,Value) ".
-					" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".
-					$dbSocket->escapeSimple($attribute)."', '".$dbSocket->escapeSimple($op)."', '".
-					$dbSocket->escapeSimple($value)."')  ";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
+            // $table value can be only '(rad)reply' or '(rad)check'
+            $table = strtolower($table);
+            if (in_array($table, array('reply', 'radreply'))) {
+                $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
+            } else if (in_array($table, array('check', 'radcheck'))) {
+                $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
+            } else {
+                continue;
+            }
 
-		} // foreach
+            // if all checks are passed, we insert the new attribute
+            $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', '%s', '%s', '%s')",
+                           $table, $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($attribute),
+                           $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($value));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
 
-	}
+            $result++;
 
+        } // foreach
 
-	if (isset($_POST['submit'])) {
+        return ($result > 0);
+    }
 
-		include 'library/opendb.php';
+    if (isset($_POST['submit'])) {
+        include('library/opendb.php');
 
-		global $username;
-		global $authType;
-		global $password;
-		global $passwordtype;
+        // we will have a $username_to_check, only
+        // if required arguments have been supplied
+        // according to the chosen $authType
+        $username_to_check = "";
+        
+        if ($authType == "userAuth") {
+            // we can add a new record to the check table
+            // only if $username and $password are not empty
+            if (!empty($username) && !empty($password)) {
+                $username_to_check = $username;
+            } else {
+                $failureMsg = "Username and/or password are invalid";
+                
+            }
+        } else if ($authType == "macAuth") {
+            if (!empty($macaddress)) {
+                $username_to_check = $macaddress;
+            } else {
+                $failureMsg = "MAC address is invalid";
+            }
+        } else if ($authType == "pincodeAuth") {
+            if (!empty($pincode)) {
+                $username_to_check = $pincode;
+            } else {
+                $failureMsg = "PIN code is invalid";
+            }
+        } else {
+            // authentication method is invalid
+            $failureMsg = "Unknown authentication method";
+        }
 
-		switch($authType) {
-			case "userAuth":
-				break;
-			case "macAuth":
-				$username = $macaddress;
-				break;
-			case "pincodeAuth":
-				$username = $pincode;
-				break;
-		}
+        if (empty($username_to_check)) {
+            // failure message has been set above
+            $logAction .= "Failed adding a new user ($failureMsg) on page: ";
+            
+        } else {
+            // we can proceed and check if username/mac address/pincode is already present in the radcheck table
+            $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
+                           $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username_to_check));
+            $res = $dbSocket->query($sql);
+            $exists = (intval($res->fetchrow()[0]) > 0);
+            $logDebugSQL .= "$sql;\n";
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
-				$dbSocket->escapeSimple($username)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
+            // we proceed only if username/mac address/pincode is not present
+            if ($exists) {
+                // user exists
+                $failureMsg = "record already found in database: <b> $username_to_check </b>";
+                $logAction .= "Failed adding new user already existing in database [$username_to_check] on page: ";
+            } else {
+                if ($authType == "userAuth") {
+                    // we need to perform the secure method escapeSimple on $dbPassword early because as seen below
+                    // we manipulate the string and manually add to it the '' which screw up the query if added in $sql
+                    $password = $dbSocket->escapeSimple($password);
 
-		if ($res->numRows() == 0) {
+                    switch (strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) {
+                        case "crypt":
+                            $dbPassword = sprintf("ENCRYPT('%s', 'SALT_DALORADIUS')", $password);
+                            break;
+                        
+                        case "md5":
+                            $dbPassword = sprintf("MD5('%s')", $password);
+                            break;
+                            
+                        default:
+                        case "cleartext":
+                            $dbPassword = sprintf("'%s'", $password);
+                    }
+                    
+                    // at this stage $dbPassword contains the password string encapsulated by '' and either uses
+                    // a function to encrypt it like ENCRYPT or it doesn't, it's based on the configuration
+                    // but here we provide another stage, for Crypt-Password and MD5-Password it's obvious
+                    // that the password need be encrypted so even if this option is not in the configuration
+                    // we enforce it.
 
-		    if ($authType == "userAuth") {
+                    // we first check if the password attribute is to be encrypted at all
+                    if (preg_match("/crypt/i", $passwordType)) {
+                        // if we don't find the encrypt function even though we identified
+                        // a Crypt-Password attribute
+                        if (!(preg_match("/encrypt/i",$dbPassword))) {
+                            $dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
+                        }
+                
+                        // we now perform the same check but for an MD5-Password attribute
+                    } else if (preg_match("/md5/i", $passwordType)) {
+                        // if we don't find the md5 function even though we identified
+                        // a MD5-Password attribute
+                        if (!(preg_match("/md5/i",$dbPassword))) {
+                            $dbPassword = "MD5('$password')";
+                        }
+                    }
 
-				if (trim($username) != "" and trim($password) != "") {
+                    // insert username/password
+                    $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', '%s', ':=', %s)",
+                                   $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username),
+                                   $dbSocket->escapeSimple($passwordType), $dbPassword);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    addGroups($dbSocket, $username, $groups);
+                    addUserInfo($dbSocket, $username);
+                    addUserBillInfo($dbSocket, $username);
+                    addAttributes($dbSocket, $username);
 
-					// we need to perform the secure method escapeSimple on $dbPassword early because as seen below
-					// we manipulate the string and manually add to it the '' which screw up the query if added in $sql
-					$password = $dbSocket->escapeSimple($password);
+                    $successMsg = sprintf("Added to database new user: <b>%s</b>", $username_enc);
+                    $logAction .= "Successfully added new user [$username] on page: ";
+                } else if ($authType == "macAuth") {
+                    // insert macaddress as username
+                    $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', 'Auth-Type', ':=', 'Accept')",
+                                   $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($macaddress));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
 
-					switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
-						case "cleartext":
-							$dbPassword = "'$password'";
-							break;
-						case "crypt":
-							$dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
-							break;
-						case "md5":
-							$dbPassword = "MD5('$password')";
-							break;
-						default:
-							$dbPassword = "'$password'";
-					}
-					
-					// at this stage $dbPassword contains the password string encapsulated by '' and either uses
-					// a function to encrypt it like ENCRYPT or it doesn't, it's based on the configuration
-					// but here we provide another stage, for Crypt-Password and MD5-Password it's obvious
-					// that the password need be encrypted so even if this option is not in the configuration
-					// we enforce it.
+                    addGroups($dbSocket, $macaddress, $groups);
+                    addUserInfo($dbSocket, $macaddress);
+                    addUserBillInfo($dbSocket, $username);
+                    addAttributes($dbSocket, $macaddress);
 
-					// we first check if the password attribute is to be encrypted at all
-					if (preg_match("/crypt/i", $passwordtype)) {
-						// if we don't find the encrypt function even though we identified
-						// a Crypt-Password attribute
-						if (!(preg_match("/encrypt/i",$dbPassword))) {
-							$dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
-						}
-				
-						// we now perform the same check but for an MD5-Password attribute
-					} elseif (preg_match("/md5/i", $passwordtype)) {
-						// if we don't find the md5 function even though we identified
-						// a MD5-Password attribute
-						if (!(preg_match("/md5/i",$dbPassword))) {
-							$dbPassword = "MD5('$password')";
-						}
-					}
+                    $successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
+                    $logAction .= "Successfully added new mac auth user [$macaddress] on page: ";
+                    
+               } else if ($authType == "pincodeAuth") {
+                   // insert pincode as username
+                   $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', 'Auth-Type', ':=', 'Accept')",
+                                  $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($pincode));
+                   $res = $dbSocket->query($sql);
+                   $logDebugSQL .= "$sql;\n";
 
-					// insert username/password
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-							" VALUES (0, '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($passwordtype).
-							"', ':=', $dbPassword)";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-					
-					addGroups($dbSocket, $username, $groups);
-					addUserInfo($dbSocket, $username);
-					addUserBillInfo($dbSocket, $username);
-					addAttributes($dbSocket, $username);
+                   addGroups($dbSocket, $pincode, $groups);
+                   addUserInfo($dbSocket, $pincode);
+                   addUserBillInfo($dbSocket, $username);
+                   addAttributes($dbSocket, $pincode);
 
-					$successMsg = "Added to database new user: <b> $username </b>";
-					$logAction .= "Successfully added new user [$username] on page: ";
+                   $successMsg = "Added to database new pincode: <b> $pincode </b>";
+                   $logAction .= "Successfully added new pincode [$pincode] on page: ";
+               }
+               
+               // TODO delete values
+            }
+        }
+        
+        include('library/closedb.php');
+    }
 
-				} else {
+    include_once('library/config_read.php');
+    
+    $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
+                    ? 'password' : 'text';
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-					$failureMsg = "username or password are empty";
-					$logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
-				}
+    // print HTML prologue
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js",
+        "library/javascript/ajaxGeneric.js",
+        "library/javascript/productive_funcs.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','mngnew.php');
+    $help = t('helpPage','mngnew');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    
+    include("menu-mng-users.php");
 
-		   } elseif ($authType == "macAuth") {
-			    
-				$macaddress = trim($macaddress);
-				
-				if (filter_var($macaddress, FILTER_VALIDATE_MAC)) {
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-					// insert username/password
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($macaddress)."', 'Auth-Type', ':=', 'Accept')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				
-					addGroups($dbSocket, $macaddress, $group_macaddress);
-					addUserInfo($dbSocket, $macaddress);
-                                	addUserBillInfo($dbSocket, $username);
-					addAttributes($dbSocket, $macaddress);
+    include_once('include/management/actionMessages.php');
+    include_once('include/management/populate_selectbox.php');
+    
+    $input_descriptors1 = array();
+    
+    $select_descriptor = array(
+                                    "type" =>"select",
+                                    "name" => "authType",
+                                    "caption" => "Authentication Type",
+                                    "options" => $valid_authTypes,
+                                    "onchange" => "switchAuthType()",
+                                    "selected_value" => ((isset($failureMsg)) ? $authType : "")
+                                 );
+    
+    $input_descriptors1[] = array(
+                                    "id" => "username",
+                                    "name" => "username",
+                                    "caption" => t('all','Username'),
+                                    "type" => "text",
+                                    "random" => true,
+                                    "value" => ((isset($failureMsg)) ? $username : ""),
+                                    "tooltipText" => t('Tooltip','usernameTooltip')
+                                 );
+                                
+    $input_descriptors1[] = array(
+                                    "id" => "password",
+                                    "name" => "password",
+                                    "caption" => t('all','Password'),
+                                    "type" => $hiddenPassword,
+                                    "random" => true,
+                                    "tooltipText" => t('Tooltip','passwordTooltip')
+                                 );
+    $input_descriptors1[] = array(
+                                    "name" => "passwordType",
+                                    "caption" => t('all','PasswordType'),
+                                    "options" => $valid_passwordTypes,
+                                    "type" => "select",
+                                    "selected_value" => ((isset($failureMsg)) ? $passwordType : "")
+                                );
+                                
+    $input_descriptors2 = array();
+    $input_descriptors2[] = array(
+                                    "name" => "macaddress",
+                                    "caption" => t('all','MACAddress'),
+                                    "type" => "text",
+                                    "value" => ((isset($failureMsg)) ? $macaddress : ""),
+                                    "tooltipText" => t('Tooltip','macaddressTooltip')
+                                 );
+                                 
+    $input_descriptors3 = array();
+    $input_descriptors3[] = array(
+                                    "name" => "pincode",
+                                    "caption" => t('all','PINCode'),
+                                    "type" => "text",
+                                    "value" => ((isset($failureMsg)) ? $pincode : ""),
+                                    "tooltipText" => t('Tooltip','pincodeTooltip')
+                                 );
+                                 
+    $button_descriptor = array(
+                                'type' => 'submit',
+                                'name' => 'submit',
+                                'value' => t('buttons','apply')
+                              );
 
-					$successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
-					$logAction .= "Successfully added new mac auth user [$macaddress] on page: ";
-				} else { 
-					$failureMsg = "Invalid Mac address format: <b> $username </b>";
-					$logAction .= "Failed adding new user invalid mac address format [$username] on page: ";
-				}
+    // draw navbar
+    $navbuttons = array(
+                            'AccountInfo-tab' => t('title','AccountInfo'),
+                            'UserInfo-tab' => t('title','UserInfo'),
+                            'BillingInfo-tab' => t('title','BillingInfo'),
+                            'Attributes-tab' => t('title','Attributes'),
+                       );
 
-		   } elseif ($authType == "pincodeAuth") {
-
-				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($pincode)."', 'Auth-Type', ':=', 'Accept')";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				addGroups($dbSocket, $pincode, $group_pincode);
-				addUserInfo($dbSocket, $pincode);
-                                addUserBillInfo($dbSocket, $username);
-				addAttributes($dbSocket, $pincode);
-
-				$successMsg = "Added to database new pincode: <b> $pincode </b>";
-				$logAction .= "Successfully added new pincode [$pincode] on page: ";
-
-		   } else {
-				echo "unknown authentication method <br/>";
-		   }
-
-		} else { 
-			$failureMsg = "user already exist in database: <b> $username </b>";
-			$logAction .= "Failed adding new user already existing in database [$username] on page: ";
-		}
-		
-		include 'library/closedb.php';
-
-	}
-
-
-
-
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-
-	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
-		$hiddenPassword = "type=\"password\"";
-	
+    print_tab_navbuttons($navbuttons);
 ?>
-
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
-</head>
- 
-<script src="library/js_date/date-functions.js" type="text/javascript"></script>
-<script src="library/js_date/datechooser.js" type="text/javascript"></script>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
-
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
-
-
- 
+     
+<form name="newuser" method="POST">
+    
+    <div id="AccountInfo-tab" class="tabcontent" title="<?= t('title','AccountInfo') ?>" style="display: block">
+    
+        <fieldset>
+            <h302>Common parameters</h302>
+            <ul>
+            
 <?php
-	include_once ("library/tabber/tab-layout.php");
+                print_form_component($select_descriptor);
 ?>
+                <li class="fieldset">
+                    <label for='group' class='form'><?= t('all','Group')?></label>
+<?php
+                    populate_groups("Select Groups","groups[]");
+                    $onclick = "javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',"
+                             . "genericCounter('divCounter')+'&elemName=groups[]')";
+?>
+
+                    <a class='tablenovisit' href='#' onclick="<?= $onclick ?>">Add</a>
+                    <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
+                    <div id='divContainerGroups'></div>
+
+
+                    <div id='groupTooltip' style='display:none;visibility:visible' class='ToolTip'>
+                        <img src='images/icons/comment.png' alt='Tip' border='0'><?= t('Tooltip','groupTooltip') ?>
+                    </div>
+                </li>
+
+            </ul>
+        </fieldset>
+    
+        <fieldset id="userAuth-fieldset">
+
+            <h302>Username/password info</h302>
+            
+            <ul>
+<?php
+                foreach ($input_descriptors1 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
+
+            </ul>
+        </fieldset>
+
+
+        <fieldset id="macAuth-fieldset">
+
+            <h302>MAC Address info</h302>
+            
+            <ul>
 
 <?php
-	include ("menu-mng-users.php");
+                foreach ($input_descriptors2 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }   
 ?>
-	<div id="contentnorightbar">
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngnew.php') ?>
-		<h144>&#x2754;</h144></a></h2>
-		
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngnew') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-		
-		<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+            </ul>
 
-<div class="tabber">
+        </fieldset>
 
-     <div class="tabbertab" title="<?php echo t('title','AccountInfo'); ?>">
+        <fieldset id="pincodeAuth-fieldset">
 
-	<fieldset>
+            <h302>PIN code info</h302>
 
-		<h302> <?php echo t('title','AccountInfo'); ?> </h302>
+            <ul>
 
-		<input checked type='radio' value="userAuth" name="authType" onclick="javascript:toggleUserAuth()"/>
-		<b> Username Authentication </b>
-		<br/>
+<?php
+                foreach ($input_descriptors3 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }   
+?>
 
-		<ul>
+            </ul>
 
-		<div id='UserContainer'>
-		<li class='fieldset'>
-		<label for='username' class='form'><?php echo t('all','Username')?></label>
-		<input name='username' type='text' id='username' value='' tabindex=100 />
-		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8,<?php
-		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" /> 
+        </fieldset>
 
-		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','usernameTooltip') ?>
-		</div>
-		</li>
+<?php
+        print_form_component($button_descriptor);
+?>
+    </div>
 
-		<li class='fieldset'>
-		<label for='password' class='form'><?php echo t('all','Password')?></label>
-		<input name='password' type='text' id='password' value='' 
-			<?php if (isset($hiddenPassword)) echo $hiddenPassword ?> tabindex=101 />
-		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8,<?php
-		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
+    <div id="UserInfo-tab" class="tabcontent" title="<?= t('title','UserInfo') ?>">
+<?php
+        $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
+        include_once('include/management/userinfo.php');
+?>
+    </div><!-- .tabbertab -->
 
-		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
-			<?php echo t('Tooltip','passwordTooltip') ?>
-		</div>
-		</li>
-		</div>
+    <div id="BillingInfo-tab" class="tabcontent" title="<?= t('title','BillingInfo') ?>">
+<?php
+        $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
+        include_once('include/management/userbillinfo.php');
+?>
+    </div><!-- .tabbertab -->
+
+    <div id="Attributes-tab" class="tabcontent" title="<?= t('title','Attributes') ?>">
+<?php
+    include_once('include/management/attributes.php');
+?>
+    </div><!-- .tabbertab -->
+</form>
 
 
-		<li class='fieldset'>
-		<label for='passwordType' class='form'><?php echo t('all','PasswordType')?> </label>
-		<select class='form' tabindex=102 name='passwordType' >
-			<option value='Cleartext-Password'>Cleartext-Password</option>
-			<option value='User-Password'>User-Password</option>
-			<option value='Crypt-Password'>Crypt-Password</option>
-			<option value='MD5-Password'>MD5-Password</option>
-			<option value='SHA1-Password'>SHA1-Password</option>
-			<option value='CHAP-Password'>CHAP-Password</option>
-		</select>
-		</li>
-
-
-		<li class='fieldset'>
-		<label for='group' class='form'><?php echo t('all','Group')?></label>
-		<?php   
-			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups","groups[]");
-		?>
-
-		<a class='tablenovisit' href='#'
-			onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter')+'&elemName=groups[]');">Add</a>
-
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
-
-		<div id='divContainerGroups'>
-		</div>
-
-
-		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' /> 
-			<?php echo t('Tooltip','groupTooltip') ?>
-		</div>
-		</li>
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-		</li>
-
-		</ul>
-
-	</fieldset>
-
-	<br/>
-
-	<fieldset>
-
-		<h302> <?php echo t('title','AccountInfo'); ?> </h302>
-
-
-		<input type='radio' name="authType" value="macAuth"  onclick="javascript:toggleMacAuth()"/>
-		<b> MAC Address Authentication </b>
-		<br/>
-
-		<ul>
-
-		<li class='fieldset'>
-		<label for='macaddress' class='form'><?php echo t('all','MACAddress')?></label>
-		<input name='macaddress' type='text' id='macaddress' value='' tabindex=105 disabled />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('macaddressTooltip')"  />
-
-		<div id='macaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','macaddressTooltip') ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<label for='group' class='form'><?php echo t('all','Group')?></label>
-		<?php   
-			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups", "group_macaddress[]", "form", "disabled");
-		?>
-
-                <a class='tablenovisit' href='#'
-                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroupsMacAuth',genericCounter('divCounter')+'&elemName=group_macaddress[]');">Add</a>
-
-		<div id='divContainerGroupsMacAuth'>
-		</div>
-		</li>
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-		</li>
-
-		</ul>
-
-	</fieldset>
-
-
-	<br/>
-
-	<fieldset>
-
-		<h302> <?php echo t('title','AccountInfo'); ?> </h302>
-
-		<input type='radio' name="authType" value="pincodeAuth" onclick="javascript:togglePinCode()"/>
-		<b> PIN Code Authentication </b>
-		<br/>
-
-		<ul>
-
-		<li class='fieldset'>
-		<label for='pincode' class='form'><?php echo t('all','PINCode')?></label>
-		<input name='pincode' type='text' id='pincode' value='' tabindex=106 disabled />
-		<input type='button' value='Generate' class='button' onclick="javascript:randomAlphanumeric('pincode',10)" />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('pincodeTooltip')" />		
-		
-		<div id='pincodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','pincodeTooltip') ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<label for='group' class='form'><?php echo t('all','Group')?></label>
-		<?php   
-			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups", "group_pincode[]", "form", "disabled");
-		?>
-
-                <a class='tablenovisit' href='#'
-                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroupsPinAuth',genericCounter('divCounter')+'&elemName=group_pincode[]');">Add</a>
-
-		<div id='divContainerGroupsPinAuth'>
-		</div>
-		</li>
-
-
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-		</li>
-
-		</ul>
-
-	</fieldset>
-
-	</div>
-
-
-
-	<div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
-	<?php
-		$customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
-		include_once('include/management/userinfo.php');
-	?>
-	</div>
-
-	<div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
-	<?php
-		$customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
-		include_once('include/management/userbillinfo.php');
-	?>
-	</div>
-
-	<div class="tabbertab" title="<?php echo t('title','Attributes'); ?>">
-	<?php
-		include_once('include/management/attributes.php');
-	?>
-	</div>	
-	
-
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+    </div>
 </div>
 
+<script>
+    function switchAuthType() {
+        var switcher = document.getElementById("authType");
+        
+        for (var i=0; i<switcher.length; i++) {
+            var fieldset_id = switcher[i].value + "-fieldset";
+            document.getElementById(fieldset_id).disabled = (switcher.value != switcher[i].value);
+        }
+    }
 
-	</form>
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-	
-		<div id="footer">
-	
-<?php
-	include 'page-footer.php';
-?>
-
-	
-		</div>
-	
-</div>
-</div>
-
+    switchAuthType();
+</script>
 
 </body>
 </html>
-

@@ -14,14 +14,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *              returns user Connection Status, Subscription Analysis, Account Status etc...
- *		(concept borrowed from Joachim's capture pages)
  *
- * Authors:     Liran Tal <liran@enginx.com>
+ * Description:    returns user Connection Status, Subscription Analysis, Account Status etc.
+ *                 (concept borrowed from Joachim's capture pages)
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/management/userReports.php') !== false) {
+    header('Location: ../../index.php');
+    exit;
+}
+
 
 /*
  *********************************************************************************************************
@@ -35,289 +43,250 @@
  */
 function userSubscriptionAnalysis($username, $drawTable) {
 
-	include_once('include/management/pages_common.php');
-	include 'library/opendb.php';
+    include_once('include/management/pages_common.php');
+    include('library/opendb.php');
 
-	$username = $dbSocket->escapeSimple($username);			// sanitize variable for sql statement
-	
+    $username = $dbSocket->escapeSimple($username);
 
-	/*
-	 *********************************************************************************************************
-	 * Global (Max-All-Session) Limit calculations
-	 *********************************************************************************************************/
-        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE UserName='$username' AND acctstoptime>0";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    /*
+     *********************************************************************************************************
+     * Global (Max-All-Session) Limit calculations
+     *********************************************************************************************************
+     */
+    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                      FROM %s WHERE UserName='%s' AND acctstoptime>0",
+                   $configValues['CONFIG_DB_TBL_RADACCT'], $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	(isset($row['SUMSession'])) ? $userSumMaxAllSession = time2str($row['SUMSession']) : $userSumMaxAllSession = "unavailable";
-	(isset($row['SUMDownload'])) ? $userSumDownload = toxbyte($row['SUMDownload']) : $userSumDownload = "unavailable";
-	(isset($row['SUMUpload'])) ? $userSumUpload = toxbyte($row['SUMUpload']) : $userSumUpload = "unavailable";
-	if ( (isset($row['SUMUpload'])) && (isset($row['SUMDownload'])) )
-		$userSumAllTraffic = toxbyte($row['SUMUpload']+$row['SUMDownload']);
-	else
-		$userSumAllTraffic = "unavailable";
-	(isset($row['Logins'])) ? $userAllLogins = $row['Logins'] : $userAllLogins = "unavailable";
-
-
-
-	/*
-	 *********************************************************************************************************
-	 * Monthly Limit calculations
-	 *********************************************************************************************************/
-	$currMonth = date("Y-m-01");
-	$nextMonth = date("Y-m-01", mktime(0, 0, 0, date("m")+ 1, date("d"), date("Y")));
-
-	$sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE AcctStartTime<'$nextMonth' AND AcctStartTime>='$currMonth' AND UserName='$username' AND acctstoptime>0";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-	(isset($row['SUMSession'])) ? $userSumMaxMonthlySession = time2str($row['SUMSession']) : $userSumMaxMonthlySession = "unavailable";
-	(isset($row['SUMDownload'])) ? $userSumMonthlyDownload = toxbyte($row['SUMDownload']) : $userSumMonthlyDownload = "unavailable";
-	(isset($row['SUMUpload'])) ? $userSumMonthlyUpload = toxbyte($row['SUMUpload']) : $userSumMonthlyUpload = "unavailable";
-	if ( (isset($row['SUMUpload'])) && (isset($row['SUMDownload'])) ) 
-		$userSumMonthlyTraffic = toxbyte($row['SUMUpload']+$row['SUMDownload']);
-	else
-		$userSumMonthlyTraffic = "unavailable";
-	(isset($row['Logins'])) ? $userMonthlyLogins = $row['Logins'] : $userMonthlyLogins = "unavailable";
+    $userSumMaxAllSession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
+    $userSumDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
+    $userSumUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
+    $userSumAllTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
+                       ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
+                       : "(n/a)";
+    $userAllLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
 
 
-	/*
-	 *********************************************************************************************************
-	 * Weekly Limit calculations
-	 *********************************************************************************************************/
-	$currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
-	$nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
-        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username' AND acctstoptime>0";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    /*
+     *********************************************************************************************************
+     * Monthly Limit calculations
+     *********************************************************************************************************
+     */
+    $currMonth = date("Y-m-01");
+    $nextMonth = date("Y-m-01", mktime(0, 0, 0, date("m")+ 1, date("d"), date("Y")));
 
-	(isset($row['SUMSession'])) ? $userSumMaxWeeklySession = time2str($row['SUMSession']) : $userSumMaxWeeklySession = "unavailable";
-	(isset($row['SUMDownload'])) ? $userSumWeeklyDownload = toxbyte($row['SUMDownload']) : $userSumWeeklyDownload = "unavailable";
-	(isset($row['SUMUpload'])) ? $userSumWeeklyUpload = toxbyte($row['SUMUpload']) : $userSumWeeklyUpload = "unavailable";
-	if ( (isset($row['SUMUpload'])) && (isset($row['SUMDownload'])) )
-		$userSumWeeklyTraffic = toxbyte($row['SUMUpload']+$row['SUMDownload']);
-	else
-		$userSumWeeklyTraffic = "unavailable";
-	(isset($row['Logins'])) ? $userWeeklyLogins = $row['Logins'] : $userWeeklyLogins = "unavailable";
+    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                      FROM %s
+                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
+                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                                              $nextMonth, $currMonth, $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-
-
-
-
-
-	/*
-	 *********************************************************************************************************
-	 * Daily Limit calculations
-	 *********************************************************************************************************/
-	$currDay = date("Y-m-d");
-	$nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
-        $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload', SUM(AcctInputOctets) AS 'SUMUpload', ".
-		" COUNT(DISTINCT AcctSessionID) AS 'Logins' ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE AcctStartTime<'$nextDay' AND AcctStartTime>='$currDay' AND UserName='$username' AND acctstoptime>0";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-	(isset($row['SUMSession'])) ? $userSumMaxDailySession = time2str($row['SUMSession']) : $userSumMaxDailySession = "unavailable";
-	(isset($row['SUMDownload'])) ? $userSumDailyDownload = toxbyte($row['SUMDownload']) : $userSumDailyDownload = "unavailable";
-	(isset($row['SUMUpload'])) ? $userSumDailyUpload = toxbyte($row['SUMUpload']) : $userSumDailyUpload = "unavailable";
-	if ( (isset($row['SUMUpload'])) && (isset($row['SUMDownload'])) )
-		$userSumDailyTraffic = toxbyte($row['SUMUpload']+$row['SUMDownload']);
-	else
-		$userSumDailyTraffic = "unavailable";
-	(isset($row['Logins'])) ? $userDailyLogins = $row['Logins'] : $userDailyLogins = "unavailable";
+    $userSumMaxMonthlySession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
+    $userSumMonthlyDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
+    $userSumMonthlyUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
+    $userSumMonthlyTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
+                           ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
+                           : "(n/a)";
+    $userMonthlyLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
 
 
+    /*
+     *********************************************************************************************************
+     * Weekly Limit calculations
+     *********************************************************************************************************
+     */
+    $currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
+    $nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
+    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                      FROM %s
+                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
+                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                                              $nextDay, $currDay, $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	/*
-	 *********************************************************************************************************
-	 * Expiration calculations
-	 *********************************************************************************************************/
-        $sql = "SELECT Value AS 'Expiration' FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-		" WHERE (UserName='$username') AND (Attribute='Expiration')";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-	(isset($row['Expiration'])) ? $userExpiration = $row['Expiration'] : $userExpiration = "unset";
-
-
-	/*
-	 *********************************************************************************************************
-	 * Session-Timeout calculations
-	 *********************************************************************************************************/
-        $sql = "SELECT Value AS 'Session-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
-		" WHERE (UserName='$username') AND (Attribute='Session-Timeout')";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-	(isset($row['Session-Timeout'])) ? $userSessionTimeout = $row['Session-Timeout'] : $userSessionTimeout = "unset";
-
-
-	/*
-	 *********************************************************************************************************
-	 * Idle-Timeout calculations
-	 *********************************************************************************************************/
- 	$sql = "SELECT Value AS 'Idle-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADREPLY'].
-                " WHERE (UserName='$username') AND (Attribute='Idle-Timeout')".
-                " UNION SELECT Value AS 'Idle-Timeout' FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
-                " WHERE (Attribute ='Idle-Timeout') AND (GroupName IN (SELECT groupname from ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'] .
-                                " WHERE username ='$username' order by priority)) LIMIT 1";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-	(isset($row['Idle-Timeout'])) ? $userIdleTimeout = $row['Idle-Timeout'] : $userIdleTimeout = "unset";
-	
-
-        include 'library/closedb.php';
+    $userSumMaxWeeklySession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
+    $userSumWeeklyDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
+    $userSumWeeklyUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
+    $userSumWeeklyTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
+                           ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
+                           : "(n/a)";
+    $userWeeklyLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
 
 
-        if ($drawTable == 1) {
+    /*
+     *********************************************************************************************************
+     * Daily Limit calculations
+     *********************************************************************************************************
+     */
+    $currDay = date("Y-m-d");
+    $nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
+    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                      FROM %s
+                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
+                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                                              $nextDay, $currDay, $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-                echo "<table border='0' class='table1'>";
-                echo "
-        		<thead>
-        			<tr>
-        	                <th colspan='10' align='left'> 
-        				<a class=\"table\" href=\"javascript:toggleShowDiv('divSubscriptionAnalysis')\">Subscription Analysis</a>
-        	                </th>
-        	                </tr>
-        		</thead>
-        		</table>
-        	";
+    $userSumMaxDailySession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
+    $userSumDailyDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
+    $userSumDailyUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
+    $userSumDailyTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
+                           ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
+                           : "(n/a)";
+    $userDailyLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
+    
+    
+    /*
+     *********************************************************************************************************
+     * Expiration calculations
+     *********************************************************************************************************
+     */
+    $sql = sprintf("SELECT Value AS 'Expiration' FROM %s WHERE UserName='%s' AND Attribute='Expiration'",
+                   $configValues['CONFIG_DB_TBL_RADCHECK'], $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+    $userExpiration = (isset($row['Expiration'])) ? $row['Expiration'] : "(n/a)";
+
+
+    /*
+     *********************************************************************************************************
+     * Session-Timeout calculations
+     *********************************************************************************************************
+     */
+    $sql = sprintf("SELECT Value AS 'Session-Timeout' FROM %s WHERE UserName='%s' AND Attribute='Session-Timeout'",
+                   $configValues['CONFIG_DB_TBL_RADREPLY'], $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+    $userSessionTimeout = (isset($row['Session-Timeout'])) ? $row['Session-Timeout'] : "(n/a)";
+
+
+    /*
+     *********************************************************************************************************
+     * Idle-Timeout calculations
+     *********************************************************************************************************
+     */
+    $sql = sprintf("SELECT Value AS 'Idle-Timeout' FROM %s AS rr WHERE UserName='%s' AND Attribute='Idle-Timeout'
+                     UNION
+                    SELECT Value AS 'Idle-Timeout' FROM %s AS rgr
+                     WHERE Attribute='Idle-Timeout'
+                       AND GroupName IN (SELECT groupname FROM %s rug WHERE username='%s' ORDER BY priority)
+                     LIMIT 1", 
+                    $configValues['CONFIG_DB_TBL_RADREPLY'], $username, $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
+                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+    $userIdleTimeout = (isset($row['Idle-Timeout'])) ? $row['Idle-Timeout'] : "(n/a)";
+    
+    include('library/closedb.php');
+    
+    if ($drawTable == 1) {
+        $href = "javascript:toggleShowDiv('divSubscriptionAnalysis')";
+    
+        printf('
+<table border="0" class="table1" style="margin: 10px auto">
+    <thead>
+        <tr>
+            <th colspan="10" align="left">
+                <a class="table" href="%s">
+                    Subscription Analysis
+                </a>
+            </th>
+        </tr>
+    </thead>
+</table>' . "\n", $href);
         
-                echo "
-        		<div id='divSubscriptionAnalysis' style='display:none;visibility:visible'>
-        		<table border='0' class='table1'>
-        		<thread> <tr>
-        
-                        <th scope='col'>
-                        </th>
-        
-                        <th scope='col'>
-        		Global
-                        </th>
-        
-                        <th scope='col'>
-        		Monthly
-                        </th>
-        
-                        <th scope='col'>
-        		Weekly
-                        </th>
+        echo '
+<div id="divSubscriptionAnalysis">
+    <table border="0" class="table1">
+        <thread>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Global</th>
+                <th scope="col">Monthly</th>
+                <th scope="col">Weekly</th>
+                <th scope="col">Daily</th>
+            </tr> 
+        </thread>' . "\n";
 
-                        <th scope='col'>
-        		Daily
-                        </th>
-        
-                        </tr> </thread>";
-/*        
-        	echo "
-        		<tr>
-        			<td>Session Limit</td>
-        			<td>$userTimeLimitGlobal</td>
-        			<td>$userTimeLimitMonthly</td>
-        			<td>$userTimeLimitWeekly</td>
-        			<td>$userTimeLimitDaily</td>
-        		</tr>
-*/				
-        	echo "        
-        		<tr>
-        			<td>Session Used</td>
-        			<td>$userSumMaxAllSession</td>
-        			<td>$userSumMaxMonthlySession</td>
-        			<td>$userSumMaxWeeklySession</td>
-        			<td>$userSumMaxDailySession</td>
-        		</tr>
-        
-        		<tr>
-        			<td>Session Download</td>
-        			<td>$userSumDownload</td>
-        			<td>$userSumMonthlyDownload</td>
-        			<td>$userSumWeeklyDownload</td>
-        			<td>$userSumDailyDownload</td>
-        		</tr>
-        
-        		<tr>
-        			<td>Session Upload</td>
-        			<td>$userSumUpload</td>
-        			<td>$userSumMonthlyUpload</td>
-        			<td>$userSumWeeklyUpload</td>
-        			<td>$userSumDailyUpload</td>
-        		</tr>
-        
-        		<tr>
-        			<td>Session Traffic (Up+Down)</td>
-        			<td>$userSumAllTraffic</td>
-        			<td>$userSumMonthlyTraffic</td>
-        			<td>$userSumWeeklyTraffic</td>
-        			<td>$userSumDailyTraffic</td>
-        		</tr>
+        echo "
+        <tbody>
+            <tr>
+                <th>Session Used</th>
+                <td>$userSumMaxAllSession</td>
+                <td>$userSumMaxMonthlySession</td>
+                <td>$userSumMaxWeeklySession</td>
+                <td>$userSumMaxDailySession</td>
+            </tr>
+    
+            <tr>
+                <th>Session Download</th>
+                <td>$userSumDownload</td>
+                <td>$userSumMonthlyDownload</td>
+                <td>$userSumWeeklyDownload</td>
+                <td>$userSumDailyDownload</td>
+            </tr>
+    
+            <tr>
+                <th>Session Upload</th>
+                <td>$userSumUpload</td>
+                <td>$userSumMonthlyUpload</td>
+                <td>$userSumWeeklyUpload</td>
+                <td>$userSumDailyUpload</td>
+            </tr>
+    
+            <tr>
+                <th>Session Traffic (Up+Down)</th>
+                <td>$userSumAllTraffic</td>
+                <td>$userSumMonthlyTraffic</td>
+                <td>$userSumWeeklyTraffic</td>
+                <td>$userSumDailyTraffic</td>
+            </tr>
 
-        		<tr>
-        			<td>Logins</td>
-        			<td>$userAllLogins</td>
-        			<td>$userMonthlyLogins</td>
-        			<td>$userWeeklyLogins</td>
-        			<td>$userDailyLogins</td>
-        		</tr>
-        
-        		</table>
+            <tr>
+                <th>Logins</th>
+                <td>$userAllLogins</td>
+                <td>$userMonthlyLogins</td>
+                <td>$userWeeklyLogins</td>
+                <td>$userDailyLogins</td>
+            </tr>
+        </tbody>
+    </table>" . "\n";
+    
+    printf('
+    <table border="0" class="table1" style="margin: 10px auto">
+        <tbody>
+            <tr>
+                <th scope="col" align="right">Expiration</th>
+                <td scope="col" align="left">%s</td>
+            </tr>
+            
+            <tr>
+                <th scope="col" align="right">Session-Timeout</th>
+                <td scope="col" align="left">%s</td>
+            </tr>
+            
+            <tr>
+                <th scope="col" align="right">Idle-Timeout</th>
+                <td scope="col" align="left">%s</td>
+            </tr>
+        </tbody>
+    </table>
+</div>', $userExpiration, $userSessionTimeout, $userIdleTimeout);
 
-        		<table border='0' class='table1'>
-        		<thread>
-
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Expiration
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userExpiration
-                        </th>
-                        </tr>
-
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Session-Timeout
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userSessionTimeout
-                        </th>
-                        </tr>
-
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Idle-Timeout
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userIdleTimeout
-                        </th>
-                        </tr>
-
-                        </table>
-
-        		</div>
-        	";
-
-	}		
-
+    }
 }
-
-
-
 
 
 /*
@@ -332,186 +301,142 @@ function userSubscriptionAnalysis($username, $drawTable) {
  */
 function userPlanInformation($username, $drawTable) {
 
-	include_once('include/management/pages_common.php');
-	include 'library/opendb.php';
-	
-	/*
-	 *********************************************************************************************************
-	 * check which kind of subscription does the user have
-	 *********************************************************************************************************/
-	$sql  = "SELECT ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeType, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planName, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeBank, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planBandwidthUp, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planBandwidthDown, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficTotal, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficUp, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTrafficDown, ".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planRecurringPeriod ".
-		" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].", ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-		" WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname=".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname ".
-		" AND ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username='$username' ";
-			
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    include_once('include/management/pages_common.php');
+    include('library/opendb.php');
+    
+    /*
+     *********************************************************************************************************
+     * check which kind of subscription does the user have
+     *********************************************************************************************************
+     */
+    $sql = sprintf("SELECT bp.planTimeType, bp.planName, bp.planTimeBank, bp.planBandwidthUp, bp.planBandwidthDown,
+                           bp.planTrafficTotal, bp.planTrafficUp, bp.planTrafficDown, bp.planRecurringPeriod
+                      FROM %s AS bp, %s AS ubi
+                     WHERE bp.planname = ubi.planname AND ubi.username = '%s'",
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                   $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	
-	empty($row['planName']) ? $planName = "unavailable" : $planName = $row['planName'];
-	empty($row['planRecurringPeriod']) ? $planRecurringPeriod = "unavailable" : $planRecurringPeriod = $row['planRecurringPeriod'];  
-	empty($row['planTimeType']) ? $planTimeType = "unavailable" : $planTimeType = $row['planTimeType'];
-	empty($row['planTimeBank']) ? $planTimeBank = 0 : $planTimeBank = $row['planTimeBank'];
-		
-	$planBandwidthUp = $row['planBandwidthUp'];
-	$planBandwidthDown = $row['planBandwidthDown'];
-	$planTrafficTotal = $row['planTrafficTotal'];
+    $planName = empty($row['planName']) ? "(n/a)" : $row['planName'];
+    $planRecurringPeriod = empty($row['planRecurringPeriod']) ? "(n/a)" :$row['planRecurringPeriod'];  
+    $planTimeType = empty($row['planTimeType']) ? "(n/a)" : $row['planTimeType'];
+    $planTimeBank = empty($row['planTimeBank']) ? 0 : $row['planTimeBank'];
+        
+    $planBandwidthUp = (isset($row['planBandwidthUp'])) ? $row['planBandwidthUp'] : "(n/a)";
+    $planBandwidthDown = (isset($row['planBandwidthDown'])) ? $row['planBandwidthDown'] : "(n/a)";
+    $planTrafficTotal = (isset($row['planTrafficTotal'])) ? $row['planTrafficTotal'] : "(n/a)";
 
+    $planTrafficDown = (isset($row['planTrafficDown'])) ? $row['planTrafficDown'] : 0;
+    $planTrafficUp = (isset($row['planTrafficUp'])) ? $row['planTrafficUp'] : 0;
 
-	(isset($row['planTrafficDown'])) ? $planTrafficDown = $row['planTrafficDown'] : $planTrafficDown = 0;
-	(isset($row['planTrafficUp'])) ? $planTrafficUp = $row['planTrafficUp'] : $planTrafficUp = 0;
-
-    (isset($row['Access-Period'])) ? $userLimitAccessPeriod = time2str($row['Access-Period']) : $userLimitAccessPeriod = "none";
+    $userLimitAccessPeriod = (isset($row['Access-Period'])) ? time2str($row['Access-Period']) : "none";
     
     
-	$sql  = "SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets) ".
-		" FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE username='$username'";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow();
+    $sql = sprintf("SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets)
+                      FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow();
     $totalTimeUsed = isset($row[0]) ? $row[0] : 0;
     $totalTrafficDown = isset($row[1]) ? $row[1] : 0;
     $totalTrafficUp = isset($row[2]) ? $row[2] : 0;
-	
+    
     $timeDiff = ($planTimeBank - $totalTimeUsed);
-    ($planTrafficDown != 0) ? $trafficDownDiff = ($planTrafficDown - $totalTrafficDown) : $trafficDownDiff = 0;
-    ($planTrafficUp != 0) ? $trafficUpDiff = ($planTrafficUp - $totalTrafficUp) : $trafficUpDiff = 0;
+    $trafficDownDiff = ($planTrafficDown != 0) ? ($planTrafficDown - $totalTrafficDown) : 0;
+    $trafficUpDiff = ($planTrafficUp != 0) ? ($planTrafficUp - $totalTrafficUp) : 0;
     
+    include('library/closedb.php');
     
-	/*
-	 *********************************************************************************************************
-	 * Plan Usage calculations
-	 *********************************************************************************************************/	
-	
-        if ($drawTable == 1) {
+    /*
+     *********************************************************************************************************
+     * Plan Usage calculations
+     *********************************************************************************************************
+     */    
+    
+    if ($drawTable == 1) {
+        $href = "javascript:toggleShowDiv('divPlanInformation')";
+    
+        printf('
+<table border="0" class="table1" style="margin: 10px auto">
+    <thead>
+        <tr>
+            <th colspan="10" align="left">
+                <a class="table" href="%s">
+                    Plan Information
+                </a>
+            </th>
+        </tr>
+    </thead>
+</table>' . "\n", $href);
 
-                echo "<table border='0' class='table1'>
+        echo '
+<div id="divPlanInformation" style="display:none;visibility:visible">
+    <table border="0" class="table1" style="margin: 10px auto">
+        <thread>
+            <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Allowed by plan</th>
+                <th scope="col">Used </th>
+                <th scope="col">Remainning</th>
+            </tr>
+        </thread>' . "\n";
+
+        echo "
+        <tbody>
+            <tr>
+                <td>Session Time</td>
+                <td>".time2str($planTimeBank)."</td>
+                <td>".time2str($totalTimeUsed)."</td>
+                <td>".time2str($timeDiff)."</td>
+            </tr>
+
+            <tr>
+                <td>Session Download</td>
+                <td>".toxbyte($planTrafficDown)."</td>
+                <td>".toxbyte($totalTrafficDown)."</td>
+                <td>".toxbyte($trafficDownDiff)."</td>
+            </tr>
+    
+            <tr>
+                <td>Session Upload</td>
+                <td>".toxbyte($planTrafficUp)."</td>
+                <td>".toxbyte($totalTrafficUp)."</td>
+                <td>".toxbyte($trafficUpDiff)."</td>
+            </tr>
+        </tbody>
+    </table>" . "\n";
                 
-        		<thead>
-        			<tr>
-        	                <th colspan='10' align='left'> 
-        						<a class=\"table\" href=\"javascript:toggleShowDiv('divPlanInformation')\">Plan Information</a>
-        	                </th>
-        	                </tr>
-        		</thead>
-        		</table>
 
-        		<div id='divPlanInformation' style='display:none;visibility:visible'>
-        		<table border='0' class='table1'>
-        		<thread> <tr>
-        
-                        <th scope='col'>
-                Item
-                        </th>
-       			
-                        <th scope='col'>
-        		Allowed by plan
-                        </th>
-        
-                        <th scope='col'>
-        		Used 
-                        </th>
-        
-                        <th scope='col'>
-        		Remainning
-                        </th>
-        
-                        </tr> </thread>";
-        
-        	echo "
-        		<tr>
-        			<td>Session Time</td>
-        			<td>".time2str($planTimeBank)."</td>
-        			<td>".time2str($totalTimeUsed)."</td>
-        			<td>".time2str($timeDiff)."</td>
-        		</tr>
+        printf('
+    <table border="0" class="table1">
+        <tr>
+            <th scope="col" align="right">Plan Name</th> 
+            <td scope="col" align="left">%s</td>
+        </tr>
 
-        		<tr>
-        			<td>Session Download</td>
-        			<td>".toxbyte($planTrafficDown)."</td>
-        			<td>".toxbyte($totalTrafficDown)."</td>
-        			<td>".toxbyte($trafficDownDiff)."</td>
-        		</tr>
-        
-        		<tr>
-        			<td>Session Upload</td>
-        			<td>".toxbyte($planTrafficUp)."</td>
-        			<td>".toxbyte($totalTrafficUp)."</td>
-        			<td>".toxbyte($trafficUpDiff)."</td>
-        		</tr>
+        <tr>        
+            <th scope="col" align="right">Plan Recurring Period</th>
+            <td scope="col" align="left">%s</td>
+        </tr>
 
-        		</table>
-        		
+        <tr>        
+            <th scope="col" align="right">Plan Time Type</th>
+            <td scope="col" align="left">%s</td>
+        </tr>
 
-        		<table border='0' class='table1'>
-        		<thread>
+        <tr>        
+            <th scope="col" align="right">Plan Bandwidth Up</th>
+            <td scope="col" align="left">%s</td>
+        </tr>
 
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan Name
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planName
-                        </th>
-                        </tr>
+        <tr>        
+            <th scope="col" align="right">Plan Bandwidth Down</th>
+            <td scope="col" align="left">%s</td>
+        </tr>
+    </table>
+</div>' . "\n", $planName, $planRecurringPeriod, $planTimeType, $planBandwidthUp, $planBandwidthDown);
 
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan Recurring Period
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planRecurringPeriod
-                        </th>
-                        </tr>
-                        
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan Time Type
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planTimeType
-                        </th>
-                        </tr>
-                        
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan Bandwidth Up
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planBandwidthUp
-                        </th>
-                        </tr>
-                        
-                        <tr>        
-                        <th scope='col' align='right'>
-                        Plan Bandwidth Down
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $planBandwidthDown
-                        </th>
-                        </tr>
-                        
-                        </table>
-
-        		</div>
-        	";
-
-	}		
+    }        
 }
 
 
@@ -528,129 +453,92 @@ function userPlanInformation($username, $drawTable) {
  */
 function userConnectionStatus($username, $drawTable) {
 
-	$userStatus = checkUserOnline($username);
+    $userStatus = checkUserOnline($username);
 
-	include_once('include/management/pages_common.php');
-	include 'library/opendb.php';
+    include_once('include/management/pages_common.php');
+    include('library/opendb.php');
 
-	$username = $dbSocket->escapeSimple($username);			// sanitize variable for sql statement
+    $username = $dbSocket->escapeSimple($username);            // sanitize variable for sql statement
 
-        $sql = "SELECT AcctStartTime,CASE WHEN AcctStopTime is NULL THEN timestampdiff(SECOND,AcctStartTime,NOW()) ELSE AcctSessionTime END AS AcctSessionTime,NASIPAddress,CalledStationId,FramedIPAddress,CallingStationId".
-		",AcctInputOctets,AcctOutputOctets FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE Username='$username' ORDER BY RadAcctId DESC LIMIT 1";
-	$res = $dbSocket->query($sql);
-	$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $sql = sprintf("SELECT AcctStartTime,
+                           CASE WHEN AcctStopTime IS NULL THEN timestampdiff(SECOND,AcctStartTime,NOW())
+                                ELSE AcctSessionTime
+                            END AS AcctSessionTime, NASIPAddress, CalledStationId, FramedIPAddress, CallingStationId,
+                           AcctInputOctets, AcctOutputOctets
+                      FROM %s WHERE Username='%s'
+                     ORDER BY RadAcctId DESC LIMIT 1", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-	$userUpload = toxbyte($row['AcctInputOctets']);
-	$userDownload = toxbyte($row['AcctOutputOctets']);
-	$userLastConnected = $row['AcctStartTime'];
-	$userOnlineTime = time2str($row['AcctSessionTime']);
+    $userUpload = toxbyte($row['AcctInputOctets']);
+    $userDownload = toxbyte($row['AcctOutputOctets']);
+    $userLastConnected = $row['AcctStartTime'];
+    $userOnlineTime = time2str($row['AcctSessionTime']);
 
-        $nasIPAddress = $row['NASIPAddress'];
-        $nasMacAddress = $row['CalledStationId'];
-        $userIPAddress = $row['FramedIPAddress'];
-        $userMacAddress = $row['CallingStationId'];
+    $nasIPAddress = $row['NASIPAddress'];
+    $nasMacAddress = $row['CalledStationId'];
+    $userIPAddress = $row['FramedIPAddress'];
+    $userMacAddress = $row['CallingStationId'];
 
-        include 'library/closedb.php';
+    include('library/closedb.php');
 
-        if ($drawTable == 1) {
+    if ($drawTable == 1) {
+        $href = "javascript:toggleShowDiv('divConnectionStatus')";
+    
+        printf('
+<table border="0" class="table1" style="margin: 10px auto">
+    <thead>
+        <tr>
+            <th colspan="10" align="left">
+                <a class="table" href="%s">
+                    Session Info
+                </a>
+            </th>
+        </tr>
+    </thead>
+</table>' . "\n", $href);
 
-                echo "<table border='0' class='table1'>";
-                echo "
-        		<thead>
-        			<tr>
-        	                <th colspan='10' align='left'> 
-        				<a class=\"table\" href=\"javascript:toggleShowDiv('divConnectionStatus')\">Session Info</a>
-        	                </th>
-        	                </tr>
-        		</thead>
-        		</table>
-        	";
-        
-                echo "
-                        <div id='divConnectionStatus' style='display:none;visibility:visible'>
-               		<table border='0' class='table1'>
-        		<thread>
+        echo "
+<div id='divConnectionStatus' style='display:none;visibility:visible'>
+    <table border='0' class='table1' style='margin: 10px auto'>
+        <tr>        
+            <th scope='col' align='right'>User Status</th>
+            <td scope='col' align='left'>$userStatus</td>
+        </tr>
 
-                        <tr>        
-                        <th scope='col' align='right'>
-                        User Status
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userStatus
-                        </th>
-                        </tr>
+        <tr>
+            <th scope='col' align='right'>Last Connection</th> 
+            <td scope='col' align='left'>$userLastConnected</td>
+        </tr>
 
-                        <tr>
-                        <th scope='col' align='right'>
-                        Last Connection                        
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userLastConnected
-                        </th>
-                        </tr>
+        <tr>
+            <th scope='col' align='right'>Online Time</th>
+            <td scope='col' align='left'>$userOnlineTime</td>
+        </tr>
 
-                        <tr>
-                        <th scope='col' align='right'>
-                        Online Time
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userOnlineTime
-                        </th>
-                        </tr>
+        <tr>
+            <th scope='col' align='right'>Server (NAS)</th>
+            <td scope='col' align='left'>$nasIPAddress (MAC: $nasMacAddress)</td>
+        </tr>
 
-                        <tr>
-                        <th scope='col' align='right'>
-                        Server (NAS)
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $nasIPAddress (MAC: $nasMacAddress)
-                        </th>
-                        </tr>
+        <tr>
+            <th scope='col' align='right'>User Workstation</th>
+            <td scope='col' align='left'>$userIPAddress (MAC: $userMacAddress)</td>
+        </tr>
 
-                        <tr>
-                        <th scope='col' align='right'>
-                        User Workstation
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userIPAddress (MAC: $userMacAddress)
-                        </th>
-                        </tr>
+        <tr>
+            <th scope='col' align='right'>User Upload</th>
+            <td scope='col' align='left'>$userUpload</td>
+        </tr>
 
-                        <tr>
-                        <th scope='col' align='right'>
-                        User Upload
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userUpload
-                        </th>
-                        </tr>
+        <tr>
+            <th scope='col' align='right'>User Download</th>
+            <td scope='col' align='left'>$userDownload</td>
+        </tr>
+    </table>
+</div>" . "\n";
 
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        User Download
-                        </th> 
-        
-                        <th scope='col' align='left'>
-                        $userDownload
-                        </th>
-                        </tr>
-
-                        </table>
-
-        		</div>
-        	";
-
-	}		
-
-
+    }
 }
 
 
@@ -664,23 +552,19 @@ function userConnectionStatus($username, $drawTable) {
  */
 function checkUserOnline($username) {
 
-	include 'library/opendb.php';
+    include('library/opendb.php');
 
-	$username = $dbSocket->escapeSimple($username);
+    $username = $dbSocket->escapeSimple($username);
 
-        $sql = "SELECT Username FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		" WHERE (AcctStopTime IS NULL AND Username='$username') OR (AcctStopTime = '0000-00-00 00:00:00' AND Username='$username')";
-	$res = $dbSocket->query($sql);
-	if ($numrows = $res->numRows() >= 1) {
-		$userStatus = "User is online";
-	} else {
-		$userStatus = "User is offline";
-	}	
+    $sql = sprintf("SELECT COUNT(username) FROM %s
+                     WHERE AcctStopTime IS NULL AND Username='%s'
+                        OR AcctStopTime = '0000-00-00 00:00:00' AND Username='%s'",
+                   $configValues['CONFIG_DB_TBL_RADACCT'], $username, $username);
+    $res = $dbSocket->query($sql);
 
-	include 'library/closedb.php';
+    $numrows = intval($res->fetchRow()[0]);
 
-	return $userStatus;
+    include('library/closedb.php');
 
+    return "User is " . (($numrows > 0) ? "online" : "offline");
 }
-
-

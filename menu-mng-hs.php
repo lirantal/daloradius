@@ -31,9 +31,6 @@ include_once("lang/main.php");
 
 ?>
 
-<body>
-    <div id="wrapper">
-        <div id="innerwrapper">
 
 <?php
     $m_active = "Management";

@@ -15,174 +15,193 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-
-	// declaring variables
-	//	isset($_GET['profile']) ? $group = $_GET['profile'] : $profile = "";
-
-	$logAction = "";
-	$logDebugSQL = "";
-
-	if (isset($_POST['submit'])) {
-	
-		$profile = $_POST['profile'];
-		if ($profile != "") {
-
-			include 'library/opendb.php';
-
-			$attrCount = 0;					// counter for number of attributes
-			foreach($_POST as $element=>$field) { 
-				
-				switch ($element) {
-					case "submit":
-					case "profile":
-							$skipLoopFlag = 1; 
-							break;
-				}
-		
-				if ($skipLoopFlag == 1) {
-					$skipLoopFlag = 0;             
-					continue;
-				}
-
-				if (isset($field[0]))
-					$attribute = $field[0];
-				if (isset($field[1]))
-					$value = $field[1];
-				if (isset($field[2]))
-					$op = $field[2];
-				if (isset($field[3]))
-					$table = $field[3];
-
-				if ($table == 'check')
-					$table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-				if ($table == 'reply')
-					$table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
-
-
-				if (!($value) || $table == '')
-					continue;
-
-				$sql = "INSERT INTO $table (id,GroupName,Attribute,op,Value) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($profile)."', '".
-						$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '".
-						$dbSocket->escapeSimple($value)."')  ";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				$attrCount++;				// increment attribute count
-
-			}
-
-			if ($attrCount == 0) {
-				$failureMsg = "Failed adding profile name [$profile] - no attributes where provided by user";
-				$logAction .= "Failed adding profile name [$profile] - no attributes where provided by user on page: ";
-			} else {
-				$successMsg = "Added to database new profile: <b> $profile </b>";
-				$logAction .= "Successfully added new profile [$profile] on page: ";
-			}
-
-			include 'library/closedb.php';
-
-		} else { // if $profile != ""
-			$failureMsg = "profile name is empty";
-			$logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
-		}
-
-	}
-	
-	include_once('library/config_read.php');
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
     $log = "visited page: ";
 
+    // we import validation facilities
+    include_once("library/validation.php");
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+        $profile = (array_key_exists('profile', $_POST) && isset($_POST['profile']))
+                 ? trim(str_replace("%", "", $_POST['profile'])) : "";
+        $profile_enc = (!empty($profile)) ? htmlspecialchars($profile, ENT_QUOTES, 'UTF-8') : "";
+    
+        if (empty($profile)) {
+            // profile required
+            $failureMsg = "The specified profile name is empty or invalid";
+            $logAction .= "Failed creating profile [empty or invalid profile name] on page: ";
+        } else {
+
+            include('library/opendb.php');
+            //~ include_once('include/management/populate_selectbox.php');
+
+            //~ $profiles = get_groups();
+            $profiles = array();
+            if (in_array($profile, $profiles)) {
+                // invalid profile name
+                $failureMsg = "This profile name [<strong>$profile_enc</strong>] is already in use";
+                $logAction .= "Failed creating profile [$profile, name already in use] on page: ";
+            } else {
+    
+                $skipList = array( "profile", "submit", "csrf_token" );
+
+                $count = 0;
+
+                foreach ($_POST as $element => $field) {
+
+                    // we skip several attributes (contained in the $skipList array)
+                    // which we do not wish to process (ie: do any sql related stuff in the db)
+                    if (in_array($element, $skipList)) {
+                        continue;
+                    }
+                    
+                    // we need $field to be exactly an array with 4 fields:
+                    // $attribute, $value, $op, $table
+                    if (!is_array($field) || count($field) != 4) {
+                        continue;
+                    }
+                    
+                    // we trim all array values
+                    foreach ($field as $i => $v) {
+                        $field[$i] = trim($v);
+                    }
+                    
+                    list($attribute, $value, $op, $table) = $field;
+                    
+                    // value and attribute are required
+                    if (empty($value) || empty($attribute)) {
+                            continue;
+                    }
+
+                    // we only accept valid ops
+                    if (!in_array($op, $valid_ops)) {
+                        continue;
+                    }
+
+                    // $table value can be only '(rad)reply' or '(rad)check'
+                    $table = strtolower($table);
+                    if (in_array($table, array('reply', 'radreply', 'radgroupreply'))) {
+                        $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+                    } else if (in_array($table, array('check', 'radcheck', 'radgroupcheck'))) {
+                        $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+                    } else {
+                        continue;
+                    }
+
+                    // if all checks are passed, we insert the new attribute
+                    $sql = sprintf("INSERT INTO %s (id, groupname, attribute, op, value) VALUES (0, '%s', '%s', '%s', '%s')",
+                                   $table, $dbSocket->escapeSimple($profile), $dbSocket->escapeSimple($attribute),
+                                   $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($value));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+
+                    if (!DB::isError($res)) {
+                        $count += 1;
+                    }
+
+                } // foreach
+                
+                
+                if ($count > 0) {
+                    $successMsg = "Added new profile: <b> $profile_enc </b>";
+                    $logAction .= "Successfully added a new profile [$profile] on page: ";
+                } else {
+                    $failureMsg = "Failed creating profile [$profile_enc], invalid or empty attributes list";
+                    $logAction .= "Failed creating profile [$profile_enc, invalid or empty attributes list] on page: ";
+                }
+
+            } // profile non-existent
+            
+            include('library/closedb.php');
+            
+        } // profile name not empty    
+    }
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js",
+        "library/javascript/ajaxGeneric.js",
+        "library/javascript/productive_funcs.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','mngradprofilesnew.php');
+    $help = t('helpPage','mngradprofilesnew');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    
+    include("menu-mng-rad-profiles.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    include_once('include/management/actionMessages.php');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
+                
+<form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+    <fieldset>
 
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
+            <h302> <?php echo t('title','ProfileInfo') ?> </h302>
+            <br/>
 
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
- 
+            <label for='profile' class='form'>Profile Name</label>
+            <input name='profile' type='text' id='profile' value='' tabindex=100 />
+            <br />
+
+            <br/><br/>
+            <hr><br/>
+
+            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+
+    </fieldset>
+
+
+    <br/>
+
+
+    <?php
+        include_once('include/management/attributes.php');
+    ?>
+        
+</form>
+
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include ("menu-mng-rad-profiles.php");
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradprofilesnew.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-
-
-				<div id="helpPage" style="display:none;visibility:visible" >				
-					<?php echo t('helpPage','mngradprofilesnew') ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-				<form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-        <fieldset>
-
-                <h302> <?php echo t('title','ProfileInfo') ?> </h302>
-                <br/>
-
-                <label for='profile' class='form'>Profile Name</label>
-                <input name='profile' type='text' id='profile' value='' tabindex=100 />
-                <br />
-
-                <br/><br/>
-                <hr><br/>
-
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
-        </fieldset>
-
-
-        <br/>
-
-
-        <?php
-			include_once('include/management/attributes.php');
-        ?>
-		
-	</form>
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

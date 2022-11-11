@@ -54,13 +54,22 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','graphsoveralllogins.php');
     $help = t('helpPage','graphsoveralllogins');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-graphs.php");
-    include_once ("library/tabber/tab-layout.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -69,15 +78,23 @@
         $src = sprintf("library/graphs-overall-users-login.php?type=%s&user=%s", $type, $username_enc);
         $alt = ucfirst($type) . " login/hit statistics for user " . $username_enc;
         
+        // set navbar stuff
+        $navbuttons = array(
+                              'Graph-tab' => "Graph",
+                              'Statistics-tab' => "Statistics",
+                           );
+
+        print_tab_navbuttons($navbuttons);
+        
 ?>
             <div class="tabber">
-                <div class="tabbertab" title="Graph">
+                <div class="tabcontent" id="Graph-tab" style="display: block">
                     <div style="text-align: center; margin-top: 50px">
                         <img alt="<?= $alt ?>" src="<?= $src ?>">
                     </div>
                 </div>
     
-                <div class="tabbertab" title="Statistics">
+                <div class="tabcontent" id="Statistics-tab">
                     <div style="margin-top: 50px">
 <?php
         include("library/tables-overall-users-login.php");
@@ -86,7 +103,9 @@
 ?>
                         <script>
                             window.addEventListener('load', function() {
-                                document.querySelector('a[title="Statistics"]').click();
+                                var stats_tab = document.getElementById('Statistics-tab'),
+                                    stats_btn = document.getElementById(stats_tab.id + '-button');
+                                stats_btn.click();
                             });
                         </script>
 <?php

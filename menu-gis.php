@@ -33,9 +33,6 @@ $m_active = "Gis";
 
 ?>
 
-<body>
-    <div id="wrapper">
-        <div id="innerwrapper">
 
 <?php
     include_once ("include/menu/menu-items.php");

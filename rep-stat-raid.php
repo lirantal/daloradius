@@ -36,20 +36,28 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = "RAID Status";
     $help = "";
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include ("menu-reports-status.php");
-      
-?>    
-        <div id="contentnorightbar">
-<?php
+
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     $failureMsg = "";
-    $error = '<strong>Error</strong> accessing RAID device information<br><br>';
+    $error = '<strong>Error</strong> accessing RAID device information';
     
     if (!file_exists('/proc/mdstat')) {
         $failureMsg = $error;
@@ -60,10 +68,24 @@
             $failureMsg = $error;
         } else {
             if (count($mdstat) > 0) {
-                include_once("library/tabber/tab-layout.php");
-                echo '<div class="tabber">';
+                
+                $navbuttons = array();
                 foreach($mdstat as $mddevice) {
-                    printf('<div class="tabbertab" title="%s">', htmlspecialchars($mddevice, ENT_QUOTES, 'UTF-8'));
+                    $key = sprintf("%s-tab", $mddevice);
+                    $navbuttons[$key] = $mddevice;
+                }
+                
+                print_tab_navbuttons($navbuttons);
+                
+                $counter = 0;
+                foreach($mdstat as $mddevice) {
+                    printf('<div class="tabcontent" id="%s-tab"', htmlspecialchars($mddevice, ENT_QUOTES, 'UTF-8'));
+                    
+                    if ($counter == 0) {
+                        echo ' style="display: block"';
+                    }
+                    
+                    echo '>';
                     
                     $dev = "/dev/$mddevice";
                     $cmd = sprintf("sudo /sbin/mdadm --detail %s", escapeshellarg($dev));
@@ -81,9 +103,11 @@
                     }
                     echo '</table>'
                        . '</div>';
+                       
+                    $counter++;
 
                 }
-                echo '</div>';
+                
 
             } else {
                 $failureMsg = $error;

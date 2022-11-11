@@ -15,90 +15,96 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
+    $log = "visited page: ";
 
-	isset($_REQUEST['profile']) ? $profile = $_REQUEST['profile'] : $profile = "";
-	isset($_REQUEST['attribute']) ? $attribute = $_REQUEST['attribute'] : $attribute = "";
-	isset($_REQUEST['tablename']) ? $tablename = $_REQUEST['tablename'] : $tablename = "";
+    isset($_REQUEST['profile']) ? $profile = $_REQUEST['profile'] : $profile = "";
+    isset($_REQUEST['attribute']) ? $attribute = $_REQUEST['attribute'] : $attribute = "";
+    isset($_REQUEST['tablename']) ? $tablename = $_REQUEST['tablename'] : $tablename = "";
 
-	isset($_REQUEST['profile_delete_assoc']) ? $removeProfileAssoc = $_REQUEST['profile_delete_assoc'] : $removeProfileAssoc = "";
-	if ($removeProfileAssoc == '1')
-		$removeProfileAssoc = true;
-	else
-		$removeProfileAssoc = false;
-
-
-	$logAction = "";
-	$logDebugSQL = "";
-
-	$showRemoveDiv = "block";
-
-	if ( (isset($_REQUEST['profile'])) && (!(isset($_REQUEST['attribute']))) && (!(isset($_REQUEST['tablename']))) ) {
-
-		$allProfiles = "";
-		$isSuccessful = 0;
-
-		if (!is_array($profile))
-			$profile = array($profile, NULL);
-
-		foreach ($profile as $variable=>$value) {
-
-			if (trim($variable) != "") {
-
-				$profile = $value;
-				$allProfiles .= $profile . ", ";
-
-				include 'library/opendb.php';
-
-				// delete all attributes associated with a profile
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-					" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
-					" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				// delete all user associations with the profile
-				if ($removeProfileAssoc == true) {
-					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
-						" WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
+    isset($_REQUEST['profile_delete_assoc']) ? $removeProfileAssoc = $_REQUEST['profile_delete_assoc'] : $removeProfileAssoc = "";
+    if ($removeProfileAssoc == '1')
+        $removeProfileAssoc = true;
+    else
+        $removeProfileAssoc = false;
 
 
-				$successMsg = "Deleted profile(s): <b> $allProfiles </b>";
-				$logAction .= "Successfully deleted profile(s) [$allProfiles] on page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
-				include 'library/closedb.php';
+    $showRemoveDiv = "block";
 
-			}  else {
-				$failureMsg = "no profile was entered, please specify a profile to remove from database";
-				$logAction .= "Failed deleting profile(s) [$allProfiles] on page: ";
-			}
+    if ( (isset($_REQUEST['profile'])) && (!(isset($_REQUEST['attribute']))) && (!(isset($_REQUEST['tablename']))) ) {
 
-		} //foreach
+        $allProfiles = "";
+        $isSuccessful = 0;
 
-		$showRemoveDiv = "none";
+        if (!is_array($profile))
+            $profile = array($profile, NULL);
 
-	} else  if ( (isset($_REQUEST['profile'])) && (isset($_REQUEST['attribute'])) && (isset($_REQUEST['tablename'])) ) {
+        foreach ($profile as $variable=>$value) {
 
-		/* this section of the deletion process only deletes the username record with the specified attribute
-		 * variable from $tablename, this is in order to support just removing a single attribute for the user
-		 */
+            if (trim($variable) != "") {
 
-		include 'library/opendb.php';
+                $profile = $value;
+                $allProfiles .= $profile . ", ";
+
+                include 'library/opendb.php';
+
+                // delete all attributes associated with a profile
+                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
+                    " WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
+
+                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
+                    " WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
+
+                // delete all user associations with the profile
+                if ($removeProfileAssoc == true) {
+                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
+                        " WHERE GroupName='".$dbSocket->escapeSimple($profile)."'";
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= $sql . "\n";
+                }
+
+
+                $successMsg = "Deleted profile(s): <b> $allProfiles </b>";
+                $logAction .= "Successfully deleted profile(s) [$allProfiles] on page: ";
+
+                include 'library/closedb.php';
+
+            }  else {
+                $failureMsg = "no profile was entered, please specify a profile to remove from database";
+                $logAction .= "Failed deleting profile(s) [$allProfiles] on page: ";
+            }
+
+        } //foreach
+
+        $showRemoveDiv = "none";
+
+    } else  if ( (isset($_REQUEST['profile'])) && (isset($_REQUEST['attribute'])) && (isset($_REQUEST['tablename'])) ) {
+
+        /* this section of the deletion process only deletes the username record with the specified attribute
+         * variable from $tablename, this is in order to support just removing a single attribute for the user
+         */
+
+        include 'library/opendb.php';
 
                 if (isset($attribute)) {
                         if (preg_match('/__/', $attribute))
@@ -107,55 +113,39 @@
                                 $attribute = $attribute;
                 }
 
-		$sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE GroupName='".$dbSocket->escapeSimple($profile).
-				"' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
+        $sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE GroupName='".$dbSocket->escapeSimple($profile).
+                "' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= $sql . "\n";
 
-		$successMsg = "Deleted attribute: <b> $attribute </b> for profile(s): <b> $profile </b> from database";
-		$logAction .= "Successfully deleted attribute [$attribute] for profile [$profile] on page: ";
+        $successMsg = "Deleted attribute: <b> $attribute </b> for profile(s): <b> $profile </b> from database";
+        $logAction .= "Successfully deleted attribute [$attribute] for profile [$profile] on page: ";
 
-		include 'library/closedb.php';
+        include 'library/closedb.php';
 
-		$showRemoveDiv = "none";
-	}
+        $showRemoveDiv = "none";
+    }
 
-	include_once('library/config_read.php');
-	$log = "visited page: ";
+    include_once("lang/main.php");
+    include("library/layout.php");
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
+    // print HTML prologue
+    
+    $title = t('Intro','mngradprofilesdel.php');
+    $help = t('helpPage','mngradprofilesdel');
+    
+    print_html_prologue($title, $langCode);
 
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+    include ("menu-mng-rad-profiles.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-</head>
-
-
-<?php
-	include ("menu-mng-rad-profiles.php");
+    include_once('include/management/actionMessages.php');
 ?>
 
-		<div id="contentnorightbar">
-
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradprofilesdel.php') ?>
-				:: <?php if (isset($profile)) { echo $profile; } ?><h144>&#x2754;</h144></a></h2>
-
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','mngradprofilesdel') ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-
-	<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <fieldset>
 
@@ -177,28 +167,11 @@
 
         </fieldset>
 
-	        </form>
-	</div>
+            </form>
+    </div>
 
 
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-
-</body>
-</html>

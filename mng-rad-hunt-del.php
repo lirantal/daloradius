@@ -15,21 +15,27 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
-	include('library/check_operator_perm.php');
+    
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
         $groupname = "";
         $nasipaddress = "";
         $nasportid = "";
-        $logAction = "";
-        $logDebugSQL = "";
+
 
         $showRemoveDiv = "block";
 
@@ -97,99 +103,60 @@
 
         }
 
-        include_once('library/config_read.php');
-    $log = "visited page: ";
+    include_once("lang/main.php");
+    include("library/layout.php");
 
+    // print HTML prologue
+    $title = t('Intro','mngradhuntdel.php');
+    $help = t('helpPage','mngradhuntdel');
+    
+    print_html_prologue($title, $langCode);
 
+    include ("menu-mng-rad-hunt.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-
-
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-
-
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-</head>
-
-
-<?php
-	include ("menu-mng-rad-hunt.php");
+    include_once('include/management/actionMessages.php');
 ?>
 
-	<div id="contentnorightbar">
-
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradhuntdel.php') ?>
-		:: <?php if (isset($nasipaddress)) { echo $nasipaddress; } ?><h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngradhuntdel') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-
-		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 
         <fieldset>
 
-			<h302> <?php echo t('title','HGInfo') ?> </h302>
-			<br/>
+            <h302> <?php echo t('title','HGInfo') ?> </h302>
+            <br/>
 
-			<label for='nasipaddress' class='form'><?php echo t('all','HgIPHost') ?></label>
-			<input name='nasipaddress' type='text' id='nasipaddress' value='' tabindex=100 />
-			<br />
+            <label for='nasipaddress' class='form'><?php echo t('all','HgIPHost') ?></label>
+            <input name='nasipaddress' type='text' id='nasipaddress' value='' tabindex=100 />
+            <br />
 
                         <label for='nasportid' class='form'><?php echo t('all','HgPortId') ?></label>
                         <input name='nasportid' type='text' id='nasportid' value='<?php echo $nasportid ?>' tabindex=101 />
                         <br/>
 
-			<br/><br/>
-			<hr><br/>
+            <br/><br/>
+            <hr><br/>
 
-			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
 
         </fieldset>
 
-		</form>
-		</div>
+        </form>
+        </div>
 
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    
+    include_once("include/management/autocomplete.php");
+    if ($autoComplete) {
+         $inline_extra_js = "
+autoComEdit = new DHTMLSuite.autoComplete();
+autoComEdit.add('nasipaddress','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteHGHost');";
+    } else {
+        $inline_extra_js = "";
+    }
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-<?php
-        include_once("include/management/autocomplete.php");
-
-        if ($autoComplete) {
-                echo "<script type=\"text/javascript\">
-                      autoComEdit = new DHTMLSuite.autoComplete();
-                      autoComEdit.add('nasipaddress','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteHGHost');
-                      </script>";
-        }
-
-?>
-
-</body>
-</html>

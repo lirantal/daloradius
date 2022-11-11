@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,180 +15,241 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-
-	$username = "";
-	$group = "";
-
-	$showRemoveDiv = "block";
-
-	if (isset($_POST['usergroup'])) {
-		$usergroup_array = $_REQUEST['usergroup'];
-	} else {
-		if (isset($_POST['username']))
-			$usergroup_array = array($_REQUEST['username']."||".$_REQUEST['group']);
-	}
-
-	$logAction = "";
-	$logDebugSQL = "";
-
-	if (isset($usergroup_array)) {
-
-		foreach ($usergroup_array as $usergroup) {
-
-		list($username, $group) = preg_split('\|\|', $usergroup);
-
-		if (trim($username) != "") {
-
-			$allGroups =  "";
-			$allUsernames = "";
-			include 'library/opendb.php';
-
-			if (trim($group) != "") {
-
-				// // delete only a specific groupname and it's attribute
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
-					" WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($group)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				$allUsernames .= $username . ", ";
-				$allGroups .= $group . ", ";
-				$successMsg = "Deleted all Usernames: <b> $allUsernames </b> and all their Groupnames: <b> $allGroups </b>";
-				$logAction .= "Successfully deleted all users [$allUsernames] and their groups [$allGroups] on page: ";
-
-				include 'library/closedb.php';
-
-			} else {
-				// delete all attributes associated with a username
-				$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
-						" WHERE UserName='".$dbSocket->escapeSimple($username)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				$successMsg = "Deleted all instances for Username: <b> $allUsernames </b>";
-				$logAction .= "Successfully deleted all group instances for users [$allUsernames] on page: ";
-
-				include 'library/closedb.php';
-			}
-
-			$showRemoveDiv = "none";
-
-		}  else {
-			$failureMsg = "No user was entered, please specify a username to remove from database";
-			$logAction .= "Failed deleting empty user on page: ";
-		}
-
-		} //foreach
-	}
-
-
-	include_once('library/config_read.php');
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
     $log = "visited page: ";
 
 
+    $success = false;
+    $count_involved_users = 0;
+    $count_involved_groups = 0;
 
+    include('library/opendb.php');
+
+
+    function check_usergroup_mapping($dbSocket, $username, $group) {
+        global $configValues, $logDebugSQL;
+    
+        $sql = sprintf("SELECT COUNT(*) FROM %s WHERE username='%s' AND groupname='%s'",
+                       $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username, $group);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+                            
+        return ($res->fetchrow()[0] > 0);
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+    
+            $usergroup_mappings = array();
+        
+            if (array_key_exists('usergroup', $_POST) && !empty($_POST['usergroup'])) {
+                $usergroup = (!is_array($_POST['usergroup'])) ? array( trim($_POST['usergroup']) ) : $_POST['usergroup'];
+                
+                foreach ($usergroup as $item) {
+                    if(strpos($item, "||") === false) {
+                        continue;
+                    }
+                    
+                    $arr = explode("||", $item);
+                    
+                    if (count($arr) != 2) {
+                        continue;
+                    }
+                    
+                    list($u, $g) = $arr;
+                    
+                    $u = $dbSocket->escapeSimple(trim(str_replace("%", "", $u)));
+                    $g = $dbSocket->escapeSimple(trim(str_replace("%", "", $g)));
+                    
+                    if (empty($u) || empty($g)) {
+                        continue;
+                    }
+                    
+                    if (array_key_exists($u, $usergroup_mappings) && in_array($g, $usergroup_mappings[$u])) {
+                        continue;
+                    }
+                    
+                    if (!check_usergroup_mapping($dbSocket, $u, $g)) {
+                        continue;
+                    }
+                    
+                    $usergroup_mappings[$u][] = $g;
+                }
+
+            } else {
+                $username_is_set = array_key_exists('username', $_POST) && !empty($_POST['username']);
+                $groupname_is_set = array_key_exists('group', $_POST) && !empty($_POST['group']);
+            
+                if ($username_is_set) {
+                    $u = $dbSocket->escapeSimple(trim(str_replace("%", "", $_POST['username'])));
+                    if (!empty($u)) {
+                        
+                        if (!$groupname_is_set) {
+                            // if user is set but groupname not we want to delete all groups
+                            if (check_usergroup_mapping($dbSocket, $u, $g)) {
+                                $usergroup_mappings[$u] = array();
+                            
+                                while ($row = $res->fetchrow()) {
+                                    $usergroup_mappings[$u][] = $dbSocket->escapeSimple($row[0]);
+                                }
+                            }
+                            
+                        } else {
+                            $g = $dbSocket->escapeSimple(trim(str_replace("%", "", $_POST['group'])));
+                            
+                            if (!empty($g)) {
+                                $sql = sprintf("SELECT COUNT(*) FROM %s WHERE username='%s' AND groupname='%s'",
+                                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $u, $g);
+                                $res = $dbSocket->query($sql);
+                                $logDebugSQL .= "$sql;\n";
+                                
+                                if ($res->fetchrow()[0] > 0) {
+                                    $usergroup_mappings[$u] = array( $g );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+       
+            if (count($usergroup_mappings) > 0) {
+                foreach ($usergroup_mappings as $username => $groups) {
+                    $sql = sprintf("DELETE FROM %s WHERE username='%s' AND groupname IN ('%s')",
+                                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
+                                   implode("', '", $groups));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if ($res > 0) {
+                        $count_involved_users++;
+                        $count_involved_groups += $res;
+                    }
+                }
+            }
+            
+            $success = $count_involved_users > 0 && $count_involved_groups > 0;
+            
+            // present results
+            if ($success) {
+                $successMsg = sprintf("Deleted %s group mapping(s) for a total of %s user(s)", $count_involved_groups, $count_involved_users);
+                $logAction .= sprintf("%s on page: ", $successMsg);
+            } else {
+                $failureMsg = "Cannot remove the specified group mapping(s)";
+                $logAction .= sprintf("%s on page: ", $failureMsg);
+            }
+            
+        } else {
+            $failureMsg = sprintf("CSRF token error");
+            $logAction .= sprintf("CSRF token error on page: ");
+        }
+        
+    } else {
+        
+        $username = (array_key_exists('username', $_REQUEST) && !empty($_REQUEST['username']))
+                  ? trim(str_replace("%", "", $_REQUEST['username'])) : "";
+                  
+        $groupname = (array_key_exists('group', $_REQUEST) && !empty($_REQUEST['group']))
+                   ? trim(str_replace("%", "", $_REQUEST['group'])) : "";
+        
+        if (!empty($username) && !empty($groupname)) {
+            $valid = check_usergroup_mapping($dbSocket, $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($groupname));
+        
+            if (!$valid) {
+                $username = "";
+                $groupname = "";
+            }
+        }
+        
+    }
+
+    include('library/closedb.php');
+
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // print HTML prologue
+    
+    $title = t('Intro','mngradusergroupdel.php');
+    $help = t('helpPage','mngradusergroupdel');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-mng-rad-usergroup.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
+    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+        include_once('include/management/actionMessages.php');
+    }
+
+    if (!$success) {
+        include_once('include/management/populate_selectbox.php');
+
+        $input_descriptors1[] = array(
+                                        "name" => "username",
+                                        "caption" => t('all','Username'),
+                                        "type" => "text",
+                                        "value" => $username,
+                                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                                     );
+
+        $options = get_groups();
+        $input_descriptors1[] = array(
+                                        "id" => "group",
+                                        "name" => "group",
+                                        "caption" => t('all','Groupname'),
+                                        "type" => "select",
+                                        "options" => $options,
+                                        "selected_value" => $groupname,
+                                        "tooltipText" => t('Tooltip','groupTooltip')
+                                     );
+
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors1[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
 
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<form method="POST">
+    <fieldset>
+        <h302><?= t('title','GroupInfo') ?></h302>
+        
+        <ul style="margin: 10px auto">
+<?php
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+?>
 
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-</head>
-
+        </ul>
+    </fieldset>
+</form>
 
 <?php
-	include ("menu-mng-rad-usergroup.php");
+    }
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-
-
-	<div id="contentnorightbar">
-
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradusergroupdel.php') ?>
-		<h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngradusergroupdel') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-
-		<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-        <fieldset>
-
-                <h302> <?php echo t('title','GroupInfo') ?> </h302>
-                <br/>
-
-                <input type="hidden" value="<?php echo $group ?>" name="group"/><br/>
-
-                <ul>
-
-                <li class='fieldset'>
-                <label for='username' class='form'><?php echo t('all','Username') ?></label>
-                <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-                </li>
-
-                <li class='fieldset'>
-                <label for='group' class='form'><?php echo t('all','Groupname') ?></label>
-                <input name='group' type='text' id='group' value='<?php echo $group ?>' tabindex=101 />
-                <?php
-                        include 'include/management/populate_selectbox.php';
-                        populate_groups("Select Groups","long");
-                ?>
-                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo t('Tooltip','groupTooltip') ?>
-                </div>
-                </li>
-
-
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-                </li>
-
-		</ul>
-	</fieldset>
-
-	</form>
-	</div>
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-
-</body>
-</html>

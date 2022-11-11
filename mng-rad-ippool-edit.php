@@ -15,15 +15,17 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include('library/check_operator_perm.php');
+
+    include('library/check_operator_perm.php');
+
 
 	isset($_GET['poolname']) ? $poolname = $_GET['poolname'] : $poolname = "";
 	isset($_GET['ipaddress']) ? $ipaddress = $_GET['ipaddress'] : $ipaddress = "";
@@ -78,93 +80,61 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
-	
+	 include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
+    // print HTML prologue
+    $title = t('Intro','mngradippoolnew.php');
+    $help = t('helpPage','mngradippoolnew');
+    
+    print_html_prologue($title, $langCode);
 
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+    include("menu-mng-rad-ippool.php");
 
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-</head>
-
-
-<?php
-	include_once ("library/tabber/tab-layout.php");
-?> 
- 
-<?php
-	include ("menu-mng-rad-ippool.php");
+    include_once('include/management/actionMessages.php');
 ?>
 
-	<div id="contentnorightbar">
-	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradippoolnew.php') ?>
-		<h144>&#x2754;</h144></a></h2>
+<form name="newippool" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    <fieldset>
 
-		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo t('helpPage','mngradippoolnew') ?>
-			<br/>
-		</div>
+        <h302> <?php echo t('title','IPPoolInfo') ?> </h302>
+        <br/>
+
+        <label for='poolname' class='form'><?php echo t('all','PoolName') ?></label>
+        <input name='poolname' type='hidden' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
+        <input disabled name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
+        <br />
+
+        <label for='ipaddressold' class='form'><?php echo t('all','IPAddress') ?></label>
+        <input name='ipaddressold' type='text' id='ipaddressold' value='<?php echo $ipaddressold ?>' tabindex=101 />
+        <br />
+
+        <label for='ipaddress' class='form'>New <?php echo t('all','IPAddress') ?></label>
+        <input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=102 />
+        <br />
+
+        <br/><br/>
+        <hr><br/>
+
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+
+    </fieldset>
+</form>
+
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include_once('include/management/actionMessages.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-		<form name="newippool" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<div class="tabber">
-	<div class="tabbertab" title="<?php echo t('title','IPPoolInfo'); ?>">
-	<fieldset>
-
-		<h302> <?php echo t('title','IPPoolInfo') ?> </h302>
-		<br/>
-
-			<label for='poolname' class='form'><?php echo t('all','PoolName') ?></label>
-			<input name='poolname' type='hidden' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
-			<input disabled name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
-			<br />
-
-			<label for='ipaddressold' class='form'><?php echo t('all','IPAddress') ?></label>
-			<input name='ipaddressold' type='text' id='ipaddressold' value='<?php echo $ipaddressold ?>' tabindex=101 />
-			<br />
-
-			<label for='ipaddress' class='form'>New <?php echo t('all','IPAddress') ?></label>
-			<input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=102 />
-			<br />
-
-			<br/><br/>
-			<hr><br/>
-
-			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
-        </fieldset>
-     </div>
+        </div><!-- #footer -->
+    </div>
 </div>
-		</form>
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
 
 </body>
 </html>

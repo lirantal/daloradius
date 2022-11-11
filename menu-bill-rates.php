@@ -31,30 +31,12 @@ include_once("lang/main.php");
 
 $m_active = "Billing";
 
-?>
-<body>
-    <link rel="stylesheet" href="library/js_date/datechooser.css">
-    <!--[if lte IE 6.5]>
-    <link rel="stylesheet" href="library/js_date/select-free.css">
-    <![endif]-->
-    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
+include_once("include/menu/menu-items.php");
+include_once("include/menu/billing-subnav.php");
+include_once("include/management/autocomplete.php");
 
-    <script src="library/js_date/date-functions.js"></script>
-    <script src="library/js_date/datechooser.js"></script>
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
-
-
-    <div id="wrapper">
-        <div id="innerwrapper">
-
-<?php
-    include_once("include/menu/menu-items.php");
-    include_once("include/menu/billing-subnav.php");
-    include_once("include/management/autocomplete.php");
-    
-    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
+$showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
+$chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>
 
             <div id="sidebar">

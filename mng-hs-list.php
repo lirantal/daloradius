@@ -26,7 +26,12 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
+
+    // init loggin variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
+
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -199,9 +204,6 @@
         
         <div id="footer">
 <?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

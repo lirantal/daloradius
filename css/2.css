@@ -66,6 +66,7 @@ body {
 
 #header input {
     width: 240px;
+    margin: 12px;
     padding: 7px;
     border: 1px solid lightgray;
     border-radius: 3px;
@@ -280,12 +281,14 @@ h3.form {
     margin: auto 20px;
 }
 
-fieldset input[type=text], fieldset input[type=number], fieldset select {
+fieldset textarea {
     padding: 5px;
-    margin: 3px auto;
+    margin: 4px;
     border: 1px solid var(--rich-black);
     border-radius: 3px;
     resize: vertical;
+    
+    min-width: 200px;
     
     font-size: 12px;
     color: var(--rich-black-fogra);
@@ -295,6 +298,32 @@ fieldset input[type=text], fieldset input[type=number], fieldset select {
     -moz-box-sizing: content-box;
     -webkit-box-sizing: content-box; 
     box-sizing: content-box;
+}
+
+fieldset input[type=text], fieldset input[type=number],
+fieldset input[type=date], fieldset select {
+    padding: 5px;
+    margin: 4px;
+    border: 1px solid var(--rich-black);
+    border-radius: 3px;
+    resize: vertical;
+    
+    min-width: 200px;
+    
+    font-size: 12px;
+    color: var(--rich-black-fogra);
+    background-color: white;
+    
+    -ms-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; 
+    box-sizing: content-box;
+}
+
+fieldset input[type=text]:disabled, fieldset input[type=numer]:disabled
+fieldset input[type=date]:disabled, fieldset select:disabled {
+    background-color: #eeeeee;
+    border: 1px solid gray;
 }
 
 #sidebar select:hover, #sidebar select:focus, #sidebar input:hover, #sidebar input:focus {
@@ -488,15 +517,6 @@ li.fieldset {
         border:none;
 }
 
-
-
-form {
-    padding:10px;
-/*
-    border:1px solid #f6f6f6;
-*/
-}
-
 form.sidebar {
     padding:10px;
     border:0px solid #f6f6f6;
@@ -527,25 +547,34 @@ form input[type="submit"].button:hover {
     opacity: 0.7;
 }
 
-form fieldset hr {
+#contentnorightbar form fieldset hr {
   border-top: 1px solid white;
 }
 
-form fieldset {
-    background-color: var(--verdigris);
-    color: white;
+#contentnorightbar form {
+    background-color: #fafafa;
+    padding-bottom: 4px;
+}
+
+#contentnorightbar form fieldset {
+    color: var(--rich-black);
     font-size: 12px;
     border: none;
     padding: 10px;
+    margin: 2px auto;
+}
+
+#contentnorightbar form fieldset:disabled {
+    opacity: 0.25;
 }
 
 label.form {
     display: inline;
     vertical-align: baseline;
     font-weight: bold;
-    color: white;
+    color: var(--rich-black-fogra);
     float: left;
-    width: 200px;
+    min-width: 220px;
     margin: auto 8px;
     clear: left;
 }
@@ -598,6 +627,26 @@ input.sidebutton {
     margin: 2px;
 }
 
+input[type="button"], input[type="submit"] {
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 4px;
+    opacity: 1;
+}
+
+#contentnorightbar form .tabcontent input[type="submit"],
+#contentnorightbar form input[type="submit"]
+ {
+    display: block;
+    width: 30%;
+}
+
+/*
 th .button {
     border: none;
     border-radius: 4px;
@@ -609,6 +658,7 @@ th .button {
     margin-left: 4px;
     opacity: 1;
 }
+*/
 
 th .button:focus, th .button:hover {
     opacity: 0.8;
@@ -839,9 +889,9 @@ h200 {
 
 /* header used in fieldset */
 h301 {
-    font:110% sans-serif;
-    font-weight:bold;
-    color:#333;
+    font-size: 110%;
+    font-weight: bold;
+    color: var(--verdigris);
 }
 
 /* header used in fieldset */
@@ -850,7 +900,7 @@ fieldset h302 {
     float: right;
     text-decoration: none;
     font-weight: bold;
-    color: #eeeeee;
+    color: var(--pale-cerulean);
 
     user-select: none;
 }
@@ -897,32 +947,29 @@ fieldset h302 {
 
 
 .failure {
-    border-bottom: 1px solid #fa601d;
+    border: 1px solid #fa601d;
     padding: 9pt 9pt 9pt 33pt;
+    margin: 12px auto;
     color: #484554;
-    //color: #996600;
-    font-family:sans-serif;
-    font-size: 8pt;
+    font-family: sans-serif;
     background: #FDDDD9 url("../images/icons/action-error.gif") 6pt 6pt no-repeat;
-    margin: 1em 0px 0em 0px;
+    
 }
 
 .warning {
-    background:#F8FEA5 url(../images/icons/action-warning.gif) no-repeat scroll 6pt;
-    border-bottom:1px solid #EBFA1D;
-    color:#484554;
-    font-size:8pt;
-    margin:1em 0px 10px;
+    background: #F8FEA5 url(../images/icons/action-warning.gif) no-repeat scroll 6pt;
+    border: 1px solid #EBFA1D;
+    color: #484554;
+    margin: 12px;
     padding:9pt 9pt 9pt 33pt;
 }
 
 .success {
-    background:#DFEF7A url(../images/icons/action-success.gif) no-repeat scroll 6pt;
-    border-bottom:1px solid #A9C500;
-    color:#484554;
-    font-size:8pt;
-    margin:1em 0px 0em;
-    padding:9pt 9pt 9pt 33pt;
+    background: #DFEF7A url(../images/icons/action-success.gif) no-repeat scroll 6pt;
+    border: 1px solid #A9C500;
+    color: #484554;
+    padding: 9pt 9pt 9pt 33pt;
+    margin: 12px auto;
 }
 
 

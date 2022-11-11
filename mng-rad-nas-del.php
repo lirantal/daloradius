@@ -87,10 +87,12 @@
                 $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
             }
             
-            $successMsg = sprintf("Deleted NAS(s): <strong>%s</strong>", implode(", ", $tmp));
-            $logAction .= sprintf("Successfully deleted NAS(s) [%s] on page: ", implode(", ", $deleted_values));
+            $label = (count($tmp) > 1 || count($tmp) == 0) ? "NASs" : "NAS";
+            
+            $successMsg = sprintf("Deleted %s: <strong>%s</strong>.", $label, implode(", ", $tmp));
+            $logAction .= sprintf("Successfully deleted %s [%s] on page: ", $label, implode(", ", $deleted_values));
         } else {
-            $failureMsg = "no NAS hostname/IP(s) or invalid NAS hostname/IP(s) have been entered";
+            $failureMsg = "Empty or invalid NAS hostname/IP(s).";
             $logAction .= sprintf("Failed deleting NAS(s) [%s] on page: ", implode(", ", $valid_values));
         }
         
@@ -123,37 +125,56 @@
     }
     
     if (!$success) {
-?>
-            <form method="POST">
-                <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-                <fieldset>
-                    <h302><?= t('title','NASInfo') ?></h302>
-                    
-                    <br>
+        $input_descriptor = array(
+                                    'name' => $field_name . "[]",
+                                    'id' => $field_name,
+                                    'type' => 'text',
+                                    'caption' => t('all','NasIPHost'),
+                                 );
+        
+        $options = $valid_values;                         
+        if (count($options) > 0) {
+            $input_descriptor['datalist'] = $options;
+        } else {
+            $input_descriptor['disabled'] = true;
+        }
+        
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = $input_descriptor;
 
-                    <label for="<?= "$field_name-id" ?>" class="form"><?= t('all','NasIPHost') ?></label>
-                    <input list="<?= "$field_name-list" ?>" name="<?= $field_name . "[]" ?>"
-                        type="text" id="<?= "$field_name-id" ?>" tabindex="101">
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+                                  
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+    
+?>
+
+<form method="POST">
+    <fieldset>
+        <h302><?= t('title','NASInfo') ?></h302>
+        
+        <ul style="margin: 10px auto">
 <?php
-        if (count($valid_values) > 0) {
-            printf('<datalist id="%s">', "$field_name-list");
-            foreach ($valid_values as $value) {
-                printf('<option value="%s"></option>', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
-            }
-            echo '</datalist>';
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
         }
 ?>
 
-                </fieldset>
-                
-                
-                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" tabindex="102" class="button">
-
-            </form>
+        </ul>
+    </fieldset>
+</form>
 <?php
     }
 ?>
-</div><!-- #contentnorightbar -->
+        </div><!-- #contentnorightbar -->
         
         <div id="footer">
 <?php

@@ -26,6 +26,11 @@
 
     include('library/check_operator_perm.php');
 
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
@@ -54,8 +59,8 @@
     //   - for table ordering purpose
     // - its value can be used for table headings presentation
     $cols = array(
-                    "id" => t('all','ID'),
-                    t('all','Name'),
+                    "selected",
+                    "fullname" => t('all','Name'),
                     "username" => t('all','Username'),
                  );
 
@@ -117,7 +122,7 @@
 
         // we execute and log the actual query
         // sql1 get id, username, password, firstname and lastname
-        $sql1 = sprintf("SELECT DISTINCT(rc.username) AS username, rc.value AS auth, rc.id AS id, ui.firstname, ui.lastname
+        $sql1 = sprintf("SELECT rc.username AS username, rc.value AS auth, CONCAT(ui.firstname, ' ', ui.lastname) AS fullname
                            FROM %s AS rc, %s AS ui
                           WHERE rc.username=ui.username
                             AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')
@@ -125,7 +130,7 @@
                         $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
                         $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql1);
-        $logDebugSQL = "$sql1;\n";
+        $logDebugSQL .= "$sql1;\n";
         
         $per_page_numrows = $res->numRows();
         
@@ -139,10 +144,13 @@
             // and the groups list is empty
             $this_username = $row['username'];
             
+            if (array_key_exists($this_username, $records)) {
+                continue;
+            }
+            
             $records[$this_username] = array(
                 'auth' => $row['auth'],
-                'id' => intval($row['id']),
-                'fullname' => $row['firstname'] . " " . $row['lastname'],
+                'fullname' => $row['fullname'],
                 'enabled' => true,
                 'groups' => array()
             );
@@ -168,9 +176,13 @@
                            htmlspecialchars($this_groupname, ENT_QUOTES, 'UTF-8'));
             }
         }
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-del.php";
 ?>
 
-<form name="listall" method="GET" action="mng-del.php">
+<form name="listall" method="GET" action="<?= $action ?>">
 
     <table border="0" class="table1">
         <thead>
@@ -193,7 +205,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('username[]', 'mng-del.php')
+        printTableFormControls('username[]', $action);
 ?>
                     <input class="button" type="button" value="Disable"
                         onclick="javascript:disableCheckbox('listall','include/management/userOperations.php')">
@@ -213,6 +225,7 @@
 
         <tbody>
 <?php
+        $count = 0;
         foreach ($records as $username => $data) {
             $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
             
@@ -225,7 +238,6 @@
             
             $fullname = htmlspecialchars($data['fullname'], ENT_QUOTES, 'UTF-8');
             $grouplist = implode("<br>", $data['groups']);
-            $id = $data['id'];
             
             // tooltip and ajax stuff
             $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
@@ -242,8 +254,9 @@
 ?>
             <tr>
                 <td>
-                    <input type="checkbox" name="username[]" id="<?= "checkbox$id" ?>" value="<?= $username ?>">
-                    <label for="<?= "checkbox$id" ?>"><?= $id ?></label>
+                    <label for="<?= "checkbox-$count" ?>">
+                        <input type="checkbox" name="username[]" id="<?= "checkbox-$count" ?>" value="<?= $username ?>">
+                    </label>
                     </td>
                 <td><?= "$fullname" ?></td>
                 <td><?= "$img $tooltip" ?></td>
@@ -270,30 +283,16 @@
         include_once("include/management/actionMessages.php");
     }
     
-    include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    include('library/closedb.php');    
 
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

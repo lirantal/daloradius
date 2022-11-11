@@ -31,44 +31,22 @@ include_once("lang/main.php");
 
 $m_active = "Billing";
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-    <head>
-        <title>daloRADIUS :: <?= $m_active ?></title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+include_once("include/menu/menu-items.php");
+include_once("include/menu/billing-subnav.php");
 
-        <link rel="stylesheet" href="css/1.css" media="screen">
-        <link rel="stylesheet" href="library/js_date/datechooser.css">
-        <!--[if lte IE 6.5]>
-        <link rel="stylesheet" href="library/js_date/select-free.css">
-        <![endif]-->
+$showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
+$chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 
-        <script src="library/js_date/date-functions.js"></script>
-        <script src="library/js_date/datechooser.js"></script>
-    </head>
+$hotspot_options = "";
 
-    <body>
-        <div id="wrapper">
-            <div id="innerwrapper">
-
-<?php
-    include_once("include/menu/menu-items.php");
-	include_once("include/menu/billing-subnav.php");
-    
-    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
-    
-    $hotspot_options = "";
-    
-    include('library/opendb.php');
-    $sql = sprintf("select name from %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-	$res = $dbSocket->query($sql);
-    while($row = $res->fetchRow()) {
-        $name = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-        $hotspot_options .= sprintf('<option value="%s">%s</option>', $name, $name);
-	}
-    include('library/closedb.php');
+include('library/opendb.php');
+$sql = sprintf("select name from %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+$res = $dbSocket->query($sql);
+while($row = $res->fetchRow()) {
+    $name = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+    $hotspot_options .= sprintf('<option value="%s">%s</option>', $name, $name);
+}
+include('library/closedb.php');
     
 ?>      
 

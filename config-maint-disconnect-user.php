@@ -91,133 +91,167 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','configmaintdisconnectuser.php');
     $help = t('helpPage','configmaintdisconnectuser');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-config-maint.php");
-    include_once("library/tabber/tab-layout.php");
+    
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
+    
+    include('library/opendb.php');
+
+    // get the list of online users
+    $sql = sprintf("SELECT DISTINCT(username)
+                    FROM %s
+                    WHERE AcctStopTime IS NULL
+                       OR AcctStopTime = '0000-00-00 00:00:00'", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+
+    $options = array();
+    while ($row = $res->fetchRow()) {
+        $options[] = $row[0];
+    }
+
+    $input_descriptors1 = array();
+    $tmp = array(
+                    "name" => "username",
+                    "caption" => t('all','Username'),
+                    "type" => "text",
+                );
+    
+    if (count($options) > 0) {
+        $tmp['datalist'] = $options;
+        if (isset($username) && in_array($username, $options)) {
+            $tmp['value'] = $username;
+        }
+    } else {
+        $tmp['disabled'] = true;
+    }
+    
+    $input_descriptors1[] = $tmp;
+    
+    $input_descriptors1[] = array( "name" => "packettype", "caption" => t('all','PacketType'), "type" => "select",
+                                   "options" => array(
+                                                        "disconnect" => 'PoD - Packet of Disconnect',
+                                                        "coa" => 'CoA - Change of Authorization'
+                                                     ),
+                                 );
+
+    $input_descriptors1[] = array( "name" => "nasaddr", "type" => "hidden", "value" => $nasaddr );
+
+    // Grabing the group lists from usergroup table
+    $sql = sprintf("SELECT DISTINCT(nasname), shortname, secret FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
+    $res = $dbSocket->query($sql);
+
+    $options = array();
+    while ($row = $res->fetchRow()) {
+        $value = sprintf("%s||%s", $row[0], $row[2]);
+        $label = sprintf("%s - %s", $row[1], $row[0]);
+        $options[$value] = $label;
+    }
+
+    include('library/closedb.php');
+
+    $tmp = array( "name" => "nasaddrlist", "caption" => t('all','NasIPHost'), "type" => "select",
+                  "onchange" => "setStringTextMulti(this.id, 'nasaddr', 'nassecret')",
+                );
+
+    if (count($options) > 0) {
+        $tmp['options'] = $options;
+    } else {
+        $tmp['disabled'] = true;
+    }
+
+    $input_descriptors1[] = $tmp;
+
+    $input_descriptors1[] = array( "name" => "nassecret", "type" => "hidden", "value" => "" );
+    $input_descriptors1[] = array( "name" => "nasport", "type" => "hidden", "value" => "" );
+    
+    $input_descriptors1[] = array( "name" => "nasportlist", "caption" => t('all','NasPorts'), "type" => "select",
+                                   "onchange" => "setStringText(this.id, 'nasport')", "options" => array( "3799", "1700" ),
+                                 );
+
+    $input_descriptors1[] = array( "name" => "customattributes", "caption" => t('all','customAttributes'),
+                                   "type" => "textarea", "content" => $customAttributes
+                                 );
+
+    $input_descriptors2 = array();
+    $input_descriptors2[] = array( "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"), );
+    $input_descriptors2[] = array( "name" => "timeout", "caption" => t('all','Timeout'), "type" => "number", "value" => "3", "min" => "1", );
+    $input_descriptors2[] = array( "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0", );
+    $input_descriptors2[] = array( "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1", );
+    $input_descriptors2[] = array( "name" => "requests", "caption" => t('all','Requests'), "type" => "number", "value" => "3", "min" => "1", );
+    
+    $button_descriptor = array(
+                                "type" => "submit",
+                                "name" => "submit",
+                                "value" => t('button','DisconnectUser')
+                              );
+
+    // set navbar stuff
+    $navbuttons = array(
+                          'Settings-tab' => t('title','Settings'),
+                          'Advanced-tab' => t('title','Advanced'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
 ?>
 
 <form name="maintdisconnectuser" method="POST">
-    <div class="tabber">
-        <div class="tabbertab" title="<?= t('title','Settings') ?>">
-            <fieldset>
+    <div id="Settings-tab" class="tabcontent" style="display: block">
+        <fieldset>
 
-                <h302><?= t('title','Settings') ?></h302>
-                <br>
-
-                <label for="username" class="form"><?= t('all','Username')?></label>
-                <input name="username" type="text" id="usernameEdit" autocomplete="off"
-                    tooltipText='<?= t('Tooltip','Username') ?> <br>'
-                    value="<?= (isset($username)) ? $username : "" ?>" tabindex="101">
-                
-                <br>
-                    
-                <label for="packettype" class="form"><?= t('all','PacketType') ?></label>
-                <select name="packettype" id="packettype" class="form" tabindex="102">
-                    <option value="disconnect"> PoD - Packet of Disconnect </option>
-                    <option value="coa"> CoA - Change of Authorization &nbsp;</option>
-                </select>
-                
-                <br>
-
-                <label for="nasaddr" class="form"><?= t('all','NasIPHost') ?></label>
-                <input name="nasaddr" type="hidden" id="nasaddr" value='<?= $nasaddr ?>' tabindex="103">
-
-                <select onchange="javascript:setStringTextMulti(this.id,'nasaddr','nassecret')"
-                    id="naslist" tabindex="104"  class="form">
-                    <option value=""> Choose NAS... </option>
+            <h302><?= t('title','Settings') ?></h302>
+            
+            <ul style="margin: 30px auto">
 <?php
-
-        include('library/opendb.php');
-
-        // Grabing the group lists from usergroup table
-        $sql = "SELECT distinct(nasname), shortname, secret FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].";";
-        $res = $dbSocket->query($sql);
-
-        while ($row = $res->fetchRow()) {
-            echo "<option value='$row[0]||$row[2]'> $row[1] - $row[0]</option>";
-        }
-
-        include('library/closedb.php');
+                foreach ($input_descriptors1 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
 ?>
-                </select>
+            </ul>
 
-                <br>
-
-                <input name="nassecret" type="hidden" type="hidden" id="nassecret" value="" tabindex="105">
-                <label for="nasport" class="form"><?= t('all','NasPorts') ?></label>
-                <input name="nasport" type="hidden" id="nasport" value="3799" tabindex="106">
-                
-                <select onChange="javascript:setStringText(this.id,'nasport')" id="nasportlist" tabindex="107" 
-                    class="form">
-                    <option value="3799"> Choose Port... </option>
-                    <option value="3799"> 3799 </option>
-                    <option value="1700"> 1700 </option>
-                </select>
-                
-                <br>
-
-                <label for="customattributes" class="form"><?= t('all','customAttributes') ?></label>
-                <textarea class="form" name="customattributes" tabindex="108"><?= $customAttributes ?></textarea>
-
-                <br><br><hr><br>
-
-                <input type="submit" name="submit" value='<?= t('button','DisconnectUser') ?>' class="button" tabindex="109">
-
-            </fieldset>
-        </div>
+        </fieldset>
+    </div><!-- #Settings-tab -->
 
 
-        <div class="tabbertab" title="<?= t('title','Advanced') ?>">
+    <div id="Advanced-tab" class="tabcontent" title="<?= t('title','Advanced') ?>">
 
-            <fieldset>
+        <fieldset>
 
-                <h302><?= t('title','Advanced') ?></h302>
+            <h302><?= t('title','Advanced') ?></h302>
 
-                <br>
+            <ul style="margin: 30px auto">
+<?php
+                foreach ($input_descriptors2 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
+            </ul>
 
-                <label for="debug" class="form"><?= t('all','Debug') ?></label>
-                <select name="debug" id="debug" class="form" tabindex="110">
-                    <option value="yes"> Yes </option>
-                    <option value="no"> No </option>
-                </select>
-                
-                <br>
+        </fieldset>
+    </div><!-- #Advanced-tab -->
 
-                <label for="timeout" class="form"><?= t('all','Timeout') ?></label>
-                <input name="timeout" type="number" id="timeout" value="3" tabindex="111">
-                <br>
+<?php
+        print_form_component($button_descriptor);
+?>
 
-                <label for="retries" class="form"><?= t('all','Retries') ?></label>
-                <input name="retries" type="number" id="retries" value="3" tabindex="112">
-                <br>
-
-                <label for="count" class="form"><?= t('all','Count') ?></label>
-                <input name="count" type="number" id="count" value="1" tabindex="113">
-                <br>
-
-                <label for="requests" class="form"><?= t('all','Requests') ?></label>
-                <input name="requests" type="number" id="requests" value="3" tabindex="114">
-                <br>
-
-                <br><br>
-                <hr><br>
-
-                <input type="submit" name="submit" value='<?= t('button','DisconnectUser') ?>' class="button">
-
-            </fieldset>
-
-        </div>
-    </div><!-- .tabber -->
-    
 </form>
 
         </div><!-- #contentnorightbar -->
@@ -230,18 +264,6 @@
         </div><!-- #footer -->
     </div>
 </div>
-
-<?php
-    include_once("include/management/autocomplete.php");
-
-    if ($autoComplete) {
-        echo "<script>
-                /** Making usernameEdit interactive **/
-                autoComEdit = new DHTMLSuite.autoComplete();
-                autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-                </script>";
-    } 
-?>
 
 </body>
 </html>

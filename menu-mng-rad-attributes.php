@@ -31,22 +31,11 @@ include_once("lang/main.php");
 
 $m_active = "Management";
 
+include_once("include/menu/menu-items.php");
+include_once("include/menu/management-subnav.php");
+include_once("include/management/autocomplete.php");
 ?>
-
-<body>
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
-    <link rel="stylesheet" tabindex="" href="css/form-field-tooltip.css" media="screen">
-
-    <div id="wrapper">
-        <div id="innerwrapper">
-
-<?php
-    include_once("include/menu/menu-items.php");
-	include_once("include/menu/management-subnav.php");
-	include_once("include/management/autocomplete.php");
-?>
-		
+        
             <div id="sidebar">
 
                 <h2>Management</h2>

@@ -33,9 +33,6 @@ $m_active = "Config";
 
 ?>
 
-<body>
-    <div id="wrapper">
-        <div id="innerwrapper">
 		
 <?php
     include_once ("include/menu/menu-items.php");
@@ -62,7 +59,8 @@ $m_active = "Config";
                             <b>&raquo;</b><?= t('button','EditOperator') ?>
                         </a>
                         <form name="mngedit" action="config-operators-edit.php" method="GET" class="sidebar">
-                            <input name="operator_username" type="text" tooltipText="<?= t('Tooltip','OperatorName'); ?><br>">
+                            <input name="operator_username" value="<?= (isset($edit_operator_username)) ? $edit_operator_username : "" ?>"
+                                type="text" tooltipText="<?= t('Tooltip','OperatorName') ?>">
                         </form>
                     </li>
                     <li>

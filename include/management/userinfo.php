@@ -1,154 +1,171 @@
 <?php
-/*********************************************************************
-* Name: userinfo.php
-* Author: Liran tal <liran.tal@gmail.com>
-* 
-* This file extends the user management pages (new user, batch add
-* users, edit user, quick add user and possibly others) by adding
-* a section for user information
-*
-*********************************************************************/
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Description:    This file extends the user management pages
+ *                 (new user, batch addusers, edit user, quick add user and possibly others)
+ *                 by adding a section for user information
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-echo "
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/management/userinfo.php') !== false) {
+    header("Location: ../../index.php");
+    exit;
+}
+
+    $input_descriptors1 = array();
+
+    $input_descriptors1[] = array(
+                                    'id' => 'firstname',
+                                    'name' => 'firstname',
+                                    'caption' => t('ContactInfo','FirstName'),
+                                    'type' => 'text',
+                                    'value' => ((isset($ui_firstname)) ? $ui_firstname : ''),
+                                );
+
+    $input_descriptors1[] = array(
+                                    'id' => 'lastname',
+                                    'name' => 'lastname',
+                                    'caption' => t('ContactInfo','LastName'),
+                                    'type' => 'text',
+                                    'value' => ((isset($ui_lastname)) ? $ui_lastname : ''),
+                                );
+
+    $input_descriptors1[] = array(
+                                    'id' => 'email',
+                                    'name' => 'email',
+                                    'caption' => t('ContactInfo','Email'),
+                                    'type' => 'text',
+                                    'value' => ((isset($ui_email)) ? $ui_email : ''),
+                                );
+    
+    $input_descriptors1[] = array(
+                                    'id' => 'copycontact',
+                                    'name' => 'copycontact',
+                                    'caption' => 'Copy contact information to billing',
+                                    'type' => 'checkbox',
+                                    'onclick' => 'copyUserBillInfo(this)'
+                                 );
+
+    $input_descriptors2 = array();
+    $input_descriptors2[] = array( 'id' => 'department', 'caption' => t('ContactInfo','Department'), 'type' => 'text',
+                                   'value' => ((isset($ui_department)) ? $ui_department : ''), 'name' => 'department' );
+    $input_descriptors2[] = array( 'id' => 'company', 'caption' => t('ContactInfo','Company'), 'type' => 'text',
+                                   'value' => ((isset($ui_company)) ? $ui_company : ''), 'name' => 'company' );
+    $input_descriptors2[] = array( 'id' => 'workphone', 'caption' => t('ContactInfo','WorkPhone'), 'type' => 'text',
+                                   'value' => ((isset($ui_workphone)) ? $ui_workphone : ''), 'name' => 'workphone' );
+    $input_descriptors2[] = array( 'id' => 'homephone', 'caption' => t('ContactInfo','HomePhone'), 'type' => 'text',
+                                   'value' => ((isset($ui_homephone)) ? $ui_homephone : ''), 'name' => 'homephone' );
+    $input_descriptors2[] = array( 'id' => 'mobilephone', 'caption' => t('ContactInfo','MobilePhone'), 'type' => 'text',
+                                   'value' => ((isset($ui_mobilephone)) ? $ui_mobilephone : ''), 'name' => 'mobilephone' );
+    $input_descriptors2[] = array( 'id' => 'address', 'caption' => t('ContactInfo','Address'), 'type' => 'text',
+                                   'value' => ((isset($ui_address)) ? $ui_address : ''), 'name' => 'address' );
+    $input_descriptors2[] = array( 'id' => 'city', 'caption' => t('ContactInfo','City'), 'type' => 'text',
+                                   'value' => ((isset($ui_city)) ? $ui_city : ''), 'name' => 'city' );
+    $input_descriptors2[] = array( 'id' => 'state', 'caption' => t('ContactInfo','State'), 'type' => 'text',
+                                   'value' => ((isset($ui_state)) ? $ui_state : ''), 'name' => 'state' );
+    $input_descriptors2[] = array( 'id' => 'country', 'caption' => t('ContactInfo','Country'), 'type' => 'text',
+                                   'value' => ((isset($ui_country)) ? $ui_country : ''), 'name' => 'country' );
+    $input_descriptors2[] = array( 'id' => 'zip', 'caption' => t('ContactInfo','Zip'), 'type' => 'text',
+                                   'value' => ((isset($ui_zip)) ? $ui_zip : ''), 'name' => 'zip' );
+
+    $input_descriptors3 = array();
+    
+    $input_descriptors3[] = array(
+                                    "type" => "textarea",
+                                    "id" => "notes",
+                                    "name" => "notes",
+                                    "caption" => t('ContactInfo','Notes'),
+                                    "content" => ((isset($ui_notes)) ? $ui_notes : "")
+                                 );
+    
+    $input_descriptors3[] = array( 'id' => 'userupdate', 'caption' => t('ContactInfo','EnableUserUpdate'),
+                                   'type' => 'checkbox', 'name' => 'changeUserInfo',
+                                   'value' => ((isset($ui_changeuserinfo)) ? $ui_changeuserinfo : ''),
+                                   'checked' => ($ui_changeuserinfo == 1) );
+
+    $input_descriptors3[] = array( 'id' => 'userupdate', 'caption' => t('ContactInfo','EnablePortalLogin'),
+                                   'type' => 'checkbox', 'name' => 'enableUserPortalLogin',
+                                   'value' => ((isset($ui_enableUserPortalLogin)) ? $ui_enableUserPortalLogin : ''),
+                                   'checked' => ($ui_enableUserPortalLogin == 1) );
+
+    $input_descriptors3[] = array( 'id' => 'portalLoginPassword', 'caption' => t('ContactInfo','PortalLoginPassword'),
+                                   'type' => 'text', 'name' => 'portalLoginPassword',
+                                   'value' => ((isset($ui_PortalLoginPassword)) ? $ui_PortalLoginPassword : '') );
+
+    $input_descriptors3[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($ui_creationdate)) ? $ui_creationdate : '') );
+
+    $input_descriptors3[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($ui_creationby)) ? $ui_creationby : '') );
+
+    $input_descriptors3[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($ui_updatedate)) ? $ui_updatedate : '') );
+
+    $input_descriptors3[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($ui_updateby)) ? $ui_updateby : '') );
+?>
 
 <fieldset>
-	
-	<h302> Contact Info </h302>
-	<br/>
+    
+    <h302><?= t('title','ContactInfo') ?></h302>
+    
+    <h301>Personal</h301>
+    
+    <ul>
 
-	<h301> Personal </h301>
-	<br/>
+<?php
 
-	<label for='username' class='form'>".t('ContactInfo','FirstName')."</label>
-        <input value='"; if (isset($ui_firstname)) echo $ui_firstname; echo "' name='firstname' id='firstname' tabindex=300 />
-	<br/>
-	
-	<label for='lastname' class='form'>".t('ContactInfo','LastName')."</label>
-        <input value='"; if (isset($ui_lastname)) echo $ui_lastname; echo "' name='lastname' id='lastname' tabindex=301 />
-	<br/>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
 
-	<label for='email' class='form'>".t('ContactInfo','Email')."</label>
-        <input value='"; if (isset($ui_email)) echo $ui_email; echo "' name='email' id='email' tabindex=302 />
-        <br/>
+?>
+    </ul>
 
-		<br/>
-	 
-	<label for='copycontact' class='form'> Copy contact information to billing </label>
-		<input type='checkbox' name='copycontact' id='copycontact' onClick='copyUserBillInfo(this);'/>
-		<br/>
-		<br/>
-		
-	<br/>
-	<h301> Business </h301>
-	<br/>
+    <h301><?= t('all','Business') ?></h301>
 
-	<label for='department' class='form'>".t('ContactInfo','Department')."</label>
-        <input value='"; if (isset($ui_department)) echo $ui_department; echo "' name='department' tabindex=303 />
-        <br/>
+    <ul>
+<?php
 
-	<label for='company' class='form'>".t('ContactInfo','Company')."</label>
-	<input value='"; if (isset($ui_company)) echo $ui_company; echo "' name='company' id='company' tabindex=304 />
-        <br/>
+    foreach ($input_descriptors2 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
 
-	<label for='workphone' class='form'>".t('ContactInfo','WorkPhone')."</label>
-	<input value='"; if (isset($ui_workphone)) echo $ui_workphone; echo "' name='workphone' id='workphone' tabindex=305 />
-        <br/>
+?>
+    </ul>
 
-	<label for='homephone' class='form'>".t('ContactInfo','HomePhone')."</label>
-	<input value='"; if (isset($ui_homephone)) echo $ui_homephone; echo "' name='homephone' tabindex=306 />
-        <br/>
+    <h301>Other</h301>
 
-	<label for='mobilephone' class='form'>".t('ContactInfo','MobilePhone')."</label>
-	<input value='"; if (isset($ui_mobilephone)) echo $ui_mobilephone; echo "' name='mobilephone' tabindex=307 />
-        <br/>
+    <ul>
 
-	<label for='address' class='form'>".t('ContactInfo','Address')."</label>
-	<input value='"; if (isset($ui_address)) echo $ui_address; echo "' name='address' id='address' tabindex=308 />
-        <br/>
+<?php
+    foreach ($input_descriptors3 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+?>
 
-	<label for='city' class='form'>".t('ContactInfo','City')."</label>
-	<input value='"; if (isset($ui_city)) echo $ui_city; echo "' name='city' id='city' tabindex=309 />
-        <br/>
-
-	<label for='state' class='form'>".t('ContactInfo','State')."</label>
-	<input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' id='state' tabindex=310 />
-        <br/>
-        
-	<label for='country' class='form'>".t('ContactInfo','Country')."</label>
-	<input value='"; if (isset($ui_country)) echo $ui_country; echo "' name='country' id='country' tabindex=310 />
-        <br/>
-
-	<label for='zip' class='form'>".t('ContactInfo','Zip')."</label>
-	<input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' id='zip' tabindex=311 />
-        <br/>
-
-	<br/>
-	<h301> Other </h301>
-	<br/>
-
-	<label for='notes' class='form'>".t('ContactInfo','Notes')."</label>
-	<textarea class='form' name='notes' tabindex=312 >"; if (isset($ui_notes)) echo $ui_notes; echo "</textarea> 
-        <br/>
-
-"; // breaking echo
-
-	if ($ui_changeuserinfo == 1) {
-		$isUIChecked = "checked='yes'";
-		$ui_changeuserinfo = 1;
-	} else {
-		$ui_changeuserinfo = 1;
-		$isUIChecked = "";
-	}
-
-
-	if ($ui_enableUserPortalLogin == 1) {
-		$isenableUserPortalLogin = "checked='yes'";
-		$ui_enableUserPortalLogin = 1;
-	} else {
-		$ui_enableUserPortalLogin = 1;
-		$isenableUserPortalLogin = "";
-	}
-	
-echo "
-
-	<label for='userupdate' class='form'>".t('ContactInfo','EnableUserUpdate')."</label>
-	<input type='checkbox' class='form' name='changeUserInfo' value='$ui_changeuserinfo' $isUIChecked tabindex=313 />
-        <br/>
-        
-	<label for='userupdate' class='form'>".t('ContactInfo','EnablePortalLogin')."</label>
-	<input type='checkbox' class='form' name='enableUserPortalLogin' value='$ui_enableUserPortalLogin' $isenableUserPortalLogin tabindex=313 />
-        <br/>
-
-	<label for='portalLoginPassword' class='form'>".t('ContactInfo','PortalLoginPassword')."</label>
-	<input name='portalLoginPassword' id='portalLoginPassword' value='"; if (isset($ui_PortalLoginPassword)) echo $ui_PortalLoginPassword; echo "' tabindex=314 />
-        <br/>
-
-	<br/>
-	<label for='creationdate' class='form'>".t('all','CreationDate')."</label>
-	<input disabled value='"; if (isset($ui_creationdate)) echo $ui_creationdate; echo "' tabindex=314 />
-        <br/>
-
-	<label for='creationby' class='form'>".t('all','CreationBy')."</label>
-	<input disabled value='"; if (isset($ui_creationby)) echo $ui_creationby; echo "' tabindex=315 />
-        <br/>
-
-	<label for='updatedate' class='form'>".t('all','UpdateDate')."</label>
-	<input disabled value='"; if (isset($ui_updatedate)) echo $ui_updatedate; echo "' tabindex=316 />
-        <br/>
-
-	<label for='updateby' class='form'>".t('all','UpdateBy')."</label>
-	<input disabled value='"; if (isset($ui_updateby)) echo $ui_updateby; echo "' tabindex=317 />
-        <br/>
-
-	<br/>
-	<hr><br/>
-
-	$customApplyButton
-
+    </ul>
 </fieldset>
 
-";
-
-
-
+<?php
+    echo $customApplyButton;
 ?>

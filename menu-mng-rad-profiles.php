@@ -32,9 +32,6 @@ include_once("lang/main.php");
 $m_active = "Management";
 
 ?>
-<body>
-    <div id="wrapper">
-        <div id="innerwrapper">
 
 <?php
     include_once("include/menu/menu-items.php");

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -23,36 +23,25 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    
+
     include_once('library/config_read.php');
     $log = "visited page: ";
+
+    include_once("lang/main.php");
     
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','acctmain.php');
+    $help = t('helpPage','acctmain');
+    
+    print_html_prologue($title, $langCode);
+
     include("menu-accounting.php");
-
-?>
-        <div id="contentnorightbar">
-        
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','acctmain.php') ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-                
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','acctmain') ?><br></div>
-            <br>
-
-        </div>
-        
-        <div id="footer">
     
-<?php
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-
-        </div>
-    </div>
-</div>
-
-</body>
-</html>

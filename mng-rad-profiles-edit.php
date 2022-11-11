@@ -15,38 +15,43 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+    
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
-	include('library/check_operator_perm.php');
+    $profile = $_REQUEST['profile'];
 
-	$profile = $_REQUEST['profile'];
-	$logAction = "";
-	$logDebugSQL = "";
+    if (isset($_REQUEST['submit'])) {
+        $profile = $_REQUEST['profile'];
 
-	if (isset($_REQUEST['submit'])) {
-		$profile = $_REQUEST['profile'];
+        include 'library/opendb.php';
 
-		include 'library/opendb.php';
+        if ($profile != "") {
+            foreach( $_POST as $element=>$field ) {
+                switch ($element) {
+                    case "submit":
+                    case "profile":
+                            $skipLoopFlag = 1;
+                            break;
+                }
 
-		if ($profile != "") {
-			foreach( $_POST as $element=>$field ) {
-				switch ($element) {
-					case "submit":
-					case "profile":
-							$skipLoopFlag = 1;
-							break;
-				}
-
-				if ($skipLoopFlag == 1) {
-					$skipLoopFlag = 0;
-					continue;
-				}
+                if ($skipLoopFlag == 1) {
+                    $skipLoopFlag = 0;
+                    continue;
+                }
 
                                 if (isset($field[0])) {
                                         if (preg_match('/__/', $field[0]))
@@ -60,129 +65,136 @@
                                         }
                                 }
 
-				if (isset($field[1]))
-					$value = $field[1];
-				if (isset($field[2]))
-					$op = $field[2];
-				if (isset($field[3]))
-					$table = $field[3];
+                if (isset($field[1]))
+                    $value = $field[1];
+                if (isset($field[2]))
+                    $op = $field[2];
+                if (isset($field[3]))
+                    $table = $field[3];
 
-				if ($table == 'check')
-					$table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-				if ($table == 'reply')
-					$table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
+                if ($table == 'check')
+                    $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+                if ($table == 'reply')
+                    $table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
 
-				if (!($value))
-					continue;
+                if (!($value))
+                    continue;
 
-				$value = $dbSocket->escapeSimple($value);
+                $value = $dbSocket->escapeSimple($value);
 
-				$sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile).
-						"' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-				if ($res->numRows() == 0) {
+                $sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile).
+                        "' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
+                if ($res->numRows() == 0) {
 
-					/* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
-					$sql = "INSERT INTO $table (id,GroupName,Attribute,op,Value) ".
-							" VALUES (0,'".$dbSocket->escapeSimple($profile)."', '".
-							$dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+                    /* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
+                    $sql = "INSERT INTO $table (id,GroupName,Attribute,op,Value) ".
+                            " VALUES (0,'".$dbSocket->escapeSimple($profile)."', '".
+                            $dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= $sql . "\n";
 
-				} else {
+                } else {
 
-					/* we update the $value[0] entry which is the attribute's value */
-					$sql = "UPDATE $table SET Value='$value' WHERE GroupName='".
-							$dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'".
-							" AND id=".$dbSocket->escapeSimple($columnId);
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+                    /* we update the $value[0] entry which is the attribute's value */
+                    $sql = "UPDATE $table SET Value='$value' WHERE GroupName='".
+                            $dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'".
+                            " AND id=".$dbSocket->escapeSimple($columnId);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= $sql . "\n";
 
-					/* then we update $value[1] which is the attribute's operator */
-					$sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
-							"' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".
-							$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+                    /* then we update $value[1] which is the attribute's operator */
+                    $sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
+                            "' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".
+                            $dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= $sql . "\n";
 
-				}
+                }
 
-			} //foreach $_POST
+            } //foreach $_POST
 
-			$successMsg = "Updated attributes for: <b> $profile </b>";
-			$logAction .= "Successfully updates attributes for profile [$profile] on page:";
+            $successMsg = "Updated attributes for: <b> $profile </b>";
+            $logAction .= "Successfully updates attributes for profile [$profile] on page:";
 
-		include 'library/closedb.php';
+        include 'library/closedb.php';
 
-		} else { // $profile is empty
+        } else { // $profile is empty
 
-			$failureMsg = "profile name is empty";
-			$logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
+            $failureMsg = "profile name is empty";
+            $logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
 
-		}
-
-
-	}
+        }
 
 
-	include_once('library/config_read.php');
-    $log = "visited page: ";
+    }
 
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js",
+        "library/javascript/ajaxGeneric.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','mngradprofilesedit.php');
+    $help = t('helpPage','mngradprofilesedit');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+
+    if (isset($profile)) {
+        $title .= ":: $profile";
+    } 
+
+    include("menu-mng-rad-profiles.php");
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    include_once('include/management/actionMessages.php');
+    
+    $input_descriptors2 = array();
+    $input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
+    $input_descriptors2[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
+    $input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
+    $input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
+                                   'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+    
+    // set navbar stuff
+    $navbuttons = array(
+                          'RADIUSCheck-tab' => t('title','RADIUSCheck'),
+                          'RADIUSReply-tab' => t('title','RADIUSReply'),
+                          'Attributes-tab' => t('title','Attributes'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
 
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
+<form name="mngradprofiles" method="POST">
+    <input type="hidden" value="<?php echo $profile ?>" name="profile" />
 
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
-
-
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
-
-<?php
-        include_once ("library/tabber/tab-layout.php");
-?>
-
-<?php
-	include ("menu-mng-rad-profiles.php");
-?>
-
-	<div id="contentnorightbar">
-
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradprofilesedit.php') ?>
-		:: <?php if (isset($profile)) { echo $profile; } ?><h144>&#x2754;</h144></a></h2>
-
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngradprofilesedit') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-
-		<form name="mngradprofiles" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-			<input type="hidden" value="<?php echo $profile ?>" name="profile" />
-
-
-<div class="tabber">
-
-     <div class="tabbertab" title="<?php echo t('title','RADIUSCheck'); ?>">
+    <div class="tabcontent" id="RADIUSCheck-tab" style="display: block">
 
         <fieldset>
 
                 <h302> <?php echo t('title','RADIUSCheck')?> </h302>
                 <br/>
 
-		<ul>
+        <ul>
 <?php
 
 
@@ -200,16 +212,16 @@
                 $configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
                 " ON ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute=".
                 $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
-		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
-		" WHERE ".
+        " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
+        " WHERE ".
                 $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
 
         if ($numrows = $res->numRows() == 0) {
-			echo "<center>";
-			echo t('messages','noCheckAttributesForGroup');
-			echo "</center>";
+            echo "<center>";
+            echo t('messages','noCheckAttributesForGroup');
+            echo "</center>";
         }
 
         while($row = $res->fetchRow()) {
@@ -217,7 +229,7 @@
                 echo "<label class='attributes'>";
                 echo "<a class='tablenovisit' href='mng-rad-profiles-del.php?profile=$profile&attribute=$row[5]__$row[0]&tablename=radgroupcheck'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-		echo "</label>";
+        echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
                 echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
@@ -262,7 +274,7 @@
                         </div>
                 ");
 
-	}
+    }
 ?>
 
         <br/><br/>
@@ -270,19 +282,19 @@
         <br/>
         <input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
 
-	</ul>
+    </ul>
 
         </fieldset>
         </div>
 
-        <div class='tabbertab' title='<?php echo t('title','RADIUSReply')?>' >
+        <div class="tabcontent" id="RADIUSReply-tab">
 
         <fieldset>
 
                 <h302> <?php echo t('title','RADIUSReply')?> </h302>
                 <br/>
 
-		<ul>
+        <ul>
 
 <?php
 
@@ -295,8 +307,8 @@
                 $configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
                 " ON ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute=".
                 $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
-		" AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
-		" WHERE ".
+        " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
+        " WHERE ".
                 $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
         $res = $dbSocket->query($sql);
         $logDebugSQL .= $sql . "\n";
@@ -313,7 +325,7 @@
                 echo "<label class='attributes'>";
                 echo "<a class='tablenovisit' href='mng-rad-profiles-del.php?profile=$profile&attribute=$row[5]__$row[0]&tablename=radgroupreply'>
                                 <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-		echo "</label>";
+        echo "</label>";
                 echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
 
                 echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
@@ -368,48 +380,27 @@
         <input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
         <br/>
 
-	</ul>
+    </ul>
 
         </fieldset>
-	</div>
+    </div>
 
 <?php
-	include 'library/closedb.php';
+    include 'library/closedb.php';
 ?>
 
 
 
-     <div class="tabbertab" title="<?php echo t('title','Attributes'); ?>">
+     <div class="tabcontent" id="Attributes-tab">
         <?php
-			include_once('include/management/attributes.php');
+            include_once('include/management/attributes.php');
         ?>
      </div>
 
 
-</div>
-
-                                </form>
-
-
+</form>
 
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-
-</body>
-</html>

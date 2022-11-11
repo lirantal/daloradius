@@ -14,179 +14,200 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "radacctid";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-	
-
-
-	include_once('library/config_read.php');
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for hotspot comparison on page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','accthotspotcompare.php');
+    $help = t('helpPage','accthotspotcompare');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+
+    include("menu-accounting-hotspot.php"); 
+    
+    $cols = array(
+                    "hotspot" => t('all','HotSpot'),
+                    "uniqueusers" => t('all','UniqueUsers'),
+                    "totalhits" => t('all','TotalHits'),
+                    "avgsessiontime" => t('all','AverageTime'),
+                    "totaltime" => t('all','TotalTime'),
+                    "sumInputOctets" => "Total Uploads",
+                    "sumOutputOctets" => "Total Downloads"
+                 );
+
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "desc";
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+    
+    
+    $sql = sprintf("SELECT hs.name AS hotspot, COUNT(DISTINCT(UserName)) AS uniqueusers, COUNT(radacctid) AS totalhits,
+                           AVG(AcctSessionTime) AS avgsessiontime, SUM(AcctSessionTime) AS totaltime, 
+                           AVG(AcctInputOctets) AS avgInputOctets, SUM(AcctInputOctets) AS sumInputOctets,
+                           AVG(AcctOutputOctets) AS avgOutputOctets, SUM(AcctOutputOctets) AS sumOutputOctets
+                      FROM %s AS ra JOIN %s AS hs ON ra.calledstationid=hs.mac
+                     GROUP BY hotspot", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                        $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $numrows = $res->numRows();
+
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL = "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+
+        // set navbar stuff
+        $navbuttons = array(
+                                "AccountInfo-tab" => "Account Info",
+                                "Graph-tab" => "Graph"
+                           );
+
+        print_tab_navbuttons($navbuttons);
 
 ?>
 
+<div class="tabcontent" id="AccountInfo-tab" style="display: block">
+    <table border="0" class="table1">
+        <thead>
+            
 <?php
-	include("menu-accounting-hotspot.php");	
-?>
-
-<?php
-        include_once ("library/tabber/tab-layout.php");
-?>
-
-
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','accthotspotcompare.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-				
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','accthotspotcompare') ?>
-			<br/>
-		</div>
-		<br/>
-
-
-<div class="tabber">
-
-     <div class="tabbertab" title="Account Info">
-	 <br/>
-	 
-<?php
-
-	include 'library/opendb.php';
-	include 'include/management/pages_common.php';
-
-	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-		".name AS hotspot, count(distinct(UserName)) AS uniqueusers, count(radacctid) AS totalhits, ".
-		" avg(AcctSessionTime) AS avgsessiontime, sum(AcctSessionTime) AS totaltime, ".
-		" avg(AcctInputOctets) AS avgInputOctets, sum(AcctInputOctets) AS sumInputOctets, ".
-		" avg(AcctOutputOctets) AS avgOutputOctets, sum(AcctOutputOctets) AS sumOutputOctets ".
-		" FROM ".
-		$configValues['CONFIG_DB_TBL_RADACCT']." JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-		" on (".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid LIKE ".
-		$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac) GROUP BY ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-		".name  ORDER BY $orderBy $orderType;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-
-
-	
-        echo "<table border='0' class='table1'>\n";
-        echo "
-                        <thead>
-                                <tr>
-                                <th colspan='10'>".t('all','Records')."</th>
-                                </tr>
-                        </thead>
-                ";
-
-	if ($orderType == "asc") {
-			$orderType = "desc";
-	} else  if ($orderType == "desc") {
-			$orderType = "asc";
-	}
-	
-	echo "<thread> <tr>
-                <th scope='col'> 
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=$orderType\">
-			".t('all','HotSpot')."</a>
-			</th>
-			<th scope='col'> 
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=uniqueusers&orderType=$orderType\">
-			".t('all','UniqueUsers')."</a>
-			</th>
-			<th scope='col'> 
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalhits&orderType=$orderType\">
-			".t('all','TotalHits')."</a>
-			</th>
-			<th scope='col'> 
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=avgsessiontime&orderType=$orderType\">
-			".t('all','AverageTime')."</a>
-			</th>
-			<th scope='col'> 
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totaltime&orderType=$orderType\">
-			".t('all','TotalTime')."</a>
-			</th>
-			<th scope='col'> 
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=sumInputOctets&orderType=$orderType\">
-			Total Uploads</a>
-			</th>
-			<th scope='col'> 
-			<br/>
-			<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=sumOutputOctets&orderType=$orderType\">
-			Total Downloads</a>
-			</th>
-        </tr> </thread>";
-	while($row = $res->fetchRow()) {
-                echo "<tr>
-                        <td> $row[0] </td>
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td> ".time2str($row[3])." </td>
-                        <td> ".time2str($row[4])." </td>
-			<td> ".toxbyte($row[6])."</td>
-			<td> ".toxbyte($row[8])."</td>
-                </tr>";
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>' . '</tr>';
         }
-        echo "</table>";
 
-        include 'library/closedb.php';
+        // second line of table header
+        echo '<tr>';
+        printTableHead($cols, $orderBy, $orderType);
+        echo '</tr>';
+?>           
+            
+        </thead>
+     
+        <tbody>
+<?php
+        while ($row = $res->fetchRow()) {
+            echo '<tr>';
+            
+            printf('<td>%s</td>', htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8'));
+            printf('<td>%s</td>', htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8'));
+            printf('<td>%s</td>', htmlspecialchars($row[2], ENT_QUOTES, 'UTF-8'));
+            
+            printf('<td>%s</td>', htmlspecialchars(time2str($row[3]), ENT_QUOTES, 'UTF-8'));
+            printf('<td>%s</td>', htmlspecialchars(time2str($row[4]), ENT_QUOTES, 'UTF-8'));
+            
+            printf('<td>%s</td>', htmlspecialchars(toxbyte($row[6]), ENT_QUOTES, 'UTF-8'));
+            printf('<td>%s</td>', htmlspecialchars(toxbyte($row[8]), ENT_QUOTES, 'UTF-8'));
+            
+            echo '</tr>';
+            
+        }
 ?>
+        </tbody>
+        
+<?php
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+?>
+    </table>
+</div><!-- #AccountInfo-tab -->
 
-	</div>
+<div class="tabcontent" id="Graph-tab">
 
-     <div class="tabbertab" title="Graph">
+    <div style="text-align: center">
+        <img src="library/graphs-hotspot-compare-unique-users.php" style="margin: 30px auto">
+        <img src="library/graphs-hotspot-compare-hits.php" style="margin: 30px auto">
+        <img src="library/graphs-hotspot-compare-time.php" style="margin: 30px auto">
+    </div>
+
+</div>
 
 <?php
-	echo "<br/><br/><br/><center>";
-        echo "<img src=\"library/graphs-hotspot-compare-unique-users.php\" /><br/><br/>";
-        echo "<img src=\"library/graphs-hotspot-compare-hits.php\" /><br/><br/>";
-        echo "<img src=\"library/graphs-hotspot-compare-time.php\" /><br/><br/>";
-	echo "</center>";
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
 ?>
 
-	</div>
-
-</div>
-
-
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>
