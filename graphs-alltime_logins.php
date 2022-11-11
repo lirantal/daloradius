@@ -76,7 +76,7 @@
     print_tab_navbuttons($navbuttons);
 
 ?>
-            <div class="tabcontent" id="Graph-tab">
+            <div class="tabcontent" id="Graph-tab" style="display: block">
                 <div style="text-align: center; margin-top: 50px">
 <?php
     $alt = ucfirst($type) . " all-time login/hit statistics";
@@ -84,9 +84,9 @@
 ?>
                     <img alt="<?= $alt ?>" src="<?= $src ?>">
                 </div>
-            </div><!-- .tabbertab -->
+            </div><!-- #Graph-tab -->
 
-            <div class="tabcontent" title="Statistics-tab">    
+            <div class="tabcontent" id="Statistics-tab">    
                 <div style="margin-top: 50px">
 <?php
     include("library/tables-alltime-users-login.php");
@@ -102,20 +102,7 @@
                     </script>
 <?php
     }
-?>
-                </div>
-            </div><!-- .tabbertab -->
 
-        </div><!-- #contentnorightbar -->
-
-		<div id="footer">		
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-		</div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>
