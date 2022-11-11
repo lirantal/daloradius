@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,511 +15,528 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
-    include ("library/checklogin.php");
+
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	$username = "";
-	$password = "";
-	$maxallsession = "";
-	$expiration = "";
-	$sessiontimeout = "";
-	$idletimeout = "";
-	$ui_changeuserinfo = "0";
-	$bi_changeuserbillinfo = "0";
-	
-	$logAction = "";
-	$logDebugSQL = "";
-
-	if (isset($_POST['submit'])) {
-		$username = $_POST['username'];
-		$password = $_POST['password'];
-		$passwordType = $_POST['passwordType'];
-		$groups = $_POST['groups'];
-		$maxallsession = $_POST['maxallsession'];
-		$expiration = $_POST['expiration'];
-		$sessiontimeout = $_POST['sessiontimeout'];
-		$idletimeout = $_POST['idletimeout'];
-		$simultaneoususe = $_POST['simultaneoususe'];
-		$framedipaddress = $_POST['framedipaddress'];
-
-
-		isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
-		isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = " ";
-		isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
-		isset($_POST['department']) ? $department = $_POST['department'] : $department = "";
-		isset($_POST['company']) ? $company = $_POST['company'] : $company = "";
-		isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone =  "";
-		isset($_POST['homephone']) ? $homephone = $_POST['homephone'] : $homephone = "";
-		isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
-	    isset($_POST['address']) ? $address = $_POST['address'] : $address = "";
-	    isset($_POST['city']) ? $city = $_POST['city'] : $city = "";
-	    isset($_POST['state']) ? $state = $_POST['state'] : $state = "";
-	    isset($_POST['country']) ? $country = $_POST['country'] : $country = "";
-	    isset($_POST['zip']) ? $zip = $_POST['zip'] : $zip = "";
-		isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
-		isset($_POST['changeuserinfo']) ? $ui_changeuserinfo = $_POST['ui_changeuserinfo'] : $ui_changeuserinfo = "0";
-		isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
-		isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
-		
-	    isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
-	    isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
-	    isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
-	    isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
-	    isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
-	    isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
-	    isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
-	    isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
-	    isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
-	    isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
-	    isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
-	    isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
-	    isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
-	    isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
-	    isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
-	    isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
-	    isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
-	    isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
-	    
-		include 'library/opendb.php';
-		
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='$username'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-
-		if ($res->numRows() == 0) {
-		
-			if (trim($username) != "" and trim($password) != "") {
-
-				$password = $dbSocket->escapeSimple($password);
-
-                                switch($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) {
-                                	case "cleartext":
-                        	                $dbPassword = "'$password'";
-                                                break;
-                                        case "crypt":
-                                                $dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
-                                                break;
-                                        case "md5":
-                                                $dbPassword = "MD5('$password')";
-                                                break;
-                                        default:
-                                                $dbPassword = "'$password'";
-                                }
-
-				// insert username/password
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-						" (id,Username,Attribute,op,Value) ".
-						" VALUES (0, '".$dbSocket->escapeSimple($username)."', '$passwordType', ".
-						" ':=', $dbPassword)";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-	
-				if ($maxallsession) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Max-All-Session', ':=', '".
-							$dbSocket->escapeSimple($maxallsession)."')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
-
-				if ($expiration) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Expiration', ':=', '".
-							$dbSocket->escapeSimple($expiration)."')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
-
-				if ($sessiontimeout) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." (id,Username,Attribute,op,Value) ".
-							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Session-Timeout', ':=', '".
-							$dbSocket->escapeSimple($sessiontimeout)."')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
-
-				if ($idletimeout) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." (id,Username,Attribute,op,Value) ".
-							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Idle-Timeout', ':=', '".
-							$dbSocket->escapeSimple($idletimeout)."')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
-
-				if ($simultaneoususe) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id,Username,Attribute,op,Value) ".
-							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Simultaneous-Use', ':=', '".
-							$dbSocket->escapeSimple($simultaneoususe)."')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
-
-				if ($framedipaddress) {
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADREPLY']." (id,Username,Attribute,op,Value) ".
-							" VALUES (0, '".$dbSocket->escapeSimple($username)."', 'Framed-IP-Address', ':=', '".
-							$dbSocket->escapeSimple($framedipaddress)."')";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-				}
-
-				if (isset($groups)) {
-
-		                        foreach ($groups as $group) {
-
-		                                if (trim($group) != "") {
-		                                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-		                                                " VALUES ('".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($group)."',0) ";
-		                                        $res = $dbSocket->query($sql);
-		                                        $logDebugSQL .= $sql . "\n";
-		                                }
-		                        }
-				}
-
-				//insert userinfo
-				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
-
-				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-						" WHERE username='".$dbSocket->escapeSimple($username)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-				// if there were no records for this user present in the userinfo table
-				if ($res->numRows() == 0) {
-					// insert user information table
-					$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-							" (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-							" mobilephone, address, city, state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
-							" VALUES (0,
-							'".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
-							$dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
-							$dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
-							$dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-							$dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($address)."', '".
-							$dbSocket->escapeSimple($city)."', '".$dbSocket->escapeSimple($state)."', '".
-							$dbSocket->escapeSimple($country)."', '".
-							$dbSocket->escapeSimple($zip)."', '".$dbSocket->escapeSimple($notes)."', '".
-							$dbSocket->escapeSimple($ui_changeuserinfo)."', '".
-							$dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
-							"', '$currDate', '$currBy', NULL, NULL)";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-
-				}
-
-
-		                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-		                                " WHERE username='".$dbSocket->escapeSimple($username)."'";
-		                $res = $dbSocket->query($sql);
-		                $logDebugSQL .= $sql . "\n";
-		
-		                // if there were no records for this user present in the userbillinfo table
-		                if ($res->numRows() == 0) {
-		                        // insert user billing information table
-		                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-		                                " (id, username, contactperson, company, email, phone, ".
-		                                " address, city, state, country, zip, ".
-		                                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
-		                                " notes, changeuserbillinfo, ".
-		                                " creationdate, creationby, updatedate, updateby) ".
-		                                " VALUES (0,
-		                                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
-		                                $dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
-		                                $dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
-		                                $dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
-		                                $dbSocket->escapeSimple($bi_country)."', '".
-		                                $dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
-		                                $dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
-		                                $dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
-	                	                $dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
-		                                $dbSocket->escapeSimple($bi_notes)."', '".
-		                                $dbSocket->escapeSimple($bi_changeuserbillinfo).
-		                                "', '$currDate', '$currBy', NULL, NULL)";
-			                        $res = $dbSocket->query($sql);
-		                        $logDebugSQL .= $sql . "\n";
-		                }
-
-				$successMsg = "Added to database new user: <b> $username </b>";
-				$logAction .= "Successfully added new user [$username] on page: ";
-			} else {
-				$failureMsg = "username or password are empty";
-				$logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
-			}
-		} else { 
-			$failureMsg = "user already exist in database: <b> $username </b>";
-			$logAction .= "Failed adding new user already existing in database [$username] on page: ";
-		}
-		
-		include 'library/closedb.php';
-
-	}
-
-
-
-
-	include_once('library/config_read.php');
+    // init logging variables
     $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
-	
-	if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes")
-		$hiddenPassword = "type=\"password\"";
+    $username = "";
+    $password = "";
+    $maxallsession = "";
+    $expiration = "";
+    $sessiontimeout = "";
+    $idletimeout = "";
+    $ui_changeuserinfo = "0";
+    $bi_changeuserbillinfo = "0";
 
+    // whitelists used for validation/presentation purposes
+    $valid_passwordTypes = array(
+                                    "Cleartext-Password",
+                                    "User-Password",
+                                    "Crypt-Password",
+                                    "MD5-Password",
+                                    "SHA1-Password",
+                                    "CHAP-Password"
+                                 );
+    
+    if (isset($_POST['submit'])) {
+        // required later
+        $currDate = date('Y-m-d H:i:s');
+        $currBy = $operator;
+    
+        // TODO validate user input
+        $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
+                  ? trim(str_replace("%", "", $_POST['username'])) : "";
+        $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+        // search:  \$([A-Za-z0-9_]+)\s+=\s+\$_POST\[\'([A-Za-z0-9_]+)\'\];
+        // replace: $\1 = (array_key_exists('\2', $_POST) && isset($_POST['\2'])) ? $_POST['\2'] : "";
+
+        $password = (array_key_exists('password', $_POST) && isset($_POST['password'])) ? trim($_POST['password']) : "";
+        $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
+                         in_array($_POST['passwordType'], $valid_passwordTypes)) ? $_POST['passwordType'] : "";
+        $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
+        $maxallsession = (array_key_exists('maxallsession', $_POST) && isset($_POST['maxallsession'])) ? $_POST['maxallsession'] : "";
+        $expiration = (array_key_exists('expiration', $_POST) && isset($_POST['expiration'])) ? $_POST['expiration'] : "";
+        $sessiontimeout = (array_key_exists('sessiontimeout', $_POST) && isset($_POST['sessiontimeout'])) ? $_POST['sessiontimeout'] : "";
+        $idletimeout = (array_key_exists('idletimeout', $_POST) && isset($_POST['idletimeout'])) ? $_POST['idletimeout'] : "";
+        $simultaneoususe = (array_key_exists('simultaneoususe', $_POST) && isset($_POST['simultaneoususe'])) ? $_POST['simultaneoususe'] : "";
+        $framedipaddress = (array_key_exists('framedipaddress', $_POST) && isset($_POST['framedipaddress'])) ? $_POST['framedipaddress'] : "";
+
+        // search:  isset\(\$_POST\[\'([A-Za-z0-9_]+)\'\]\)\s+\?\s+\$([A-Za-z0-9_]+).*
+        // replace: $\2 = (array_key_exists('\1', $_POST) && isset($_POST['\1'])) ? $_POST['\1'] : "";
+
+        $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
+        $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
+        $email = (array_key_exists('email', $_POST) && isset($_POST['email'])) ? $_POST['email'] : "";
+        $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? $_POST['department'] : "";
+        $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? $_POST['company'] : "";
+        $workphone = (array_key_exists('workphone', $_POST) && isset($_POST['workphone'])) ? $_POST['workphone'] : "";
+        $homephone = (array_key_exists('homephone', $_POST) && isset($_POST['homephone'])) ? $_POST['homephone'] : "";
+        $mobilephone = (array_key_exists('mobilephone', $_POST) && isset($_POST['mobilephone'])) ? $_POST['mobilephone'] : "";
+        $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? $_POST['address'] : "";
+        $city = (array_key_exists('city', $_POST) && isset($_POST['city'])) ? $_POST['city'] : "";
+        $state = (array_key_exists('state', $_POST) && isset($_POST['state'])) ? $_POST['state'] : "";
+        $country = (array_key_exists('country', $_POST) && isset($_POST['country'])) ? $_POST['country'] : "";
+        $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
+        $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
+        $ui_changeuserinfo = (array_key_exists('changeuserinfo', $_POST) && isset($_POST['changeuserinfo'])) ? $_POST['changeuserinfo'] : "0";
+        $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
+        $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
+
+        // billing info variables
+        $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
+        $bi_company = (array_key_exists('bi_company', $_POST) && isset($_POST['bi_company'])) ? $_POST['bi_company'] : "";
+        $bi_email = (array_key_exists('bi_email', $_POST) && isset($_POST['bi_email'])) ? $_POST['bi_email'] : "";
+        $bi_phone = (array_key_exists('bi_phone', $_POST) && isset($_POST['bi_phone'])) ? $_POST['bi_phone'] : "";
+        $bi_address = (array_key_exists('bi_address', $_POST) && isset($_POST['bi_address'])) ? $_POST['bi_address'] : "";
+        $bi_city = (array_key_exists('bi_city', $_POST) && isset($_POST['bi_city'])) ? $_POST['bi_city'] : "";
+        $bi_state = (array_key_exists('bi_state', $_POST) && isset($_POST['bi_state'])) ? $_POST['bi_state'] : "";
+        $bi_country = (array_key_exists('bi_country', $_POST) && isset($_POST['bi_country'])) ? $_POST['bi_country'] : "";
+        $bi_zip = (array_key_exists('bi_zip', $_POST) && isset($_POST['bi_zip'])) ? $_POST['bi_zip'] : "";
+        $bi_paymentmethod = (array_key_exists('bi_paymentmethod', $_POST) && isset($_POST['bi_paymentmethod'])) ? $_POST['bi_paymentmethod'] : "";
+        $bi_cash = (array_key_exists('bi_cash', $_POST) && isset($_POST['bi_cash'])) ? $_POST['bi_cash'] : "";
+        $bi_creditcardname = (array_key_exists('bi_creditcardname', $_POST) && isset($_POST['bi_creditcardname'])) ? $_POST['bi_creditcardname'] : "";
+        $bi_creditcardnumber = (array_key_exists('bi_creditcardnumber', $_POST) && isset($_POST['bi_creditcardnumber'])) ? $_POST['bi_creditcardnumber'] : "";
+        $bi_creditcardverification = (array_key_exists('bi_creditcardverification', $_POST) && isset($_POST['bi_creditcardverification'])) ? $_POST['bi_creditcardverification'] : "";
+        $bi_creditcardtype = (array_key_exists('bi_creditcardtype', $_POST) && isset($_POST['bi_creditcardtype'])) ? $_POST['bi_creditcardtype'] : "";
+        $bi_creditcardexp = (array_key_exists('bi_creditcardexp', $_POST) && isset($_POST['bi_creditcardexp'])) ? $_POST['bi_creditcardexp'] : "";
+        $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
+        $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
+        
+        include('library/opendb.php');
+        
+        // check if username is already present in the radcheck table
+        $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
+                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username));
+        $res = $dbSocket->query($sql);
+        $userExists = (intval($res->fetchrow()[0]) > 0);
+        $logDebugSQL .= "$sql;\n";
+
+        if ($userExists) {
+            $failureMsg = "user already exist in database: <b> $username_enc </b>";
+            $logAction .= "Failed adding new user already existing in database [$username] on page: ";
+        } else {
+            
+            // username and password are required
+            if (empty($username) || empty($password)) {
+                $failureMsg = "username and/or password are empty";
+                $logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
+            } else {
+            
+                $password = $dbSocket->escapeSimple($password);
+
+                switch (strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) {
+                    case "crypt":
+                        $dbPassword = sprintf("ENCRYPT('%s', 'SALT_DALORADIUS')", $password);
+                        break;
+                    
+                    case "md5":
+                        $dbPassword = sprintf("MD5('%s')", $password);
+                        break;
+                        
+                    default:
+                    case "cleartext":
+                        $dbPassword = sprintf("'%s'", $password);
+                }
+
+                // left piece of the query which is the same for all common check attributes
+                $sql0 = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES ",
+                                $configValues['CONFIG_DB_TBL_RADCHECK']);
+
+                $sql_piece_format = "(0, '%s', '%s', ':=', %s)";
+                $sql_pieces = array();
+
+                // insert username/password
+                $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($username),
+                                                           $dbSocket->escapeSimple($passwordType),
+                                                           $dbPassword);
+                
+                if ($maxallsession) {
+                    $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($username),
+                                                               'Max-All-Session',
+                                                               $dbSocket->escapeSimple($maxallsession));
+                }
+
+                if ($expiration) {
+                    $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($username),
+                                                               'Expiration',
+                                                               $dbSocket->escapeSimple($expiration));
+                }
+
+                if ($sessiontimeout) {
+                    $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($username),
+                                                               'Session-Timeout',
+                                                               $dbSocket->escapeSimple($sessiontimeout));
+                }
+
+                if ($idletimeout) {
+                    $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($username),
+                                                               'Idle-Timeout',
+                                                               $dbSocket->escapeSimple($idletimeout));
+                }
+
+                if ($simultaneoususe) {
+                    $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($username),
+                                                               'Simultaneous-Use',
+                                                               $dbSocket->escapeSimple($simultaneoususe));
+                }
+                
+                if ($framedipaddress) {
+                    $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($username),
+                                                               'Framed-IP-Address',
+                                                               $dbSocket->escapeSimple($framedipaddress));
+                }
+
+                if (count($sql_pieces) > 0) {
+                    $sql = $sql0 . implode(", ", $sql_pieces);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                }
+                
+                // check if any group should be added
+                if (count($groups) > 0) {
+                    foreach ($groups as $group) {
+                        $group = trim($group);
+                        
+                        if (empty($group)) {
+                            continue;
+                        }
+
+                        $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
+                                       $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                       $dbSocket->escapeSimple($username),
+                                       $dbSocket->escapeSimple($group));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                    }
+                }
+                
+                // insert userinfo
+                $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($username));
+                $res = $dbSocket->query($sql);
+                $userinfoExist = intval($res->fetchrow()[0]) > 0;
+                $logDebugSQL .= "$sql;\n";
+                
+                // if there were no records for this user present in the userinfo table
+                if (!$userinfoExist) {
+                    // insert user information table
+                    $sql = sprintf("INSERT INTO %s (id, username, firstname, lastname, email, department, company,
+                                                    workphone, homephone,  mobilephone, address, city, state, country,
+                                                    zip, notes, changeuserinfo, portalloginpassword, enableportallogin,
+                                                    creationdate, creationby, updatedate, updateby) 
+                                           VALUES (0, '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s', 
+                                                   '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s',  '%s', '%s',
+                                                   '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                                                       $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($firstname),
+                                                                       $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($email),
+                                                                       $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company),
+                                                                       $dbSocket->escapeSimple($workphone), $dbSocket->escapeSimple($homephone),
+                                                                       $dbSocket->escapeSimple($mobilephone), $dbSocket->escapeSimple($address),
+                                                                       $dbSocket->escapeSimple($city), $dbSocket->escapeSimple($state),
+                                                                       $dbSocket->escapeSimple($country), $dbSocket->escapeSimple($zip),
+                                                                       $dbSocket->escapeSimple($notes), $dbSocket->escapeSimple($ui_changeuserinfo),
+                                                                       $dbSocket->escapeSimple($ui_PortalLoginPassword),
+                                                                       $dbSocket->escapeSimple($ui_enableUserPortalLogin),
+                                                                       $dbSocket->escapeSimple($currDate), $dbSocket->escapeSimple($currBy));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                }
+                
+                // insert user billing info
+                $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $dbSocket->escapeSimple($username));
+                $res = $dbSocket->query($sql);
+                $userbillinfoExits = $res->fetchrow()[0];
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!$userbillinfoExits) {
+                    // insert user billing information table
+                    $sql = sprintf("INSERT INTO %s (id, username, contactperson, company, email, phone, address,
+                                                    city, state, country, zip, paymentmethod, cash, creditcardname,
+                                                    creditcardnumber, creditcardverification, creditcardtype,
+                                                    creditcardexp, notes, changeuserbillinfo, creationdate,
+                                                    creationby, updatedate, updateby)
+                                           VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+                                                   '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+                                                   NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                                                 $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($bi_contactperson),
+                                                                 $dbSocket->escapeSimple($bi_company), $dbSocket->escapeSimple($bi_email),
+                                                                 $dbSocket->escapeSimple($bi_phone), $dbSocket->escapeSimple($bi_address),
+                                                                 $dbSocket->escapeSimple($bi_city), $dbSocket->escapeSimple($bi_state),
+                                                                 $dbSocket->escapeSimple($bi_country), $dbSocket->escapeSimple($bi_zip),
+                                                                 $dbSocket->escapeSimple($bi_paymentmethod), $dbSocket->escapeSimple($bi_cash),
+                                                                 $dbSocket->escapeSimple($bi_creditcardname),
+                                                                 $dbSocket->escapeSimple($bi_creditcardnumber), 
+                                                                 $dbSocket->escapeSimple($bi_creditcardverification),
+                                                                 $dbSocket->escapeSimple($bi_creditcardtype),
+                                                                 $dbSocket->escapeSimple($bi_creditcardexp), $dbSocket->escapeSimple($bi_notes),
+                                                                 $dbSocket->escapeSimple($bi_changeuserbillinfo), $currDate, $currBy);
+                    
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                }
+                
+                $successMsg = "Added to database new user: <b> $username_enc </b>";
+                $logAction .= "Successfully added new user [$username] on page: ";
+            
+            } // if (empty($username) || empty($password)) {
+        
+        } // if ($userExists) {
+
+        include('library/closedb.php');
+    }
+
+    include_once('library/config_read.php');
+    
+    $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
+                    ? 'password' : 'text';
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js",
+        "library/javascript/productive_funcs.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','mngnewquick.php');
+    $help = t('helpPage','mngnewquick');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+
+    include("menu-mng-users.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    include_once('include/management/actionMessages.php');
+    
+    $input_descriptors = array();
+    
+    $input_descriptors[] = array(
+                                    "id" => "username",
+                                    "name" => "username",
+                                    "caption" => t('all','Username'),
+                                    "type" => "text",
+                                    "value" => "",
+                                    "random" => true,
+                                    "tooltipText" => t('Tooltip','usernameTooltip')
+                                 );
+                                
+    $input_descriptors[] = array(
+                                    "id" => "password",
+                                    "name" => "password",
+                                    "caption" => t('all','Password'),
+                                    "type" => $hiddenPassword,
+                                    "value" => "",
+                                    "random" => true,
+                                    "tooltipText" => t('Tooltip','passwordTooltip')
+                                 );
+    $input_descriptors[] = array(
+                                    "name" => "passwordType",
+                                    "caption" => t('all','PasswordType'),
+                                    "options" => $valid_passwordTypes,
+                                    "type" => "select"
+                                );
+
+    // draw navbar
+    $navbuttons = array(
+                          'AccountInfo-tab' => t('title','AccountInfo'),
+                          'UserInfo-tab' => t('title','UserInfo'),
+                          'BillingInfo-tab' => t('title','BillingInfo')
+                       );
+
+    print_tab_navbuttons($navbuttons);
 
 ?>
 
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
-</head>
-<script src="library/js_date/date-functions.js" type="text/javascript"></script>
-<script src="library/js_date/datechooser.js" type="text/javascript"></script>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/productive_funcs.js" type="text/javascript"></script>
-
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+<form name="newuser" method="POST">
+    <div id="AccountInfo-tab" class="tabcontent" title="<?= t('title','AccountInfo') ?>" style="display: block">
+        <fieldset>
+            <h302> <?= t('title','AccountInfo') ?> </h302>
+            <ul>
 
 <?php
-	include_once ("library/tabber/tab-layout.php");
+                    foreach ($input_descriptors as $input_descriptor) {
+                        print_form_component($input_descriptor);
+                    }
 ?>
 
-<?php
-
-	include ("menu-mng-users.php");
-	
+                <li class="fieldset">
+                    <label for="group" class="form"><?= t('all','Group')?></label>
+<?php   
+                    include_once('include/management/populate_selectbox.php');
+                    populate_groups("Select Groups","groups[]");
+                    
+                    $onclick = "javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',"
+                             . "genericCounter('divCounter')+'&elemName=groups[]');";
 ?>
 
-	<div id="contentnorightbar">
+                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>">Add</a>
+                    <img src="images/icons/comment.png" alt="Tip" border="0" onclick="javascript:toggleShowDiv('group')">
+                    <div id="divContainerGroups"></div>
 
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngnewquick.php') ?>
-		<h144>&#x2754;</h144></a></h2>
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngnewquick') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-		
-		<form name="newuser" action="mng-new-quick.php" method="post" >
-<div class="tabber">
+                    <div id="groupTooltip"  style='display:none;visibility:visible' class="ToolTip">
+                        <img src="images/icons/comment.png" alt="Tip" border="0">
+                        <?= t('Tooltip','groupTooltip') ?>
+                    </div>
+                </li>
 
-     <div class="tabbertab" title="<?php echo t('title','AccountInfo'); ?>">
+            </ul>
+        </fieldset>
 
         <fieldset>
 
-			<h302> <?php echo t('title','AccountInfo'); ?> </h302>
-			<br/>
-		
-		<ul>
+            <h302><?= t('title','Attributes') ?></h302>
 
-		<li class='fieldset'>
-		<label for='username' class='form'><?php echo t('all','Username')?></label>
-		<input name='username' type='text' id='username' value='' tabindex=100  />
-		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('username',8,<?php
-		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernameTooltip')" />
+            <ul>
 
-		<div id='usernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','usernameTooltip') ?>
-		</div>
-		</li>
+<?php
+    $input_descriptors = array();
 
-		<li class='fieldset'>
-		<label for='password' class='form'><?php echo t('all','Password')?></label>
-		<input name='password' type='text' id='password' value='' <?php if (isset($hiddenPassword)) 
-			echo $hiddenPassword ?> tabindex=101 />
-		<input type='button' value='Random' class='button' onclick="javascript:randomAlphanumeric('password',8,<?php
-		echo "'".$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']."'" ?>)" />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTooltip')" />
+    $input_descriptors[] = array(
+                                    "name" => "simultaneoususe",
+                                    "caption" => t('all','SimultaneousUse'),
+                                    "type" => "number",
+                                );
+    
+    $input_descriptors[] = array(
+                                    "name" => "framedipaddress",
+                                    "caption" => t('all','FramedIPAddress'),
+                                    "type" => "text",
+                                    "pattern" => "^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.){3}((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])$"
+                                );
+    
+    $input_descriptors[] = array(
+                                    "id" => "expiration",
+                                    "name" => "expiration",
+                                    "caption" => t('all','Expiration'),
+                                    "type" => "date",
+                                    "min" => "1970-01-01",
+                                    "max" => date('Y-m-d')
+                                    
+                                );
+    
+    foreach ($input_descriptors as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+                    
+    $time_values = array(
+                            "0" => "calculate time",
+                            "1" => "seconds",
+                            "60" => "minutes",
+                            "3600" => "hours",
+                            "86400" => "days",
+                            "604800" => "weeks",
+                            "2592000" => "months (30 days)",
+                        );
+                        
+    $select_descriptors = array();
+    $select_descriptors[] = array(
+                                    "id" => "sessiontimeout",
+                                    "name" => "sessiontimeout",
+                                    "caption" => t('all','SessionTimeout'),
+                                    "type" => "number",
+                                    "options" => $time_values
+                                 );
+                                 
+    $select_descriptors[] = array(
+                                    "id" => "idletimeout",
+                                    "name" => "idletimeout",
+                                    "caption" => t('all','IdleTimeout'),
+                                    "type" => "number",
+                                    "options" => $time_values
+                                 );
+                                 
+    $select_descriptors[] = array(
+                                "id" => "maxallsession",
+                                "name" => "idletimeout",
+                                "caption" => t('all','MaxAllSession'),
+                                "type" => "number",
+                                "options" => $time_values
+                             );
+                             
+    
+    foreach ($select_descriptors as $select_descriptor) {
+        print_calculated_select($select_descriptor);
+    }
 
-		<div id='passwordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','passwordTooltip') ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<label for='passwordType' class='form'><?php echo t('all','PasswordType')?> </label>
-		<select class='form' tabindex=102 name='passwordType' >
-			<option value='Cleartext-Password'>Cleartext-Password</option>
-			<option value='User-Password'>User-Password</option>
-			<option value='Crypt-Password'>Crypt-Password</option>
-			<option value='MD5-Password'>MD5-Password</option>
-			<option value='SHA1-Password'>SHA1-Password</option>
-			<option value='CHAP-Password'>CHAP-Password</option>
-		</select>
-		<br />
-		</li>
-
-		<li class='fieldset'>
-		<label for='group' class='form'><?php echo t('all','Group')?></label>
-		<?php   
-			include_once 'include/management/populate_selectbox.php';
-			populate_groups("Select Groups","groups[]");
-		?>
-
-                <a class='tablenovisit' href='#'
-                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter')+'&elemName=groups[]');">Add</a>
-
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
-
-                <div id='divContainerGroups'>
-                </div>
+    $button_descriptor = array(
+                            'type' => 'submit',
+                            'name' => 'submit',
+                            'value' => t('buttons','apply'),
+                            'onclick' => 'javascript:small_window(document.newuser.username.value,
+                                                                  document.newuser.password.value,
+                                                                  document.newuser.maxallsession.value)'
+                          );
 
 
-		<div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','groupTooltip') ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-		<br/>
-                <hr><br/>
-		<input type="submit" name="submit" value="<?php echo t('buttons','apply')?>" 
-			onclick = "javascript:small_window(document.newuser.username.value, 
-			document.newuser.password.value, document.newuser.maxallsession.value);" tabindex=10000 class='button' />
-		</li>
-		</ul>
+?>
+            <ul>
         </fieldset>
 
-	<br/>
-
-	<fieldset>
-
-		<h302> <?php echo t('title','Attributes'); ?> </h302>
-	<br/>
-
-		<label for='simultaneoususe' class='form'><?php echo t('all','SimultaneousUse')?></label>
-		<input name='simultaneoususe' type='text' value='' tabindex=106 />
-		<br/>
-
-		<label for='framedipaddress' class='form'><?php echo t('all','FramedIPAddress')?></label>
-		<input name='framedipaddress' type='text' value='' tabindex=107 />
-		<br/>
-
-		<label for='expiration' class='form'><?php echo t('all','Expiration')?></label>		
-		<input value='' id='expiration' name='expiration'  tabindex=108 />
-		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'expiration', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'd M Y', false);">
-		<br/>
-
-		<label for='sessiontimeout' class='form'><?php echo t('all','SessionTimeout')?></label>
-		<input value='' id='sessiontimeout' name='sessiontimeout'  tabindex=109 />
-		<select onChange="javascript:setText(this.id,'sessiontimeout')" id="option0" class='form' >
-			<option value="1">calculate time</option>
-			<option value="1">seconds</option>
-			<option value="60">minutes</option>
-			<option value="3600">hours</option>
-			<option value="86400">days</option>
-			<option value="604800">weeks</option>
-			<option value="2592000">months (30 days)</option>
-		</select>
-		<br/>
-
-		<label for='idletimeout' class='form'><?php echo t('all','IdleTimeout')?></label>
-		<input value='' id='idletimeout' name='idletimeout'  tabindex=110 />
-		<select onChange="javascript:setText(this.id,'idletimeout')" id="option1" class='form' >
-			<option value="1">calculate time</option>
-			<option value="1">seconds</option>
-			<option value="60">minutes</option>
-			<option value="3600">hours</option>
-			<option value="86400">days</option>
-			<option value="604800">weeks</option>
-			<option value="2592000">months (30 days)</option>
-		</select>
-		<br/>
-
-		<label for='maxallsession' class='form'><?php 
-			echo t('all','MaxAllSession') ?></label>
-		<input value='' id='maxallsession' name='maxallsession'  tabindex=111 />
-		<select onChange="javascript:setText(this.id,'maxallsession')" id="option2" class='form' >
-			<option value="1">calculate time</option>
-			<option value="1">seconds</option>
-			<option value="60">minutes</option>
-			<option value="3600">hours</option>
-			<option value="86400">days</option>
-			<option value="604800">weeks</option>
-			<option value="2592000">months (30 days)</option>
-		</select>
-		<br/>
-
-		<br/>	
-	</fieldset>
-
-	<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
-
-        </div>
-
-
-     <div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
-
-        <?php
-		$customApplyButton = "<input type=\"submit\" name=\"submit\" value=\"".t('buttons','apply')."\"
-		                        onclick = \"javascript:small_window(document.newuser.username.value,
-		                        document.newuser.password.value, document.newuser.maxallsession.value);\" tabindex=10000
-		                        class='button' />";
-
-                include_once('include/management/userinfo.php');
-        ?>
-
-     </div>
-
-
-
-        <div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
-        <?php
-                $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
-                include_once('include/management/userbillinfo.php');
-        ?>
-        </div>
-
-
-</div>
-
-		</form>
-
-
 <?php
-	include('include/config/logging.php');
+            print_form_component($button_descriptor);
 ?>
 
-		</div>
+    </div><!-- #AccountInfo-tab -->
 
-		<div id="footer">
-
+    <div id="UserInfo-tab" class="tabcontent" title="<?= t('title','UserInfo') ?>">
 <?php
-	include 'page-footer.php';
+            $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" ', t('buttons','apply'))
+                               . 'onclick="javascript:small_window(document.newuser.username.value, '
+                               . 'document.newuser.password.value, document.newuser.maxallsession.value);" '
+                               . 'class="button">';
+            include_once('include/management/userinfo.php');
 ?>
 
+        </div><!-- #UserInfo-tab -->
 
-		</div>
+        <div id="BillingInfo-tab" class="tabcontent" title="<?= t('title','BillingInfo') ?>">
+<?php
+            $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
+            include_once('include/management/userbillinfo.php');
+?>
 
+        </div><!-- #BillingInfo-tab -->
+        
+    
+</form>
+
+        </div><!-- #contentnorightbar -->
+
+        <div id="footer">
+<?php
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->       
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>
-
-
-
-
-

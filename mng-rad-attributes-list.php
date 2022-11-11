@@ -26,7 +26,11 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    include_once("lang/main.php");
+
+    // init loggin variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
 
     // get vendor name passed to us from menu-mng-rad-attributes.php
     $vendor = (array_key_exists('vendor', $_GET) && isset($_GET['vendor']))
@@ -68,7 +72,7 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
-               
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
@@ -147,6 +151,7 @@
         
         <tbody>
 <?php
+        $counter = 1;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -166,9 +171,9 @@
 ?>
             <tr>
                 <td>
-                    <input type="checkbox" name="vendor[]"
+                    <input type="checkbox" name="vendor[]" id="checkbox-<?= $counter ?>"
                         value="<?= urlencode($this_vendor) . "||" . urlencode($this_attribute) ?>">
-                    <?= $this_id ?>
+                    <label for="checkbox-<?= $counter ?>"><?= $this_id ?></label>
                 </td>
                 <td><?= $this_vendor ?></td>
                 <td>
@@ -179,13 +184,14 @@
             </tr>
         
 <?php
+            $counter++;
         }
 ?>
         </tbody>
 <?php
         // tfoot
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
 ?>
     </table>
 </form>
@@ -197,29 +203,15 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
 
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

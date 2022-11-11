@@ -15,205 +15,200 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
- * 			Filippo Maria Del Prete <filippo.delprete@gmail.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Maria Del Prete <filippo.delprete@gmail.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	isset($_POST['payment_invoice_id']) ? $payment_invoice_id = $_POST['payment_invoice_id'] : $payment_invoice_id = "";
-	isset($_POST['payment_amount']) ? $payment_amount = $_POST['payment_amount'] : $payment_amount = "";
-	isset($_POST['payment_date']) ? $payment_date = $_POST['payment_date'] : $payment_date = "";
-	isset($_POST['payment_type_id']) ? $payment_type_id = $_POST['payment_type_id'] : $payment_type_id = "";
-	isset($_POST['payment_notes']) ? $paymentnotes = $_POST['payment_notes'] : $payment_notes = "";
+    isset($_POST['payment_invoice_id']) ? $payment_invoice_id = $_POST['payment_invoice_id'] : $payment_invoice_id = "";
+    isset($_POST['payment_amount']) ? $payment_amount = $_POST['payment_amount'] : $payment_amount = "";
+    isset($_POST['payment_date']) ? $payment_date = $_POST['payment_date'] : $payment_date = "";
+    isset($_POST['payment_type_id']) ? $payment_type_id = $_POST['payment_type_id'] : $payment_type_id = "";
+    isset($_POST['payment_notes']) ? $paymentnotes = $_POST['payment_notes'] : $payment_notes = "";
 
-	$logAction = "";
-	$logDebugSQL = "";
+    $logAction = "";
+    $logDebugSQL = "";
 
-	if (isset($_POST["submit"])) {
-		$payment_invoice_id = $_POST['payment_invoice_id'];
-		$payment_amount = $_POST['payment_amount'];
-		$payment_date = $_POST['payment_date'];
-		$payment_type_id = $_POST['payment_type_id'];
-		$payment_notes = $_POST['payment_notes'];
-		
-		include 'library/opendb.php';
+    if (isset($_POST["submit"])) {
+        $payment_invoice_id = $_POST['payment_invoice_id'];
+        $payment_amount = $_POST['payment_amount'];
+        $payment_date = $_POST['payment_date'];
+        $payment_type_id = $_POST['payment_type_id'];
+        $payment_notes = $_POST['payment_notes'];
+        
+        include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE invoice_id=".$dbSocket->escapeSimple($payment_invoice_id)." AND amount=".$dbSocket->escapeSimple($payment_amount)." AND date='".$dbSocket->escapeSimple($payment_date)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE invoice_id=".$dbSocket->escapeSimple($payment_invoice_id)." AND amount=".$dbSocket->escapeSimple($payment_amount)." AND date='".$dbSocket->escapeSimple($payment_date)."'";
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= $sql . "\n";
 
-		if ($res->numRows() == 0) {
-			if (trim($payment_invoice_id) != "" and trim($payment_amount)!="" and trim($payment_date)!="") {
+        if ($res->numRows() == 0) {
+            if (trim($payment_invoice_id) != "" and trim($payment_amount)!="" and trim($payment_date)!="") {
 
-				$currDate = date('Y-m-d H:i:s');
-				$currBy = $_SESSION['operator_user'];
-				
-				// insert apyment type info
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
-					" (id, invoice_id, amount,date,type_id, notes, ".
-					"  creationdate, creationby, updatedate, updateby) ".
-					" VALUES (0, ".$dbSocket->escapeSimple($payment_invoice_id).", ".
-					"".$dbSocket->escapeSimple($payment_amount).", ".
-					"'".$dbSocket->escapeSimple($payment_date)."', ".
-					"'".$dbSocket->escapeSimple($payment_type_id)."', ".
-					"'".$dbSocket->escapeSimple($payment_notes)."', ".
-					" '$currDate', '$currBy', NULL, NULL)";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $_SESSION['operator_user'];
+                
+                // insert apyment type info
+                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
+                    " (id, invoice_id, amount,date,type_id, notes, ".
+                    "  creationdate, creationby, updatedate, updateby) ".
+                    " VALUES (0, ".$dbSocket->escapeSimple($payment_invoice_id).", ".
+                    "".$dbSocket->escapeSimple($payment_amount).", ".
+                    "'".$dbSocket->escapeSimple($payment_date)."', ".
+                    "'".$dbSocket->escapeSimple($payment_type_id)."', ".
+                    "'".$dbSocket->escapeSimple($payment_notes)."', ".
+                    " '$currDate', '$currBy', NULL, NULL)";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Added to database new payment for invoice: <b>$payment_invoice_id</b> <br/>";
-				$successMsg .= "<a href='bill-invoice-edit.php?invoice_id=$payment_invoice_id'> Show Invoice $payment_invoice_id </a>";
-				$logAction .= "Successfully added new payment for invoice [$payment_invoice_id] on page: ";
-				
-				
-			} else {
-				$failureMsg = "you must provide an invoice, an amount and a date ";	
-				$logAction .= "Failed adding new payment for invoice [$payment_invoice_id] on page: ";	
-			}
-		} else { 
-			$failureMsg = "You have tried to add a paymente that already exist in the database for the invoice: $payment_invoice_id";
-			$logAction .= "Failed adding new payment already in database for invoice [$payment_invoice_id] on page: ";		
-		}
-	
-		include 'library/closedb.php';
+                $successMsg = "Added to database new payment for invoice: <b>$payment_invoice_id</b> <br/>";
+                $successMsg .= "<a href='bill-invoice-edit.php?invoice_id=$payment_invoice_id'> Show Invoice $payment_invoice_id </a>";
+                $logAction .= "Successfully added new payment for invoice [$payment_invoice_id] on page: ";
+                
+                
+            } else {
+                $failureMsg = "you must provide an invoice, an amount and a date ";    
+                $logAction .= "Failed adding new payment for invoice [$payment_invoice_id] on page: ";    
+            }
+        } else { 
+            $failureMsg = "You have tried to add a paymente that already exist in the database for the invoice: $payment_invoice_id";
+            $logAction .= "Failed adding new payment already in database for invoice [$payment_invoice_id] on page: ";        
+        }
+    
+        include 'library/closedb.php';
 
-	}
+    }
 
-	isset($_GET['payment_invoice_id']) ? $invoice_id = $_GET['payment_invoice_id'] : $invoice_id = "";
-	isset($_GET['payment_date']) ? $payment_date = $_GET['payment_date'] : $payment_date = date('Y-m-d H:i:s');
-	
+    isset($_GET['payment_invoice_id']) ? $invoice_id = $_GET['payment_invoice_id'] : $invoice_id = "";
+    isset($_GET['payment_date']) ? $payment_date = $_GET['payment_date'] : $payment_date = date('Y-m-d H:i:s');
+    
 
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js",
+        "library/javascript/ajaxGeneric.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','paymentsnew.php');
+    $help = t('helpPage','paymentsnew');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+
+    include("menu-bill-payments.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
+    include_once('include/management/actionMessages.php');
+    
+    // set navbar stuff
+    $navbuttons = array(
+                          'PaymentInfo-tab' => t('title','PaymentInfo'),
+                          'Optional-tab' => t('title','Optional'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
 ?>
 
+<form method="POST">
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
-</head>
-<script src="library/js_date/date-functions.js" type="text/javascript"></script>
-<script src="library/js_date/datechooser.js" type="text/javascript"></script>
-<script type="text/javascript" src="library/javascript/pages_common.js"></script>
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
-<?php
-	include_once ("library/tabber/tab-layout.php");
-?>
- 
-<?php
+    <div class="tabcontent" id="PaymentInfo-tab" style="display: block">
 
-	include ("menu-bill-payments.php");
-	
-?>
+    <fieldset>
 
-<div id="contentnorightbar">
+        <h302> <?php echo t('title','PaymentInfo'); ?> </h302>
+        <br/>
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','paymentsnew.php') ?>
-	<h144>&#x2754;</h144></a></h2>
-	
-	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo t('helpPage','paymentsnew') ?>
-		<br/>
-	</div>
-	<?php
-		include_once('include/management/actionMessages.php');
-	?>
+        <ul>
 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        <li class='fieldset'>
+        <label for='name' class='form'><?php echo t('all','PaymentInvoiceID') ?></label>
+        <input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 />
+        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentInvoiceTooltip')" /> 
+        
+        <div id='paymentInvoiceTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+            <img src='images/icons/comment.png' alt='Tip' border='0' />
+            <?php echo t('Tooltip','paymentInvoiceTooltip') ?>
+        </div>
+        </li>
 
-<div class="tabber">
-
-	<div class="tabbertab" title="<?php echo t('title','PaymentInfo'); ?>">
-
-	<fieldset>
-
-		<h302> <?php echo t('title','PaymentInfo'); ?> </h302>
-		<br/>
-
-		<ul>
-
-		<li class='fieldset'>
-		<label for='name' class='form'><?php echo t('all','PaymentInvoiceID') ?></label>
-		<input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 />
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentInvoiceTooltip')" /> 
-		
-		<div id='paymentInvoiceTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','paymentInvoiceTooltip') ?>
-		</div>
-		</li>
-
-		<li class='fieldset'>
-   		<label for='payment_amount' class='form'><?php echo t('all','PaymentAmount') ?></label>
-   		<input class='integer5len' name='payment_amount' type='text' id='payment_amount' value='000.00' tabindex=103 />
+        <li class='fieldset'>
+           <label for='payment_amount' class='form'><?php echo t('all','PaymentAmount') ?></label>
+           <input class='integer5len' name='payment_amount' type='text' id='payment_amount' value='000.00' tabindex=103 />
                    <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('payment_amount','increment')" />
                    <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('payment_amount','decrement')"/>
-   		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" />
+           <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" />
    
-   		<div id='amountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-   			<img src='images/icons/comment.png' alt='Tip' border='0' />
-   			<?php echo t('Tooltip','amountTooltip') ?>
-   		</div>
-   		</li>
+           <div id='amountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+               <img src='images/icons/comment.png' alt='Tip' border='0' />
+               <?php echo t('Tooltip','amountTooltip') ?>
+           </div>
+           </li>
 
-		<label for='payment_date' class='form'><?php echo t('all','PaymentDate')?></label>
-   		<input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
-   		<img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
-		<br/>
+        <label for='payment_date' class='form'><?php echo t('all','PaymentDate')?></label>
+           <input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
+           <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
+        <br/>
 
-   		<li class='fieldset'>
-   		<label for='payment_type_id' class='form'><?php echo t('all','PaymentType')?></label>
-   		<?php
-   		        include_once('include/management/populate_selectbox.php');
-   		        populate_payment_type_id("Select Payment Type", "payment_type_id");
-   		?>
-   		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentTypeIdTooltip')" />
-   		<div id='paymentTypeIdTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-   			<img src='images/icons/comment.png' alt='Tip' border='0' />
-   			<?php echo t('Tooltip','paymentTypeIdTooltip') ?>
-   		</div>
-   		</li>
+           <li class='fieldset'>
+           <label for='payment_type_id' class='form'><?php echo t('all','PaymentType')?></label>
+           <?php
+                   include_once('include/management/populate_selectbox.php');
+                   populate_payment_type_id("Select Payment Type", "payment_type_id");
+           ?>
+           <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentTypeIdTooltip')" />
+           <div id='paymentTypeIdTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+               <img src='images/icons/comment.png' alt='Tip' border='0' />
+               <?php echo t('Tooltip','paymentTypeIdTooltip') ?>
+           </div>
+           </li>
 
-		<li class='fieldset'>
-		<label for='payment_notes' class='form'><?php echo t('all','PaymentNotes') ?></label>
-		<textarea name='payment_notes'  class='form' tabindex=101 ></textarea>
-		<img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentNotesTooltip')" /> 
-		
-		<div id='paymentNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-			<img src='images/icons/comment.png' alt='Tip' border='0' />
-			<?php echo t('Tooltip','paymentNotesTooltip') ?>
-		</div>
-		</li>
-	
-		<li class='fieldset'>
-		<br/>
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-		</li>
+        <li class='fieldset'>
+        <label for='payment_notes' class='form'><?php echo t('all','PaymentNotes') ?></label>
+        <textarea name='payment_notes'  class='form' tabindex=101 ></textarea>
+        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentNotesTooltip')" /> 
+        
+        <div id='paymentNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
+            <img src='images/icons/comment.png' alt='Tip' border='0' />
+            <?php echo t('Tooltip','paymentNotesTooltip') ?>
+        </div>
+        </li>
+    
+        <li class='fieldset'>
+        <br/>
+        <hr><br/>
+        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
+        </li>
 
-		</ul>
-	</fieldset>
+        </ul>
+    </fieldset>
 
-	</div>
+    </div>
 
 
-	<div class="tabbertab" title="<?php echo t('title','Optional'); ?>">
+    <div class="tabcontent" id="Optional-tab">
 
 <fieldset>
 
@@ -251,36 +246,23 @@
 </fieldset>
 
 
-	</div>
-	<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
+    </div>
+    <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
 </div>
 
-	</form>
+    </form>
 
+</div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-		
-		</div>
-		
-		<div id="footer">
-		
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>
-
-
-
-
-

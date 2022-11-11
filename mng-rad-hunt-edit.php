@@ -15,157 +15,151 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include('library/check_operator_perm.php');
+
+    include('library/check_operator_perm.php');
 
 
 
     include 'library/opendb.php';
 
-	$nasipaddress = "";
-	$nasportid = "";
-	$groupname = "";
+    $nasipaddress = "";
+    $nasportid = "";
+    $groupname = "";
 
-	isset($_REQUEST['nasipaddress']) ? $nasipaddress = $_REQUEST['nasipaddress'] : $nasipaddress = "";
-	isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "";
+    isset($_REQUEST['nasipaddress']) ? $nasipaddress = $_REQUEST['nasipaddress'] : $nasipaddress = "";
+    isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "";
 
-	$logAction = "";
-	$logDebugSQL = "";
+    $logAction = "";
+    $logDebugSQL = "";
 
-	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG']." WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress).
-			"' AND groupname='".$dbSocket->escapeSimple($groupname)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+    // fill-in nashost details in html textboxes
+    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG']." WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress).
+            "' AND groupname='".$dbSocket->escapeSimple($groupname)."'";
+    $res = $dbSocket->query($sql);
+    $logDebugSQL = "";
+    $logDebugSQL .= $sql . "\n";
 
-	$row = $res->fetchRow();		// array fetched with values from $sql query
+    $row = $res->fetchRow();        // array fetched with values from $sql query
 
-	// assignment of values from query to local variables
-	// to be later used in html to display on textboxes (input)
-	$groupname = $row[1];
-	$nasipaddress = $row[2];
-	$nasportid = $row[3];
-	
+    // assignment of values from query to local variables
+    // to be later used in html to display on textboxes (input)
+    $groupname = $row[1];
+    $nasipaddress = $row[2];
+    $nasportid = $row[3];
+    
 
-	if (isset($_POST['submit'])) {
-	
-		$nasipaddressold = $_REQUEST['nasipaddressold'];
-		$nasipaddress = $_REQUEST['nasipaddress'];
-		$nasportid = $_REQUEST['nasportid'];
-		$nasportidold = $_REQUEST['nasportidold'];
-		$groupname = $_REQUEST['groupname'];
+    if (isset($_POST['submit'])) {
+    
+        $nasipaddressold = $_REQUEST['nasipaddressold'];
+        $nasipaddress = $_REQUEST['nasipaddress'];
+        $nasportid = $_REQUEST['nasportid'];
+        $nasportidold = $_REQUEST['nasportidold'];
+        $groupname = $_REQUEST['groupname'];
 
-			
-		include 'library/opendb.php';
+            
+        include 'library/opendb.php';
 
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG'].
-		" WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddressold).
-		"' AND nasportid='". $dbSocket->escapeSimple($nasportidold)."' ";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
+        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG'].
+        " WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddressold).
+        "' AND nasportid='". $dbSocket->escapeSimple($nasportidold)."' ";
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= $sql . "\n";
 
-		if ($res->numRows() == 1) {
+        if ($res->numRows() == 1) {
 
-			if (trim($nasipaddress) != "" and trim($groupname) != "") {
+            if (trim($nasipaddress) != "" and trim($groupname) != "") {
 
-				if (!$nasportid) {
-					$nasportid = 0;
-				}
+                if (!$nasportid) {
+                    $nasportid = 0;
+                }
 
-				// insert nas details
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADHG'].
-					" SET nasipaddress='".$dbSocket->escapeSimple($nasipaddress)."', ".
-					" groupname='".$dbSocket->escapeSimple($groupname)."', ".
-					" nasportid=".$dbSocket->escapeSimple($nasportid)." ".
-					" WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddressold)."'".
-					" AND nasportid='". $dbSocket->escapeSimple($nasportidold)."' ";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
+                // insert nas details
+                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADHG'].
+                    " SET nasipaddress='".$dbSocket->escapeSimple($nasipaddress)."', ".
+                    " groupname='".$dbSocket->escapeSimple($groupname)."', ".
+                    " nasportid=".$dbSocket->escapeSimple($nasportid)." ".
+                    " WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddressold)."'".
+                    " AND nasportid='". $dbSocket->escapeSimple($nasportidold)."' ";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= $sql . "\n";
 
-				$successMsg = "Updated HG settings in database: <b> $nasipaddress - $nasportid</b>  ";
-				$logAction .= "Successfully updated attributes for hg [$nasipaddress - $nasportid] on page: ";
-			} else {
-				$failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both hg Host and HG GroupName ";
-				$logAction .= "Failed updating attributes for hg [$nasipaddress - $nasportid] on page: ";
-			}
-			
-		} elseif ($res->numRows() > 1) {
-			$failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> already exists in the database
-			<br/> Please check that there are no duplicate entries in the database";
-			$logAction .= "Failed updating attributes for already existing hg [$nasipaddress - $nasportid] on page: ";
-		} else {
-			$failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> doesn't exist at all in the database.
-			<br/>Please re-check the nashost ou specified.";
-			$logAction .= "Failed updating empty nas on page: ";
-		}
+                $successMsg = "Updated HG settings in database: <b> $nasipaddress - $nasportid</b>  ";
+                $logAction .= "Successfully updated attributes for hg [$nasipaddress - $nasportid] on page: ";
+            } else {
+                $failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both hg Host and HG GroupName ";
+                $logAction .= "Failed updating attributes for hg [$nasipaddress - $nasportid] on page: ";
+            }
+            
+        } elseif ($res->numRows() > 1) {
+            $failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> already exists in the database
+            <br/> Please check that there are no duplicate entries in the database";
+            $logAction .= "Failed updating attributes for already existing hg [$nasipaddress - $nasportid] on page: ";
+        } else {
+            $failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> doesn't exist at all in the database.
+            <br/>Please re-check the nashost ou specified.";
+            $logAction .= "Failed updating empty nas on page: ";
+        }
 
-		include 'library/closedb.php';
-	}
+        include 'library/closedb.php';
+    }
 
-	if (isset($_REQUEST['nasipaddress']))
-		$nasipaddress = $_REQUEST['nasipaddress'];
-	else
-		$nasipaddress = "";
+    if (isset($_REQUEST['nasipaddress']))
+        $nasipaddress = $_REQUEST['nasipaddress'];
+    else
+        $nasipaddress = "";
 
-	if (trim($nasipaddress) == "") {
-		$failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both HG Host and HG GroupName";
-	}		
+    if (trim($nasipaddress) == "") {
+        $failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both HG Host and HG GroupName";
+    }        
 
-
-
-
-
-	include_once('library/config_read.php');
+    include_once('library/config_read.php');
     $log = "visited page: ";
 
-	
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','mngradhuntedit.php');
+    $help = t('helpPage','mngradhuntedit');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+
+    if (isset($nasipaddress)) {
+        $title .= ":: $nasipaddress";
+    } 
+
+    include("menu-mng-rad-hunt.php");
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    include_once('include/management/actionMessages.php');
+    
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
 
-<?php
-	include_once ("library/tabber/tab-layout.php");
-?>
- 
- 
-<?php
-	include ("menu-mng-rad-hunt.php");
-?>
+<form name="newhg" method="post">
+            
 
-	<div id="contentnorightbar">
-
-			<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradhuntedit.php') ?>
-			:: <?php if (isset($nasipaddress)) { echo $nasipaddress; } ?><h144>&#x2754;</h144></a></h2>
-
-			<div id="helpPage" style="display:none;visibility:visible" >
-				<?php echo t('helpPage','mngradhuntedit') ?>
-				<br/>
-			</div>
-			<?php
-				include_once('include/management/actionMessages.php');
-			?>
-
-			<form name="newhg" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-			
-<div class="tabber">
-
-     <div class="tabbertab" title="<?php echo t('title','HGInfo'); ?>">
-		<input type="hidden" value="<?php echo $nasipaddress ?>" name="nasipaddressold" />
-		<input type="hidden" value="<?php echo $nasportid ?>" name="nasportidold" />
+        <input type="hidden" value="<?php echo $nasipaddress ?>" name="nasipaddressold" />
+        <input type="hidden" value="<?php echo $nasportid ?>" name="nasportidold" />
 
 
         <fieldset>
@@ -195,31 +189,18 @@
 
         </fieldset>
 
-	</div>
-</div>
+</form>
 
-                                </form>
-
-
-
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>

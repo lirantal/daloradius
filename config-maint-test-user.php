@@ -74,96 +74,109 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+
     $title = t('Intro','configmainttestuser.php');
     $help = t('helpPage','configmainttestuser');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-config-maint.php");
-    include_once("library/tabber/tab-layout.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
+    
+    $input_descriptors1 = array();
+    $input_descriptors1[] = array( "name" => "username", "caption" => t('all','Username'),
+                                   "type" => "text", "value" => ((isset($username)) ? $username : ""), );
+    $input_descriptors1[] = array( "name" => "password", "caption" => t('all','Password'),
+                                   "type" => "text", "value" => ((isset($password)) ? $password : ""), );
+    $input_descriptors1[] = array( "name" => "radius", "caption" => t('all','RadiusServer'),
+                                   "type" => "text", "value" => ((isset($radius)) ? $radius : ""), );
+    $input_descriptors1[] = array( "name" => "radiusport", "caption" => t('all','RadiusPort'),
+                                   "type" => "text", "value" => ((isset($radiusport)) ? $radiusport : ""), );
+    $input_descriptors1[] = array( "name" => "nasport", "caption" => t('all','NasPorts'),
+                                   "type" => "text", "value" => ((isset($nasport)) ? $nasport : ""), );
+    $input_descriptors1[] = array( "name" => "secret", "caption" => t('all','NasSecret'),
+                                   "type" => "text", "value" => ((isset($secret)) ? $secret : ""), );
+
+    $input_descriptors2 = array();
+    $input_descriptors2[] = array( "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"), );
+    $input_descriptors2[] = array( "name" => "timeout", "caption" => t('all','Timeout'), "type" => "number", "value" => "3", "min" => "1", );
+    $input_descriptors2[] = array( "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0", );
+    $input_descriptors2[] = array( "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1", );
+    $input_descriptors2[] = array( "name" => "requests", "caption" => t('all','Requests'), "type" => "number", "value" => "3", "min" => "1", );
+    $input_descriptors2[] = array( "name" => "dictionaryPath", "caption" => t('all','RADIUSDictionaryPath'), "type" => "text",
+                                   "value" => ((isset($dictionaryPath)) ? $dictionaryPath : ""), );
+
+    $button_descriptor = array(
+                                "type" => "submit",
+                                "name" => "submit",
+                                "value" => "Test"
+                              );
+
+    // set navbar stuff
+    $navbuttons = array(
+                          'Settings-tab' => t('title','Settings'),
+                          'Advanced-tab' => t('title','Advanced'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
 ?>
 
 <form name="mainttestuser" method="POST">
-    <div class="tabber">
+    
+    <div id="Settings-tab" class="tabcontent" title="<?= t('title','Settings') ?>" style="display: block">
+        <fieldset>
+
+            <h302> Test User Connectivity </h302>
+            
+            <ul style="margin: 30px auto">
+<?php
+                foreach ($input_descriptors1 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
+            </ul>
+
+        </fieldset>
         
-        <div class="tabbertab" title="<?= t('title','Settings') ?>">
-            <fieldset>
-
-                <h302> Test User Connectivity </h302>
-                <br/>
-
-                <label for="username" class="form"><?= t('all','Username')?></label>
-                <input name="username" type="text" id="username" value='<?= $username ?>' tabindex="100">
-                <br>
-
-
-                <label for="password" class="form"><?= t('all','Password')?></label>
-                <input name="password" type="text" id="password" value='<?= $password ?>' tabindex="101">
-                <br>
-
-                <label for="radius" class="form"><?= t('all','RadiusServer') ?></label>
-                <input name="radius" type="text" id="radius" value='<?= $radius ?>' tabindex="102">
-                <br>
-
-                <label for="radiusport" class="form"><?= t('all','RadiusPort') ?></label>
-                <input name="radiusport" type="text" id="radiusport" value='<?= $radiusport ?>' tabindex="103">
-                <br>
-
-                <label for="nasport" class="form"><?= t('all','NasPorts') ?></label>
-                <input name="nasport" type="text" id="nasport" value='<?= $nasport ?>' tabindex="104">
-                <br>
-
-                <label for="secret" class="form"><?= t('all','NasSecret') ?></label>
-                <input name="secret" type="text" id="secret" value='<?= $secret ?>' tabindex="105">
-                <br>
-
-            </fieldset>
-        </div>
+<?php
+        print_form_component($button_descriptor);
+?>
+            
+    </div><!-- #Settings-tab -->
         
-        <div class="tabbertab" title="<?= t('title','Advanced') ?>">
+        <div id="Advanced-tab" class="tabcontent" title="<?= t('title','Advanced') ?>">
             <fieldset>
 
                 <h302><?= t('title','Advanced') ?></h302>
-                <br/>
 
-                <label for="debug" class="form"><?= t('all','Debug') ?></label>
-                <select name="debug" id="debug" class="form" tabindex="106">
-                    <option value="yes"> Yes </option>
-                    <option value="no"> No </option>
-                </select>
-                <br/>
-
-                <label for="timeout" class="form"><?= t('all','Timeout') ?></label>
-                <input name="timeout" type="number" id="timeout" value="3" tabindex="107">
-                <br/>
-
-                <label for="retries" class="form"><?= t('all','Retries') ?></label>
-                <input name="retries" type="number" id="retries" value="3" tabindex="108">
-                <br/>
-
-                <label for="count" class="form"><?= t('all','Count') ?></label>
-                <input name="count" type="number" id="count" value="1" tabindex="109">
-                <br/>
-
-                <label for="requests" class="form"><?= t('all','Requests') ?></label>
-                <input name="requests" type="number" id="requests" value="3" tabindex="110">
-                <br/>
-
-                <label for="dictionaryPath" class="form"><?= t('all','RADIUSDictionaryPath') ?></label>
-                <input name="dictionaryPath" type="text" id="dictionaryPath" value='<?= $dictionaryPath ?>' tabindex="111">
-                <br>
+            <ul style="margin: 30px auto">
+<?php
+                foreach ($input_descriptors2 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
+            </ul>
 
             </fieldset>
-        </div>
-    </div><!-- .tabber -->
-    
-    <input type="submit" name="submit" value='Perform Test' class="button">
-    
+
+<?php
+        print_form_component($button_descriptor);
+?>
+            
+    </div><!-- #Advanced-tab -->
 </form>
 
         </div><!-- #contentnorightbar -->

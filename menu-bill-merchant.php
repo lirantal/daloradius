@@ -31,82 +31,59 @@ include_once("lang/main.php");
 
 $m_active = "Billing";
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $langCode ?>" lang="<?= $langCode ?>">
-    <head>
-        <title>daloRADIUS :: <?= $m_active ?></title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        
-        <link rel="stylesheet" href="css/1.css" media="screen">
-        <link rel="stylesheet" href="library/js_date/datechooser.css">
-        <!--[if lte IE 6.5]>
-        <link rel="stylesheet" href="library/js_date/select-free.css">
-        <![endif]-->
-
-        <script src="library/js_date/date-functions.js"></script>
-        <script src="library/js_date/datechooser.js"></script>
-        <script src="library/javascript/pages_common.js"></script>
-    </head>
-
-    <body>
-        <div id="wrapper">
-            <div id="innerwrapper">
-
-<?php
-    include_once("include/menu/menu-items.php");
-	include_once("include/menu/billing-subnav.php");
+include_once("include/menu/menu-items.php");
+include_once("include/menu/billing-subnav.php");
     
-    $checkboxes = array(
-                            "id" => t('all','ID'),
-                            "username" => t('all','Username'),
-                            "password"  => t('all','Password'),
-                            "txnId"  => t('all','TxnId'),
-                            "planName" => t('all','PlanName'),
-                            "planId"  => t('all','PlanId'),
-                            "quantity"  => t('all','Quantity'),
-                            "business_email"  => t('all','ReceiverEmail'),
-                            "business_id"  => t('all','Business'),
-                            "payment_tax" => t('all','Tax'),
-                            "payment_cost"  => t('all','Cost'),
-                            "payment_fee" => t('all','TransactionFee'),
-                            "payment_total" => t('all','TotalCost'),
-                            "payment_currency" => t('all','PaymentCurrency'),
-                            "first_name" => t('all','FirstName'),
-                            "last_name" => t('all','LastName'),
-                            "payer_email" => t('all','PayerEmail'),
-                            "payer_address_name"  => t('all','AddressRecipient'),
-                            "payer_address_street"  => t('all','Street'),
-                            "payer_address_country" => t('all','Country'),
-                            "payer_address_country_code"  => t('all','CountryCode'),
-                            "payer_address_city" => t('all','City'),
-                            "payer_address_state" => t('all','State'),
-                            "payer_address_zip"  => t('all','Zip'),
-                            "payment_date" => t('all','PaymentDate'),
-                            "payment_status" => t('all','PaymentStatus'),
-                            "payer_status" => t('all','PayerStatus'),
-                            "payment_address_status" => t('all','PaymentAddressStatus'),
-                            "vendor_type" => t('all','VendorType')
-                       );
-    $checkboxes_checked = array(
-                                "username",
-                                "planName",
-                                "payment_fee",
-                                "payment_total",
-                                "payment_currency",
-                                "first_name",
-                                "last_name",
-                                "payer_email",
-                                "payer_address_country",
-                                "payer_address_city",
-                                "payer_address_state",
-                                "payment_date",
-                                "payment_status",
-                                "vendor_type"
-                               );
+$checkboxes = array(
+                        "id" => t('all','ID'),
+                        "username" => t('all','Username'),
+                        "password"  => t('all','Password'),
+                        "txnId"  => t('all','TxnId'),
+                        "planName" => t('all','PlanName'),
+                        "planId"  => t('all','PlanId'),
+                        "quantity"  => t('all','Quantity'),
+                        "business_email"  => t('all','ReceiverEmail'),
+                        "business_id"  => t('all','Business'),
+                        "payment_tax" => t('all','Tax'),
+                        "payment_cost"  => t('all','Cost'),
+                        "payment_fee" => t('all','TransactionFee'),
+                        "payment_total" => t('all','TotalCost'),
+                        "payment_currency" => t('all','PaymentCurrency'),
+                        "first_name" => t('all','FirstName'),
+                        "last_name" => t('all','LastName'),
+                        "payer_email" => t('all','PayerEmail'),
+                        "payer_address_name"  => t('all','AddressRecipient'),
+                        "payer_address_street"  => t('all','Street'),
+                        "payer_address_country" => t('all','Country'),
+                        "payer_address_country_code"  => t('all','CountryCode'),
+                        "payer_address_city" => t('all','City'),
+                        "payer_address_state" => t('all','State'),
+                        "payer_address_zip"  => t('all','Zip'),
+                        "payment_date" => t('all','PaymentDate'),
+                        "payment_status" => t('all','PaymentStatus'),
+                        "payer_status" => t('all','PayerStatus'),
+                        "payment_address_status" => t('all','PaymentAddressStatus'),
+                        "vendor_type" => t('all','VendorType')
+                   );
+$checkboxes_checked = array(
+                            "username",
+                            "planName",
+                            "payment_fee",
+                            "payment_total",
+                            "payment_currency",
+                            "first_name",
+                            "last_name",
+                            "payer_email",
+                            "payer_address_country",
+                            "payer_address_city",
+                            "payer_address_state",
+                            "payment_date",
+                            "payment_status",
+                            "vendor_type"
+                           );
 
-    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
+$showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
+$chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>
 
                 <div id="sidebar">

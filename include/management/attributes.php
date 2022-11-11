@@ -1,82 +1,118 @@
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false) {
+    header('Location: ../../index.php');
+    exit;
+}
+
+?>
 
 <fieldset>
-	<h302> <?php echo t('title','Attributes'); ?> </h302>
-	<br/>
+    <h302> <?= t('title','Attributes') ?> </h302>
+    
+    <br>
 
-	<input checked type='radio' value="" name="" onclick="javascript:toggleAttributeSelectbox();"/>
-	<b> Locate Attribute via Vendor/Attribute </b>
-	<br/>
+    <input checked type="radio" id="attribute-radio"
+        onclick="toggleAttributeSelectbox();document.getElementById('autocomplete-radio').checked=false">
+    <b> Locate Attribute via Vendor/Attribute </b>
+    
+    <br>
 
-	<ul>
-	
-	<label for='vendor' class='form'>Vendor:</label>
-	<select id='dictVendors0' onchange="getAttributesList(this,'dictAttributesDatabase')"
-		style='width: 215px' class='form' >
-		<option value=''>Select Vendor...</option>
-		<?php
-			include 'library/opendb.php';
+    <ul>
+        <li class="fieldset">
+            <label for="dictVendors0" class="form">Vendor:</label>
+            <select id="dictVendors0" onchange="getAttributesList(this,'dictAttributesDatabase')" class="form">
+                <option value="">Select Vendor...</option>
+<?php
+            include('library/opendb.php');
 
-			$sql = "SELECT distinct(Vendor) as Vendor FROM ".
-				$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE Vendor>'' ORDER BY Vendor ASC";
-			$res = $dbSocket->query($sql);
+            $sql = sprintf("SELECT DISTINCT(vendor) AS vendor
+                              FROM %s
+                             WHERE vendor<>'' AND vendor IS NOT NULL
+                             ORDER BY vendor ASC",
+                           $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+            $res = $dbSocket->query($sql);
 
-			while($row = $res->fetchRow()) {
-				echo "<option value=$row[0]>$row[0]</option>";
-			}
+            while ($row = $res->fetchRow()) {
+                $vendor = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+                printf('<option value="%s">%s</option>', $vendor, $vendor);
+            }
 
-			include 'library/closedb.php';
-		?>
-		</select>
-		<input type='button' name='reloadAttributes' id='reloadAttributes' value='Reload Vendors'
-			onclick="javascript:getVendorsList('dictVendors0');" class='button'>
-		<br/>
+            include('library/closedb.php');
+?>
+            </select>
+            <input type="button" name="reloadAttributes" id="reloadAttributes" value="Reload Vendors"
+                onclick="getVendorsList('dictVendors0');" class="button">
+        </li>
+        
+        <li class="fieldset">
+            <label for="attribute" class="form">Attribute:</label>
+            <select id="dictAttributesDatabase" class="form"></select>
+            <input type="button" name="addAttributes" value="Add Attribute" id="addAttributesVendor"
+                onclick="javascript:parseAttribute(1);" class="button">
+        </li>
+    </ul>
+    
+    <br>
+    
+    <input type="radio" id="autocomplete-radio"
+        onclick="toggleAttributeCustom();document.getElementById('attribute-radio').checked=false">
+    <b> Quickly Locate attribute with autocomplete input</b>
+    
+    <br>
 
-		<label for='attribute' class='form'>Attribute:</label>
-		<select id='dictAttributesDatabase' style='width: 270px' class='form' >
-		</select>
-		<input type='button' name='addAttributes' value='Add Attribute' id='addAttributesVendor'
-			onclick="javascript:parseAttribute(1);" class='button'>
-		<br/><br/>
+    <ul>
+        <li class="fieldset">
+            <label for="attribute" class="form">Custom Attribute:</label>
+            <input disabled type="text" id="dictAttributesCustom" autocomplete="off">
+        
+<?php
 
+            include_once('library/config_read.php');
 
-	</ul>
-	
-	<input type='radio' value="" name="" onclick="javascript:toggleAttributeCustom();"/>
-	<b> Quickly Locate attribute with autocomplete input</b>
-	<br/>
+            if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") {
 
-		<ul>
-		<label for='attribute' class='form'>Custom Attribute:</label>
-		<input disabled type='text' id='dictAttributesCustom' style='width: 264px' autocomplete=off />
-		
-		<?php
+                include_once("include/management/autocomplete.php");
 
-			include_once('library/config_read.php');
+                echo "
+<script>
+autoComEdit.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
+</script>
+";
+            }
 
-			if ( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
-				(strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") ) {
-
-				include_once("include/management/autocomplete.php");
-
-				echo "
-					<script type=\"text/javascript\">
-					autoComEdit.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
-					</script>
-				";
-			}
-
-		?>
-		<input disabled type='button' name='addAttributes' value='Add Attribute' id='addAttributesCustom'
-			onclick="javascript:parseAttribute(2);" class='button'>
-		<br/><br/>
-		</ul>
-
-<br/>
-<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+?>
+            <input disabled type="button" name="addAttributes" value="Add Attribute" id="addAttributesCustom"
+                onclick="parseAttribute(2);" class="button">
+        </li>
+    </ul>
 
 </fieldset>
-<br/>
 
-<input type="hidden" value="0" id="divCounter" />
-<div id="divContainer"> </div> <br/>
+<input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
 
+<input type="hidden" value="0" id="divCounter">
+<div id="divContainer"></div>

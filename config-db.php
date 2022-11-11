@@ -31,21 +31,7 @@
     
     include_once("lang/main.php");
     
-    // whitelists used for validation/presentation purposes
-    $valid_db_engines = array(
-                                "mysql" => "MySQL",
-                                "pgsql" => "PostgreSQL",
-                                "odbc" => "ODBC",
-                                "mssql" => "MsSQL",
-                                "mysqli" => "MySQLi",
-                                "msql" => "MsQL",
-                                "sybase" => "Sybase",
-                                "sqlite" => "Sqlite",
-                                "oci8" => "Oci8 ",
-                                "ibase" => "ibase",
-                                "fbsql" => "fbsql",
-                                "informix" => "informix"
-                             );
+    include("library/validation.php");
     
     $db_tbl_param_label = array(
                                 'CONFIG_DB_TBL_RADCHECK' => t('all','radcheck'), 
@@ -122,98 +108,120 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','configmain.php');
     $help = t('helpPage','configmain');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-config.php");
     
-    include_once ("library/tabber/tab-layout.php");
-
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
+    
+    // set navbar stuff
+    $navbuttons = array(
+                          'Settings-tab' => t('title','Settings'),
+                          'DatabaseTables-tab' => t('title','DatabaseTables'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
+    
+    
+    $submit_descriptor = array(
+                                "type" => "submit",
+                                "name" => "submit",
+                                "value" => t('buttons','apply')
+                              );
 ?>
 
 <form name="dbsettings" method="POST">
-    <div class="tabber">
         
-        <div class="tabbertab" title="<?= t('title','Settings') ?>">
-            <fieldset>
-                <h302><?= t('title','Settings') ?></h302>
-                
-                <br/>
+    <div id="Settings-tab" class="tabcontent" title="<?= t('title','Settings') ?>" style="display: block">
+        <fieldset>
+            <h302><?= t('title','Settings') ?></h302>
+            
+            <br/>
 
-                <ul>
+            <ul>
 
-                    <li class="fieldset">
-                        <label for="CONFIG_DB_ENGINE" class="form"><?= t('all','DBEngine')?></label>
-                        <select class="form" name="CONFIG_DB_ENGINE" id="CONFIG_DB_ENGINE">
+                <li class="fieldset">
+                    <label for="CONFIG_DB_ENGINE" class="form"><?= t('all','DBEngine')?></label>
+                    <select class="form" name="CONFIG_DB_ENGINE" id="CONFIG_DB_ENGINE">
 <?php
-        foreach ($valid_db_engines as $value => $caption) {
-            $selected = (strtolower($configValues['CONFIG_DB_ENGINE']) === $value) ? " selected" : "";
-            printf('<option value="%s"%s>%s</option>', $value, $selected, $caption);
+    foreach ($valid_db_engines as $value => $caption) {
+        $selected = (strtolower($configValues['CONFIG_DB_ENGINE']) === $value) ? " selected" : "";
+        printf('<option value="%s"%s>%s</option>', $value, $selected, $caption);
+    }
+?>
+                    </select>
+                </li>
+
+                <li class="fieldset">
+                    <label for="CONFIG_DB_PORT" class="form"><?= t('all','DatabasePort') ?></label>
+                    <input type="number" min="0" max="65535" value="<?= $configValues['CONFIG_DB_PORT'] ?>"
+                        name="CONFIG_DB_PORT" id="CONFIG_DB_PORT">
+                </li>
+
+<?php
+        foreach ($generic_db_conf_params as $param => $label) {
+            $value = htmlspecialchars($configValues[$param], ENT_QUOTES, 'UTF-8');
+            
+            echo '<li class="fieldset">';
+            printf('<label for="%s" class="form">%s</label>', $param, $label);
+            printf('<input type="text" value="%s" name="%s" id="%s">', $value, $param, $param);
+            echo '</li>';
         }
 ?>
-                        </select>
-                    </li>
 
-                    <li class="fieldset">
-                        <label for="CONFIG_DB_PORT" class="form"><?= t('all','DatabasePort') ?></label>
-                        <input type="number" min="0" max="65535" value="<?= $configValues['CONFIG_DB_PORT'] ?>"
-                            name="CONFIG_DB_PORT" id="CONFIG_DB_PORT">
-                    </li>
+            </ul>
+
+        </fieldset>
 
 <?php
-            foreach ($generic_db_conf_params as $param => $label) {
-                $value = htmlspecialchars($configValues[$param], ENT_QUOTES, 'UTF-8');
-                
-                echo '<li class="fieldset">';
-                printf('<label for="%s" class="form">%s</label>', $param, $label);
-                printf('<input type="text" value="%s" name="%s" id="%s">', $value, $param, $param);
-                echo '</li>';
-            }
+        print_form_component($submit_descriptor);
 ?>
-                    <li class="fieldset">
-                        <br><hr><br>
-                        <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
-                    </li>
 
-                </ul>
+    </div><!-- #Settings-tab -->
+
+     <div id="DatabaseTables-tab" class="tabcontent" title="<?= t('title','DatabaseTables') ?>">
+        <fieldset>
+            <h302><?= t('title','DatabaseTables') ?></h302>
     
-            </fieldset>
+            <br>
 
-        </div><!-- .tabbertab -->
-
-         <div class="tabbertab" title="<?= t('title','DatabaseTables') ?>">
-            <fieldset>
-                <h302><?= t('title','DatabaseTables') ?></h302>
-        
-                <br>
-
-                <ul>
+            <ul>
 
 <?php
-            foreach ($db_tbl_param_label as $param => $label) {
-                $value = htmlspecialchars($configValues[$param], ENT_QUOTES, 'UTF-8');
-                
-                echo '<li class="fieldset">';
-                printf('<label for="%s" class="form">%s</label>', $param, $label);
-                printf('<input type="text" value="%s" name="%s" id="%s" pattern="%s">', $value, $param, $param, $tbl_name_regex);
-                echo '</li>';
-            }
+        foreach ($db_tbl_param_label as $param => $label) {
+            $value = htmlspecialchars($configValues[$param], ENT_QUOTES, 'UTF-8');
+            
+            echo '<li class="fieldset">';
+            printf('<label for="%s" class="form">%s</label>', $param, $label);
+            printf('<input type="text" value="%s" name="%s" id="%s" pattern="%s">', $value, $param, $param, $tbl_name_regex);
+            echo '</li>';
+        }
 ?>
-                    <li class="fieldset">
-                        <br><hr><br>
-                        <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
-                    </li>
-                    
-                </ul>
-            </fieldset>
-        </div><!-- .tabbertab -->
-    </div>
+
+            </ul>
+        </fieldset>
+        
+<?php
+        print_form_component($submit_descriptor);
+?>
+        
+    </div><!-- #DatabaseTables-tab -->
 </form>
 
         </div><!-- #contentnorightbar -->

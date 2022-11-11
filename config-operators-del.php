@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -14,154 +14,190 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	$operator_id = $_SESSION['operator_id'];
+    $operator_id = $_SESSION['operator_id'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
-	isset($_POST['operator_username']) ? $operator_username = $_POST['operator_username'] : $operator_username = "";
-	
-	$logAction = "";
-	$logDebugSQL = "";
-
-	if ($operator_username != "") {
-
-		if (!is_array($operator_username))
-				$operator_username = array($operator_username);
-		
-		$allOperators = "";
-
-		
-		include 'library/opendb.php';
-
-		foreach ($operator_username as $variable=>$value) {
-			if (trim($value) != "") {
-				
-				$username = $dbSocket->escapeSimple($value);
-				$allOperators .= $username . ", ";
-
-				$sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." WHERE username='$username'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-				
-				if ($res->numRows() == 1) {
-					
-					$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-					$new_operator_id = $row['id'];
-
-					// delete operator from database
-					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS']." where Username='$username'";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-	
-					// delete all operators' acl entries
-					$sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL']." where operator_id='$new_operator_id'";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-					
-					$successMsg = "Deleted operator(s): <b> $allOperators </b>";
-					$logAction .= "Successfully deleted operator(s) [$allOperators] on page: ";
-					
-				}
-	
-			}  else { 
-				
-				$failureMsg = "no operator username was entered, please specify an operator username to remove from database";		
-				$logAction .= "Failed deleting operator username [$allOperators] on page: ";
-			}
-		}
-
-		include 'library/closedb.php';		
-	}
-
-
-	include_once('library/config_read.php');
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
     $log = "visited page: ";
 
+    include('library/opendb.php');
+
+    // init field_name and values (all, valid and to delete)
+    $field_name = 'operator_username';
+    
+    $valid_values = array();
+    
+    $sql = sprintf("SELECT id, username FROM %s", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    // foreach username we obtain a map of valid username => id
+    while ($row = $res->fetchRow()) {
+        list($id, $username) = $row;
+        if (!in_array($username, array_values($valid_values))) {
+            $valid_values["$id"] = $username;
+        }
+    }
+    
+    if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        $values = array();
+        $deleted_values = array();
+        
+        // validate values
+        if (array_key_exists($field_name, $_POST) && isset($_POST[$field_name])) {
+            
+            $tmp = (!is_array($_POST[$field_name])) ? array($_POST[$field_name]) : $_POST[$field_name];
+            foreach ($tmp as $value) {
+                
+                $value = trim(str_replace("%", "", $value));
+        
+                foreach ($valid_values as $id => $valid_value) {
+                    if ($value == $valid_value) {
+                        $values[] = $id;
+                    }
+                }
+            }
+        }
+        
+        // use valid values for updating db,
+        // update deleted_values as a valid value has been removed
+        if (count($values) > 0) {
+            foreach ($values as $id) {
+                $id = intval($id);
+                
+                // delete all operators' acl entries
+                $sql = sprintf("DELETE FROM %s WHERE operator_id=%d",
+                               $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $id);
+                $result = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                // delete operator from database
+                $sql = sprintf("DELETE FROM %s WHERE id=%d", $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $id);
+                $result += $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if ($result > 0) {
+                    $deleted_values[] = $valid_values["$id"];
+                }
+            }
+        }
+        
+        $success = $_SERVER['REQUEST_METHOD'] == 'POST' && count($values) > 0 && count($deleted_values) > 0;
+        
+        // present results
+        if ($success) {
+            $tmp = array();
+            foreach ($deleted_values as $deleted_value) {
+                $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
+            }
+            
+            $successMsg = sprintf("Deleted operator(s): <strong>%s</strong>", implode(", ", $tmp));
+            $logAction .= sprintf("Successfully deleted operator(s) [%s] on page: ", implode(", ", $deleted_values));
+        } else {
+            $failureMsg = "empty or invalid operator(s) have been entered";
+            $logAction .= sprintf("Failed deleting operator(s) [%s] on page: ", implode(", ", $valid_values));
+        }
+        
+        include('library/closedb.php');
+    } else {
+        $success = false;
+        $failureMsg = sprintf("CSRF token error");
+        $logAction .= sprintf("CSRF token error on page: ");
+    }
+    
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // print HTML prologue
+    
+    $title = t('Intro','configoperatorsdel.php');
+    $help = t('helpPage','configoperatorsdel');
+    
+    print_html_prologue($title, $langCode);
+
+    include ("menu-config-operators.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+        include_once('include/management/actionMessages.php');
+    }
+
+    if (!$success) {
+    
+        $input_descriptor = array(
+                                    'name' => 'operator_username[]',
+                                    'id' => 'operator_username',
+                                    'type' => 'text',
+                                    'caption' => 'Operator Username',
+                                 );
+        
+        $options = array_values($valid_values);                         
+        if (count($options) > 0) {
+            $input_descriptor['datalist'] = $options;
+        } else {
+            $input_descriptor['disabled'] = true;
+        }
+
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = $input_descriptor;
+
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+                                  
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
 
 ?>
 
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-</head>
- 
+<form method="POST">
+    <fieldset>
+        <h302>Operator Account Removal</h302>
+        
+        <ul style="margin: 10px auto">
 <?php
-
-	include ("menu-config-operators.php");
-	
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configoperatorsdel.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-				
-                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','configoperatorsdel') ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
 
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-
-        <fieldset>
-
-                <h302>Operator Account Removal</h302>
-                <br/>
-
-                <label for='username' class='form'>Operator Username</label>
-                <input name='operator_username' type='text' id='username'
-                        value='<?php if (isset($username)) echo $username ?>' tabindex=100 />
-                <br/>
-
-                <br/><br/>
-                <hr><br/>
-
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
-	</fieldset>
-
-				</form>
-		
+        </ul>
+    </fieldset>
+</form>
 <?php
-	include('include/config/logging.php');
-?>		
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+    }
 ?>
-
-		
-		</div>
-		
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>
-
-
-
-
-

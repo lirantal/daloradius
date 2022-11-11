@@ -15,215 +15,236 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
-	include('library/check_operator_perm.php');
-
-
-
-	include 'library/opendb.php';
-
-	// declaring variables
-	$username = "";
-	$group = "";
-	$groupOld = "";
-	$priority = "";
-
-	$username = $_REQUEST['username'];
-	$groupOld = $_REQUEST['group'];
-
-	$logAction = "";
-	$logDebugSQL = "";
-
-	// fill-in nashost details in html textboxes
-	$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
-		" WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-	$row = $res->fetchRow();		// array fetched with values from $sql query
-
-	// assignment of values from query to local variables
-	// to be later used in html to display on textboxes (input)
-	$priority = $row[2];
-
-	if (isset($_POST['submit'])) {
-		$username = $_REQUEST['username'];
-		$groupOld = $_REQUEST['groupOld'];;
-		$group = $_REQUEST['group'];;
-		$priority = $_REQUEST['priority'];;
-		
-		include 'library/opendb.php';
-
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP'].
-			" WHERE UserName='".$dbSocket->escapeSimple($username)."' AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-
-		if ($res->numRows() == 1) {
-
-			if (trim($username) != "" and trim($group) != "") {
-
-				if (!isset($priority)) {
-					$priority = 1;
-				}
-
-				// insert nas details
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." SET GroupName='".$dbSocket->escapeSimple($group)."',
-priority='".$dbSocket->escapeSimple($priority)."' WHERE UserName='".$dbSocket->escapeSimple($username)."'
-AND GroupName='".$dbSocket->escapeSimple($groupOld)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-						
-				$successMsg = "Updated User-Group mapping in database: User<b> $username </b> and Group: <b> $group </b> ";
-				$logAction .= "Successfully updated attributes for user-group mapping of user [$username] with group [$group] on page: ";
-			} else {
-				$failureMsg = "no username or groupname was entered, it is required that you specify both username and groupname";
-				$logAction .= "Failed updating (missing attributes) attributes on page: ";
-			}
-		} else {
-			$failureMsg = "The user $username already exists in the user-group mapping database
-			<br/> It seems that you have duplicate entries for User-Group mapping. Check your database";
-			$logAction .= "Failed updating already existing user [$username] with group [$group] on page: ";
-		} 
-
-		include 'library/closedb.php';
-	}
-	
-	if (isset($_REQUEST['username']))
-		$username = $_REQUEST['username'];
-	else
-		$username = "";
-
-	if (isset($_REQUEST['group']))
-		$group = $_REQUEST['group'];
-	else
-		$group = "";
-
-	if (trim($username) == "" OR trim($group) == "") {
-		$failureMsg = "no username or groupname was entered, please specify a username and groupname to edit ";
-	}	
-
-
-
-	include_once('library/config_read.php');
+    
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
     $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // declaring variables
+        $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
+                  ? trim(str_replace("%", "", $_POST['username'])) : "";
+        $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
+        $groupname = (array_key_exists('group', $_POST) && isset($_POST['group']))
+                   ? trim(str_replace("%", "", $_POST['group'])) : "";
+        $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
+
+        $groupnameOld = (array_key_exists('groupOld', $_POST) && isset($_POST['groupOld']))
+                      ? trim(str_replace("%", "", $_POST['groupOld'])) : "";
+        $groupnameOld_enc = (!empty($groupnameOld)) ? htmlspecialchars($groupnameOld, ENT_QUOTES, 'UTF-8') : "";
+
+        $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']) &&
+                     intval(trim($_POST['priority'])) >= 0) ? intval(trim($_POST['priority'])) : 1;
+    } else {
+        // declaring variables
+        $username = (array_key_exists('username', $_REQUEST) && isset($_REQUEST['username']))
+                  ? trim(str_replace("%", "", $_REQUEST['username'])) : "";
+        $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+        $groupnameOld = (array_key_exists('group', $_REQUEST) && isset($_REQUEST['group']))
+                      ? trim(str_replace("%", "", $_REQUEST['group'])) : "";
+        $groupnameOld_enc = (!empty($groupnameOld)) ? htmlspecialchars($groupnameOld, ENT_QUOTES, 'UTF-8') : "";
+    }
+
+    // feed the sidebar
+    $usernameList = $username_enc;
+
+    include('library/opendb.php');
+
+    $mapping_check_format = "SELECT COUNT(*) FROM %s WHERE username='%s' AND groupname='%s'";
+
+    // check if the old mapping is already in place
+    $sql = sprintf($mapping_check_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                          $dbSocket->escapeSimple($username),
+                                          $dbSocket->escapeSimple($groupnameOld));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $old_mapping_inplace = intval($res->fetchrow()[0]) > 0;
+    
+    if (!$old_mapping_inplace) {
+        // if the mapping is not in place we reset user and group
+        $username = "";
+        $groupnameOld = "";
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (empty($username) || empty($groupname) || empty($groupnameOld)) {
+            // username and groupname are required
+            $failureMsg = "Username and groupname are required.";
+            $logAction .= "Failed updating user-group mapping (username and/or groupname missing or invalid): ";
+        } else {
+            // check if the new mapping is already in place
+            $sql = sprintf($mapping_check_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                                  $dbSocket->escapeSimple($username),
+                                                  $dbSocket->escapeSimple($groupname));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+
+            $new_mapping_inplace = intval($res->fetchrow()[0]) > 0;
+            
+            if ($new_mapping_inplace) {
+                // error
+                $failureMsg = "The chosen user mapping ($username_enc - $groupname_enc) is already in place.";
+                $logAction .= "Failed updating user-group mapping [$username - $groupname already in place]: ";
+            } else {
+                $sql = sprintf("UPDATE %s SET groupname='%s', priority=%s WHERE username='%s' AND groupname='%s'",
+                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($groupname),
+                               $dbSocket->escapeSimple($priority), $dbSocket->escapeSimple($username),
+                               $dbSocket->escapeSimple($groupnameOld));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    $successMsg = "Updated user-group mapping [$username_enc, from $groupnameOld_enc to $groupname_enc]";
+                    $logAction .= "Updated user-group mapping [$username, from $groupnameOld to $groupname]: ";
+                } else {
+                    $failureMsg = "DB Error when updating the chosen user mapping ($username_enc, from $groupnameOld_enc to $groupname_enc)";
+                    $logAction .= "Failed updating user-group mapping [$username, from $groupnameOld to $groupname, db error]: ";
+                }
+            }
+        }
+    }
+    
+    if (empty($username) || empty($groupnameOld)) {
+        $failureMsg = "the user-group you have specified is empty or invalid";
+        $logAction .= "Failed updating user-group [empty or invalid user-group] on page: ";
+    } else {
+        // retrieve mapping from database
+        $sql = sprintf("SELECT username, groupname, priority FROM %s WHERE username='%s' AND groupname='%s'",
+                       $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
+                       $dbSocket->escapeSimple($groupnameOld));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        list($this_username, $this_groupname, $this_priority) = $res->fetchRow();
+    }
+
+    include('library/closedb.php');
+
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/productive_funcs.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','mngradusergroupedit');
+    $help = t('helpPage','mngradusergroupedit');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    
+    if (!empty($username_enc)) {
+        $title .= " $username_enc";
+    }
+    
+    include("menu-mng-rad-usergroup.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    include_once('include/management/actionMessages.php');
+    
+    if (!empty($username) && !empty($groupnameOld)) {
+        include_once('include/management/populate_selectbox.php');
+
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array(
+                                        "name" => "username-presentation",
+                                        "caption" => t('all','Username'),
+                                        "type" => "text",
+                                        "value" => $this_username,
+                                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                                        "disabled" => true,
+                                     );
+
+        $input_descriptors1[] = array(
+                                        "name" => "username",
+                                        "type" => "hidden",
+                                        "value" => $this_username,
+                                     );
+        
+        $input_descriptors1[] = array(
+                                        "name" => "groupname-presentation",
+                                        "caption" => (t('all','Groupname') . " (current)"),
+                                        "type" => "text",
+                                        "value" => $this_groupname,
+                                        "disabled" => true,
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "groupOld",
+                                        "type" => "hidden",
+                                        "value" => $this_groupname,
+                                     );
+
+        $options = get_groups();
+        $input_descriptors1[] = array(
+                                        "id" => "group",
+                                        "name" => "group",
+                                        "caption" => (t('all','Groupname') . " (new)"),
+                                        "type" => "select",
+                                        "options" => $options,
+                                        "selected_value" => $this_groupname,
+                                        "tooltipText" => t('Tooltip','groupTooltip')
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "id" => "priority",
+                                        "name" => "priority",
+                                        "caption" => t('all','Priority'),
+                                        "type" => "number",
+                                        "min" => "1",
+                                        "value" => $this_priority,
+                                     );
+
+        $input_descriptors1[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
+            <form name="newusergroup" method="POST">
+                <fieldset>
+                    <h302><?= t('title','GroupInfo') ?></h302>
 
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-</head>
- 
- 
+                    <ul>
+                    
 <?php
-	include ("menu-mng-rad-usergroup.php");
+                        foreach ($input_descriptors1 as $input_descriptor) {
+                            print_form_component($input_descriptor);
+                        }
 ?>
 
-	<div id="contentnorightbar">
-	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradusergroupedit') ?> 
-		<?php echo $username ?><h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >				
-			<?php echo t('helpPage','mngradusergroupedit') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
-				
-		<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-			<input type="hidden" value="<?php echo $username ?>" name="username" />
-
-        <fieldset>
-
-                <h302> <?php echo t('title','GroupInfo') ?> </h302>
-                <br/>
-
-                <ul>
-
-                <li class='fieldset'>
-                <label for='username' class='form'><?php echo t('all','Username') ?></label>
-                <input type='hidden' name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-                <input disabled type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-                </li>
-
-
-                <li class='fieldset'>
-                <label for='groupOld' class='form'><?php echo t('all','CurrentGroupname') ?></label>
-                <input type='hidden' name='groupOld' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
-                <input disabled type='text' id='groupOld' value='<?php echo $groupOld ?>' tabindex=101 />
-				Old Group Name
-                </li>
-
-                <li class='fieldset'>
-                <label for='group' class='form'><?php echo t('all','NewGroupname') ?></label>
-                <?php   
-					include 'include/management/populate_selectbox.php';
-					populate_groups("Select Groups","group","form");
-                ?>
-                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-					<img src='images/icons/comment.png' alt='Tip' border='0' />
-					<?php echo t('Tooltip','groupTooltip') ?>
-                </div>
-                </li>
-
-
-                <li class='fieldset'>
-                <label for='priority' class='form'><?php echo t('all','Priority') ?></label>
-                <input class='integer' name='priority' type='text' id='priority' value='<?php echo $priority ?>' tabindex=103 />
-                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('priority','increment')" />
-                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('priority','decrement')"/>
-                </li>
-
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-                </li>
-
-
-                </ul>
-        </fieldset>
-
-        </form>
-
-
-
+                    </ul>
+                </fieldset>
+            </form>
 <?php
-	include('include/config/logging.php');
+    }
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-
-		</div>
-	
-		<div id="footer">
-	
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-
-</body>
-</html>

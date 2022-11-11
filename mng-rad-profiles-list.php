@@ -27,6 +27,11 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     
+    // init loggin variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
+    
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -92,7 +97,7 @@
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
+        $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
 ?>
@@ -174,29 +179,16 @@
     }
     
     include('library/closedb.php');
-?>
-
-</div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-
+    
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
+    
+    $inline_extra_js = "
     var tooltipObj = new DHTMLgoodies_formTooltip();
     tooltipObj.setTooltipPosition('right');
     tooltipObj.setPageBgColor('#EEEEEE');
     tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>
+    tooltipObj.initFormFieldTooltip();";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
+?>

@@ -1,85 +1,94 @@
 <?php
-/*********************************************************************
-* Name: groups.php
-* Author: Liran tal <liran.tal@gmail.com>
-* 
-* This file extends user management pages (specifically edit user
-* page) to allow group management.
-* Essentially, this extention populates groups into tables
-*
-*********************************************************************/
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Description:    this file extends user management pages
+ *                 (specifically edit user page) to allow group management.
+ *                 Essentially, this extention populates groups into tables
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-	if (!isset($groupTerminology)) {
-		$groupTerminology = "Group";
-		$groupTerminologyPriority = "GroupPriority";
-	}
-		
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/management/groups.php') !== false) {
+    header('Location: ../../index.php');
+    exit;
+}
 
 
-	// Grabing the group lists from usergroup table
-	$sql = "(SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
-		") UNION (SELECT distinct(GroupName) FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].");";
-	$res = $dbSocket->query($sql);
-
-	$groupOptions = "";
-
-	while($row = $res->fetchRow()) {			
-		$groupOptions .= "<option value='$row[0]'> $row[0] </option>";
-	}
+if (!isset($groupTerminology)) {
+    $groupTerminology = "Group";
+    $groupTerminologyPriority = "GroupPriority";
+}
 
 ?>
 
-	<fieldset>
+<fieldset>
+    <h302><?= $groupTerminology ?> Assignment</h302>
+    <br/>
 
-                <h302> <?php echo $groupTerminology ?> Assignment </h302>
-		<br/>
+    <h301>Associated <?= $groupTerminology ?>s</h301>
+    <br/>
 
-	        <h301> Associated <?php echo $groupTerminology ?>s </h301>
-	        <br/>
-
-		<ul>
+    <ul>
 
 <?php
 
-	$sql = "SELECT GroupName, priority FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']
-		." WHERE UserName='".$dbSocket->escapeSimple($username)."';";
-	$res = $dbSocket->query($sql);
+    $sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority DESC",
+                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
+    $res = $dbSocket->query($sql);
 
-	if ($res->numRows() == 0) {
-		echo "<center> ".t('messages','nogroupdefinedforuser')." <br/></center>";
-	} else {
+    if ($res->numRows() == 0) {
+        printf('<div style="text-align: center">%s</div>', t('messages','nogroupdefinedforuser'));
+    } else {
 
-		$counter = 0;
+        $counter = 1;
 
-		while($row = $res->fetchRow()) {
+        while ($row = $res->fetchRow()) {
+            
+            foreach ($row as $i => $v) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($groupname, $priority) = $row;
+            
+            echo '<li class="fieldset">';
+            
+            $id = "usergroup" . $counter;
+            
+            printf('<label for="%s" class="form">%s #%s</label>', $id, t('all')[$groupTerminology], $counter);
+            printf('<input type="text" value="%s" id="%s" class="form" disabled>', $groupname, $id);
+            printf('<input type="hidden" value="%s" name="groups[]">', $groupname);
+            
+            $id = "group_priority" . $counter;
+            
+            printf('<label for="%s" class="form">%s</label>', $id, t('all')[$groupTerminologyPriority]);
+            printf('<input type="number" class="integer" min="0" value="%s" name="groups_priority[]" id="%s">', $row[1], $id);
+            
+            echo '</li>';
+            
+            $counter++;
 
-			echo "
+        } //while
 
-				<li class='fieldset'>
-				<label for='group' class='form'>".t('all')[$groupTerminology]." #".($counter+1)."</label>
-				<select name='groups[]' id='usergroup$counter' tabindex=105 class='form' >
-					<option value='$row[0]'>$row[0]</option>
-					<option value=''></option>
-					".$groupOptions."
-				</select>
-
-				<br/>
-				<label for='groupPriority' class='form'>".t('all')[$groupTerminologyPriority]."</label>
-				<input class='integer' value='$row[1]' name='groups_priority[]' id='group_priority$counter' >
-				<img src=\"images/icons/bullet_arrow_up.png\" alt=\"+\" 
-					onclick=\"javascript:changeInteger('group_priority$counter','increment')\" />
-				<img src=\"images/icons/bullet_arrow_down.png\" alt=\"-\" 
-					onclick=\"javascript:changeInteger('group_priority$counter','decrement')\"/>
-
-				<br/>
-				</li>
-			";
-
-			$counter++;
-
-		} //while
-
-	} // if-else
+    } // if-else
 ?>
 
-
+    </ul>
+</fieldset>

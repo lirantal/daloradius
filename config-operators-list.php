@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -14,208 +14,213 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-
-	$logDebugSQL = "";
-
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
-	
-    include_once('library/config_read.php');
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
 
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
+    // print HTML prologue    
+    $title = t('Intro','configoperatorslist.php');
+    $help = t('helpPage','configoperatorslist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-config-operators.php");
+
+    $cols = array(
+                    "id" => t('all','ID'), 
+                    "username" => t('all','Username')
+    );
+    
+    if (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes") {
+        $cols[] = t('all','Password');
+    } else {
+        $cols["auth"] = t('all','Password');
+    }
+    
+    $cols["fullname"] = "Full name";
+    $cols["title"] = "Title";
+    
+    
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "desc";
+               
+    // start printing content
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+
+    // we use this simplified query just to initialize $numrows
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
+    $res = $dbSocket->query($sql);
+    $numrows = $res->fetchrow()[0];
+    
+     if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+        
+        // we execute and log the actual query
+        $sql = sprintf("SELECT id, username, password AS auth, CONCAT(firstname, ' ', lastname) AS fullname, title
+                          FROM %s", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "config-operators-del.php";
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
-</head>
 
+<form name="listall" method="POST" action="<?= $action ?>">
+    <table border="0" class="table1">
+        <thead>
+            
+<?php
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>' . '</tr>';
+        }
+?>
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('operator_username[]', $action);
+?>
+                </th>
+            </tr>
+            
+            <tr>
+<?php
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
+?>           
+            </tr>
+        </thead>
+        
+        <tbody>
+<?php
+        $count = 1;
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($id, $username, $auth, $fullname, $title) = $row;
+            
+            if (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes") {
+                $auth = "[Password is hidden]";
+            }
+            
+            $onclick = "javascript:return false;";
+            $tooltipText = sprintf('<a class="toolTip" href="config-operators-edit.php?operator_username=%s">%s</a>', 
+                                   urlencode($username), t('Tooltip','UserEdit'));
+?>
+            <tr>
+                <td>
+                    <input type="checkbox" name="operator_username[]" value="<?= $username ?>" id="<?= "checkbox-$count" ?>">
+                    <label for="<?= "checkbox-$count" ?>"><?= $id ?></label>
+                </td>
+                <td>
+                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
+                        <?= $username ?>
+                    </a>
+                </td>
+                <td><?= $auth ?></td>
+                <td><?= $fullname ?></td>
+                <td><?= $title ?></td>
+            </tr>
 <?php
 
-    include ("menu-config-operators.php");
-
+            $count++;
+        }
 ?>
-
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','configoperatorslist.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-				
-                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','configoperatorslist') ?>
-					<br/>
-				</div>
-				<br/>
+        </tbody>
 
 <?php
-
-    include 'library/opendb.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-	
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT id, username, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS'];
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-	
-	$numrows = $res->numRows();
-
-
-	/* we are searching for both kind of attributes for the password, being User-Password, the more
-	   common one and the other which is Password, this is also done for considerations of backwards
-	   compatibility with version 0.7        */
-	
-	$sql = "SELECT id, username, password, firstname, lastname, title FROM ".$configValues['CONFIG_DB_TBL_DALOOPERATORS'].
-			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-	echo "<form name='listoperators' method='post' action='config-operators-del.php' >";
-	
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-                                Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'operator_username[]','listoperators')\">All</a>
-
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'operator_username[]','listoperators')\">None</a>
-                        <br/>
-                                <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listoperators\",\"config-operators-del.php\")' />
-                                <br/><br/>
-                ";
-
-
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-        echo " </th></tr>
-                                        </thead>
-
-                        ";
-
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".t('all','ID'). " 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
-		</th>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".t('all','Username')." 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Username&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
-		</th>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		".t('all','Password')." 
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=Value&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
-		</th>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=lastname&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		Full name
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=lastname&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
-		</th>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=title&orderType=asc\">
-			<img src='images/icons/arrow_up.png' alt='>' border='0' /></a>
-		Title
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=title&orderType=desc\">
-			<img src='images/icons/arrow_down.png' alt='<' border='0' /></a>
-		</th>
-
-	</tr> </thread>";
-
-	while($row = $res->fetchRow()) {
-
-		if ( ($row[4] == "") && ($row[3] == "") )
-			$fullname = "";
-		else 
-			$fullname = "$row[4], $row[3]";
-
-		echo "<tr>
-			<td> <input type='checkbox' name='operator_username[]' value='$row[1]'>$row[0]</td>
-			<td> <a class='tablenovisit' href='config-operators-edit.php?operator_username=$row[1]' title='".
-			t('Tooltip','UserEdit')."'>$row[1]</a> </td>
-			";
-                if ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") {
-                        echo "<td>[Password is hidden]</td>";
-                } else {
-                        echo "<td>$row[2]</td>";
-                }
-                echo "
-			<td>$fullname</td>
-			<td>$row[5]</td>
-
-		</tr>";
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
-	
-	echo "</table>";
-	include 'library/closedb.php';
-	
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
+    </table>
 
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+
+</form>
 
 <?php
-	include('include/config/logging.php');
-?>	
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
 ?>
-
-		
-		</div>
-		
+                
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
+<?php
+    include('include/config/logging.php');
+    include('page-footer.php');
+?>
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
 
+<script>
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
+</script>
 
 </body>
 </html>

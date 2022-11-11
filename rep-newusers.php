@@ -47,12 +47,20 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','repnewusers.php');
     $help = t('helpPage','repnewusers');
     
-    print_html_prologue($title, $langCode);
-
-    include_once("library/tabber/tab-layout.php");
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
     include("menu-reports.php");
     
@@ -81,12 +89,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
-?>
 
-        <div id="contentnorightbar">
 
-<?php
-
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -144,10 +149,16 @@
         $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
         
         
+    // set navbar stuff
+    $navbuttons = array(
+                          'Statistics-tab' => "Statistics",
+                          'Graph-tab' => "Graph",
+                       );
+
+    print_tab_navbuttons($navbuttons);
 ?>
 
-            <div class="tabber">
-                <div class="tabbertab" title="Statistics">
+                <div class="tabcontent" id="Statistics-tab" style="display: block">
 
                     <form name="usersonline" method="GET" style="margin-top: 50px">
                         <table border="0" class="table1">
@@ -193,9 +204,9 @@
                         </table>
                     </form>
 
-                </div><!-- .tabbertab -->
+                </div><!-- #Statistics-tab -->
                 
-                <div class="tabbertab" title="Graph">
+                <div class="tabcontent" id="Graph-tab">
                     <div style="text-align: center; margin-top: 50px">
 <?php
                         $src = sprintf('library/graphs-reports-new-users.php?startdate=%s&enddate=%s', $startdate, $enddate);
@@ -203,8 +214,7 @@
 ?>
                         <img src="<?= $src ?>" alt="<?= $alt ?>">
                     </div>
-                </div><!-- .tabbertab -->
-            </div><!-- .tabber -->
+                </div><!-- #Graph-tab -->
 
 <?php
     } else {

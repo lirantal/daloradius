@@ -352,23 +352,42 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','configbackupcreatebackups.php');
     $help = t('helpPage','configbackupcreatebackups');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include ("menu-config-backup.php");
-    include_once ("library/tabber/tab-layout.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
+    
+    
+    // set navbar stuff
+    $navbuttons = array(
+                          "FreeRADIUSTables-tab" => t('title','FreeRADIUSTables'),
+                          "daloRADIUSTables-tab" => t('title','daloRADIUSTables'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
+    
+    
 ?>
 
 <form name="createbackups" method="POST">
-    <div class="tabber">
-        <div class="tabbertab" title="<?= t('title','FreeRADIUSTables'); ?>">
+        <div id="FreeRADIUSTables-tab" class="tabcontent" style="display: block">
             <fieldset>
                 <h302><?= t('title','Backups'); ?></h302>
                 
@@ -474,7 +493,7 @@
             </fieldset>
         </div>
 
-        <div class="tabbertab" title="<?= t('title','daloRADIUSTables'); ?>">
+        <div id="daloRADIUSTables-tab" class="tabcontent" title="<?= t('title','daloRADIUSTables'); ?>">
             <fieldset>
                 <h302> <?= t('title','Backups'); ?> </h302>
                 
@@ -747,7 +766,6 @@
         </fieldset>
 
     </div>
-</div>
 
     <input type="submit" name="submit" value='<?= t('buttons','apply') ?>' class="button" />
 </form>

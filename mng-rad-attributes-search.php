@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,198 +15,204 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-	
-	include('library/check_operator_perm.php');
 
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+    // init loggin variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
 
-	//get attribute name passed to us from menu-mng-rad-attributes.php
-	isset($_GET['attribute']) ? $attribute = $_GET['attribute'] : $attribute = "%";
+    // get vendor name passed to us from menu-mng-rad-attributes.php
+    $attribute = (array_key_exists('attribute', $_GET) && isset($_GET['attribute']))
+            ? str_replace("%", "", $_GET['attribute']) : "";
 
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	$logQuery = "performed query for listing of records on page: ";
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','mngradattributessearch.php');
+    $help = t('helpPage','mngradattributessearch');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
 
+    include("menu-mng-rad-attributes.php");
+    
+    $cols = array(
+                    "id" => t('all','VendorID'),
+                    "vendor" => t('all','VendorName'),
+                    "attribute" => t('all','VendorAttribute')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+
+    $sql_WHERE = array();
+    $sql_WHERE[] = "(type <> '' OR type IS NOT NULL)";
+    if (!empty($vendor)) {
+        $sql_WHERE[] = sprintf("attribute LIKE '%s%%'", $dbSocket->escapeSimple($attribute));
+    }
+    
+    // we use this simplified query just to initialize $numrows
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+    $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+    $res = $dbSocket->query($sql);
+    $numrows = $res->fetchrow()[0];
+    
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
+        $sql = sprintf("SELECT id, vendor, attribute FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL = "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
+        $partial_query_string = (!empty($attribute))
+                              ? "&attribute=" . urlencode(htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8')) : "";
+                              
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-attributes-del.php";
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
 
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+<form name="listall" method="POST" action="<?= $action ?>">
+    <table border="0" class="table1">
+        <thead>
 <?php
-	include ("menu-mng-rad-attributes.php");
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo '</td>' . '</tr>';
+        }
 ?>
 
-	<div id="contentnorightbar">
-	
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradattributessearch.php') ?>
-		:: <?php if (isset($attribute)) { echo $attribute; } ?><h144>&#x2754;</h144></a></h2>
-		
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','mngradattributessearch') ?>
-			<br/>
-		</div>
-		<br/>
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('vendor[]', $action);
+?>
+                </th>
+            </tr>
+<?php
+        // second line of table header
+        echo "<tr>";
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+        echo "</tr>";
+?>
+        </thead>
+        
+        <tbody>
+<?php
+        $counter = 1;
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+
+            list($this_id, $this_vendor, $this_attribute) = $row;
+            
+            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-attributes-edit.php?vendor=%s&attribute=%s">%s</a>',
+                                   urlencode($this_vendor), urlencode($this_attribute), t('Tooltip','AttributeEdit'))
+                         . '<div style="margin: 15px auto" id="divContainerAttributeInfo">Loading...</div>';
+            
+            $onclick = sprintf('javascript:ajaxGeneric("include/management/retVendorAttributeInfo.php","retAttributeInfo",'
+                             . '"divContainerAttributeInfo","attribute=%s");return false;', urlencode($this_attribute));
+?>
+            <tr>
+                <td>
+                    <input type="checkbox" name="vendor[]" id="checkbox-<?= $counter ?>"
+                        value="<?= urlencode($this_vendor) . "||" . urlencode($this_attribute) ?>">
+                    <label for="checkbox-<?= $counter ?>"><?= $this_id ?></label>
+                </td>
+                <td><?= $this_vendor ?></td>
+                <td>
+                    <a class="tablenovisit" href="#" onclick='<?= $onclick ?>' tooltipText='<?= $tooltipText ?>'>
+                        <?= $this_attribute ?>
+                    </a>
+                </td>
+            </tr>
+        
+<?php
+            $counter++;
+        }
+?>
+        </tbody>
+<?php
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
+?>
+    </table>
+</form>
 
 <?php
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
 
-
-	include 'library/opendb.php';
-        include 'include/management/pages_common.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page	
-	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Attribute like '%$attribute%' AND Type <> ''".
-		" GROUP BY Attribute;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-
-	$numrows = $res->numRows();
-
-	$sql = "SELECT id, Vendor, Attribute FROM dictionary WHERE Attribute like '%$attribute%' AND Type <> '' ".
-		" GROUP BY Attribute ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-
-	echo "<form name='listvendorattributes' method='post' action='mng-rad-attributes-del.php'>";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-			<tr>
-			<th colspan='10' align='left'>
-
-			Select:
-			<a class=\"table\" href=\"javascript:SetChecked(1,'vendor[]','listvendorattributes')\">All</a>
-			<a class=\"table\" href=\"javascript:SetChecked(0,'vendor[]','listvendorattributes')\">None</a>
-			<br/>
-			<input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listvendorattributes\",\"mng-rad-attributes-del.php\")' />
-			<br/><br/>
-	";
-
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, "&attribute=$attribute");
-
-	echo "	</th></tr>
-			</thead>
-	";
-
-	if ($orderType == "asc") {
-		$orderTypeNextPage = "desc";
-	} else  if ($orderType == "desc") {
-		$orderTypeNextPage = "asc";
-	}
-
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage&attribute=$attribute\">
-		".t('all','VendorID')."</a>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=vendor&orderType=$orderTypeNextPage&attribute=$attribute\">
-		".t('all','VendorName')."</a>
-		</th>
-
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage&attribute=$attribute\">
-		".t('all','VendorAttribute')."</a>
-		</th>
-
-		</tr> </thread>";
-	while($row = $res->fetchRow()) {
-		printqn ("<tr>
-                                <td> <input type='checkbox' name='vendor[]' value='$row[1]||$row[2]'> $row[0] </td>
-				<td> <a class='tablenovisit' href='mng-rad-attributes-list.php?vendor=$row[1]'>$row[1]</a></td>
-                                <td> <a class='tablenovisit' href='#'
-                                onClick='javascript:ajaxGeneric(\"include/management/retVendorAttributeInfo.php\",\"retAttributeInfo\",\"divContainerAttributeInfo\",\"attribute=$row[2]\");return false;'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-rad-attributes-edit.php?vendor=$row[1]&attribute=$row[2]\">
-                                                ".t('Tooltip','AttributeEdit')."</a>
-                                        <br/><br/>
-
-                                        <div id=\"divContainerAttributeInfo\">
-                                                Loading...
-                                        </div>
-                                        <br/>'
-                                >$row[2]</a>
-                                </td>
-                        </tr>
-                        ");
-	}
-
-	echo "
-		<tfoot>
-			<tr>
-			<th colspan='10' align='left'>
-	";
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType, "&attribute=$attribute");
-	echo "
-			</th>
-			</tr>
-		</tfoot>
-	";
-
-
-	echo "</table></form>";
-
-	include 'library/closedb.php';
+    include('include/config/logging.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-
-
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-	</div>
-	
-	<div id="footer">
-	
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

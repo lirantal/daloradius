@@ -39,6 +39,21 @@
     //feed the sidebar variables
     $accounting_ipaddress = $ipaddress_enc;
 
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = sprintf("performed query for %s on page: ",
+                        ((!empty($ipaddress)) ? "IP address [$ipaddress]" : "all IP addresses"));
+    $logDebugSQL = "";
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+    
+    $title = t('Intro','acctipaddress.php');
+    $help = t('helpPage','acctipaddress');
+    
+    print_html_prologue($title, $langCode);
+
     include("menu-accounting.php");
 
     $cols = array(
@@ -70,19 +85,10 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array($_GET['orderType'], array( "desc", "asc" )))
                ? $_GET['orderType'] : "asc";
+               
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-?>
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','acctipaddress.php') ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
-                
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','acctipaddress') ?><br></div>
-            <br>
-<?php
 
     // we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
     include('library/opendb.php');
@@ -105,6 +111,8 @@
     $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']) . $sql_WHERE;
 
     $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
     $numrows = $res->numRows();
     
     if ($numrows > 0) {
@@ -122,7 +130,7 @@
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
+        $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
         
@@ -236,10 +244,6 @@
         <div id="footer">
         
 <?php
-    $log = "visited page: ";
-    $logQuery = sprintf("performed query for %s on page: ",
-                        ((!empty($ipaddress)) ? "IP address [$ipaddress]" : "all IP addresses"));
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

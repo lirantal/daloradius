@@ -33,13 +33,9 @@ $m_active = "Management";
 
 ?>
 
-<body>
     <script src="library/javascript/rounded-corners.js"></script>
     <script src="library/javascript/form-field-tooltip.js"></script>
     <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
-    
-    <div id="wrapper">
-        <div id="innerwrapper">
 
 <?php
     include_once("include/menu/menu-items.php");

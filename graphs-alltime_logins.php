@@ -47,56 +47,73 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+
     $title = t('Intro','graphsalltimelogins.php');
     $help = t('helpPage','graphsalltimelogins');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-graphs.php");    
-    include_once("library/tabber/tab-layout.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
-?>
+    // set navbar stuff
+    $navbuttons = array(
+                          'Graph-tab' => "Graph",
+                          'Statistics-tab' => "Statistics",
+                       );
 
-            <div class="tabber">
-                <div class="tabbertab" title="Graph">
-                    <div style="text-align: center; margin-top: 50px">
+    print_tab_navbuttons($navbuttons);
+
+?>
+            <div class="tabcontent" id="Graph-tab">
+                <div style="text-align: center; margin-top: 50px">
 <?php
     $alt = ucfirst($type) . " all-time login/hit statistics";
     $src = "library/graphs-alltime-users-login.php?type=" . $type;
 ?>
-                        <img alt="<?= $alt ?>" src="<?= $src ?>">
-                    </div>
-                </div><!-- .tabbertab -->
+                    <img alt="<?= $alt ?>" src="<?= $src ?>">
+                </div>
+            </div><!-- .tabbertab -->
 
-                <div class="tabbertab" title="Statistics">    
-                    <div style="margin-top: 50px">
+            <div class="tabcontent" title="Statistics-tab">    
+                <div style="margin-top: 50px">
 <?php
     include("library/tables-alltime-users-login.php");
     
     if ($goto_stats) {
 ?>
-                        <script>
-                            window.addEventListener('load', function() {
-                                document.querySelector('a[title="Statistics"]').click();
-                            });
-                        </script>
+                    <script>
+                        window.addEventListener('load', function() {
+                            var stats_tab = document.getElementById('Statistics-tab'),
+                                stats_btn = document.getElementById(stats_tab.id + '-button');
+                            stats_btn.click();
+                        });
+                    </script>
 <?php
     }
 ?>
-                    </div>
-                </div><!-- .tabbertab -->
-            </div>
-        </div>
+                </div>
+            </div><!-- .tabbertab -->
 
-        <div id="footer">        
+        </div><!-- #contentnorightbar -->
+
+		<div id="footer">		
 <?php
     include('include/config/logging.php');
     include('page-footer.php');
 ?>
-        </div><!-- #footer -->
+		</div><!-- #footer -->
     </div>
 </div>
 

@@ -59,13 +59,22 @@
     include("library/layout.php");
 
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
     $title = t('Intro','graphsoveralldownload.php');
     $help = t('helpPage','graphsoveralldownload');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-graphs.php");
-    include_once ("library/tabber/tab-layout.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -73,32 +82,42 @@
     if (!empty($username)) {
         $src = sprintf("library/graphs-overall-users-download.php?type=%s&size=%s&user=%s", $type, $size, $username_enc);
         $alt = sprintf("%s of traffic in download %s produced by %s", $size, $type, $username_enc);
-?>
-            <div class="tabber">
-                <div class="tabbertab" title="Graph">
-                    <div style="text-align: center; margin-top: 50px">
-                        <img alt="<?= $alt ?>" src="<?= $src ?>">
-                    </div>
-                </div>
-
-                <div class="tabbertab" title="Statistics">
-                    <div style="margin-top: 50px">
-<?php
-        include("library/tables-overall-users-download.php");
         
-        if ($goto_stats) {
+        // set navbar stuff
+        $navbuttons = array(
+                              'Graph-tab' => "Graph",
+                              'Statistics-tab' => "Statistics",
+                           );
+
+        print_tab_navbuttons($navbuttons);
 ?>
-                        <script>
-                            window.addEventListener('load', function() {
-                                document.querySelector('a[title="Statistics"]').click();
-                            });
-                        </script>
-<?php
-        }
-?>
-                    </div>
+            
+            <div class="tabcontent" id="Graph-tab" style="display: block">
+                <div style="text-align: center; margin-top: 50px">
+                    <img alt="<?= $alt ?>" src="<?= $src ?>">
                 </div>
             </div>
+
+            <div class="tabcontent" id="Statistics-tab">
+                <div style="margin-top: 50px">
+<?php
+    include("library/tables-overall-users-download.php");
+    
+    if ($goto_stats) {
+?>
+                    <script>
+                        window.addEventListener('load', function() {
+                            var stats_tab = document.getElementById('Statistics-tab'),
+                                stats_btn = document.getElementById(stats_tab.id + '-button');
+                            stats_btn.click();
+                        });
+                    </script>
+<?php
+    }
+?>
+                </div>
+            </div>
+
 <?php
     } else {
         $failureMsg = "You must provide a valid username";

@@ -27,6 +27,15 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
     $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
               ? str_replace("%", "", $_GET['username']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
@@ -231,6 +240,9 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
     </table>
+    
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+    
 </form>
 
 <?php
@@ -246,9 +258,6 @@
         
         <div id="footer">
 <?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

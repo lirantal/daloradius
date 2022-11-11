@@ -567,7 +567,7 @@ function refillSessionTrafficCheckbox(formName,pageDst) {
  ***********************************************************************/
 function copyUserBillInfo(obj) {
 
-	if (obj.checked == true) {
+    if (obj.checked == true) {
 
 		// set contact name
 		document.getElementById('bi_contactperson').value = document.getElementById('firstname').value + " " +

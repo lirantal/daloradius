@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,280 +15,290 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
-    include ("library/checklogin.php");
+
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-
-	//setting values for the order by and order type variables
-	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "id";
-	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "desc";
-
-	isset($_GET['username']) ? $username = $_GET['username'] : $username = "%";
-	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
-	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
-	isset($_GET['invoice_status']) ? $invoice_status = $_GET['invoice_status'] : $invoice_status = "%";
-	
-	// initialize the left-side menu vars
-    $billinvoice_startdate = $startdate;
-    $billinvoice_enddate = $enddate;
-    $billinvoice_username = $username;
-    
-    // 
-
-
-	include_once('library/config_read.php');
+    // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
-	
+    $logDebugSQL = "";
+
+
+    //setting values for the order by and order type variables
+    // and in other cases we partially strip some character,
+    // and leave validation/escaping to other functions used later in the script
+    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+              ? trim(str_replace("%", "", $_GET['username'])) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    
+    // in other cases we just check that syntax is ok
+    $date_regex = '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/';
+    
+    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
+                  preg_match($date_regex, $_GET['startdate'], $m) !== false &&
+                  checkdate($m[2], $m[3], $m[1]))
+               ? $_GET['startdate'] : "";
+
+    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
+                preg_match($date_regex, $_GET['enddate'], $m) !== false &&
+                checkdate($m[2], $m[3], $m[1]))
+             ? $_GET['enddate'] : "";
+    
+    $invoice_status = (array_key_exists('invoice_status', $_GET) && isset($_GET['invoice_status']))
+                    ? trim($_GET['invoice_status']) : "";
+    
+    // initialize the left-side menu vars
+    $billinvoice_startdate = $startdate;
+    $billinvoice_enddate = $enddate;
+    $billinvoice_username = $username_enc;
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array();
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js",
+    );
+    
+    $title = t('Intro','billinvoicereport.php');
+    $help = t('helpPage','billinvoicereport');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+
+
+    include("menu-bill-invoice.php");
+    
+    
+    $cols = array(
+                    "id" => t('all','Invoice'), 
+                    "contactperson" => t('all','ClientName'),
+                    "date" => t('all','Date'),
+                    "totalbilled" => t('all','TotalBilled'),
+                    "totalpayed" => t('all','TotalPayed'),
+                    t('all','Balance'),
+                    "status_id" => t('all','Status'),
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+
+    
+    $sql_WHERE = array();
+    $partial_query_params = array();
+    
+    if (!empty($startdate)) {
+        $sql_WHERE[] = sprintf("a.date >= '%s'", $dbSocket->escapeSimple($startdate));
+        $partial_query_params[] = sprintf("startdate=%s", $startdate);
+    }
+    
+    if (!empty($enddate)) {
+        $sql_WHERE[] = sprintf("a.date <= '%s'", $dbSocket->escapeSimple($enddate));
+        $partial_query_params[] = sprintf("enddate=%s", $enddate);
+    }
+    
+    if (!empty($username)) {
+        $sql_WHERE[] = sprintf("b.username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+        $partial_query_params[] = sprintf("username=%s", $username_enc);
+    }
+    
+    if (!empty($invoice_status)) {
+        $sql_WHERE[] = sprintf("a.status_id = '%s'", $dbSocket->escapeSimple($invoice_status));
+        $partial_query_params[] = sprintf("invoice_status=%s", htmlspecialchars($invoice_status, ENT_QUOTES, 'UTF-8'));
+    }
+    
+    $sql = sprintf("SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, c.value AS status,
+                           COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled
+                      FROM %s AS a INNER JOIN %s AS b ON a.user_id=b.id
+                                   INNER JOIN %s AS c ON a.status_id=c.id
+                                    LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) AS totalbilled, invoice_id
+                                                 FROM %s AS d GROUP BY d.invoice_id) AS d2 ON d2.invoice_id=a.id
+                                    LEFT JOIN (SELECT SUM(e.amount) AS totalpayed, invoice_id
+                                                 FROM %s AS e GROUP BY e.invoice_id) AS e2 ON e2.invoice_id=a.id",
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'], $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
+                   $configValues['CONFIG_DB_TBL_DALOPAYMENTS']);
+    if (count($sql_WHERE) > 0) {
+        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+    }
+    $sql .= " GROUP BY a.id";
+    $res = $dbSocket->query($sql);
+    $numrows = $res->numRows();        
+    
+    // setup php session variables for exporting
+    $_SESSION['reportTable'] = '';
+    $_SESSION['reportQuery'] = $sql;
+    $_SESSION['reportType'] = "reportsInvoiceList";
+    
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+                     
+        // we execute and log the actual query
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL = "$sql;\n";
+
+        $per_page_numrows = $res->numRows();
+
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
+        $partial_query_string = implode("&", $partial_query_params);
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "bill-invoice-del.php";
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" href="css/form-field-tooltip.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script src="library/javascript/rounded-corners.js" type="text/javascript"></script>
-<script src="library/javascript/form-field-tooltip.js" type="text/javascript"></script>
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+<form name="listall" method="GET" action="<?= $action ?>">
+
+    <table border="0" class="table1">
+        <thead>
+            <tr style="background-color: white">
 <?php
-	include ("menu-bill-invoice.php");
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo '</td>';
+        }
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billinvoicereport.php') ?>
-				<h144>&#x2754;</h144></a></h2>
-				
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','billinvoicelist') ?>
-					<br/>
-				</div>
-				<br/>
+                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
+                    <input class="button" type="button" value="CSV Export"
+                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
+                </td>
 
+            </tr>
 
+            <tr>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('invoice_id[]', $action);
+?>
+                </th>
+            </tr>
+
+            <tr>
+<?php
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+?>
+            </tr>
+            
+        </thead>
 <?php
 
-	include 'library/opendb.php';
-	include 'include/management/pages_common.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            
+            foreach ($row as $key => $value) {
+                $row[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            }
+            
+            echo '<tr>';
+            
+            $content = sprintf('<a class="toolTip" href="bill-invoice-edit.php?invoice_id=%s">%s</a>',
+                               urlencode($row['id']), t('Tooltip','InvoiceEdit'));
+            $arr = array(
+                            'content' => $content,
+                            'onClick' => '',
+                            'value' => '#'.$row['id'],
+                            'divId' => '',
+                        );
+            $invoice_id = addToolTipBalloon($arr);
 
-	$sql_WHERE = ' WHERE (a.date>="'.$startdate.'" AND a.date<="'.$enddate.'") ';
-	
-	if (!empty($username) && $username != '%')
-		$sql_WHERE .= ' AND (b.username LIKE  "'.$dbSocket->escapeSimple($username).'") ';
-		
-	if (!empty($invoice_status) && $invoice_status != '%')
-		$sql_WHERE .= ' AND (a.status_id = "'.$dbSocket->escapeSimple($invoice_status).'") ';
+            $content = sprintf('<a class="toolTip" href="bill-pos-edit.php?username=%s">%s</a>',
+                               urlencode($row['username']), t('Tooltip','UserEdit'));
+            $arr = array(
+                            'content' => $content,
+                            'onClick' => '',
+                            'value' => $row['contactperson'],
+                            'divId' => '',
+                        );
+            $contactperson = addToolTipBalloon($arr);
 
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
-			" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
-			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
-			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
-			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) ".
-					" as totalbilled, invoice_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
-			" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
-			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
-			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
-			$sql_WHERE.
-			" GROUP BY a.id ";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();		
-	
-	
-	// setup php session variables for exporting
-	$_SESSION['reportTable'] = '';
-	$_SESSION['reportQuery'] = $sql;
-	$_SESSION['reportType'] = "reportsInvoiceList";
-	
-	
-	$sql = "SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
-			" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
-			" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
-			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
-			" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-			" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) ".
-					" as totalbilled, invoice_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
-			" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
-			" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
-			$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
-			$sql_WHERE.
-			" GROUP BY a.id ".
-			" ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-	
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
 
-	
-	echo "<form name='listbillinvoices' method='post' action='bill-invoice-del.php'>";
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-                                Select:
-                                <a class=\"table\" href=\"javascript:SetChecked(1,'invoice_id[]','listbillinvoices')\">All</a> 
-                                
-                                <a class=\"table\" href=\"javascript:SetChecked(0,'invoice_id[]','listbillinvoices')\">None</a>
-	                 <br/>
-                                
-			<input class='button' type='button' value='CSV Export'
-				onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\" />
-			<br/><br/>
-					
-        ";
-
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-        echo " </th></tr>
-                                        </thead>
-
-                        ";
-
-        if ($orderType == "asc") {
-                $orderTypeNextPage = "desc";
-        } else  if ($orderType == "desc") {
-                $orderTypeNextPage = "asc";
+            $balance = ($row['totalpayed'] - $row['totalbilled']);
+            if ($balance < 0)
+                $balance = '<span style="color: red">'.$balance.'</span>';
+                
+            echo '<td> '.$invoice_id.' </td>';
+            echo '<td> '.$contactperson.' </td>';
+            echo '<td> '.$row['date'].' </td>';
+            echo '<td> '.$row['totalbilled'].' </td>';
+            echo '<td> '.$row['totalpayed'].' </td>';
+            echo '<td> '.$balance.' </td>';
+            echo '<td> '.$row['status'].' </td>';
+            
+            echo '</tr>';
+        
         }
 
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=id&orderType=$orderTypeNextPage\">
-		".t('all','Invoice')."</a>
-		</th>
-
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=contactperson&orderType=$orderTypeNextPage\">
-		".t('all','ClientName')."</a>
-		</th>
-
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=date&orderType=$orderTypeNextPage\">
-		".t('all','Date')."</a>
-		</th>
-		
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalbilled&orderType=$orderTypeNextPage\">
-		".t('all','TotalBilled')."</a>
-		</th>
-		
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=totalpayed&orderType=$orderTypeNextPage\">
-		".t('all','TotalPayed')."</a>
-		</th>
-		
-		<th scope='col'> 
-		".t('all','Balance')."
-		</th>
-		
-		<th scope='col'> 
-		<a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=status_id&orderType=$orderTypeNextPage\">
-		".t('all','Status')."</a>
-		</th>
-		
-	</tr> </thread>";
-
-	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-		
-		echo '<tr>';
-		
-		$content =  '<a class="toolTip" href="bill-invoice-edit.php?invoice_id='.$row['id'].'">'.t('Tooltip','InvoiceEdit').'</a>';
-		$invoice_id = addToolTipBalloon(array(
-									'content' => $content,
-									'onClick' => '',
-									'value' => '#'.$row['id'],
-									'divId' => '',
-		
-							));
-
-		$content =  '<a class="toolTip" href="bill-pos-edit.php?username='.urlencode($row['username']).'">'.t('Tooltip','UserEdit').'</a>';
-		$contactperson = addToolTipBalloon(array(
-									'content' => $content,
-									'onClick' => '',
-									'value' => $row['contactperson'],
-									'divId' => '',
-		
-							));
-							
-		$balance = ($row['totalpayed'] - $row['totalbilled']);
-		if ($balance < 0)
-			$balance = '<font color="red">'.$balance.'</font>';
-		echo '<td> '.$invoice_id.' </td>';
-		echo '<td> '.$contactperson.' </td>';
-		echo '<td> '.$row['date'].' </td>';
-		echo '<td> '.$row['totalbilled'].' </td>';
-		echo '<td> '.$row['totalpayed'].' </td>';
-		echo '<td> '.$balance.' </td>';
-		echo '<td> '.$row['status'].' </td>';
-		
-		echo '</tr>';
-		
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='10' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
-
-
-	echo "</table>";
-        echo "</form>";
-
-	include 'library/closedb.php';
 ?>
-				
-						
+        </tbody>
+
 <?php
-	include('include/config/logging.php');
-?>
-		
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
 ?>
 
-		
-		</div>
-		
-</div>
-</div>
+    </table>
+</form>
 
-<script type="text/javascript">
+<?php
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');    
+
+    include('include/config/logging.php');
+    
+    $inline_extra_js = "
 var tooltipObj = new DHTMLgoodies_formTooltip();
 tooltipObj.setTooltipPosition('right');
 tooltipObj.setPageBgColor('#EEEEEE');
 tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
+?>

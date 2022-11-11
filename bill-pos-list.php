@@ -32,6 +32,9 @@
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
+    
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     include_once("lang/main.php");
     

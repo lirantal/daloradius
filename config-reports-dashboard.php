@@ -28,8 +28,7 @@
 
     include_once('library/config_read.php');
     $log = "visited page: ";
-    include('include/config/logging.php');
-
+    
     if (isset($_POST['submit'])) {
         
         if (array_key_exists('config_dashboard_dalo_secretkey', $_POST) && isset($_POST['config_dashboard_dalo_secretkey'])) {
@@ -47,101 +46,110 @@
     include_once("lang/main.php");
     
     include("library/layout.php");
-
+    
     // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+
     $title = t('Intro','configdashboard.php');
     $help = t('helpPage','configdashboard');
     
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-config-reports.php");
 
-    include_once("library/tabber/tab-layout.php");
-?>
-        
-            
-        <div id="contentnorightbar">
-        
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+
     include_once('include/management/actionMessages.php');
+    
+    // set navbar stuff
+    $navbuttons = array(
+                          'Dashboard-tab' => t('title','Dashboard'),
+                          'Settings-tab' => t('title','Settings'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
+    
+    
+    
+    $input_descriptors1 = array();
+    $input_descriptors1[] = array( "name" => "config_dashboard_dalo_secretkey", "caption" => t('all','DashboardSecretKey'),
+                                   "type" => "text", "value" => $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] );
+    
+    $input_descriptors1[] = array( "name" => "config_dashboard_dalo_debug", "caption" => t('all','DashboardDebug'),
+                                   "type" => "select", "selected_value" => $configValues['CONFIG_DASHBOARD_DALO_DEBUG'],
+                                   "options" => array("0", "1")
+                                 );
+    
+    $input_descriptors2 = array();
+    
+    $input_descriptors2[] = array( "name" => "config_dashboard_dalo_delay_soft", "caption" => t('all','DashboardDelaySoft'),
+                                   "type" => "text", "value" => $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] );
+
+    $input_descriptors2[] = array( "name" => "config_dashboard_dalo_delay_hard", "caption" => t('all','DashboardDelayHard'),
+                                   "type" => "text", "value" => $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] );
+
+
+    $submit_descriptor = array(
+                                "type" => "submit",
+                                "name" => "submit",
+                                "value" => t('buttons','apply')
+                              );
 ?>
 
-            <form name="dashboardsettings" method="POST">
+<form name="dashboardsettings" method="POST">
 
-                <div class="tabber">
+    <div id="Dashboard-tab" class="tabcontent" title="<?= t('title','Dashboard') ?>" style="display: block">
 
-                    <div class="tabbertab" title="<?= t('title','Dashboard') ?>">
+        <fieldset>
+            <h302><?= t('title','Dashboard') ?></h302>
+
+            <ul style="margin: 30px auto">
+<?php
+                foreach ($input_descriptors1 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
+            </ul>
+        </fieldset>
+
+    </div><!-- #Dashboard-tab -->
                     
-                        <fieldset>
-                            <h302><?= t('title','Dashboard') ?></h302>
+    <div id="Settings-tab" class="tabcontent" title="<?= t('title','Settings') ?>">
+    
+        <fieldset>
+            <h302><?= t('title','Settings') ?></h302>
 
-                            <ul style="margin: 30px auto">
-                                <li class="fieldset">
-                                    <label for="config_dashboard_dalo_secretkey" class="form">
-                                        <?= t('all','DashboardSecretKey') ?>
-                                    </label>
-                                    <input type="text" value="<?= $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] ?>"
-                                        name="config_dashboard_dalo_secretkey" id="config_dashboard_dalo_secretkey">
-                                </li>
+            <ul style="margin: 30px auto">
+<?php
+                foreach ($input_descriptors2 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
+            </ul>
+        </fieldset>
 
-                                <li class="fieldset">
-                                    <label for="config_dashboard_dalo_debug" class="form">
-                                        <?= t('all','DashboardDebug')?>
-                                    </label>
-                                    <select class="form" name="config_dashboard_dalo_debug" id="config_dashboard_dalo_debug">
-                                        <option value="<?= $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] ?>">
-                                            <?= $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] ?>
-                                        </option>
-                                        <option value=""></option>
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
-                                    </select>
-                                </li>
-                            </ul>
-                        </fieldset>
+    </div><!-- #Settings-tab -->
 
-                    </div><!-- .tabbertab -->
-                    
-                    <div class="tabbertab" title="<?= t('title','Settings') ?>">
-                    
-                        <fieldset>
-                            <h302><?= t('title','Settings') ?></h302>
-        
-                            <ul style="margin: 30px auto">
-                                <li class="fieldset">
-                                    <label for="config_dashboard_dalo_delay_soft" class="form">
-                                        <?= t('all','DashboardDelaySoft') ?>
-                                    </label>
-                                    <input type="text" value="<?= $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] ?>"
-                                        name="config_dashboard_dalo_delay_soft" id="config_dashboard_dalo_delay_soft">
-                                </li>
-                                
-                                <li class="fieldset">
-                                    <label for="config_dashboard_dalo_delay_hard" class="form">
-                                        <?= t('all','DashboardDelayHard') ?>
-                                    </label>
-                                    <input type="text" value="<?= $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] ?>"
-                                        name="config_dashboard_dalo_delay_hard" id="config_dashboard_dalo_delay_hard">
-                                </li>
-                            
-                            </ul>
-                        </fieldset>
+<?php
+    print_form_component($submit_descriptor);
+?>
 
-                    </div><!-- .tabbertab -->
-                
-                </div><!-- .tabber -->
-
-                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
-            </form>
+</form>
 
 
         </div><!-- #contentnorightbar -->
         
         <div id="footer">
 <?php
-    $log = "visited page: ";
-
     include('include/config/logging.php');
     include('page-footer.php');
 ?>

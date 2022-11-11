@@ -15,162 +15,177 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+    
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','mngradprofilesduplicate.php');
+    $help = t('helpPage','mngradprofilesduplicate');
+    
+    print_html_prologue($title, $langCode);
+    
+    if (!empty($username_enc)) {
+        $title .= " $username_enc";
+    }
+    
+    include("menu-mng-rad-profiles.php");
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+    // we use get_groups() to check for the existance of new and old profile
+    include_once('include/management/populate_selectbox.php');
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
-	include('library/check_operator_perm.php');
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
+            dalo_check_csrf_token($_POST['csrf_token'])) {
+        
+            include('library/opendb.php');
+            
+            $sourceProfile = (array_key_exists('sourceProfile', $_REQUEST) && isset($_REQUEST['sourceProfile']))
+                           ? trim(str_replace("%", "", $_REQUEST['sourceProfile'])) : "";
+            $sourceProfile_enc = (!empty($sourceProfile)) ? htmlspecialchars($sourceProfile, ENT_QUOTES, 'UTF-8') : "";
+            
+            $targetProfile = (array_key_exists('targetProfile', $_REQUEST) && isset($_REQUEST['targetProfile']))
+                           ? trim(str_replace("%", "", $_REQUEST['targetProfile'])) : "";
+            $targetProfile_enc = (!empty($targetProfile)) ? htmlspecialchars($targetProfile, ENT_QUOTES, 'UTF-8') : "";
+        
+            if (empty($sourceProfile) || empty($targetProfile)) {
+                // profiles are required
+                $failureMsg = "Source and target profile names are required";
+                $logAction .= "Failed duplicating profile [$failureMsg] on page: ";
+            } else {
+            
+                $groups = get_groups();
+            
+                if (!in_array($sourceProfile, $groups)) {
+                    // source profile non-existent
+                    $failureMsg = "Invalid source profile name";
+                    $logAction .= "Failed duplicating profile [$failureMsg] on page: ";
+                } else {
+                    if (in_array($targetProfile, $groups)) {
+                        // target profile already inplace
+                        $failureMsg = "Invalid target profile name";
+                        $logAction .= "Failed duplicating profile [$failureMsg] on page: ";
+                    } else {
+                        
+                        // we duplicate group attributes which are present in these two tables
+                        $tables = array(
+                                          $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
+                                          $configValues['CONFIG_DB_TBL_RADGROUPREPLY']
+                                       );
+                        
+                        // this are the query used
+                        $sql_select_format = "SELECT '%s', attribute, op, value FROM %s WHERE groupname='%s'";
+                        $sql_insert_format = "INSERT INTO %s (groupname, attribute, op, value)";
+                        
+                        $counter = 0;
+                        foreach ($tables as $table) {
+                            $sql_select = sprintf($sql_select_format, $dbSocket->escapeSimple($targetProfile),
+                                                                      $table,
+                                                                      $dbSocket->escapeSimple($sourceProfile));
+                            $sql_insert = sprintf($sql_insert_format, $table, $sql_select);
+                            
+                            $sql = $sql_insert . " " . $sql_select;
+                            $res = $dbSocket->query($sql);
+                            $logDebugSQL .= "$sql;\n";
+                            
+                            if (!DB::isError($res)) {
+                                $counter += $res;
+                            }
+                        }
+                        
+                        if ($counter > 0) {
+                            $successMsg = sprintf("Profile <strong>%s</strong> has been successfully cloned into <strong>%s</strong>",
+                                                  $sourceProfile_enc, $targetProfile_enc);
+                            $logAction .= "Successfully cloned profile [$sourceProfile] to new profile name [$targetProfile] on page: ";
+                            
+                            // we empty these two variables for presentation purpose
+                            $sourceProfile = "";
+                            $targetProfile = "";
+                        } else {
+                            $failureMsg = sprintf("Cannot clone profile <strong>%s</strong> into <strong>%s</strong>",
+                                                  $sourceProfile_enc, $targetProfile_enc);
+                            $logAction .= "Failed while cloning profile [$sourceProfile] on page: ";
+                        }
+                        
+                    }
+                }
+            }
+                           
+            include('library/closedb.php');
 
-	isset($_POST['sourceProfile']) ? $sourceProfile = $_POST['sourceProfile'] : $sourceProfile = "";
-	isset($_POST['targetProfile']) ? $targetProfile = $_POST['targetProfile'] : $targetProfile = "";
+        } else {
+            $failureMsg = sprintf("CSRF token error");
+            $logAction .= sprintf("CSRF token error on page: ");
+        }
+    }
+    
+    include_once('include/management/actionMessages.php');
+    
+    $options = get_groups();
+    $input_descriptors1[] = array(
+                                    "name" => "sourceProfile",
+                                    "caption" => "Profile Name to Duplicate",
+                                    "type" => "select",
+                                    "options" => $options,
+                                    "selected_value" => (isset($sourceProfile)) ? $sourceProfile : "",
+                                 );
+    $input_descriptors1[] = array(
+                                    "name" => "targetProfile",
+                                    "caption" => "New Profile Name",
+                                    "type" => "text",
+                                    "value" => (isset($targetProfile)) ? $targetProfile : "",
+                                 );
+                                 
+    $input_descriptors1[] = array(
+                                    "type" => "submit",
+                                    "name" => "submit",
+                                    "value" => t('buttons','apply')
+                                 );
 
-	$logAction = "";
-	$logDebugSQL = "";
-
-	if (isset($_POST['submit'])) {
-
-		if ( (isset($_POST['sourceProfile'])) && (isset($_POST['targetProfile'])) && ($_POST['targetProfile']) ) {
-
-			include 'library/opendb.php';
-
-			// get all sets of attributes from radgroupcheck for this profile/group
-			$sql = "SELECT Attribute,Op,Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-				" WHERE GroupName='".$dbSocket->escapeSimple($sourceProfile)."'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
-
-			while($row = $res->fetchRow()) {
-
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-					" (GroupName,Attribute,Op,Value) VALUES (".
-					"'".$dbSocket->escapeSimple($targetProfile)."',".
-					"'".$row[0]."',".
-					"'".$row[1]."',".
-					"'".$row[2]."'".
-					")";
-				$dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-			
-			}
-
-
-			// get all sets of attributes from radgroupreply for this profile/group
-			$sql = "SELECT Attribute,Op,Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
-				" WHERE GroupName='".$dbSocket->escapeSimple($sourceProfile)."'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
-	
-			while($row = $res->fetchRow()) {
-
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
-					" (GroupName,Attribute,Op,Value) VALUES (".
-					"'".$dbSocket->escapeSimple($targetProfile)."',".
-					"'".$row[0]."',".
-					"'".$row[1]."',".
-					"'".$row[2]."'".
-					")";
-				$dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-
-			}
-
-			include 'library/closedb.php';
-
-			$successMsg = "Duplicated profile: <b>$sourceProfile</b> to new profile name: <b>$targetProfile</b>";
-			$logAction .= "Successfully duplicated profile [$sourceProfile] to new profile name [$targetProfile] on page: ";
-
-		} else {
-
-			$failureMsg = "possibly no source/target profiles were entered, please specify source and target profile names";
-			$logAction .= "Failed duplicating profile [$sourceProfile] on page: ";
-		}
-
-	}
-
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
 
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-
-</head>
- 
- 
+<form method="POST">
+    <fieldset>
+        <h302><?= t('title','ProfileInfo') ?></h302>
+        
+        <ul style="margin: 30px auto">
 <?php
-	include ("menu-mng-rad-profiles.php");
+            foreach ($input_descriptors1 as $input_descriptor) {
+                print_form_component($input_descriptor);
+            }
 ?>
-		
-		<div id="contentnorightbar">
-		
-				<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','mngradprofilesduplicate.php') ?>
-				:: <?php if (isset($profile)) { echo $profile; } ?><h144>&#x2754;</h144></a></h2>
+        </ul>
 
-				<div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','mngradprofilesduplicate') ?>
-					<br/>
-				</div>
-                <?php
-					include_once('include/management/actionMessages.php');
-                ?>
-				
-				<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-        <fieldset>
-
-                <h302> <?php echo t('title','ProfileInfo') ?> </h302>
-                <br/>
-
-                <label for='sourceProfile' class='form'>Profile Name to Duplicate</label>
-                        <?php
-                                // include 'include/management/populate_selectbox.php'; // already included in menu-mng-rad-profile.php
-                                populate_groups("Select Profile","sourceProfile","form");
-                        ?>
-                <br/>
-
-                <label for='profile' class='form'>New Profile Name</label>
-                <input name='targetProfile' type='text' id='profile' value='<?php echo $targetProfile ?>' tabindex=101 />
-                <br/>
-
-                <br/><br/>
-                <hr><br/>
-
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
-        </fieldset>
-
-                                </form>
-
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-
-		<div id="footer">
+    </fieldset>
+</form>
 
 <?php
-	include 'page-footer.php';
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-
-
-		</div>
-
-</div>
-</div>
-
-
-</body>
-</html>

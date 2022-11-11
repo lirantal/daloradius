@@ -15,15 +15,16 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
+
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
 
 	// invoice details
 	
@@ -170,63 +171,65 @@
 	include_once('library/config_read.php');
     $log = "visited page: ";
 
+	include_once("lang/main.php");
     
-	include_once('include/management/populate_selectbox.php');
-	
-?>
+    include("library/layout.php");
 
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js",
+        "library/javascript/ajaxGeneric.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-<link rel="stylesheet" type="text/css" href="library/js_date/datechooser.css">
-<!--[if lte IE 6.5]>
-<link rel="stylesheet" type="text/css" href="library/js_date/select-free.css"/>
-<![endif]-->
-</head>
-<script src="library/js_date/date-functions.js" type="text/javascript"></script>
-<script src="library/js_date/datechooser.js" type="text/javascript"></script>
-<script type="text/javascript" src="library/javascript/pages_common.js"></script>
-<script type="text/javascript" src="library/javascript/ajax.js"></script>
-<script type="text/javascript" src="library/javascript/dynamic_attributes.js"></script>
-<script type="text/javascript" src="library/javascript/ajaxGeneric.js"></script>
+    include_once('include/management/populate_selectbox.php');
+    $planSelect = populate_plans("","itemXXXXXXX[plan]", "form", "", "", true);
 
-<script type="text/javascript">
-
+    $inline_extra_js = <<<EOF
 var itemCounter = 1;
 
 function addTableRow() {
-
-	itemCounter++;			// incrementing elements counter
+    itemCounter++;
 
   	var container = document.getElementById('container');
-  	var counter = document.getElementById('counter');
-  	var num = (document.getElementById('counter').value -1)+ 2;
+  	
+    var counter = document.getElementById('counter');
+    var num = counter.value + 1;
   	counter.value = num;
   	
 	var trContainer = document.createElement('tr');
-	var trIdName = 'itemsRow'+num;
-	trContainer.setAttribute('id',trIdName);
+	var trIdName = 'itemsRow' + num;
+	trContainer.setAttribute('id', trIdName);
 
-	var td1 = document.createElement('td');
-	//td1.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[plan]' /> ";
-	var plansSelect = "<?php populate_plans("","itemXXXXXXX[plan]", "form", "", "", true); ?>";
-	td1.innerHTML = plansSelect.replace('itemXXXXXXX[plan]', 'item'+itemCounter+'[plan]');
+	var plansSelect = "$planSelect";
+    
+    var td1_name = "item" + itemCounter + "[plan]",
+        td2_name = "item" + itemCounter + "[amount]",
+        td3_name = "item" + itemCounter + "[tax]",
+        td4_name = "item" + itemCounter + "[notes]",
+        td5_onclick = "removeTableRow('" + trIdName + "')";
+    
+    var td1 = document.createElement('td');
+    td1.innerHTML = plansSelect.replace("itemXXXXXXX[plan]", td1_name);
 
-	var td2 = document.createElement('td');
-	td2.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[amount]' /> ";
+	var td2 = document.createElement("td");
+    td2.innerHTML = '<input type="text" id="item' + num + '" name="' + td2_name + '">';
 
 	var td3 = document.createElement('td');
-	td3.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[tax]' /> ";
+	td3.innerHTML = '<input type="text" id="item' + num + '" name="' + td3_name + '">';
 
 	var td4 = document.createElement('td');
-	td4.innerHTML = "<input type='text' id='item"+num+"' name='item"+itemCounter+"[notes]' /> ";
+	td4.innerHTML = '<input type="text" id="item' + num + '" name="' + td4_name + '">';
 
 	var td5 = document.createElement('td');
-	td5.innerHTML = "<input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow(\'"+trIdName+"\');\" class='button'>";
+	td5.innerHTML = '<input type="button" name="remove" value="Remove" onclick="' + td5_onclick + '" class="button">';
 
 	trContainer.appendChild(td1);
 	trContainer.appendChild(td2);
@@ -237,44 +240,40 @@ function addTableRow() {
 	  
 }
 
-
 function removeTableRow(rowCounter) {
 	  var container = document.getElementById('container');
 	  var trContainer = document.getElementById(rowCounter);
 	  container.removeChild(trContainer);
-	}
+	}    
+EOF;
 
-</script>
+    $title = t('Intro','billinvoiceedit.php');
+    $help = t('helpPage','billinvoiceedit');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js, "", $inline_extra_js);
 
-<?php
-	include_once ("library/tabber/tab-layout.php");
-?>
- 
-<?php
+    include("menu-bill-invoice.php");
 
-	include ("menu-bill-invoice.php");
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
+    include_once('include/management/actionMessages.php');
+    
+    
+    // set navbar stuff
+    $navbuttons = array(
+                          'Invoice-tab' => t('title','Invoice'),
+                          'Items-tab' => t('title','Items'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
 	
 ?>
 
-<div id="contentnorightbar">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
-	<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','billinvoiceedit.php') ?>
-	<h144>&#x2754;</h144></a></h2>
-	
-	<div id="helpPage" style="display:none;visibility:visible" >
-		<?php echo t('helpPage','billinvoiceedit') ?>
-		<br/>
-	</div>
-	<?php
-		include_once('include/management/actionMessages.php');
-	?>
-
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-<div class="tabber">
-
-	<div class="tabbertab" title="<?php echo t('title','Invoice'); ?>">
-	<fieldset>
+	<div class="tabcontent" id="Invoice-tab" style="display: block">
+        <fieldset>
 
 		<h302> <?php echo t('title','Invoice'); ?> </h302>
 
@@ -380,10 +379,8 @@ function removeTableRow(rowCounter) {
 		<input class='button' type='button' value='Download Invoice' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=download'"/>
 		<input class='button' type='button' value='Email Invoice to Customer' onClick="javascript:window.location.href='include/common/notificationsUserInvoice.php?invoice_id=<?php echo $invoice_id ?>&destination=email'"/>
 	  	              			
-		<br/><br/>
 		
-		<hr><br/>
-		<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
+		
 		</li>
 		
 		</ul>
@@ -397,7 +394,7 @@ function removeTableRow(rowCounter) {
 
 
 
-	<div class="tabbertab" title="<?php echo t('title','Items'); ?>">
+	<div class="tabcontent" id="Items-tab">
 	<fieldset>
 
 		<h302> <?php echo t('title','Items'); ?> </h302>
@@ -437,14 +434,11 @@ function removeTableRow(rowCounter) {
 					$itemName = $row['id'];
 					
 					echo "<tr id='itemsRow_".$itemName."'>".
-						//"<td> <input type='text' id='_item".$itemName."' value='".$row['planName']."' name='_item".$itemName."[plan]' /> ".
-						//"	<input type='hidden' id='_item".$itemName."' value='".$row['plan_id']."' name='_item".$itemName."[plan]' /> </td>".
 						"<td> ";
 					populate_plans($row['planName'],"item_".$itemName."[plan]", "form", "", $row['plan_id'], true);
 					echo " </td>".
 						"<td> <input class='money' type='text' id='_item".$itemName."' value='".$row['amount']."'name='item_".$itemName."[amount]' /> </td>".
 						"<td> <input class='money' type='text' id='_item".$itemName."' value='".$row['tax_amount']."'name='item_".$itemName."[tax]' /> </td>".
-						//"<td> <select name=''> <option value='1'> 1 </option> </select> </td> ".
 						"<td> <input type='text' id='_item".$row['plan_id']."' value='".$row['notes']."' name='item_".$itemName."[notes]' /> </td>".
 						"<td> <input type='button' name='remove' value='Remove' onclick=\"javascript:removeTableRow('itemsRow_".$itemName."');\" class='button'> </td>".
 						"</tr>";
@@ -469,28 +463,20 @@ function removeTableRow(rowCounter) {
 
 	<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
 
-	
-</div>
-	</form>
+	<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
 
+</form>
+
+        </div><!-- #contentnorightbar -->
+        
+        <div id="footer">
 <?php
-	include('include/config/logging.php');
+    include('include/config/logging.php');
+    include('page-footer.php');
 ?>
-		
-		</div>
-		
-		<div id="footer">
-		
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
+        </div><!-- #footer -->
+    </div>
 </div>
-</div>
-
 
 </body>
 </html>
