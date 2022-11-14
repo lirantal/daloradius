@@ -58,8 +58,8 @@ $l['all']['Item'] = "Item";
 
 $l['all']['RemoveRadacctRecords'] = "Remover Registros de Accounting";
 
-$l['all']['CleanupSessions'] = "Limpar sessoes anteriores a";
-$l['all']['DeleteSessions'] = "Excluir sessoes anteriores a";
+$l['all']['CleanupSessions'] = "Limpar sessões anteriores a";
+$l['all']['DeleteSessions'] = "Excluir sessões anteriores a";
 
 $l['all']['StartingDate'] = "Data Inicial";
 $l['all']['EndingDate'] = "Data Final";
@@ -119,35 +119,35 @@ $l['all']['MaxTimeExpiration'] = "Tempo maximo / Expiração";
 $l['all']['UsedTime'] = "Tempo de uso";
 $l['all']['Status'] = "Status";
 $l['all']['Usage'] = "Uso";
-$l['all']['StartTime'] = "Horario Inicial";
-$l['all']['StopTime'] = "Horario Final";
+$l['all']['StartTime'] = "Horário Inicial";
+$l['all']['StopTime'] = "Horário Final";
 $l['all']['TotalTime'] = "Tempo Total";
 $l['all']['Bytes'] = "Bytes";
 $l['all']['Upload'] = "Upload";
 $l['all']['Download'] = "Download";
 $l['all']['Rollback'] = "Reversão";
-$l['all']['Termination'] = "Terminacao";
-$l['all']['NASIPAddress'] = "NAS - Endereco IP";
-$l['all']['Action'] = "Acao";
-$l['all']['UniqueUsers'] = "Usuário unico ";
+$l['all']['Termination'] = "Terminação";
+$l['all']['NASIPAddress'] = "NAS - Endereço IP";
+$l['all']['Action'] = "Ação";
+$l['all']['UniqueUsers'] = "Usuário único ";
 $l['all']['TotalHits'] = "Total Hits";
-$l['all']['AverageTime'] = "Tempo Medio";
+$l['all']['AverageTime'] = "Tempo Médio";
 $l['all']['Records'] = "Registros";
-$l['all']['Summary'] = "Sumario";
+$l['all']['Summary'] = "Sumário";
 $l['all']['Statistics'] = "Statisticas";
 $l['all']['Credit'] = "Credito";
 $l['all']['Used'] = "Utilizado";
 $l['all']['LeftTime'] = "Tempo Restante";
 $l['all']['LeftPercent'] = "% de tempo restante";
-$l['all']['TotalSessions'] = "Total de Sessoes";
-$l['all']['LastLoginTime'] = "Ultimo Login";
-$l['all']['TotalSessionTime'] = "Total da Sessao";
+$l['all']['TotalSessions'] = "Total de Sessões";
+$l['all']['LastLoginTime'] = "Último Login";
+$l['all']['TotalSessionTime'] = "Total da Sessão";
 $l['all']['RateName'] = "Nome da taxa";
 $l['all']['RateType'] = "Tipo da taxa";
 $l['all']['RateCost'] = "Custo da taxa";
 $l['all']['Billed'] = "Faturado";
 $l['all']['TotalUsers'] = "Total de Usuários";
-$l['all']['TotalBilled'] = "Total de Cobrancas";
+$l['all']['TotalBilled'] = "Total de Cobranças";
 $l['all']['CardBank'] = "Cartão de credito";
 $l['all']['Type'] = "Tipo";
 $l['all']['CardBank'] = "Cartão de credito";
@@ -187,16 +187,16 @@ $l['all']['Debug'] = "Debug";
 $l['all']['Timeout'] = "Tempo esgotado";
 $l['all']['Retries'] = "Tentativa";
 $l['all']['Count'] = "Contador";
-$l['all']['Requests'] = "Requesição";
+$l['all']['Requests'] = "Requisição";
 
 $l['all']['DatabaseHostname'] = "Host do banco de dados";
 $l['all']['DatabaseUser'] = "Usuário do Banco";
 $l['all']['DatabasePass'] = "Senha do Banco";
 $l['all']['DatabaseName'] = "Nome do Banco";
 
-$l['all']['PrimaryLanguage'] = "Linguagem primaria";
+$l['all']['PrimaryLanguage'] = "Linguagem primária";
 
-$l['all']['PagesLogging'] = "Registro em paginas";
+$l['all']['PagesLogging'] = "Registro em páginas";
 $l['all']['QueriesLogging'] = "Registro de consultas";
 $l['all']['ActionsLogging'] = "Registro de ações";
 $l['all']['FilenameLogging'] = "Registro de nome de arquivos";
@@ -204,7 +204,7 @@ $l['all']['LoggingDebugOnPages'] = "Registro de erros e informações";
 $l['all']['LoggingDebugInfo'] = "Registro de erros e informações";
 
 $l['all']['PasswordHidden'] = "Habilitar Esconder password";
-$l['all']['TablesListing'] = "Registro de tabelas por pagina e listagem";
+$l['all']['TablesListing'] = "Registro de tabelas por página e listagem";
 $l['all']['TablesListingNum'] = "Ativar numeração de listagem de tabelas";
 $l['all']['AjaxAutoComplete'] = "Ativar Ajax Auto-Complete";
 
@@ -212,13 +212,13 @@ $l['all']['RadiusServer'] = "Radius Servidor";
 $l['all']['RadiusPort'] = "Radius Porta";
 
 $l['all']['UsernamePrefix'] = "Usuário Prefixo";
-$l['all']['NumberInstances'] = "Numero de instacias para criar";
+$l['all']['NumberInstances'] = "Número de instâncias para criar";
 $l['all']['UsernameLength'] = "Cumprimento do nome";
 $l['all']['PasswordLength'] = "Cumprimento do password";
 
 $l['all']['Expiration'] = "Validade";
-$l['all']['MaxAllSession'] = "Numero Maximo de Sessão";
-$l['all']['SessionTimeout'] = "Tempo maximo sessão";
+$l['all']['MaxAllSession'] = "Número Máximo de Sessão";
+$l['all']['SessionTimeout'] = "Tempo máximo sessão";
 $l['all']['IdleTimeout'] = "Tempo inativo";
 
 $l['all']['DBEngine'] = "Driver Banco de dados";
@@ -226,7 +226,7 @@ $l['all']['radcheck'] = "radiocheck";
 $l['all']['radreply'] = "radreply";
 $l['all']['radgroupcheck'] = "radgroupcheck";
 $l['all']['radgroupreply'] = "radgroupreply";
-$l['all']['usergroup'] = "grupodousuario";
+$l['all']['usergroup'] = "Grupo de Usuário";
 $l['all']['radacct'] = "radacct";
 $l['all']['operators'] = "operador";
 $l['all']['billingrates'] = "Taxa de cobrança";
@@ -1126,7 +1126,7 @@ desconectar um usuário e encerrar sua sessão em um determinado NAS.<br/>
 $l['helpPage']['configmainttestuser'] = "
 <h200><b>Testar conectividade do usuario</b></h200> - Envie uma solicitação de acesso ao servidor RADIUS para verificar se as credenciais do usuário são válidas.<br/>
 O daloRADIUS usa o utilitário binário radclient para executar o teste e retorna os resultados do comando após a conclusão. <br/>
-O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ $ PATH; caso contrário, faça
+O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ PATH; caso contrário, faça
 correções no arquivo library / exten-maint-radclient.php.<br/><br/>
 
 Observe que pode demorar um pouco para o teste terminar (até vários segundos [10-20 segundos]] devido a falhas e
@@ -1145,7 +1145,7 @@ enquanto outros estão configurados para receber o pacote na porta 1700.
 
 
 O daloRADIUS usa o utilitário binário radclient para executar o teste e retorna os resultados do comando após a conclusão. <br/>
-O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ $ PATH; caso contrário, faça
+O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ PATH; caso contrário, faça
 correções no arquivo library / exten-maint-radclient.php.<br/><br/>
 
 Observe que pode demorar um pouco para o teste terminar (até vários segundos [10-20 segundos]] devido a falhas e
