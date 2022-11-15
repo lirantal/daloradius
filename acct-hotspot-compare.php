@@ -123,7 +123,10 @@
         // set navbar stuff
         $navbuttons = array(
                                 "AccountInfo-tab" => "Account Info",
-                                "Graph-tab" => "Graph"
+                                "unique_users-tab" => "Graphs - Unique users",
+                                "login_hits-tab" => "Graphs - Login hits",
+                                "total_session_time-tab" => "Graphs - Total sess. time",
+                                "avg_session_time-tab" => "Graphs - Average sess. time",
                            );
 
         print_tab_navbuttons($navbuttons);
@@ -179,15 +182,22 @@
     </table>
 </div><!-- #AccountInfo-tab -->
 
-<div class="tabcontent" id="Graph-tab">
-
-    <div style="text-align: center">
-        <img src="library/graphs-hotspot-compare-unique-users.php" style="margin: 30px auto">
-        <img src="library/graphs-hotspot-compare-hits.php" style="margin: 30px auto">
-        <img src="library/graphs-hotspot-compare-time.php" style="margin: 30px auto">
-    </div>
-
+<div class="tabcontent" style="text-align: center" id="unique_users-tab">
+    <img src="library/graphs-hotspot-compare.php?category=unique_users">
 </div>
+
+<div class="tabcontent" style="text-align: center" id="login_hits-tab">
+    <img src="library/graphs-hotspot-compare.php?category=login_hits">
+</div>
+
+<div class="tabcontent" style="text-align: center" id="total_session_time-tab">
+    <img src="library/graphs-hotspot-compare.php?category=total_session_time">
+</div>
+
+<div class="tabcontent" style="text-align: center" id="avg_session_time-tab">
+    <img src="library/graphs-hotspot-compare.php?category=avg_session_time">
+</div>
+
 
 <?php
     } else {
@@ -196,18 +206,7 @@
     }
     
     include('library/closedb.php');
-?>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

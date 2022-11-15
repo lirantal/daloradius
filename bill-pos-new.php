@@ -460,8 +460,8 @@
 
     // print HTML prologue
     $extra_css = array(
-        // css tabber stuff
-        "library/tabber/tab-css2.css"
+        // css tabs stuff
+        "css/tabs.css"
     );
     
     $extra_js = array(
@@ -469,22 +469,29 @@
         "library/javascript/ajaxGeneric.js",
         "library/javascript/productive_funcs.js",
         "library/javascript/dynamic_attributes.js",
-        // js tabber stuff
-        "library/tabber/tabber.js"
+        // js tabs stuff
+        "library/javascript/tabs.js"
     );
-    
-    // inline css tabber stuff
-    $inline_extra_css = ".tabber{display:none;}"; 
     
     $title = t('Intro','billposnew.php');
     $help = t('helpPage','billposnew');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js, $inline_extra_css);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-bill-pos.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+
+        // set navbar stuff
+    $navbuttons = array(
+                            "AccountInfo-tab" => t('title','AccountInfo'),
+                            "UserInfo-tab" => t('title','UserInfo'),
+                            "BillingInfo-tab" => t('title','BillingInfo'),
+                            "Advanced-tab" => t('title','Advanced'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
 
     include_once('include/management/actionMessages.php');
     
@@ -516,7 +523,7 @@
 
 <form method="POST">
     <div class="tabber">
-        <div class="tabbertab" title="<?= t('title','AccountInfo') ?>">
+        <div class="tabcontent" id="AccountInfo-tab" style="display: block">
             <fieldset>
 
                 <h302><?= t('title','AccountInfo') ?></h302>
@@ -531,7 +538,7 @@
 
 
                     <li class='fieldset'>
-                    <label for='planName' class='form'><?php echo t('all','PlanName') ?></label>
+                    <label for='planName' class='form'><?= t('all','PlanName') ?></label>
                             <?php
                                    populate_plans("Select Plan","planName","form");
                             ?>
@@ -539,13 +546,13 @@
                     
                     <div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                         <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo t('Tooltip','planNameTooltip') ?>
+                        <?= t('Tooltip','planNameTooltip') ?>
                     </div>
                     </li>
     
 
                     <li class='fieldset'>
-                    <label for='profile' class='form'><?php echo t('all','Profile')?></label>
+                    <label for='profile' class='form'><?= t('all','Profile')?></label>
                     <?php
                             populate_groups("Select Profile","profiles[]");
                     ?>
@@ -560,12 +567,12 @@
 
                     <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
                             <img src='images/icons/comment.png' alt='Tip' border='0' />
-                            <?php echo t('Tooltip','groupTooltip') ?>
+                            <?= t('Tooltip','groupTooltip') ?>
                     </div>
                     </li>
 
         <li class='fieldset'>
-        <label for='userupdate' class='form'><?php echo t('all','SendWelcomeNotification')?></label>
+        <label for='userupdate' class='form'><?= t('all','SendWelcomeNotification')?></label>
         <input type='checkbox' class='form' name='notificationWelcome' value='1' checked/>
             <br/>
         </li>
@@ -574,7 +581,7 @@
         <li class='fieldset'>
         <br/>
         <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
+        <input type='submit' name='submit' value='<?= t('buttons','apply') ?>' tabindex=10000 class='button' />
         </li>
 
         </ul>
@@ -584,14 +591,14 @@
     </div>
 
 
-        <div class="tabbertab" title="<?php echo t('title','UserInfo'); ?>">
+        <div class="tabcontent" id="UserInfo-tab">
         <?php
                 $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userinfo.php');
         ?>
         </div>
 
-        <div class="tabbertab" title="<?php echo t('title','BillingInfo'); ?>">
+        <div class="tabcontent" id="BillingInfo-tab">
         <?php
                 $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
                 include_once('include/management/userbillinfo.php');
@@ -599,16 +606,16 @@
         </div>
 
 
-     <div class="tabbertab" title="<?php echo t('title','Advanced'); ?>">
+     <div class="tabcontent" id="Advanced-tab">
 
         <fieldset>
 
-                <h302> <?php echo t('title','AccountInfo'); ?> </h302>
+                <h302> <?= t('title','AccountInfo'); ?> </h302>
 
                 <ul>
 
                 <li class='fieldset'>
-                <label for='passwordType' class='form'><?php echo t('all','PasswordType')?> </label>
+                <label for='passwordType' class='form'><?= t('all','PasswordType')?> </label>
                 <select class='form' tabindex=102 name='passwordType' >
                         <option value='Cleartext-Password'>Cleartext-Password</option>
                         <option value='User-Password'>User-Password</option>
@@ -622,7 +629,7 @@
         <li class='fieldset'>
         <br/>
         <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
+        <input type='submit' name='submit' value='<?= t('buttons','apply') ?>' tabindex=10000 class='button' />
         </li>
 
         </ul>
@@ -637,27 +644,5 @@
 
 <?php
     include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-        
-        </div>
-        
-        <div id="footer">
-        
-<?php
-    include 'page-footer.php';
-?>
-
-
-        </div>
-
-</div>
-</div>
-
-
-</body>
-</html>
-
-
-
-
-

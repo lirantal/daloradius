@@ -75,7 +75,7 @@
     print_title_and_help($title, $help);
 
     if (!empty($username)) {
-        $src = sprintf("library/graphs-overall-users-login.php?type=%s&user=%s", $type, $username_enc);
+        $src = sprintf("library/graphs-overall-users-data.php?category=login&type=%s&user=%s", $type, $username_enc);
         $alt = ucfirst($type) . " login/hit statistics for user " . $username_enc;
         
         // set navbar stuff

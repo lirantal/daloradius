@@ -26,24 +26,50 @@
     include('checklogin.php');
 
     include('opendb.php');
-    include('libchart/classes/libchart.php');
-
-    $chart = new VerticalBarChart(800, 600);
-	$dataSet = new XYDataSet();
 
     $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
     $res = $dbSocket->query($sql);
 
-    $label = "users";
-    $value = intval($res->fetchRow()[0]);
-    $point = new Point($label, $value);
-    $dataSet->addPoint($point);
-
+    $labels = array( "" );
+    $values = array( intval($res->fetchRow()[0]) );
+    
     include('closedb.php');
+    
+    // draw the graph
+    include_once('jpgraph/jpgraph.php');
+    include_once('jpgraph/jpgraph_bar.php');
+    
+    // create the graph
+    $graph = new Graph(1024, 384, 'auto');
+    $graph->SetScale('textint');
+    $graph->clearTheme();
+    $graph->SetFrame(false);
+    $graph->SetTickDensity(TICKD_SPARSE, TICKD_SPARSE);
+    $graph->img->SetMargin(110, 20, 20, 110);
+    $graph->title->Set("total users");
+    
+    // setup x-axis
+    $graph->xaxis->title->SetMargin(60);
+    $graph->xaxis->SetLabelAngle(60);
+    $graph->xaxis->SetTickLabels($labels);
+    $graph->xaxis->HideLastTickLabel(); 
+    
+    // setup y-axis
+    $graph->yaxis->title->Set("users");
+    $graph->yaxis->title->SetMargin(40);
+    $graph->yaxis->SetLabelAngle(45);
+    $graph->yaxis->scale->SetGrace(25);
+    
+    // create the linear plot
+    $plot = new BarPlot($values);
+    $plot->value->Show();
+    $plot->value->SetFormat('%d'); 
+    $plot->value->SetAngle(45);
+    
+    // add the plot to the graph
+    $graph->Add($plot);
 
-    header("Content-type: image/png");
-    $chart->setTitle("Total Users");
-    $chart->setDataSet($dataSet);
-    $chart->render();
+    // display the graph
+    $graph->Stroke();
 
 ?>

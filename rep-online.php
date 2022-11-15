@@ -49,27 +49,24 @@
     include_once("lang/main.php");
     
     include("library/layout.php");
-
+    
     // print HTML prologue
     $extra_css = array(
-        // css tabber stuff
-        "library/tabber/tab-css2.css"
+        // css tabs stuff
+        "css/tabs.css"
     );
     
     $extra_js = array(
         "library/javascript/ajax.js",
         "library/javascript/ajaxGeneric.js",
-        // js tabber stuff
-        "library/tabber/tabber.js"
+        // js tabs stuff
+        "library/javascript/tabs.js"
     );
-    
-    // inline css tabber stuff
-    $inline_extra_css = ".tabber{display:none;}";    
     
     $title = t('Intro','reponline.php');
     $help = t('helpPage','reponline');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js, $inline_extra_css);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
     include("menu-reports.php");
 
@@ -109,11 +106,18 @@
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-?>
 
-            <div class="tabber">
-                <div class="tabbertab" title="Statistics">
+    // set navbar stuff
+    $navbuttons = array(
+                            "Statistics-tab" => "Statistics",
+                            "Online-users-tab" => "Online/offline users",
+                            "Online-NAS-tab" => "Online NAS",
+                       );
+
+    print_tab_navbuttons($navbuttons);
     
+?>
+                <div class="tabcontent" id="Statistics-tab" style="display: block">
 <?php
 
     include('library/opendb.php');
@@ -180,8 +184,12 @@
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = (!empty($username_enc) ? "&usernameOnline=" . urlencode($username_enc) : "");
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-del.php";
 ?>
-<form name="usersonline" method="GET">
+<form name="listall" method="GET" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
             <tr style="background-color: white">
@@ -202,12 +210,9 @@
 
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
-                    Select:
-                    <a title="Select All" class="table" href="javascript:SetChecked(1,'clearSessionsUsers[]','usersonline')">All</a>
-                    <a title="Select None" class="table" href="javascript:SetChecked(0,'clearSessionsUsers[]','usersonline')">None</a>
-                    <br>
-                    <input class="button" type="button" value="<?= t('button','ClearSessions') ?>"
-                        onclick="javascript:removeCheckbox('usersonline','mng-del.php')">
+<?php
+                    printTableFormControls('clearSessionsUsers[]', $action);
+?>
                 </th>
             </tr>
 
@@ -306,34 +311,25 @@
     
     include('library/closedb.php');
 ?>
-                </div>
+            </div>
 
-                <div class="tabbertab" style="text-align: center" title="Online users">
-                    <img src="library/graphs-reports-online-users.php" alt="Online users">
-                </div>
-    
-                <div class="tabbertab" style="text-align: center" title="Online NAS">
-                    <img src="library/graphs-reports-online-nas.php" alt="Online NAS">
-                </div>
-            </div>        
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
+            <div class="tabcontent" style="text-align: center" id="Online-users-tab">
+                <img src="library/graphs-reports-online-users.php" alt="Online users" style="margin: 30px auto">
+            </div>
+
+            <div class="tabcontent" style="text-align: center" id="Online-NAS-tab">
+                <img src="library/graphs-reports-online-nas.php" alt="Online NAS"  style="margin: 30px auto">
+            </div>
 <?php
+
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->       
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

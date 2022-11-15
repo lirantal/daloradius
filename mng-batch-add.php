@@ -526,8 +526,8 @@
 
     // print HTML prologue
     $extra_css = array(
-        // css tabber stuff
-        "library/tabber/tab-css2.css"
+        // css tabs stuff
+        "css/tabs.css"
     );
     
     $extra_js = array(
@@ -535,17 +535,14 @@
         "library/javascript/ajaxGeneric.js",
         "library/javascript/productive_funcs.js",
         "library/javascript/dynamic_attributes.js",
-        // js tabber stuff
-        "library/tabber/tabber.js"
+        // js tabs stuff
+        "library/javascript/tabs.js"
     );
-    
-    // inline css tabber stuff
-    $inline_extra_css = ".tabber{display:none;}"; 
     
     $title = t('Intro','mngbatch.php');
     $help = t('helpPage','mngbatch');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js, $inline_extra_css);
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-mng-batch.php");
     
@@ -553,11 +550,21 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
+    
+    // set navbar stuff
+    $navbuttons = array(
+                            "AccountInfo-tab" => t('title','AccountInfo'),
+                            "UserInfo-tab" => t('title','UserInfo'),
+                            "BillingInfo-tab" => t('title','BillingInfo'),
+                            "Attributes-tab" => t('title','Attributes'),
+                       );
+
+    print_tab_navbuttons($navbuttons);
 ?>
 
 <form name="batchuser" method="POST">
-    <div class="tabber">
-        <div class="tabbertab" title="<?= t('title','AccountInfo') ?>">
+    
+        <div class="tabcontent" id="AccountInfo-tab" style="display: block">
             <fieldset>
                 <h302><?= t('title','AccountInfo') ?></h302>
                 
@@ -753,21 +760,21 @@
 
      </div>
 
-    <div class="tabbertab" title="<?= t('title','UserInfo') ?>">
+    <div class="tabcontent" id="UserInfo-tab">
     <?php
         $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
         include_once('include/management/userinfo.php');
     ?>
     </div>
 
-    <div class="tabbertab" title="<?= t('title','BillingInfo') ?>">
+    <div class="tabcontent" id="BillingInfo-tab">
     <?php
         $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
         include_once('include/management/userbillinfo.php');
     ?>
     </div>
 
-     <div class="tabbertab" title="<?= t('title','Attributes') ?>">
+     <div class="tabcontent" id="Attributes-tab">
     <?php
         include_once('include/management/attributes.php');
     ?>
@@ -781,34 +788,10 @@
 
      </div>
 
-</div>
 
                 </form>
 
-
 <?php
     include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-        
-        </div>
-        
-        <div id="footer">
-        
-                                <?php
-        include 'page-footer.php';
-?>
-
-        
-        </div>
-        
-</div>
-</div>
-
-
-</body>
-</html>
-
-
-
-
-

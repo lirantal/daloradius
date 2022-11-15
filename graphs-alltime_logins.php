@@ -80,7 +80,7 @@
                 <div style="text-align: center; margin-top: 50px">
 <?php
     $alt = ucfirst($type) . " all-time login/hit statistics";
-    $src = "library/graphs-alltime-users-login.php?type=" . $type;
+    $src = "library/graphs-alltime-users-data.php?category=login&type=" . $type;
 ?>
                     <img alt="<?= $alt ?>" src="<?= $src ?>">
                 </div>

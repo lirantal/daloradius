@@ -26,44 +26,55 @@
     include('checklogin.php');
 
     include('opendb.php');
-    include('libchart/classes/libchart.php');
-
-    $chart = new VerticalBarChart(800, 600);
-    $dataSet = new XYDataSet();
-
+    
     // getting total users
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
     $res = $dbSocket->query($sql);
-    $totalUsers = $res->numRows();
+    $totalUsers = $res->fetchrow()[0];
 
     // get total users online
-    $sql = sprintf("SELECT DISTINCT(username)
+    $sql = sprintf("SELECT COUNT(DISTINCT(username))
                     FROM %s
                     WHERE AcctStopTime IS NULL
                        OR AcctStopTime = '0000-00-00 00:00:00'", $configValues['CONFIG_DB_TBL_RADACCT']);
     $res = $dbSocket->query($sql);
-    $totalUsersOnline = $res->numRows();
+    $totalUsersOnline = $res->fetchrow()[0];
 
     include('closedb.php');
+
+    $values = array();
+    $labels = array();
 
     if ($totalUsers > 0) {
         $totalUsersOffline = $totalUsers - $totalUsersOnline;
         
-        $label1 = "offline users";
-        $value1 = intval($totalUsersOffline);
-        $point1 = new Point($label1, $value1);
-        $dataSet->addPoint($point1);
+        $value = intval($totalUsersOffline);
+        $labels[] = sprintf("%d user(s) offline", $value);
+        $values[] = $value;
         
         if ($totalUsersOnline > 0) {
-            $label2 = "online users";
-            $value2 = intval($totalUsersOnline);
-            $point2 = new Point($label2, $value2);
-            $dataSet->addPoint($point2);
+            $value = intval($totalUsersOnline);
+            $labels[] = sprintf("%d user(s) online", $value);
+            $values[] = $value;
         }
     }
 
-    header("Content-type: image/png");
-    $chart->setTitle("online/offline users");
-    $chart->setDataSet($dataSet);
-    $chart->render();
+    include_once('jpgraph/jpgraph.php');
+    include_once('jpgraph/jpgraph_pie.php');
+     
+    $graph = new PieGraph(1024, 768);
+    $graph->SetShadow();
+    $graph->legend->SetLayout(LEGEND_VERT);
+    $graph->legend->SetPos(0.1, 0.1);
+    $graph->clearTheme();
+    $graph->SetFrame(false);
+    $graph->title->Set("online/offline users");
+    
+    $plot = new PiePlot($values);
+    $plot->SetTheme("water");
+    $plot->SetLegends($labels);
+    
+    $graph->Add($plot);
+    $graph->Stroke();
+
 ?>

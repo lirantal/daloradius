@@ -82,7 +82,7 @@
             <div class="tabcontent" id="Download-tab" style="display: block">
                 <div style="text-align: center; margin-top: 50px;">
 <?php
-    $download_src = sprintf("library/graphs-alltime-traffic-download.php?type=%s&size=%s", $type, $size);
+    $download_src = sprintf("library/graphs-alltime-users-data.php?category=download&type=%s&size=%s", $type, $size);
     $download_alt = sprintf("%s all-time download traffic (in %s) statistics", ucfirst($type), $size);
 ?>
                     <img alt="<?= $download_alt ?>" src="<?= $download_src ?>">
@@ -92,7 +92,7 @@
             <div class="tabcontent" id="Upload-tab">
                 <div style="text-align: center; margin-top: 50px">
 <?php
-    $upload_src = sprintf("library/graphs-alltime-traffic-upload.php?type=%s&size=%s", $type, $size);
+    $upload_src = sprintf("library/graphs-alltime-users-data.php?category=upload&type=%s&size=%s", $type, $size);
     $upload_alt = sprintf("%s all-time upload traffic (in %s) statistics", ucfirst($type), $size);
 ?>
                     <img alt="<?= $upload_alt ?>" src="<?= $upload_src ?>">

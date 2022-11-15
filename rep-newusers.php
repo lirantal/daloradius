@@ -40,6 +40,17 @@
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : "";
 
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for new user(s)";
+    if (!empty($startdate)) {
+         $logQuery .= " from $startdate";
+    }
+    if (!empty($enddate)) {
+         $logQuery .= " to $enddate";
+    }
+    $logQuery .= "on page: ";
+
     include_once('library/config_read.php');
     
     include_once("lang/main.php");
@@ -223,30 +234,15 @@
     }
     
     include('library/closedb.php');
-?>
-
-        </div><!-- #contentnorightbar -->
-                
-        <div id="footer">
-                
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
 
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>
