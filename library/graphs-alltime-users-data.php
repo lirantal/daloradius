@@ -99,8 +99,10 @@
 
     if ($category == "login") {
         $ytitle = sprintf("Login count");
+        $format = '%d';
     } else {
         $ytitle = sprintf("%s %sed", ucfirst($size), $category);
+        $format = '%01.1f';
     }
     
     $title = sprintf("all-time %s statistics", $category);
@@ -136,6 +138,7 @@
     // create the linear plot
     $plot = new BarPlot($values);
     $plot->value->Show();
+    $plot->value->SetFormat($format); 
     $plot->value->SetAngle(45);
     
     // add the plot to the graph
