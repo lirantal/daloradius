@@ -39,10 +39,7 @@
              ? $_GET['enddate'] : "";
 
     include('opendb.php');
-    include('libchart/classes/libchart.php');
 
-    $chart = new VerticalBarChart(800, 600);
-    $dataSet = new XYDataSet();
     $limit = 24;
 
     $sql_WHERE_pieces = array();
@@ -62,19 +59,57 @@
                  . $sql_WHERE . " GROUP BY month ORDER BY month";
     $res = $dbSocket->query($sql);
 
-    while ($row = $res->fetchRow()) {
-        $value = intval($row[0]);
-        $label = strval($row[1]);
+    $labels = array();
+    $values = array();
 
-        $point = new Point($label, $value);
-        $dataSet->addPoint($point);
+    while ($row = $res->fetchRow()) {
+        $values[] = intval($row[0]);
+        $labels[] = strval($row[1]);
     }
 
     include('closedb.php');
 
-    header("Content-type: image/png");
-    $chart->setTitle("monthly number of new users");
-    $chart->setDataSet($dataSet);
-    $chart->render();
+    $title = "new users amount";
+    $xtitle = "per-month distribution";
+    $ytitle = "users";
+    
+    
+    include_once('jpgraph/jpgraph.php');
+    include_once('jpgraph/jpgraph_bar.php');
+    
+    // create the graph
+    $graph = new Graph(1024, 384, 'auto');
+    $graph->SetScale('textint');
+    $graph->clearTheme();
+    $graph->SetFrame(false);
+    $graph->SetTickDensity(TICKD_SPARSE, TICKD_SPARSE);
+    $graph->img->SetMargin(110, 20, 20, 110);
+    $graph->title->Set($title);
+    
+    // setup x-axis
+    
+    $graph->xaxis->title->Set($xtitle);
+    $graph->xaxis->title->SetMargin(60);
+    $graph->xaxis->SetLabelAngle(60);
+    $graph->xaxis->SetTickLabels($labels);
+    $graph->xaxis->HideLastTickLabel(); 
+    
+    // setup y-axis
+    $graph->yaxis->title->Set($ytitle);
+    $graph->yaxis->title->SetMargin(40);
+    $graph->yaxis->SetLabelAngle(45);
+    $graph->yaxis->scale->SetGrace(25);
+    
+    // create the linear plot
+    $plot = new BarPlot($values);
+    $plot->value->Show();
+    $plot->value->SetFormat('%d');
+    $plot->value->SetAngle(45);
+    
+    // add the plot to the graph
+    $graph->Add($plot);
+
+    // display the graph
+    $graph->Stroke();
 
 ?>

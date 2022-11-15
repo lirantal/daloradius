@@ -168,9 +168,11 @@ function print_input_field($input_descriptor) {
         $input_descriptor['id'] = $input_descriptor['name'];
     }
     
-    $input_descriptor['type'] = strtolower($input_descriptor['type']);
+    $input_descriptor['type'] = (!array_key_exists('type', $input_descriptor))
+                              ? "text" : strtolower($input_descriptor['type']);
     
-    if (!in_array($input_descriptor['type'], array('hidden', 'button', 'submit'))) {
+    if (array_key_exists('caption', $input_descriptor) && !empty($input_descriptor['caption']) &&
+        !in_array($input_descriptor['type'], array('hidden', 'button', 'submit'))) {
         printf('<label for="%s" class="form">%s</label>', $input_descriptor['id'], $input_descriptor['caption']);
     }
     
@@ -235,13 +237,17 @@ function print_input_field($input_descriptor) {
         printf(' list="%s-list"', $input_descriptor['id']);
     }
     
+    if (array_key_exists('tooltipText', $input_descriptor)) {
+        printf(' placeholder="%s"', strip_tags($input_descriptor['tooltipText']));
+    }
+    
     echo '>';
 
     if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist'])) {
         printf('<datalist id="%s-list">', $input_descriptor['id']);
         foreach ($input_descriptor['datalist'] as $value) {
             $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-            printf('<option value="%s"></option>' . "\n", $value);
+            printf('<option value="%s">' . "\n", $value);
         }
         echo '</datalist>';
     }
@@ -372,12 +378,24 @@ function print_form_component($descriptor) {
         print_input_field($descriptor);
     }
     
+    //~ if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
+        //~ $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
+        //~ $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
+        //~ printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip"></a>', $onclick);
+        //~ printf('<div id="%s" style="display:none; visibility:visible" class="ToolTip">%s</div>',
+               //~ $tooltip_box_id, $descriptor['tooltipText']);
+    //~ }
+    
     if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
         $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
         $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
-        printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip"></a>', $onclick);
-        printf('<div id="%s" style="display:none; visibility:visible" class="ToolTip">%s</div>',
-               $tooltip_box_id, $descriptor['tooltipText']);
+        
+
+        
+        echo '<div class="tooltip">';
+        printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip" style="vertical-align: middle"></a>', $onclick);
+        printf('<span id="%s" class="tooltiptext">%s</span>', $tooltip_box_id, $descriptor['tooltipText']);
+        echo '</div>';
     }
     
     if (!in_array($descriptor['type'], array('hidden', 'button', 'submit'))) {

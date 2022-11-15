@@ -80,8 +80,8 @@
     print_title_and_help($title, $help);
 
     if (!empty($username)) {
-        $src = sprintf("library/graphs-overall-users-download.php?type=%s&size=%s&user=%s", $type, $size, $username_enc);
-        $alt = sprintf("%s of traffic in download %s produced by %s", $size, $type, $username_enc);
+        $src = sprintf("library/graphs-overall-users-data.php?category=download&type=%s&size=%s&user=%s", $type, $size, $username_enc);
+        $alt = sprintf("traffic downloaded by user %s", $username_enc);
         
         // set navbar stuff
         $navbuttons = array(

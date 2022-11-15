@@ -58,7 +58,7 @@
         // we reset the operator username if it does not exist
         $operator_username = "";
     } else {
-        // if the operator exists, we get its curret id
+        // if the operator exists, we get its current id
         $curr_operator_id = intval($res->fetchRow()[0]);
     }
     
@@ -69,77 +69,85 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
-        if (!empty($operator_username)) {
-            $currDate = date('Y-m-d H:i:s');
-            $currBy = $_SESSION['operator_user'];
-            
-            $operator_password = (array_key_exists('operator_password', $_POST) && isset($_POST['operator_password']))
-                               ? trim($_POST['operator_password']) : "";
-
-            $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? trim($_POST['firstname']) : "";
-            $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? trim($_POST['lastname']) : "";
-            $title = (array_key_exists('title', $_POST) && isset($_POST['title'])) ? trim($_POST['title']) : "";
-            $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? trim($_POST['department']) : "";
-            $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? trim($_POST['company']) : "";
-            $phone1 = (array_key_exists('phone1', $_POST) && isset($_POST['phone1'])) ? trim($_POST['phone1']) : "";
-            $phone2 = (array_key_exists('phone2', $_POST) && isset($_POST['phone2'])) ? trim($_POST['phone2']) : "";
-            $email1 = (array_key_exists('email1', $_POST) && isset($_POST['email1'])) ? trim($_POST['email1']) : "";
-            $email2 = (array_key_exists('email2', $_POST) && isset($_POST['email2'])) ? trim($_POST['email2']) : "";
-            $messenger1 = (array_key_exists('messenger1', $_POST) && isset($_POST['messenger1'])) ? trim($_POST['messenger1']) : "";
-            $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
-            $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
-            
-            // update operator data into the database
-            $sql = sprintf("UPDATE %s SET password='%s', firstname='%s', lastname='%s', title='%s', department='%s',
-                                          company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
-                                          messenger2='%s', updatedate='%s', updateby='%s'
-                             WHERE username='%s'",
-                           $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_password),
-                           $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
-                           $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
-                           $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
-                           $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $currDate,
-                           $currBy, $dbSocket->escapeSimple($operator_username));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-
-            // insert operators acl for this operator
-            foreach ($_POST as $field => $access ) {
-                
-                if (preg_match('/^ACL_/', $field) === false) {
-                    continue;
-                }
-                
-                $file = substr($field, 4);
-                
-                $sql = sprintf("SELECT id FROM %s WHERE operator_id=%d AND file='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
-                               $curr_operator_id, $dbSocket->escapeSimple($file));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                $numrows = $res->numRows();
-                
-                if ($numrows > 0) {
-                    $sql = sprintf("UPDATE %s SET access='%s'
-                                     WHERE file='%s' AND operator_id=%d", 
-                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
-                                   $dbSocket->escapeSimple($access),
-                                   $dbSocket->escapeSimple($file), $curr_operator_id);
-                } else {
-                    $sql = sprintf("INSERT INTO %s (operator_id, file, access)
-                                            VALUES (%d, '%s', '%s')",
-                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $curr_operator_id,
-                                   $dbSocket->escapeSimple($file), $dbSocket->escapeSimple($access));
-                }
-                
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-            } // foreach
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
         
-            $successMsg = "Updated settings for: <b> $operator_username_enc </b>";
-            $logAction .= "Successfully updated settings for operator user [$operator_username] on page: ";
+            if (!empty($operator_username)) {
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $_SESSION['operator_user'];
+                
+                $operator_password = (array_key_exists('operator_password', $_POST) && isset($_POST['operator_password']))
+                                   ? trim($_POST['operator_password']) : "";
+
+                $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? trim($_POST['firstname']) : "";
+                $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? trim($_POST['lastname']) : "";
+                $title = (array_key_exists('title', $_POST) && isset($_POST['title'])) ? trim($_POST['title']) : "";
+                $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? trim($_POST['department']) : "";
+                $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? trim($_POST['company']) : "";
+                $phone1 = (array_key_exists('phone1', $_POST) && isset($_POST['phone1'])) ? trim($_POST['phone1']) : "";
+                $phone2 = (array_key_exists('phone2', $_POST) && isset($_POST['phone2'])) ? trim($_POST['phone2']) : "";
+                $email1 = (array_key_exists('email1', $_POST) && isset($_POST['email1'])) ? trim($_POST['email1']) : "";
+                $email2 = (array_key_exists('email2', $_POST) && isset($_POST['email2'])) ? trim($_POST['email2']) : "";
+                $messenger1 = (array_key_exists('messenger1', $_POST) && isset($_POST['messenger1'])) ? trim($_POST['messenger1']) : "";
+                $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
+                $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
+                
+                // update operator data into the database
+                $sql = sprintf("UPDATE %s SET password='%s', firstname='%s', lastname='%s', title='%s', department='%s',
+                                              company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
+                                              messenger2='%s', updatedate='%s', updateby='%s'
+                                 WHERE username='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_password),
+                               $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
+                               $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
+                               $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
+                               $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $currDate,
+                               $currBy, $dbSocket->escapeSimple($operator_username));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+
+                // insert operators acl for this operator
+                foreach ($_POST as $field => $access ) {
+                    
+                    if (preg_match('/^ACL_/', $field) === false) {
+                        continue;
+                    }
+                    
+                    $file = substr($field, 4);
+                    
+                    $sql = sprintf("SELECT id FROM %s WHERE operator_id=%d AND file='%s'",
+                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
+                                   $curr_operator_id, $dbSocket->escapeSimple($file));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    $numrows = $res->numRows();
+                    
+                    if ($numrows > 0) {
+                        $sql = sprintf("UPDATE %s SET access='%s'
+                                         WHERE file='%s' AND operator_id=%d", 
+                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
+                                       $dbSocket->escapeSimple($access),
+                                       $dbSocket->escapeSimple($file), $curr_operator_id);
+                    } else {
+                        $sql = sprintf("INSERT INTO %s (operator_id, file, access)
+                                                VALUES (%d, '%s', '%s')",
+                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $curr_operator_id,
+                                       $dbSocket->escapeSimple($file), $dbSocket->escapeSimple($access));
+                    }
+                    
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+
+                } // foreach
+            
+                $successMsg = "Updated settings for: <b> $operator_username_enc </b>";
+                $logAction .= "Successfully updated settings for operator user [$operator_username] on page: ";
+            }
+        
+        } else {
+            $operator_username = "";
+            $failureMsg = sprintf("CSRF token error");
+            $logAction .= sprintf("CSRF token error on page: ");
         }
     }
 
@@ -201,9 +209,15 @@
     
     if (!empty($operator_username)) {
         // set form component descriptors
-        $input_descriptor1 = array();
+        $input_descriptors1 = array();
         
-        $input_descriptor1[] = array(
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+        
+        $input_descriptors1[] = array(
                                         "type" => "hidden",
                                         "value" => $operator_username_enc,
                                         "name" => "operator_username"
@@ -289,18 +303,7 @@
 
 <?php
     }
-?>
-
-        </div><!-- #contentnorightbar -->
-
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->       
-    </div>
-</div>
-
-</body>
-</html>
