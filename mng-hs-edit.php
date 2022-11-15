@@ -26,110 +26,147 @@
 
     include('library/check_operator_perm.php');
 
-
-    include 'library/opendb.php';
-
-    isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
-    isset($_REQUEST['macaddress']) ? $macaddress = $_REQUEST['macaddress'] : $macaddress = "";
-    isset($_REQUEST['geocode']) ? $geocode = $_REQUEST['geocode'] : $geocode = "";
-    isset($_REQUEST['owner']) ? $owner = $_REQUEST['owner'] : $owner = "";
-    isset($_REQUEST['email_owner']) ? $email_owner = $_REQUEST['email_owner'] : $email_owner = "";
-    isset($_REQUEST['manager']) ? $manager = $_REQUEST['manager'] : $manager = "";
-    isset($_REQUEST['email_manager']) ? $email_manager = $_REQUEST['email_manager'] : $email_manager = "";
-    isset($_REQUEST['address']) ? $address = $_REQUEST['address'] : $address = "";
-    isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
-    isset($_REQUEST['phone1']) ? $phone1 = $_REQUEST['phone1'] : $phone1 = "";
-    isset($_REQUEST['phone2']) ? $phone2 = $_REQUEST['phone2'] : $phone2 = "";
-    isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
-    isset($_REQUEST['companywebsite']) ? $companywebsite = $_REQUEST['companywebsite'] : $companywebsite = "";
-    isset($_REQUEST['companyphone']) ? $companyphone = $_REQUEST['companyphone'] : $companyphone = "";
-    isset($_REQUEST['companyemail']) ? $companyemail = $_REQUEST['companyemail'] : $companyemail = "";
-    isset($_REQUEST['companycontact']) ? $companycontact = $_REQUEST['companycontact'] : $companycontact = "";
-
-    $edit_hotspotname = $name; //feed the sidebar variables    
-
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
+    
+    include_once('library/config_read.php');
 
-    if (isset($_REQUEST['submit'])) {
 
-        $name = $_REQUEST['name'];
-        $macaddress = $_REQUEST['macaddress'];
-        $geocode = $_REQUEST['geocode'];
+    include('library/opendb.php');
 
-        if (trim($name) != "") {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = (array_key_exists('name', $_POST) && isset($_POST['name']) && trim(str_replace("%", "", $_POST['name'])))
+              ? trim($_POST['name']) : "";
+    } else {
+        $name = (array_key_exists('name', $_REQUEST) && isset($_REQUEST['name']) && trim(str_replace("%", "", $_REQUEST['name'])))
+              ? trim($_REQUEST['name']) : "";
+    }
+    $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
+    
+    //feed the sidebar variables
+    $edit_hotspotname = $name_enc;
+    
+    // check if it exists
+    $sql = sprintf("SELECT id FROM %s WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                                                            $dbSocket->escapeSimple($name));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
 
-            $currDate = date('Y-m-d H:i:s');
-            $currBy = $_SESSION['operator_user'];
-
-            $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." SET ".
-            " mac='".$dbSocket->escapeSimple($macaddress)."', ".
-            " geocode='".$dbSocket->escapeSimple($geocode).    "', ".
-            " owner='".$dbSocket->escapeSimple($owner)."', ".
-            " email_owner='".$dbSocket->escapeSimple($email_owner)."', ".
-            " manager='".$dbSocket->escapeSimple($manager)."', ".
-            " email_manager='".$dbSocket->escapeSimple($email_manager)."', ".
-            " address='".$dbSocket->escapeSimple($address)."', ".
-            " company='".$dbSocket->escapeSimple($company)."', ".
-            " phone1='".$dbSocket->escapeSimple($phone1)."', ".
-            " phone2='".$dbSocket->escapeSimple($phone2)."', ".
-            " type='".$dbSocket->escapeSimple($hotspot_type)."', ".
-            " companywebsite='".$dbSocket->escapeSimple($companywebsite)."' , ".
-            " companyemail='".$dbSocket->escapeSimple($companyemail)."' , ".
-            " companycontact='".$dbSocket->escapeSimple($companycontact)."' , ".
-            " companyphone='".$dbSocket->escapeSimple($companyphone)."' , ".
-            " updatedate='$currDate', updateby='$currBy' ".
-            " WHERE name='".$dbSocket->escapeSimple($name)."'";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL = "";
-            $logDebugSQL .= $sql . "\n";
+    $exists = ($res->numRows() == 1);
+    
+    if (!$exists) {
+        // we empty the name if the hs does not exist
+        $name = "";
+    }
+    
+    // from now on we can assume that $name is valid
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             
-            $successMsg = "Updated attributes for: <b> $name </b>";
-            $logAction .= "Successfully updated attributes for hotspot [$name] on page: ";
+            if (!empty($name)) {
+                $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
+                               filter_var($_POST['macaddress'], FILTER_VALIDATE_MAC) &&
+                               filter_var($_POST['macaddress'], FILTER_VALIDATE_IP))
+                            ? $_POST['macaddress'] : "";
+                
+                // we check that this MAC/IP addr is not assigned to any other HS
+                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE mac='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                                                                          $dbSocket->escapeSimple($mac));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                $exists = $res->fetchrow()[0] > 0;
+                
+                if (!$exitst) {
+                    $currDate = date('Y-m-d H:i:s');
+                    $currBy = $_SESSION['operator_user'];
+                    
+                    $geocode = (array_key_exists('geocode', $_POST) && isset($_POST['geocode'])) ? trim($_POST['geocode']) : "";
+                    $hotspot_type = (array_key_exists('hotspot_type', $_POST) && isset($_POST['hotspot_type'])) ? trim($_POST['hotspot_type']) : "";
+                                
+                    $owner = (array_key_exists('owner', $_POST) && isset($_POST['owner'])) ? trim($_POST['owner']) : "";
+                    $manager = (array_key_exists('manager', $_POST) && isset($_POST['manager'])) ? trim($_POST['manager']) : "";
+                    $email_manager = (array_key_exists('email_manager', $_POST) && isset($_POST['email_manager'])) ? trim($_POST['email_manager']) : "";
+                    $email_owner = (array_key_exists('email_owner', $_POST) && isset($_POST['email_owner'])) ? trim($_POST['email_owner']) : "";
+                    $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? trim($_POST['address']) : "";
+                    $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? trim($_POST['company']) : "";
+                    $phone1 = (array_key_exists('phone1', $_POST) && isset($_POST['phone1'])) ? trim($_POST['phone1']) : "";
+                    $phone2 = (array_key_exists('phone2', $_POST) && isset($_POST['phone2'])) ? trim($_POST['phone2']) : "";
+                    
+                    $companyphone = (array_key_exists('companyphone', $_POST) && isset($_POST['companyphone'])) ? trim($_POST['companyphone']) : "";
+                    $companywebsite = (array_key_exists('companywebsite', $_POST) && isset($_POST['companywebsite'])) ? trim($_POST['companywebsite']) : "";
+                    $companyemail = (array_key_exists('companyemail', $_POST) && isset($_POST['companyemail'])) ? trim($_POST['companyemail']) : "";
+                    $companycontact = (array_key_exists('companycontact', $_POST) && isset($_POST['companycontact'])) ? trim($_POST['companycontact']) : "";
+                    
+                    $sql = sprintf("UPDATE %s SET mac='%s', geocode='%s', owner='%s', email_owner='%s', manager='%s', email_manager='%s',
+                                                  address='%s', company='%s', phone1='%s', phone2='%s', type='%s', companywebsite='%s',
+                                                  companyemail='%s', companycontact='%s', companyphone='%s', updatedate='%s', updateby='%s'
+                                            WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                                   $dbSocket->escapeSimple($macaddress), $dbSocket->escapeSimple($geocode), $dbSocket->escapeSimple($owner),
+                                   $dbSocket->escapeSimple($email_owner), $dbSocket->escapeSimple($manager), $dbSocket->escapeSimple($email_manager),
+                                   $dbSocket->escapeSimple($address), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
+                                   $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($hotspot_type), $dbSocket->escapeSimple($companywebsite),
+                                   $dbSocket->escapeSimple($companyemail) , $dbSocket->escapeSimple($companycontact),
+                                   $dbSocket->escapeSimple($companyphone), $currDate, $currBy, $dbSocket->escapeSimple($name));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        // it seems that operator could not be added
+                        $f = "Failed to update this hotspot [%s]";
+                        $failureMsg = sprintf($f, $name_enc);
+                        $logAction .= sprintf($f, $name);
+                    } else {
+                        $successMsg = sprintf("Updated hotspot: <strong>%s</strong>", $name_enc);
+                        $logAction .= sprintf("Successfully updated hotspot [%s] on page: ", $name);
+                    }
+                    
+                } else {
+                    // MAC/IP already taken
+                    $failureMsg = "MAC/IP address already in use";
+                    $logAction .= "Failed updating (possible duplicate MAC/IP addr) HS on page: ";
+                }
+                
+            } else {
+                // invalid or empty
+                $failureMsg = "Hotspot name is invalid or empty";
+                $logAction .= "Failed updating (possible empty or invalid HS name) HS on page: ";
+            }
             
         } else {
-            $failureMsg = "no hotspot name was entered, please specify a hotspot name to edit";
-            $logAction .= "Failed updating attributes for hotspot [$name] on page: ";
+            // csrf
+            $name = "";
+            $failureMsg = sprintf("CSRF token error");
+            $logAction .= sprintf("CSRF token error on page: ");
         }
         
     }
     
-
-    // fill-in username and password in the textboxes
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='".$dbSocket->escapeSimple($name)."'";
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= $sql . "\n";
-
-    $row = $res->fetchRow();
-    $macaddress = $row[2];
-    $geocode = $row[3];
-    $owner = $row[4];
-    $email_owner = $row[5];
-    $manager = $row[6];
-    $email_manager = $row[7];
-    $address = $row[8];
-    $company = $row[9];
-    $phone1 = $row[10];
-    $phone2 = $row[11];
-    $hotspot_type = $row[12];
-    $companywebsite = $row[13];
-    $companyemail = $row[14];
-    $companycontact = $row[15];
-    $companyphone = $row[16];
-    $creationdate = $row[17];
-    $creationby = $row[18];
-    $updatedate = $row[19];
-    $updateby = $row[20];
-
-    include 'library/closedb.php';
-
-
-    if (trim($name) == "") {
-        $failureMsg = "no hotspot name was entered, please specify a hotspot name to edit</b>";
+    
+    if (empty($name)) {
+        $failureMsg = "Hotspot name is invalid or empty";
+        $logAction .= "Failed updating (possible empty or invalid HS name) HS on page: ";
+    } else {
+        /* fill-in all the hs settings */
+        $sql = sprintf("SELECT id, name, mac, geocode, owner, email_owner, manager, email_manager, address, company,
+                               phone1, phone2, type, companywebsite, companyemail, companycontact, companyphone,
+                               creationdate, creationby, updatedate, updateby
+                          FROM %s
+                         WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                                               $dbSocket->escapeSimple($name));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        list(
+                $id, $name, $mac, $geocode, $owner, $email_owner, $manager, $email_manager, $address, $company, $phone1,
+                $phone2, $type, $companywebsite, $companyemail, $companycontact, $companyphone,
+                $creationdate, $creationby, $updatedate, $updateby
+            ) = $res->fetchRow();
     }
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
+    include('library/closedb.php');
 
     include_once("lang/main.php");
     
@@ -142,6 +179,7 @@
     );
     
     $extra_js = array(
+        "library/javascript/pages_common.js",
         // js tabs stuff
         "library/javascript/tabs.js"
     );
@@ -151,100 +189,105 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (isset($name)) {
-        $title .= ":: $name";
+    if (!empty($name_enc)) {
+        $title .= " :: $name_enc";
     } 
 
     include("menu-mng-hs.php");
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
     
-    // set navbar stuff
-    $navbuttons = array(
-                          'HotspotInfo-tab' => t('title','HotspotInfo'),
-                          'ContactInfo-tab' => t('title','ContactInfo'),
-                       );
+    if (!empty($name)) {
+    
+        // set form component descriptors
+        $input_descriptors = array();
+        
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => $name_enc,
+                                        "name" => "name"
+                                     );
 
-    print_tab_navbuttons($navbuttons);
+        $input_descriptors[] = array(
+                                        "name" => "name_presentation",
+                                        "caption" => t('all','HotSpotName'),
+                                        "type" => "text",
+                                        "value" => ((isset($name)) ? $name : ""),
+                                        "tooltipText" => t('Tooltip','hotspotNameTooltip'),
+                                        "disabled" => true
+                                     );
+                                    
+        $input_descriptors[] = array(
+                                        "name" => "macaddress",
+                                        "caption" => t('all','MACAddress'),
+                                        "type" => "text",
+                                        "value" => ((isset($macaddress)) ? $macaddress : ""),
+                                        "tooltipText" => t('Tooltip','hotspotMacaddressTooltip')
+                                     );
+                                     
+        $input_descriptors[] = array(
+                                        "name" => "geocode",
+                                        "caption" => t('all','Geocode'),
+                                        "type" => "text",
+                                        "value" => ((isset($geocode)) ? $geocode : ""),
+                                        "tooltipText" => t('Tooltip','geocodeTooltip')
+                                     );
+        
+        $submit_descriptor = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                  );
+        
+        // set navbar stuff
+        $navbuttons = array(
+                              'HotspotInfo-tab' => t('title','HotspotInfo'),
+                              'ContactInfo-tab' => t('title','ContactInfo'),
+                           );
+
+        print_tab_navbuttons($navbuttons);
 ?>
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form method="POST">
+    <div id="HotspotInfo-tab" class="tabcontent" style="display: block">
+        <fieldset>
 
+            <h302><?= t('title','HotspotInfo') ?></h302>
 
-    <div class="tabcontent" id="HotspotInfo-tab" style="display: block">
-
-
-    <fieldset>
-
-        <h302> <?php echo t('title','HotspotInfo'); ?> </h302>
-        <br/>
-
-        <ul>
-
-            <li class='fieldset'>
-            <label for='name' class='form'><?php echo t('all','HotSpotName') ?></label>
-            <input disabled name='name' type='text' id='name' value='<?php echo $name ?>' tabindex=100 />
-            </li>
-
-            <li class='fieldset'>
-            <label for='macaddress' class='form'><?php echo t('all','MACAddress') ?></label>
-            <input name='macaddress' type='text' id='macaddress' value='<?php echo $macaddress ?>' tabindex=101 />
-            <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotMacaddressTooltip')" /> 
-            
-            <div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                <img src='images/icons/comment.png' alt='Tip' border='0' />
-                <?php echo t('Tooltip','hotspotMacaddressTooltip') ?>
-            </div>
-            </li>
-
-            <li class='fieldset'>
-            <label for='geocode' class='form'><?php echo t('all','Geocode') ?></label>
-            <input name='geocode' type='text' id='geocode' value='<?php echo $geocode ?>' tabindex=102 />
-            <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('geocodeTooltip')" /> 
-            
-            <div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                <img src='images/icons/comment.png' alt='Tip' border='0' />
-                <?php echo t('Tooltip','geocodeTooltip') ?>
-            </div>
-            </li>
-
-            <li class='fieldset'>
-            <br/>
-            <hr><br/>
-            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-                class='button' />
-            </li>
-
-        </ul>
-
-    </fieldset>
-
-    <input type=hidden value="<?php echo $name ?>" name="name"/>
-
-</div>
-
-<div class="tabcontent" id="ContactInfo-tab">
+            <ul style="margin: 30px auto">
 
 <?php
-    include_once('include/management/contactinfo.php');
+                foreach ($input_descriptors as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
 ?>
 
-        </div>
+            </ul>
+        </fieldset>
+
+<?php
+        print_form_component($submit_descriptor);
+?>
+
+    </div><!-- #HotspotInfo-tab -->
+
+
+    <div id="ContactInfo-tab" class="tabcontent">
+
+<?php
+        include_once('include/management/contactinfo.php');
+?>
+
+    </div><!-- #ContactInfo-tab -->
 
 </form>
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
 <?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    }
 
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+?>

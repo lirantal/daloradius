@@ -39,12 +39,12 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $operator_username = (array_key_exists('operator_username', $_POST) && isset($_POST['operator_username']))
                            ? trim(str_replace("%", "", $_POST['operator_username'])) : "";
-        $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";
     } else {
         $operator_username = (array_key_exists('operator_username', $_REQUEST) && isset($_REQUEST['operator_username']))
                            ? trim(str_replace("%", "", $_REQUEST['operator_username'])) : "";
-        $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";
     }
+    $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";
+    
     
     // check if this operator exists
     $sql = sprintf("SELECT id FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
@@ -200,6 +200,10 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
+    if (!empty($operator_username_enc)) {
+        $title .= " :: $operator_username_enc";
+    } 
+
     include("menu-config-operators.php");
     
     echo '<div id="contentnorightbar">';
@@ -258,7 +262,7 @@
 ?>
 
 <form method="POST">
-    <div id="OperatorInfo-tab" class="tabcontent" title="Operator Info" style="display: block">
+    <div id="OperatorInfo-tab" class="tabcontent" style="display: block">
         <fieldset>
             <h302>Account Settings</h302>
             <br/>
@@ -280,13 +284,13 @@
         
     </div>
     
-     <div id="ContactInfo-tab" class="tabcontent" title="Contact Info">
+     <div id="ContactInfo-tab" class="tabcontent">
 <?php
         include_once('include/management/operatorinfo.php');
 ?>
      </div>
     
-    <div id="ACLSettings-tab" class="tabcontent" title="ACL Settings">
+    <div id="ACLSettings-tab" class="tabcontent">
         <fieldset>
 <?php
             include_once('include/management/operator_acls.php');

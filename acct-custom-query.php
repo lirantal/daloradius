@@ -20,12 +20,22 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
-	
-	//setting values for the order by and order type variables
+    include('library/check_operator_perm.php');
+
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
+    include_once('library/config_read.php');
+    
+    //setting values for the order by and order type variables
 	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "radacctid";
 	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
 
@@ -44,33 +54,26 @@
 	$accounting_custom_value = $value;
 
 
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logQuery = "performed query for all accounting records on page: ";
+	include_once("lang/main.php");
+    
+    include("library/layout.php");
 
-?>
-
-<?php
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','acctcustomquery.php');
+    $help = t('helpPage','acctcustomquery');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
 	
 	include("menu-accounting-custom.php");
 	
-?>
-
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctcustomquery.php')?>
-		<h144>&#x2754;</h144></a></h2>
-				
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','acctcustomquery') ?>
-			<br/>
-		</div>
-		<br/>
-
-
-
-<?php
-
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
 		include 'library/opendb.php';
 		include 'include/management/pages_common.php';	
 		include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file

@@ -49,9 +49,7 @@ $m_active = "Graphs";
                                 "megabytes" => t('all','Megabytes'),
                                 "gigabytes" => t('all','Gigabytes')
                              );
-                             
-    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
+
 ?>
         <div id="sidebar">
 
@@ -204,16 +202,10 @@ $m_active = "Graphs";
                     </a>
                     <form name="logged_users" action="graphs-logged_users.php" method="GET" class="sidebar">
                         
-                        <label style="user-select: none" for="logged_users_on_date"
-                            onclick="<?= sprintf($showChooser_format, "logged_users_on_date", date('Y', time())) ?>">
-                            <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                            Date
-                        </label>
-                        <input tabindex="17" type="text" name="logged_users_on_date" id="logged_users_on_date"
+                        <label style="user-select: none" for="logged_users_on_date"><?= t('all','Date') ?></label>
+                        <input tabindex="17" type="date" name="logged_users_on_date" id="logged_users_on_date"
                             tooltipText="<?= t('Tooltip','Date') ?>"
                             value="<?= (isset($logged_users_on_date)) ? $logged_users_on_date : date("Y-m-d") ?>">
-                        <?= $chooserSpan ?>
-                        
                         
                     </form>
                 </li>

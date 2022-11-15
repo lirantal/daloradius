@@ -20,10 +20,10 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
 	//setting values for the order by and order type variables
 	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "username";
@@ -41,39 +41,64 @@
 		$planname = "%";
 	}
 
-	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
-	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
+	$date_regex = '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/';
+
+    // we validate starting and ending dates
+    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
+                  preg_match($date_regex, $_GET['startdate'], $m) !== false &&
+                  checkdate($m[2], $m[3], $m[1]))
+               ? $_GET['startdate'] : "";
+
+    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
+                preg_match($date_regex, $_GET['enddate'], $m) !== false &&
+                checkdate($m[2], $m[3], $m[1]))
+             ? $_GET['enddate'] : "";
+
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query";
+    if (!empty($username)) {
+        $logQuery .= " for user $username";
+    }
+    
+    if (!empty($startdate)) {
+         $logQuery .= " from $startdate";
+    }
+    if (!empty($enddate)) {
+         $logQuery .= " to $enddate";
+    }
+    $logQuery .= "on page: ";
+
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','acctplans.php');
+    $help = t('helpPage','acctplans');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    
+    include("menu-accounting-plans.php");
 	
 	//feed the sidebar variables
 	$accounting_plan_username = $username;
 	$accounting_plan_startdate = $startdate;
 	$accounting_plan_enddate = $enddate;
 
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
-	$logDebugSQL = "";
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
-?>
-
-<?php
-	
-	include("menu-accounting-plans.php");
-	
-?>
-
-	<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctplans.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','acctplans') ?>
-			<br/>
-		</div>
-		<br/>
-
-
-<?php
 
 	include 'library/opendb.php';
 	include 'include/management/pages_common.php';

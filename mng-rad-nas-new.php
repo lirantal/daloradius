@@ -21,85 +21,80 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
 
-
-    // declaring variables
-    $nashost = "";
-    $nassecret = "";
-    $nasname = "";
-    $nasports = "";
-    $nastype = "";
-    $nasdescription = "";
-    $nascommunity = "";
-    $nasvirtualserver = "";
-
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($_POST['submit'])) {
-    
-        $nashost = $_POST['nashost'];
-        $nassecret = $_POST['nassecret'];
-        $nasname = $_POST['nasname'];
-        $nasports = $_POST['nasports'];
-        $nastype = $_POST['nastype'];
-        $nasdescription = $_POST['nasdescription'];
-        $nascommunity = $_POST['nascommunity'];
-        $nasvirtualserver = $_POST['nasvirtualserver'];
-
-        include 'library/opendb.php';
-
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].
-                " WHERE nasname='".$dbSocket->escapeSimple($nashost)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($res->numRows() == 0) {
-
-            if (trim($nashost) != "" and trim($nassecret) != "") {
-
-                if (!$nasports) {
-                    $nasports = 0;
-                }
-                
-                if (!$nasvirtualserver) {
-                      $nasvirtualserver = '';
-               }
-
-                // insert nas details
-                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADNAS'].
-                    " (id,nasname,shortname,type,ports,secret,server,community,description) ".
-                    " values (0, '".$dbSocket->escapeSimple($nashost)."', '".$dbSocket->escapeSimple($nasname).
-                    "', '".$dbSocket->escapeSimple($nastype)."', '".$dbSocket->escapeSimple($nasports).
-                    "', '".$dbSocket->escapeSimple($nassecret)."', '".$dbSocket->escapeSimple($nasvirtualserver).
-                    "', '".$dbSocket->escapeSimple($nascommunity)."', '".$dbSocket->escapeSimple($nasdescription)."')";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-            
-                $successMsg = "Added new NAS to database: <b> $nashost </b>  ";
-                $logAction .= "Successfully added nas [$nashost] on page: ";
-            } else {
-                $failureMsg = "no NAS Host or NAS Secret was entered, it is required that you specify both NAS Host and NAS Secret";
-                $logAction .= "Failed adding (missing nas/secret) nas [$nashost] on page: ";
-            }
-        } else {
-            $failureMsg = "The NAS IP/Host $nashost already exists in the database";    
-            $logAction .= "Failed adding already existing nas [$nashost] on page: ";
-        }
-
-        include 'library/closedb.php';
-    }
-    
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
-
+    
     include_once("lang/main.php");
     
+    // we import validation facilities
+    include_once("library/validation.php");
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nasname = (array_key_exists('nasname', $_POST) && isset($_POST['nasname'])) ? trim(str_replace("%", "", $_POST['nasname'])) : "";
+        $nassecret = (array_key_exists('nassecret', $_POST) && isset($_POST['nassecret'])) ? trim(str_replace("%", "", $_POST['nassecret'])) : "";
+        
+        $nasname_enc = (!empty($nasname)) ? htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8') : "";
+        
+        if (empty($nasname) || empty($nassecret)) {
+            // required
+            $failureMsg = sprintf("%s and/or %s are empty or invalid", t('all','NasIPHost'), t('all','NasSecret'));
+            $logAction .= "Failed adding (possible empty user/pass) new operator on page: ";
+        } else {
+            include('library/opendb.php');
+            
+            $sql = sprintf("SELECT COUNT(id) FROM %s WHERE nasname='%s'", $configValues['CONFIG_DB_TBL_RADNAS'],
+                                                                          $dbSocket->escapeSimple($nasname));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+            
+            $exists = $res->fetchrow()[0] > 0;
+            
+            if ($exists) {
+                // name already taken
+                $failureMsg = sprintf("This %s already exists: <b>%s</b>", t('all','NasIPHost'), $nasname_enc);
+                $logAction .= "Failed adding a new NAS [$nasname already exists] on page: ";
+            } else {
+                $shortname = (array_key_exists('shortname', $_POST) && isset($_POST['shortname'])) ? trim(str_replace("%", "", $_POST['shortname'])) : "";
+                $nasports = (array_key_exists('nasports', $_POST) && isset($_POST['nasports'])) ? trim(str_replace("%", "", $_POST['nasports'])) : "";
+                $nastype = (array_key_exists('nastype', $_POST) && isset($_POST['nastype']) &&
+                            in_array($_POST['nastype'], $valid_nastypes)) ? $_POST['nastype'] : $valid_nastypes[0];
+                $nasdescription = (array_key_exists('nasdescription', $_POST) && isset($_POST['nasdescription'])) ? trim(str_replace("%", "", $_POST['nasdescription'])) : "";
+                $nascommunity = (array_key_exists('nascommunity', $_POST) && isset($_POST['nascommunity'])) ? trim(str_replace("%", "", $_POST['nascommunity'])) : "";
+                $nasvirtualserver = (array_key_exists('nasvirtualserver', $_POST) && isset($_POST['nasvirtualserver'])) ? trim(str_replace("%", "", $_POST['nasvirtualserver'])) : "";
+                
+                $sql = sprintf("INSERT INTO %s (id, nasname, shortname, type, ports, secret, server, community, description)
+                                        VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $configValues['CONFIG_DB_TBL_RADNAS'],
+                               $dbSocket->escapeSimple($nasname), $dbSocket->escapeSimple($shortname), $dbSocket->escapeSimple($nastype),
+                               $dbSocket->escapeSimple($nasports), $dbSocket->escapeSimple($nassecret), $dbSocket->escapeSimple($nasvirtualserver),
+                               $dbSocket->escapeSimple($nascommunity), $dbSocket->escapeSimple($nasdescription));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    // it seems that operator could not be added
+                    $f = "Failed to add this new NAS [%s] to database";
+                    $failureMsg = sprintf($f, $nasname_enc);
+                    $logAction .= sprintf($f, $nasname_enc);
+                } else {
+                    $successMsg = sprintf("Added to database new NAS: <strong>%s</strong>", $nasname_enc);
+                    $logAction .= sprintf("Successfully added new NAS [%s] on page: ", $nasname);
+                }
+            }
+            
+            include('library/closedb.php');
+        }
+
+    }
+
     include("library/layout.php");
 
     // print HTML prologue
@@ -124,102 +119,130 @@
     
     include_once('include/management/actionMessages.php');
 
-    // set navbar stuff
-    $navbuttons = array(
-                          'NASInfo-tab' => t('title','NASInfo'),
-                          'NASAdvanced-tab' => t('title','NASAdvanced'),
-                       );
+    if (!isset($successMsg)) {
 
-    print_tab_navbuttons($navbuttons);
+        // set form component descriptors
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array(
+                                        "name" => "nasname",
+                                        "caption" => t('all','NasIPHost'),
+                                        "type" => "text",
+                                        "value" => ((isset($nasname)) ? $nasname : "")
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "nassecret",
+                                        "caption" => t('all','NasSecret'),
+                                        "type" => "text",
+                                        "value" => ((isset($nassecret)) ? $nassecret : "")
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "nastype",
+                                        "caption" => t('all','NasType'),
+                                        "type" => "text",
+                                        "datalist" => $valid_nastypes,
+                                        "value" => ((isset($nastype)) ? $nastype : $valid_nastypes[0])
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "shortname",
+                                        "caption" => t('all','NasShortname'),
+                                        "type" => "text",
+                                        "value" => ((isset($shortname)) ? $shortname : "")
+                                     );
+
+        
+        $input_descriptors2 = array();
+        
+        $input_descriptors2[] = array(
+                                        "name" => "nasports",
+                                        "caption" => t('all','NasPorts'),
+                                        "type" => "number",
+                                        "min" => "0",
+                                        "max" => "65535",
+                                        "value" => ((isset($nasports)) ? $nasports : "")
+                                     );
+                                     
+        $input_descriptors2[] = array(
+                                        "name" => "nascommunity",
+                                        "caption" => t('all','NasCommunity'),
+                                        "type" => "text",
+                                        "value" => ((isset($nascommunity)) ? $nascommunity : "")
+                                     );
+                                     
+        $input_descriptors2[] = array(
+                                        "name" => "nasvirtualserver",
+                                        "caption" => t('all','NasVirtualServer'),
+                                        "type" => "text",
+                                        "value" => ((isset($nasvirtualserver)) ? $nasvirtualserver : "")
+                                     );
+                                     
+        $input_descriptors2[] = array(
+                                        "name" => "nasdescription",
+                                        "caption" => t('all','NasDescription'),
+                                        "type" => "textarea",
+                                        "content" => ((isset($nasdescription)) ? $nasdescription : "")
+                                     );
+
+        $submit_descriptor = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                  );
+
+        // set navbar stuff
+        $navbuttons = array(
+                              'NASInfo-tab' => t('title','NASInfo'),
+                              'NASAdvanced-tab' => t('title','NASAdvanced'),
+                           );
+
+        print_tab_navbuttons($navbuttons);
 
 ?>
 
 <form name="newnas" action="<?= $_SERVER['PHP_SELF']; ?>" method="post">
     <div class="tabcontent" id="NASInfo-tab" style="display: block">
-
         <fieldset>
-
-        <h302> <?= t('title','NASInfo') ?> </h302>
-        <br/>
-
-                <label for='nashost' class='form'><?= t('all','NasIPHost') ?></label>
-                <input name='nashost' type='text' id='nashost' value='' tabindex=100 />
-                <br />
-
-
-                <label for='nassecret' class='form'><?= t('all','NasSecret') ?></label>
-                <input name='nassecret' type='text' id='nassecret' value='' tabindex=101 />
-                <br />
-
-
-                <label for='nastype' class='form'><?= t('all','NasType') ?></label>
-                <input name='nastype' type='text' id='nastype' value='' tabindex=102 />
-                <select onChange="javascript:setStringText(this.id,'nastype')" id="optionSele" tabindex=103 class='form'>
-                    <option value="">Select Type...</option>
-                    <option value="other">other</option>
-                    <option value="cisco">cisco</option>
-                    <option value="livingston">livingston</option>
-                    <option value="computon">computon</option>
-                    <option value="max40xx">max40xx</option>
-                    <option value="multitech">multitech</option>
-                    <option value="natserver">natserver</option>
-                    <option value="pathras">pathras</option>
-                    <option value="patton">patton</option>
-                    <option value="portslave">portslave</option>
-                    <option value="tc">tc</option>
-                    <option value="usrhiper">usrhiper</option>
-                   </select>
-                <br />
+            <h302><?= t('title','NASInfo') ?></h302>
         
+            <ul style="margin: 30px auto">
 
-                <label for='nasname' class='form'><?= t('all','NasShortname') ?></label>
-                <input name='nasname' type='text' id='nasname' value='' tabindex=104 />
-                <br />
+<?php
+                foreach ($input_descriptors1 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
 
+            </ul>
         </fieldset>
-
-
-     </div>
+     </div><!-- #NASInfo-tab -->
     
     <div class="tabcontent" id="NASAdvanced-tab">
         <fieldset>
+            <h302><?= t('title','NASAdvanced') ?></h302>
+            <ul style="margin: 30px auto">
 
-        <h302> <?= t('title','NASAdvanced') ?> </h302>
-        <br/>
+<?php
+                foreach ($input_descriptors2 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
 
-                <label for='nasports' class='form'><?= t('all','NasPorts') ?></label>
-                <input name='nasports' type='text' id='nasports' value='0' tabindex=105 />
-                <br />
-
-                <label for='nascommunity' class='form'><?= t('all','NasCommunity') ?></label>
-                <input name='nascommunity' type='text' id='nascommunity' value='' tabindex=106 />
-                <br />
-
-                <label for='nasvirtualserver' class='form'><?= t('all','NasVirtualServer') ?></label>
-                <input name='nasvirtualserver' type= 'text' id='nasvirtualserver' value='' tabindex=107 >
-                <br />
-
-                <label for='nasdescription' class='form'><?= t('all','NasDescription') ?></label>
-                <textarea class='form' name='nasdescription' id='nasdescription' value='' tabindex=108 ></textarea>
-                <br />
-                
+            </ul>
         </fieldset>
-
-    </div>
+    </div><!-- #NASAdvanced-tab -->
     
-    <input type='submit' name='submit' value='<?= t('buttons','apply') ?>' class='button' />
+<?php
+        print_form_component($submit_descriptor);
+?>
 
 </form>
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
 
-</body>
-</html>
+<?php
+    }
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+?>

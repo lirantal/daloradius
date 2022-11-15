@@ -35,8 +35,6 @@ include_once("include/menu/menu-items.php");
 include_once("include/menu/accounting-subnav.php");
 include_once("include/management/autocomplete.php");
 
-$showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-$chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>	
 
             <div id="sidebar">
@@ -88,23 +86,13 @@ $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="dis
                                 tooltipText="<?= t('Tooltip','Username') ?>"
                                 value="<?= (isset($accounting_date_username)) ? $accounting_date_username : ""?>">
                             
-                            <label style="user-select: none" for="startdate"
-                                onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                Start Date
-                            </label>
-                            <input tabindex="9" name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
+                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
+                            <input tabindex="9" name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($accounting_date_startdate)) ? $accounting_date_startdate : date("Y-m-01") ?>">
-                            <?= $chooserSpan ?>
-
-                            <label style="user-select: none" for="enddate"
-                                onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                End Date
-                            </label>
-                            <input tabindex="10" name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
+                            
+                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
+                            <input tabindex="10" name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($accounting_date_enddate)) ? $accounting_date_enddate : date("Y-m-t") ?>">
-                            <?= $chooserSpan ?>
                         </form>
                     </li>
                     

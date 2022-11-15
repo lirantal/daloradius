@@ -49,8 +49,7 @@ $valid_ops = array(
                     "=", ":=", ":=", "==", "+=", "!=", ">",
                     ">=", "<", "<=", "=~", "!~", "=*", "!*"
                   );
-                  
-// whitelists used for validation/presentation purposes
+
 $valid_db_engines = array(
                             "mysql" => "MySQL",
                             "pgsql" => "PostgreSQL",
@@ -65,5 +64,11 @@ $valid_db_engines = array(
                             "fbsql" => "fbsql",
                             "informix" => "informix"
                          );
+
+$valid_nastypes = array(
+                            "other", "cisco", "livingston", "computon", "max40xx",
+                            "multitech", "natserver", "pathras",
+                            "patton", "portslave", "tc", "usrhiper"
+                       );
 
 ?>

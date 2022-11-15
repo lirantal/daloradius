@@ -34,8 +34,6 @@ $m_active = "Billing";
 include_once("include/menu/menu-items.php");
 include_once("include/menu/billing-subnav.php");
 
-$showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-$chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 
 $hotspot_options = "";
 
@@ -70,23 +68,13 @@ include('library/closedb.php');
                             <br><br>
                             
                             Filter by date
-                            <label style="user-select: none" for="startdate"
-                                onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                Start Date
-                            </label>
-                            <input name="startdate" type="text" id="startdate" value="<?= date('Y-01-01') ?>"
+                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
+                            <input name="startdate" type="date" id="startdate" value="<?= date('Y-01-01') ?>"
                                 tooltipText="<?= t('Tooltip','Date') ?>">
-                            <?= $chooserSpan ?>
 
-                            <label style="user-select: none" for="enddate"
-                                onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                End Date
-                            </label>
-                            <input name="enddate" type="text" id="enddate" value="<?= date('Y-m-d') ?>"
+                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
+                            <input name="enddate" type="date" id="enddate" value="<?= date('Y-m-d') ?>"
                                 tooltipText="<?= t('Tooltip','Date') ?>">
-                            <?= $chooserSpan ?>
                         </form>
                     </li>
 
@@ -104,23 +92,13 @@ include('library/closedb.php');
                             <br><br>
 
                             Filter by date
-                            <label style="user-select: none" for="ps-startdate"
-                                onclick="<?= sprintf($showChooser_format, "ps-startdate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                Start Date
-                            </label>
-                            <input name="ps-startdate" type="text" id="ps-startdate" value="<?= date('Y-01-01') ?>"
+                            <label style="user-select: none" for="ps-startdate"><?= t('all','StartingDate') ?></label>
+                            <input name="ps-startdate" type="date" id="ps-startdate" value="<?= date('Y-01-01') ?>"
                                  tooltipText="<?= t('Tooltip','Date') ?>">
-                            <?= $chooserSpan ?>
 
-                            <label style="user-select: none" for="ps-enddate"
-                                onclick="<?= sprintf($showChooser_format, "ps-enddate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                End Date
-                            </label>
-                            <input name="ps-enddate" type="text" id="ps-enddate" value="<?= date('Y-m-d') ?>"
+                            <label style="user-select: none" for="ps-enddate"><?= t('all','EndingDate') ?></label>
+                            <input name="ps-enddate" type="date" id="ps-enddate" value="<?= date('Y-m-d') ?>"
                                  tooltipText="<?= t('Tooltip','Date') ?>">
-                            <?= $chooserSpan ?>
                         </form>
                     </li>
 
@@ -129,15 +107,15 @@ include('library/closedb.php');
 				<h3>Rates Management</h3>
 				<ul class="subnav">
 				
-                    <li><a title="Show rates" href="bill-rates-list.php"><b>&raquo;</b>Show rates</a></li>
-                    <li><a title="New rate" href="bill-rates-new.php"><b>&raquo;</b>New rate</a></li>
+                    <li><a title="Show rates" href="bill-rates-list.php"><b>&raquo;</b><?= t('button','ListRates') ?></a></li>
+                    <li><a title="New rate" href="bill-rates-new.php"><b>&raquo;</b><?= t('button','NewRate') ?></a></li>
                     <li>
-                        <a title="Edit rate" href="javascript:document.billratesedit.submit();"><b>&raquo;</b>Edit rate</a>
+                        <a title="Edit rate" href="javascript:document.billratesedit.submit();"><b>&raquo;</b><?= t('button','EditRate') ?></a>
                         <form name="billratesedit" action="bill-rates-edit.php" method="GET" class="sidebar">
                             <input name="type" type="text">
                         </form>
                     </li>
-                    <li><a title="Delete rate" href="bill-rates-del.php"><b>&raquo;</b>Delete rate</a></li>
+                    <li><a title="Delete rate" href="bill-rates-del.php"><b>&raquo;</b><?= t('button','RemoveRate') ?></a></li>
 				</ul><!-- .subnav -->
             </div><!-- #sidebar -->
 		
