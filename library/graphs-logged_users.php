@@ -15,7 +15,12 @@
  *
  *********************************************************************************************************
  *
- * Description:    this graph extension procduces a query of the overall logins 
+ * Description:    if called specifing only year and month, this script
+ *                 produces a barchart containing min/max number of user
+ *                 accounted on every day of the specified month;
+ *                 if a full date is specified, the barchart
+ *                 reports the per-hour distribution of users accounted 
+ *                 on the specified date.
  *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Tiago Ratto <tiagoratto@gmail.com>
@@ -137,43 +142,36 @@ if (!empty($day)) {
     
     // iterate through each day of the selected interval
     for ($dt_obj = $startdate_obj; $dt_obj <= $enddate_obj; $dt_obj->modify('+1 day')) {
+        $date = $dt_obj->format('Y-m-d');
         
-        for ($j = 0; $j <= 23; $j++) {
-            $dt_str = $dt_obj->format('Y-m-d H:i:s');
-            
-            // we get a table containing starting_day, starting_hour and ending_day, ending_hour
-            $sql = sprintf("SELECT COUNT(DISTINCT(radacctid)) FROM %s
-                             WHERE acctstarttime <= '%s'
-                               AND (acctstoptime >= '%s' OR (acctsessiontime = 0 and acctinputoctets = 0 and acctoutputoctets = 0))",
-                           $configValues['CONFIG_DB_TBL_RADACCT'], $dt_str, $dt_str);
-            $result = $dbSocket->query($sql);
-            
-            $counter = intval($result->fetchRow()[0]);
+        $sql = sprintf("SELECT HOUR(acctstarttime) AS h, COUNT(DISTINCT(radacctid)) FROM %s
+                         WHERE DATE(acctstarttime) <= '%s'
+                           AND (DATE(acctstoptime) >= '%s'OR (acctsessiontime = 0 AND acctinputoctets = 0 AND acctoutputoctets = 0))
+                         GROUP BY h", $configValues['CONFIG_DB_TBL_RADACCT'], $date, $date);
+        $result = $dbSocket->query($sql);
+        
+        while ($row = $result->fetchRow()) {
+            $counter = intval($row[1]);
             
             // populate data arrays
-            $key = $dt_obj->format('Y-m-d');
+            $tot_values[$date] = (array_key_exists($date, $tot_values)) ? $tot_values[$date] + $counter : $counter;
             
-            $tot_values[$key] = (array_key_exists($key, $tot_values)) ? $tot_values[$key] + $counter : $counter;
-            
-            if (!array_key_exists($key, $min_values)) {
-                $min_values[$key] = $counter;
+            if (!array_key_exists($date, $min_values)) {
+                $min_values[$date] = $counter;
             } else {
-                if ($min_values[$key] > $counter) {
-                    $min_values[$key] = $counter;
+                if ($min_values[$date] > $counter) {
+                    $min_values[$date] = $counter;
                 }
             }
             
-            if (!array_key_exists($key, $max_values)) {
-                $max_values[$key] = $counter;
+            if (!array_key_exists($date, $max_values)) {
+                $max_values[$date] = $counter;
             } else {
-                if ($max_values[$key] < $counter) {
-                    $max_values[$key] = $counter;
+                if ($max_values[$date] < $counter) {
+                    $max_values[$date] = $counter;
                 }
             }
-            
-            $dt_obj->modify('+ 1 hour');
         }
-        
     }
     
     ksort($tot_values);
