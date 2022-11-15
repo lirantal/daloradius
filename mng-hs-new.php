@@ -26,80 +26,96 @@
 
     include('library/check_operator_perm.php');
 
-    isset($_REQUEST['name']) ? $name = $_REQUEST['name'] : $name = "";
-    isset($_REQUEST['macaddress']) ? $macaddress = $_REQUEST['macaddress'] : $macaddress = "";
-    isset($_REQUEST['geocode']) ? $geocode = $_REQUEST['geocode'] : $geocode = "";
-    isset($_REQUEST['owner']) ? $owner = $_REQUEST['owner'] : $owner = "";
-    isset($_REQUEST['email_owner']) ? $email_owner = $_REQUEST['email_owner'] : $email_owner = "";
-    isset($_REQUEST['manager']) ? $manager = $_REQUEST['manager'] : $manager = "";
-    isset($_REQUEST['email_manager']) ? $email_manager = $_REQUEST['email_manager'] : $email_manager = "";
-    isset($_REQUEST['address']) ? $address = $_REQUEST['address'] : $address = "";
-    isset($_REQUEST['company']) ? $company = $_REQUEST['company'] : $company = "";
-    isset($_REQUEST['phone1']) ? $phone1 = $_REQUEST['phone1'] : $phone1 = "";
-    isset($_REQUEST['phone2']) ? $phone2 = $_REQUEST['phone2'] : $phone2 = "";
-    isset($_REQUEST['hotspot_type']) ? $hotspot_type = $_REQUEST['hotspot_type'] : $hotspot_type = "";
-    isset($_REQUEST['companywebsite']) ? $companywebsite = $_REQUEST['companywebsite'] : $companywebsite = "";
-    isset($_REQUEST['companyphone']) ? $companyphone = $_REQUEST['companyphone'] : $companyphone = "";
-    isset($_REQUEST['companyemail']) ? $companyemail = $_REQUEST['companyemail'] : $companyemail = "";
-    isset($_REQUEST['companycontact']) ? $companycontact = $_REQUEST['companycontact'] : $companycontact = "";
-
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($_POST["submit"])) {
-        $name = $_REQUEST['name'];
-        $macaddress = $_REQUEST['macaddress'];
-        $geocode = $_REQUEST['geocode'];
+    include_once('library/config_read.php');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
+                       filter_var($_POST['macaddress'], FILTER_VALIDATE_MAC) &&
+                       filter_var($_POST['macaddress'], FILTER_VALIDATE_IP))
+                    ? $_POST['macaddress'] : "";
+        $name = (array_key_exists('name', $_POST) && isset($_POST['name']) && trim(str_replace("%", "", $_POST['name'])))
+              ? trim($_POST['name']) : "";
+        $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
         
-        include 'library/opendb.php';
+        $geocode = (array_key_exists('geocode', $_POST) && isset($_POST['geocode'])) ? trim($_POST['geocode']) : "";
+        $hotspot_type = (array_key_exists('hotspot_type', $_POST) && isset($_POST['hotspot_type'])) ? trim($_POST['hotspot_type']) : "";
+                    
+        $owner = (array_key_exists('owner', $_POST) && isset($_POST['owner'])) ? trim($_POST['owner']) : "";
+        $manager = (array_key_exists('manager', $_POST) && isset($_POST['manager'])) ? trim($_POST['manager']) : "";
+        $email_manager = (array_key_exists('email_manager', $_POST) && isset($_POST['email_manager'])) ? trim($_POST['email_manager']) : "";
+        $email_owner = (array_key_exists('email_owner', $_POST) && isset($_POST['email_owner'])) ? trim($_POST['email_owner']) : "";
+        $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? trim($_POST['address']) : "";
+        $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? trim($_POST['company']) : "";
+        $phone1 = (array_key_exists('phone1', $_POST) && isset($_POST['phone1'])) ? trim($_POST['phone1']) : "";
+        $phone2 = (array_key_exists('phone2', $_POST) && isset($_POST['phone2'])) ? trim($_POST['phone2']) : "";
+        
+        $companyphone = (array_key_exists('companyphone', $_POST) && isset($_POST['companyphone'])) ? trim($_POST['companyphone']) : "";
+        $companywebsite = (array_key_exists('companywebsite', $_POST) && isset($_POST['companywebsite'])) ? trim($_POST['companywebsite']) : "";
+        $companyemail = (array_key_exists('companyemail', $_POST) && isset($_POST['companyemail'])) ? trim($_POST['companyemail']) : "";
+        $companycontact = (array_key_exists('companycontact', $_POST) && isset($_POST['companycontact'])) ? trim($_POST['companycontact']) : "";
+        
+        include('library/opendb.php');
+        
+        if (empty($macaddress) || empty($name)) {
+            // if statement returns false which means that the user has left an empty field for
+            // either macaddress, name, or both
 
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." WHERE name='".$dbSocket->escapeSimple($name)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
+            $failureMsg = "IP/MAC Address or name are empty";
+            $logAction .= "Failed adding (possible empty IP/MAC Addr and/or name) new HS on page: ";
+        } else {
+            $sql = sprintf("SELECT COUNT(id) FROM %s WHERE name='%s' OR mac='%s'",
+                           $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                           $dbSocket->escapeSimple($name), $dbSocket->escapeSimple($mac));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+            
+            $exists = $res->fetchrow()[0] > 0;
+            
+            if ($exists) {
+                // if statement returns false which means there is at least one HS
+                // in the database with the same name or macaddress
 
-        if ($res->numRows() == 0) {
-            if (trim($name) != "" and trim($macaddress) != "") {
-
+                $failureMsg = sprintf("Name <strong>%s</strong> or IP/MAC address <strong>%s</strong> already exist in database", $name_enc, $macaddress);
+                $logAction .= "Failed adding new HS. Name or IP/MAC address already existing in database [$name, $macaddress] on page: ";
+            } else {
                 $currDate = date('Y-m-d H:i:s');
                 $currBy = $_SESSION['operator_user'];
-
-                // insert hotspot info
-                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-                " (id, name, mac, geocode, owner, email_owner, manager, email_manager, address, company, ".
-                "  phone1, phone2, type, companywebsite, companyemail, companycontact, companyphone, ".
-                "  creationdate, creationby, updatedate, updateby) ".
-                " VALUES (0, '".$dbSocket->escapeSimple($name)."', '".
-                $dbSocket->escapeSimple($macaddress)."', '".
-                $dbSocket->escapeSimple($geocode)."','".$dbSocket->escapeSimple($owner)."','".
-                $dbSocket->escapeSimple($email_owner)."','".$dbSocket->escapeSimple($manager)."','".
-                $dbSocket->escapeSimple($email_manager)."','".
-                $dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($company)."','".
-                $dbSocket->escapeSimple($phone1)."','".$dbSocket->escapeSimple($phone2)."','".
-                $dbSocket->escapeSimple($hotspot_type)."','".$dbSocket->escapeSimple($companywebsite)."','".
-                $dbSocket->escapeSimple($companyemail)."','".
-                $dbSocket->escapeSimple($companycontact)."','".
-                $dbSocket->escapeSimple($companyphone).    "', ".
-                " '$currDate', '$currBy', NULL, NULL)";
+                
+                $sql = sprintf("INSERT INTO %s (id, name, mac, geocode, owner, email_owner, manager, email_manager, address,
+                                                company, phone1, phone2, type, companywebsite, companyemail, companycontact,
+                                                companyphone, creationdate, creationby, updatedate, updateby)
+                                        VALUES (0, '%s', '%s', '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
+                                                '%s', '%s', '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                               $dbSocket->escapeSimple($name), $dbSocket->escapeSimple($macaddress), $dbSocket->escapeSimple($geocode),
+                               $dbSocket->escapeSimple($owner), $dbSocket->escapeSimple($email_owner), $dbSocket->escapeSimple($manager),
+                               $dbSocket->escapeSimple($email_manager), $dbSocket->escapeSimple($address), $dbSocket->escapeSimple($company),
+                               $dbSocket->escapeSimple($phone1), $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($hotspot_type),
+                               $dbSocket->escapeSimple($companywebsite), $dbSocket->escapeSimple($companyemail),
+                               $dbSocket->escapeSimple($companycontact), $dbSocket->escapeSimple($companyphone), $currDate, $currBy);
                 $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg = "Added to database new hotspot: <b>$name</b>";
-                $logAction .= "Successfully added new hotspot [$name] on page: ";
-            } else {
-                $failureMsg = "you must provide atleast a hotspot name and mac-address";    
-                $logAction .= "Failed adding new hotspot [$name] on page: ";    
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    // it seems that operator could not be added
+                    $f = "Failed to add this new hotspot [%s] to database";
+                    $failureMsg = sprintf($f, $name_enc);
+                    $logAction .= sprintf($f, $name);
+                } else {
+                    $successMsg = sprintf("Added to database new hotspot: <strong>%s</strong>", $name_enc);
+                    $logAction .= sprintf("Successfully added new hotspot [%s] on page: ", $name);
+                }
             }
-        } else { 
-            $failureMsg = "You have tried to add a hotspot that already exist in the database: $name";    
-            $logAction .= "Failed adding new hotspot already in database [$name] on page: ";        
+            
         }
-    
-        include 'library/closedb.php';
+        
+        include('library/closedb.php');
 
     }
-
-    include_once('library/config_read.php');
-    $log = "visited page: ";
 
     include_once("lang/main.php");
     
@@ -123,75 +139,79 @@
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-mng-hs.php");
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
 
-    // set navbar stuff
-    $navbuttons = array(
-                          'HotspotInfo-tab' => t('title','HotspotInfo'),
-                          'ContactInfo-tab' => t('title','ContactInfo'),
-                       );
+    if (!isset($successMsg)) {
 
-    print_tab_navbuttons($navbuttons);
+        // set form component descriptors
+        $input_descriptors = array();
+        
+        $input_descriptors[] = array(
+                                        "name" => "name",
+                                        "caption" => t('all','HotSpotName'),
+                                        "type" => "text",
+                                        "value" => ((isset($name)) ? $name : ""),
+                                        "tooltipText" => t('Tooltip','hotspotNameTooltip')
+                                     );
+                                    
+        $input_descriptors[] = array(
+                                        "name" => "macaddress",
+                                        "caption" => t('all','MACAddress'),
+                                        "type" => "text",
+                                        "value" => ((isset($macaddress)) ? $macaddress : ""),
+                                        "tooltipText" => t('Tooltip','hotspotMacaddressTooltip')
+                                     );
+                                     
+        $input_descriptors[] = array(
+                                        "name" => "geocode",
+                                        "caption" => t('all','Geocode'),
+                                        "type" => "text",
+                                        "value" => ((isset($geocode)) ? $geocode : ""),
+                                        "tooltipText" => t('Tooltip','geocodeTooltip')
+                                     );
+        
+        $submit_descriptor = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                  );
+
+        // set navbar stuff
+        $navbuttons = array(
+                              'HotspotInfo-tab' => t('title','HotspotInfo'),
+                              'ContactInfo-tab' => t('title','ContactInfo'),
+                           );
+
+        print_tab_navbuttons($navbuttons);
 
 ?>
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
+<form method="POST">
     <div id="HotspotInfo-tab" class="tabcontent" style="display: block">
+        <fieldset>
 
-    <fieldset>
+            <h302><?= t('title','HotspotInfo') ?></h302>
 
-        <h302> <?php echo t('title','HotspotInfo'); ?> </h302>
-        <br/>
+            <ul style="margin: 30px auto">
 
-        <ul>
+<?php
+                foreach ($input_descriptors as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
 
-        <li class='fieldset'>
-        <label for='name' class='form'><?php echo t('all','HotSpotName') ?></label>
-        <input name='name' type='text' id='name' value='' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotNameTooltip')" /> 
-        
-        <div id='hotspotNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','hotspotNameTooltip') ?>
-        </div>
-        </li>
+            </ul>
+        </fieldset>
 
-        <li class='fieldset'>
-        <label for='macaddress' class='form'><?php echo t('all','MACAddress') ?></label>
-        <input name='macaddress' type='text' id='macaddress' value='' tabindex=101 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspotMacaddressTooltip')" /> 
-        
-        <div id='hotspotMacaddressTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','hotspotMacaddressTooltip') ?>
-        </div>
-        </li>
+<?php
+        print_form_component($submit_descriptor);
+?>
 
-        <li class='fieldset'>
-        <label for='geocode' class='form'><?php echo t('all','Geocode') ?></label>
-        <input name='geocode' type='text' id='geocode' value='' tabindex=102 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('geocodeTooltip')" /> 
-        
-        <div id='geocodeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','geocodeTooltip') ?>
-        </div>
-        </li>
-    
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
-
-        </ul>
-    </fieldset>
-
-    </div>
+    </div><!-- #HotspotInfo-tab -->
 
 
     <div id="ContactInfo-tab" class="tabcontent">
@@ -204,16 +224,9 @@
 
 </form>
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
 <?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    }
 
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+?>

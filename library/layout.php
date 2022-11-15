@@ -378,25 +378,25 @@ function print_form_component($descriptor) {
         print_input_field($descriptor);
     }
     
-    //~ if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
-        //~ $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
-        //~ $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
-        //~ printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip"></a>', $onclick);
-        //~ printf('<div id="%s" style="display:none; visibility:visible" class="ToolTip">%s</div>',
-               //~ $tooltip_box_id, $descriptor['tooltipText']);
-    //~ }
-    
     if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
         $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
         $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
+        printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip"></a>', $onclick);
+        printf('<div id="%s" style="display:none; visibility:visible" class="ToolTip">%s</div>',
+               $tooltip_box_id, $descriptor['tooltipText']);
+    }
+    
+    //~ if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
+        //~ $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
+        //~ $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
         
 
         
-        echo '<div class="tooltip">';
-        printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip" style="vertical-align: middle"></a>', $onclick);
-        printf('<span id="%s" class="tooltiptext">%s</span>', $tooltip_box_id, $descriptor['tooltipText']);
-        echo '</div>';
-    }
+        //~ echo '<div class="tooltip">';
+        //~ printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip" style="vertical-align: middle"></a>', $onclick);
+        //~ printf('<span id="%s" class="tooltiptext">%s</span>', $tooltip_box_id, $descriptor['tooltipText']);
+        //~ echo '</div>';
+    //~ }
     
     if (!in_array($descriptor['type'], array('hidden', 'button', 'submit'))) {
         echo '</li>' . "\n";

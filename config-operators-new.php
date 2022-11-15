@@ -182,53 +182,55 @@
     include("menu-config-operators.php");
     
     echo '<div id="contentnorightbar">';
+    
     include_once('include/management/actionMessages.php');
     
-    // set form component descriptors
-    $input_descriptors = array();
+    if (!isset($successMsg)) {
     
-    $input_descriptors[] = array(
-                                    "id" => "operator_username",
-                                    "name" => "operator_username",
-                                    "caption" => t('all','Username'),
-                                    "type" => "text",
-                                    "value" => ((isset($operator_username)) ? $operator_username : ""),
-                                    "random" => true
-                                 );
-                                
-    $input_descriptors[] = array(
-                                    "id" => "operator_password",
-                                    "name" => "operator_password",
-                                    "caption" => t('all','Password'),
-                                    "type" => $hiddenPassword,
-                                    "value" => ((isset($operator_password)) ? $operator_password : ""),
-                                    "random" => true
-                                 );
-    
-    $submit_descriptor = array(
-                                    "type" => "submit",
-                                    "name" => "submit",
-                                    "value" => t('buttons','apply')
-                              );
-                              
-    // draw navbar
-    $navbuttons = array(
-                          'OperatorInfo-tab' => 'Operator Info',
-                          'ContactInfo-tab' => 'Contact Info',
-                          'ACLSettings-tab' => 'ACL Settings'
-                       );
+        // set form component descriptors
+        $input_descriptors = array();
+        
+        $input_descriptors[] = array(
+                                        "id" => "operator_username",
+                                        "name" => "operator_username",
+                                        "caption" => t('all','Username'),
+                                        "type" => "text",
+                                        "value" => ((isset($operator_username)) ? $operator_username : ""),
+                                        "random" => true
+                                     );
+                                    
+        $input_descriptors[] = array(
+                                        "id" => "operator_password",
+                                        "name" => "operator_password",
+                                        "caption" => t('all','Password'),
+                                        "type" => $hiddenPassword,
+                                        "value" => ((isset($operator_password)) ? $operator_password : ""),
+                                        "random" => true
+                                     );
+        
+        $submit_descriptor = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                  );
+                                  
+        // draw navbar
+        $navbuttons = array(
+                              'OperatorInfo-tab' => 'Operator Info',
+                              'ContactInfo-tab' => 'Contact Info',
+                              'ACLSettings-tab' => 'ACL Settings'
+                           );
 
-    print_tab_navbuttons($navbuttons);
+        print_tab_navbuttons($navbuttons);
     
 ?>
 
 <form name="newoperator" method="POST">
-    <div id="OperatorInfo-tab" class="tabcontent" title="Operator Info" style="display: block">
+    <div id="OperatorInfo-tab" class="tabcontent" style="display: block">
         <fieldset>
             <h302>Account Settings</h302>
-            <br/>
             
-            <ul>
+            <ul style="margin: 30px auto">
 
 <?php
                 foreach ($input_descriptors as $input_descriptor) {
@@ -245,13 +247,13 @@
         
     </div>
 
-    <div id="ContactInfo-tab" class="tabcontent" title="Contact Info">
+    <div id="ContactInfo-tab" class="tabcontent">
 <?php
         include_once('include/management/operatorinfo.php');
 ?>
      </div>
      
-     <div id="ACLSettings-tab" class="tabcontent" title="ACL Settings">
+     <div id="ACLSettings-tab" class="tabcontent">
         <fieldset>
 <?php
             include_once('include/management/operator_acls.php');
@@ -265,17 +267,10 @@
 
     </div>
 </form>
-                
-        </div><!-- #contentnorightbar -->
 
-        <div id="footer">
 <?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->       
-    </div>
-</div>
+    }
 
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+?>
