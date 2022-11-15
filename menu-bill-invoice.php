@@ -36,8 +36,6 @@ include_once("include/menu/billing-subnav.php");
 include_once("include/management/autocomplete.php");
 include_once("include/management/populate_selectbox.php");
 
-$showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-$chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>
 
             <div id="sidebar">
@@ -90,23 +88,13 @@ $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="dis
                         <form name="billinvoicereport" action="bill-invoice-report.php" method="GET" class="sidebar">
                             <h109><?= t('button','BetweenDates') ?></h109><br>
                             
-                            <label style="user-select: none" for="startdate"
-                                onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                Start Date
-                            </label>
+                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
                             <input name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date') ?><br>"
                                 value="<?= (isset($billinvoice_startdate)) ? $billinvoice_startdate : date("Y-m-01") ?>">
-                            <?= $chooserSpan ?>
 
-                            <label style="user-select: none" for="enddate"
-                                onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                End Date
-                            </label>
+                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
                             <input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?><br>"
                                 value="<?= (isset($billinvoice_enddate)) ? $billinvoice_enddate : date("Y-m-t") ?>">
-                            <?= $chooserSpan ?>
 
                             <br>
 

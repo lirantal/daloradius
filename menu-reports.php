@@ -31,16 +31,10 @@ include_once("lang/main.php");
 
 $m_active = "Reports";
 
-?>
+include_once("include/menu/menu-items.php");
+include_once("include/menu/reports-subnav.php");
+include_once("include/management/autocomplete.php");
 
-
-<?php
-    include_once("include/menu/menu-items.php");
-    include_once("include/menu/reports-subnav.php");
-    include_once("include/management/autocomplete.php");
-    
-    $showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-    $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>      
 
             <div id="sidebar">
@@ -80,23 +74,13 @@ $m_active = "Reports";
                                 <option value="Access-Reject">Access-Reject</option>
                             </select>
                             
-                            <label style="user-select: none" for="startdate_lastconnect"
-                                onclick="<?= sprintf($showChooser_format, "startdate_lastconnect", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                Start Date
-                            </label>
-                            <input name="startdate" type="text" id="startdate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
+                            <label style="user-select: none" for="startdate_lastconnect"><?= t('all','StartingDate') ?></label>
+                            <input name="startdate" type="date" id="startdate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="4">
-                            <?= $chooserSpan ?>
                             
-                            <label style="user-select: none" for="enddate_lastconnect"
-                                onclick="<?= sprintf($showChooser_format, "enddate_lastconnect", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                End Date
-                            </h4>
-                            <input name="enddate" type="text" id="enddate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
+                            <label style="user-select: none" for="enddate_lastconnect"><?= t('all','EndingDate') ?></label>
+                            <input name="enddate" type="date" id="enddate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="5">
-                            <?= $chooserSpan ?>
                         </form>
                     </li>
                     
@@ -107,23 +91,13 @@ $m_active = "Reports";
                         </a>
 
                         <form name="repnewusers" action="rep-newusers.php" method="GET" class="sidebar">
-                            <label style="user-select: none" for="startdate"
-                                onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                Start Date
-                            </label>
-                            <input name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
+                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
+                            <input name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-01-01") ?>" tabindex="6">
-                            <?= $chooserSpan ?>
                             
-                            <label style="user-select: none" for="enddate"
-                                onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                End Date
-                            </label>
+                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
                             <input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="7">
-                            <?= $chooserSpan ?>
                          </form>
                     </li>
                     
@@ -141,23 +115,13 @@ $m_active = "Reports";
                             <input name="username" type="text" id="usernameFilter" value="<?= (isset($username)) ? $username : "" ?>"
                                  placeholder="<?= t('all','Username') ?>" tabindex="9">
             
-                            <label style="user-select: none" for="startdate_topuser"
-                                onclick="<?= sprintf($showChooser_format, "startdate_topuser", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                Start Date
-                            </label>
-                            <input name="startdate" type="text" id="startdate_topuser" tooltipText="<?= t('Tooltip','Date') ?>"
+                            <label style="user-select: none" for="startdate_topuser"><?= t('all','StartingDate') ?></label>
+                            <input name="startdate" type="date" id="startdate_topuser" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="10">
-                            <?= $chooserSpan ?>
-            
-                            <label style="user-select: none" for="enddate_topuser"
-                                onclick="<?= sprintf($showChooser_format, "enddate_topuser", date('Y', time())) ?>">
-                                <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                End Date
-                            </label>
-                            <input name="enddate" type="text" id="enddate_topuser" tooltipText="<?= t('Tooltip','Date') ?>"
+                            
+                            <label style="user-select: none" for="enddate_topuser"><?= t('all','EndingDate') ?></label>
+                            <input name="enddate" type="date" id="enddate_topuser" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="11">
-                            <?= $chooserSpan ?>
 
                             <label for="orderBy"><?= t('button','OrderBy') ?></label>
                             <select class="generic" id="orderBy" name="orderBy" type="text" tabindex="12">

@@ -33,8 +33,6 @@ $m_active = "Billing";
 include_once("include/menu/menu-items.php");
 include_once("include/menu/billing-subnav.php");
 
-$showChooser_format = "showChooser(this, '%s', 'chooserSpan', '1970', '%s', 'Y-m-d', false);";
-$chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px"></div>';
 ?>
 
                 <div id="sidebar">
@@ -50,23 +48,13 @@ $chooserSpan = '<div id="chooserSpan" class="dateChooser select-free" style="dis
                                 
                                 <h109><?= t('button','BetweenDates'); ?></h109><br>
                                 
-                                <label style="user-select: none" for="startdate"
-                                    onclick="<?= sprintf($showChooser_format, "startdate", date('Y', time())) ?>">
-                                    <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                    Start Date
-                                </label>
+                                <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
                                 <input name="startdate" type="date" id="startdate"
                                     value="<?= (isset($billing_date_startdate)) ? $billing_date_startdate : date("Y-m-01") ?>">
-                                <?= $chooserSpan ?>
 
-                                <label style="user-select: none" for="enddate"
-                                    onclick="<?= sprintf($showChooser_format, "enddate", date('Y', time())) ?>">
-                                    <img style="border: 0; margin-right: 5px" src="library/js_date/calendar.gif">
-                                    End Date
-                                </label>
+                                <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
                                 <input name="enddate" type="text" id="enddate"
                                     value="<?= (isset($billing_date_enddate)) ? $billing_date_enddate : date("Y-m-t") ?>">
-                                <?= $chooserSpan ?>
 
                                 <br><br>
 
