@@ -6,6 +6,23 @@
     --pale-cerulean: #97c8ebff;
 }
 
+.badge {
+    color: white;
+    padding: 2px 4px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 10px;
+    user-select: none;
+}
+
+.badge-mac, .badge-pin {
+    background-color: #008cba;
+}
+
+.badge-user {
+    background-color: #4CAF50;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -40,6 +57,7 @@
     padding: 1%;
     background-color: var(--rich-black);
     color: white;
+    margin-bottom: 0 !important;
 }
 
 #footer a {

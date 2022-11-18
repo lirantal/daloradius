@@ -25,14 +25,15 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
-    include_once('library/config_read.php');
 
+    // we import validation facilities
+    include_once("library/validation.php");
 
     include('library/opendb.php');
 

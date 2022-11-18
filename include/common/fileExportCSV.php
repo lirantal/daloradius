@@ -1,26 +1,54 @@
 <?php
-/*********************************************************************
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
- * Filename: fileExport.php
- * Author: Liran Tal <liran.tal@gmail.com>
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * Description:
- * The purpose of this extension is to handle exports of different
- * kinds like CSV andother formats to the user's browser so that
- * they can download a local copy of the tables listing mostly
- *********************************************************************/
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Description:    The purpose of this extension is to handle exports of different
+ *                 kinds like CSV andother formats to the user's browser so that
+ *                 they can download a local copy of the tables listing mostly
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-if (isset($_REQUEST['csv_output'])) {
+    include('../../library/checklogin.php');
 
-	$csv_output = $_REQUEST['csv_output'];
-	$csv_formatted = str_replace("||", "\r\n", $csv_output);
-
-        header("Content-type: application/vnd.ms-excel");
-        header("Content-disposition: csv; filename=export_" . date("Ymd") . ".csv; size=" . strlen($csv_formatted));
-        //header("Content-disposition: csv; filename=document_; size=" . strlen($csv_output));
-	print $csv_formatted;
-	exit;
-
-}
-
+    $redirect = (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE'])))
+              ? trim($_SESSION['PREV_LIST_PAGE'])
+              : "../../index.php";
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts'])) {
+            
+            $content = "";
+            foreach ($_POST['accounts'] as $account) {
+                $content .= implode(",", $account) . "\r\n";
+            }
+            
+            $filename_prefix = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])) &&
+                                preg_match("/^[\w\-. ]+$/", trim($_POST['batch_name'])) !== false)
+                             ? trim($_POST['batch_name']) : "users";
+            
+            header("Content-type: text/csv; charset=utf-8");
+            header(sprintf("Content-disposition: csv; filename=%s__%s.csv; size=%s", $filename_prefix, date("Ymd"), strlen($content)));
+            print $content;
+            exit;
+        }
+    }
+    
+    header("Location: $redirect");
 ?>

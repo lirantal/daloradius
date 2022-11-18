@@ -44,7 +44,6 @@ $m_active = "Management";
 
                 <h3>Profiles Management</h3>
                 <ul class="subnav">
-
                     <li>
                         <a title="<?= strip_tags(t('button','ListProfiles')) ?>" href="mng-rad-profiles-list.php" tabindex="1">
                             <b>&raquo;</b>
@@ -67,8 +66,18 @@ $m_active = "Management";
                         </a>
                         <form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="GET" class="sidebar">
 <?php   
-                            include('include/management/populate_selectbox.php');
-                            populate_groups("Select Profile", "profile", "generic");
+                            include_once('include/management/populate_selectbox.php');
+                            $groups = get_groups();
+                            array_unshift($groups , '');
+                            $descr = array(
+                                                "caption" => "Select Profile",
+                                                "type" => "select",
+                                                "name" => "profile",
+                                                "options" => $groups,
+                                                "selected_value" => ((isset($profile)) ? $profile : ""),
+                                           );
+                            
+                            print_form_component($descr);
 ?>
                         </form>
                     </li>

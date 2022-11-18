@@ -25,317 +25,47 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
     
-    include('include/management/pages_common.php');
+    // we import validation facilities
+    include_once("library/validation.php");
+
+    // if cleartext passwords are not allowed, 
+    // we remove Cleartext-Password from the $valid_passwordTypes array
+    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
+        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
+        $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
+        $valid_passwordTypes = array_values($valid_passwordTypes);
+    }
     
-    /* variables for batch_history */
-    isset($_POST['batch_name']) ? $batch_name = $_POST['batch_name'] : $batch_name = "";
-    isset($_POST['batch_description']) ? $batch_description = $_POST['batch_description'] : $batch_description = "";
-    isset($_POST['hotspot_id']) ? $hotspot_id = $_POST['hotspot_id'] : $hotspot_id = "";
+    include('library/opendb.php');
     
-    /* variables for userbillinfo */
-    isset($_POST['bi_contactperson']) ? $bi_contactperson = $_POST['bi_contactperson'] : $bi_contactperson = "";
-    isset($_POST['bi_company']) ? $bi_company = $_POST['bi_company'] : $bi_company = "";
-    isset($_POST['bi_email']) ? $bi_email = $_POST['bi_email'] : $bi_email = "";
-    isset($_POST['bi_phone']) ? $bi_phone = $_POST['bi_phone'] : $bi_phone = "";
-    isset($_POST['bi_address']) ? $bi_address = $_POST['bi_address'] : $bi_address = "";
-    isset($_POST['bi_city']) ? $bi_city = $_POST['bi_city'] : $bi_city = "";
-    isset($_POST['bi_state']) ? $bi_state = $_POST['bi_state'] : $bi_state = "";
-    isset($_POST['bi_country']) ? $bi_country = $_POST['bi_country'] : $bi_country = "";
-    isset($_POST['bi_zip']) ? $bi_zip = $_POST['bi_zip'] : $bi_zip = "";
-    isset($_POST['bi_paymentmethod']) ? $bi_paymentmethod = $_POST['bi_paymentmethod'] : $bi_paymentmethod = "";
-    isset($_POST['bi_cash']) ? $bi_cash = $_POST['bi_cash'] : $bi_cash = "";
-    isset($_POST['bi_creditcardname']) ? $bi_creditcardname = $_POST['bi_creditcardname'] : $bi_creditcardname = "";
-    isset($_POST['bi_creditcardnumber']) ? $bi_creditcardnumber = $_POST['bi_creditcardnumber'] : $bi_creditcardnumber = "";
-    isset($_POST['bi_creditcardverification']) ? $bi_creditcardverification = $_POST['bi_creditcardverification'] : $bi_creditcardverification = "";
-    isset($_POST['bi_creditcardtype']) ? $bi_creditcardtype = $_POST['bi_creditcardtype'] : $bi_creditcardtype = "";
-    isset($_POST['bi_creditcardexp']) ? $bi_creditcardexp = $_POST['bi_creditcardexp'] : $bi_creditcardexp = "";
-    isset($_POST['bi_notes']) ? $bi_notes = $_POST['bi_notes'] : $bi_notes = "";
-    isset($_POST['bi_lead']) ? $bi_lead = $_POST['bi_lead'] : $bi_lead = "";
-    isset($_POST['bi_coupon']) ? $bi_coupon = $_POST['bi_coupon'] : $bi_coupon = "";
-    isset($_POST['bi_ordertaker']) ? $bi_ordertaker = $_POST['bi_ordertaker'] : $bi_ordertaker = "";
-    isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
-    isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
-    isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
-    isset($_POST['bi_postalinvoice']) ? $bi_postalinvoice = $_POST['bi_postalinvoice'] : $bi_postalinvoice = "";
-    isset($_POST['bi_faxinvoice']) ? $bi_faxinvoice = $_POST['bi_faxinvoice'] : $bi_faxinvoice = "";
-    isset($_POST['bi_emailinvoice']) ? $bi_emailinvoice = $_POST['bi_emailinvoice'] : $bi_emailinvoice = "";
-    isset($_POST['bi_batch_id']) ? $bi_batch_id = $_POST['bi_batch_id'] : $bi_batch_id = "";
-    isset($_POST['changeUserBillInfo']) ? $bi_changeuserbillinfo = $_POST['changeUserBillInfo'] : $bi_changeuserbillinfo = "0";
-
-    /* variables for userinfo */
-    isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
-    isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
-    isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
-    isset($_POST['department']) ? $department = $_POST['department'] : $department = "";
-    isset($_POST['company']) ? $company = $_POST['company'] : $company = "";
-    isset($_POST['workphone']) ? $workphone = $_POST['workphone'] : $workphone = "";
-    isset($_POST['homephone']) ? $homephone = $_POST['homephone'] :  $homephone = "";
-    isset($_POST['mobilephone']) ? $mobilephone = $_POST['mobilephone'] : $mobilephone = "";
-    isset($_POST['address']) ? $ui_address = $_POST['address'] : $ui_address = "";
-    isset($_POST['city']) ? $ui_city = $_POST['city'] : $ui_city = "";
-    isset($_POST['state']) ? $ui_state = $_POST['state'] : $ui_state = "";
-    isset($_POST['country']) ? $ui_country = $_POST['country'] : $ui_country = "";
-    isset($_POST['zip']) ? $ui_zip = $_POST['zip'] : $ui_zip = "";
-    isset($_POST['notes']) ? $notes = $_POST['notes'] : $notes = "";
-    isset($_POST['changeUserInfo']) ? $ui_changeuserinfo = $_POST['changeUserInfo'] : $ui_changeuserinfo = "0";
-    isset($_POST['enableUserPortalLogin']) ? $ui_enableUserPortalLogin = $_POST['enableUserPortalLogin'] : $ui_enableUserPortalLogin = "0";
-    isset($_POST['portalLoginPassword']) ? $ui_PortalLoginPassword = $_POST['portalLoginPassword'] : $ui_PortalLoginPassword = "";
-
-    $username_prefix = "";
-    $number = "";
-    $length_pass = "";
-    $length_user = "";
-    $pass_type = "";
-    $group = "";
-    $group_priority = "";
-
-    $logAction = "";
-    $logDebugSQL = "";
+    $sql = sprintf("SELECT id, name FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
     
-    if (isset($_POST['submit'])) {
-        $username_prefix = $_POST['username_prefix'];
-        $number = $_POST['number'];
-        $length_pass = $_POST['length_pass'];
-        (isset($_POST['length_user'])) ? $length_user = $_POST['length_user'] : $length_user = 0;
-        $pass_type = $_POST['passwordType'];
-        $group = $_POST['group'];
-        $plan = $_POST['plan'];
-        $group_priority = $_POST['group_priority'];
+    $valid_hotspots = array( );
+    while ($row = $res->fetchrow()) {
+        list($id, $name) = $row;
         
-        (isset($_POST['startingIndex'])) ? $startingIndex = $_POST['startingIndex'] : $startingIndex = 0;
-        $createBatchUsersType = $_POST['createBatchUsersType'];
-        //$createRandomUsers = $_POST['createRandomUsers'];
-        //$createIncrementUsers = $_POST['createIncrementUsers'];
-
-
-        $currDate = date('Y-m-d H:i:s');            // current date and time to enter as creationdate field
-        $currBy = $_SESSION['operator_user'];
-
-        include 'library/opendb.php';
-
-        // before looping through all generated batch users we create the batch_history entry
-        // to associate the created users with a batch_history entry
-        if (!empty($batch_name)) {
-            $sql_batch_id = addUserBatchHistory($dbSocket);
-        
-            if ($sql_batch_id == 0) {
-                // 0 may be returned in the case of failure in adding the batch_history record due
-                // to SQL related issues or in case where there is a duplicate record of the batch_history,
-                // meaning, the same batch_name is used to identify the batch entry
-                $failureMsg = "Failure creating batch users due to an error or possible duplicate entry: <b> $batch_name </b>";
-                $logAction .= "Failure creating a batch_history entry on page: ";
-            }
-            
-        } else {
-            $sql_batch_id = 0;
-            
-            $failureMsg = "Failure creating batch - please provide a batch name";
-            $logAction .= "Failure creating batch - missing field [batch_name] on page: ";
-
-        }
-        
-        
-        $actionMsgBadUsernames = "";
-        $actionMsgGoodUsernames = "";
-
-        $exportCSV = "Username,Password||";
-        
-        for ($i=0; $i<$number; $i++) {
-            
-            // we do not create users and continue with the batch loop process
-            // if batch_history creation failed.
-            if ($sql_batch_id == 0)
-                break;
-            
-            switch ($createBatchUsersType) {
-                case "createRandomUsers":
-                    $username = createPassword($length_user, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-                    break;
-                    
-                case "createIncrementUsers":
-                    $username = $startingIndex + $i;
-                    break;
-            }
-
-
-            // append the prefix to the username
-            $username  = $username_prefix . $username;
-            $password = createPassword($length_pass, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-
-            $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
-                $dbSocket->escapeSimple($username)."'";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-
-            if ($res->numRows() > 0) {
-                $actionMsgBadUsernames = $actionMsgBadUsernames . $username . ", " ;
-                $failureMsg = "skipping matching entry: <b> $actionMsgBadUsernames </b>";
-            } else {
-                
-                // insert username/password
-                $actionMsgGoodUsernames .= $username;
-                if ($i+1 != $number)
-                    $actionMsgGoodUsernames .= ", ";
-
-                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." VALUES (0, '".$dbSocket->escapeSimple($username)."',
-                '".$dbSocket->escapeSimple($pass_type)."', ':=', '".$dbSocket->escapeSimple($password)."')";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-                
-                
-                // if a group was defined to add the user to in the form let's add it to the database
-                if (isset($group)) {
-
-                    if (!($group_priority))
-                        $group_priority=0;        // if group priority wasn't set we
-                                        // initialize it to 0 by default
-                    $sql = "INSERT INTO ". $configValues['CONFIG_DB_TBL_RADUSERGROUP'] ." VALUES (NULL,'".
-                        $dbSocket->escapeSimple($username)."', '".
-                        $dbSocket->escapeSimple($group)."', ".
-                        $dbSocket->escapeSimple($group_priority).") ";
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                }
-
-
-                addUserInfo($dbSocket, $username);
-                addUserBillInfo($dbSocket, $username, $sql_batch_id);
-                
-                foreach($_POST as $element=>$field) {
-
-                        // switch case to rise the flag for several $attribute which we do not
-                        // wish to process (ie: do any sql related stuff in the db)
-                        switch ($element) {
-
-                        case "username_prefix":
-                        case "passwordType":
-                        case "length_pass":
-                        case "length_user":
-                        case "number":
-                        case "plan":
-                        case "submit":
-                        case "group":
-                        case "group_priority":
-                        case "createBatchUsersType":
-                        case "startingIndex":
-                        case "firstname":
-                        case "lastname":
-                        case "email":
-                        case "department":
-                        case "company":
-                        case "workphone":
-                        case "homephone":
-                        case "mobilephone":
-                        case "address":
-                        case "city":
-                        case "state":
-                        case "country":
-                        case "zip":
-                        case "notes":
-                        case "bi_contactperson":
-                        case "bi_company":
-                        case "bi_email":
-                        case "bi_phone":
-                        case "bi_address":
-                        case "bi_city":
-                        case "bi_state":
-                        case "bi_country":
-                        case "bi_zip":
-                        case "bi_paymentmethod":
-                        case "bi_cash":
-                        case "bi_creditcardname":
-                        case "bi_creditcardnumber":
-                        case "bi_creditcardverification":
-                        case "bi_creditcardtype":
-                        case "bi_creditcardexp":
-                        case "bi_notes":
-                        case "bi_lead":
-                        case "bi_coupon":
-                        case "bi_ordertaker":
-                        case "bi_billstatus":
-                        case "bi_lastbill":
-                        case "bi_nextbill":
-                        case "bi_postalinvoice":
-                        case "bi_faxinvoice":
-                        case "bi_emailinvoice":
-                        case "bi_batch_id":
-                        case "changeUserBillInfo":
-                        case "changeUserInfo":
-                        case "batch_description":
-                        case "batch_name":
-                        case "hotspot":
-                        case "hotspot_id":
-                        case "copycontact":
-                        case "enableUserPortalLogin":
-                        case "portalLoginPassword":
-                                $skipLoopFlag = 1;      // if any of the cases above has been met weset a flag
-                                                        // to skip the loop (continue) without entering it as
-                                                        // we do not want to process this $attributein the following
-                                                        // code block
-                                break;
-                        }
-
-                        if ($skipLoopFlag == 1) {
-                                $skipLoopFlag = 0;              // resetting the loop flag
-                                continue;
-                        }
-
-
-                        if (isset($field[0]))
-                                $attribute = $field[0];
-                        if (isset($field[1]))
-                                $value = $field[1];
-                        if (isset($field[2]))
-                                $op = $field[2];
-                        if (isset($field[3]))
-                                $table = $field[3];
-
-                        if ( isset($table) && ($table == 'check') )
-                                $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-                        if ( isset($table) && ($table == 'reply') )
-                                $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-
-                        if ( (isset($field)) && (!isset($field[1])) )
-                                continue;
-                            
-                        $sql = "INSERT INTO $table values (0, '".$dbSocket->escapeSimple($username)."', '".
-                        $dbSocket->escapeSimple($attribute)."', '".
-                        $dbSocket->escapeSimple($op)."', '".
-                        $dbSocket->escapeSimple($value)."')  ";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";
-
-                    } // foreach
-
-                    $exportCSV .= "$username,$password||";
-
-            }
-        
-        }
-
-        // if batch_history record was created successfuly
-        if ($sql_batch_id != 0) {
-            // remove the last || chars to sanitize it for proper format
-            $exportCSV = substr($exportCSV, 0, -2);
-            $successMsg = "Exported Usernames - ".
-                                "<a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>".
-                            "Printable Tickets - ".
-                                "<a href='include/common/printTickets.php?type=batch&plan=$plan&accounts=$exportCSV'>view</a><br/>".
-                            "Added to database new user(s): <b> $actionMsgGoodUsernames </b><br/>";
-                            
-            $logAction .= "Successfully added to database new users [$actionMsgGoodUsernames] with prefix [$username_prefix] on page: ";
-        }
-        
-        include 'library/closedb.php';
-
+        $valid_hotspots["hotspot-$id"] = $name;
     }
 
+    include_once('include/management/populate_selectbox.php');
+    $valid_groups = get_groups();
+    $valid_planNames = get_plans();
+    
+    
+    include("include/management/functions.php");
+    include('include/management/pages_common.php');
 
 
     function addUserBatchHistory($dbSocket) {
@@ -352,173 +82,23 @@
         $currDate = date('Y-m-d H:i:s');
         $currBy = $_SESSION['operator_user'];
         
-        $sql = "INSERT INTO ".
-                $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
-                " (id, batch_name, batch_description, hotspot_id, creationdate, creationby, updatedate, updateby) ".
-                " VALUES ".
-                " (0, ".
-                "'".$dbSocket->escapeSimple($batch_name)."', ".
-                "'".$dbSocket->escapeSimple($batch_description)."', ".
-                "'".$dbSocket->escapeSimple($hotspot_id)."', ".
-                "'$currDate', '$currBy', NULL, NULL)";
+        $sql = sprintf("INSERT INTO %s (id, batch_name, batch_description, hotspot_id, creationdate, creationby, updatedate, updateby) 
+                                VALUES (0, '%s', '%s', '%s', '%s', '%s', NULL, NULL)",
+                       $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
+                       $dbSocket->escapeSimple($batch_name), $dbSocket->escapeSimple($batch_description),
+                       $dbSocket->escapeSimple($hotspot_id), $currDate, $currBy);
         $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
+        $logDebugSQL .= "$sql;\n";
         
-        $sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
-                " WHERE batch_name = '".$dbSocket->escapeSimple($batch_name)."'";
+        $sql = sprintf("SELECT id FROM %s WHERE batch_name = '%s'", 
+                       $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $dbSocket->escapeSimple($batch_name));
         $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
+        $logDebugSQL .= "$sql;\n";
+    
         // if the INSERT to the batch_history table was succesful and there exist
         // only 1 record (meaning, we don't have a duplicate) then we return the id
-        if ($res->numRows() == 1) {
-            $row = $res->fetchRow();
-            $batch_id = $row[0];
-        }
-        
-        return $batch_id;
-        
+        return ($res->numRows() == 1) ? intval($res->fetchRow()[0]) : 0;        
     }
-    function addUserInfo($dbSocket, $username) {
-
-        global $firstname;
-        global $lastname;
-        global $email;
-        global $department;
-        global $company;
-        global $workphone;
-        global $homephone;
-        global $mobilephone;
-        global $ui_address;
-        global $ui_city;
-        global $ui_state;
-        global $ui_country;
-        global $ui_zip;
-        global $notes;
-        global $ui_changeuserinfo;
-        global $ui_enableUserPortalLogin;
-        global $ui_PortalLoginPassword;
-        
-        global $logDebugSQL;
-        global $configValues;
-
-        $currDate = date('Y-m-d H:i:s');
-        $currBy = $_SESSION['operator_user'];
-
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-                " WHERE username='".$dbSocket->escapeSimple($username)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        // if there were no records for this user present in the userinfo table
-        if ($res->numRows() == 0) {
-            // insert user information table
-            $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-                " (id, username, firstname, lastname, email, department, company, workphone, homephone, ".
-                " mobilephone, address, city, state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate, creationby, updatedate, updateby) ".
-                " VALUES (0, 
-                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($firstname)."', '".
-                $dbSocket->escapeSimple($lastname)."', '".$dbSocket->escapeSimple($email)."', '".
-                $dbSocket->escapeSimple($department)."', '".$dbSocket->escapeSimple($company)."', '".
-                $dbSocket->escapeSimple($workphone)."', '".$dbSocket->escapeSimple($homephone)."', '".
-                $dbSocket->escapeSimple($mobilephone)."', '".$dbSocket->escapeSimple($ui_address)."', '".
-                $dbSocket->escapeSimple($ui_city)."', '".$dbSocket->escapeSimple($ui_state)."', '".
-                $dbSocket->escapeSimple($ui_country)."', '".
-                $dbSocket->escapeSimple($ui_zip)."', '".$dbSocket->escapeSimple($notes)."', '".
-                $dbSocket->escapeSimple($ui_changeuserinfo)."', '".
-                $dbSocket->escapeSimple($ui_PortalLoginPassword)."', '".$dbSocket->escapeSimple($ui_enableUserPortalLogin).
-                "', '$currDate', '$currBy', NULL, NULL)";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-        } //FIXME:
-          //if the user already exist in userinfo then we should somehow alert the user
-          //that this has happened and the administrator/operator will take care of it
-
-    }
-
-
-
-    function addUserBillInfo($dbSocket, $username, $sql_batch_id = 0) {
-
-        global $bi_contactperson;
-        global $bi_company;
-        global $bi_email;
-        global $bi_phone;
-        global $bi_address;
-        global $bi_city;
-        global $bi_state;
-        global $bi_country;
-        global $bi_zip;
-        global $bi_paymentmethod;
-        global $bi_cash;
-        global $bi_creditcardname;
-        global $bi_creditcardnumber;
-        global $bi_creditcardexp;
-        global $bi_creditcardverification;
-        global $bi_creditcardtype;
-        global $bi_notes;
-        global $bi_lead;
-        global $bi_coupon;
-        global $bi_ordertaker;
-        global $bi_billstatus;
-        global $bi_lastbill;
-        global $bi_nextbill;
-        global $bi_postalinvoice;
-        global $bi_faxinvoice;
-        global $bi_emailinvoice;
-        //global $bi_batch_id;
-        global $bi_changeuserbillinfo;
-        global $plan;
-        global $logDebugSQL;
-        global $configValues;
-
-        $currDate = date('Y-m-d H:i:s');
-        $currBy = $_SESSION['operator_user'];
-
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-                " WHERE username='".$dbSocket->escapeSimple($username)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        // if there were no records for this user present in the userbillinfo table
-        if ($res->numRows() == 0) {
-            // insert user billing information table
-            $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-                " (id, username, contactperson, company, email, phone, ".
-                " address, city, state, country, zip, ".
-                " paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp, ".
-                " notes, changeuserbillinfo, ".
-                " `lead`, coupon, ordertaker, billstatus, lastbill, nextbill, postalinvoice, faxinvoice, emailinvoice, batch_id, planName, ".
-                " creationdate, creationby, updatedate, updateby) ".
-                " VALUES (0, 
-                '".$dbSocket->escapeSimple($username)."', '".$dbSocket->escapeSimple($bi_contactperson)."', '".
-                $dbSocket->escapeSimple($bi_company)."', '".$dbSocket->escapeSimple($bi_email)."', '".
-                $dbSocket->escapeSimple($bi_phone)."', '".$dbSocket->escapeSimple($bi_address)."', '".
-                $dbSocket->escapeSimple($bi_city)."', '".$dbSocket->escapeSimple($bi_state)."', '".
-                $dbSocket->escapeSimple($bi_country)."', '".
-                $dbSocket->escapeSimple($bi_zip)."', '".$dbSocket->escapeSimple($bi_paymentmethod)."', '".
-                $dbSocket->escapeSimple($bi_cash)."', '".$dbSocket->escapeSimple($bi_creditcardname)."', '".
-                $dbSocket->escapeSimple($bi_creditcardnumber)."', '".$dbSocket->escapeSimple($bi_creditcardverification)."', '".
-                $dbSocket->escapeSimple($bi_creditcardtype)."', '".$dbSocket->escapeSimple($bi_creditcardexp)."', '".
-                $dbSocket->escapeSimple($bi_notes)."', '".
-                $dbSocket->escapeSimple($bi_changeuserbillinfo)."', '".
-                $dbSocket->escapeSimple($bi_lead)."', '".$dbSocket->escapeSimple($bi_coupon)."', '".
-                $dbSocket->escapeSimple($bi_ordertaker)."', '".$dbSocket->escapeSimple($bi_billstatus)."', '".
-                $dbSocket->escapeSimple($bi_lastbill)."', '".$dbSocket->escapeSimple($bi_nextbill)."', '".
-                $dbSocket->escapeSimple($bi_postalinvoice)."', '".$dbSocket->escapeSimple($bi_faxinvoice)."', '".
-                $dbSocket->escapeSimple($bi_emailinvoice)."', '".
-                $dbSocket->escapeSimple($sql_batch_id)."', '".
-                $dbSocket->escapeSimple($plan).
-                "', '$currDate', '$currBy', NULL, NULL)";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-        } //FIXME:
-          //if the user already exist in userinfo then we should somehow alert the user
-          //that this has happened and the administrator/operator will take care of it
-
-    }
-
-    include_once('library/config_read.php');
     
     include_once("lang/main.php");
     
@@ -549,249 +129,539 @@
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
+    $exportForm = "";
+    $detailedInfo = array();
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        /* variables for batch_history */
+        $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])) &&
+                       preg_match("/^[\w\-. ]+$/", trim($_POST['batch_name']) !== false)) ? trim($_POST['batch_name']) : "";
+        
+        if (empty($batch_name)) {
+            // batch name required
+            $failureMsg = "Failure creating batch - please provide a batch name";
+            $logAction .= "Failure creating batch - missing field [batch_name] on page: ";
+        } else {
+        
+            $batch_description = (array_key_exists('batch_description', $_POST) && isset($_POST['batch_description']))
+                               ? trim(str_replace("%", "", $_POST['batch_description'])) : "";
+            
+            $hotspot_id = (array_key_exists('hotspot_id', $_POST) && !empty(trim($_POST['hotspot_id'])) &&
+                           in_array(trim($_POST['hotspot_id']), array_keys($valid_hotspots)))
+                        ? intval(str_replace("hotspot-", "", $_POST['hotspot_id'])) : "";
+
+            /* variables for userbillinfo */
+            $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
+            $bi_company = (array_key_exists('bi_company', $_POST) && isset($_POST['bi_company'])) ? $_POST['bi_company'] : "";
+            $bi_email = (array_key_exists('bi_email', $_POST) && isset($_POST['bi_email'])) ? $_POST['bi_email'] : "";
+            $bi_phone = (array_key_exists('bi_phone', $_POST) && isset($_POST['bi_phone'])) ? $_POST['bi_phone'] : "";
+            $bi_address = (array_key_exists('bi_address', $_POST) && isset($_POST['bi_address'])) ? $_POST['bi_address'] : "";
+            $bi_city = (array_key_exists('bi_city', $_POST) && isset($_POST['bi_city'])) ? $_POST['bi_city'] : "";
+            $bi_state = (array_key_exists('bi_state', $_POST) && isset($_POST['bi_state'])) ? $_POST['bi_state'] : "";
+            $bi_country = (array_key_exists('bi_country', $_POST) && isset($_POST['bi_country'])) ? $_POST['bi_country'] : "";
+            $bi_zip = (array_key_exists('bi_zip', $_POST) && isset($_POST['bi_zip'])) ? $_POST['bi_zip'] : "";
+            $bi_paymentmethod = (array_key_exists('bi_paymentmethod', $_POST) && isset($_POST['bi_paymentmethod'])) ? $_POST['bi_paymentmethod'] : "";
+            $bi_cash = (array_key_exists('bi_cash', $_POST) && isset($_POST['bi_cash'])) ? $_POST['bi_cash'] : "";
+            $bi_creditcardname = (array_key_exists('bi_creditcardname', $_POST) && isset($_POST['bi_creditcardname'])) ? $_POST['bi_creditcardname'] : "";
+            $bi_creditcardnumber = (array_key_exists('bi_creditcardnumber', $_POST) && isset($_POST['bi_creditcardnumber'])) ? $_POST['bi_creditcardnumber'] : "";
+            $bi_creditcardverification = (array_key_exists('bi_creditcardverification', $_POST) && isset($_POST['bi_creditcardverification'])) ? $_POST['bi_creditcardverification'] : "";
+            $bi_creditcardtype = (array_key_exists('bi_creditcardtype', $_POST) && isset($_POST['bi_creditcardtype'])) ? $_POST['bi_creditcardtype'] : "";
+            $bi_creditcardexp = (array_key_exists('bi_creditcardexp', $_POST) && isset($_POST['bi_creditcardexp'])) ? $_POST['bi_creditcardexp'] : "";
+            $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
+            
+            $bi_lead = (array_key_exists('bi_lead', $_POST) && isset($_POST['bi_lead'])) ? $_POST['bi_lead'] : "";
+            $bi_coupon = (array_key_exists('bi_coupon', $_POST) && isset($_POST['bi_coupon'])) ? $_POST['bi_coupon'] : "";
+            $bi_ordertaker = (array_key_exists('bi_ordertaker', $_POST) && isset($_POST['bi_ordertaker'])) ? $_POST['bi_ordertaker'] : "";
+            $bi_billstatus = (array_key_exists('bi_billstatus', $_POST) && isset($_POST['bi_billstatus'])) ? $_POST['bi_billstatus'] : "";
+            $bi_lastbill = (array_key_exists('bi_lastbill', $_POST) && isset($_POST['bi_lastbill'])) ? $_POST['bi_lastbill'] : "";
+            $bi_nextbill = (array_key_exists('bi_nextbill', $_POST) && isset($_POST['bi_nextbill'])) ? $_POST['bi_nextbill'] : "";
+            $bi_nextinvoicedue = (array_key_exists('bi_nextinvoicedue', $_POST) && isset($_POST['bi_nextinvoicedue'])) ? $_POST['bi_nextinvoicedue'] : "";
+            $bi_billdue = (array_key_exists('bi_billdue', $_POST) && isset($_POST['bi_billdue'])) ? $_POST['bi_billdue'] : "";
+            $bi_postalinvoice = (array_key_exists('bi_postalinvoice', $_POST) && isset($_POST['bi_postalinvoice'])) ? $_POST['bi_postalinvoice'] : "";
+            $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
+            $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
+            
+            $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
+
+            /* variables for userinfo */
+            $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
+            $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
+            $email = (array_key_exists('email', $_POST) && isset($_POST['email'])) ? $_POST['email'] : "";
+            $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? $_POST['department'] : "";
+            $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? $_POST['company'] : "";
+            $workphone = (array_key_exists('workphone', $_POST) && isset($_POST['workphone'])) ? $_POST['workphone'] : "";
+            $homephone = (array_key_exists('homephone', $_POST) && isset($_POST['homephone'])) ? $_POST['homephone'] : "";
+            $mobilephone = (array_key_exists('mobilephone', $_POST) && isset($_POST['mobilephone'])) ? $_POST['mobilephone'] : "";
+            $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? $_POST['address'] : "";
+            $city = (array_key_exists('city', $_POST) && isset($_POST['city'])) ? $_POST['city'] : "";
+            $state = (array_key_exists('state', $_POST) && isset($_POST['state'])) ? $_POST['state'] : "";
+            $country = (array_key_exists('country', $_POST) && isset($_POST['country'])) ? $_POST['country'] : "";
+            $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
+            $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
+            $ui_changeuserinfo = (array_key_exists('changeuserinfo', $_POST) && isset($_POST['changeuserinfo'])) ? $_POST['changeuserinfo'] : "0";
+            $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
+            $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
+
+            $username_prefix = (array_key_exists('username_prefix', $_POST) && !empty(trim(str_replace("%", "", $_POST['username_prefix']))))
+                             ? trim(str_replace("%", "", $_POST['username_prefix'])) : "";
+            $number = (array_key_exists('number', $_POST) && !empty(trim($_POST['number'])) && intval(trim($_POST['number'])) > 0)
+                    ? intval(trim($_POST['number'])) : 4;
+            
+            $length_pass = (array_key_exists('length_pass', $_POST) && !empty(trim($_POST['length_pass'])) && intval(trim($_POST['length_pass'])) > 0)
+                         ? intval(trim($_POST['length_pass'])) : 8;
+            $length_user = (array_key_exists('length_user', $_POST) && !empty(trim($_POST['length_user'])) && intval(trim($_POST['length_user'])) > 0)
+                         ? intval(trim($_POST['length_user'])) : 8;
+            
+            $passwordType = (array_key_exists('passwordType', $_POST) && !empty(trim($_POST['passwordType'])) &&
+                          in_array(trim($_POST['passwordType']), $valid_passwordTypes))
+                       ? trim($_POST['passwordType']) : $valid_passwordTypes[0];
+            
+            $group = (array_key_exists('group', $_POST) && !empty($_POST['group']) && in_array($_POST['group'], $valid_groups))
+                   ? $_POST['group'] : "";
+            $group_priority = (array_key_exists('group_priority', $_POST) && !empty(trim($_POST['group_priority'])) &&
+                               intval(trim($_POST['group_priority'])) >= 0)
+                            ? intval(trim($_POST['group_priority'])) : 0;
+
+            $planName = (array_key_exists('planName', $_POST) && !empty($_POST['planName']) && in_array($_POST['planName'], $valid_planNames))
+                   ? $_POST['planName'] : "";
+            
+            $startingIndex = (array_key_exists('startingIndex', $_POST) && !empty(trim($_POST['startingIndex'])) &&
+                              intval(trim($_POST['startingIndex'])) > 0)
+                           ? intval(trim($_POST['startingIndex'])) : 1000;
+            
+            $createBatchUsersType = (array_key_exists('createBatchUsersType', $_POST) && !empty(trim($_POST['createBatchUsersType'])) &&
+                                     in_array(trim($_POST['createBatchUsersType']), array("createRandomUsers", "createIncrementUsers")))
+                                  ? trim($_POST['createBatchUsersType']) : "createRandomUsers";
+            
+            
+            $currDate = date('Y-m-d H:i:s');            // current date and time to enter as creationdate field
+            $currBy = $_SESSION['operator_user'];
+
+
+            // before looping through all generated batch users we create the batch_history entry
+            // to associate the created users with a batch_history entry
+            $sql_batch_id = addUserBatchHistory($dbSocket);
+            
+            if ($sql_batch_id == 0) {
+                // 0 may be returned in the case of failure in adding the batch_history record due
+                // to SQL related issues or in case where there is a duplicate record of the batch_history,
+                // meaning, the same batch_name is used to identify the batch entry
+                $failureMsg = "Failure creating batch users due to an error or possible duplicate entry: <b> $batch_name </b>";
+                $logAction .= "Failure creating a batch_history entry on page: ";
+            } else {
+                
+                $actionMsgBadUsernames = "";
+                $actionMsgGoodUsernames = "";
+
+                $exportCSV = "Username,Password||";
+                
+                $inserted_usernames = array( "Username" );
+                $inserted_passwords = array( "Password" );
+                
+                if ($number > 0) {
+                    for ($i = 0; $i < $number; $i++) {
+
+                        // create the username
+                        switch ($createBatchUsersType) {
+                            default:
+                            case "createRandomUsers":
+                                $username_suffix = createPassword($length_user, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+                                break;
+                                
+                            case "createIncrementUsers":
+                                $username_suffix = $startingIndex + $i;
+                                break;
+                        }
+                        
+                        $username = $username_prefix . $username_suffix;
+                        $password = createPassword($length_pass, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+                        
+                        if (user_exists($dbSocket, $username)) {
+                            // $username skipped
+                            $detailedInfo[] = sprintf("cannot insert username %s, username exists",
+                                                      htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
+                            continue;
+                        }
+                        
+                        // username does not exist
+                        include_once("library/attributes.php");
+                        
+                        $hash = hashPasswordAttribute($passwordType, $password);
+                        
+                        if (!insert_single_attribute($dbSocket, $username, $passwordType, ':=', $hash)) {
+                            // if we fail to insert this user, we skip other queries
+                            $detailedInfo[] = sprintf("cannot insert username %s, db error",
+                                                      htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
+                            continue;
+                        }
+                        
+                        // if a group was defined to add the user to in the form let's add it to the database
+                        if (!empty($group)) {
+                            if (!insert_single_user_group_mapping($dbSocket, $username, $group, $group_priority)) {
+                                $detailedInfo[] = sprintf("cannot insert user-group mapping %s-%s",
+                                                      htmlspecialchars($username, ENT_QUOTES, 'UTF-8'), 
+                                                      htmlspecialchars($group, ENT_QUOTES, 'UTF-8'));
+                            }
+                        }
+                        
+                        // adding user info
+                        $params = array(
+                                            "firstname" => $firstname,
+                                            "lastname" => $lastname,
+                                            "email" => $email,
+                                            "department" => $department,
+                                            "company" => $company,
+                                            "workphone" => $workphone,
+                                            "homephone" => $homephone,
+                                            "mobilephone" => $mobilephone,
+                                            "address" => $address,
+                                            "city" => $city,
+                                            "state" => $state,
+                                            "country" => $country,
+                                            "zip" => $zip,
+                                            "notes" => $notes,
+                                            "changeuserinfo" => $ui_changeuserinfo,
+                                            "enableuserportallogin" => $ui_enableUserPortalLogin,
+                                            "portalloginpassword" => $ui_PortalLoginPassword,
+                                       );
+                        
+                        if (add_user_info($dbSocket, $username, $params) === false) {
+                            $detailedInfo[] = sprintf("cannot insert userinfo for user %s",
+                                                      htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
+                        }
+                        
+                        
+                        // adding billing info
+                        $params = array(
+                                            "contactperson" => $bi_contactperson,
+                                            "company" => $bi_company,
+                                            "email" => $bi_email,
+                                            "phone" => $bi_phone,
+                                            "address" => $bi_address,
+                                            "city" => $bi_city,
+                                            "state" => $bi_state,
+                                            "country" => $bi_country,
+                                            "zip" => $bi_zip,
+                                            "paymentmethod" => $bi_paymentmethod,
+                                            "cash" => $bi_cash,
+                                            "creditcardname" => $bi_creditcardname,
+                                            "creditcardnumber" => $bi_creditcardnumber,
+                                            "creditcardexp" => $bi_creditcardexp,
+                                            "creditcardverification" => $bi_creditcardverification,
+                                            "creditcardtype" => $bi_creditcardtype,
+                                            "notes" => $bi_notes,
+                                            "lead" => $bi_lead,
+                                            "coupon" => $bi_coupon,
+                                            "ordertaker" => $bi_ordertaker,
+                                            "billstatus" => $bi_billstatus,
+                                            "lastbill" => $bi_lastbill,
+                                            "nextbill" => $bi_nextbill,
+                                            "postalinvoice" => $bi_postalinvoice,
+                                            "faxinvoice" => $bi_faxinvoice,
+                                            "emailinvoice" => $bi_emailinvoice,
+                                            "changeuserbillinfo" => $bi_changeuserbillinfo,
+                                            "planName" => $planName,
+                                            "hotspot_id" => $hotspot_id,
+                                            "batch_id" => $sql_batch_id,
+                                            "creationdate" => $currDate,
+                                            "creationby" => $operator
+                                       );
+                        
+                        if (add_user_billing_info($dbSocket, $username, $params) === false) {
+                            $detailedInfo[] = sprintf("cannot insert billing info for user %s",
+                                                      htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
+                        }
+                        
+                        // adding attributes
+                        $skipList = array( 
+                                           "username_prefix", "passwordType", "length_pass", "length_user", "number", "plan",
+                                           "submit", "group", "group_priority", "createBatchUsersType", "startingIndex",
+                                           "firstname", "lastname", "email", "department", "company", "workphone", "homephone",
+                                           "mobilephone", "address", "city", "state", "country", "zip", "notes", "bi_contactperson",
+                                           "bi_company", "bi_email", "bi_phone", "bi_address", "bi_city", "bi_state", "bi_country",
+                                           "bi_zip", "bi_paymentmethod", "bi_cash", "bi_creditcardname", "bi_creditcardnumber",
+                                           "bi_creditcardverification", "bi_creditcardtype", "bi_creditcardexp", "bi_notes", "bi_lead",
+                                           "bi_coupon", "bi_ordertaker", "bi_billstatus", "bi_lastbill", "bi_nextbill", "bi_postalinvoice",
+                                           "bi_faxinvoice", "bi_emailinvoice", "bi_batch_id", "changeUserBillInfo", "changeUserInfo",
+                                           "batch_description", "batch_name", "hotspot", "hotspot_id", "copycontact",
+                                           "enableUserPortalLogin", "portalLoginPassword", "csrf_token"
+                                         );
+                        
+                        $count = handleAttributes($dbSocket, $username, $skipList);
+                        
+                        $inserted_usernames[] = $username;
+                        $inserted_passwords[] = $password;
+                        
+                        $exportCSV .= "$username,$password||";
+                        
+                    } // end for
+                    
+                    $form_id = "export-users-form";
+                    $exportForm .= sprintf('<form target="_blank" style="display: none" id="%s" ', $form_id)
+                                 . 'method="POST">'
+                                 . sprintf('<input type="hidden" name="batch_name" value="%s">',
+                                           htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8'))
+                                 . '<input type="hidden" name="type" value="batch">';
+                                 
+                    if (!empty($planName)) {
+                        $exportForm .= sprintf('<input type="hidden" name="plan" value="%s">',
+                                               htmlspecialchars($planName, ENT_QUOTES, 'UTF-8'));
+                    }
+                    
+                    for ($i = 0; $i < count($inserted_usernames); $i++) {
+                        $u = $inserted_usernames[$i];
+                        $p = $inserted_passwords[$i];
+                        $exportForm .= sprintf('<input type="hidden" name="accounts[%d][0]" value="%s">', $i, htmlspecialchars($u, ENT_QUOTES, 'UTF-8'))
+                                     . sprintf('<input type="hidden" name="accounts[%d][1]" value="%s">', $i, htmlspecialchars($p, ENT_QUOTES, 'UTF-8'));
+                    }
+                    $exportForm .= '</form>';
+                    $onclick = "batch_export('include/common/fileExportCSV.php')";
+                    $exportForm .= sprintf('<input type="button" onclick="%s" value="CSV Download">', $onclick);
+                    $onclick = "batch_export('include/common/printTickets.php')";
+                    $exportForm .= sprintf('<input type="button" onclick="%s" value="Printable Tickets">', $onclick);
+                            
+                            // if batch_history record was created successfuly
+                            //~ if ($sql_batch_id != 0) {
+                                //~ // remove the last || chars to sanitize it for proper format
+                                //~ $exportCSV = substr($exportCSV, 0, -2);
+                                //~ $successMsg = "Exported Usernames - ".
+                                                    //~ "<a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>".
+                                                //~ "Printable Tickets - ".
+                                                    //~ "<a href='include/common/printTickets.php?type=batch&plan=$planName&accounts=$exportCSV'>view</a><br/>".
+                                                //~ "Added to database new user(s): <b> $actionMsgGoodUsernames </b><br/>";
+                    $successMsg = sprintf("Created %d user(s) (batch name: <strong>%s</strong>)", count($inserted_usernames)-1, $batch_name);
+                    $logAction .= sprintf("Successfully added to database new users [%s] with prefix [%s] on page: ",
+                                          implode(", ", $inserted_usernames), $username_prefix);
+                            //~ }
+                
+                
+                } else {// $number > 0
+                    $failureMsg = "specify a valid number of accounts";
+                    $logAction = "specified an invalid number of accounts on page: ";
+                }
+            }
+        }
+    }
+
+    include('library/closedb.php');
+
     include_once('include/management/actionMessages.php');
     
-    // set navbar stuff
-    $navbuttons = array(
-                            "AccountInfo-tab" => t('title','AccountInfo'),
-                            "UserInfo-tab" => t('title','UserInfo'),
-                            "BillingInfo-tab" => t('title','BillingInfo'),
-                            "Attributes-tab" => t('title','Attributes'),
-                       );
+    if (!empty($exportForm)) {
+        echo $exportForm;
+        
+        if (count($detailedInfo) > 0) {
+            echo "<h4>Detailed info</h4>"
+               . "<pre>"
+               . implode("\n", $detailedInfo)
+               . "</pre>";
+        }
+        
+    } else {
+    
+        // set navbar stuff
+        $navbuttons = array(
+                                "AccountInfo-tab" => t('title','AccountInfo'),
+                                "UserInfo-tab" => t('title','UserInfo'),
+                                "BillingInfo-tab" => t('title','BillingInfo'),
+                                "Attributes-tab" => t('title','Attributes'),
+                           );
 
-    print_tab_navbuttons($navbuttons);
+        print_tab_navbuttons($navbuttons);
+        
+        $input_descriptors1 = array();
+        $input_descriptors1[] = array(
+                                        "name" => "batch_name",
+                                        "caption" => t('all','batchName'),
+                                        "type" => "text",
+                                        "value" => ((isset($failureMsg)) ? $batch_name : ""),
+                                        "tooltipText" => t('Tooltip','batchNameTooltip')
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "batch_description",
+                                        "caption" => t('all','batchDescription'),
+                                        "type" => "text",
+                                        "value" => ((isset($failureMsg)) ? $batch_description : ""),
+                                        "tooltipText" => t('Tooltip','batchDescriptionTooltip')
+                                     );
+                                     
+        $options = $valid_hotspots;
+        array_unshift($options , '');
+        $input_descriptors1[] = array(
+                                        "type" =>"select",
+                                        "name" => "hotspot_id",
+                                        "caption" => t('all','HotSpot'),
+                                        "options" => $options,
+                                        "onchange" => "switchAuthType()",
+                                        "selected_value" => ((isset($failureMsg) && intval($hotspot_id) > 0) ? "hotspot-$hotspot_id" : ""),
+                                        "tooltipText" => t('Tooltip','hotspotTooltip')
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "username_prefix",
+                                        "caption" => t('all','UsernamePrefix'),
+                                        "type" => "text",
+                                        "value" => ((isset($failureMsg)) ? $username_prefix : ""),
+                                        "tooltipText" => t('Tooltip','usernamePrefixTooltip'),
+                                        "random" => true
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "type" => "radio",
+                                        "value" => "createRandomUsers",
+                                        "name" => "createBatchUsersType",
+                                        "onclick" => "toggleRandomUsers()",
+                                        "caption" => t('all','CreateRandomUsers'),
+                                        "checked" => true
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "length_user",
+                                        "caption" => t('all','UsernameLength'),
+                                        "type" => "number",
+                                        "value" => ((isset($failureMsg)) ? $length_user : "8"),
+                                        "tooltipText" => t('Tooltip','lengthOfUsernameTooltip'),
+                                        "min" => "4",
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "type" => "radio",
+                                        "value" => "createIncrementUsers",
+                                        "name" => "createBatchUsersType",
+                                        "onclick" => "toggleIncrementUsers()",
+                                        "caption" => t('all','CreateIncrementingUsers'),
+                                        "checked" => false
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "startingIndex",
+                                        "caption" => t('all','StartingIndex'),
+                                        "type" => "number",
+                                        "value" => ((isset($failureMsg)) ? $startingIndex : "1000"),
+                                        "tooltipText" => t('Tooltip','startingIndexTooltip'),
+                                        "min" => "1",
+                                        "disabled" => true,
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "type" =>"select",
+                                        "name" => "passwordType",
+                                        "caption" => t('all','PasswordType'),
+                                        "options" => $valid_passwordTypes,
+                                        "selected_value" => ((isset($failureMsg)) ? $passwordType : ""),
+                                        "tooltipText" => t('Tooltip','passwordTypeTooltip')
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "length_pass",
+                                        "caption" => t('all','PasswordLength'),
+                                        "type" => "number",
+                                        "value" => ((isset($failureMsg)) ? $length_pass : "8"),
+                                        "tooltipText" => t('Tooltip','lengthOfPasswordTooltip'),
+                                        "min" => "8",
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "number",
+                                        "caption" => t('all','NumberInstances'),
+                                        "type" => "number",
+                                        "value" => ((isset($failureMsg)) ? $number : "4"),
+                                        "tooltipText" => t('Tooltip','instancesToCreateTooltip'),
+                                        "min" => "4",
+                                        "step" => "4"
+                                     );
+                                     
+        $options = $valid_groups;
+        array_unshift($options, '');
+        $input_descriptors1[] = array(
+                                        "type" =>"select",
+                                        "name" => "group",
+                                        "caption" => t('all','Group'),
+                                        "options" => $options,
+                                        "selected_value" => ((isset($failureMsg)) ? $group : ""),
+                                        "tooltipText" => t('Tooltip','groupTooltip')
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "group_priority",
+                                        "caption" => t('all','GroupPriority'),
+                                        "type" => "number",
+                                        "value" => ((isset($failureMsg)) ? $group_priority : "0"),
+                                        "min" => "0",
+                                     );
+        
+        $options = $valid_planNames;
+        array_unshift($options, '');
+        $input_descriptors1[] = array(
+                                        "type" =>"select",
+                                        "name" => "planName",
+                                        "caption" => t('all','PlanName'),
+                                        "options" => $options,
+                                        "selected_value" => ((isset($failureMsg)) ? $planName : ""),
+                                        "tooltipText" => t('Tooltip','planTooltip')
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
 ?>
 
 <form name="batchuser" method="POST">
-    
-        <div class="tabcontent" id="AccountInfo-tab" style="display: block">
-            <fieldset>
-                <h302><?= t('title','AccountInfo') ?></h302>
-                
-                <br/>
+    <div class="tabcontent" id="AccountInfo-tab" style="display: block">
+        <fieldset>
+            <h302><?= t('title','AccountInfo') ?></h302>
+            <ul>
 
-                <ul>
-
-
-        <li class='fieldset'>
-        <label for='batchName' class='form'><?= t('all','batchName') ?></label>
-        <input name='batch_name' type='text' id='batch_name' value='' tabindex='100' />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('batchNameTooltip')" />
-        
-        <div id='batchNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','batchNameTooltip') ?>
-        </div>
-        </li>
-        
-        <li class='fieldset'>
-        <label for='batchDescription' class='form'><?= t('all','batchDescription') ?></label>
-        <input name='batch_description' type='text' id='batch_description' value='' tabindex='101' />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('batchDescriptionTooltip')" />
-        
-        <div id='batchDescriptionTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','batchDescriptionTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='hotspot' class='form'><?= t('all','HotSpot')?></label>
-        <?php
-                include_once('include/management/populate_selectbox.php');
-                populate_hotspots("Select Hotspot", "hotspot_id");
-        ?>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('hotspot')" />
-        <div id='hotspotTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','hotspotTooltip') ?>
-        </div>
-        </li>
-
-
-
-
-
-
-
-        <br/>
-        <br/>
-        
-        <li class='fieldset'>
-        <label for='usernamePrefix' class='form'><?= t('all','UsernamePrefix') ?></label>
-        <input name='username_prefix' type='text' id='username_prefix' value='' tabindex='102' />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('usernamePrefixTooltip')" />
-        
-        <div id='usernamePrefixTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','usernamePrefixTooltip') ?>
-        </div>
-        </li>
-        
-        <br/>
-
-        <li class='fieldset'>
-        <input checked type='radio' value="createRandomUsers" name="createBatchUsersType" 
-            onclick="javascript:toggleRandomUsers()"/>
-        <b> <?= t('all','CreateRandomUsers') ?> </b>
-        <br/>
-        </li>
-
-        <li class='fieldset'>
-        <label for='usernameLength' class='form'><?= t('all','UsernameLength') ?></label>
-        <input class="integer" name='length_user' type='text' id='length_user' value='8' tabindex='103' />
-        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('length_user','increment')" />
-        <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_user','decrement')"/>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('lengthOfUsernameTooltip')" />
-        
-        <div id='lengthOfUsernameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','lengthOfUsernameTooltip') ?>
-        </div>
-        </li>
-
-
-        
-        <br/>
-        <li class='fieldset'>
-        <input type='radio' value="createIncrementUsers" name="createBatchUsersType" 
-            onclick="javascript:toggleIncrementUsers()"/>
-        <b> <?= t('all','CreateIncrementingUsers') ?> </b>
-        <br/>
-        </li>
-
-        <li class='fieldset'>
-        <label for='startingIndex' class='form'><?= t('all','StartingIndex') ?></label>
-        <input class="integerLarge" name='startingIndex' type='text' id='startingIndex' value='1' disabled tabindex='104' />
-        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('startingIndex','increment')" />
-        <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('startingIndex','decrement')"/>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('startingIndexTooltip')" />
-
-        <div id='startingIndexTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','startingIndexTooltip') ?>
-        </div>
-        <li>
-
-
-        <br/>
-        
-        <li class='fieldset'>
-        <label for='passwordType' class='form'><?= t('all','PasswordType')?></label>
-        <?php
-                include_once('include/management/populate_selectbox.php');
-                populate_password_types("passwordType");
-        ?>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('passwordTypeTooltip')" />
-        <div id='passwordTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','passwordTypeTooltip') ?>
-        </div>
-        </li>
-        
-        <li class='fieldset'>
-        <label for='passwordLength' class='form'><?= t('all','PasswordLength') ?></label>
-        <input class="integer" name='length_pass' type='text' id='length_pass' value='8' tabindex='105' />
-        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('length_pass','increment')" />
-        <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('length_pass','decrement')"/>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('lengthOfPasswordTooltip')" />
-
-        <div id='lengthOfPasswordTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','lengthOfPasswordTooltip') ?>
-        </div>
-        </li>        
-
-        <li class='fieldset'>
-        <label for='numberInstances' class='form'><?= t('all','NumberInstances') ?></label>
-        <input class="integer" name='number' type='text' id='number' value='1' tabindex='106' />
-        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('number','increment')" />
-        <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('number','decrement')"/>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('instancesToCreateTooltip')" />
-
-        <div id='instancesToCreateTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','instancesToCreateTooltip') ?>
-        </div>
-        <li>
-        
-        <li class='fieldset'>
-        <label for='group' class='form'><?= t('all','Group')?></label>
-        <?php
-                include_once('include/management/populate_selectbox.php');
-                populate_groups("Select Groups","group");
-        ?>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
-        <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','groupTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='groupPriority' class='form'><?= t('all','GroupPriority') ?></label>
-        <input class="integer" name='group_priority' type='text' id='group_priority' value='0' tabindex='107' />
-        <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('group_priority','increment')" />
-        <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('group_priority','decrement')"/>
-        </li>
-
-        <li class='fieldset'>
-        <label for='plan' class='form'><?= t('all','PlanName')?></label>
-        <?php
-                include_once('include/management/populate_selectbox.php');
-                populate_plans("Select Plan","plan");
-        ?>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('plan')" />
-        <div id='planTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?= t('Tooltip','planTooltip') ?>
-        </div>
-        </li>
-        
-        <li class='fieldset'>
-        <br/><br/>
-        <hr><br/>
-        <input type="submit" name="submit" value="<?= t('buttons','apply') ?> " tabindex=1000 
-            class='button' />
-        </li>
-        </ul>
-    </fieldset>
-
-
-     </div>
+<?php
+                foreach ($input_descriptors1 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
+            </ul>
+        </fieldset>
+    </div><!-- #AccountInfo-tab -->
 
     <div class="tabcontent" id="UserInfo-tab">
-    <?php
+<?php
         $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
         include_once('include/management/userinfo.php');
-    ?>
+?>
     </div>
 
     <div class="tabcontent" id="BillingInfo-tab">
-    <?php
+<?php
         $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
         include_once('include/management/userbillinfo.php');
-    ?>
+?>
     </div>
 
-     <div class="tabcontent" id="Attributes-tab">
-    <?php
+    <div class="tabcontent" id="Attributes-tab">
+<?php
         include_once('include/management/attributes.php');
-    ?>
-     </div>        
-
-</div>
-
-
-
-    <br/>
-
-     </div>
-
-
-                </form>
+?>
+    </div>
+</form>
 
 <?php
+    }
+
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+    
+    if (!empty($exportForm) && !empty($form_id)) {
+        $inline_extra_js = 'function batch_export(action) {' . "\n";
+        $inline_extra_js .= sprintf("var f = document.getElementById('%s');", $form_id);
+        $inline_extra_js .= '
+f.action = action;
+f.submit();
+}
+';
+    } else {
+        $inline_extra_js = "";
+    }
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>

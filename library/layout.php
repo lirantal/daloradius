@@ -199,6 +199,12 @@ function print_input_field($input_descriptor) {
         if (array_key_exists('max', $input_descriptor)) {
             printf(' max="%s"', $input_descriptor['max']);
         }
+        
+        if ($input_descriptor['type'] == "number") {
+            if (array_key_exists('step', $input_descriptor)) {
+                printf(' step="%s"', $input_descriptor['step']);
+            }
+        }
     }
     
     if ($input_descriptor['type'] == "number") {
@@ -339,6 +345,14 @@ function print_select($select_descriptor) {
         printf(' onchange="%s"', $select_descriptor['onchange']);
     }
     
+    if (array_key_exists('multiple', $select_descriptor)) {
+        echo ' multiple';
+    }
+    
+    if (array_key_exists('size', $select_descriptor) && intval($select_descriptor['size']) > 0) {
+        printf(' size="%s"', $select_descriptor['size']);
+    }
+    
     echo '>';
     
     foreach ($select_descriptor['options'] as $key => $elem) {
@@ -348,10 +362,18 @@ function print_select($select_descriptor) {
         
         printf('<option value="%s"', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
         
-        if (array_key_exists('selected_value', $select_descriptor) &&
-            !empty($select_descriptor['selected_value']) &&
-            $select_descriptor['selected_value'] === $value) {
-            echo ' selected';
+        if (array_key_exists('selected_value', $select_descriptor) && !empty($select_descriptor['selected_value'])) {
+            
+            $selected_values = (!is_array($select_descriptor['selected_value']))
+                             ? array( $select_descriptor['selected_value'] )
+                             : $select_descriptor['selected_value'];
+            
+            foreach ($selected_values as $selected_value) {
+                if ($selected_value === $value) {
+                    echo ' selected';
+                    break;
+                }
+            }
         }
         
         printf('>%s</option>', $caption);

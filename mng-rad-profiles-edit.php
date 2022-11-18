@@ -32,103 +32,18 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    $profile = $_REQUEST['profile'];
+    // we import validation facilities
+    include_once("library/validation.php");
 
-    if (isset($_REQUEST['submit'])) {
-        $profile = $_REQUEST['profile'];
-
-        include 'library/opendb.php';
-
-        if ($profile != "") {
-            foreach( $_POST as $element=>$field ) {
-                switch ($element) {
-                    case "submit":
-                    case "profile":
-                            $skipLoopFlag = 1;
-                            break;
-                }
-
-                if ($skipLoopFlag == 1) {
-                    $skipLoopFlag = 0;
-                    continue;
-                }
-
-                                if (isset($field[0])) {
-                                        if (preg_match('/__/', $field[0]))
-                                                list($columnId, $attribute) = explode("__", $field[0]);
-                                        else {
-                                                $columnId = 0;                          // we need to set a non-existent column id so that the attribute would
-                                                                                        // not match in the database (as it is added from the Attributes tab)
-                                                                                        // and the if/else check will result in an INSERT instead of an UPDATE for the
-                                                                                        // the last attribute
-                                                $attribute = $field[0];
-                                        }
-                                }
-
-                if (isset($field[1]))
-                    $value = $field[1];
-                if (isset($field[2]))
-                    $op = $field[2];
-                if (isset($field[3]))
-                    $table = $field[3];
-
-                if ($table == 'check')
-                    $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-                if ($table == 'reply')
-                    $table = $configValues['CONFIG_DB_TBL_RADGROUPREPLY'];
-
-                if (!($value))
-                    continue;
-
-                $value = $dbSocket->escapeSimple($value);
-
-                $sql = "SELECT Attribute FROM $table WHERE GroupName='".$dbSocket->escapeSimple($profile).
-                        "' AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-                if ($res->numRows() == 0) {
-
-                    /* if the returned rows equal 0 meaning this attribute is not found and we need to add it */
-                    $sql = "INSERT INTO $table (id,GroupName,Attribute,op,Value) ".
-                            " VALUES (0,'".$dbSocket->escapeSimple($profile)."', '".
-                            $dbSocket->escapeSimple($attribute)."','".$dbSocket->escapeSimple($op)."', '$value')";
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-
-                } else {
-
-                    /* we update the $value[0] entry which is the attribute's value */
-                    $sql = "UPDATE $table SET Value='$value' WHERE GroupName='".
-                            $dbSocket->escapeSimple($profile)."' AND Attribute='".$dbSocket->escapeSimple($attribute)."'".
-                            " AND id=".$dbSocket->escapeSimple($columnId);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-
-                    /* then we update $value[1] which is the attribute's operator */
-                    $sql = "UPDATE $table SET Op='".$dbSocket->escapeSimple($op).
-                            "' WHERE GroupName='".$dbSocket->escapeSimple($profile)."' AND Attribute='".
-                            $dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-
-                }
-
-            } //foreach $_POST
-
-            $successMsg = "Updated attributes for: <b> $profile </b>";
-            $logAction .= "Successfully updates attributes for profile [$profile] on page:";
-
-        include 'library/closedb.php';
-
-        } else { // $profile is empty
-
-            $failureMsg = "profile name is empty";
-            $logAction .= "Failed adding (possibly empty) profile name [$profile] on page: ";
-
-        }
-
-
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $profile = (array_key_exists('profile', $_POST) && !empty($_POST['profile']) && trim(str_replace("%", "", $_POST['profile'])))
+                 ? trim(str_replace("%", "", $_POST['profile'])) : "";
+    } else {
+        $profile = (array_key_exists('profile', $_REQUEST) && isset($_REQUEST['profile']) && trim(str_replace("%", "", $_REQUEST['profile'])))
+                 ? trim(str_replace("%", "", $_REQUEST['profile'])) : "";
     }
+    
+    $profile_enc = (!empty($profile)) ? htmlspecialchars($profile, ENT_QUOTES, 'UTF-8') : "";
 
     include_once("lang/main.php");
     
@@ -153,254 +68,283 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (isset($profile)) {
-        $title .= ":: $profile";
+    if (!empty($profile)) {
+        $title .= " :: $profile";
     } 
 
+    include_once('include/management/populate_selectbox.php');
     include("menu-mng-rad-profiles.php");
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        
+        
+        $groups = array_keys(get_groups());
+        
+        // check if it exists
+        if (!in_array($profile, $groups)) {
+            // we empty the profile if the hs does not exist
+            $profile = "";
+        } else {
+            include('library/opendb.php');
+            include("library/attributes.php");
+            $skipList = array( "profile", "submit", "csrf_token" );
+            $count = handleAttributes($dbSocket, $profile, $skipList, false, 'group');
+            include('library/closedb.php');
+            
+            $successMsg = "Updated attributes for: <b> $profile </b>";
+            $logAction .= "Successfully updates attributes for profile [$profile] on page:";
+        }
+    }
+    
+    if (empty($profile)) {
+        $failureMsg = "Profile name is invalid or empty";
+        $logAction .= "Failed updating (possible empty or invalid profile name) profile on page: ";
+    }
+    
     include_once('include/management/actionMessages.php');
     
-    $input_descriptors2 = array();
-    $input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
-    $input_descriptors2[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
-    $input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
-    $input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+    if (!empty($profile)) { 
+        $input_descriptors2 = array();
+        $input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
+        $input_descriptors2[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
+        $input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
+        $input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+        
+        $submit_descriptor = array(
+                                    "type" => "submit",
+                                    "name" => "submit",
+                                    "value" => t('buttons','apply')
+                                  );
+        
+        // set navbar stuff
+        $navbuttons = array(
+                              'RADIUSCheck-tab' => t('title','RADIUSCheck'),
+                              'RADIUSReply-tab' => t('title','RADIUSReply'),
+                              'Attributes-tab' => t('title','Attributes'),
+                           );
+
+        print_tab_navbuttons($navbuttons);
     
-    // set navbar stuff
-    $navbuttons = array(
-                          'RADIUSCheck-tab' => t('title','RADIUSCheck'),
-                          'RADIUSReply-tab' => t('title','RADIUSReply'),
-                          'Attributes-tab' => t('title','Attributes'),
-                       );
-
-    print_tab_navbuttons($navbuttons);
-
+    
+        include('library/opendb.php');
+        include_once('include/management/pages_common.php');
+        
+        $hashing_algorithm_notice = '<small style="font-size: 10px; color: black">'
+                                  . 'Notice that for supported password-like attributes, you can just specify a plaintext value. '
+                                  . 'The system will take care of correctly hashing it.'
+                                  . '</small>';
 ?>
 
 <form name="mngradprofiles" method="POST">
-    <input type="hidden" value="<?php echo $profile ?>" name="profile" />
+    <input type="hidden" value="<?= $profile ?>" name="profile">
 
-    <div class="tabcontent" id="RADIUSCheck-tab" style="display: block">
-
+    <div id="RADIUSCheck-tab" class="tabcontent" style="display: block">
         <fieldset>
-
-                <h302> <?php echo t('title','RADIUSCheck')?> </h302>
-                <br/>
-
-        <ul>
+            <h302><?= t('title','RADIUSCheck') ?></h302>
+            <ul>
 <?php
 
 
-        include 'library/opendb.php';
-        include 'include/management/pages_common.php';
 
+    $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
+                      FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
+                     WHERE rc.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
+                                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                               $dbSocket->escapeSimple($profile));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+
+    if ($res->numRows() == 0) {
+        echo '<div style="text-align: center">'
+           . t('messages','noCheckAttributesForGroup')
+           . '</div>';
+    } else {
+        
+        echo '<ul>';
+        
         $editCounter = 0;
+        $table = 'radgroupcheck';
+        while ($row = $res->fetchRow()) {
+            
+            foreach ($row as $i => $v) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
 
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute, ".
-                $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".op, ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Value, ".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip, ".
-                $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".id ".
-                " FROM ".
-                $configValues['CONFIG_DB_TBL_RADGROUPCHECK']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
-                " ON ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".Attribute=".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
-        " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
-        " WHERE ".
-                $configValues['CONFIG_DB_TBL_RADGROUPCHECK'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
+            $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
+            $name = sprintf('editValues%s[]', $editCounter);
+            $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
+            
+            echo '<li>';
+            printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile=%s&attribute=%s&tablename=%s">',
+                   urlencode($profile_enc), urlencode($id__attribute), $table);
+            echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
+            
+            printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
 
-        if ($numrows = $res->numRows() == 0) {
-            echo "<center>";
-            echo t('messages','noCheckAttributesForGroup');
-            echo "</center>";
+            printf('<input type="hidden" name="%s" value="%s">', $name, $id__attribute);            
+            printf('<input type="%s" value="%s" name="%s">', $type, $row[2], $name);
+            
+            printf('<select name="%s" class="form">', $name);
+            printf('<option value="%s">%s</option>', $row[1], $row[1]);
+            drawOptions();
+            echo '</select>';
+
+            printf('<input type="hidden" name="%s" value="%s">', $name, $table);
+
+
+            if (!empty($row[3]) || !empty($row[4])) {
+                $divId = sprintf("%s-Tooltip-%d-%s", $row[0], $editCounter, $table);
+                $onclick = sprintf("toggleShowDiv('%s')", $divId);
+                printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
+                printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
+                
+                if (!empty($row[3])) {
+                    echo '<br>';
+                    printf('<i><b>Type:</b> %s</i>', $row[3]);
+                }
+                
+                if (!empty($row[4])) {
+                    echo '<br>';
+                    printf('<i><b>Tooltip Description:</b> %s</i>', $row[4]);
+                }
+                echo '</div>';
+            }
+            
+            echo '</li>';
+            
+            // we increment the counter for the html elements of the edit attributes
+            $editCounter++;
         }
-
-        while($row = $res->fetchRow()) {
-
-                echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-profiles-del.php?profile=$profile&attribute=$row[5]__$row[0]&tablename=radgroupcheck'>
-                                <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-        echo "</label>";
-                echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
-
-                echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
-
-                        if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
-                                echo "<input type='hidden' value='$row[2]' name='passwordOrig' />";
-                                echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
-                                echo "&nbsp;";
-                                echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-                                echo "<option value='$row[1]'>$row[1]</option>";
-                                drawOptions();
-                                echo "</select>";
-                        } else {
-                                echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
-                                echo "&nbsp;";
-                                echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-                                echo "<option value='$row[1]'>$row[1]</option>";
-                                drawOptions();
-                                echo "</select>";
-                        }
-
-                echo "
-                        <input type='hidden' name='editValues".$editCounter."[]' value='radgroupcheck' style='width: 90px'>
-                ";
-
-                $editCounter++;                 // we increment the counter for the html elements of the edit attributes
-
-                if (!$row[3])
-                        $row[3] = "unavailable";
-                if (!$row[4])
-                        $row[4] = "unavailable";
-
-                printq("
-                        <img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
-                        <br/>
-                        <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <i><b>Type:</b> $row[3]</i><br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <i><b>Tooltip Description:</b> $row[4]</i><br/>
-                                <br/>
-                        </div>
-                ");
-
+        
+        echo '</ul>';
+        
+        echo $hashing_algorithm_notice;
     }
+
 ?>
-
-        <br/><br/>
-        <hr><br/>
-        <br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
-
-    </ul>
-
-        </fieldset>
-        </div>
-
-        <div class="tabcontent" id="RADIUSReply-tab">
-
-        <fieldset>
-
-                <h302> <?php echo t('title','RADIUSReply')?> </h302>
-                <br/>
-
-        <ul>
+            </ul>
 
 <?php
-
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute, ".
-                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".op, ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Value, ".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Type, ".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".RecommendedTooltip, ".
-                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".id ".
-                " FROM ".
-                $configValues['CONFIG_DB_TBL_RADGROUPREPLY']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
-                " ON ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".Attribute=".
-                $configValues['CONFIG_DB_TBL_DALODICTIONARY'].".attribute ".
-        " AND ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].".Value IS NULL ".
-        " WHERE ".
-                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'].".GroupName='".$dbSocket->escapeSimple($profile)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($numrows = $res->numRows() == 0) {
-                echo "<center>";
-                echo t('messages','noReplyAttributesForGroup');
-                echo "</center>";
-        }
-
-        while($row = $res->fetchRow()) {
-
-
-                echo "<label class='attributes'>";
-                echo "<a class='tablenovisit' href='mng-rad-profiles-del.php?profile=$profile&attribute=$row[5]__$row[0]&tablename=radgroupreply'>
-                                <img src='images/icons/delete.png' border=0 alt='Remove' /> </a>";
-        echo "</label>";
-                echo "<label for='attribute' class='attributes'>&nbsp;&nbsp;&nbsp;$row[0]</label>";
-
-                echo "<input type='hidden' name='editValues".$editCounter."[]' value='$row[5]__$row[0]' />";
-
-                if ( ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") and (preg_match("/.*-Password/", $row[0])) ) {
-                        echo "<input type='password' value='$row[2]' name='editValues".$editCounter."[]'  style='width: 115px' />";
-                        echo "&nbsp;";
-                        echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-                        echo "<option value='$row[1]'>$row[1]</option>";
-                        drawOptions();
-                        echo "</select>";
-                } else {
-                        echo "<input value='$row[2]' name='editValues".$editCounter."[]' style='width: 115px' />";
-                        echo "&nbsp;";
-                        echo "<select name='editValues".$editCounter."[]' style='width: 45px' class='form'>";
-                        echo "<option value='$row[1]'>$row[1]</option>";
-                        drawOptions();
-                        echo "</select>";
-                }
-
-                echo "
-                        <input type='hidden' name='editValues".$editCounter."[]' value='radgroupreply' style='width: 90px'>
-                ";
-
-                $editCounter++;                 // we increment the counter for the html elements of the edit attributes
-
-                if (!$row[3])
-                        $row[3] = "unavailable";
-                if (!$row[4])
-                        $row[4] = "unavailable";
-
-                printq("
-                        <img src='images/icons/comment.png' alt='Tip' border='0' onClick=\"javascript:toggleShowDiv('$row[0]Tooltip')\" />
-                        <br/>
-                        <div id='$row[0]Tooltip'  style='display:none;visibility:visible' class='ToolTip2'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <i><b>Type:</b> $row[3]</i><br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <i><b>Tooltip Description:</b> $row[4]</i><br/>
-                                <br/>
-                        </div>
-                ");
-
-        }
-
+            print_form_component($submit_descriptor);
 ?>
-
-
-        <br/><br/>
-        <hr><br/>
-        <br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply')?>' class='button' />
-        <br/>
-
-    </ul>
 
         </fieldset>
     </div>
 
+    <div class="tabcontent" id="RADIUSReply-tab">
+        <fieldset>
+            <h302><?= t('title','RADIUSReply') ?></h302>
+
+            <ul>
 <?php
-    include 'library/closedb.php';
+
+
+    $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
+                      FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
+                     WHERE rc.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
+                                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                               $dbSocket->escapeSimple($profile));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+
+    if ($res->numRows() == 0) {
+        echo '<div style="text-align: center">'
+           . t('messages','noReplyAttributesForGroup')
+           . '</div>';
+    } else {
+        
+        echo '<ul>';
+        
+        $editCounter = 0;
+        $table = 'radgroupreply';
+        while ($row = $res->fetchRow()) {
+            
+            foreach ($row as $i => $v) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+
+            $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
+            $name = sprintf('editValues%s[]', $editCounter);
+            $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
+            
+            echo '<li>';
+            printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile=%s&attribute=%s&tablename=%s">',
+                   urlencode($profile_enc), urlencode($id__attribute), $table);
+            echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
+            
+            printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
+
+            printf('<input type="hidden" name="%s" value="%s">', $name, $id__attribute);            
+            printf('<input type="%s" value="%s" name="%s">', $type, $row[2], $name);
+            
+            printf('<select name="%s" class="form">', $name);
+            printf('<option value="%s">%s</option>', $row[1], $row[1]);
+            drawOptions();
+            echo '</select>';
+
+            printf('<input type="hidden" name="%s" value="%s">', $name, $table);
+
+
+            if (!empty($row[3]) || !empty($row[4])) {
+                $divId = sprintf("%s-Tooltip-%d-%s", $row[0], $editCounter, $table);
+                $onclick = sprintf("toggleShowDiv('%s')", $divId);
+                printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
+                printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
+                
+                if (!empty($row[3])) {
+                    echo '<br>';
+                    printf('<i><b>Type:</b> %s</i>', $row[3]);
+                }
+                
+                if (!empty($row[4])) {
+                    echo '<br>';
+                    printf('<i><b>Tooltip Description:</b> %s</i>', $row[4]);
+                }
+                echo '</div>';
+            }
+            
+            echo '</li>';
+            
+            // we increment the counter for the html elements of the edit attributes
+            $editCounter++;
+        }
+        
+        echo '</ul>';
+        
+        echo $hashing_algorithm_notice;
+    }
+    
 ?>
+            </ul>
+            
+<?php
+            print_form_component($submit_descriptor);
+?>
+            
+        </fieldset>
+    </div>
 
-
-
-     <div class="tabcontent" id="Attributes-tab">
-        <?php
-            include_once('include/management/attributes.php');
-        ?>
-     </div>
-
-
+<?php
+        include('library/closedb.php');
+?>
+    
+    <div class="tabcontent" id="Attributes-tab">
+<?php
+        include_once('include/management/attributes.php');
+?>
+    </div>     
 </form>
 
 <?php
+    }
+    
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

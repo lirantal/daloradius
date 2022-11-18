@@ -26,15 +26,21 @@
 
     //~ include('library/check_operator_perm.php');
 
+    $log = "visited page: ";
+    $logQuery = "performed query for [$orderBy";
+    if (!empty($limit)) {
+        $logQuery .= " : $limit";
+    }
+    $logQuery .= "] on page: ";
+
     // validate this parameter before including menu
     $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
                     ? str_replace("%", "", $_GET['username']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logQuery = "performed query for user [$username] on page: ";
-    $logDebugSQL = "";
+    
+    include("library/validation.php");
 
     include_once("lang/main.php");
     
@@ -67,14 +73,11 @@
              ? $_GET['orderBy'] : array_keys($cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "asc";
 
-?>
 
-        <div id="contentnorightbar">
-
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -146,25 +149,8 @@
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-?>
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for [$orderBy";
-    if (!empty($limit)) {
-        $logQuery .= " : $limit";
-    }
-    $logQuery .= "] on page: ";
 
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-        
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

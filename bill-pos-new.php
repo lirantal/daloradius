@@ -25,24 +25,24 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
+
     include('include/management/pages_common.php');
 
+    // we import validation facilities
+    include_once("library/validation.php");
 
-    // whitelists used for validation/presentation purposes
-    $valid_passwordTypes = array(
-                                    "Cleartext-Password",
-                                    "User-Password",
-                                    "Crypt-Password",
-                                    "MD5-Password",
-                                    "SHA1-Password",
-                                    "CHAP-Password"
-                                 );
+    // if cleartext passwords are not allowed, 
+    // we remove Cleartext-Password from the $valid_passwordTypes array
+    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
+        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
+        $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
+    }
 
     isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
     isset($_POST['password']) ? $password = $_POST['password'] : $password = "";

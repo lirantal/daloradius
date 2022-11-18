@@ -42,10 +42,6 @@
     
     print_html_prologue($title, $langCode);
     
-    if (!empty($username_enc)) {
-        $title .= " $username_enc";
-    }
-    
     include("menu-mng-rad-profiles.php");
     
     echo '<div id="contentnorightbar">';

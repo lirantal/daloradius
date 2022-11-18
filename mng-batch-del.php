@@ -32,71 +32,70 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    isset($_GET['batch_id']) ? $batch_id = $_GET['batch_id'] : $batch_id = "";
-    isset($_GET['batch_name']) ? $batch_name = $_GET['batch_name'] : $batch_name = "";
-
-    $showRemoveDiv = "block";
-
-    if (
-        ( (isset($_GET['batch_id'])) && (!empty($batch_id)) )
-             ||
-        ( (isset($_GET['batch_name'])) && (!empty($batch_name)) )
-        )
-            {
-
-        include 'library/opendb.php';
-        
-        // if batch_name is set then we need to translate that to the batch_id
-        if ($batch_name) {
-            
-            $sql = "SELECT ".
-                    $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id,".
-                    $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name ".
-                    " FROM ".
-                    $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY']." ".
-                    " WHERE ".
-                    $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name = '$batch_name'";
-                    
-            $res_q_batch = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-            $row_q_batch = $res_q_batch->fetchRow();
-            $batch_id = array($row_q_batch[0]);
-                
+    $batch_id = (array_key_exists('batch_id', $_POST) && !empty($_POST['batch_id']) &&
+                 !is_array($_POST['batch_id']))
+              ? array( intval(trim($_POST['batch_id'])) ) : $_POST['batch_id'];
+    
+    $batch_ids = array();
+    foreach ($batch_id as $id) {
+        $id = intval(trim($id));
+    
+        if (in_array($id, $batch_ids)) {
+            continue;
         }
-                
-        $allBatches = "";
+        
+        $batch_ids[] = $id;
+    }
 
-        /* since the foreach loop will report an error/notice of undefined variable $value because
-           it is possible that the $username is not an array, but rather a simple GET request
-           with just some value, in this case we check if it's not an array and convert it to one with
-           a NULL 2nd element
-        */
-        if (!is_array($batch_id))
-            $batch_id = array($batch_id);
+    $deleted_batches = 0;
 
-        foreach ($batch_id as $variable=>$value) {
-            
-            if (trim($variable) != "") {
-                                
-                $batch = $value;
-                $allBatches .= $batch . ", ";
+    include('library/opendb.php');
+    
+    $valid_batch_names = array();
+    $sql = sprintf("SELECT DISTINCT(batch_name) FROM %s", $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    while ($row = $res->fetchrow()) {
+        $valid_batch_names[] = $row[0];
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            if (array_key_exists('batch_name', $_POST) && !empty(trim(str_replace("%", "", $_POST['batch_name'])))) {
+                $batch_name = trim(str_replace("%", "", $_POST['batch_name']));
                 
-                // delete all attributes associated with a username
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY']." WHERE id='".$dbSocket->escapeSimple($batch)."'";
-                $req_q_delete = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+                $sql = sprintf("SELECT id FROM %s WHERE batch_name='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
+                               $dbSocket->escapeSimple($batch_name));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                $id = intval($res->fetchrow()[0]);
+                if (!in_array($id, $batch_ids)) {
+                    $batch_ids[] = $id;
+                }
+            }
+
+            if (count($batch_ids) > 0) {
+
+            foreach ($batch_ids as $bid) {
+                
+                // delete batch history
+                $sql0 = sprintf("DELETE FROM %s WHERE id = %d",
+                               $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $bid);
+                $res0 = $dbSocket->query($sql0);
+                $logDebugSQL .= "$sql0;\n";
                 
                 // we grab all users which are associated with this batch_id
-                $sql = "SELECT ".
-                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id,".
-                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ".
-                        " FROM ".
-                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." ".
-                        " WHERE ".
-                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = $batch ";
-                        
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+                $sql1 = sprintf("SELECT username FROM %s WHERE batch_id = %d",
+                               $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $bid);
+                $res1 = $dbSocket->query($sql1);
+                $logDebugSQL .= "$sql1;\n";
+                
+                $usernames = array();
+                while ($row = $res1->fetchrow()) {
+                    $usernames[] = $row[0];
+                }
                 
                 // setting table-related parameters first                
                 switch($configValues['FREERADIUS_VERSION']) {
@@ -113,61 +112,52 @@
                         $tableSetting['postauth']['date'] = 'authdate';
                         break;
                 }
-                                
-                // loop through each user and delete it
-                while($row = $res->fetchRow()) {
-    
-                    $username = $row[1];
-                    
-                    // delete all attributes associated with a username
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE Username='$username'";
-                    $res_q = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                    
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE Username='$username'";
-                    $res_q = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-    
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE Username='$username'";
-                    $res_q = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-    
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." WHERE Username='$username'";
-                    $res_q = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-    
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE Username='$username'";
-                    $res_q = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                    
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." WHERE ".
-                        $tableSetting['postauth']['user']."='$username'";
-                    $res_q = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                    
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE Username='$username'";
-                    $res_q = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                    
+                
+                $sql_format = "DELETE FROM %s WHERE %s='%s'";
+                
+                $sql = sprintf($sql_format, $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
+                                            $tableSetting['postauth']['user'],
+                                            $dbSocket->escapeSimple($username));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                $tables = array(
+                                    $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                    $configValues['CONFIG_DB_TBL_RADREPLY'],
+                                    $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                    $configValues['CONFIG_DB_TBL_RADACCT']
+                               );
+                               
+                foreach ($tables as $table) {
+                    $sql = sprintf($sql_format, $table, 'username', $dbSocket->escapeSimple($username));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
                 }
                 
-
-                $successMsg = "Deleted batch(s): <b> $allBatches </b>";
-                $logAction .= "Successfully deleted batch(s) [$allBatches] on page: ";
-
-            }  else { 
-                $failureMsg = "no batch was entered, please specify a batch name to remove from database";        
-                $logAction .= "Failed deleting batch(s) [$allBatches] on page: ";
+                $deleted_batches++;
             }
+            
+            $successMsg = sprintf("Deleted %d batch(es)", $deleted_batches);
+            $logAction .= "Successfully deleted batch(s) [$allBatches] on page: ";
+            
+        } else { 
+            $failureMsg = "no batch was entered, please specify a batch name to remove from database";        
+            $logAction .= "Failed deleting batch(s) [$allBatches] on page: ";
+        }
+    
+    
+        } else {
+            $failureMsg = sprintf("CSRF token error");
+            $logAction .= sprintf("CSRF token error on page: ");
+        }
+    }
 
 
-        $showRemoveDiv = "none";
+    include('library/closedb.php');
+    
 
-        } //foreach
-        
-        include 'library/closedb.php';
-        
-    } //if
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -188,43 +178,60 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
+    
+    if ($deleted_batches == 0) {
+        
+        $input_descriptors1 = array();
+    
+        $input_descriptors1[] = array(
+                                        "name" => "batch_name",
+                                        "caption" => t('all','BatchName'),
+                                        "type" => "text",
+                                        "datalist" => $valid_batch_names
+                                     );
+                                     
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors1[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
 
 ?>
 
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-    
+<form method="POST">
     <fieldset>
+        <h302><?= t('title','BatchRemoval') ?></h302>
+        
+        <ul style="margin: 10px auto">
+<?php
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+?>
 
-        <h302> <?php echo t('title','BatchRemoval') ?> </h302>
-        <br/>
-
-        <label for='batch_name' class='form'><?php echo t('all','BatchName')?></label>
-        <input name='batch_name' type='text' id='batch_name' value='' tabindex=100 />
-
-        <br/><br/>
-        <hr><br/>
-        <input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 
-            class='button' />
-
+        </ul>
     </fieldset>
-    
-    </form>
-    </div>
+</form>
 
 <?php
-    include('include/config/logging.php');
-    
-    include_once("include/management/autocomplete.php");
-    
-    if ($autoComplete) {
-         $inline_extra_js = "
-autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('batch_name','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteBatchNames');";
-    } else {
-        $inline_extra_js = "";
+
+    }
+
+    if (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE']))) {
+        echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
+        printf('<a href="%s" title="Back to Previous Page">Back to Previous Page</a>', trim($_SESSION['PREV_LIST_PAGE']));
+        echo '</div>';
+        
+        unset($_SESSION['PREV_LIST_PAGE']);
     }
     
-    print_footer_and_html_epilogue($inline_extra_js);
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
 
