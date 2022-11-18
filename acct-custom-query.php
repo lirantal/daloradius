@@ -228,4 +228,5 @@
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
+
 ?>
