@@ -89,7 +89,8 @@ $input_descriptors3[] = array(
                              );
 
 $input_descriptors3[] = array( 'caption' => t('ContactInfo','EnableUserUpdate'), 'name' => 'bi_changeuserbillinfo',
-                               'type' => 'checkbox', 'value' => '1', 'checked' => ($bi_changeuserbillinfo == 1) );
+                               'type' => 'checkbox', 'value' => '1',
+                               'checked' => (isset($bi_changeuserbillinfo) && $bi_changeuserbillinfo == 1) );
 $input_descriptors3[] = array( 'caption' => t('all','BillStatus'), 'type' => 'text',  'name' => 'bi_billstatus',
                                'value' => ((isset($bi_billstatus)) ? $bi_billstatus : ''), 'disabled' => true );
 $input_descriptors3[] = array( 'caption' => t('all','LastBill'), 'type' => 'text',  'name' => 'bi_lastbill',

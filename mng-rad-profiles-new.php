@@ -48,81 +48,24 @@
         } else {
 
             include('library/opendb.php');
-            //~ include_once('include/management/populate_selectbox.php');
-
-            //~ $profiles = get_groups();
-            $profiles = array();
-            if (in_array($profile, $profiles)) {
+            
+            $groups = array_keys(get_groups());
+            if (in_array($profile, $groups)) {
                 // invalid profile name
                 $failureMsg = "This profile name [<strong>$profile_enc</strong>] is already in use";
                 $logAction .= "Failed creating profile [$profile, name already in use] on page: ";
             } else {
     
+                include("library/attributes.php");
                 $skipList = array( "profile", "submit", "csrf_token" );
+                $count = handleAttributes($dbSocket, $profile, $skipList, true, 'group');
 
-                $count = 0;
-
-                foreach ($_POST as $element => $field) {
-
-                    // we skip several attributes (contained in the $skipList array)
-                    // which we do not wish to process (ie: do any sql related stuff in the db)
-                    if (in_array($element, $skipList)) {
-                        continue;
-                    }
-                    
-                    // we need $field to be exactly an array with 4 fields:
-                    // $attribute, $value, $op, $table
-                    if (!is_array($field) || count($field) != 4) {
-                        continue;
-                    }
-                    
-                    // we trim all array values
-                    foreach ($field as $i => $v) {
-                        $field[$i] = trim($v);
-                    }
-                    
-                    list($attribute, $value, $op, $table) = $field;
-                    
-                    // value and attribute are required
-                    if (empty($value) || empty($attribute)) {
-                            continue;
-                    }
-
-                    // we only accept valid ops
-                    if (!in_array($op, $valid_ops)) {
-                        continue;
-                    }
-
-                    // $table value can be only '(rad)reply' or '(rad)check'
-                    $table = strtolower($table);
-                    if (in_array($table, array('reply', 'radreply', 'radgroupreply'))) {
-                        $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-                    } else if (in_array($table, array('check', 'radcheck', 'radgroupcheck'))) {
-                        $table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-                    } else {
-                        continue;
-                    }
-
-                    // if all checks are passed, we insert the new attribute
-                    $sql = sprintf("INSERT INTO %s (id, groupname, attribute, op, value) VALUES (0, '%s', '%s', '%s', '%s')",
-                                   $table, $dbSocket->escapeSimple($profile), $dbSocket->escapeSimple($attribute),
-                                   $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($value));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        $count += 1;
-                    }
-
-                } // foreach
-                
-                
                 if ($count > 0) {
                     $successMsg = "Added new profile: <b> $profile_enc </b>";
                     $logAction .= "Successfully added a new profile [$profile] on page: ";
                 } else {
                     $failureMsg = "Failed creating profile [$profile_enc], invalid or empty attributes list";
-                    $logAction .= "Failed creating profile [$profile_enc, invalid or empty attributes list] on page: ";
+                    $logAction .= "Failed creating profile [$profile], invalid or empty attributes list] on page: ";
                 }
 
             } // profile non-existent
@@ -162,46 +105,49 @@
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
+    
+    if (!isset($successMsg)) {
+    
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array(
+                                        "name" => "profile",
+                                        "caption" => "Profile Name",
+                                        "type" => "text",
+                                        "value" => ((isset($profile)) ? $profile : "")
+                                     );
+
+        //~ $input_descriptors1[] = array(
+                                        //~ "type" => "submit",
+                                        //~ "name" => "submit",
+                                        //~ "value" => t('buttons','apply')
+                                  //~ );
 ?>
-                
-<form name="newusergroup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+<form name="newusergroup" method="POST">
     <fieldset>
+        <h302><?= t('title','ProfileInfo') ?></h302>
 
-            <h302> <?php echo t('title','ProfileInfo') ?> </h302>
-            <br/>
+        <ul style="margin: 30px auto">
 
-            <label for='profile' class='form'>Profile Name</label>
-            <input name='profile' type='text' id='profile' value='' tabindex=100 />
-            <br />
+<?php
+                foreach ($input_descriptors1 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
 
-            <br/><br/>
-            <hr><br/>
-
-            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
+        </ul>
     </fieldset>
 
+<?php
+    include_once('include/management/attributes.php');
+?>
 
-    <br/>
-
-
-    <?php
-        include_once('include/management/attributes.php');
-    ?>
-        
 </form>
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
 <?php
+    }
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

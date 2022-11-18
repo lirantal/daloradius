@@ -101,19 +101,7 @@
             <div class="tabcontent" id="Statistics-tab">
                 <div style="margin-top: 50px">
 <?php
-    include("library/tables-overall-users-download.php");
-    
-    if ($goto_stats) {
-?>
-                    <script>
-                        window.addEventListener('load', function() {
-                            var stats_tab = document.getElementById('Statistics-tab'),
-                                stats_btn = document.getElementById(stats_tab.id + '-button');
-                            stats_btn.click();
-                        });
-                    </script>
-<?php
-    }
+        include("library/tables-overall-users-download.php");
 ?>
                 </div>
             </div>
@@ -123,17 +111,20 @@
         $failureMsg = "You must provide a valid username";
         include_once("include/management/actionMessages.php");
     }
-?>
-        </div>
-
-        <div id="footer">        
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div>
-    </div>
-</div>
 
-</body>
-</html>
+    if ($goto_stats) {
+        $inline_extra_js = "
+window.addEventListener('load', function() {
+    var stats_tab = document.getElementById('Statistics-tab'),
+        stats_btn = document.getElementById(stats_tab.id + '-button');
+    stats_btn.click();
+});
+";
+    } else {
+        $inline_extra_js = "";
+    }
+    
+    print_footer_and_html_epilogue($inline_extra_js);
+?>

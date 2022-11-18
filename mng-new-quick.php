@@ -31,6 +31,9 @@
     $logAction = "";
     $logDebugSQL = "";
 
+    // we import validation facilities
+    include_once("library/validation.php");
+
     $username = "";
     $password = "";
     $maxallsession = "";
@@ -39,16 +42,6 @@
     $idletimeout = "";
     $ui_changeuserinfo = "0";
     $bi_changeuserbillinfo = "0";
-
-    // whitelists used for validation/presentation purposes
-    $valid_passwordTypes = array(
-                                    "Cleartext-Password",
-                                    "User-Password",
-                                    "Crypt-Password",
-                                    "MD5-Password",
-                                    "SHA1-Password",
-                                    "CHAP-Password"
-                                 );
     
     if (isset($_POST['submit'])) {
         // required later
@@ -527,16 +520,7 @@
     
 </form>
 
-        </div><!-- #contentnorightbar -->
-
-        <div id="footer">
 <?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->       
-    </div>
-</div>
-
-</body>
-</html>

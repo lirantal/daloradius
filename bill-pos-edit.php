@@ -684,18 +684,7 @@ window.onload = function(){
         
         unset($_SESSION['PREV_LIST_PAGE']);
     }
-?>
-
-        </div><!-- #contentnorightbar -->
-
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->       
-    </div>
-</div>
-
-</body>
-</html>

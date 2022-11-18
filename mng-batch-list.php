@@ -24,13 +24,17 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
-    include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+    
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -123,11 +127,21 @@
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
         
+        $per_page_numrows = $res->numRows();
+        
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-batch-del.php";
+        
+        $csrf_token = array(
+                                "name" => "csrf_token",
+                                "type" => "hidden",
+                                "value" => dalo_csrf_token(),
+                           );
 ?>
 <form name="listall" method="POST" action="<?= $action ?>">
+
+    <?= print_form_component($csrf_token); ?>
 
     <table border="0" class="table1">
         <thead>
@@ -234,26 +248,15 @@
     }
     
     include('library/closedb.php');
-?>
-
-</div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
+
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

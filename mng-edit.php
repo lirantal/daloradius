@@ -25,13 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
-    include_once('library/config_read.php');
     
     // we import validation facilities
     include_once("library/validation.php");
@@ -310,6 +309,10 @@
 
             addPlanProfile($dbSocket, $username, $planName, $oldplanName);
 
+
+            // dealing with attributes
+            include("library/attributes.php");
+
             $skipList = array( "username", "submit", "oldgroups", "groups", "planName", "oldplanName", "groups_priority",
                                "copycontact", "firstname", "lastname", "email", "department", "company", "workphone",
                                "homephone", "mobilephone", "address", "city", "state", "country", "zip", "notes",
@@ -321,177 +324,12 @@
                                "bi_emailinvoice", "bi_planname", "newgroups", "portalLoginPassword", "enableUserPortalLogin"
                              );
 
-            $counter = 0;
+            
+            handleAttributes($dbSocket, $username, $skipList, false);
 
-            foreach ($_POST as $element => $field) {
-
-                // we skip several attributes (contained in the $skipList array)
-                // which we do not wish to process (ie: do any sql related stuff in the db)
-                if (in_array($element, $skipList)) {
-                    continue;
-                }
-
-                // we need $field to be exactly an array with 4 fields:
-                // $attribute, $value, $op, $table
-                if (!is_array($field) || count($field) != 4) {
-                    continue;
-                }
-
-                // we trim all array values
-                foreach ($field as $i => $v) {
-                    $field[$i] = trim($v);
-                }
-
-                list($id__attribute, $value, $op, $table) = $field;
-
-                // first field could carry id__attribute
-                // so here we set id and attribute values
-                if (preg_match("/__/", $id__attribute)) {
-                    list($columnId, $attribute) = explode("__", $id__attribute);
-                    
-                    $attribute = trim($attribute);
-                    $columnId = intval(trim($columnId));
-                    
-                } else {
-                    $columnId = 0;      // we need to set a non-existent column id so that the attribute would
-                                        // not match in the database (as it is added from the Attributes tab)
-                                        // and the if/else check will result in an INSERT instead of an UPDATE for the
-                                        // the last attribute
-                    $attribute = $id__attribute;
-                }
-
-                // value and attribute are required
-                if (empty($value) || empty($attribute)) {
-                        continue;
-                }
-
-                // we only accept valid ops
-                if (!in_array($op, $valid_ops)) {
-                    continue;
-                }
-
-                // $table value can be only '(rad)reply' or '(rad)check'
-                $table = strtolower($table);
-                if (in_array($table, array('reply', 'radreply'))) {
-                    $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-                } else if (in_array($table, array('check', 'radcheck'))) {
-                    $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-                } else {
-                    continue;
-                }
-                
-                // let's check if this attribute is a "password" attribute
-                if (preg_match("/-Password$/", $attribute)) {
-                    
-                    // we check if the password should be updated
-                    $sql = sprintf("SELECT value, op FROM %s WHERE username='%s' AND attribute='%s' AND id=%s",
-                               $table, $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($attribute),
-                               $dbSocket->escapeSimple($columnId));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
+            $successMsg = sprintf("Successfully updated user <strong>%s</strong>", $username_enc);
+            $logAction .= sprintf("Successfully updated user %s on page: ", $username);
         
-                    // if we have found one entry and the password is not changed
-                    // we can skip
-                    
-                    list($this_value, $this_op) = $res->fetchrow();
-                    
-                    if ($res->numRows() == 1 && $this_value === $value && $this_op === $op) {
-                       continue; 
-                    }
-                    
-                    if ($this_value !== $value) {
-                    
-                        // if this is a password attribute and we have to update it
-                        // we prepare the value to be updated in the database
-                        
-                        // operator has full control over the password encryption
-                        switch ($attribute) {
-                            case "Crypt-Password":
-                                $value = sprintf("ENCRYPT('%s', 'SALT_DALORADIUS')", $dbSocket->escapeSimple($value));
-                                break;
-                                
-                            case "MD5-Password":
-                                $value = sprintf("'%s'", strtoupper(md5($value)));
-                                break;
-                            
-                            case "SHA1-Password":
-                                $value = sprintf("SHA1('%s')", $dbSocket->escapeSimple($value));
-                                break;
-                            
-                            case "NT-Password":
-                                $value = strtoupper(bin2hex(mhash(MHASH_MD4, iconv('UTF-8', 'UTF-16LE', $value))));
-                                $value = sprintf("'%s'", $value);
-                                break;
-                            
-                            case "Cleartext-Password":
-                                // if the system does not allow cleartext passwords,
-                                // we force the use of the NT-Password hashing algorithm
-                                if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-                                    strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
-                                    
-                                    // we have to delete this attribute and create another one
-                                    $sql = sprintf("DELETE FROM %s WHERE username='%s' AND attribute='%s' AND id=%s",
-                                                   $table, $dbSocket->escapeSimple($username),
-                                                   $dbSocket->escapeSimple($attribute), $dbSocket->escapeSimple($columnId));
-                                    $res = $dbSocket->query($sql);
-                                    $logDebugSQL .= "$sql;\n";
-                                    
-                                    $value = strtoupper(bin2hex(mhash(MHASH_MD4, iconv('UTF-8', 'UTF-16LE', $value))));
-                                    $attribute = "NT-Password";
-                                }
-                                
-                                $value = sprintf("'%s'", $dbSocket->escapeSimple($value));
-                                break;
-                            
-                            default:
-                            case "User-Password": // TODO
-                            case "CHAP-Password": // TODO
-                                $value = sprintf("'%s'", $dbSocket->escapeSimple($value));
-                        }
-                    } else {
-                        // we only have to update $op
-                        // so we keep $value
-                        $value = sprintf("'%s'", $dbSocket->escapeSimple($value));
-                    }
-                    
-                }
-
-                /* we can't simply UPDATE because it might be that the attribute
-                 * doesn't exist at all and we need to insert it.
-                 * for this reason we need to check if it exists or not, if exists we update, if not we insert
-                 */
-
-                $sql = sprintf("SELECT COUNT(DISTINCT(id)) FROM %s WHERE username='%s' AND attribute='%s' AND id=%s",
-                               $table, $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($attribute),
-                               $dbSocket->escapeSimple($columnId));
-
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                $attributeExists = (intval($res->fetchrow()[0]) == 1);
-                
-                if ($attributeExists) {
-                    // in this case we have to update
-                    $sql = sprintf("UPDATE %s SET value=%s, op='%s' WHERE username='%s' AND attribute='%s' AND id=%s",
-                                   $table, $value, $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($username),
-                                   $dbSocket->escapeSimple($attribute), $dbSocket->escapeSimple($columnId));
-                } else {
-                    // in this case we have to insert a new attribute
-                    $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', '%s', '%s', %s)",
-                                   $table, $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($attribute),
-                                   $dbSocket->escapeSimple($op), $value);
-                }
-
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                $counter++;
-
-            } //foreach $_POST
-
-            $successMsg = "Updated attributes for: <b> $username </b>";
-            $logAction .= "Successfully updates attributes for user [$username] on page: ";
-
         } else { // if username != ""
             $failureMsg = "no user was entered, please specify a username to edit";
             $logAction .= "Failed updating attributes for user [$username] on page: ";
@@ -724,6 +562,11 @@ window.onload = function(){
             <ul>
 <?php
 
+    $hashing_algorithm_notice = '<small style="font-size: 10px; color: black">'
+                              . 'Notice that for supported password-like attributes, you can just specify a plaintext value. '
+                              . 'The system will take care of correctly hashing it.'
+                              . '</small>';
+
     include('library/opendb.php');
 
     include_once('include/management/pages_common.php');
@@ -757,7 +600,7 @@ window.onload = function(){
 
             echo '<li>';
             printf('<a class="tablenovisit" href="mng-del.php?username=%s&attribute=%s&tablename=radcheck">',
-                   $editCounter, urlencode($username_enc), urlencode($id__attribute));
+                   urlencode($username_enc), urlencode($id__attribute));
             echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
             
             printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
@@ -799,6 +642,8 @@ window.onload = function(){
         
         echo '</ul>';
     }
+    
+    echo $hashing_algorithm_notice;
 
 ?>
             <br/><br/>
@@ -852,7 +697,7 @@ window.onload = function(){
     
             echo '<li>';
             printf('<a class="tablenovisit" href="mng-del.php?username=%s&attribute=%s&tablename=radreply">',
-                   $editCounter, urlencode($username_enc), urlencode($id__attribute));
+                   urlencode($username_enc), urlencode($id__attribute));
             echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
 
             printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
@@ -893,6 +738,8 @@ window.onload = function(){
         echo '</ul>';
     }
 
+    echo $hashing_algorithm_notice;
+
     include('library/closedb.php');
 
 ?>
@@ -925,6 +772,7 @@ window.onload = function(){
     <div id="Attributes-tab" class="tabcontent">
 <?php
         include_once('include/management/attributes.php');
+        echo $hashing_algorithm_notice;
 ?>
     </div>
 
@@ -1002,18 +850,8 @@ window.onload = function(){
         
         unset($_SESSION['PREV_LIST_PAGE']);
     }
-?>
 
-        </div><!-- #contentnorightbar -->
-
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->       
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

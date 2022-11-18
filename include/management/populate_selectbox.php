@@ -290,6 +290,27 @@ function get_users() {
 }
 
 
+function get_plans() {
+    global $configValues;
+
+    include('library/opendb.php');
+
+    $sql = sprintf("SELECT DISTINCT(planName)
+                      FROM %s WHERE planActive = 'yes'
+                     ORDER BY planName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
+    $res = $dbSocket->query($sql);
+
+    $result = array();
+    while ($row = $res->fetchRow()) {
+        $result[] = $row[0];
+    }
+
+    include('library/closedb.php');
+    
+    return $result;
+
+}
+
 function get_groups() {
     global $configValues;
 

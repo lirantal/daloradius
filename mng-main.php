@@ -48,16 +48,17 @@
                 <img alt="Total Users" src="library/chart-mng-total-users.php">
             </div>
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
 <?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
 
-</body>
-</html>
+    include('include/config/logging.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
+
+?>

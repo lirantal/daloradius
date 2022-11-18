@@ -100,12 +100,14 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/userinfo.php') !== false) 
     $input_descriptors3[] = array( 'id' => 'userupdate', 'caption' => t('ContactInfo','EnableUserUpdate'),
                                    'type' => 'checkbox', 'name' => 'changeUserInfo',
                                    'value' => ((isset($ui_changeuserinfo)) ? $ui_changeuserinfo : ''),
-                                   'checked' => ($ui_changeuserinfo == 1) );
+                                   'checked' => (isset($ui_changeuserinfo) && $ui_changeuserinfo == 1)
+                                 );
 
     $input_descriptors3[] = array( 'id' => 'userupdate', 'caption' => t('ContactInfo','EnablePortalLogin'),
                                    'type' => 'checkbox', 'name' => 'enableUserPortalLogin',
                                    'value' => ((isset($ui_enableUserPortalLogin)) ? $ui_enableUserPortalLogin : ''),
-                                   'checked' => ($ui_enableUserPortalLogin == 1) );
+                                   'checked' => (isset($ui_enableUserPortalLogin) && $ui_enableUserPortalLogin == 1)
+                                 );
 
     $input_descriptors3[] = array( 'id' => 'portalLoginPassword', 'caption' => t('ContactInfo','PortalLoginPassword'),
                                    'type' => 'text', 'name' => 'portalLoginPassword',

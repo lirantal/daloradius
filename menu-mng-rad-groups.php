@@ -33,6 +33,7 @@ $m_active = "Management";
 
 include_once("include/menu/menu-items.php");
 include_once("include/menu/management-subnav.php");
+include_once("include/management/autocomplete.php");
 ?>
 
             <div id="sidebar">
@@ -144,4 +145,13 @@ include_once("include/menu/management-subnav.php");
     tooltipObj.setPageBgColor('#EEEEEE');
     tooltipObj.setTooltipCornerSize(15);
     tooltipObj.initFormFieldTooltip();
+    
+<?php 
+	if ($autoComplete) {
+?>
+    var autoComEdit = new DHTMLSuite.autoComplete();
+
+<?php
+	} 
+?>
 </script>

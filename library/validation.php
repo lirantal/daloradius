@@ -26,6 +26,15 @@ if (strpos($_SERVER['PHP_SELF'], '/library/validation.php') !== false) {
     exit;
 }
 
+// commonly used regexes collection
+define("DATE_REGEX", "/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/");
+define("ORDER_TYPE_REGEX", "/^(de|a)sc$/");
+define("IP_REGEX", "/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9]).){3}((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])$/");
+define("NETMASK_LENGTH_REGEX", "/^3[0-2]|[1-2][0-9]|[1-9]$/");
+define("MACADDR_REGEX", "/^(?:[0-9a-f]{2}([-:]))(?:[0-9a-f]{2}\1){4}[0-9a-f]{2}$/i");
+define("PINCODE_REGEX", "/^[a-zA-Z0-9]+$/");
+
+
 // some parameters can be validated using a whitelist.
 // here we collect some useful whitelist.
 // this lists can be also used for presentation purpose.
@@ -70,5 +79,38 @@ $valid_nastypes = array(
                             "multitech", "natserver", "pathras",
                             "patton", "portslave", "tc", "usrhiper"
                        );
+
+$acct_custom_query_options_all = array(
+                                        "RadAcctId",
+                                        "AcctSessionId",
+                                        "AcctUniqueId",
+                                        "UserName",
+                                        "Realm",
+                                        "NASIPAddress",
+                                        "NASPortId",
+                                        "NASPortType",
+                                        "AcctStartTime",
+                                        "AcctStopTime",
+                                        "AcctSessionTime",
+                                        "AcctAuthentic",
+                                        "ConnectInfo_start",
+                                        "ConnectInfo_stop",
+                                        "AcctInputOctets",
+                                        "AcctOutputOctets",
+                                        "CalledStationId",
+                                        "CallingStationId",
+                                        "AcctTerminateCause",
+                                        "ServiceType",
+                                        "FramedProtocol",
+                                        "FramedIPAddress",
+                                        "AcctStartDelay",
+                                        "AcctStopDelay"
+                                    );
+                                    
+$acct_custom_query_options_default = array(
+                                            "UserName", "Realm", "NASIPAddress", "AcctStartTime", "AcctStopTime",
+                                            "AcctSessionTime", "AcctInputOctets", "AcctOutputOctets", "CalledStationId",
+                                            "CallingStationId", "AcctTerminateCause", "FramedIPAddress"
+                                          );
 
 ?>

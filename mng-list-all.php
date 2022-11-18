@@ -84,7 +84,7 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "asc";
 
 
@@ -122,7 +122,8 @@
 
         // we execute and log the actual query
         // sql1 get id, username, password, firstname and lastname
-        $sql1 = sprintf("SELECT rc.username AS username, rc.value AS auth, CONCAT(ui.firstname, ' ', ui.lastname) AS fullname
+        $sql1 = sprintf("SELECT rc.username AS username, rc.value AS auth, rc.attribute,
+                                CONCAT(ui.firstname, ' ', ui.lastname) AS fullname
                            FROM %s AS rc, %s AS ui
                           WHERE rc.username=ui.username
                             AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')
@@ -148,11 +149,23 @@
                 continue;
             }
             
+            // we try to get the type of this user
+            if ($row['attribute'] == 'Auth-Type' && $row['auth'] == 'Accept') {
+                if (filter_var($this_username, FILTER_VALIDATE_MAC)) {
+                    $type = 'MAC';
+                } else {
+                    $type = 'PIN';
+                }
+            } else {
+                $type = 'USER';
+            }
+            
             $records[$this_username] = array(
                 'auth' => $row['auth'],
                 'fullname' => $row['fullname'],
                 'enabled' => true,
-                'groups' => array()
+                'groups' => array(),
+                'type' => $type
             );
             // in the same pass we init the $usernamelist
             $usernamelist[] = sprintf("'%s'", $dbSocket->escapeSimple($this_username));
@@ -228,6 +241,7 @@
         $count = 0;
         foreach ($records as $username => $data) {
             $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+            $type = $data['type'];
             
             $img = (!$data['enabled'])
                  ? '<img title="user is disabled" src="images/icons/userStatusDisabled.gif" alt="[disabled]">'
@@ -259,8 +273,8 @@
                     </label>
                     </td>
                 <td><?= "$fullname" ?></td>
-                <td><?= "$img $tooltip" ?></td>
-                <td><?= $auth ?></td>
+                <td><?= "$img $tooltip" . sprintf(' <span class="badge badge-%s">%s</span>', strtolower($type), $type); ?></td>
+                <td><?= ($type == 'USER') ? $auth : "" ?></td>
                 <td><?= $grouplist ?></td>
             </tr>
 <?php

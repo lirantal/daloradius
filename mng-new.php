@@ -25,6 +25,7 @@
     $operator = $_SESSION['operator_user'];
     
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
     // init logging variables
     $log = "visited page: ";
@@ -34,19 +35,27 @@
     // we import validation facilities
     include_once("library/validation.php");
 
+    // if cleartext passwords are not allowed, 
+    // we remove Cleartext-Password from the $valid_passwordTypes array
+    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
+        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
+        $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
+    }
+
     // TODO validate user input
     $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
               ? trim(str_replace("%", "", $_POST['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-    isset($_POST['authType']) ? $authType = $_POST['authType'] : $authType = "";
-
+    $authType = (array_key_exists('authType', $_POST) && isset($_POST['authType']) &&
+                 in_array($_POST['authType'], array_keys($valid_authTypes))) ? $_POST['authType'] : array_keys($valid_authTypes)[0];
+    
     $password = (array_key_exists('password', $_POST) && isset($_POST['password'])) ? $_POST['password'] : "";
     $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
                      in_array($_POST['passwordType'], $valid_passwordTypes)) ? $_POST['passwordType'] : "";
     
     $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
-                   filter_var(trim($_POST['macaddress']), FILTER_VALIDATE_MAC)) ? trim($_POST['macaddress']) : "";
+                   filter_var(trim(strtoupper($_POST['macaddress'])), FILTER_VALIDATE_MAC)) ? trim(strtoupper($_POST['macaddress'])) : "";
                    
     $pincode = (array_key_exists('pincode', $_POST) && isset($_POST['pincode'])) ? trim($_POST['pincode']) : "";
 
@@ -106,11 +115,11 @@
     
     isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";        
 
-
     function addGroups($dbSocket, $username, $groups) {
-
         global $logDebugSQL;
         global $configValues;
+
+        $groups = array_unique($groups);
 
         // insert usergroup mapping
         // check if any group should be added
@@ -275,80 +284,6 @@
     }
 
 
-    function addAttributes($dbSocket, $username) {
-        
-        global $logDebugSQL;
-        global $configValues;
-
-        $skipList = array( "authType", "username", "password", "passwordType", "groups",
-                           "macaddress", "pincode", "submit", "firstname", "lastname", "email",
-                           "department", "company", "workphone", "homephone", "mobilephone", "address", "city",
-                           "state", "country", "zip", "notes", "bi_contactperson", "bi_company", "bi_email", "bi_phone",
-                           "bi_address", "bi_city", "bi_state", "bi_country", "bi_zip", "bi_paymentmethod", "bi_cash",
-                           "bi_creditcardname", "bi_creditcardnumber", "bi_creditcardverification", "bi_creditcardtype",
-                           "bi_creditcardexp", "bi_notes", "bi_lead", "bi_coupon", "bi_ordertaker", "bi_billstatus",
-                           "bi_lastbill", "bi_nextbill", "bi_nextinvoicedue", "bi_billdue", "bi_postalinvoice", "bi_faxinvoice",
-                           "bi_emailinvoice", "changeUserBillInfo", "changeUserInfo", "copycontact", "portalLoginPassword",
-                           "enableUserPortalLogin"
-                         );
-
-        $result = 0;
-
-        foreach ($_POST as $element => $field) {
-
-            // we skip several attributes (contained in the $skipList array)
-            // which we do not wish to process (ie: do any sql related stuff in the db)
-            if (in_array($element, $skipList)) {
-                continue;
-            }
-            
-            // we need $field to be exactly an array with 4 fields:
-            // $attribute, $value, $op, $table
-            if (!is_array($field) || count($field) != 4) {
-                continue;
-            }
-            
-            // we trim all array values
-            foreach ($field as $i => $v) {
-                $field[$i] = trim($v);
-            }
-            
-            list($attribute, $value, $op, $table) = $field;
-            
-            // value and attribute are required
-            if (empty($value) || empty($attribute)) {
-                    continue;
-            }
-
-            // we only accept valid ops
-            if (!in_array($op, $valid_ops)) {
-                continue;
-            }
-
-            // $table value can be only '(rad)reply' or '(rad)check'
-            $table = strtolower($table);
-            if (in_array($table, array('reply', 'radreply'))) {
-                $table = $configValues['CONFIG_DB_TBL_RADREPLY'];
-            } else if (in_array($table, array('check', 'radcheck'))) {
-                $table = $configValues['CONFIG_DB_TBL_RADCHECK'];
-            } else {
-                continue;
-            }
-
-            // if all checks are passed, we insert the new attribute
-            $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', '%s', '%s', '%s')",
-                           $table, $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($attribute),
-                           $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($value));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-
-            $result++;
-
-        } // foreach
-
-        return ($result > 0);
-    }
-
     if (isset($_POST['submit'])) {
         include('library/opendb.php');
 
@@ -401,102 +336,68 @@
                 $failureMsg = "record already found in database: <b> $username_to_check </b>";
                 $logAction .= "Failed adding new user already existing in database [$username_to_check] on page: ";
             } else {
-                if ($authType == "userAuth") {
-                    // we need to perform the secure method escapeSimple on $dbPassword early because as seen below
-                    // we manipulate the string and manually add to it the '' which screw up the query if added in $sql
-                    $password = $dbSocket->escapeSimple($password);
-
-                    switch (strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) {
-                        case "crypt":
-                            $dbPassword = sprintf("ENCRYPT('%s', 'SALT_DALORADIUS')", $password);
-                            break;
-                        
-                        case "md5":
-                            $dbPassword = sprintf("MD5('%s')", $password);
-                            break;
-                            
-                        default:
-                        case "cleartext":
-                            $dbPassword = sprintf("'%s'", $password);
-                    }
-                    
-                    // at this stage $dbPassword contains the password string encapsulated by '' and either uses
-                    // a function to encrypt it like ENCRYPT or it doesn't, it's based on the configuration
-                    // but here we provide another stage, for Crypt-Password and MD5-Password it's obvious
-                    // that the password need be encrypted so even if this option is not in the configuration
-                    // we enforce it.
-
-                    // we first check if the password attribute is to be encrypted at all
-                    if (preg_match("/crypt/i", $passwordType)) {
-                        // if we don't find the encrypt function even though we identified
-                        // a Crypt-Password attribute
-                        if (!(preg_match("/encrypt/i",$dbPassword))) {
-                            $dbPassword = "ENCRYPT('$password', 'SALT_DALORADIUS')";
-                        }
                 
-                        // we now perform the same check but for an MD5-Password attribute
-                    } else if (preg_match("/md5/i", $passwordType)) {
-                        // if we don't find the md5 function even though we identified
-                        // a MD5-Password attribute
-                        if (!(preg_match("/md5/i",$dbPassword))) {
-                            $dbPassword = "MD5('$password')";
-                        }
+                if ($authType == "userAuth") {
+                    // we prepare a password attribute for the "injection" (see below)
+                    // and the success/log messages
+                    
+                    $attribute = $passwordType;
+                    $value = $password;
+                    
+                    $u = $username;
+                    $what = "user";
+
+                } else if ($authType == "macAuth" || $authType == "pincodeAuth") {
+                    // we prepare an auth attribute for the "injection" (see below)
+                    // and the success/log messages
+                    
+                    $attribute = 'Auth-Type';
+                    $value = 'Accept';
+                    
+                    if ($authType == "macAuth") {
+                        $u = $macaddress;
+                        $what = "MAC address";
+                        
+                    } else {
+                        $u = $pincode;
+                        $what = "PIN code";
                     }
 
-                    // insert username/password
-                    $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', '%s', ':=', %s)",
-                                   $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username),
-                                   $dbSocket->escapeSimple($passwordType), $dbPassword);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    addGroups($dbSocket, $username, $groups);
-                    addUserInfo($dbSocket, $username);
-                    addUserBillInfo($dbSocket, $username);
-                    addAttributes($dbSocket, $username);
-
-                    $successMsg = sprintf("Added to database new user: <b>%s</b>", $username_enc);
-                    $logAction .= "Successfully added new user [$username] on page: ";
-                } else if ($authType == "macAuth") {
-                    // insert macaddress as username
-                    $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', 'Auth-Type', ':=', 'Accept')",
-                                   $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($macaddress));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    addGroups($dbSocket, $macaddress, $groups);
-                    addUserInfo($dbSocket, $macaddress);
-                    addUserBillInfo($dbSocket, $username);
-                    addAttributes($dbSocket, $macaddress);
-
-                    $successMsg = "Added to database new mac auth user: <b> $macaddress </b>";
-                    $logAction .= "Successfully added new mac auth user [$macaddress] on page: ";
-                    
-               } else if ($authType == "pincodeAuth") {
-                   // insert pincode as username
-                   $sql = sprintf("INSERT INTO %s (id, username, attribute, op, value) VALUES (0, '%s', 'Auth-Type', ':=', 'Accept')",
-                                  $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($pincode));
-                   $res = $dbSocket->query($sql);
-                   $logDebugSQL .= "$sql;\n";
-
-                   addGroups($dbSocket, $pincode, $groups);
-                   addUserInfo($dbSocket, $pincode);
-                   addUserBillInfo($dbSocket, $username);
-                   addAttributes($dbSocket, $pincode);
-
-                   $successMsg = "Added to database new pincode: <b> $pincode </b>";
-                   $logAction .= "Successfully added new pincode [$pincode] on page: ";
-               }
+                } 
                
-               // TODO delete values
+                // we "inject" the prepared password/auth attribute in the $_POST array.
+                // addAttributes() - called later - will take care of it.
+                $_POST['injected_attribute'] = array( $attribute, $value, ':=', 'check' );
+
+                include("library/attributes.php");
+
+                $skipList = array( "authType", "username", "password", "passwordType", "groups",
+                                   "macaddress", "pincode", "submit", "firstname", "lastname", "email",
+                                   "department", "company", "workphone", "homephone", "mobilephone", "address", "city",
+                                   "state", "country", "zip", "notes", "bi_contactperson", "bi_company", "bi_email", "bi_phone",
+                                   "bi_address", "bi_city", "bi_state", "bi_country", "bi_zip", "bi_paymentmethod", "bi_cash",
+                                   "bi_creditcardname", "bi_creditcardnumber", "bi_creditcardverification", "bi_creditcardtype",
+                                   "bi_creditcardexp", "bi_notes", "bi_lead", "bi_coupon", "bi_ordertaker", "bi_billstatus",
+                                   "bi_lastbill", "bi_nextbill", "bi_nextinvoicedue", "bi_billdue", "bi_postalinvoice", "bi_faxinvoice",
+                                   "bi_emailinvoice", "changeUserBillInfo", "changeUserInfo", "copycontact", "portalLoginPassword",
+                                   "enableUserPortalLogin"
+                                 );
+
+                handleAttributes($dbSocket, $u, $skipList);
+                addGroups($dbSocket, $u, $groups);
+                addUserInfo($dbSocket, $u);
+                addUserBillInfo($dbSocket, $u);
+
+                $u_enc = htmlspecialchars($u, ENT_QUOTES, 'UTF-8');
+
+                $successMsg = sprintf("Inserted new <strong>%s</strong>: <strong>%s</strong>", $what, $u_enc);
+                $logAction .= sprintf("Successfully inserted new %s [%s] on page: ", $what, $u);
             }
         }
         
         include('library/closedb.php');
     }
 
-    include_once('library/config_read.php');
-    
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
     
@@ -504,7 +405,6 @@
     
     include("library/layout.php");
 
-    // print HTML prologue
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
@@ -531,108 +431,115 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-    include_once('include/management/populate_selectbox.php');
     
-    $input_descriptors1 = array();
+    if (!isset($successMsg)) {
     
-    $select_descriptor = array(
-                                    "type" =>"select",
-                                    "name" => "authType",
-                                    "caption" => "Authentication Type",
-                                    "options" => $valid_authTypes,
-                                    "onchange" => "switchAuthType()",
-                                    "selected_value" => ((isset($failureMsg)) ? $authType : "")
-                                 );
-    
-    $input_descriptors1[] = array(
-                                    "id" => "username",
-                                    "name" => "username",
-                                    "caption" => t('all','Username'),
-                                    "type" => "text",
-                                    "random" => true,
-                                    "value" => ((isset($failureMsg)) ? $username : ""),
-                                    "tooltipText" => t('Tooltip','usernameTooltip')
-                                 );
-                                
-    $input_descriptors1[] = array(
-                                    "id" => "password",
-                                    "name" => "password",
-                                    "caption" => t('all','Password'),
-                                    "type" => $hiddenPassword,
-                                    "random" => true,
-                                    "tooltipText" => t('Tooltip','passwordTooltip')
-                                 );
-    $input_descriptors1[] = array(
-                                    "name" => "passwordType",
-                                    "caption" => t('all','PasswordType'),
-                                    "options" => $valid_passwordTypes,
-                                    "type" => "select",
-                                    "selected_value" => ((isset($failureMsg)) ? $passwordType : "")
-                                );
-                                
-    $input_descriptors2 = array();
-    $input_descriptors2[] = array(
-                                    "name" => "macaddress",
-                                    "caption" => t('all','MACAddress'),
-                                    "type" => "text",
-                                    "value" => ((isset($failureMsg)) ? $macaddress : ""),
-                                    "tooltipText" => t('Tooltip','macaddressTooltip')
-                                 );
-                                 
-    $input_descriptors3 = array();
-    $input_descriptors3[] = array(
-                                    "name" => "pincode",
-                                    "caption" => t('all','PINCode'),
-                                    "type" => "text",
-                                    "value" => ((isset($failureMsg)) ? $pincode : ""),
-                                    "tooltipText" => t('Tooltip','pincodeTooltip')
-                                 );
-                                 
-    $button_descriptor = array(
-                                'type' => 'submit',
-                                'name' => 'submit',
-                                'value' => t('buttons','apply')
-                              );
+        include_once('include/management/populate_selectbox.php');
+        
+        
+        $input_descriptors0 = array();
+        
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "authType",
+                                        "caption" => "Authentication Type",
+                                        "options" => $valid_authTypes,
+                                        "onchange" => "switchAuthType()",
+                                        "selected_value" => ((isset($failureMsg)) ? $authType : "")
+                                     );
 
-    // draw navbar
-    $navbuttons = array(
-                            'AccountInfo-tab' => t('title','AccountInfo'),
-                            'UserInfo-tab' => t('title','UserInfo'),
-                            'BillingInfo-tab' => t('title','BillingInfo'),
-                            'Attributes-tab' => t('title','Attributes'),
-                       );
+        $options = get_groups();
+        array_unshift($options, '');
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "groups[]",
+                                        "id" => "groups",
+                                        "caption" => t('all','Group'),
+                                        "options" => $options,
+                                        "multiple" => true,
+                                        "size" => 5,
+                                        "selected_value" => ((isset($failureMsg)) ? $groups : ""),
+                                        "tooltipText" => t('Tooltip','groupTooltip')
+                                     );
 
-    print_tab_navbuttons($navbuttons);
+
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array(
+                                        "id" => "username",
+                                        "name" => "username",
+                                        "caption" => t('all','Username'),
+                                        "type" => "text",
+                                        "random" => true,
+                                        "value" => ((isset($failureMsg)) ? $username : ""),
+                                        "tooltipText" => t('Tooltip','usernameTooltip')
+                                     );
+                                    
+        $input_descriptors1[] = array(
+                                        "id" => "password",
+                                        "name" => "password",
+                                        "caption" => t('all','Password'),
+                                        "type" => $hiddenPassword,
+                                        "random" => true,
+                                        "tooltipText" => t('Tooltip','passwordTooltip')
+                                     );
+        $input_descriptors1[] = array(
+                                        "name" => "passwordType",
+                                        "caption" => t('all','PasswordType'),
+                                        "options" => $valid_passwordTypes,
+                                        "type" => "select",
+                                        "selected_value" => ((isset($failureMsg)) ? $passwordType : "")
+                                    );
+
+
+        $input_descriptors2 = array();
+        $input_descriptors2[] = array(
+                                        "name" => "macaddress",
+                                        "caption" => t('all','MACAddress'),
+                                        "type" => "text",
+                                        "value" => ((isset($failureMsg)) ? $macaddress : ""),
+                                        "tooltipText" => t('Tooltip','macaddressTooltip')
+                                     );
+                                     
+        $input_descriptors3 = array();
+        $input_descriptors3[] = array(
+                                        "name" => "pincode",
+                                        "caption" => t('all','PINCode'),
+                                        "type" => "text",
+                                        "value" => ((isset($failureMsg)) ? $pincode : ""),
+                                        "tooltipText" => t('Tooltip','pincodeTooltip')
+                                     );
+                                     
+        $button_descriptor = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                  );
+
+        // draw navbar
+        $navbuttons = array(
+                                'AccountInfo-tab' => t('title','AccountInfo'),
+                                'UserInfo-tab' => t('title','UserInfo'),
+                                'BillingInfo-tab' => t('title','BillingInfo'),
+                                'Attributes-tab' => t('title','Attributes'),
+                           );
+
+        print_tab_navbuttons($navbuttons);
 ?>
      
 <form name="newuser" method="POST">
     
-    <div id="AccountInfo-tab" class="tabcontent" title="<?= t('title','AccountInfo') ?>" style="display: block">
+    <div id="AccountInfo-tab" class="tabcontent"  style="display: block">
     
         <fieldset>
             <h302>Common parameters</h302>
             <ul>
             
 <?php
-                print_form_component($select_descriptor);
+                foreach ($input_descriptors0 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
 ?>
-                <li class="fieldset">
-                    <label for='group' class='form'><?= t('all','Group')?></label>
-<?php
-                    populate_groups("Select Groups","groups[]");
-                    $onclick = "javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',"
-                             . "genericCounter('divCounter')+'&elemName=groups[]')";
-?>
-
-                    <a class='tablenovisit' href='#' onclick="<?= $onclick ?>">Add</a>
-                    <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
-                    <div id='divContainerGroups'></div>
-
-
-                    <div id='groupTooltip' style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0'><?= t('Tooltip','groupTooltip') ?>
-                    </div>
-                </li>
 
             </ul>
         </fieldset>
@@ -689,51 +596,44 @@
 ?>
     </div>
 
-    <div id="UserInfo-tab" class="tabcontent" title="<?= t('title','UserInfo') ?>">
+    <div id="UserInfo-tab" class="tabcontent">
 <?php
         $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
         include_once('include/management/userinfo.php');
 ?>
-    </div><!-- .tabbertab -->
+    </div><!-- .tabcontent -->
 
-    <div id="BillingInfo-tab" class="tabcontent" title="<?= t('title','BillingInfo') ?>">
+    <div id="BillingInfo-tab" class="tabcontent">
 <?php
         $customApplyButton = "<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />";
         include_once('include/management/userbillinfo.php');
 ?>
-    </div><!-- .tabbertab -->
+    </div><!-- .tabcontent -->
 
-    <div id="Attributes-tab" class="tabcontent" title="<?= t('title','Attributes') ?>">
+    <div id="Attributes-tab" class="tabcontent">
 <?php
     include_once('include/management/attributes.php');
 ?>
-    </div><!-- .tabbertab -->
+    </div><!-- .tabcontent -->
 </form>
 
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
 <?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    function switchAuthType() {
-        var switcher = document.getElementById("authType");
-        
-        for (var i=0; i<switcher.length; i++) {
-            var fieldset_id = switcher[i].value + "-fieldset";
-            document.getElementById(fieldset_id).disabled = (switcher.value != switcher[i].value);
-        }
     }
+    
+    include('include/config/logging.php');
+    
+    $inline_extra_js = '
+function switchAuthType() {
+    var switcher = document.getElementById("authType");
+    
+    for (var i=0; i<switcher.length; i++) {
+        var fieldset_id = switcher[i].value + "-fieldset";
+        document.getElementById(fieldset_id).disabled = (switcher.value != switcher[i].value);
+    }
+}
 
-    switchAuthType();
-</script>
-
-</body>
-</html>
+window.addEventListener("load", function() { switchAuthType(); });
+';
+    
+    print_footer_and_html_epilogue($inline_extra_js);
+?>
