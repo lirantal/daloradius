@@ -15,7 +15,8 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -35,26 +36,57 @@
 
     include_once('library/config_read.php');
     
-    //setting values for the order by and order type variables
-	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "radacctid";
-	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
+    include("library/validation.php");
+    
+    $sqlfields = (array_key_exists('sqlfields', $_GET) && !empty($_GET['sqlfields']) && is_array($_GET['sqlfields']) &&
+                  array_intersect($_GET['sqlfields'], $acct_custom_query_options_all) == $_GET['sqlfields'])
+               ? $_GET['sqlfields'] : $acct_custom_query_options_default;
+    
+    $cols = array();
+    foreach ($sqlfields as $sqlfield) {
+        $cols[$sqlfield] = $sqlfield;
+    }
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+    
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($acct_custom_query_options_all)))
+             ? $_GET['orderBy'] : array_keys($acct_custom_query_options_all)[0];
 
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+               ? strtolower($_GET['orderType']) : "asc";
 
-	isset($_GET['fields']) ? $where = $_GET['fields'] : $where = "";
-	isset($_GET['sqlfields']) ? $sqlfields = $_GET['sqlfields'] : $sqlfields = "";
-	isset($_GET['operator']) ? $op = $_GET['operator'] : $op = "=";
-	isset($_GET['where_field']) ? $value = $_GET['where_field'] : $value = "";
-	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
-	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
+    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
+                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
+                  checkdate($m[2], $m[3], $m[1]))
+               ? $_GET['startdate'] : "";
 
+    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
+                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
+                checkdate($m[2], $m[3], $m[1]))
+             ? $_GET['enddate'] : "";
+    
+    $valid_operators = array("equals" => "=", "contains" => "LIKE");
+    $operator = (array_key_exists('operator', $_GET) && !empty($_GET['operator']) &&
+                 in_array($_GET['operator'], array_keys($valid_operators)))
+              ? $_GET['operator'] : "";
+    
+    $where_field = (array_key_exists('where_field', $_GET) && !empty($_GET['where_field']) &&
+                    in_array($_GET['where_field'], $acct_custom_query_options_all))
+                 ? $_GET['where_field'] : "";
+    
+    $where_value = (array_key_exists('where_value', $_GET) && !empty(str_replace("%", "", trim($_GET['where_value']))))
+                 ? str_replace("%", "", trim($_GET['where_value'])) : "";
 
-	//feed the sidebar variables
-	$accounting_custom_startdate = $startdate;
-	$accounting_custom_enddate = $enddate;
-	$accounting_custom_value = $value;
+    $where_value_enc = (!empty($where_value)) ? htmlspecialchars($where_value, ENT_QUOTES, 'UTF-8') : "";
+    
+    //feed the sidebar variables
+    $accounting_custom_startdate = $startdate;
+    $accounting_custom_enddate = $enddate;
+    $accounting_custom_value = $where_value_enc;
 
-
-	include_once("lang/main.php");
+    include_once("lang/main.php");
     
     include("library/layout.php");
 
@@ -68,148 +100,132 @@
     $help = t('helpPage','acctcustomquery');
     
     print_html_prologue($title, $langCode, array(), $extra_js);
-	
-	include("menu-accounting-custom.php");
-	
+    
+    include("menu-accounting-custom.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
-		include 'library/opendb.php';
-		include 'include/management/pages_common.php';	
-		include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+    
+    // preparing the custom query
+    
+    $sql_WHERE = array();
+    $partial_query_string_pieces = array();
+    
+    foreach ($sqlfields as $sqlfield) {
+        $partial_query_string_pieces[] = sprintf("sqlfields[]=%s", $sqlfield);
+    }
+    
+    if (!empty($startdate)) {
+        $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
+        $partial_query_string_pieces[] = sprintf("startdate=%s", $startdate);
+    }
+    
+    if (!empty($startdate)) {
+        $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
+        $partial_query_string_pieces[] = sprintf("enddate=%s", $enddate);
+    }
+    
+    if (!empty($where_value)) {
+        // get the operator
+        $op = $valid_operators[$operator];
+        
+        // if the op is LIKE then the SQL syntax uses % for pattern matching
+        // and we sorround the $value with % as a wildcard
+        $where_value = $dbSocket->escapeSimple($where_value);
+        
+        if ($op == "LIKE") {
+            $where_value = "%" . $where_value . "%";
+        }
+
+        $sql_WHERE[] = sprintf("%s %s '%s'", $where_field, $op, $where_value);
+
+        $partial_query_string_pieces[] = sprintf("where_field=%s", $where_field);
+        $partial_query_string_pieces[] = sprintf("operator=%s", $operator);
+        $partial_query_string_pieces[] = sprintf("where_value=%s", $where_value_enc);
+    }
+
+    // executing the custom query
+
+    $sql = sprintf("SELECT %s FROM %s", implode(", ", $sqlfields), $configValues['CONFIG_DB_TBL_RADACCT']);
+    
+    if (count($sql_WHERE) > 0) {
+        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+    }
+
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $numrows = $res->numRows();
+    
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
+        $partial_query_string = (count($partial_query_string_pieces) > 0)
+                              ? "&" . implode("&", $partial_query_string_pieces) : "";
 
 
-		if ($op == "LIKE") {						// if the op is LIKE then the SQL syntax uses % for pattern matching
-			$value = "%$value%";					// and we sorround the $value with % as a wildcard
-		}
+        echo '<table border="0" class="table1">'
+           . '<thead>';
+            
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo '</td>' . '</tr>';
+        }
 
-		// let's sanitize the values passed to us:
-		$where = $dbSocket->escapeSimple($where);
-		$operator = $dbSocket->escapeSimple($operator);
-		$value = $dbSocket->escapeSimple($value);
-		$startdate = $dbSocket->escapeSimple($startdate);
-		$enddate = $dbSocket->escapeSimple($enddate);
+        // second line of table header
+        echo "<tr>";
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+        echo "</tr>";
 
-		// since we need to span through pages, which we do using GET queries I can't rely on this page
-		// to be processed through POST but rather using GET only (with the current design anyway).
-		// For this reason, I need to build the GET query which I will later use in the page number's links
+            
+        echo '</thead>'
+           . '<tbody>';
 
-		$getFields = "";		
-		$counter = 0;
-		foreach ($sqlfields as $elements) {
-			$getFields .= "&sqlfields[$counter]=$elements";
-			$counter++;
-		}
+        // inserting the values of each field from the database to the table
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            echo "<tr>";
+            foreach ($sqlfields as $field) {
+                printf("<td>%s</td>", htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8'));
+            }
+            echo "</tr>";
+        }
 
-		// we should also sanitize the array that we will be passing to this page in the next query
-		$getFields = $dbSocket->escapeSimple($getFields);
+        echo '</tbody>';
 
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 
-		$getQuery = "";
-		$getQuery .= "&fields=$where&operator=$op&where_field=$value";
-		$getQuery .= "&startdate=$startdate&enddate=$enddate";
+        echo '</table>';
 
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+        
+    include('library/closedb.php');    
 
-	
-		$select = implode(",", $sqlfields);
-		// sanitizing the array passed to us in the get request
-		$select = $dbSocket->escapeSimple($select);
-
-
-		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE ($where $op '$value') AND (AcctStartTime>'$startdate'
-			 AND AcctStartTime<'$enddate');";
-		$res = $dbSocket->query($sql);
-		$numrows = $res->numRows();
-
-
-		$sql = "SELECT $select FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE ($where $op '$value') AND (AcctStartTime>'$startdate'
-			AND AcctStartTime<'$enddate') ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL = "";
-		$logDebugSQL .= $sql . "\n";
-
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-
-	echo "<table border='0' class='table1'>\n";
-	echo "
-					<thead>
-							<tr>
-							<th colspan='25'>".t('all','Records')."</th>
-							</tr>
-
-                                                        <tr>
-                                                        <th colspan='25' align='left'>
-                <br/>
-        ";
-
-        if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $getFields, $getQuery);
-
-        echo " </th></tr>
-                                        </thead>
-
-                        ";
-
-
-	// building the dybamic table list fields
-	echo "<thread> <tr>";
-	foreach ($sqlfields as $value) {
-		echo "<th scope='col'> $value   </th>";
-	} //foreach $sqlfields
-	echo "</tr> </thread>";
-
-
-	// inserting the values of each field from the database to the table
-	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-		echo "<tr>";
-		foreach ($sqlfields as $value) {
-			echo "<td> " . $row[$value] . "</td>";
-		}
-		echo "</tr>";
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='25' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType, $getFields, $getQuery);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
-
-	echo "</table>";
-
-	include 'library/closedb.php';
-
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
-</div>
-</div>
-
-
-</body>
-</html>

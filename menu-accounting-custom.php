@@ -35,37 +35,6 @@ $m_active = "Accounting";
 include_once("include/menu/menu-items.php");
 include_once("include/menu/accounting-subnav.php");
 
-$options = array(
-                    "RadAcctId",
-                    "AcctSessionId",
-                    "AcctUniqueId",
-                    "UserName",
-                    "Realm",
-                    "NASIPAddress",
-                    "NASPortId",
-                    "NASPortType",
-                    "AcctStartTime",
-                    "AcctStopTime",
-                    "AcctSessionTime",
-                    "AcctAuthentic",
-                    "ConnectInfo_start",
-                    "ConnectInfo_stop",
-                    "AcctInputOctets",
-                    "AcctOutputOctets",
-                    "CalledStationId",
-                    "CallingStationId",
-                    "AcctTerminateCause",
-                    "ServiceType",
-                    "FramedProtocol",
-                    "FramedIPAddress",
-                    "AcctStartDelay",
-                    "AcctStopDelay"
-                );
-
-$options_checked = array("UserName", "Realm", "NASIPAddress", "AcctStartTime", "AcctStopTime", "AcctSessionTime",
-                         "AcctInputOctets", "AcctOutputOctets", "CalledStationId", "CallingStationId",
-                         "AcctTerminateCause", "FramedIPAddress");
-
 ?>	
             <div id="sidebar">
                 <h2>Accounting</h2>
@@ -89,58 +58,83 @@ $options_checked = array("UserName", "Realm", "NASIPAddress", "AcctStartTime", "
                                 value="<?= (isset($accounting_custom_enddate)) ? $accounting_custom_enddate : date("Y-m-t") ?>">
                             
                             <br><br>
-            
-                            <h109><?= t('button','Where') ?></h109><br>
-                            <div style="text-aling: center">
-                                <select name="fields" size="1" class="generic">
-<?php
-                                foreach ($options as $option) {
-                                    printf('<option value="%s">%s</option>', $option, $option);
-                                }
-?>
-
-                                </select><!-- .generic -->
-
-                                <select name="operator" size="1" class="generic">
-                                    <option value="=">Equals</option>
-                                    <option value="LIKE">Contains</option>
-                                </select><!-- .generic -->
-                            </div>
                             
-                            <input type="text" name="where_field" tooltipText="<?= t('Tooltip','Filter') ?><br>"
+<?php
+                                
+                            $descr = array(
+                                            "caption" => t('button','Where'),
+                                            "type" => "select",
+                                            "name" => "where_field",
+                                            "options" => $acct_custom_query_options_all,
+                                            "selected_value" => ((isset($where_field)) ? $where_field : $acct_custom_query_options_all[0]),
+                                          );
+                            
+                            print_form_component($descr);
+                            
+                            
+                            $descr = array(
+                                            "caption" => "Operator",
+                                            "type" => "select",
+                                            "name" => "operator",
+                                            "options" => array("equals", "contains"),
+                                            "selected_value" => ((isset($operator)) ? $operator : "equals"),
+                                          );
+                            
+                            print_form_component($descr);
+                            
+?>
+                            <input type="text" name="where_value" tooltipText="<?= t('Tooltip','Filter') ?><br>"
                                 value="<?= (isset($accounting_custom_value)) ? $accounting_custom_value : "" ?>">
                             <br><br>
-                            
-                            <h109><?= t('button','AccountingFieldsinQuery') ?></h109><br>
-<?php
-                            foreach ($options as $option) {
-                                $checked = in_array($option, $options_checked) ? ' checked' : '';
-                                printf('<input type="checkbox" name="sqlfields[]" value="%s"%s><h109>%s<h109><br>',
-                                       $option, $checked, $option);
-                            }
-?>
 
-                            Select:
-                            <a class="table" href="javascript:SetChecked(1,'sqlfields[]','acctcustomquery')">All</a>
-                            <a class="table" href="javascript:SetChecked(0,'sqlfields[]','acctcustomquery')">None</a>
+<?php
+                            $descr = array(
+                                            "caption" => t('button','AccountingFieldsinQuery'),
+                                            "type" => "select",
+                                            "name" => "sqlfields[]",
+                                            "id" => "sqlfields",
+                                            "options" => $acct_custom_query_options_all,
+                                            "selected_value" => ((isset($sqlfields)) ? $sqlfields : $acct_custom_query_options_default),
+                                            "multiple" => true
+                                          );
+                            
+                            print_form_component($descr);
+?>
+                            <a style="display: inline" href="#" onclick="select('all')">Select All</a>
+                            <a style="display: inline" href="#" onclick="select('none')">Select None</a>
                             <br><br>
-                            
-                            <h109><?= t('button','OrderBy') ?><h109><br>
-                            <div style="text-aling: center">
-                                <select name="orderBy" size="1" class="generic">
+
+<script>
+    function select(what) {
+        var selected = (what == 'all'),
+            sqlfields = document.getElementById('sqlfields');
+    
+        for (var i = 0; i < sqlfields.options.length; i++) {
+            sqlfields.options[i].selected = selected;
+        }
+    }
+</script>
 <?php
-                            foreach ($options as $option) {
-                                printf('<option value="%s">%s</option>', $option, $option);
-                            }
+                            $descr = array(
+                                            "caption" => t('button','OrderBy'),
+                                            "type" => "select",
+                                            "name" => "orderBy",
+                                            "options" => $acct_custom_query_options_all,
+                                            "selected_value" => ((isset($orderBy)) ? $orderBy : $acct_custom_query_options_all[0])
+                                          );
+                            
+                            print_form_component($descr);
+
+                            $descr = array(
+                                            "caption" => "Order Type",
+                                            "type" => "select",
+                                            "name" => "orderType",
+                                            "options" => array("asc" => "Ascending", "desc" => "Descending"),
+                                            "selected_value" => ((isset($orderType)) ? $orderType : "asc")
+                                          );
+                            
+                            print_form_component($descr);
 ?>
-
-                                </select><!-- .generic -->
-
-                                <select name="orderType" size="1" class="generic">
-                                    <option value="ASC">Ascending</option>
-                                    <option value="DESC">Descending</option>
-                                </select><!-- .generic -->
-                            </div>
                             <br>
                             
                             <input class="sidebutton" type="submit" name="submit" value="<?= t('button','ProcessQuery') ?>">
