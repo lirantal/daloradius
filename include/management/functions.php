@@ -121,7 +121,7 @@ function insert_single_user_group_mapping($dbSocket, $username, $groupname, $pri
     
     $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
-                   $dbSocket->escapeSimple($group), $priority);
+                   $dbSocket->escapeSimple($groupname), $priority);
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     
