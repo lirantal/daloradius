@@ -14,248 +14,201 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+    
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
 
-	include('library/check_operator_perm.php');
-	
-	//setting values for the order by and order type variables
-	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "id";
-	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
-
-
-	include_once('library/config_read.php');
+    // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for all accounting records on page: ";
+    $logDebugSQL = "";
 
+    include("library/validation.php");
+
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+
+    // print HTML prologue
+    $title = t('Intro','acctall.php');
+    $help = t('helpPage','acctall');
+
+    print_html_prologue($title, $langCode);
+    
+    include("menu-accounting.php");
+
+    $cols = array(
+                    "radacctid" => t('all','ID'),
+                    "hotspot" => t('all','HotSpot'),
+                    "username" => t('all','Username'),
+                    "framedipaddress" => t('all','IPAddress'),
+                    "acctstarttime" => t('all','StartTime'),
+                    "acctstoptime" => t('all','StopTime'),
+                    "acctsessiontime" => t('all','TotalTime'),
+                    "acctinputoctets" => sprintf("%s (%s)", t('all','Upload'), t('all','Bytes')),
+                    "acctoutputoctets" => sprintf("%s (%s)", t('all','Download'), t('all','Bytes')),
+                    "acctterminatecause" => t('all','Termination'),
+                    "nasipaddress" => t('all','NASIPAddress'),
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+    
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($acct_custom_query_options_all)))
+             ? $_GET['orderBy'] : array_keys($cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+               ? strtolower($_GET['orderType']) : "asc";
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+
+    include('library/opendb.php');
+    include_once('include/management/pages_common.php');
+
+    // setup php session variables for exporting
+    $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
+    $_SESSION['reportQuery'] = "";
+    $_SESSION['reportType'] = "accountingGeneric";
+
+    $sql = sprintf("SELECT COUNT(radacctid) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $numrows = $res->fetchrow()[0];
+
+    if ($numrows > 0) {
+            
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        $sql = sprintf("SELECT ra.RadAcctId, dhs.name AS hotspot, ra.username, ra.FramedIPAddress, ra.AcctStartTime,
+                               ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets,
+                               ra.AcctTerminateCause, ra.NASIPAddress
+                          FROM %s AS ra LEFT JOIN %s AS dhs ON ra.calledstationid=dhs.mac",
+                       $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'])
+             . sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
 ?>
+
+    <table border="0" class="table1">
+    <thead>
+        <tr style="background-color: white">
+<?php
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>';
+        }
+?>
+            <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
+                <input class="button" type="button" value="CSV Export"
+                    onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
+            </td>
+
+        </tr>
 
 <?php
-	
-	include("menu-accounting.php");
-	
+        // second line of table header
+        echo "<tr>";
+        printTableHead($cols, $orderBy, $orderType);
+        echo "</tr>";
 ?>
-
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctall.php')?>
-		<h144>&#x2754;</h144></a></h2>
-				
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','acctall') ?>
-			<br/>
-		</div>
-		<br/>
-
-
-
+    </thead>
+    
+    <tbody>
 <?php
+        $simple_td_format = '<td>%s</td>';
+        $li_style = 'margin: 7px auto';
 
-	include 'library/opendb.php';
-	include 'include/management/pages_common.php';	
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        while ($row = $res->fetchRow()) {
+            foreach ($row as $i => $value) {
+                $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            }
+            
+            echo "<tr>";
+            printf($simple_td_format, $row[0]);
+            
+            $onclick = "javascript:ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','divContainerHotspotInfo'"
+                     . sprintf(",'hotspot=%s');return false;", $row[1]);
+            $tooltip = '<ul style="list-style-type: none">'
+                     . sprintf('<li style="%s"><a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a></li>',
+                               $li_style, urlencode($row[1]), t('Tooltip','HotspotEdit'))
+                     . sprintf('<li style="%s"><a class="toolTip" href="acct-hotspot-compare.php">%s</a></li>',
+                               $li_style, t('all','Compare'))
+                     . '</ul>'
+                     . '<div style="margin: 15px auto" id="divContainerHotspotInfo">Loading...</div>';
+            
+            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
+                   $onclick, $tooltip, $row[1]);
+            
+            $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo',"
+                     . sprintf("'username=%s');return false;", $row[2]);
+            $tooltip = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>', $row[2], t('Tooltip','UserEdit'))
+                     . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
+            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
+                   $onclick, $tooltip, $row[2]);
 
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = "";
-        $_SESSION['reportType'] = "accountingGeneric";
+            printf($simple_td_format, $row[3]);
+            printf($simple_td_format, $row[4]);
+            printf($simple_td_format, $row[5]);
+            
+            printf($simple_td_format, time2str($row[6]));
+            printf($simple_td_format, toxbyte($row[7]));
+            printf($simple_td_format, toxbyte($row[8]));
+            printf($simple_td_format, $row[9]);
+            printf($simple_td_format, $row[10]);
+        
+            echo "</tr>";
+        
+        }
 
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac;";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
+        echo '</tbody>';
 
-	
-	$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac  ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
+        echo '</table>';
+        
+    } else {
+        $failureMsg = "Nothing to display";
+    }
+    
+    include_once("include/management/actionMessages.php");
+    
+    include('library/closedb.php');
 
-	echo "<table border='0' class='table1'>\n";
-        echo "
-                <thead>
-                        <tr>
-                        <th colspan='12' align='left'>
-
-                        <input class='button' type='button' value='CSV Export'
-                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
-                        />
-                        <br/>
-                <br/>
-        ";
-
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-	echo " </th></tr>
-			</thead>
-	";
-
-	if ($orderType == "asc") {
-			$orderTypeNextPage = "desc";
-	} else  if ($orderType == "desc") {
-			$orderTypeNextPage = "asc";
-	}
-	
-	echo "<thread> <tr>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=radacctid&orderType=$orderTypeNextPage\">
-		".t('all','ID')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=hotspot&orderType=$orderTypeNextPage\">
-		".t('all','HotSpot')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
-		".t('all','Username')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=framedipaddress&orderType=$orderTypeNextPage\">
-		".t('all','IPAddress')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstarttime&orderType=$orderTypeNextPage\">
-		".t('all','StartTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctstoptime&orderType=$orderTypeNextPage\">
-		".t('all','StopTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctsessiontime&orderType=$orderTypeNextPage\">
-		".t('all','TotalTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctinputoctets&orderType=$orderTypeNextPage\">
-		".t('all','Upload')." (".t('all','Bytes').")</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctoutputoctets&orderType=$orderTypeNextPage\">
-		".t('all','Download')." (".t('all','Bytes').")</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=acctterminatecause&orderType=$orderTypeNextPage\">
-		".t('all','Termination')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=nasipaddress&orderType=$orderTypeNextPage\">
-		".t('all','NASIPAddress')."</a>
-		</th>
-		</tr> </thread>";
-	
-	while($row = $res->fetchRow()) {
-
-		printqn("<tr>
-				<td> $row[0] </td>
-
-                        <td> <a class='tablenovisit' href='#'
-                                onClick='javascript:ajaxGeneric(\"include/management/retHotspotInfo.php\",\"retHotspotGeneralStat\",\"divContainerHotspotInfo\",\"hotspot=$row[1]\");return false;'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-hs-edit.php?name=$row[1]\">
-						".t('Tooltip','HotspotEdit')."</a>
-					&nbsp;
-                                        <a class=\"toolTip\" href=\"acct-hotspot-compare.php?\">
-	                                        ".t('all','Compare')."</a>
-                                        <br/><br/>
-
-                                        <div id=\"divContainerHotspotInfo\">
-                                                Loading...
-                                        </div>
-                                        <br/>'
-                                >$row[1]</a>
-                        </td>
-
-
-                        <td> <a class='tablenovisit' href='#'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[2]\");return false;'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[2]\">
-	                                        ".t('Tooltip','UserEdit')."</a>
-                                        <br/><br/>
-
-                                        <div id=\"divContainerUserInfo\">
-                                                Loading...
-                                        </div>
-                                        <br/>'
-                                >$row[2]</a>
-                        </td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
-				<td> $row[5] </td>
-				<td> ".time2str($row[6])."</td>
-				<td> ".toxbyte($row[7])."</td>
-				<td> ".toxbyte($row[8])."</td>
-				<td> $row[9] </td>
-				<td> $row[10] </td>
-		</tr>");
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-        ";
-        setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
-
-	echo "</table>";
-
-	include 'library/closedb.php';
+    include('include/config/logging.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-
-
-
-<?php
-	include('include/config/logging.php');
-?>
-
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
-</div>
-</div>
-
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

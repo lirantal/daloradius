@@ -26,18 +26,18 @@
 
     //~ include('library/check_operator_perm.php');
 
-    $log = "visited page: ";
-    $logQuery = "performed query for [$orderBy";
-    if (!empty($limit)) {
-        $logQuery .= " : $limit";
-    }
-    $logQuery .= "] on page: ";
-
     // validate this parameter before including menu
     $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
                     ? str_replace("%", "", $_GET['username']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
+    $log = "visited page: ";
+    $logQuery = "performed query for [$username";
+    if (!empty($limit)) {
+        $logQuery .= " : $limit";
+    }
+    $logQuery .= "] on page: ";
+
     include_once('library/config_read.php');
     
     include("library/validation.php");
