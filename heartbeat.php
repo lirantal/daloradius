@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,121 +15,99 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-
-require_once('library/opendb.php');
-require_once('library/config_read.php');
-
-$secret_key = $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'];
-$debug_mode = $configValues['CONFIG_DASHBOARD_DALO_DEBUG'];
-
-isset($_GET['secret_key']) ? $secretKey = $dbSocket->escapeSimple($_GET['secret_key']) : $secretKey = "";
-if ($secretKey != $secret_key) {
-	die("authorization denied\n");
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    die("wrong HTTP method" . "\n");
 }
 
-isset($_GET['wan_iface']) ? $wan_iface = $dbSocket->escapeSimple($_GET['wan_iface']) : $wan_iface = "";
-isset($_GET['wan_ip']) ? $wan_ip = $dbSocket->escapeSimple($_GET['wan_ip']) : $wan_ip = "";
-isset($_GET['wan_mac']) ? $wan_mac = $dbSocket->escapeSimple($_GET['wan_mac']) : $wan_mac = "";
-isset($_GET['wan_gateway']) ? $wan_gateway = $dbSocket->escapeSimple($_GET['wan_gateway']) : $wan_gateway = "";
-isset($_GET['wifi_iface']) ? $wifi_iface = $dbSocket->escapeSimple($_GET['wifi_iface']) : $wifi_iface = "";
-isset($_GET['wifi_ip']) ? $wifi_ip = $dbSocket->escapeSimple($_GET['wifi_ip']) : $wifi_ip = "";
-isset($_GET['wifi_mac']) ? $wifi_mac = $dbSocket->escapeSimple($_GET['wifi_mac']) : $wifi_mac = "";
-isset($_GET['wifi_ssid']) ? $wifi_ssid = $dbSocket->escapeSimple($_GET['wifi_ssid']) : $wifi_ssid = "";
-isset($_GET['wifi_key']) ? $wifi_key = $dbSocket->escapeSimple($_GET['wifi_key']) : $wifi_key = "";
-isset($_GET['wifi_channel']) ? $wifi_channel = $dbSocket->escapeSimple($_GET['wifi_channel']) : $wifi_channel = "";
-isset($_GET['lan_iface']) ? $lan_iface = $dbSocket->escapeSimple($_GET['lan_iface']) : $lan_iface = "";
-isset($_GET['lan_mac']) ? $lan_mac = $dbSocket->escapeSimple($_GET['lan_mac']) : $lan_mac = "";
-isset($_GET['lan_ip']) ? $lan_ip = $dbSocket->escapeSimple($_GET['lan_ip']) : $lan_ip = "";
-isset($_GET['uptime']) ? $uptime = $dbSocket->escapeSimple($_GET['uptime']) : $uptime = "";
-isset($_GET['memfree']) ? $memfree = $dbSocket->escapeSimple($_GET['memfree']) : $memfree = "";
-isset($_GET['wan_bup']) ? $wan_bup = $dbSocket->escapeSimple($_GET['wan_bup']) : $wan_bup = "";
-isset($_GET['wan_bdown']) ? $wan_bdown = $dbSocket->escapeSimple($_GET['wan_bdown']) : $wan_bdown = "";
-isset($_GET['nas_mac']) ? $nas_mac = $dbSocket->escapeSimple($_GET['nas_mac']) : $nas_mac = "";
-isset($_GET['firmware']) ? $firmware = $dbSocket->escapeSimple($_GET['firmware']) : $firmware = "";
-isset($_GET['firmware_revision']) ? $firmware_revision = $dbSocket->escapeSimple($_GET['firmware_revision']) : $firmware_revision = "";
-isset($_GET['cpu']) ? $cpu = $dbSocket->escapeSimple($_GET['cpu']) : $cpu = "";
+$secret_key = (array_key_exists('secret_key', $_GET) && !empty(trim($_GET['secret_key']))
+            ? trim($_GET['secret_key']) : "";
+
+if (empty($secretKey)) {
+    die("secret_key not provided" . "\n");
+}
+
+require_once('library/config_read.php');
+
+if ($secret_key !== $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY']) {
+    die("authorization denied" . "\n");
+}
+
+$wan_iface = (array_key_exists('wan_iface', $_GET) && !empty(trim($_GET['wan_iface'])) ? trim($_GET['wan_iface']) : "";
+$wan_ip = (array_key_exists('wan_ip', $_GET) && !empty(trim($_GET['wan_ip'])) ? trim($_GET['wan_ip']) : "";
+$wan_mac = (array_key_exists('wan_mac', $_GET) && !empty(trim($_GET['wan_mac'])) ? trim($_GET['wan_mac']) : "";
+$wan_gateway = (array_key_exists('wan_gateway', $_GET) && !empty(trim($_GET['wan_gateway'])) ? trim($_GET['wan_gateway']) : "";
+$wifi_iface = (array_key_exists('wifi_iface', $_GET) && !empty(trim($_GET['wifi_iface'])) ? trim($_GET['wifi_iface']) : "";
+$wifi_ip = (array_key_exists('wifi_ip', $_GET) && !empty(trim($_GET['wifi_ip'])) ? trim($_GET['wifi_ip']) : "";
+$wifi_mac = (array_key_exists('wifi_mac', $_GET) && !empty(trim($_GET['wifi_mac'])) ? trim($_GET['wifi_mac']) : "";
+$wifi_ssid = (array_key_exists('wifi_ssid', $_GET) && !empty(trim($_GET['wifi_ssid'])) ? trim($_GET['wifi_ssid']) : "";
+$wifi_key = (array_key_exists('wifi_key', $_GET) && !empty(trim($_GET['wifi_key'])) ? trim($_GET['wifi_key']) : "";
+$wifi_channel = (array_key_exists('wifi_channel', $_GET) && !empty(trim($_GET['wifi_channel'])) ? trim($_GET['wifi_channel']) : "";
+$lan_iface = (array_key_exists('lan_iface', $_GET) && !empty(trim($_GET['lan_iface'])) ? trim($_GET['lan_iface']) : "";
+$lan_mac = (array_key_exists('lan_mac', $_GET) && !empty(trim($_GET['lan_mac'])) ? trim($_GET['lan_mac']) : "";
+$lan_ip = (array_key_exists('lan_ip', $_GET) && !empty(trim($_GET['lan_ip'])) ? trim($_GET['lan_ip']) : "";
+$uptime = (array_key_exists('uptime', $_GET) && !empty(trim($_GET['uptime'])) ? trim($_GET['uptime']) : "";
+$memfree = (array_key_exists('memfree', $_GET) && !empty(trim($_GET['memfree'])) ? trim($_GET['memfree']) : "";
+$wan_bup = (array_key_exists('wan_bup', $_GET) && !empty(trim($_GET['wan_bup'])) ? trim($_GET['wan_bup']) : "";
+$wan_bdown = (array_key_exists('wan_bdown', $_GET) && !empty(trim($_GET['wan_bdown'])) ? trim($_GET['wan_bdown']) : "";
+$nas_mac = (array_key_exists('nas_mac', $_GET) && !empty(trim($_GET['nas_mac'])) ? trim($_GET['nas_mac']) : "";
+$firmware = (array_key_exists('firmware', $_GET) && !empty(trim($_GET['firmware'])) ? trim($_GET['firmware']) : "";
+$firmware_revision = (array_key_exists('firmware_revision', $_GET) && !empty(trim($_GET['firmware_revision'])) ? trim($_GET['firmware_revision']) : "";
+$cpu = (array_key_exists('cpu', $_GET) && !empty(trim($_GET['cpu'])) ? trim($_GET['cpu']) : "";
 //isset($_GET['checkin_date']) ? $checkin_date = $dbSocket->escapeSimple($_GET['checkin_date']) : $checkin_date = "";
 
 $currDate = date('Y-m-d H:i:s');
 
+require_once('library/opendb.php');
+
 // insert hotspot info
 
-$sql = "SELECT mac FROM ".$configValues['CONFIG_DB_TBL_DALONODE']." WHERE mac='$nas_mac'";
-$res = $dbSocket->query($sql);
-if ($res->numRows() >= 1) {
+$sql0 = sprintf("SELECT mac FROM %s WHERE mac=?", $configValues['CONFIG_DB_TBL_DALONODE']);
+$prepared0 = $dbSocket->prepare($sql0);
+$res0 = $dbSocket->execute($prepared0, $nas_mac);
+
+$numrows = $res0->numRows();
+$data = array(
+               $wan_iface, $wan_ip, $wan_mac, $wan_gateway, $wifi_iface, $wifi_ip, $wifi_mac, $wifi_ssid, $wifi_key,
+               $wifi_channel, $lan_iface, $lan_mac, $lan_ip, $uptime, $memfree, $wan_bup, $wan_bdown, $firmware,
+               $firmware_revision, $nas_mac, $currDate, $cpu, $nas_mac
+             );
+
+if ($numrows > 0) {
 	// we update
-	$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALONODE']." SET ".
-			"wan_iface='".$wan_iface."',".
-			"wan_ip='".$wan_ip."',".
-			"wan_mac='".$wan_mac."',".
-			"wan_gateway='".$wan_gateway."',".
-			"wifi_iface='".$wifi_iface."',".
-			"wifi_ip='".$wifi_ip."',".
-			"wifi_mac='".$wifi_mac."',".
-			"wifi_ssid='".$wifi_ssid."',".
-			"wifi_key='".$wifi_key."',".
-			"wifi_channel='".$wifi_channel."',".
-			"lan_iface='".$lan_iface."',".
-			"lan_mac='".$lan_mac."',".
-			"lan_ip='".$lan_ip."',".
-			"uptime='".$uptime."',".
-			"memfree='".$memfree."',".
-			"wan_bup='".$wan_bup."',".
-			"wan_bdown='".$wan_bdown."',".
-			"firmware='".$firmware."',".
-			"firmware_revision='".$firmware_revision."',".
-			"mac='".$nas_mac."',".
-			"time='".$currDate."',".
-			"cpu='".$cpu."'".
-			" WHERE mac='$nas_mac'";
-			;
+    $sql1 = sprintf("UPDATE %s SET ", $configValues['CONFIG_DB_TBL_DALONODE'])
+          . "`wan_iface`=?, `wan_ip`=?, `wan_mac`=?, `wan_gateway`=?, `wifi_iface`=?, `wifi_ip`=?, `wifi_mac`=?, `wifi_ssid`=?, "
+          . "`wifi_key`=?, `wifi_channel`=?, `lan_iface`=?, `lan_mac`=?, `lan_ip`=?, `uptime`=?, `memfree`=?, `wan_bup`=?, "
+          . "`wan_bdown`=?, `firmware`=?, `firmware_revision`=?, `mac`=?, `time`=?, `cpu`=? WHERE `mac`=?";
 } else {
 	// we insert
-	$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALONODE']." (".
-			" id, wan_iface, wan_ip, wan_mac, wan_gateway, wifi_iface, wifi_ip, wifi_mac, wifi_ssid, wifi_key, wifi_channel, ".
-			" lan_iface, lan_mac, lan_ip, uptime, memfree, wan_bup, wan_bdown, firmware, firmware_revision, ".
-			" mac, `time`, cpu ".
-			" ) ".
-			" VALUES (0, ".
-			"'".$wan_iface."',".
-			"'".$wan_ip."',".
-			"'".$wan_mac."',".
-			"'".$wan_gateway."',".
-			"'".$wifi_iface."',".
-			"'".$wifi_ip."',".
-			"'".$wifi_mac."',".
-			"'".$wifi_ssid."',".
-			"'".$wifi_key."',".
-			"'".$wifi_channel."',".
-			"'".$lan_iface."',".
-			"'".$lan_mac."',".
-			"'".$lan_ip."',".
-			"'".$uptime."',".
-			"'".$memfree."',".
-			"'".$wan_bup."',".
-			"'".$wan_bdown."',".
-			"'".$firmware."',".
-			"'".$firmware_revision."',".
-			"'".$nas_mac."',".
-			"'".$currDate."',".
-			"'".$cpu."'".
-			" ) ";
+	$sql1 = sprintf("INSERT INTO %s ( ", $configValues['CONFIG_DB_TBL_DALONODE'])
+          . "`id`, `wan_iface`, `wan_ip`, `wan_mac`, `wan_gateway`, `wifi_iface`, `wifi_ip`, `wifi_mac`, `wifi_ssid`, "
+          . "`wifi_key`, `wifi_channel`, `lan_iface`, `lan_mac`, `lan_ip`, `uptime`, `memfree`, `wan_bup`, `wan_bdown`, "
+          . "`firmware`, `firmware_revision`, `mac`, `time`, `cpu` ) "
+          . "VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?)";
+    array_pop($data);
 }
 
+$prepared1 = $dbSocket->prepare($sql1);
+$res1 = $dbSocket->execute($prepared1, $data);
 
-$res = $dbSocket->query($sql);
 require_once('library/closedb.php');
 
-if (isset($debug_mode) && $debug_mode == 1) {
+$debug_mode = $configValues['CONFIG_DASHBOARD_DALO_DEBUG'];
+
+
+if (array_key_exists('CONFIG_DASHBOARD_DALO_DEBUG', $_GET) &&
+    !empty(trim($_GET['CONFIG_DASHBOARD_DALO_DEBUG'])) &&
+    intval(trim($_GET['CONFIG_DASHBOARD_DALO_DEBUG'])) > 0) {
 	echo "Debug: \n";
 	var_dump($_GET);
 	echo "\n\n$sql\n\n";	
 }
 
-echo "success";
-
+echo "success" . "\n";
