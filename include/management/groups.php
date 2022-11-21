@@ -50,7 +50,9 @@ if (!isset($groupTerminology)) {
 
 <?php
 
-    $sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority DESC",
+    $selected_groups = array();
+
+    $sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority ASC",
                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
     $res = $dbSocket->query($sql);
 
@@ -61,6 +63,8 @@ if (!isset($groupTerminology)) {
         $counter = 1;
 
         while ($row = $res->fetchRow()) {
+            
+            $selected_groups[] = $row[0];
             
             foreach ($row as $i => $v) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
