@@ -34,6 +34,8 @@ define("NETMASK_LENGTH_REGEX", "/^3[0-2]|[1-2][0-9]|[1-9]$/");
 define("MACADDR_REGEX", "/^(?:[0-9a-f]{2}([-:]))(?:[0-9a-f]{2}\1){4}[0-9a-f]{2}$/i");
 define("PINCODE_REGEX", "/^[a-zA-Z0-9]+$/");
 
+// this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
+define("LOOSE_IP_REGEX", "/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/");
 
 // some parameters can be validated using a whitelist.
 // here we collect some useful whitelist.

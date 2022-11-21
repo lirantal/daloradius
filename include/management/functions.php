@@ -103,6 +103,52 @@ function group_exists($dbSocket, $groupname) {
 
 }
 
+function update_user_group_mapping_priority($dbSocket, $username, $groupname, $new_priority) {
+    global $configValues, $logDebugSQL;
+    
+    $username = trim($username);
+    $groupname = trim($groupname);
+    
+    
+    $sql = sprintf("SELECT priority FROM %s WHERE username='%s' AND groupname='%s'",
+                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
+                   $dbSocket->escapeSimple($groupname));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $numrows = $res->numRows();
+    
+    
+    if ($numrows > 0) {
+        $priority = (intval($new_priority) < 0) ? 0 : intval($new_priority);
+        
+        if ($numrows == 1) {
+            $sql = sprintf("UPDATE %s SET priority=%d WHERE username='%s' AND groupname='%s'",
+                           $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $priority,
+                           $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($groupname));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+        } else {
+            // if we have more than one row, we delete all and insert only a new one
+            $sql = sprintf("DELETE FROM %s WHERE username='%s' AND groupname='%s'",
+                           $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
+                           $dbSocket->escapeSimple($groupname));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+            
+            $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
+                           $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
+                           $dbSocket->escapeSimple($groupname), $priority);
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+        }
+        return true;
+    }
+    
+    return false;
+    
+}
+
 // give an open $dbSocket, an $username and $groupname
 // inserts (if possible) an user-group mapping with the
 // provided $priority (default: 0)
@@ -117,7 +163,7 @@ function insert_single_user_group_mapping($dbSocket, $username, $groupname, $pri
         return false;
     }
     
-    $priority = intval($priority);
+    $priority = (intval($priority) < 0) ? 0 : intval($priority);
     
     $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
@@ -125,7 +171,29 @@ function insert_single_user_group_mapping($dbSocket, $username, $groupname, $pri
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     
-    return boolval(DB::isError($res));
+    return $res == 1;
+}
+
+// returns all groups associated with a provided $username
+function get_user_group_mappings($dbSocket, $username) {
+    global $configValues, $logDebugSQL;
+    
+    $username = trim($username);
+    $result = array();
+    
+    $sql = sprintf("SELECT DISTINCT(groupname) FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    if (!DB::isError($res)) {
+        while ($row = $res->fetchRow()) {
+            $result[] = $row[0];
+        }
+    }
+    
+    return $result;
+    
 }
 
 // give an open $dbSocket, an $username and an array of groupnames

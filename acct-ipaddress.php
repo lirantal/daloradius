@@ -25,15 +25,13 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-    
     include_once('library/config_read.php');
 
-    // this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
-    $ip_regex = '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/';
+    include("library/validation.php");
     
     // validate this parameter before including menu
     $ipaddress = (array_key_exists('ipaddress', $_GET) && isset($_GET['ipaddress']) &&
-                  preg_match($ip_regex, $_GET['ipaddress'], $m) !== false) ? $_GET['ipaddress'] : "";
+                  preg_match(LOOSE_IP_REGEX, $_GET['ipaddress'], $m) !== false) ? $_GET['ipaddress'] : "";
     $ipaddress_enc = (!empty($ipaddress)) ? htmlspecialchars($ipaddress, ENT_QUOTES, 'UTF-8') : "";
 
     //feed the sidebar variables
@@ -237,27 +235,15 @@
     }
     
     include('library/closedb.php');
-?>
 
-        </div>
-        
-        <div id="footer">
-        
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div>        
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

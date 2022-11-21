@@ -304,6 +304,8 @@ function userPlanInformation($username, $drawTable) {
     include_once('include/management/pages_common.php');
     include('library/opendb.php');
     
+    $username = $dbSocket->escapeSimple($username);
+    
     /*
      *********************************************************************************************************
      * check which kind of subscription does the user have

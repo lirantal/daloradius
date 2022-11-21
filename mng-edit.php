@@ -35,6 +35,8 @@
     // we import validation facilities
     include_once("library/validation.php");
     
+    include_once("include/management/functions.php");
+    
     // required later
     $currDate = date('Y-m-d H:i:s');
     $currBy = $operator;
@@ -132,6 +134,19 @@
         $bi_creditcardtype = (array_key_exists('bi_creditcardtype', $_POST) && isset($_POST['bi_creditcardtype'])) ? $_POST['bi_creditcardtype'] : "";
         $bi_creditcardexp = (array_key_exists('bi_creditcardexp', $_POST) && isset($_POST['bi_creditcardexp'])) ? $_POST['bi_creditcardexp'] : "";
         $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
+    
+        $bi_lead = (array_key_exists('bi_lead', $_POST) && isset($_POST['bi_lead'])) ? $_POST['bi_lead'] : "";
+        $bi_coupon = (array_key_exists('bi_coupon', $_POST) && isset($_POST['bi_coupon'])) ? $_POST['bi_coupon'] : "";
+        $bi_ordertaker = (array_key_exists('bi_ordertaker', $_POST) && isset($_POST['bi_ordertaker'])) ? $_POST['bi_ordertaker'] : "";
+        $bi_billstatus = (array_key_exists('bi_billstatus', $_POST) && isset($_POST['bi_billstatus'])) ? $_POST['bi_billstatus'] : "";
+        $bi_lastbill = (array_key_exists('bi_lastbill', $_POST) && isset($_POST['bi_lastbill'])) ? $_POST['bi_lastbill'] : "";
+        $bi_nextbill = (array_key_exists('bi_nextbill', $_POST) && isset($_POST['bi_nextbill'])) ? $_POST['bi_nextbill'] : "";
+        $bi_nextinvoicedue = (array_key_exists('bi_nextinvoicedue', $_POST) && isset($_POST['bi_nextinvoicedue'])) ? $_POST['bi_nextinvoicedue'] : "";
+        $bi_billdue = (array_key_exists('bi_billdue', $_POST) && isset($_POST['bi_billdue'])) ? $_POST['bi_billdue'] : "";
+        $bi_postalinvoice = (array_key_exists('bi_postalinvoice', $_POST) && isset($_POST['bi_postalinvoice'])) ? $_POST['bi_postalinvoice'] : "";
+        $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
+        $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
+
         $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
 
         $planName = (array_key_exists('planName', $_POST) && isset($_POST['planName'])) ? trim($_POST['planName']) : "";
@@ -206,7 +221,7 @@
 
 
             // if there were no records for this user present in the userbillinfo table
-            if (!$userbillinfoExits) {
+            if (!$userbillinfoExist) {
                 // insert user billing information table
                 $sql = sprintf("INSERT INTO %s (id, username, contactperson, company, email, phone, address,
                                                 city, state, country, zip, paymentmethod, cash, creditcardname,
@@ -259,52 +274,50 @@
             $res = $dbSocket->query($sql);
             $logDebugSQL .= "$sql;\n";
 
-            // update usergroup mapping (existing)
-            if (count($groups) > 0) {
 
-                // remove old mapping
-                $sql = sprintf("DELETE FROM %s WHERE username='%s'",
-                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                foreach ($groups as $i => $group) {
-                    $prio = (empty($groups_priority[$i])) ? 0 : intval($groups_priority[$i]);
-                    
-                    $group = trim($group);
-                    
-                    if (empty($group)) {
-                        continue;
-                    }
-
-                    $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
-                                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                   $dbSocket->escapeSimple($username),
-                                   $dbSocket->escapeSimple($group),
-                                   $prio);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                }
-            }
-
-            
-            // insert usergroup mapping (new groups)
+            // add new user group mappings (implicitly) using priority 0
+            $user_groups = get_user_group_mappings($dbSocket, $username);
             if (count($newgroups) > 0) {
-                foreach ($newgroups as $newgroup) {
-                    $newgroup = trim($newgroup);
+                foreach ($newgroups as $groupname) {
+                    $groupname = trim($groupname);
                     
-                    if (empty($newgroup)) {
+                    if (empty($groupname) || in_array($groupname, $user_groups)) {
                         continue;
                     }
-
-                    $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
-                                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                   $dbSocket->escapeSimple($username),
-                                   $dbSocket->escapeSimple($newgroup));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
+                    
+                    insert_single_user_group_mapping($dbSocket, $username, $groupname);
                 }
             }
+
+            // $groups and $groups_priority are used to update existing user group mappings
+            if (count($groups) == count($groups_priority)) {
+                // we need that these two arrays contain the exact same number of elements
+                
+                $updated_user_group_mappings = array();
+                
+                for ($i = 0; $i < count($groups); $i++) {
+                    $groupname = trim($groups[$i]);
+                    
+                    // if the groupname is empty or it is not contained
+                    // in the user group mappings we skip
+                    if (empty($groupname) || !in_array($groupname, $user_groups)) {
+                        continue;
+                    }
+                    
+                    $priority = (empty($groups_priority[$i])) ? 0 : intval($groups_priority[$i]);
+                    
+                    // if the groupname appears two times, we "reset" the priority to the default values
+                    $updated_user_group_mappings[$groupname] = (array_key_exists($groupname, $updated_user_group_mappings))
+                                                             ? 0 : $priority;
+                }
+                
+                // we now can proceed and update existing user group mappings
+                foreach ($updated_user_group_mappings as $groupname => $priority) {
+                    update_user_group_mapping_priority($dbSocket, $username, $groupname, $priority);
+                }
+            }
+                        
+            
             
 
             addPlanProfile($dbSocket, $username, $planName, $oldplanName);
@@ -780,7 +793,33 @@ window.onload = function(){
 <?php
         include('library/opendb.php');
         include_once('include/management/groups.php');
+        
+        $selected_options = get_user_group_mappings($dbSocket, $username);
+        
+        include_once('include/management/populate_selectbox.php');
+        $options = get_groups();
+        array_unshift($options, '');
+        
         include('library/closedb.php');
+        
+        $input_descriptors2 = array();
+        
+        $input_descriptors2[] = array(
+                                        "type" =>"select",
+                                        "name" => "newgroups[]",
+                                        "id" => "groups",
+                                        "caption" => t('all','Group'),
+                                        "options" => $options,
+                                        "multiple" => true,
+                                        "size" => 5,
+                                        "selected_value" => $selected_options,
+                                        "tooltipText" => t('Tooltip','groupTooltip')
+                                     );
+        $input_descriptors2[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
 ?>
 
         <br/>
@@ -789,38 +828,11 @@ window.onload = function(){
         
         <ul>
 
-            <li class='fieldset'>
-
-                <li class='fieldset'>
-                <label for='group' class='form'><?= t('all','Group')?></label>
-                <?php
-                        include_once 'include/management/populate_selectbox.php';
-                        populate_groups("Select Groups","newgroups[]");
-                ?>
-
-                <a class='tablenovisit' href='#'
-                        onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter')+'&elemName=newgroups[]');">Add</a>
-
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
-
-                <div id='divContainerGroups'>
-                </div>
-
-
-                <div id='groupTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?= t('Tooltip','groupTooltip') ?>
-                </div>
-                </li>
-
-
-
-    <br/><br/>
-
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?= t('buttons','apply') ?>' class='button' />
-        </li>
+<?php
+                foreach ($input_descriptors2 as $input_descriptor) {
+                    print_form_component($input_descriptor);
+                }
+?>
 
         </ul>
 

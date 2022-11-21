@@ -14,225 +14,223 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-	//setting values for the order by and order type variables
-	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "username";
-	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
+    // include validation utils
+    include("library/validation.php");
 
+    // validate this parameter before including menu
+    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+                    ? str_replace("%", "", $_GET['username']) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-	isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
-	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
-	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
+    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
+                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
+                  checkdate($m[2], $m[3], $m[1]))
+               ? $_GET['startdate'] : "";
 
-	include_once('library/config_read.php');
+    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
+                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
+                checkdate($m[2], $m[3], $m[1]))
+             ? $_GET['enddate'] : "";
+    
+    //feed the sidebar variables
+    $accounting_date_username = $username_enc;
+    $accounting_date_startdate = $startdate;
+    $accounting_date_enddate = $enddate;
+
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for active accounting records on page: ";
+    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
+    $logDebugSQL = "";
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
 
+    // print HTML prologue
+    $title = t('Intro','acctactive.php');
+    $help = t('helpPage','acctactive');
+
+    print_html_prologue($title, $langCode);
+    
+    include("menu-accounting.php");
+
+    $cols = array(
+                    "username" => t('all','Username'),
+                    "attribute" => t('all','Attribute'),
+                    "maxtimeexpiration" => t('all','MaxTimeExpiration'),
+                    "usedtime" => t('all','UsedTime'),
+                    t('all','Status'),
+                    t('all','Usage')    
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "desc";
+
+    // start printing content
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
+
+    include('library/opendb.php');
+    include('library/datediff.php');
+    include('include/management/pages_common.php');
+    
+    $currdate = date("j M Y");
+    
+    //orig: used as maethod to get total rows - this is required for the pages_numbering.php page
+    $sql = sprintf("SELECT DISTINCT(ra.username) AS username, rc.attribute AS attribute, rc.Value AS maxtimeexpiration,
+                           SUM(ra.AcctSessionTime) AS usedtime
+                      FROM %s AS ra, %s AS rc
+                     WHERE ra.username=rc.username AND (rc.Attribute = 'Max-All-Session' OR rc.Attribute='Expiration')
+                     GROUP BY ra.username", $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $res = $dbSocket->query($sql);
+    $numrows = $res->numRows();
+    
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+            
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+    
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
 ?>
 
-
+    <table border="0" class="table1">
+        <thead>
+            <tr style="background-color: white">
 <?php
-	
-	include("menu-accounting.php");
-	
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            echo '</td>';
+        }
 ?>
-		
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctactive.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-				
-                <div id="helpPage" style="display:none;visibility:visible" >
-					<?php echo t('helpPage','acctactive') ?>
-					<br/>
-				</div>
-				<br/>
-
-
+            </tr>
+            
+            <tr>
 <?php
+        printTableHead($cols, $orderBy, $orderType);
+?>
+            </tr>
+        </thead>
+        
+        <tbody>
+<?php
+        while($row = $res->fetchRow()) {
+            $status="Active";
 
-	include 'library/opendb.php';
-	include 'library/datediff.php';
-	include 'include/management/pages_common.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-	$currdate = date("j M Y");
+            if ($row[1] == "Expiration") {        
+                if (datediff('d', $row[2], "$currdate", false) > 0) {
+                    $status = "Expired";
+                }
+            } 
 
-	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
-	$username = $dbSocket->escapeSimple($username);
-	$enddate = $dbSocket->escapeSimple($enddate);
-	$startdate = $dbSocket->escapeSimple($startdate);
-	
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
+            if ($row[1] == "Max-All-Session") {        
+                if ($row[3] >= $row[2]) {
+                    $status = "End";
+                }
+            }
 
-	$sql = "select distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName) as username, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute as attribute, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value maxtimeexpiration, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as usedtime from ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Max-All-Session' or ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Expiration') group by ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName;";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
-	
-	$sql = "select distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName) as username, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".attribute as attribute, ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Value maxtimeexpiration, sum(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) as usedtime from ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_RADCHECK']." where (".$configValues['CONFIG_DB_TBL_RADACCT'].".Username = ".$configValues['CONFIG_DB_TBL_RADCHECK'].".UserName) and (".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Max-All-Session' or ".$configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute = 'Expiration') group by ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName  ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+            foreach ($row as $i => $value) {
+                $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            }
 
+            echo "<tr>";
+        
+            $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=%s');"
+                     . "return false;", $row[0]);
+        
+            $tooltip = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>', $row[2], t('Tooltip','UserEdit'))
+                         . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
+        
+            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
+                   $onclick, $tooltip, $row[0]);
+            
+            printf("<td>%s</td>", $row[1]);
+            printf("<td>%s</td>", $row[2]);
+            printf("<td>%s</td>", time2str($row[3]));
+            printf("<td>%s</td>", $status);
 
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
+            echo "<td>";
 
-	echo "<table border='0' class='table1'>\n";
-	echo "
-		<thead>
-				<tr>
-				<th colspan='12' align='left'>
-		<br/>
-	";
+            if ($row[1] == "Expiration") {        
+                $difference = datediff('d', $row[2], "$currdate", false);
+                if ($difference > 0)
+                    echo "<h100> " . " $difference days since expired" . "</h100> ";
+                else 
+                    echo substr($difference, 1) . " days until expiration";
+            } 
 
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
-	
-	echo " </th></tr>
-			</thead>
-	";
-
-	if ($orderType == "asc") {
-		$orderTypeNextPage = "desc";
-	} else  if ($orderType == "desc") {
-		$orderTypeNextPage = "asc";
-	}
-	
-	echo "<thread> <tr>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=username&orderType=$orderTypeNextPage\">
-		".t('all','Username')."</a>
-		</th>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
-		".t('all','Attribute')."</a>
-		</th>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=maxtimeexpiration&orderType=$orderTypeNextPage\">
-		".t('all','MaxTimeExpiration')."</a>
-		</th>
-		<th scope='col'>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=usedtime&orderType=$orderTypeNextPage\">
-		".t('all','UsedTime')."</a>
-		</th>
-		<th scope='col'> ".t('all','Status')." </th>
-		<th scope='col'> ".t('all','Usage')." </th>
-		</tr> </thread>";
-	
-	while($row = $res->fetchRow()) {
-		$status="Active";
-
-		if ($row[1] == "Expiration") {		
-			if (datediff('d', $row[2], "$currdate", false) > 0) {
-				$status = "Expired";
-			}
-		} 
+            if ($row[1] == "Max-All-Session") {        
+                if ($status == "End") {
+                    echo "<h100> " . abs($row[2] - $row[3]) . " seconds overdue credit" . "</h100>";
+                } else {
+                    echo $row[2] - $row[3];
+                    echo " left on credit";
+                }
+            } 
 
 
-		if ($row[1] == "Max-All-Session") {		
-			if ($row[3] >= $row[2]) {
-				$status = "End";
-			}
-		}
-
-                printqn("<tr>
-                        <td> <a class='tablenovisit' href='#'
-                                onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username=$row[0]\");return false;'
-                                tooltipText='
-                                        <a class=\"toolTip\" href=\"mng-edit.php?username=$row[0]\">
-                                                ".t('Tooltip','UserEdit')."</a>
-                                        <br/><br/>
-
-                                        <div id=\"divContainerUserInfo\">
-                                                Loading...
-                                        </div>
-                                        <br/>'
-                                >$row[0]</a>
-                        </td>
-
-                        <td> $row[1] </td>
-                        <td> $row[2] </td>
-                        <td>".time2str($row[3])."</td>
-                        <td> $status </td>
-			<td> ");
-
-		if ($row[1] == "Expiration") {		
-			$difference = datediff('d', $row[2], "$currdate", false);
-			if ($difference > 0)
-				echo "<h100> " . " $difference days since expired" . "</h100> ";
-			else 
-				echo substr($difference, 1) . " days until expiration";
-		} 
-
-		if ($row[1] == "Max-All-Session") {		
-			if ($status == "End") {
-				echo "<h100> " . abs($row[2] - $row[3]) . " seconds overdue credit" . "</h100>";
-			} else {
-				echo $row[2] - $row[3];
-				echo " left on credit";
-			}
-		} 
-
-
-		echo "	</td>
-                </tr>";
+            echo "</td>"
+               . "</tr>";
         }
 
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-        ";
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
+        echo '</tbody>';
+    
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 
-        echo "</table>";
+        echo '</table>';
+    } else {
+        $failureMsg = "Nothing to display";
+    }
+    
+    include_once("include/management/actionMessages.php");
+    
+    include('library/closedb.php');
 
-        include 'library/closedb.php';
+    include('include/config/logging.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-
-
-<?php
-	include('include/config/logging.php');
-?>
-				
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
-</div>
-</div>
-
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

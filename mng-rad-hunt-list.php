@@ -132,6 +132,7 @@
         
         <tbody>
 <?php
+        $li_style = 'margin: 7px auto';
         $count = 1;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
@@ -143,7 +144,6 @@
             
             list($id, $groupname, $nasipaddress, $nasportid) = $row;
             
-            $li_style = 'margin: 7px auto';
             $tooltipText = '<ul style="list-style-type: none">'
                          . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-hunt-edit.php?nasipaddress=%s&nasportid=%s">%s</a></li>',
                                    $li_style, urlencode($nasipaddress), urlencode($nasportid), t('Tooltip','EditHG'))
@@ -153,7 +153,7 @@
             
             $onclick = 'javascript:return false;';
             
-            $checkbox_value = sprint("%s||%s", $nasipaddress, $nasportid);
+            $checkbox_value = sprintf("%s||%s", $nasipaddress, $nasportid);
 ?>
             <tr>
                 <td>
@@ -190,27 +190,16 @@
         include_once("include/management/actionMessages.php");
     }
     
-    include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+        include('library/closedb.php');
+
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

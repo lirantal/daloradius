@@ -103,11 +103,9 @@
                     in_array($_GET['orderType'], array( "Any", "Access-Accept", "Access-Reject" )))
                  ? $_GET['radiusReply'] : "Any";
 
-?>        
-    <div id="contentnorightbar">
-
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+
 
     include('include/management/pages_common.php');
     include('library/opendb.php');
@@ -238,23 +236,7 @@
     }
     
     include('library/closedb.php');
-?>
-
-        </div><!-- #contentnorightbar -->
-                
-        <div id="footer">
-                
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->
-
-    </div>
-</div>
-
-</body>
-</html>

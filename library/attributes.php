@@ -68,7 +68,7 @@ function hashPasswordAttribute($attribute, $value) {
 //
 // returns an array of prepared attributes
 function handleAttributes($dbSocket, $subject, $skipList, $insert_only=true, $user_or_group='user') {
-    global $configValues, $valid_ops;
+    global $configValues, $valid_ops, $logDebugSQL;
     
     $param = (strtolower($user_or_group) == 'group') ? 'groupname' : 'username';
     $counter = 0;
@@ -136,9 +136,9 @@ function handleAttributes($dbSocket, $subject, $skipList, $insert_only=true, $us
         } else {
             // default: user
             $table = (preg_match("/reply$/i", $table))
-                   ? $configValues['CONFIG_DB_TBL_RADGROUPREPLY']
+                   ? $configValues['CONFIG_DB_TBL_RADREPLY']
                    // default: radcheck
-                   : $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
+                   : $configValues['CONFIG_DB_TBL_RADCHECK'];
         }
         
         // we have to prepare the "value".

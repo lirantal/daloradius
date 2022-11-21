@@ -42,21 +42,21 @@ if (!empty($username_enc)) {
     if (!empty($user_password_enc)) {
 
         $button_descriptors1[] = array( "onclick" => sprintf("self.location='config-maint-test-user.php?username=%s&password=%s'", $username_enc, $user_password_enc),
-                                        "type" => "button", "value" => 'Test Connectivity', );
+                                        "type" => "button", "value" => 'Test Connectivity', "name" => "test-connectivity-button" );
     }
     
     $button_descriptors1[] = array( "onclick" => sprintf("self.location='config-maint-disconnect-user.php?username=%s'", $username_enc),
-                                    "type" => "button", "value" => 'Disconnect User', );                                
+                                    "type" => "button", "value" => 'Disconnect User', "name" => "disconnect-user-button" );                                
     $button_descriptors1[] = array( "onclick" => sprintf("self.location='acct-maintenance-cleanup.php?username=%s'", $username_enc),
-                                    "type" => "button", "value" => 'Cleanup Stale Sessions', );
+                                    "type" => "button", "value" => 'Cleanup Stale Sessions', "name" => "cleanup-stale-sessions-button" );
     $button_descriptors1[] = array( "onclick" => sprintf("self.location='acct-username.php?username=%s'", $username_enc),
-                                    "type" => "button", "value" => 'Accounting', );
+                                    "type" => "button", "value" => 'Accounting', "name" => "accounting-button" );
     $button_descriptors1[] = array( "onclick" => sprintf("self.location='graphs-overall_logins.php?type=monthly&username=%s'", $username_enc),
-                                    "type" => "button", "value" => 'Graphs - Logins', );
+                                    "type" => "button", "value" => 'Graphs - Logins', "name" => "graphs-logins-button" );
     $button_descriptors1[] = array( "onclick" => sprintf("self.location='graphs-overall_download.php?type=monthly&username=%s'", $username_enc),
-                                    "type" => "button", "value" => 'Graphs - Downloads', );
+                                    "type" => "button", "value" => 'Graphs - Downloads', "name" => "graphs-downloads-button" );
     $button_descriptors1[] = array( "onclick" => sprintf("self.location='graphs-overall_upload.php?type=monthly&username=%s'", $username_enc),
-                                    "type" => "button", "value" => 'Graphs - Uploads', );
+                                    "type" => "button", "value" => 'Graphs - Uploads', "name" => "graphs-uploads-button" );
                                     
     foreach ($button_descriptors1 as $button_descriptor) {
         print_form_component($button_descriptor);

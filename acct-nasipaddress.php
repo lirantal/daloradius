@@ -20,27 +20,40 @@
  *
  *********************************************************************************************************
  */
- 
+
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-    
     include_once('library/config_read.php');
+
+    include("library/validation.php");
 
     // validate this parameter before including menu
     $onlyactive = (array_key_exists('only-active', $_GET) && isset($_GET['only-active']));
-
-    // this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
-    $ip_regex = '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/';
     
     // validate this parameter before including menu
     $nasipaddress = (array_key_exists('nasipaddress', $_GET) && isset($_GET['nasipaddress']) &&
-                  preg_match($ip_regex, $_GET['nasipaddress'], $m) !== false) ? $_GET['nasipaddress'] : "";
+                  preg_match(LOOSE_IP_REGEX, $_GET['nasipaddress'], $m) !== false) ? $_GET['nasipaddress'] : "";
     $nasipaddress_enc = (!empty($nasipaddress)) ? htmlspecialchars($nasipaddress, ENT_QUOTES, 'UTF-8') : "";
 
     //feed the sidebar variables
     $accounting_nasipaddress = $nasipaddress_enc;
+
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = sprintf("performed query for %s on page: ",
+                        ((!empty($nasipaddress)) ? "NAS IP address [$nasipaddress]" : "all NAS IP addresses"));
+    $logDebugSQL = "";
+    
+    include_once("lang/main.php");
+    
+    include("library/layout.php");
+    
+    $title = t('Intro','acctnasipaddress.php');
+    $help = t('helpPage','acctnasipaddress');
+    
+    print_html_prologue($title, $langCode);
 
     include("menu-accounting.php");
 
@@ -74,21 +87,9 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
-?>
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','acctnasipaddress.php') ?>
-                    <h144>&#x2754;</h144>
-                </a>
-            </h2>
 
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','acctnasipaddress') ?><br></div>
-            <br>
-
-
-
-<?php
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     // we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
     include('library/opendb.php');
@@ -221,30 +222,14 @@
     
     include('library/closedb.php');
 
-?>
-        </div>
-        
-        <div id="footer">
-        
-<?php
-    $log = "visited page: ";
-    $logQuery = sprintf("performed query for %s on page: ",
-                        ((!empty($nasipaddress)) ? "NAS IP address [$nasipaddress]" : "all NAS IP addresses"));
-
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div>
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>
