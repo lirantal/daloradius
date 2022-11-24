@@ -16,6 +16,7 @@
  *********************************************************************************************************
  *
  * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -38,6 +39,9 @@
     $log = "visited page: ";
     $logQuery = "performed query for batch [$batch_name] on page: ";
     $logDebugSQL = "";
+
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     include_once("lang/main.php");
     
@@ -82,23 +86,14 @@
 
     // print HTML prologue   
     $title = t('Intro','repbatchdetails.php');
+    $help = t('helpPage','repbatchdetails');
     
     print_html_prologue($title, $langCode);
 
     include ("menu-reports-batch.php");
-      
-?>    
-
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#"  onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','repbatchdetails.php'); ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','repbatchdetails') ?><br></div>
-
-<?php
+    
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -148,7 +143,7 @@
             <tr style="background-color: white">
                 <td style="text-align: right" colspan="<?= $colspan1 ?>">
                     <input class="button" type="button" value="Download Invoice"
-                        onclick="location.href='include/common/notificationsBatchDetails.php?batch_name=<?= urlencode($batch_name_enc) ?>&destination=download'">
+                        onclick="window.open('include/common/notificationsBatchDetails.php?batch_name=<?= urlencode($batch_name_enc) ?>&destination=download')">
                     <input class="button" type="button" value="Email Invoice to Business/Hotspot"
                         onclick="location.href='include/common/notificationsBatchDetails.php?batch_name=<?= urlencode($batch_name_enc) ?>&destination=email'">
                     <input class="button" type="button" value="CSV Export"
@@ -318,26 +313,14 @@
     
     include('library/closedb.php');
 
-?>
-
-</div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

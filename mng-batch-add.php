@@ -398,11 +398,11 @@
                     } // end for
                     
                     $form_id = "export-users-form";
-                    $exportForm .= sprintf('<form target="_blank" style="display: none" id="%s" ', $form_id)
+                    $exportForm .= sprintf('<form target="_blank" id="%s" ', $form_id)
                                  . 'method="POST">'
-                                 . sprintf('<input type="hidden" name="batch_name" value="%s">',
+                                 . sprintf('<input style="display: none" type="hidden" name="batch_name" value="%s">',
                                            htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8'))
-                                 . '<input type="hidden" name="type" value="batch">';
+                                 . '<input style="display: none" type="hidden" name="type" value="batch">';
                                  
                     if (!empty($planName)) {
                         $exportForm .= sprintf('<input type="hidden" name="plan" value="%s">',
@@ -412,30 +412,25 @@
                     for ($i = 0; $i < count($inserted_usernames); $i++) {
                         $u = $inserted_usernames[$i];
                         $p = $inserted_passwords[$i];
-                        $exportForm .= sprintf('<input type="hidden" name="accounts[%d][0]" value="%s">', $i, htmlspecialchars($u, ENT_QUOTES, 'UTF-8'))
-                                     . sprintf('<input type="hidden" name="accounts[%d][1]" value="%s">', $i, htmlspecialchars($p, ENT_QUOTES, 'UTF-8'));
+                        $exportForm .= sprintf('<input style="display: none" type="hidden" name="accounts[%d][0]" value="%s">', $i, htmlspecialchars($u, ENT_QUOTES, 'UTF-8'))
+                                     . sprintf('<input style="display: none" type="hidden" name="accounts[%d][1]" value="%s">', $i, htmlspecialchars($p, ENT_QUOTES, 'UTF-8'));
                     }
-                    $exportForm .= '</form>';
+                    
+                    
+                    $exportForm .= '<fieldset><label for="ticketInformation" class="form">Description</label>'
+                                 . '<textarea class="form" id="ticketInformation" name="ticketInformation">'
+                                 . 'to use this card, please connect your device to the nearest ssid.' . "\n"
+                                 . 'Open your web browser and enter each needed field.</textarea>';
+                    $exportForm .= '</fieldset></form>';
                     $onclick = "batch_export('include/common/fileExportCSV.php')";
-                    $exportForm .= sprintf('<input type="button" onclick="%s" value="CSV Download">', $onclick);
+                    $exportForm .= sprintf('<input style="margin: 10px" type="button" onclick="%s" value="CSV Download">', $onclick);
                     $onclick = "batch_export('include/common/printTickets.php')";
-                    $exportForm .= sprintf('<input type="button" onclick="%s" value="Printable Tickets">', $onclick);
+                    $exportForm .= sprintf('<input style="margin: 10px" type="button" onclick="%s" value="Printable Tickets">', $onclick);
                             
-                            // if batch_history record was created successfuly
-                            //~ if ($sql_batch_id != 0) {
-                                //~ // remove the last || chars to sanitize it for proper format
-                                //~ $exportCSV = substr($exportCSV, 0, -2);
-                                //~ $successMsg = "Exported Usernames - ".
-                                                    //~ "<a href='include/common/fileExportCSV.php?csv_output=$exportCSV'>download</a><br/>".
-                                                //~ "Printable Tickets - ".
-                                                    //~ "<a href='include/common/printTickets.php?type=batch&plan=$planName&accounts=$exportCSV'>view</a><br/>".
-                                                //~ "Added to database new user(s): <b> $actionMsgGoodUsernames </b><br/>";
                     $successMsg = sprintf("Created %d user(s) (batch name: <strong>%s</strong>)", count($inserted_usernames)-1, $batch_name);
                     $logAction .= sprintf("Successfully added to database new users [%s] with prefix [%s] on page: ",
                                           implode(", ", $inserted_usernames), $username_prefix);
-                            //~ }
-                
-                
+
                 } else {// $number > 0
                     $failureMsg = "specify a valid number of accounts";
                     $logAction = "specified an invalid number of accounts on page: ";

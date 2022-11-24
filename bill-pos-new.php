@@ -43,13 +43,14 @@
         strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
         $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
     }
+    $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
+                     in_array($_POST['passwordType'], $valid_passwordTypes)) ? $_POST['passwordType'] : "";
+
 
     isset($_POST['username']) ? $username = $_POST['username'] : $username = "";
     isset($_POST['password']) ? $password = $_POST['password'] : $password = "";
     isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
     isset($_POST['profiles']) ? $profiles = $_POST['profiles'] : $profiles = "";
-    $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
-                         in_array($_POST['passwordType'], $valid_passwordTypes)) ? $_POST['passwordType'] : "";
     isset($_POST['notificationWelcome']) ? $notificationWelcome = $_POST['notificationWelcome'] : $notificationWelcome = "";
     
 
