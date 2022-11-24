@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,353 +15,263 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-  include ("library/checklogin.php");
-  $operator = $_SESSION['operator_user'];
-
-	require_once(dirname(__FILE__)."/../../notifications/processNotificationBatchDetails.php");
-	require_once(dirname(__FILE__)."/../../library/config_read.php");
-
-	isset($_GET['batch_name']) ? $batch_name = $_GET['batch_name'] : $batch_name = "";
-	isset($_GET['destination']) ? $destination = $_GET['destination'] : $destination = "download";
-
-	if ($batch_name != "") {
-		$customerInfo = @getBatchDetails($batch_name);
-
-		$smtpInfo['host'] = $configValues['CONFIG_MAIL_SMTPADDR'];
-		$smtpInfo['port'] = $configValues['CONFIG_MAIL_SMTPPORT'];
-		$smtpInfo['auth'] = $configValues['CONFIG_MAIL_SMTPAUTH'];
-		$from = $configValues['CONFIG_MAIL_SMTPFROM'];
-
-		$pdfDocument = @createBatchDetailsNotification($customerInfo);
-
-		if ($destination == "download") {
-
-			header("Content-type: application/pdf");
-			header("Content-Disposition: attachment; filename=batch_notification_invoice_" . date("Ymd") . ".pdf; size=" . strlen($pdfDocument));
-			print $pdfDocument;
-
-		} else if ($destination == "email") {
-
-			@emailNotification($pdfDocument, $customerInfo, $smtpInfo, $from);
-			header("Location: ".$_SERVER['HTTP_REFERER']);
-		}
-
-	}
-
-
-	function getBatchDetails($batch_name = NULL) {
-
-		require(dirname(__FILE__)."/../../library/opendb.php");
-		require_once(dirname(__FILE__)."/../../lang/main.php");
-
-		global $configValues;
-
-		if ($batch_name == NULL || empty($batch_name))
-			exit;
-
-
-
-		$tableTags = "width='580px' ";
-		$tableTrTags = "bgcolor='#ECE5B6'";
-
-		$customerInfo = array();
-
-		$sql = "SELECT ".
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id,".
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name,".
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_description,".
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_status,".
-
-			"COUNT(DISTINCT(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id)) as total_users,".
-			"COUNT(DISTINCT(".$configValues['CONFIG_DB_TBL_RADACCT'].".username)) as active_users,".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname,".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".plancost,".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".plancurrency,".
-			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as HotspotName,".
-
-
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".creationdate,".
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".creationby,".
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".updatedate,".
-			$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".updateby ".
-			" FROM ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id = ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id) ".
-
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname = ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname) ".
-
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".hotspot_id = ".
-			$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".id) ".
-
-			" LEFT JOIN ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			" ON ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".username = ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username) ".
-
-			" WHERE ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name = '".$dbSocket->escapeSimple($batch_name)."' ".
-			" GROUP by ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name ";
-
-		$res = $dbSocket->query($sql);
-
-		$batch_details = "";
-
-		$batch_details .= "<table $tableTags><tr $tableTrTags>
-					<td>
-			".t('all','BatchName')."
-			</td>
-
-			<td>
-			".t('all','HotSpot')."
-			</td>
-
-			<td>
-			".t('all','BatchStatus')."
-			</td>
-
-			<td>
-			".t('all','TotalUsers')."
-			</td>
-
-			<td>
-			".t('all','ActiveUsers')."
-			</td>
-
-			<td>
-			".t('all','PlanName')."
-			</td>
-
-			<td>
-			".t('all','PlanCost')."
-			</td>
-
-			<td>
-			".t('all','BatchCost')."
-			</td>
-
-			<td>
-			".t('all','CreationDate')."
-			</td>
-
-			<td>
-			".t('all','CreationBy')."
-			</td>
-
-			</tr>";
-
-		$active_users_per = 0;
-		$total_users = 0;
-		$active_users = 0;
-		$batch_cost = 0;
-
-		$hotspot_name = "";
-		$batch_id = "";
-		$planname = "";
-
-		while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-
-			$batch_id = $row['id'];
-			$hotspot_name = $row['HotspotName'];
-			$batch_status = $row['batch_status'];
-			$plancost = $row['plancost'];
-			$total_users = $row['total_users'];
-			$active_users = $row['active_users'];
-			$batch_cost = ($active_users * $plancost);
-			$plan_currency = $row['plancurrency'];
-			$planname = $row['planname'];
-
-
-			$batch_details .= "
-					<tr>
-
-					<td>".$row['batch_name']."
-
-					</td>
-
-					<td>".$hotspot_name."
-
-					</td>
-
-					<td>".$batch_status."
-
-					</td>
-
-					<td>".$total_users."
-
-					</td>
-
-					<td>".$active_users."
-
-					</td>
-
-					<td>".
-						$row['planname']."
-					</td>
-
-					<td>".$plancost."
-					</td>
-
-					<td>".$batch_cost."
-					</td>
-
-					<td>".
-						$row['creationdate']."
-					</td>
-
-					<td>".
-						$row['creationby']."
-					</td>
-
-				</tr>
-			";
-
-
-
-		}
-
-		$batch_details .= "</table>";
-
-		$customerInfo['batch_details'] = $batch_details;
-
-
-
-
-
-
-
-
-
-
-		$sql = "SELECT planId, planName, planRecurringPeriod, planCost, planSetupCost, planTax, planCurrency FROM ".
-				$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-				" WHERE planName = '".$planname."'";
-		$res = $dbSocket->query($sql);
-		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-		$service_plan_info = "";
-		$service_plan_info = "<table $tableTags>";
-
-		foreach($row as $rowName => $rowValue) {
-
-			$service_plan_info .= "<tr $tableTrTags'>
-						<td>$rowName</td>
-						<td>$rowValue</td>
-						</tr>";
-
-		}
-
-		$service_plan_info .= "</table>";
-		$customerInfo['service_plan_info'] = $service_plan_info;
-
-
-		$sql = "SELECT id, name, owner, address, companyphone, companyemail, companywebsite FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-					" WHERE name='".$hotspot_name."'";
-		$res = $dbSocket->query($sql);
-		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-		$customerInfo['business_name'] = $row['name'];
-		$customerInfo['business_owner_name'] = $row['owner'];
-		$customerInfo['business_address'] = $row['address'];
-		$customerInfo['business_phone'] = $row['companyphone'];
-		$customerInfo['business_email'] = $row['companyemail'];
-		$customerInfo['business_web'] = $row['companywebsite'];
-
-
-
-
-
-
-		$batch_active_users = "";
-
-		$sql = "SELECT ".
-				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".id,".
-				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username,".
-				$configValues['CONFIG_DB_TBL_RADACCT'].".acctstarttime,".
-				$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name ".
-
-				" FROM ".
-				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].",".
-				$configValues['CONFIG_DB_TBL_RADACCT'].",".
-				$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
-
-				" WHERE ".
-				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = ".
-				$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id".
-				" AND ".
-				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = '$batch_id' ".
-				" AND ".
-				$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".
-				$configValues['CONFIG_DB_TBL_RADACCT'].".username".
-
-				" GROUP by ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ".
-				" ORDER BY id ,".$configValues['CONFIG_DB_TBL_RADACCT'].".radacctid ASC ";
-
-		$res = $dbSocket->query($sql);
-
-		$batch_active_users = "<table $tableTags><tr $tableTrTags'>
-			<td>
-			".t('all','BatchName')."
-			</td>
-
-			<td>
-			".t('all','Username')."
-			</td>
-
-			<td>
-			".t('all','StartTime')."
-			</td>
-
-			</tr>";
-
-
-		$active_users_per = 0;
-		$total_users = 0;
-		$active_users = 0;
-		$batch_cost = 0;
-		while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-
-			$username = $row['username'];
-			$acctstarttime = $row['acctstarttime'];
-			$batch_name = $row['batch_name'];
-
-			$batch_active_users .= "
-					<tr>
-
-					<td>".$batch_name."
-					</td>
-
-					<td>".$username."
-					</td>
-
-					<td>".$acctstarttime."
-					</td>
-
-				</tr>
-			";
-
-		}
-
-
-		$batch_active_users .= "</table>";
-		$customerInfo['batch_active_users'] = $batch_active_users;
-
-
-		require(dirname(__FILE__)."/../../library/closedb.php");
-
-		return $customerInfo;
-
-
-	}
+    include("../../library/checklogin.php");
+    $operator = $_SESSION['operator_user'];
+
+    $batch_name = (array_key_exists('batch_name', $_GET) && !empty(str_replace("%", "", trim($_GET['batch_name']))))
+                ? str_replace("%", "", trim($_GET['batch_name'])) : "";
+
+    $destination = (array_key_exists('destination', $_GET) && !empty(trim($_GET['destination'])) &&
+                    in_array(strtolower(trim($_GET['destination'])), array( "download", "email" )))
+                 ? strtolower($_GET['destination']) : "download";
+
+    if (empty($batch_name)) {
+        die("you should provide a valid batch name");
+    }
+    
+    include_once("../../notifications/processNotificationBatchDetails.php");
+    include_once("../../library/config_read.php");
+    
+    
+    function getBatchDetails($batch_name = NULL) {
+        global $configValues;
+
+        if ($batch_name == NULL || empty(trim($batch_name))) {
+            return false;
+        }
+
+        include("../../library/opendb.php");
+        include_once("../../lang/main.php");
+
+        $tableTags = 'style="width: 580px"';
+        $tableTrTags = 'style="background-color: #ECE5B6"';
+
+        $customerInfo = array();
+
+        $ths = array(
+                        t('all','BatchName'),
+                        t('all','HotSpot'),
+                        t('all','BatchStatus'),
+                        t('all','TotalUsers'),
+                        t('all','ActiveUsers'),
+                        t('all','PlanName'),
+                        t('all','PlanCost'),
+                        t('all','BatchCost'),
+                        t('all','CreationDate'),
+                        t('all','CreationBy'),
+                    );
+
+        // start filling in batch details
+        $batch_details = "<table $tableTags><tr $tableTrTags>";
+        
+        foreach ($ths as $th) {
+            $batch_details .= sprintf("<th>%s</th>", $th);
+        }
+        
+        $batch_details .= "</tr>";
+
+        $sql = sprintf("SELECT dbh.id AS batch_id, dbh.batch_name, dbh.batch_description, dbh.batch_status,
+                               COUNT(DISTINCT(ubi.id)) AS total_users, COUNT(DISTINCT(ra.username)) AS active_users,
+                               ubi.planname, dbp.plancost, dbp.plancurrency, dhs.name AS hotspot_name,
+                               dbh.creationdate, dbh.creationby, dbh.updatedate, dbh.updateby
+                          FROM %s AS dbh LEFT JOIN %s AS ubi ON dbh.id=ubi.batch_id
+                                        LEFT JOIN %s AS dbp ON dbp.planname=ubi.planname
+                                        LEFT JOIN %s AS dhs ON dbh.hotspot_id=dhs.id
+                                        LEFT JOIN %s AS ra ON ra.username=ubi.username
+                         WHERE dbh.batch_name='%s'
+                         GROUP BY dbh.batch_name", $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
+                                                   $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
+                                                   $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                                                   $configValues['CONFIG_DB_TBL_RADACCT'],
+                                                   $dbSocket->escapeSimple($batch_name));
+        $res = $dbSocket->query($sql);
+
+        
+        $active_users_per = 0;
+        $total_users = 0;
+        $active_users = 0;
+        $batch_cost = 0;
+
+        $hotspot_name = "";
+        $batch_id = "";
+        $planname = "";
+
+        while($row = $res->fetchRow()) {
+
+            foreach ($row as $i => $value) {
+                $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            }
+
+            list(
+                    $batch_id, $batch_name, $batch_description, $batch_status, $total_users, $active_users, $planname,
+                    $plancost, $plancurrency, $hotspot_name, $creationdate, $creationby, $updatedate, $updateby
+                ) = $row;
+
+            
+            $batch_cost = (intval($active_users) * intval($plancost));
+
+            $tds = array(
+                            $batch_name,
+                            $hotspot_name,
+                            $batch_status,
+                            $total_users,
+                            $active_users,
+                            $planname,
+                            $plancost,
+                            $batch_cost,
+                            $creationdate,
+                            $creationby
+                        );
+                        
+            $batch_details .= "<tr>";
+            foreach ($tds as $td) {
+                $batch_details .= sprintf("<td>%s</td>", $td);
+            }
+            $batch_details .= "</tr>";
+
+        }
+
+        $batch_details .= "</table>";
+
+        $customerInfo['batch_details'] = $batch_details;
+
+
+        // filling in plan info
+        if (!empty($planname)) {
+        
+            $sql = sprintf("SELECT planId, planName, planRecurringPeriod, planCost, planSetupCost, planTax, planCurrency
+                              FROM %s WHERE planName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
+                                                            $dbSocket->escapeSimple($planname));
+            $res = $dbSocket->query($sql);
+            $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+            
+            echo $sql;
+            echo $row;
+            exit;
+
+            $service_plan_info = "<table $tableTags>";
+
+            foreach ($row as $rowName => $rowValue) {
+                $rowName = htmlspecialchars($rowName, ENT_QUOTES, 'UTF-8');
+                $rowValue = htmlspecialchars($rowValue, ENT_QUOTES, 'UTF-8');
+
+                $service_plan_info .= "<tr $tableTrTags>"
+                                    . sprintf("<th>%s</th>", $rowName)
+                                    . sprintf("<td>%s</td>", $rowValue)
+                                    . "</tr>";
+            }
+
+            $service_plan_info .= "</table>";
+            $customerInfo['service_plan_info'] = $service_plan_info;
+        }
+
+        // filling in business info
+        if (!empty($hotspot_name)) {
+            $sql = sprintf("SELECT id, name, owner, address, companyphone, companyemail, companywebsite
+                              FROM %s WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                                                        $dbSocket->escapeSimple($hotspot_name));
+            $res = $dbSocket->query($sql);
+            $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+
+            $customerInfo['business_name'] = $row['name'];
+            $customerInfo['business_owner_name'] = $row['owner'];
+            $customerInfo['business_address'] = $row['address'];
+            $customerInfo['business_phone'] = $row['companyphone'];
+            $customerInfo['business_email'] = $row['companyemail'];
+            $customerInfo['business_web'] = $row['companywebsite'];
+        }
+
+        // active users details
+        $sql = sprintf("SELECT ubi.id, ubi.username, ra.acctstarttime, dbh.batch_name
+                          FROM %s AS ubi, %s AS ra, %s AS dbh
+                         WHERE ubi.batch_id=dbh.id
+                           AND ubi.batch_id='%s'
+                           AND ubi.username=ra.username
+                         GROUP BY ubi.username
+                         ORDER BY id, ra.radacctid ASC", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                                         $configValues['CONFIG_DB_TBL_RADACCT'],
+                                                         $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
+                                                         $dbSocket->escapeSimple($batch_id));
+        $res = $dbSocket->query($sql);
+
+        $ths = array(
+                        t('all','BatchName'),
+                        t('all','Username'),
+                        t('all','StartTime'),
+                    );
+
+        $batch_active_users = "<table $tableTags><tr $tableTrTags>";
+        foreach ($ths as $th) {
+            $batch_active_users .= sprintf("<th>%s</th>", $th);
+        }
+        $batch_active_users .= "</tr>";
+        
+        $active_users_per = 0;
+        $total_users = 0;
+        $active_users = 0;
+        $batch_cost = 0;
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            foreach ($row as $i => $value) {
+                $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            }
+
+            list($id, $username, $acctstarttime, $batch_name) = $row;
+
+            $tds = array( $username, $acctstarttime, $batch_name );
+
+            $batch_active_users .= "<tr>";
+            foreach ($tds as $td) {
+                $batch_active_users .= sprintf("<td>%s</td>", $td);
+            }
+            $batch_active_users .= "</tr>";
+        }
+        
+        $batch_active_users .= "</table>";
+        $customerInfo['batch_active_users'] = $batch_active_users;
+
+
+        require("../../library/closedb.php");
+
+        return $customerInfo;
+    }
+    
+    $customerInfo = getBatchDetails($batch_name);
+    
+    if ($customerInfo === false) {
+        die("error when loading batch details");
+    }
+
+    $smtpInfo['host'] = $configValues['CONFIG_MAIL_SMTPADDR'];
+    $smtpInfo['port'] = $configValues['CONFIG_MAIL_SMTPPORT'];
+    $smtpInfo['auth'] = $configValues['CONFIG_MAIL_SMTPAUTH'];
+    $from = $configValues['CONFIG_MAIL_SMTPFROM'];
+
+    $pdfDocument = @createBatchDetailsNotification($customerInfo);
+
+    if ($destination == "download") {
+        $filename = sprintf('batch_notification_invoice_%s.pdf', date("Ymd"));
+        $size = strlen($pdfDocument);
+        
+        header("Content-type: application/pdf");
+        header(sprintf("Content-Disposition: attachment; filename=%s; size=%d", $filename, $size));
+        print $pdfDocument;
+        
+    } else if ($destination == "email") {
+        
+        @emailNotification($pdfDocument, $customerInfo, $smtpInfo, $from);
+        
+        $redirect = (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE'])))
+                  ? trim($_SESSION['PREV_LIST_PAGE']) : "/mng-batch.php";
+        header("Location: " . $redirect);
+        
+    }
+    
 
 ?>
