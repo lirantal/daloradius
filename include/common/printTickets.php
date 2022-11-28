@@ -145,8 +145,7 @@
 
 }
 
-    $ticketInformation = "Information: To use this card, please connect your device to the nearest ssid."
-                       . "<br>"
+    $ticketInformation = "<strong>Information</strong>:<br>to use this card, please connect your device to the nearest ssid."
                        . "Open your web browser and enter each needed field.";
     $ticketLogoFile = "/images/daloradius_small.png";
 
@@ -155,16 +154,22 @@
         if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts']) &&
             array_key_exists('type', $_POST) && $_POST['type'] == "batch") {
             
+            $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])))
+                        ? htmlspecialchars(trim($_POST['batch_name']), ENT_QUOTES, 'UTF-8') : "";
+            
             $accounts = $_POST['accounts'];
             
             if (array_key_exists('ticketInformation', $_POST) && !empty(trim($_POST['ticketInformation']))) {
-                $ticketInformation = htmlspecialchars(trim($_POST['ticketInformation']), ENT_QUOTES, 'UTF-8');
+                $ticketInformation = "<strong>Information</strong>:<br>" . htmlspecialchars(trim($_POST['ticketInformation']), ENT_QUOTES, 'UTF-8');
                 $ticketInformation = str_replace("\n", "<br>", $ticketInformation);
             }
             
             $plan = (array_key_exists('plan', $_POST) && !empty(trim($_POST['plan'])))
                   ? trim($_POST['plan']) : "";
-                  
+            
+            $ticketCost = "";
+            $ticketTime = "";
+            
             if (!empty($plan)) {
                 include_once('../../library/opendb.php');
                 include_once('../management/pages_common.php');
@@ -179,8 +184,17 @@
                 $ticketTime = time2str($ticketTime);
 
                 include_once('../../library/closedb.php');
-            } else {
-                $ticketCost = $ticketTime = $ticketCurrency = "(n/a)";
+            }
+            
+            $card_body_height = 10;
+            $card_foot_height = 30;
+            if (!empty($ticketCost)) {
+                $card_foot_height -= 5;
+                $card_body_height += 5;
+            }
+            if (!empty($ticketTime)) {
+                $card_foot_height -= 5;
+                $card_body_height += 5;
             }
             
 ?>
@@ -188,9 +202,19 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>untitled</title>
+        <title><?= (!empty($batch_name)) ? $batch_name : "user cards" ?></title>
         
         <style>
+
+@page {
+    size: 21cm 29.7cm;
+    margin: 0;
+}
+
+body {
+    font-family: Tahoma;
+    padding: 1cm;
+}
 
 .container:first-child .card {
     border-top: 1px dotted gray;
@@ -229,8 +253,8 @@
 }
 
 .card-body {
-    height: 18mm;
-    width: 100%;
+    height: <?= $card_body_height ?>mm;
+    width: 42mm;
     margin: 0;
     padding: 1mm;
 }
@@ -240,24 +264,39 @@
     margin: 0;
     width: 100%;
     text-align: center;
-    font-size: 9pt;
+    font-size: 8pt;
     padding: 0;
 }
 
-.card-foot {
-    height: 24mm;
+.card-body table tr {
+    border: 0;
+    margin: 0;
     width: 100%;
+    height: 5mm;
+    padding: 0;
+}
+
+.card-body table th {
+    text-align: right;
+}
+
+.card-body table td {
+    text-align: left;
+}
+
+.card-foot {
+    height: <?= $card_foot_height ?>mm;
     margin: 0;
 }
 
 .card-foot p {
     margin: 0;
-    padding: 2mm;
-    font-size: 7pt;
+    width: 42mm;
+    padding: 1mm;
+    font-size: 8pt;
     font-weight: normal;
     text-align: justify;
 }
-
 
 .container {
     text-align: center;
@@ -291,27 +330,29 @@
                 echo '</div><div class="container">';
             }
             
+            $trs = array(
+                            "User" => $username,
+                            "Pass" => $password
+                        );
+            
+            if (!empty($ticketTime)) {
+                $trs["Validity"] = $ticketTime;
+            }
+            
+            if (!empty($ticketCost)) {
+                $trs["Price"] = $ticketCost;
+            }
+            
             echo '<div class="card">';
             printf('<div class="card-head"><img src="%s"></div>', $ticketLogoFile); 
             echo '<div class="card-body">'
-               . '<table>'
-               . '<tr>'
-               . '<th>Login</th>';
-            printf('<td>%s</td>', htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
-            echo '</tr>'
-               . '<tr>'
-               . '<th>Password</th>';
-            printf('<td>%s</td>', htmlspecialchars($password, ENT_QUOTES, 'UTF-8'));
-            echo '</tr>'
-               . '<tr>'
-               . '<th>Validity</th>';
-            printf('<td>%s</td>', htmlspecialchars($ticketTime, ENT_QUOTES, 'UTF-8'));
-            echo '</tr>'
-               . '<tr>'
-               . '<th>Price</th>';
-            printf('<td>%s</td>', htmlspecialchars($ticketCost, ENT_QUOTES, 'UTF-8'));
-            echo '</tr>'
-               . '</table>'
+               . '<table>';
+
+            foreach ($trs as $label => $value) {
+                printf('<tr><th>%s:</th><td>%s</td></tr>', $label, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+            }
+
+            echo '</table>'
                . '</div>'
                . '<div class="card-foot">';
             printf('<p>%s</p>', $ticketInformation);

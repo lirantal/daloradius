@@ -50,6 +50,16 @@
                   ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8')
                   : "";
 
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for ";
+    if (!empty($username)) {
+         $logQuery .= "username(s) starting with [$username] ";
+    } else {
+        $logQuery .= "all usernames ";
+    }
+    $logQuery .= "on page: ";
+
     //feed the sidebar variables
     $search_username = $username_enc;
 
@@ -142,9 +152,13 @@
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = (!empty($username_enc) ? "&usernameOnline=" . urlencode($username_enc) : "");
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-del.php";
 ?>
         
-<form name="searchusers" method="GET" action="mng-del.php">
+<form name="searchusers" method="POST" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
             <tr style="background-color: white">
@@ -164,7 +178,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('username[]', 'mng-del.php', 'searchusers');
+        printTableFormControls('username[]', $action, 'searchusers');
 ?>
                 </th>
             </tr>
@@ -235,6 +249,9 @@
 ?>
 
     </table>
+    
+    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+    
 </form>
 
 <?php
@@ -244,38 +261,15 @@
     }
     
     include('library/closedb.php');
-?>
-
-        </div><!-- #contentnorightbar -->
-
-        <div id="footer">
-
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for ";
-    if (!empty($username)) {
-         $logQuery .= "username(s) starting with [$username] ";
-    } else {
-        $logQuery .= "all usernames ";
-    }
-    $logQuery .= "on page: ";
 
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-
-
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

@@ -189,7 +189,7 @@
         // printTableFormControls function parameter
         $action = "mng-del.php";
 ?>
-<form name="listall" method="GET" action="<?= $action ?>">
+<form name="listall" method="POST" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
             <tr style="background-color: white">
@@ -301,6 +301,9 @@
 ?>
 
     </table>
+    
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+    
 </form>    
 
 <?php

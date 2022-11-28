@@ -120,6 +120,8 @@
 
     <tbody>
 <?php
+            $csrf_token = dalo_csrf_token();
+
             while ($row = $res->fetchRow()) {
                 $rowlen = count($row);
                 
@@ -129,8 +131,17 @@
                 }
                 
                 $this_username = htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8');
-                printf('<td><a href="mng-edit.php?username=%s">%s</a>&nbsp;<a href="mng-del.php?username=%s">%s</a></td>',
-                       urlencode($this_username), t('all','edit'), urlencode($this_username), t('all','del'));
+                echo '<td>';
+                $formId = $this_username . "-form-del";
+                printf('<form id="%s" style="display: none" method="POST" action="mng-del.php">', $formId);
+                printf('<input type="hidden" name="username[]" value="%s">', $this_username);
+                printf('<input type="hidden" name="csrf_token" value="%s">', $csrf_token);
+                echo '</form>';
+                
+                $onclick = sprintf("document.getElementById('%s').submit()", $formId);
+                printf('<a href="mng-edit.php?username=%s">%s</a>&nbsp;<a href="#" onclick="%s">%s</a>',
+                       urlencode($this_username), t('all','edit'), $onclick, t('all','del'));
+                echo '</td>';
                 echo "</tr>";
             }
 ?>
