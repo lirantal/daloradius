@@ -33,9 +33,15 @@ if (strpos($_SERVER['PHP_SELF'], '/library/checklogin.php') !== false) {
 include('sessions.php');
 dalo_session_start();
 
+
 if (!array_key_exists('daloradius_logged_in', $_SESSION) || $_SESSION['daloradius_logged_in'] !== true) {
     $_SESSION['daloradius_logged_in'] = false;
-    header('Location: /login.php');
+
+    // implement a sort of "dynamic redirect finder" based on the number of "/" in the PHP_SELF value
+    $count = substr_count($_SERVER['PHP_SELF'], "/", 1);
+    $location = str_repeat("../", $count) . "login.php";
+
+    header("Location: " . $location);
     exit;
 }
 
