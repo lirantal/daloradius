@@ -32,166 +32,198 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
-    isset($_GET['attribute']) ? $attribute = $_GET['attribute'] : $attribute = "";
-    isset($_GET['tablename']) ? $tablename = $_GET['tablename'] : $tablename = "";
-    isset($_GET['delradacct']) ? $delradacct = $_GET['delradacct'] : $delradacct = "";
-    isset($_GET['clearSessionsUsers']) ? $clearSessionsUsers = $_GET['clearSessionsUsers'] : $clearSessionsUsers = "";
+    $valid_tablenames = array(
+                                $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                $configValues['CONFIG_DB_TBL_RADREPLY'],
+                                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
+                                $configValues['CONFIG_DB_TBL_RADGROUPCHECK']
+                             );
 
-    $logAction = "";
-    $logDebugSQL = "";
+    include('library/opendb.php');
 
-    $showRemoveDiv = "block";
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+                
+            $id__attribute = (array_key_exists('attribute', $_POST) && !empty(trim($_POST['attribute'])) &&
+                              preg_match("/__/", trim($_POST['attribute'])) !== false) ? trim($_POST['attribute']) : "";
+            
+            $tablename = (!empty($id__attribute) && array_key_exists('tablename', $_POST) &&
+                          !empty(trim($_POST['tablename'])) && in_array(trim($_POST['tablename']), $valid_tablenames))
+                       ? trim($_POST['tablename']) : "";
 
-    if ( (isset($_GET['username'])) && (!(isset($_GET['attribute']))) && (!(isset($_GET['tablename']))) ) {
+            $delradacct = (array_key_exists('delradacct', $_POST) && strtolower(trim($_POST['delradacct'])) == 'yes');
 
-        $allUsernames = "";
-        $isSuccessful = 0;
 
-        /* since the foreach loop will report an error/notice of undefined variable $value because
-           it is possible that the $username is not an array, but rather a simple GET request
-           with just some value, in this case we check if it's not an array and convert it to one with
-           a NULL 2nd element
-        */
-        if (!is_array($username))
-            $username = array($username, NULL);
-
-        foreach ($username as $variable=>$value) {
-
-            if (trim($variable) != "") {
-
-                $username = $value;
-                $allUsernames .= $username . ", ";
-
-                include 'library/opendb.php';
-
-                // setting table-related parameters first
-                switch($configValues['FREERADIUS_VERSION']) {
-                    case '1' :
-                        $tableSetting['postauth']['user'] = 'user';
-                        $tableSetting['postauth']['date'] = 'date';
-                        break;
-                    case '2' :
-                        // down
-                    case '3' :
-                        // down
-                    default  :
-                        $tableSetting['postauth']['user'] = 'username';
-                        $tableSetting['postauth']['date'] = 'authdate';
-                        break;
+            // validate values
+            $usernames = array();
+            
+            if (array_key_exists('username', $_POST) && !empty($_POST['username'])) {
+                
+                $tmp = (!is_array($_POST['username'])) ? array($_POST['username']) : $_POST['username'];
+                foreach ($tmp as $value) {
+                    
+                    $value = trim(str_replace("%", "", $value));
+                    
+                    if (!in_array($value, $usernames)) {
+                        $usernames[] = $value;
+                    }
                 }
+                
+                if (count($usernames) > 0) {
+                
+                    if (!empty($id__attribute) && !empty($tablename)) {
+                        
+                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE username='%s'",
+                                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($usernames[0]));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                        
+                        $check_attr_count = intval($res->fetchrow()[0]);
+                        
+                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE username='%s' AND attribute='Auth-Type' OR attribute LIKE '%%-Password'",
+                                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($usernames[0]));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                        
+                        $check_auth_attr_count = intval($res->fetchrow()[0]);
+                        
+                        list($columnId, $attribute) = explode("__", $id__attribute);
+                        $attribute = trim($attribute);
+                        $columnId = intval(trim($columnId));
+                        
+                        if ($tablename == 'radcheck' && $check_attr_count == 1 ||
+                            (($attribute == 'Auth-Type' || preg_match("/-Password$/", $attribute) !== false) && $check_auth_attr_count == 1)) {
+                            // if operator wants to remove the last check attribute
+                            // or the last "password-like" check attribute
+                            // they should delete all user related info stored in the db
+                            
+                            $format = "Cannot delete the last check (password like?) attribute for the selected user (<strong>%s</strong>)";
+                            $failureMsg = sprintf($format,
+                                                  htmlspecialchars($usernames[0], ENT_QUOTES, 'UTF-8'));
+                            $logAction = sprintf("$format on page: ", $username[0]);
+                        } else {
+                        
+                            $sql = sprintf("DELETE FROM %s WHERE username='%s' AND attribute='%s' AND id=%s",
+                                           $dbSocket->escapeSimple($tablename), $dbSocket->escapeSimple($usernames[0]),
+                                           $dbSocket->escapeSimple($attribute), $dbSocket->escapeSimple($columnId));
+                            $res = $dbSocket->query($sql);
+                            $logDebugSQL .= "$sql;\n";
+                            
+                            $format = "Deleted attribute <strong>%s</strong> for user <strong>%s</strong>";
+                            $successMsg = sprintf($format, htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8'),
+                                                           htmlspecialchars($usernames[0], ENT_QUOTES, 'UTF-8'));
+                            $logAction = sprintf("$format on page: ", $attribute, $usernames[0]);
+                        }
+                    } else {
+                        $dbusers = array();
+                        
+                        foreach ($usernames as $u) {
+                            if (!empty($dbSocket->escapeSimple($u))) {
+                                $dbusers[] = $dbSocket->escapeSimple($u);
+                            }
+                        }
+                        
+                        $dbusersLen = count($dbusers);
+                        if ($dbusersLen > 0) {
+                            // setting table-related parameters first                
+                            switch($configValues['FREERADIUS_VERSION']) {
+                                case '1' :
+                                    $tableSetting['postauth']['user'] = 'user';
+                                    $tableSetting['postauth']['date'] = 'date';
+                                    break;
+                                case '2' :
+                                    // down
+                                case '3' :
+                                    // down
+                                default  :
+                                    $tableSetting['postauth']['user'] = 'username';
+                                    $tableSetting['postauth']['date'] = 'authdate';
+                                    break;
+                            }
+                            
+                            $sql_format = "DELETE FROM %s WHERE %s IN ('" . implode("', '", $dbusers) . "')";
+                            
+                            $sql = sprintf($sql_format, $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
+                                                        $tableSetting['postauth']['user']);
+                            $res = $dbSocket->query($sql);
+                            $logDebugSQL .= "$sql;\n";
+                            
+                            $tables = array(
+                                                $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                                $configValues['CONFIG_DB_TBL_RADREPLY'],
+                                                $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                                $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                                $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                           );
 
-                // delete all attributes associated with a username
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADPOSTAUTH']." WHERE ".
-                    $tableSetting['postauth']['user']."='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                if (strtolower($delradacct) == "yes") {
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
+                            if ($delradacct) {
+                                $tables[] = $configValues['CONFIG_DB_TBL_RADACCT'];
+                            }
+                            
+                            foreach ($tables as $table) {
+                                $sql = sprintf($sql_format, $table, 'username');
+                                $res = $dbSocket->query($sql);
+                                $logDebugSQL .= "$sql;\n";
+                            }
+                            
+                            $format = "<strong>%d user(s)</strong> have been deleted";
+                            $successMsg = sprintf($format, $dbusersLen);
+                            $logAction = sprintf("$format on page: ", $dbusersLen);
+                            
+                        } else {
+                            $failureMsg = "You have provided an empty or invalid username list";
+                            $logAction = "Provided an empty or invalid username list (user(s) deletion) on page: ";
+                        }
+                    }
+                } else {
+                    $failureMsg = "You have provided an empty or invalid username list";
+                    $logAction = "Provided an empty or invalid username list (user(s) deletion) on page: ";
                 }
-
-                $successMsg = "Deleted user(s): <b> $allUsernames </b>";
-                $logAction .= "Successfully deleted user(s) [$allUsernames] on page: ";
-
-                include 'library/closedb.php';
-
-            }  else {
-                $failureMsg = "no user was entered, please specify a username to remove from database";
-                $logAction .= "Failed deleting user(s) [$allUsernames] on page: ";
+            } else if (array_key_exists('clearSessionsUsers', $_POST) && !empty($_POST['clearSessionsUsers'])) {
+                
+                $username__starttimes = array();
+                
+                $tmp = (!is_array($_POST['clearSessionsUsers'])) ? array($_POST['clearSessionsUsers']) : $_POST['clearSessionsUsers'];
+                foreach ($tmp as $value) {
+                    
+                    $value = trim(str_replace("%", "", $value));
+                    
+                    if (!in_array($value, $username__starttimes)) {
+                        $username__starttimes[] = $value;
+                    }
+                }
+                
+                
+                $userstimesLen = count($username__starttimes);
+                if ($userstimesLen > 0) {
+                    
+                    foreach ($username__starttimes as $username__starttime) {
+                        list($username, $starttime) = explode('||', $username__starttime);
+                        $sql = sprintf("DELETE FROM %s
+                                         WHERE username='%s' AND AcctStartTime='%s'
+                                           AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime IS NULL)",
+                                       $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username),
+                                       $dbSocket->escapeSimple($starttime));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                    }
+                    
+                    $format = "<strong>%d user' session(s)</strong> have been cleaned";
+                    $successMsg = sprintf($format, $userstimesLen);
+                    $logAction = sprintf("$format on page: ", $userstimesLen);
+                    
+                } else {
+                    $failureMsg = "You have provided an empty or invalid username list";
+                    $logAction = "Provided an empty or invalid username list (session cleaning) on page: ";
+                }
             }
-
-
-        $showRemoveDiv = "none";
-
-        } //foreach
-
-
-    } else     if ( (isset($_GET['username'])) && (isset($_GET['attribute'])) && (isset($_GET['tablename'])) ) {
-
-        /* this section of the deletion process only deletes the username record with the specified attribute
-         * variable from $tablename, this is in order to support just removing a single attribute for the user
-         */
-
-        include 'library/opendb.php';
-
-        if (isset($attribute)) {
-            if (preg_match('/__/', $attribute))
-                list($columnId, $attribute) = explode("__", $attribute);
-            else
-                $attribute = $attribute;
+        } else {
+            $failureMsg = sprintf("CSRF token error");
+            $logAction .= sprintf("CSRF token error on page: ");
         }
-
-        $sql = "DELETE FROM ".$dbSocket->escapeSimple($tablename)." WHERE Username='".$dbSocket->escapeSimple($username)."' ".
-                " AND Attribute='".$dbSocket->escapeSimple($attribute)."' AND id=".$dbSocket->escapeSimple($columnId);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        $successMsg = "Deleted attribute: <b> $attribute </b> for user(s): <b> $username </b> from database";
-        $logAction .= "Successfully deleted attribute [$attribute] for user [$username] on page: ";
-
-        include 'library/closedb.php';
-
-        $showRemoveDiv = "none";
-
-    } else if ( (isset($clearSessionsUsers)) && ($clearSessionsUsers != "") ) {
-
-        /* this is used to remove stale user sessions from the accounting table
-        */
-        $allUsernames = "";
-
-        if (!is_array($clearSessionsUsers))
-            $clearSessionsUsers = array($clearSessionsUsers, NULL);
-
-            foreach ($clearSessionsUsers as $variable=>$value) {
-
-                if (trim($value) != "") {
-
-                    list($userSessions,$acctStartTime) = preg_split('/\\|\\|/', $value);
-
-                    $allUsernames .= $userSessions . ", ";
-
-                    include 'library/opendb.php';
-
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-                        " WHERE Username='$userSessions' AND AcctStartTime='$acctStartTime' ".
-                        " AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime IS NULL)";
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-
-                    $successMsg = "Deleted stale accounting sessions for user: <b> $allUsernames </b> from database";
-                    $logAction .= "Successfully deleted stale accounting sessions for user [$allUsernames] on page: ";
-
-                    include 'library/closedb.php';
-            } // if trim
-
-        } // foreach
-
-        $showRemoveDiv = "none";
-
     }
+
+    include('library/closedb.php');
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -213,50 +245,75 @@
 
     include_once('include/management/actionMessages.php');
 
-?>
-
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-
-    <fieldset>
-
-        <h302> <?php echo t('title','AccountRemoval') ?> </h302>
-        <br/>
-
-        <label for='username' class='form'><?php echo t('all','Username')?></label>
-        <input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-        <br />
-
-        <label for='delradacct' class='form'><?php echo t('all','RemoveRadacctRecords')?></label>
-        <select class='form' tabindex=102 name='delradacct' tabindex=101>
-            <option value='no'>no</option>
-            <option value='yes'>yes</option>
-        </select>
-        <br />
-
-        <br/><br/>
-        <hr><br/>
-        <input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000
-            class='button' />
-
-    </fieldset>
-
-    </form>
-    </div>
-
-<?php
-    include('include/config/logging.php');
+    include('library/opendb.php');
     
-    include_once("include/management/autocomplete.php");
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
     
-    if ($autoComplete) {
-         $inline_extra_js = "
-autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('username','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');";
-    } else {
-        $inline_extra_js = "";
+    $options = array();
+    while ($row = $res->fetchrow()) {
+        $options[] = $row[0];
     }
     
-    print_footer_and_html_epilogue($inline_extra_js);
+    include('library/closedb.php');
+
+    $input_descriptors1 = array();
+
+    $input_descriptors1[] = array(
+                                'name' => 'username[]',
+                                'id' => 'username',
+                                'type' => 'select',
+                                'caption' => t('all','Username'),
+                                'options' => $options,
+                                'multiple' => true,
+                                'size' => 5
+                             );
+
+    $input_descriptors1[] = array(
+                                'name' => 'delradacct',
+                                'type' => 'select',
+                                'caption' => t('all','RemoveRadacctRecords'),
+                                'options' => array("", "yes", "no"),
+                             );
+
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+?>
+
+<form method="POST">
+    <fieldset>
+        <h302><?= t('title','AccountRemoval') ?></h302>
+        <ul style="margin: 10px auto">
+<?php
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+?>
+
+        </ul>
+    </fieldset>
+</form>
+<?php
+
+    if (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE']))) {
+        echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
+        printf('<a href="%s" title="Back to Previous Page">Back to Previous Page</a>', trim($_SESSION['PREV_LIST_PAGE']));
+        echo '</div>';
+        
+        unset($_SESSION['PREV_LIST_PAGE']);
+    }
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
 

@@ -475,6 +475,12 @@ window.onload = function(){
         
         $input_descriptors1[] = array(
                                         "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+        
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
                                         "value" => $username_enc,
                                         "name" => "username"
                                      );
@@ -610,10 +616,10 @@ window.onload = function(){
             $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
             $name = sprintf('editValues%s[]', $editCounter);
             $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
-
+            $onclick = sprintf("document.getElementById('form-%d-radcheck').submit()", $editCounter);
+            
             echo '<li>';
-            printf('<a class="tablenovisit" href="mng-del.php?username=%s&attribute=%s&tablename=radcheck">',
-                   urlencode($username_enc), urlencode($id__attribute));
+            printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
             echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
             
             printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
@@ -630,7 +636,7 @@ window.onload = function(){
 
 
             if (!empty($row[3]) || !empty($row[4])) {
-                $divId = sprintf("%s-Tooltip-%d-check", $row[0], $editCounter);
+                $divId = sprintf("%s-Tooltip-%d-radcheck", $row[0], $editCounter);
                 $onclick = sprintf("toggleShowDiv('%s')", $divId);
                 printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
                 printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
@@ -707,10 +713,10 @@ window.onload = function(){
             $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
             $name = sprintf('editValues%s[]', $editCounter);
             $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
-    
+            $onclick = sprintf("document.getElementById('form-%d-radreply').submit()", $editCounter);
+            
             echo '<li>';
-            printf('<a class="tablenovisit" href="mng-del.php?username=%s&attribute=%s&tablename=radreply">',
-                   urlencode($username_enc), urlencode($id__attribute));
+            printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
             echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
 
             printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
@@ -726,7 +732,7 @@ window.onload = function(){
             printf('<input type="hidden" name="%s" value="radreply">', $name);
 
             if (!empty($row[3]) || !empty($row[4])) {
-                $divId = sprintf("%s-Tooltip-%d-reply", $row[0], $editCounter);
+                $divId = sprintf("%s-Tooltip-%d-radreply", $row[0], $editCounter);
                 $onclick = sprintf("toggleShowDiv('%s')", $divId);
                 printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
                 printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
@@ -843,6 +849,44 @@ window.onload = function(){
 
 </form>
 
+<?php
+    include('library/opendb.php');
+
+    $tables = array(
+                        'radcheck' => $configValues['CONFIG_DB_TBL_RADCHECK'],
+                        'radreply' => $configValues['CONFIG_DB_TBL_RADREPLY']
+                   );
+
+    $csrf_token = dalo_csrf_token();
+
+    foreach ($tables as $table_value => $table) {
+
+        $sql = sprintf("SELECT id, attribute, value FROM %s WHERE username='%s'",
+                       $table, $dbSocket->escapeSimple($username));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+
+        if ($res->numRows() > 0) {
+            $counter = 0;
+            while ($row = $res->fetchrow()) {
+                list($id, $attribute, $value) = $row;
+                
+                $formId = sprintf("form-%d-%s", $counter, $table_value);
+                $id__attribute = sprintf("%d__%s", intval($id), htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8'));
+                
+                printf('<form id="%s" style="display: none" method="POST" action="mng-del.php">', $formId);
+                printf('<input type="hidden" name="username" value="%s">', $username_enc);
+                printf('<input type="hidden" name="attribute" value="%s">', $id__attribute);
+                printf('<input type="hidden" name="csrf_token" value="%s">', $csrf_token);
+                printf('<input type="hidden" name="tablename" value="%s">', $table_value);
+                echo '</form>';
+                
+                $counter++;
+            }
+        }
+    }
+    include('library/closedb.php');
+?>
     <div id="OtherInfo-tab" class="tabcontent" title="Other Info">
 <?php
         include_once('include/management/userReports.php');

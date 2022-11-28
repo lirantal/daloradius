@@ -195,7 +195,7 @@
         $action = "mng-del.php";
 ?>
 
-<form name="listall" method="GET" action="<?= $action ?>">
+<form name="listall" method="POST" action="<?= $action ?>">
 
     <table border="0" class="table1">
         <thead>
@@ -289,6 +289,9 @@
 ?>
 
     </table>
+
+    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+    
 </form>
 
 <?php
