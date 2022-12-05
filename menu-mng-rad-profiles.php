@@ -72,7 +72,7 @@ $m_active = "Management";
                             $descr = array(
                                                 "caption" => "Select Profile",
                                                 "type" => "select",
-                                                "name" => "profile",
+                                                "name" => "profile_name",
                                                 "options" => $groups,
                                                 "selected_value" => ((isset($profile)) ? $profile : ""),
                                            );
