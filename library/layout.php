@@ -444,4 +444,72 @@ function print_tab_navbuttons($button_descriptors) {
         echo '</div>' . "\n";
     }
 }
+
+// prints the back to previous session link 
+function print_back_to_previous_page() {
+    global $_SESSION;
+
+    if (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE']))) {
+        echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
+        printf('<a href="%s" title="Back to Previous Page">Back to Previous Page</a>', trim($_SESSION['PREV_LIST_PAGE']));
+        echo '</div>';
+        
+        unset($_SESSION['PREV_LIST_PAGE']);
+    }
+}
+
+function open_form($descriptor=array()) {
+    if (!array_key_exists('name', $descriptor) || empty($descriptor['name'])) {
+        $descriptor['name'] = "form-" . rand();
+        $descriptor['id'] = $descriptor['name'];
+    } else {
+        if (!array_key_exists('id', $descriptor) || empty($descriptor['id'])) {
+            $descriptor['id'] = $descriptor['name'];
+        }
+    }
+    
+    printf('<form name="%s" id="%s"', $descriptor['name'], $descriptor['id']);
+    
+    if (array_key_exists('disabled', $descriptor) && $descriptor['disabled']) {
+        echo ' disabled';
+    }
+    
+    if (array_key_exists('action', $descriptor) && !empty($descriptor['action'])) {
+        printf(' action="%s"', $descriptor['action']);
+    }
+    
+    if (array_key_exists('method', $descriptor) && !empty($descriptor['method'])) {
+        $descriptor['method'] = strtoupper($descriptor['method']);
+    } else {
+        $descriptor['method'] = "POST";
+    }
+    
+    printf(' method="%s">', strtoupper($descriptor['method']));
+}
+
+function close_form() {
+    echo "</form>";
+}
+
+function open_fieldset($descriptor=array()) {
+    echo "<fieldset";
+    
+    if (array_key_exists('disabled', $descriptor) && $descriptor['disabled']) {
+        echo ' disabled';
+    }
+    
+    echo ">";
+    
+    if (array_key_exists('title', $descriptor) && !empty($descriptor['title'])) {
+        printf('<h302>%s</h302>', strip_tags(trim($descriptor['title'])));
+    }
+    
+    echo '<ul style="margin: 10px auto">';
+}
+
+function close_fieldset() {
+    echo '</ul>'
+       . '</fieldset>';
+}
+
 ?>
