@@ -1,6 +1,6 @@
 <?php
 /*
- *******************************************************************************
+ *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
  * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
@@ -13,20 +13,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *******************************************************************************
- * Description:
- *		Main language file control
+ *********************************************************************************************************
+ * 
+ * Description:    Main language file control
  *
- * Authors:
- *      Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
- *******************************************************************************
+ *********************************************************************************************************
  */
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/lang/main.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
 
 // Load language dictionary according to:
 //
 // 1. Load default language.
-// 2. Try to load the language according to configuration. If the language file does
+// 2. Try to load the language according to the configuration. If the language file does
 //    not exists, or it's the default one, do nothing.
 //    If it's loaded, the missing dictionary entries will remain the ones from
 //    the default language.
@@ -50,13 +56,13 @@ require_once($langFile);
 $langConf = $configValues['CONFIG_LANG'];
 
 if($langConf != $langDefault) {
-	$langFileConf = __DIR__ . '/' . $langConf . '.php';
+    $langFileConf = __DIR__ . '/' . $langConf . '.php';
 
-	if(is_file($langFileConf)) {
-		require_once($langFileConf);
-		
-		$langFile = $langFileConf;
-	}
+    if(is_file($langFileConf)) {
+        require_once($langFileConf);
+        
+        $langFile = $langFileConf;
+    }
 }
 
 // $langCode can be used in html tag elements like lang and/or xml:lang
@@ -66,26 +72,26 @@ $langCode = str_replace("_", "-", pathinfo($langFile, PATHINFO_FILENAME));
 function t($a, $b = null, $c = null, $d = null) {
     global $l;
 
-    $t = null;
+    // dictionary will be modified by the for loop
+    $t = $l;
 
-    if($b === null) {
-        $t = isset($l[$a]) ? $l[$a] : null;
-    }
-    else if($c === null) {
-        $t = isset($l[$a][$b]) ? $l[$a][$b] : null;
-    }
-    else if($d === null) {
-        $t = isset($l[$a][$b][$c]) ? $l[$a][$b][$c] : null;
-    }
-    else {
-        $t = isset($l[$a][$b][$c][$d]) ? $l[$a][$b][$c][$d] : null;
+    // added a static null at the end of the $arr
+    $arr = array( $a, $b, $c, $d, null );
+    
+    // count($arr) - 1 == 4
+    for ($i = 0; $i < 4; $i++) {
+        
+        $current = $arr[$i];
+        $next = $arr[$i+1];
+        
+        if ($next == null && array_key_exists($current, $t) && !empty(trim($t[$current]))) {
+            return trim($t[$current]);
+        }
+        
+        $t = $t[$current];
     }
 
-    if($t === null) {
-        $t = "Lang Error!";
-    }
-
-    return $t;
+    return "Lang Error!";
 }
 
 ?>

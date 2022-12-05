@@ -1,32 +1,42 @@
 <?php
 /*
  *********************************************************************************************************
- * daloRADIUS - RADIUS Web 平台
- * Copyright (C) 2007 - Liran Tal <liran@enginx.com> 版权所有。
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
- *这个程序是自由软件;你可以和/或重新分配
- *修改它根据GNU通用公共许可证
- *由自由软件基金会发布,版本2
- *的许可,或者(在您的选择)任何后来的版本。
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- *你应该收到了GNU通用公共许可证的副本
- *连同这个程序;如果不是,写信给自由软件
- *基础,Inc . 59寺庙的地方——330套房,波士顿,MA 02111 - 1307,美国
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 描述:
- *		中文语言文件
- * 作者：Liran Tal <liran@enginx.com>
- * 汉化作者:	三多 <10644331064@qq.com>
- * 适用版本:	0.9.9
+ * 
+ * Description:    中文语言文件
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 三多 <10644331064@qq.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
-$l['all']['daloRADIUSVersion'] = "版本 " . $configValues['DALORADIUS_VERSION'];
-$l['all']['copyright1'] = "RADIUS 管理、报告、会计和账单<a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by Liran Tal of Produced by SanDuo Chinese language pack</a>.";
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/lang/zh.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
+
+$l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
+$l['all']['daloRADIUSVersion'] = sprintf("版本 %s ", $configValues['DALORADIUS_VERSION']);
+$l['all']['copyright1'] = 'RADIUS 管理、报告、会计和账单 <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+                        . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.<br>'
+                        . 'Chinese language pack produced by SanDuo';
+
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "IP地址名称";
 $l['all']['CalledStationId'] = "被叫号码";
@@ -423,8 +433,8 @@ $l['all']['DBPasswordEncryption'] = "数据库密码加密类型";
 
 
 /***********************************************************************************
-	工具提示
-	辅助信息辅助信息,如为鼠标悬停提示文本事件和弹出提示
+    工具提示
+    辅助信息辅助信息,如为鼠标悬停提示文本事件和弹出提示
  ************************************************************************************/
 
 $l['Tooltip']['batchNameTooltip'] = "为本批创建提供一个标识符名称";
@@ -478,13 +488,13 @@ $l['Tooltip']['EditRate'] = "编辑价格";
 $l['Tooltip']['RemoveRate'] = "移除价格";
 
 $l['Tooltip']['rateNameTooltip'] = "价格的名称，<br/>
-					来描述价格的用途";
+                    来描述价格的用途";
 $l['Tooltip']['rateTypeTooltip'] = "价格类型，来描述<br/>
-					价格的操作";
+                    价格的操作";
 $l['Tooltip']['rateCostTooltip'] = "价格花费金额";
 
 $l['Tooltip']['planNameTooltip'] = "计划的名字。这是<br/>
-					一个友好的描述计划的特性。";
+                    一个友好的描述计划的特性。";
 $l['Tooltip']['planIdTooltip'] = "计划ID提示工具";
 $l['Tooltip']['planTimeTypeTooltip'] = "计划时间类型提示工具";
 $l['Tooltip']['planTimeBankTooltip'] = "计划时间银行提示工具";
@@ -519,28 +529,28 @@ $l['Tooltip']['BusinessContactPersonTooltip'] = "公司联系人提示工具";
 
 $l['Tooltip']['proxyNameTooltip'] = "代理名称";
 $l['Tooltip']['proxyRetryDelayTooltip'] = "等待的时间(在短时间内)<br/>
-					来自代理的响应, <br/>
-					在重发代理请求之前";
+                    来自代理的响应, <br/>
+                    在重发代理请求之前";
 $l['Tooltip']['proxyRetryCountTooltip'] = "发送重试次数 <br/>
-					在放弃之前,并发送拒绝 <br/>
-					消息给NAS.";
+                    在放弃之前,并发送拒绝 <br/>
+                    消息给NAS.";
 $l['Tooltip']['proxyDeadTimeTooltip'] = "如果主机不响应 <br/>
-					给任意一个多重尝试，<br/>
-					然后FreeRADIUS将停止发送给它。<br/>
-					代理请求，然后标记它‘废弃’。";
+                    给任意一个多重尝试，<br/>
+                    然后FreeRADIUS将停止发送给它。<br/>
+                    代理请求，然后标记它‘废弃’。";
 $l['Tooltip']['proxyDefaultFallbackTooltip'] = "如果所有完全匹配的域 <br/>
-						不响应，我们可以尝试 <br/>
-						";
+                        不响应，我们可以尝试 <br/>
+                        ";
 $l['Tooltip']['realmNameTooltip'] = "域名";
 $l['Tooltip']['realmTypeTooltip'] = "设置默认radius";
 $l['Tooltip']['realmSecretTooltip'] = "域RADIUS共享秘钥安全";
 $l['Tooltip']['realmAuthhostTooltip'] = "域认证主机";
 $l['Tooltip']['realmAccthostTooltip'] = "域账单主机";
 $l['Tooltip']['realmLdflagTooltip'] = "允许负载平衡<br/>
-					允许值为‘失效转移’ <br/>
-					和‘轮叫调度’。";
+                    允许值为‘失效转移’ <br/>
+                    和‘轮叫调度’。";
 $l['Tooltip']['realmNostripTooltip'] = "不论是否去除 <br/>
-					域后缀";
+                    域后缀";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
@@ -549,16 +559,16 @@ $l['Tooltip']['vendorNameTooltip'] = "示例：cisco<br/>&nbsp;&nbsp;&nbsp;
                                         设备商名称<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['typeTooltip'] = "示例：string<br/>&nbsp;&nbsp;&nbsp;
                                         属性变量类型<br/>&nbsp;&nbsp;&nbsp;
-					(string, integer, date, ipaddr).";
+                    (string, integer, date, ipaddr).";
 $l['Tooltip']['attributeTooltip'] = "示例：Framed-IPAddress<br/>&nbsp;&nbsp;&nbsp;
                                         准确的属性名称<br/>&nbsp;&nbsp;&nbsp;";
 
 $l['Tooltip']['RecommendedOPTooltip'] = "示例：:=<br/>&nbsp;&nbsp;&nbsp;
                                         推荐的属性的操作符<br/>&nbsp;&nbsp;&nbsp;
-					(one of: := == != etc...)";
+                    (one of: := == != etc...)";
 $l['Tooltip']['RecommendedTableTooltip'] = "示例：check<br/>&nbsp;&nbsp;&nbsp;
                                         推荐的目标表<br/>&nbsp;&nbsp;&nbsp;
-					(either check or reply).";
+                    (either check or reply).";
 $l['Tooltip']['RecommendedTooltipTooltip'] = "示例：用户的ip地址<br/>&nbsp;&nbsp;&nbsp;
                                         推荐的工具提示<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['RecommendedHelperTooltip'] = "添加属性为<br/>&nbsp;&nbsp;&nbsp;
@@ -600,47 +610,47 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "如果指�
 
 
 $l['Tooltip']['usernameTooltip'] = "准确的用户名，用户将<br/>&nbsp;&nbsp;&nbsp;
-					用来连接系统";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
+                    用来连接系统";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";                    
 $l['Tooltip']['passwordTooltip'] = "密码实例包含在系统里<br/>&nbsp;&nbsp;&nbsp;
-					所以要格外小心";
+                    所以要格外小心";
 $l['Tooltip']['groupTooltip'] = "用户将被添加到这个组<br/>&nbsp;&nbsp;&nbsp;
-					通过分配一个用户特定组<br/>&nbsp;&nbsp;&nbsp;
-					用户必须受制于组的属性";
+                    通过分配一个用户特定组<br/>&nbsp;&nbsp;&nbsp;
+                    用户必须受制于组的属性";
 $l['Tooltip']['macaddressTooltip'] = "示例：00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
-					MAC地址格式应该是相同的<br/>&nbsp;&nbsp;&nbsp;
-					随着NAS发送它，通常这<br/>&nbsp;&nbsp;&nbsp;
-					没有字符";
+                    MAC地址格式应该是相同的<br/>&nbsp;&nbsp;&nbsp;
+                    随着NAS发送它，通常这<br/>&nbsp;&nbsp;&nbsp;
+                    没有字符";
 $l['Tooltip']['pincodeTooltip'] = "示例：khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
-					这是准确的pin码将作为用户进入它<br/>&nbsp;&nbsp;&nbsp;
-					你可以使用alpha数字字符";
+                    这是准确的pin码将作为用户进入它<br/>&nbsp;&nbsp;&nbsp;
+                    你可以使用alpha数字字符";
 $l['Tooltip']['usernamePrefixTooltip'] = "示例：TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
-					这个用户名前缀会增加<br/>&nbsp;&nbsp;&nbsp;
-					生成的用户名最终。";
+                    这个用户名前缀会增加<br/>&nbsp;&nbsp;&nbsp;
+                    生成的用户名最终。";
 $l['Tooltip']['instancesToCreateTooltip'] = "示例：100<br/>&nbsp;&nbsp;&nbsp;
-					用户创建随机的数量<br/>&nbsp;&nbsp;&nbsp;
-					用指定的个人配置文件";
+                    用户创建随机的数量<br/>&nbsp;&nbsp;&nbsp;
+                    用指定的个人配置文件";
 $l['Tooltip']['lengthOfUsernameTooltip'] = "示例：8<br/>&nbsp;&nbsp;&nbsp;
-					用户名的字符长度<br/>&nbsp;&nbsp;&nbsp;
-					被创建。建议8-12个字符。";
+                    用户名的字符长度<br/>&nbsp;&nbsp;&nbsp;
+                    被创建。建议8-12个字符。";
 $l['Tooltip']['lengthOfPasswordTooltip'] = "示例：8<br/>&nbsp;&nbsp;&nbsp;
-					密码的字符长度<br/>&nbsp;&nbsp;&nbsp;
-					被创建。建议8-12个字符。";
+                    密码的字符长度<br/>&nbsp;&nbsp;&nbsp;
+                    被创建。建议8-12个字符。";
 
 
 $l['Tooltip']['hotspotNameTooltip'] = "Example：酒店的电吉他<br/>&nbsp;&nbsp;&nbsp;
-					一个友好的热点名称<br/>";
+                    一个友好的热点名称<br/>";
 
 $l['Tooltip']['hotspotMacaddressTooltip'] = "示例：00-aa-bb-cc-dd-ee<br/>&nbsp;&nbsp;&nbsp;
-					NAS的MAC地址<br/>";
+                    NAS的MAC地址<br/>";
 
 $l['Tooltip']['geocodeTooltip'] = "示例：-1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
-					GooleMaps位置代码<br/>&nbsp;&nbsp;&nbsp;
-					来PIN热点/NAS在上（看GIS）";
+                    GooleMaps位置代码<br/>&nbsp;&nbsp;&nbsp;
+                    来PIN热点/NAS在上（看GIS）";
 
 $l['Tooltip']['reassignplanprofiles'] = "如果开启,当应用用户信息 <br/>
-					这个个人配置文件中显示的个人配置文件选项卡将被忽略和<br/>
-					个人配置文件将被重新分配根据计划个人配置文件关联";
+                    这个个人配置文件中显示的个人配置文件选项卡将被忽略和<br/>
+                    个人配置文件将被重新分配根据计划个人配置文件关联";
 
 /* ********************************************************************************** */
 
@@ -1595,20 +1605,20 @@ $l['helpPage']['mngnewquick'] = "下面的用户/卡是预付费类型。<br/>
 
 // 账单部分
 $l['helpPage']['acctactive'] = "
-	规定，将被证明是用于跟踪活动或过期的数据库中的用户有用的信息
+    规定，将被证明是用于跟踪活动或过期的数据库中的用户有用的信息
 其中有一个到期属性或马克斯 - 所有会话属性的用户而言。
 <br/>
 ";
 $l['helpPage']['acctall'] = "
-	为数据库中的所有会话的完整的会计信息。
+    为数据库中的所有会话的完整的会计信息。
 <br/>
 ";
 $l['helpPage']['acctdate'] = "
-	为给定的2日期为特定用户之间的所有会话完整的会计信息。
+    为给定的2日期为特定用户之间的所有会话完整的会计信息。
 <br/>
 ";
 $l['helpPage']['acctipaddress'] = "
-	为起源与特定IP地址的所有会话的完整的会计信息。
+    为起源与特定IP地址的所有会话的完整的会计信息。
 <br/>
 ";
 
@@ -1616,51 +1626,51 @@ $l['helpPage']['acctplans'] = "";
 $l['helpPage']['acctmain'] = "
 <b>General Accounting</b><br/>
 <h200><b>User Accounting</b></h200> - 
-	为数据库中的一个特定用户的所有会话的完整的会计信息。
+    为数据库中的一个特定用户的所有会话的完整的会计信息。
 <br/>
 <h200><b>IP Accounting</b></h200> - 
-	为起源与特定IP地址的所有会话的完整的会计信息。
+    为起源与特定IP地址的所有会话的完整的会计信息。
 <br/>
 <h200><b>NAS Accounting</b></h200> - 
-	为所有的特定NAS的IP地址已办理了全面的会话计费信息。
+    为所有的特定NAS的IP地址已办理了全面的会话计费信息。
 <br/>
 <h200><b>Date Accounting</b></h200> - 
-	Provides对于给定的2日期为特定用户之间的所有会话完整的会计信息。
+    Provides对于给定的2日期为特定用户之间的所有会话完整的会计信息。
 <br/>
 <h200><b>All Accounting Records</b></h200> - 
-	为数据库中的所有会话的完整的会计信息。
+    为数据库中的所有会话的完整的会计信息。
 <br/>
 <h200><b>Active Records Accounting</b></h200> - 
-	规定，将被证明是用于跟踪活动或过期的数据库中的用户有用的信息
+    规定，将被证明是用于跟踪活动或过期的数据库中的用户有用的信息
 其中有一个到期属性或 Max-All-Session（最大-所有-会话）属性的用户而言。
 <br/>
 
 <br/>
 <b>Sub-Category Accounting</b><br/>
 <h200><b>Custom</b></h200> - 
-	提供了最灵活的自定义查询到数据库上运行。
+    提供了最灵活的自定义查询到数据库上运行。
 <br/>
 <h200><b>Hotspots</b></h200> - 
-	提供不同的管理热点信息、比较,和其他有用的信息。
+    提供不同的管理热点信息、比较,和其他有用的信息。
 <br/>
 ";
 $l['helpPage']['acctnasipaddress'] = "
-	提供完整的会计信息的所有会话的具体处理NAS IP地址。
+    提供完整的会计信息的所有会话的具体处理NAS IP地址。
 <br/>
 ";
 $l['helpPage']['acctusername'] = "
-	提供完整的会计信息对特定用户的数据库中的所有会话。
+    提供完整的会计信息对特定用户的数据库中的所有会话。
 <br/>
 ";
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
-	提供完整的会计信息的所有会话起源于这个特定的热点。
+    提供完整的会计信息的所有会话起源于这个特定的热点。
 这个列表是计算清单只有那些与CalledStationId radacct表中的记录
 字段匹配一个热点中的热点的MAC地址条目的管理数据库。
 <br/>
 ";
 $l['helpPage']['accthotspotcompare'] = "
-	提供了基本的会计信息比较数据库中找到的所有活跃的热点。
+    提供了基本的会计信息比较数据库中找到的所有活跃的热点。
        会计提供的信息:< br / > < br / >
     热点名称——热点的名称< br / >
     独特的用户-用户已登陆,只有通过这个热点< br / >
@@ -1669,7 +1679,7 @@ $l['helpPage']['accthotspotcompare'] = "
     总时间——所有用户的accumolated花时间在这个热点<br/>
 
 <br/>
-	提供了一个图块不同的比较了< br / >
+    提供了一个图块不同的比较了< br / >
     图:< br / > < br / >
     每个热点分布的独特用户< br / >
     分配每个热点的点击< br / >
@@ -1678,27 +1688,27 @@ $l['helpPage']['accthotspotcompare'] = "
 ";
 $l['helpPage']['accthotspot'] = "
 <h200><b>Hotspot Accounting</b></h200> - 
-	提供完整的会计信息的所有会话起源于这个特定的热点。
+    提供完整的会计信息的所有会话起源于这个特定的热点。
 <br/>
 <h200><b>Hotspot Comparison</b></h200> - 
-	提供了基本的会计信息比较数据库中找到的所有活跃的热点。
+    提供了基本的会计信息比较数据库中找到的所有活跃的热点。
 提供了一个图块不同的比较。
 <br/>
 ";
 // 会计自定义查询部分
 $l['helpPage']['acctcustom'] = "
 <h200><b>Custom</b></h200> - 
-	提供最灵活的自定义查询数据库上运行。< br / >
+    提供最灵活的自定义查询数据库上运行。< br / >
 你可以调整查询的max通过修改设置在左侧栏。< br / >
 <br/>
-	<b> 日期< / b > -设置开始和结束日期.
+    <b> 日期< / b > -设置开始和结束日期.
 <br/>
-	<b> < / b >——设置数据库中的字段(像一个键)你想匹配,选择如果值
+    <b> < / b >——设置数据库中的字段(像一个键)你想匹配,选择如果值
 比赛应该等于(=)或它包含你搜索的一部分价值(如一个正则表达式)。如果你
 选择使用包含操作符你不应该添加任何常见的通配符“*”而是
 您输入的值将自动搜索这种形式:* *价值(或mysql风格:%值%)。
 <br/>
-	< b > < / b >查询会计领域,你可以选择你想要的字段出现在结果中
+    < b > < / b >查询会计领域,你可以选择你想要的字段出现在结果中
 列表。
 < br / >
 < b > < / b >订单——选择你想订场的结果和它的类型(提升
@@ -1708,13 +1718,13 @@ $l['helpPage']['acctcustom'] = "
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
 <h200><b>清理过期会话</b></h200> - 
-	‘过期会话’可能经常存在因为会影响NAS无法提供计费停止纪录<<br/>
-	如不不清理长时间的过期用户会话，会导致假的用户登录记录的存在
-	记录 (false positive).
+    ‘过期会话’可能经常存在因为会影响NAS无法提供计费停止纪录<<br/>
+    如不不清理长时间的过期用户会话，会导致假的用户登录记录的存在
+    记录 (false positive).
 <br/>
 <h200><b>删除会计记录</b></h200> - 
-	删除数据库中的会计记录。要执行该操作，或者要允许其他用户。
-	除了管理员访问这个页面。
+    删除数据库中的会计记录。要执行该操作，或者要允许其他用户。
+    除了管理员访问这个页面。
 <br/>
 ";
 $l['helpPage']['acctmaintenancecleanup'] = "";
@@ -1723,13 +1733,13 @@ $l['helpPage']['acctmaintenancedelete'] = "";
 
 
 $l['helpPage']['giseditmap'] = "
-	编辑地图模式，在这种模式下你可以简单地通过点击添加或删除热点
+    编辑地图模式，在这种模式下你可以简单地通过点击添加或删除热点
 在地图上的位置或通过点击一个热点（分别）<br/><br/>
-	<b> 添加热点 </b> - 只需点击一个清晰的地图上的位置,你将提供
+    <b> 添加热点 </b> - 只需点击一个清晰的地图上的位置,你将提供
 热点的名称和它的MAC地址。这些关键细节后用于识别这个热点
 在会计表中。务必提供正确的MAC地址！
 <br/><br/>
-	<b> 删除热点 </b> - 只需点击一个热点的图标，你确定它删除从
+    <b> 删除热点 </b> - 只需点击一个热点的图标，你确定它删除从
 数据库。
 <br/>
 ";
@@ -1737,8 +1747,8 @@ $l['helpPage']['gisviewmap'] = "
 查看地图模式-在此模式下你可以浏览他们的热点进行布局
 在利用GoogleMaps服务提供的地图图标。<br/><br/>
 
-	<b> 点击一个热点 </b> -将提供您更深入的细节上的热点。
-	如联系信息的热点，统计信息。
+    <b> 点击一个热点 </b> -将提供您更深入的细节上的热点。
+    如联系信息的热点，统计信息。
 <br/>
 ";
 $l['helpPage']['gismain'] = "
@@ -1800,15 +1810,14 @@ $l['messages']['loginerror'] = "<br/><br/>下面之一：<br/>
 $l['buttons']['savesettings'] = "保存设置";
 $l['buttons']['apply'] = "应用";
 
-$l['menu']['Home'] = "<em>主</em>页</a>";
-$l['menu']['Managment'] = "<em>管</em>理</a>";
-$l['menu']['Reports'] = "<em>报</em>告</a>";
-$l['menu']['Accounting'] = "<em>账</em>单</a>";
-$l['menu']['Billing'] = "<em>记</em>账</a>";
-$l['menu']['Gis'] = "<em>G</em>IS</a>";
-$l['menu']['Graphs'] = "<em>图</em>表</a>";
-$l['menu']['Config'] = "<em>配</em>置</a>";
-$l['menu']['Help'] = "<em>帮</em>助</a>";
-
+$l['menu']['Home'] = "主页";
+$l['menu']['Managment'] = "管理";
+$l['menu']['Reports'] = "报告";
+$l['menu']['Accounting'] = "账单";
+$l['menu']['Billing'] = "记账";
+$l['menu']['Gis'] = "GIS";
+$l['menu']['Graphs'] = "图表";
+$l['menu']['Config'] = "配置";
+$l['menu']['Help'] = "帮助";
 
 ?>

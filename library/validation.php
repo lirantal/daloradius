@@ -115,4 +115,17 @@ $acct_custom_query_options_default = array(
                                             "CallingStationId", "AcctTerminateCause", "FramedIPAddress"
                                           );
 
+// validating values
+$valid_languages = array(
+                            "en" => "English", 
+                            "it" => "Italian", 
+                            "hu" => "Hungarian", 
+                            "ro" => "Romanian",
+                            "ru" => "Russian", 
+                            "ja" => "Japanese",
+                            "zh" => "Chinese",
+                            "es_ve" => "Spanish - Venezuelan", 
+                            "pt_br" => "Portuguese - Brazilian", 
+                        );
+
 ?>

@@ -1,31 +1,41 @@
 <?php
 /*
-*********************************************************************************************************
-* daloRADIUS - RADIUS Web Platform
-* Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*********************************************************************************************************
-* Description:
-*		English language file
-*
-* Authors:	Liran Tal <liran@enginx.com>
-*
-*********************************************************************************************************
-*/
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ * 
+ * Description:    Japanese language file
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
-$l['all']['daloRADIUSVersion'] = "version " . $configValues['DALORADIUS_VERSION'];
-$l['all']['copyright1'] = "RADIUS は <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>によって管理、レポート、アカウンティング、課金されています。";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/lang/ja.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
+
+$l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
+$l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
+$l['all']['copyright1'] = 'RADIUS は <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>'
+                        . 'によって管理、レポート、アカウンティング、課金されています。';
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+                        . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
+
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "プール名";
 $l['all']['CalledStationId'] = "呼び出されたステーションID";
@@ -1735,9 +1745,9 @@ $l['helpPage']['replogs'] = "
 <h200><b>daloRADIUSログ</b></h200> - daloRADIUS のログファイルをモニタリ
 ングします<br/>
 <h200><b>RADIUSログ</b></h200> - FreeRADIUS のログファイルをモニタリングします - /var/log/freeradius/radius.log または /usr/local/var/log/radius/radius.log の内容と同じです。
-ログファイルが他の場所にある可能性もあります。その場合は、それに応じて設定を変更してください。	<br/>
+ログファイルが他の場所にある可能性もあります。その場合は、それに応じて設定を変更してください。    <br/>
 <h200><b>システムログ</b></h200> - オペレーティングシステムのログファイルをモニタリングします - /var/log/syslog またはほとんどのプラットフォームで /var/log/message の内容と同じです
-ログファイルが他の場所にある可能性もあります。その場合は、それに応じて設定を変更してください。	<br/>
+ログファイルが他の場所にある可能性もあります。その場合は、それに応じて設定を変更してください。    <br/>
 <h200><b>起動ログ</b></h200> - オペレーティングシステムの起動ログファイルをモニタリングします - dmesg コマンドを実行した結果と同じです
 ";
 
@@ -1990,13 +2000,13 @@ $l['messages']['loginerror'] = "<br/><br/>以下のいずれかです:<br/>
 $l['buttons']['savesettings'] = "設定保存";
 $l['buttons']['apply'] = "適用";
 
-$l['menu']['Home'] = "ホーム(<em>H</em>)</a>";
-$l['menu']['Managment'] = "管理(<em>M</em>)</a>";
-$l['menu']['Reports'] = "レポート(<em>R</em>)</a>";
-$l['menu']['Accounting'] = "アカウンティング(<em>A</em>)</a>";
-$l['menu']['Billing'] = "課金(<em>B</em>)</a>";
-$l['menu']['Gis'] = "地理情報(<em>G</em>)</a>";
-$l['menu']['Graphs'] = "グラフ(<em>G</em>)</a>";
-$l['menu']['Config'] = "設定(<em>C</em>)</a>";
-$l['menu']['Help'] = "ヘルプ(<em>H</em>)</a>";
+$l['menu']['Home'] = "ホーム(H)";
+$l['menu']['Managment'] = "管理(M)";
+$l['menu']['Reports'] = "レポート(R)";
+$l['menu']['Accounting'] = "アカウンティング(A)";
+$l['menu']['Billing'] = "課金(B)";
+$l['menu']['Gis'] = "地理情報(G)";
+$l['menu']['Graphs'] = "グラフ(G)";
+$l['menu']['Config'] = "設定(C)";
+$l['menu']['Help'] = "ヘルプ(H)";
 ?>

@@ -14,19 +14,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		Italian language file94
+ * Description:    Italian language file
  *
- * Authors:	Alessandro Rendina <ale@seleneinformatica.it>
+ * Authors:        Alessandro Rendina <ale@seleneinformatica.it>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
-$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
-$l['all']['daloRADIUSVersion'] = "versione " . $configValues['DALORADIUS_VERSION'];
-$l['all']['copyright1'] = "Rapporti, Fatturazione e Gestione Radius by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a>";
-$l['all']['copyright2'] = "daloRADIUS Copyright &copy; 2007-2019 by <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> <br/>
-Template design by <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a>.";
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/lang/it.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
+
+$l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
+$l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
+$l['all']['copyright1'] = 'Rapporti, Fatturazione e Gestione RADIUS by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+                        . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Nome Pool";
 $l['all']['CalledStationId'] = "IdStazioneChiamata";
@@ -236,28 +242,28 @@ $l['Tooltip']['BusinessContactPersonTooltip'] = "";
 
 $l['Tooltip']['proxyNameTooltip'] = "Nome Proxy";
 $l['Tooltip']['proxyRetryDelayTooltip'] = "Il tempo (in secondi)da aspettare<br/>
-					per una risposta dal proxy, <br/>
-					prima di rispedire la rischiesta al proxy.";
+                    per una risposta dal proxy, <br/>
+                    prima di rispedire la rischiesta al proxy.";
 $l['Tooltip']['proxyRetryCountTooltip'] = "Numero delle prove di spedizione<br/>
-					prima di rinunciare, e mandare un<br/>
-					messaggio di reject al NAS.";
+                    prima di rinunciare, e mandare un<br/>
+                    messaggio di reject al NAS.";
 $l['Tooltip']['proxyDeadTimeTooltip'] = "Se l'home server non risponde<br/>
-					a nessuna delle prove multiple, <br/>
-					allora FreeRADIUS smetter&aacute; di mandare<br/>
-					richieste proxy, e lo marcher&aacute; come 'dead'.";
+                    a nessuna delle prove multiple, <br/>
+                    allora FreeRADIUS smetter&aacute; di mandare<br/>
+                    richieste proxy, e lo marcher&aacute; come 'dead'.";
 $l['Tooltip']['proxyDefaultFallbackTooltip'] = "If all exact matching realms <br/>
-						did not respond, we can try the <br/>
-						";
+                        did not respond, we can try the <br/>
+                        ";
 $l['Tooltip']['realmNameTooltip'] = "Nome Realm";
 $l['Tooltip']['realmTypeTooltip'] = "Imposta su radius per default";
 $l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS shared secret";
 $l['Tooltip']['realmAuthhostTooltip'] = "Host autenticazione Realm";
 $l['Tooltip']['realmAccthostTooltip'] = "Accounting host Realm";
 $l['Tooltip']['realmLdflagTooltip'] = "Abilita per il load balancing<br/>
-					I valori abilitati sono 'fail_over' <br/>
-					e 'round_robin'.";
+                    I valori abilitati sono 'fail_over' <br/>
+                    e 'round_robin'.";
 $l['Tooltip']['realmNostripTooltip'] = "Se togliere o no il<br/>
-					suffisso realm";
+                    suffisso realm";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
@@ -266,16 +272,16 @@ $l['Tooltip']['vendorNameTooltip'] = "Esempio: Cisco<br/>&nbsp;&nbsp;&nbsp;
                                         Il nome del Fornitore.<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['typeTooltip'] = "Esempio: string<br/>&nbsp;&nbsp;&nbsp;
                                         Il tipo variabile attributi<br/>&nbsp;&nbsp;&nbsp;
-					(string, integer, date, ipaddr).";
+                    (string, integer, date, ipaddr).";
 $l['Tooltip']['attributeTooltip'] = "Esempio: Framed-IPAddress<br/>&nbsp;&nbsp;&nbsp;
                                         Il nome esatto dell'attributo.<br/>&nbsp;&nbsp;&nbsp;";
 
 $l['Tooltip']['RecommendedOPTooltip'] = "Esempio: :=<br/>&nbsp;&nbsp;&nbsp;
                                         L'operatore dell'attributo raccomandato.<br/>&nbsp;&nbsp;&nbsp;
-					(one of: := == != etc...)";
+                    (one of: := == != etc...)";
 $l['Tooltip']['RecommendedTableTooltip'] = "Esempio: check<br/>&nbsp;&nbsp;&nbsp;
                                         L'obiettivo tabella raccomandato.<br/>&nbsp;&nbsp;&nbsp;
-					(l'uno o l'altro: check, reply).";
+                    (l'uno o l'altro: check, reply).";
 $l['Tooltip']['RecommendedTooltipTooltip'] = "Esempio: L'indirizzo ip per l'utente<br/>&nbsp;&nbsp;&nbsp;
                                         Il consiglio raccomandato.<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['RecommendedHelperTooltip'] = "La funzione di aiuto che sarà<br/>&nbsp;&nbsp;&nbsp;
@@ -311,43 +317,43 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specific
 
 
 $l['Tooltip']['usernameTooltip'] = "Il nome utente esatto<br/>&nbsp;&nbsp;&nbsp;
-					così come l'utente userà connettersi al sistema";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
+                    così come l'utente userà connettersi al sistema";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";                    
 $l['Tooltip']['passwordTooltip'] = "Le password sono sensibili alle maiuscole<br/>&nbsp;&nbsp;&nbsp;
-					in certi sistemi. Prestare attenzione";
+                    in certi sistemi. Prestare attenzione";
 $l['Tooltip']['groupTooltip'] = "L'utente verrà aggiunto a questo gruppo.<br/>&nbsp;&nbsp;&nbsp;
-					Assegnando un utente a un particolare gruppo<br/>&nbsp;&nbsp;&nbsp;
-					l'utente diventa soggetto agli attributi del gruppo";
+                    Assegnando un utente a un particolare gruppo<br/>&nbsp;&nbsp;&nbsp;
+                    l'utente diventa soggetto agli attributi del gruppo";
 $l['Tooltip']['macaddressTooltip'] = "Esempio: 00:aa:bb:cc:dd:ee<br/>&nbsp;&nbsp;&nbsp;
-					Il formato dell'indirizzo MAC dovrebbe essere lo stesso <br/>&nbsp;&nbsp;&nbsp;
-					come viene mandato dal NAS. La maggioranza delle volte è senza<br/>&nbsp;&nbsp;&nbsp;
-					altri caratteri.";
+                    Il formato dell'indirizzo MAC dovrebbe essere lo stesso <br/>&nbsp;&nbsp;&nbsp;
+                    come viene mandato dal NAS. La maggioranza delle volte è senza<br/>&nbsp;&nbsp;&nbsp;
+                    altri caratteri.";
 $l['Tooltip']['pincodeTooltip'] = "Esempio: khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
-					Questo è il codice pin esattamente come verrà inserito dall'utente.<br/>&nbsp;&nbsp;&nbsp;
-					Si possono usare caratteri alfanumerici, è sensibile alle maiuscole";
+                    Questo è il codice pin esattamente come verrà inserito dall'utente.<br/>&nbsp;&nbsp;&nbsp;
+                    Si possono usare caratteri alfanumerici, è sensibile alle maiuscole";
 $l['Tooltip']['usernamePrefixTooltip'] = "Esempio: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
-					Questo prefisso dell'username verrà aggiunto a<br/>&nbsp;&nbsp;&nbsp;
-					l'username generato alla fine.";
+                    Questo prefisso dell'username verrà aggiunto a<br/>&nbsp;&nbsp;&nbsp;
+                    l'username generato alla fine.";
 $l['Tooltip']['instancesToCreateTooltip'] = "Esempio: 100<br/>&nbsp;&nbsp;&nbsp;
-					L'ammontare degli utenti random da creare<br/>&nbsp;&nbsp;&nbsp;
-					con il profilo specificato.";
+                    L'ammontare degli utenti random da creare<br/>&nbsp;&nbsp;&nbsp;
+                    con il profilo specificato.";
 $l['Tooltip']['lengthOfUsernameTooltip'] = "Esempio: 8<br/>&nbsp;&nbsp;&nbsp;
-					La lunghezza dei caratteri del nome utente<br/>&nbsp;&nbsp;&nbsp;
-					da creare. Si raccomandano 8-12 caratteri.";
+                    La lunghezza dei caratteri del nome utente<br/>&nbsp;&nbsp;&nbsp;
+                    da creare. Si raccomandano 8-12 caratteri.";
 $l['Tooltip']['lengthOfPasswordTooltip'] = "Esempio: 8<br/>&nbsp;&nbsp;&nbsp;
-					La lunghezza di caratteri delle password<br/>&nbsp;&nbsp;&nbsp;
-					da creare. Si raccomandano 8-12 caratteri.";
+                    La lunghezza di caratteri delle password<br/>&nbsp;&nbsp;&nbsp;
+                    da creare. Si raccomandano 8-12 caratteri.";
 
 
 $l['Tooltip']['hotspotNameTooltip'] = "Esempio: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
-					un nome comprensibile dell'hotspot<br/>";
+                    un nome comprensibile dell'hotspot<br/>";
 
 $l['Tooltip']['hotspotMacaddressTooltip'] = "Esempio: 00aabbccddee<br/>&nbsp;&nbsp;&nbsp;
-					L'indirizzo MAC del NAS<br/>";
+                    L'indirizzo MAC del NAS<br/>";
 
 $l['Tooltip']['geocodeTooltip'] = "Esempio: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
-					Questo è il codice del luogo GoogleMaps utilizzato<br/>&nbsp;&nbsp;&nbsp;
-					per segnalare l'HotSpot/NAS sulla mappa (guardare GIS).";
+                    Questo è il codice del luogo GoogleMaps utilizzato<br/>&nbsp;&nbsp;&nbsp;
+                    per segnalare l'HotSpot/NAS sulla mappa (guardare GIS).";
 
 
 /* ********************************************************************************** */
@@ -1022,119 +1028,119 @@ L'ammontare del tempo specificato in Time Credit (Credito di tempo) verrà usato
 
 // accounting section
 $l['helpPage']['acctactive'] = "
-	Fornisce informazioni che potrebbero essere funzionali per tracciare utenti attivi o scaduti nel database 
-	in termini di utenti che hanno un attributo di Scadenza (Expiration) o un attributo di Massimo-numero-sessioni (Max-All-Session).
+    Fornisce informazioni che potrebbero essere funzionali per tracciare utenti attivi o scaduti nel database 
+    in termini di utenti che hanno un attributo di Scadenza (Expiration) o un attributo di Massimo-numero-sessioni (Max-All-Session).
 <br/>
 ";
 $l['helpPage']['acctall'] = "
-	Fornisce informazioni complete sull'accounting per tutte le sessioni nel database.
+    Fornisce informazioni complete sull'accounting per tutte le sessioni nel database.
 <br/>
 ";
 $l['helpPage']['acctdate'] = "
-	Fornisce informazioni complete per tutte le sessioni tra due date per un particolare utente.
+    Fornisce informazioni complete per tutte le sessioni tra due date per un particolare utente.
 <br/>
 ";
 $l['helpPage']['acctipaddress'] = "
-	Fornisce informazioni complete per tutte le sessioni che sono state avviate da un particolare indirizzo IP.
+    Fornisce informazioni complete per tutte le sessioni che sono state avviate da un particolare indirizzo IP.
 <br/>
 ";
 $l['helpPage']['acctmain'] = "
 <b>Accounting Generale</b><br/>
 <h200><b>Accounting Utente</b></h200> - 
-	Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
+    Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
 <br/>
 <h200><b>Accounting IP</b></h200> - 
-	Fornisce informazioni complete di accounting per tutte le sessioni che sono state avviate da un particolare indirizzo IP.
+    Fornisce informazioni complete di accounting per tutte le sessioni che sono state avviate da un particolare indirizzo IP.
 <br/>
 <h200><b>Accounting NAS</b></h200> - 
-	Fornisce informazioni complete per tutte le sessioni che uno specifico indirizzo NAS ha gestito.
+    Fornisce informazioni complete per tutte le sessioni che uno specifico indirizzo NAS ha gestito.
 <br/>
 <h200><b>Accounting Date</b></h200> - 
-	Fornisce informazioni complete di accounting per tutte le sessioni tra due date di un paricolare utente.
+    Fornisce informazioni complete di accounting per tutte le sessioni tra due date di un paricolare utente.
 <br/>
 <h200><b>Tutti i Records di Accounting</b></h200> - 
-	Fornisce informazioni complete per tutte le sessioni di accounting nel database.
+    Fornisce informazioni complete per tutte le sessioni di accounting nel database.
 <br/>
 <h200><b>Records di Accounting Attivi</b></h200> - 
-	Fornisce informazioni che potrebbero essere comode per tracciare utenti attivi o scaduti nel database 
-	in termini di utenti che hanno un attributo di scadenza (Expiration) o un attributo Max-All-session.
+    Fornisce informazioni che potrebbero essere comode per tracciare utenti attivi o scaduti nel database 
+    in termini di utenti che hanno un attributo di scadenza (Expiration) o un attributo Max-All-session.
 <br/>
 
 <br/>
 <b>Sottocategoria Accounting</b><br/>
 <h200><b>Personalizzazioni</b></h200> - 
-	Fornisce la query personalizzata più flessibile che si possa lanciare nel database.
+    Fornisce la query personalizzata più flessibile che si possa lanciare nel database.
 <br/>
 <h200><b>Hotspots</b></h200> - 
-	Fornisce informazioni sui differenti hotspot gestiti, confronti, e altre comode informazioni.
+    Fornisce informazioni sui differenti hotspot gestiti, confronti, e altre comode informazioni.
 <br/>
 ";
 $l['helpPage']['acctnasipaddress'] = "
-	Fornisce informazioni complete per tutte le sessioni che l'indirizzo NAS specifico ha gestito.
+    Fornisce informazioni complete per tutte le sessioni che l'indirizzo NAS specifico ha gestito.
 <br/>
 ";
 $l['helpPage']['acctusername'] = "
-	Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
+    Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
 <br/>
 ";
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
-	Fornisce informazioni per tutte le sessioni che sono state avviate da uno specifico hotspot.
-	Questa lista viene calcolata mostrando solo quei record che si trovano nella tabella radacct con il campo CalledStationId corrispondente all'indirizzo MAC nel databasee di gestione Hotspot.
+    Fornisce informazioni per tutte le sessioni che sono state avviate da uno specifico hotspot.
+    Questa lista viene calcolata mostrando solo quei record che si trovano nella tabella radacct con il campo CalledStationId corrispondente all'indirizzo MAC nel databasee di gestione Hotspot.
 <br/>
 ";
 $l['helpPage']['accthotspotcompare'] = "
-	Fornisce informazioni di base sull'accounting per confronto tra tutti gli hotspot attivi trovati nel database.
-	Informazioni di Accounting fornite: <br/><br/>
-	Nome Hotspot - Il nome dell'Hotspot<br/>
-	Utenti Unici - Utenti che hanno effettuato il login solamente attraverso questo hotspot<br/>
-	Hits Totali - Il totale dei login che sono stati eseguiti da questo hotspot (unici e non unici) <br/>
-	Tempo Medio - Il tempo medio che l'utente ha speso in questo hotspot <br/>
-	Tempo Totale - Il tempo speso da tutti gli utenti (cumulato) in questo hotspot<br/>
+    Fornisce informazioni di base sull'accounting per confronto tra tutti gli hotspot attivi trovati nel database.
+    Informazioni di Accounting fornite: <br/><br/>
+    Nome Hotspot - Il nome dell'Hotspot<br/>
+    Utenti Unici - Utenti che hanno effettuato il login solamente attraverso questo hotspot<br/>
+    Hits Totali - Il totale dei login che sono stati eseguiti da questo hotspot (unici e non unici) <br/>
+    Tempo Medio - Il tempo medio che l'utente ha speso in questo hotspot <br/>
+    Tempo Totale - Il tempo speso da tutti gli utenti (cumulato) in questo hotspot<br/>
 
 <br/>
-	Fornisce un grafico dei differenti confronti che si possono fare<br/>
-	Grafici: <br/><br/>
-	Distribuzione di utenti Unici per hotspot<br/>
-	Distribuzione delle Hits per hotspot<br/>
-	Distribuzione del tempo di utilizzo per hotspot<br/>
+    Fornisce un grafico dei differenti confronti che si possono fare<br/>
+    Grafici: <br/><br/>
+    Distribuzione di utenti Unici per hotspot<br/>
+    Distribuzione delle Hits per hotspot<br/>
+    Distribuzione del tempo di utilizzo per hotspot<br/>
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
 <h200><b>Accounting Hotspot</b></h200> - 
-	Fornisce informazioni complete per tutte le sessioni che sono state avviate da uno specifico Hotspot.
+    Fornisce informazioni complete per tutte le sessioni che sono state avviate da uno specifico Hotspot.
 <br/>
 <h200><b>Confronto Hotspot</b></h200> - 
-	Fornisce informazioni di base sull'accounting per confronto tra gli hotspot attivi nel database.
-	Fornisce un grafico dei differenti confronti possibili.
+    Fornisce informazioni di base sull'accounting per confronto tra gli hotspot attivi nel database.
+    Fornisce un grafico dei differenti confronti possibili.
 <br/>
 ";
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
 <h200><b>Custom</b></h200> - 
-	Fornisce la più flessibile query personalizzata da lanciare sul database.<br/>
-	E' possibile regolare la query modificando le impostazioni sulla barra a sinistra.<br/>
+    Fornisce la più flessibile query personalizzata da lanciare sul database.<br/>
+    E' possibile regolare la query modificando le impostazioni sulla barra a sinistra.<br/>
 <br/>
-	<b> Tra le Date </b> - Imposta la data di inizio e di fine.
+    <b> Tra le Date </b> - Imposta la data di inizio e di fine.
 <br/>
-	<b> Dove </b> - Imposta il campo nel database che si desidera far corrispondere (come una chiave), scegliere se il valore 
-	da far corrispondere deve essere Uguale (=) o deve Contenere parte del valore che si cerca (come una regex). Se si sceglie
-	di usare l'operatore Contiene non si devono aggiungere caratteri jolly della comune forma '*' 
-	il valore che si inserisce verrà automaticamente cercato in questa forma: *value* (o in stile mysql: %valore%).
+    <b> Dove </b> - Imposta il campo nel database che si desidera far corrispondere (come una chiave), scegliere se il valore 
+    da far corrispondere deve essere Uguale (=) o deve Contenere parte del valore che si cerca (come una regex). Se si sceglie
+    di usare l'operatore Contiene non si devono aggiungere caratteri jolly della comune forma '*' 
+    il valore che si inserisce verrà automaticamente cercato in questa forma: *value* (o in stile mysql: %valore%).
 <br/>
-	<b> Query Campi Accounting </b> - E' possibile scegliere quali campi si vogliono mostrare nella lista risultante.
+    <b> Query Campi Accounting </b> - E' possibile scegliere quali campi si vogliono mostrare nella lista risultante.
 <br/>
-	<b> Ordina per </b> - Scegliere per quale campo si desidera ordinare i risultati e il loro tipo (Ascendente o Discendente)
+    <b> Ordina per </b> - Scegliere per quale campo si desidera ordinare i risultati e il loro tipo (Ascendente o Discendente)
 <br/>
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
 <h200><b>Pulisci sessioni stantie (stale-sessions)</b></h200> - 
-	Le sessioni stantie si formano quando il NAS non è capace di forntire un Accounting-STOP per la sessione utente <br/>
-	risultante in un record di sessione aperta che simula un utente connesso in un record utente (falso positivo).
+    Le sessioni stantie si formano quando il NAS non è capace di forntire un Accounting-STOP per la sessione utente <br/>
+    risultante in un record di sessione aperta che simula un utente connesso in un record utente (falso positivo).
 <br/>
 <h200><b>Cancella Record accounting</b></h200> - 
-	Cancellazione di un Record di accounting nel database. Potrebbe non essere saggio farlo o permettere di farlo ad altri utenti eccetto l'amministratore o un gruppo controllato.
+    Cancellazione di un Record di accounting nel database. Potrebbe non essere saggio farlo o permettere di farlo ad altri utenti eccetto l'amministratore o un gruppo controllato.
 <br/>
 ";
 $l['helpPage']['acctmaintenancecleanup'] = "";
@@ -1143,25 +1149,25 @@ $l['helpPage']['acctmaintenancedelete'] = "";
 
 
 $l['helpPage']['giseditmap'] = "
-	Modifica Modalità Mappa - in questa modalità si può Aggiungere o Cancellare Hotspots semplicemente cliccando
-	su un luogo della mappa o cliccando su un hotspot (rispettivamente).<br/><br/>
-	<b> Aggiungere Hotspot </b> - Si deve semplicemente cliccare su un luogo vuoto della mappa, verrà chiesto di fornire
-	il nome dell'hotspot e il suo indirizzo MAC. Questi sono i due elementi cruciali per identificare l'hotspot nella tabella di accounting. Fare attenzione a fornire l'indirizzo MAC corretto!
+    Modifica Modalità Mappa - in questa modalità si può Aggiungere o Cancellare Hotspots semplicemente cliccando
+    su un luogo della mappa o cliccando su un hotspot (rispettivamente).<br/><br/>
+    <b> Aggiungere Hotspot </b> - Si deve semplicemente cliccare su un luogo vuoto della mappa, verrà chiesto di fornire
+    il nome dell'hotspot e il suo indirizzo MAC. Questi sono i due elementi cruciali per identificare l'hotspot nella tabella di accounting. Fare attenzione a fornire l'indirizzo MAC corretto!
 <br/><br/>
-	<b> Cancellare Hotspot </b> - Cliccare semplicemente su una icona di un hotspot e confermare la cancellazione dal database.
+    <b> Cancellare Hotspot </b> - Cliccare semplicemente su una icona di un hotspot e confermare la cancellazione dal database.
 <br/>
 ";
 $l['helpPage']['gisviewmap'] = "
-	Vedi Modalità Mappa - in questa modalità è possibile sfogliare gli Hotspot così come sono visualizzati come icone nelle mappe fornite dal servizio GoogleMap.<br/><br/>
+    Vedi Modalità Mappa - in questa modalità è possibile sfogliare gli Hotspot così come sono visualizzati come icone nelle mappe fornite dal servizio GoogleMap.<br/><br/>
 
-	<b> Cliccare su un Hotspot </b> - Fornirà maggiore dettaglio sull'hotspot.
-	Come le informazioni sui contatti per l'hotspot, e dettagli statistiche.
+    <b> Cliccare su un Hotspot </b> - Fornirà maggiore dettaglio sull'hotspot.
+    Come le informazioni sui contatti per l'hotspot, e dettagli statistiche.
 <br/>
 ";
 $l['helpPage']['gismain'] = "
 <b> Informazioni Generali</b>
 Le Mappature GIS forniscono mappature visuali del luogo dell'hotspot attraverso la mappa mondiale utilizzando la API di Google Maps. <br/>
-Nella pagina Gestione è possibile aggiungere nuove voci hotspot al database dove c'è anche un campo chiamato Geolocation, questo èè un valore numerico che la API di Google Maps usa per segnare (pin-point) il luogo esatto di un hotspot nella mappa.<br/><br/>
+Nella pagina Gestione è possibile aggiungere nuove voci hotspot al database dove c'è anche un campo chiamato Geolocation, questo è un valore numerico che la API di Google Maps usa per segnare (pin-point) il luogo esatto di un hotspot nella mappa.<br/><br/>
 
 <h200><b>Vengono fornite 2 Modalità Operative:</b></h200>
 Una è la modalità <b>Vedi MAPPA</b> che abilita il 'surfing' attraverso la mappa mondiale 
@@ -1207,20 +1213,20 @@ $l['messages']['gisviewwelcome'] = "Benvenuto nelle mappe visuali Enginx";
 
 $l['messages']['loginerror'] = "<br/><br/>qualcuno dei seguenti:<br/>
 1. username/password sbagliate<br/>
-2. un amministratore &egrave; gi&agrave; loggato (è permessa una sola istanza per volta) <br/>
+2. un amministratore &egrave; già loggato (è permessa una sola istanza per volta) <br/>
 3. sembra esserci pi&ugrave; di un 'administrator' nel database<br/>
 ";
 
 $l['buttons']['savesettings'] = "Salva Impostazioni";
 $l['buttons']['apply'] = "Applica";
 
-$l['menu']['Home'] = "<em>H</em>ome</a>";
-$l['menu']['Managment'] = "<em>G</em>estione</a>";
-$l['menu']['Reports'] = "<em>R</em>apporti</a>";
-$l['menu']['Accounting'] = "<em>C</em>ontabilit&agrave;</a>";
-$l['menu']['Billing'] = "<em>F</em>atture</a>";
-$l['menu']['Gis'] = "<em>G</em>IS</a>";
-$l['menu']['Graphs'] = "<em>G</em>raphs</a>";
-$l['menu']['Config'] = "<em>C</em>onfig</a>";
-$l['menu']['Help'] = "<em>A</em>iuto</a>";
+$l['menu']['Home'] = "Home";
+$l['menu']['Managment'] = "Gestione";
+$l['menu']['Reports'] = "Rapporti";
+$l['menu']['Accounting'] = "Contabilità";
+$l['menu']['Billing'] = "Fatture";
+$l['menu']['Gis'] = "GIS";
+$l['menu']['Graphs'] = "Grafici";
+$l['menu']['Config'] = "Config";
+$l['menu']['Help'] = "Aiuto";
 ?>
