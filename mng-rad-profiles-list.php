@@ -45,6 +45,7 @@
     include ("menu-mng-rad-profiles.php");
     
     $cols = array(
+                    "selected",
                     "groupname" => t('all','Groupname'),
                     "users" => t('all','TotalUsers')
                  );
@@ -100,9 +101,13 @@
         $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-profiles-del.php";
 ?>
 
-<form name="listall" method="GET" action="mng-rad-profiles-del.php">
+<form name="listall" method="POST" action="<?= $action ?>">
 
     <table border="0" class="table1">
         <thead>
@@ -119,7 +124,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('profile[]', 'mng-rad-profiles-del.php')
+        printTableFormControls('profile_names[]', $action);
 ?>
                 </th>
             </tr>
@@ -135,6 +140,8 @@
         
         <tbody>
 <?php
+        $count = 0;
+        $li_style = 'margin: 7px auto';
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -148,18 +155,34 @@
             // tooltip stuff
             $onclick = 'javascript:return false;';
         
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-profiles-edit.php?profile=%s">%s</a>',
-                                   urlencode($groupname), t('Tooltip','EditProfile'));
+            // tooltip stuff
+            $tooltipText = '<ul style="list-style-type: none">'
+                     . sprintf('<li style="%s">', $li_style)
+                     . sprintf('<a class="toolTip" href="mng-rad-profiles-edit.php?profile_name=%s">%s</a></li>',
+                               urlencode($groupname), t('button','EditProfile'))
+                     . sprintf('<li style="%s">', $li_style)
+                     . sprintf('<a class="toolTip" href="mng-rad-profiles-del.php?profile_name=%s">%s</a></li>',
+                               urlencode($groupname), t('button','RemoveProfile'))
+                     . '</ul>';
         
             echo "<tr>";
-            printf('<td>'
-                 . '<input type="checkbox" name="profile[]" value="%s">'
-                 . '<a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a>"
-                 .'</td>', urlencode($groupname), $onclick, $tooltipText, $groupname);
+            
+            echo '<td>';
+            printf('<label for="checkbox-%s">', $count);
+            printf('<input type="checkbox" name="profile_names[]" id="checkbox-%s" value="%s">',
+                   $count, urlencode($groupname));
+            echo '</label></td>';
+            
+            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
+                   $onclick, $tooltipText, $groupname);
+            
+            
             
             printf("<td>%s</td>", $usercount);
             
             echo "</tr>";
+            
+            $count++;
             
         }
 ?>
@@ -171,6 +194,10 @@
 ?>
         
     </table>
+    
+    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+
+</form>
 
 <?php
     } else {

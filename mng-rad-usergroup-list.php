@@ -30,14 +30,13 @@
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
-    $logAction = "";
     $logDebugSQL = "";
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace("%", "", $_GET['username']) : "";
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     // feed the sidebar
@@ -120,13 +119,17 @@
                                $orderBy, $orderType, $offset, $rowsPerPage);
         $res0 = $dbSocket->query($sql0);
 
-        $per_page_numrows = $res->numRows();
+        $per_page_numrows = $res0->numRows();
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = (!empty($username_enc) ? "&username=" . urlencode($username_enc) : "");
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-usergroup-del.php";
 ?>
-<form name="listall" method="POST" action="mng-rad-usergroup-del.php">
+<form name="listall" method="POST" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
 <?php
@@ -142,7 +145,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('usergroup[]', 'mng-rad-usergroup-del.php')
+        printTableFormControls('usergroup[]', $action);
 ?>
                 </th>
             </tr>
@@ -193,7 +196,7 @@
                 'groups' => array()
             );
             
-            $sql1 = sprintf("SELECT groupname, priority FROM %s WHERE username='%s'",
+            $sql1 = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority DESC, groupname ASC",
                             $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($this_username));
             $res1 = $dbSocket->query($sql1);
             
@@ -252,26 +255,15 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

@@ -32,6 +32,9 @@
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
 
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -134,6 +137,7 @@
         
         <tbody>
 <?php
+        $li_style = 'margin: 7px auto';
         $count = 1;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
@@ -145,7 +149,6 @@
             
             list($id, $rateName, $rateType, $rateCost) = $row;
             
-            $li_style = 'margin: 7px auto';
             $tooltipText = '<ul style="list-style-type: none">'
                          . sprintf('<li style="%s"><a class="toolTip" href="bill-rates-edit.php?ratename=%s">%s</a></li>',
                                    $li_style, urlencode($rateName), t('Tooltip','EditRate'))
@@ -181,6 +184,8 @@
 ?>
     </table>
 
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+
 </form>
 
 <?php
@@ -190,26 +195,15 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>
