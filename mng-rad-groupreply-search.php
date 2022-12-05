@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -23,18 +23,22 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
+    
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-
-    // init loggin variables
+    
+    // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
 
-    $groupname = (array_key_exists('groupname', $_REQUEST) && !empty($_REQUEST['usergroup']))
-               ? trim(str_replace("%", "", $_POST['groupname'])) : "";
-    $groupname_enc = (!empty($groupname)) ? htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8') : "";
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
+    $groupname = (array_key_exists('groupname', $_GET) && !empty(str_replace("%", "", trim($_GET['groupname']))))
+               ? str_replace("%", "", trim($_GET['groupname'])) : "";
+    
+    $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
     
     //feed the sidebar variables
     $search_groupname = $groupname_enc;
@@ -50,7 +54,7 @@
     print_html_prologue($title, $langCode);
 
     include("menu-mng-rad-groups.php");
-
+    
     $cols = array(
                     "groupname" => t('all','Groupname'),
                     "attribute" => t('all','Attribute'),
@@ -76,21 +80,16 @@
     // start printing content
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-
+    
     
     include('library/opendb.php');
     include('include/management/pages_common.php');
 
-    $sql_WHERE = "";
-    $partial_query_string = "";
-    if (!empty($groupname)) {
-        $sql_WHERE = sprintf(" WHERE groupname LIKE '%s%%'", $dbSocket->escapeSimple($groupname));
-        $partial_query_string = sprintf("&groupname=%s", $groupname_enc);
-    }
+    $sql_WHERE = (!empty($groupname))
+               ? sprintf(" WHERE groupname LIKE '%s%%'", $dbSocket->escapeSimple($groupname)) : "";
 
     // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
-    $sql .= $sql_WHERE;
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']) . $sql_WHERE;
     $res = $dbSocket->query($sql);
     $numrows = $res->fetchrow()[0];
     
@@ -107,23 +106,26 @@
         /* END */
     
         // we execute and log the actual query
-        $sql = sprintf("SELECT groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
+        $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
         
-        
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
+        $partial_query_string = (!empty($groupname_enc) ? "&groupname=" . urlencode($groupname_enc) : "");
+                              
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-groupreply-del.php";
+
 ?>
 
 <form name="listall" method="POST" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
-            
 <?php
         // page numbers are shown only if there is more than one page
         if ($drawNumberLinks) {
@@ -133,23 +135,24 @@
             echo '</td>' . '</tr>';
         }
 ?>
+
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('group[]', $action);
+        printTableFormControls('record_id[]', $action);
 ?>
                 </th>
             </tr>
-            
-            <tr>
 <?php
         // second line of table header
+        echo "<tr>";
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>           
-            </tr>
+        echo "</tr>";
+?>
         </thead>
-
-        <?php
+        
+        <tbody>
+<?php
     
         $count = 1;
         while ($row = $res->fetchRow()) {
@@ -160,9 +163,9 @@
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
             
-            list($groupname, $attribute, $op, $value) = $row;
+            list($id, $groupname, $attribute, $op, $value) = $row;
             
-            $checkbox_value = sprintf("%s||%s||%s", $groupname, $value, $attribute);
+            $checkbox_value = "record-" . $id;
             
             $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupreply-edit.php?groupname=%s&value=%s&attribute=%s">%s</a>',
                                    urlencode($groupname), urlencode($value), urlencode($attribute), t('button','EditGroup'));
@@ -170,7 +173,7 @@
 ?>
             <tr>
                 <td>
-                    <input type="checkbox" name="group[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
+                    <input type="checkbox" name="record_id[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
                     <label for="<?= "checkbox-$count" ?>">
                         <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
                             <?= $groupname ?>
@@ -190,10 +193,12 @@
 
 <?php
         // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
     </table>
+
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
 
 </form>
 
@@ -212,7 +217,7 @@ var tooltipObj = new DHTMLgoodies_formTooltip();
 tooltipObj.setTooltipPosition('right');
 tooltipObj.setPageBgColor('#EEEEEE');
 tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip()";
+tooltipObj.initFormFieldTooltip();";
     
     print_footer_and_html_epilogue($inline_extra_js);
 ?>
