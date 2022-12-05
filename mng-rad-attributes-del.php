@@ -32,66 +32,83 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    isset($_GET['vendor']) ? $vendor = $$_GET['vendor'] : $vendor = "";
-    isset($_GET['attribute']) ? $attribute = $$_GET['attribute'] : $attribute = "";
+    include('library/opendb.php');
 
-    $showRemoveDiv = "block";
-
-    if (isset($_POST['vendor'])) {
-
-        if (is_array($_POST['vendor'])) {
-            $vendor_array = $_POST['vendor'];
-        } else {
-            $vendor_array = array($_POST['vendor']."||".$_POST['attribute']);
-        }
-
-        foreach ($vendor_array as $vendor_attribute) {
-
-                    list($vendor, $attribute) = preg_split('\|\|', $vendor_attribute);
-
-                    if ( (trim($vendor) != "") && (trim($attribute) != "") ) {
-
-                            $allVendors =  "";
-                            $allAttributes = "";
-                            include 'library/opendb.php';
-
-                include 'library/opendb.php';
-
-                $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE vendor='".
-                        $dbSocket->escapeSimple($vendor)."' AND attribute='".$dbSocket->escapeSimple($attribute)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                if ($res->numRows() == 1) {
-                    if (trim($vendor) != "" and trim($attribute) != "") {
-                        // remove vendor/attribute pairs from database
-                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE vendor='".
-                            $dbSocket->escapeSimple($vendor)."' AND attribute='".$dbSocket->escapeSimple($attribute)."'";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";
-
-                        $successMsg = "Removed from database vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
-                        $logAction .= "Successfully removed vendor [$vendor] and attribute [$attribute] from database on page: ";
-                    } else {
-                        $failureMsg = "you must provide atleast a vendor name and attribute";
-                        $logAction .= "Failed removing vendor [$vendor] and attribute [$attribute] from database on page: ";
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            $arr = array();
+            
+            if (array_key_exists('vendor__attribute', $_POST) && !empty($_POST['vendor__attribute'])) {
+                $arr = (!is_array($_POST['vendor__attribute']))
+                     ? array( $_POST['vendor__attribute'] ) : $_POST['vendor__attribute'];
+            }
+            
+            if (count($arr) > 0) {
+                
+                $deleted = 0;
+                foreach ($arr as $arr_elem) {
+                    $tmp = explode("__", $arr_elem);
+                    if (count($tmp) != 2) {
+                        continue;
                     }
+                    
+                    list($vendor, $attribute) = $tmp;
+                    $vendor = str_replace("%", "", trim($vendor));
+                    $attribute = str_replace("%", "", trim($attribute));
+                    
+                    if (empty($vendor) || empty($attribute)) {
+                        continue;
+                    }
+                    
+                    $sql_WHERE = array();
+                    $sql_WHERE[] = sprintf("vendor='%s'", $dbSocket->escapeSimple($vendor));
+                    $sql_WHERE[] = sprintf("attribute='%s'", $dbSocket->escapeSimple($attribute));
+                    
+                    
+                    // check if attribute exists
+                    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY'])
+                         . " WHERE " . implode(" AND ", $sql_WHERE);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    $exists = $res->fetchrow()[0] == 1;
+                    
+                    if (!$exists) {
+                        continue;
+                    }
+                    
+                    $sql = sprintf("DELETE FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY'])
+                         . " WHERE " . implode(" AND ", $sql_WHERE);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $deleted++;
+                    }
+                }
+                
+                if ($deleted > 0) {                
+                    $successMsg = sprintf("Deleted %s vendor/attribute(s)", $deleted);
+                    $logAction .= "$successMsg on page: ";
                 } else {
-                    $failureMsg = "You have tried to remove a vendor's attribute that either is not present in the database or there
-                            may be more than 1 entry for this vendor attribute in database (attribute :$attribute)";
-                    $logAction .= "Failed removing vendor attribute already in database [$attribute] on page: ";
-                } //if ($res->numRows() == 1)
-
-                include 'library/closedb.php';
-
-            } // if (trim...
-
-        } //foreach
-
-        $showRemoveDiv = "none";
-
-    } //if (isset)
-
+                    // invalid
+                    $failureMsg = "Empty or invalid vendor/attribute list";
+                    $logAction .= sprintf("Failed deleting vendor/attribute(s) [%s] on page: ", $failureMsg);
+                }
+                
+            } else {
+                // invalid
+                $failureMsg = "Empty or invalid vendor/attribute list";
+                $logAction .= sprintf("Failed deleting vendor/attribute(s) [%s] on page: ", $failureMsg);
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -109,54 +126,64 @@
 
     include_once('include/management/actionMessages.php');
 
-?>
+    // load options
+    $options = array();
+    
+    $sql = sprintf("SELECT vendor, attribute FROM %s ORDER BY vendor, attribute DESC",
+                   $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    while ($row = $res->fetchrow()) {
+        list($vendor, $attribute) = $row;
+        $value = sprintf("%s__%s", $vendor, $attribute);
+        $caption = sprintf("%s - %s", $vendor, $attribute);
+        $options[$value] = $caption;
+    }
+    
+    $input_descriptors1 = array();
 
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    $input_descriptors1[] = array(
+                                    'name' => 'vendor__attribute[]',
+                                    'id' => 'vendor__attribute',
+                                    'type' => 'select',
+                                    'caption' => t('all','VendorName') . " - " . t('all','Attribute'),
+                                    'options' => $options,
+                                    'multiple' => true,
+                                    'size' => 5,
+                                 );
+                                 
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-    <fieldset>
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+                                 
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','VendorAttribute'),
+                                    "disabled" => (count($options) == 0)
+                                 );
 
-        <h302> <?php echo t('title','VendorAttribute'); ?> </h302>
-        <br/>
+    open_form();
+        
+    open_fieldset($fieldset1_descriptor);
 
-        <ul>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
 
-        <li class='fieldset'>
-        <label for='vendor' class='form'><?php echo t('all','VendorName') ?></label>
-        <input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
+    print_back_to_previous_page();
 
-        <div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','vendorNameTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='attribute' class='form'><?php echo t('all','Attribute') ?></label>
-        <input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('attributeTooltip')" />
-
-        <div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','attributeTooltip') ?>
-        </div>
-        </li>
-
-
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
-
-        </ul>
-    </fieldset>
-
-    </form>
-    </div>
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

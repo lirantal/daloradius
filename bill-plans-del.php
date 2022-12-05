@@ -33,53 +33,87 @@
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    isset($_REQUEST['planName']) ? $plans = $_REQUEST['planName'] : $plans = "";
+    include('library/opendb.php');
 
-    $showRemoveDiv = "block";
-
-    if (isset($_REQUEST['planName'])) {
-
-        if (!is_array($plans))
-            $plans = array($plans);
-
-        $allPlans = "";
-
-        include 'library/opendb.php';
+    $valid_planNames = array();
     
-        foreach ($plans as $variable=>$value) {
-            if (trim($value) != "") {
-
-                $planName = $value;
-                $allPlans .= $planName . ", ";
-
-                // remove the plan entry from the plans table
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                        " WHERE planName='".$dbSocket->escapeSimple($planName)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+    $sql = sprintf("SELECT DISTINCT(planName) FROM %s
+                    UNION
+                    SELECT DISTINCT(plan_name) FROM %s",
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    while ($row = $res->fetchrow()) {
+        if (!in_array($row[0], $valid_planNames)) {
+            $valid_planNames[] = $row[0];
+        }
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            if (array_key_exists('planName', $_POST) && !empty($_POST['planName'])) {
+                $planName = array();
+            
+                $tmparr = (!is_array($_POST['planName'])) ? array( $_POST['planName'] ) : $_POST['planName'];
                 
-                // remove plan's association with profiles from the plans_profiles table
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'].
-                        " WHERE plan_name='".$dbSocket->escapeSimple($planName)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+                foreach ($tmparr as $tmp_name) {
+                    $tmp_name = trim($tmp_name);
+                    if (!in_array($tmp_name, $valid_planNames)) {
+                        continue;
+                    }
                 
-                $successMsg = "Deleted billing plan(s): <b> $allPlans </b>";
-                $logAction .= "Successfully deleted billing plan(s) [$allPlans] on page: ";
+                    $tmp_name = $dbSocket->escapeSimple($tmp_name);
+                    if (!in_array($tmp_name, $planName)) {
+                        $planName[] = $tmp_name;
+                    }
+                }
                 
-            } else { 
-                $failureMsg = "no billing plan name was entered, please specify a billing plan name to remove from database";
-                $logAction .= "Failed deleting billing plan(s) [$allPlans] on page: ";
+                if (count($planName) > 0) {
+                
+                    
+                    $tables = array(
+                                        "planName" => $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
+                                        "plan_name" => $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'],
+                                   );
+                                   
+                    $format = "DELETE FROM %s WHERE %s IN ('%s')";
+                    foreach ($tables as $field => $table) {
+                        $sql = sprintf($format, $table, $field, implode("', '", $planName));
+                        $count = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                    }
+                    
+                    $successMsg = sprintf("Deleted %d plan(s)", intval($count));
+                    $logAction .= "$successMsg on page: ";
+                
+                } else {
+                    $failureMsg = "Empty or invalid plan name(s)";
+                    $logAction .= sprintf("Failed deleting plan(s) [%s] on page: ", $failureMsg);
+                }
+            } else {
+                // invalid
+                $failureMsg = "Empty or invalid plan name(s)";
+                $logAction .= sprintf("Failed deleting plan(s) [%s] on page: ", $failureMsg);
             }
+                
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    } else {
+        // !POST
+        $planName = (array_key_exists('planName', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['planName']))))
+                     ? str_replace("%", "", trim($_REQUEST['planName'])) : "";
+        
+        if (empty($planName) || !in_array($planName, $valid_planNames)) {
+            $planName = "";
+        }
+    }
 
-        } //foreach
-
-        $plans = "";
-        include 'library/closedb.php';
-
-        $showRemoveDiv = "none";
-    } 
-
+    include('library/closedb.php');
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -92,8 +126,8 @@
 
     include("menu-bill-plans.php");
     
-    if (!empty($plans) && !is_array($plans)) {
-        $title .= " :: " . htmlspecialchars($plans, ENT_QUOTES, 'UTF-8');
+    if (!empty($planName) && !is_array($planName)) {
+        $title .= " :: " . htmlspecialchars($planName, ENT_QUOTES, 'UTF-8');
     }
     
     echo '<div id="contentnorightbar">';
@@ -101,43 +135,55 @@
 
     include_once('include/management/actionMessages.php');
 
-?>
+    if (!isset($successMsg)) {
 
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        $input_descriptors1 = array();
 
-    <fieldset>
+        $input_descriptors1[] = array(
+                                    'name' => 'planName[]',
+                                    'id' => 'planName',
+                                    'type' => 'select',
+                                    'caption' => t('all','PlanName'),
+                                    'options' => $valid_planNames,
+                                    'multiple' => true,
+                                    'size' => 5,
+                                    'selected_value' => $planName
+                                 );
+                                 
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
 
-        <h302> <?php echo t('title','PlanRemoval') ?> </h302>
-        <br/>
+        $input_descriptors1[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
 
-        <label for='planNname' class='form'><?php echo t('all','PlanName') ?></label>
-        <input name='planName[]' type='text' id='planName' value='<?php echo $plans ?>' tabindex=100 autocomplete="off" />
-        <br/>
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','PlanRemoval'),
+                                        "disabled" => (count($valid_planNames) == 0)
+                                     );
 
-        <br/><br/>
-        <hr><br/>
+        open_form();
+        
+        open_fieldset($fieldset1_descriptor);
 
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
-            class='button' />
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
 
-    </fieldset>
-
-    </form>
-    </div>
-
-<?php
-    include('include/config/logging.php');
-    
-    include_once("include/management/autocomplete.php");
-
-    if ($autoComplete) {
-        $inline_extra_js = "
-autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('planName','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteBillingPlans');";
-    } else {
-        $inline_extra_js = "";
     }
-    
-    print_footer_and_html_epilogue($inline_extra_js);
+
+    print_back_to_previous_page();
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
+

@@ -149,8 +149,8 @@
     
     
         } else {
-            $failureMsg = sprintf("CSRF token error");
-            $logAction .= sprintf("CSRF token error on page: ");
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     }
 
@@ -180,16 +180,22 @@
     include_once('include/management/actionMessages.php');
     
     if ($deleted_batches == 0) {
+        $options = $valid_batch_names;
         
         $input_descriptors1 = array();
     
-        $input_descriptors1[] = array(
+        $input_descriptors1[0] = array(
                                         "name" => "batch_name",
                                         "caption" => t('all','BatchName'),
                                         "type" => "text",
-                                        "datalist" => $valid_batch_names
                                      );
-                                     
+
+        if (count($options) > 0) {
+            $input_descriptor[0]['datalist'] = $options;
+        } else {
+            $input_descriptor[0]['disabled'] = true;
+        }
+
         $input_descriptors1[] = array(
                                         "name" => "csrf_token",
                                         "type" => "hidden",
@@ -201,37 +207,28 @@
                                         'name' => 'submit',
                                         'value' => t('buttons','apply')
                                      );
+                                     
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','BatchRemoval'),
+                                        "disabled" => (count($options) == 0)
+                                     );
 
-?>
-
-<form method="POST">
-    <fieldset>
-        <h302><?= t('title','BatchRemoval') ?></h302>
+        open_form();
         
-        <ul style="margin: 10px auto">
-<?php
+        open_fieldset($fieldset1_descriptor);
+
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-?>
-
-        </ul>
-    </fieldset>
-</form>
-
-<?php
-
-    }
-
-    if (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE']))) {
-        echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
-        printf('<a href="%s" title="Back to Previous Page">Back to Previous Page</a>', trim($_SESSION['PREV_LIST_PAGE']));
-        echo '</div>';
         
-        unset($_SESSION['PREV_LIST_PAGE']);
+        close_fieldset();
+        
+        close_form();
+
     }
+
+    print_back_to_previous_page();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>
-

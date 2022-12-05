@@ -32,61 +32,54 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    $invoice_id = array();
-    
-    if (array_key_exists('invoice_id', $_REQUEST) && !empty($_REQUEST['invoice_id'])) {
-        $tmparr = (!is_array($_REQUEST['invoice_id'])) ? array( $_REQUEST['invoice_id'] ) : $_POST['invoice_id'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            $invoice_id = array();
         
-        foreach ($tmparr as $tmp_id) {
-            $tmp_id = intval(trim($tmp_id));
-            if (!in_array($tmp_id, $invoice_id)) {
-                $invoice_id[] = $tmp_id;
+            if (array_key_exists('invoice_id', $_POST) && !empty($_POST['invoice_id'])) {
+                $tmparr = (!is_array($_POST['invoice_id'])) ? array( $_POST['invoice_id'] ) : $_POST['invoice_id'];
+                
+                foreach ($tmparr as $tmp_id) {
+                    $tmp_id = intval(trim($tmp_id));
+                    if (!in_array($tmp_id, $invoice_id)) {
+                        $invoice_id[] = intval($tmp_id);
+                    }
+                }
             }
+            
+            if (count($invoice_id) > 0) {
+                include('library/opendb.php');
+                
+                // remove invoice id(s)
+                $sql = sprintf("DELETE FROM %s WHERE id IN ('%s')",
+                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], implode(", ", $invoice_id));
+                $removed_invoice_ids = intval($dbSocket->query($sql));
+                $logDebugSQL .= "$sql;\n";
+                
+                // remove invoice items associated with this invoice id(s)
+                $sql = sprintf("DELETE FROM %s WHERE invoice_id IN ('%s')",
+                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'], implode(", ", $invoice_id));
+                $removed_invoice_items = intval($dbSocket->query($sql));
+                $logDebugSQL .= "$sql;\n";
+                
+                $successMsg = sprintf("Deleted %d invoice id(s) and %d item(s)", $removed_invoice_ids, $removed_invoice_items);
+                $logAction .= sprintf("Successfully %s on page: ", $successMsg);
+                
+                include('library/closedb.php');
+            } else {
+                $failureMsg = "Empty or invalid invoice id(s)";
+                $logAction .= sprintf("Failed deleting invoice(s) [%s] on page: ", $failureMsg);
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     }
 
-    $showRemoveDiv = "block";
-
-    if (count($invoice_id) > 0) {
-        $allInvoices = "";
-
-        include 'library/opendb.php';
     
-        foreach ($invoice_id as $variable=>$value) {
-            if (trim($value) != "") {
-
-                $invoice_id_single = $value;
-                $allInvoices .= $invoice_id_single . ", ";
-
-                // remove invoice id 
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
-                        " WHERE id='".$dbSocket->escapeSimple($invoice_id_single)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                // remove invoice items associated with this invoice id
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].
-                        " WHERE invoice_id='".$dbSocket->escapeSimple($invoice_id_single)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-                
-                $successMsg = "Deleted invoice id(s): <b> $allInvoices </b>";
-                $logAction .= "Successfully deleted invoice id(s) [$allInvoices] on page: ";
-                
-            } else { 
-                $failureMsg = "no invoice id was entered, please specify an invoice id to remove from database";
-                $logAction .= "Failed deleting invoice id(s) [$allInvoices] on page: ";
-            }
-
-        } //foreach
-
-        $plans = "";
-        include 'library/closedb.php';
-
-        $showRemoveDiv = "none";
-    } 
-
-
+        
     include_once("lang/main.php");
     include("library/layout.php");
 
@@ -96,7 +89,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include ("menu-mng-batch.php");
+    include("menu-bill-invoice.php");
     
     if (!empty($invoice_id) && !is_array($invoice_id)) {
         $title .= " :: #" . htmlspecialchars($invoice_id, ENT_QUOTES, 'UTF-8');
@@ -106,33 +99,63 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
+    
+    // load options
+    include('library/opendb.php');
+    $sql = sprintf("SELECT id FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $options = array();
+    while ($row = $res->fetchrow()) {
+        $id = intval($row[0]);
+        $options[$id] = $id;
+    }
+    include('library/closedb.php');
+    
+    $input_descriptors1 = array();
 
-?>
+    $input_descriptors1[] = array(
+                                    'name' => 'invoice_id[]',
+                                    'id' => 'invoice_id',
+                                    'type' => 'select',
+                                    'caption' => t('all','InvoiceID'),
+                                    'options' => $options,
+                                    'multiple' => true,
+                                    'size' => 5
+                                 );
 
-<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-    <fieldset>
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
 
-        <h302> <?php echo t('title','InvoiceRemoval') ?> </h302>
-        <br/>
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','InvoiceRemoval'),
+                                    "disabled" => (count($options) == 0)
+                                 );
 
-        <label for='invoice_id' class='form'><?php echo t('all','InvoiceID') ?></label>
-        <input name='invoice_id[]' type='text' id='invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 autocomplete="off" />
-        <br/>
+    open_form();
+    
+    open_fieldset($fieldset1_descriptor);
 
-        <br/><br/>
-        <hr><br/>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
+    
+    print_back_to_previous_page();
 
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
-            class='button' />
-
-    </fieldset>
-
-    </form>
-    </div>
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

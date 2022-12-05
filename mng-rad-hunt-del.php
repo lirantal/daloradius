@@ -32,76 +32,84 @@
     $logAction = "";
     $logDebugSQL = "";
 
-        $groupname = "";
-        $nasipaddress = "";
-        $nasportid = "";
+    include('library/opendb.php');
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        
+            $arr = array();
+        
+            if (array_key_exists('nashost', $_POST) && !empty($_POST['nashost'])) {
+                $arr = (!is_array($_POST['nashost'])) ? array( $_POST['nashost'] ) : $_POST['nashost'];
+            } else if (array_key_exists('nasipaddress', $_POST) && !empty(trim($_POST['nasipaddress']))) {
+             
+                if (array_key_exists('nasportid', $_POST) && !empty(trim($_POST['nasportid']))) {
+                    $arr = array( trim($_POST['nasipaddress']) . "||" . trim($_POST['nasportid']) );
+                } else {
+                    $arr = array( trim($_POST['nasipaddress']) );
+                }
+            }
 
-        $showRemoveDiv = "block";
+            if (count($arr) > 0) {
 
-        if (isset($_POST['nashost'])) {
-                $hgroup_array = $_POST['nashost'];
-        } else {
-                if (isset($_GET['nasportid']))
-                $hgroup_array = array($_GET['nasipaddress']."||".$_GET['nasportid']);
-        }
-
-        if (isset($hgroup_array)) {
-
-                $allNasipaddresses =  "";
-                $allNasportid =  "";
-
-                foreach ($hgroup_array as $hgroup) {
-
-                        list($nasipaddress, $nasportid) = preg_split('/\|\|/', $hgroup);
-
-                        if (trim($nasipaddress) != "") {
-
-                                $allNasipaddresses .= $nasipaddress . ", ";
-                                $allNasportid .= $nasportid . ", ";
-
-                                if ( trim($nasportid) != "")  {
-
-                                        include 'library/opendb.php';
-
-                                        // delete only a specific groupname and it's attribute
-                                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADHG'].
-                                                        " WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress).
-                                                        "' AND nasportid='$nasportid' ";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
-
-                                        $successMsg = "Deleted HuntGroup(s): <b> $allNasipaddresses </b> with Port ID(s): <b> $allNasportid </b> ";
-                                        $logAction .= "Successfully deleted hunt group(s) [$allNasipaddresses] with port id [$allNasportid] on page: ";
-
-                                        include 'library/closedb.php';
-
-                                } else {
-
-                                        include 'library/opendb.php';
-
-                                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADHG']." WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress)."'";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
-
-                                        $successMsg = "Deleted all instances for HuntGroup(s): <b> $allNasipaddresses </b>";
-                                        $logAction .= "Successfully deleted all instances for huntgroup(s) [$allNasipaddresses] on page: ";
-
-                                        include 'library/closedb.php';
-
-                                }
-
-                        } else {
-
-                                        $failureMsg = "No hunt groupname was entered, please specify a hunt groupname to remove from database";
-                                        $logAction .= "Failed deleting empty hunt group on page: ";
+                $deleted = 0;
+                foreach ($arr as $arr_elem) {
+                    
+                    $sql_WHERE = array();
+                    
+                    if (preg_match('/^[a-zA-Z0-9_-.]+\|\|/[0-9]+$', $arr_elem) !== false) {
+                        $tmp = explode("||", $arr_elem);
+                        if (count($tmp) != 2) {
+                            continue;
                         }
+                        
+                        list($addr, $port) = $tmp;
+                        $addr = trim($addr);
+                        $port = trim($port);
+                        
+                        if (empty($addr) || empty($port)) {
+                            continue;
+                        }
+                        
+                        $sql_WHERE[] = sprintf("nasipaddress='%s'", $dbSocket->escapeSimple($addr));
+                        $sql_WHERE[] = sprintf("nasportid='%s'", $dbSocket->escapeSimple($port));
+                    } else if (preg_match('/^[a-zA-Z0-9_-.]+$', $arr_elem) !== false) {
+                        $sql_WHERE[] = sprintf("nasipaddress='%s'", $dbSocket->escapeSimple($addr));
+                    } else {
+                        continue;
+                    }
+                    
+                    $sql = sprintf("DELETE FROM %s", $configValues['CONFIG_DB_TBL_RADHG'])
+                         . " WHERE " . implode(" AND ", $sql_WHERE);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $deleted++;
+                    }
+                }
+                
+                if ($deleted > 0) {                
+                    $successMsg = sprintf("Deleted %s huntgroup(s)", $deleted);
+                    $logAction .= "$successMsg on page: ";
+                } else {
+                    // invalid
+                    $failureMsg = "Empty or invalid huntgroup(s)";
+                    $logAction .= sprintf("Failed deleting huntgroup(s) [%s] on page: ", $failureMsg);
+                }
 
-                } // foreach
-
-                $showRemoveDiv = "none";
-
+            } else {
+                // invalid
+                $failureMsg = "Empty or invalid huntgroup(s)";
+                $logAction .= sprintf("Failed deleting huntgroup(s) [%s] on page: ", $failureMsg);
+            }
+        
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
+    }
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -112,51 +120,77 @@
     
     print_html_prologue($title, $langCode);
 
-    include ("menu-mng-rad-hunt.php");
+    include("menu-mng-rad-hunt.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-?>
-
-<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-
-        <fieldset>
-
-            <h302> <?php echo t('title','HGInfo') ?> </h302>
-            <br/>
-
-            <label for='nasipaddress' class='form'><?php echo t('all','HgIPHost') ?></label>
-            <input name='nasipaddress' type='text' id='nasipaddress' value='' tabindex=100 />
-            <br />
-
-                        <label for='nasportid' class='form'><?php echo t('all','HgPortId') ?></label>
-                        <input name='nasportid' type='text' id='nasportid' value='<?php echo $nasportid ?>' tabindex=101 />
-                        <br/>
-
-            <br/><br/>
-            <hr><br/>
-
-            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
-        </fieldset>
-
-        </form>
-        </div>
-
-<?php
-    include('include/config/logging.php');
     
-    include_once("include/management/autocomplete.php");
-    if ($autoComplete) {
-         $inline_extra_js = "
-autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('nasipaddress','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteHGHost');";
-    } else {
-        $inline_extra_js = "";
+    if (!isset($successMsg)) {
+    
+        $sql = sprintf("SELECT nasipaddress, nasportid FROM %s", $configValues['CONFIG_DB_TBL_RADHG']);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $options = array();
+        while ($row = $res->fetchrow()) {
+            $tmp = $row[0] . "||" . $row[1];
+            
+            if (in_array($tmp, array_keys($options))) {
+                continue;
+            }
+            
+            $options[$tmp] = sprintf("%s:%s", $row[0], $row[1]);
+        }
+    
+    
+        $input_descriptors1 = array();
+
+        $input_descriptors1[] = array(
+                                        'name' => 'nashost[]',
+                                        'id' => 'nashost',
+                                        'type' => 'select',
+                                        'caption' => t('all','HgIPHost') . ":" . t('all','HgPortId'),
+                                        'options' => $options,
+                                        'multiple' => true,
+                                        'size' => 5,
+                                     );
+                                 
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors1[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
+                                     
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','HGInfo'),
+                                        "disabled" => (count($options) == 0)
+                                     );
+
+        open_form();
+        
+        open_fieldset($fieldset1_descriptor);
+
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
     }
-    
-    print_footer_and_html_epilogue($inline_extra_js);
+
+    include('library/closedb.php');
+
+    print_back_to_previous_page();
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
