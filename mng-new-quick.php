@@ -284,6 +284,7 @@
                 
                 $successMsg = "Added to database new user: <b> $username_enc </b>";
                 $logAction .= "Successfully added new user [$username] on page: ";
+                
             
             } // if (empty($username) || empty($password)) {
         
@@ -429,8 +430,8 @@
                                     "name" => "expiration",
                                     "caption" => t('all','Expiration'),
                                     "type" => "date",
-                                    "min" => "1970-01-01",
-                                    "max" => date('Y-m-d')
+                                    "min" => "2022-01-01",
+                                    "max" => "2030-01-01"
                                     
                                 );
     
