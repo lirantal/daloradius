@@ -84,8 +84,8 @@ function t($a, $b = null, $c = null, $d = null) {
         $current = $arr[$i];
         $next = $arr[$i+1];
         
-        if ($next == null && array_key_exists($current, $t) && !empty(trim($t[$current]))) {
-            return trim($t[$current]);
+        if ($next == null && array_key_exists($current, $t) && !empty($t[$current])) {
+            return $t[$current];
         }
         
         $t = $t[$current];
