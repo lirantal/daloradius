@@ -235,6 +235,10 @@ function print_input_field($input_descriptor) {
         printf(' pattern="%s"', $input_descriptor['pattern']);
     }
     
+    if (array_key_exists('title', $input_descriptor)) {
+        printf(' title="%s"', $input_descriptor['title']);
+    }
+    
     if (array_key_exists('onclick', $input_descriptor)) {
         printf(' onclick="%s"', $input_descriptor['onclick']);
     }
@@ -425,26 +429,6 @@ function print_form_component($descriptor) {
     }
 }
 
-// $button_descriptors = array( 'tab-id' => 'button-caption' )
-function print_tab_navbuttons($button_descriptors) {
-    if (is_array($button_descriptors) && count($button_descriptors)) {
-        echo '<div class="tab">';
-        
-        $count = 0;
-        foreach ($button_descriptors as $tab_id => $button_caption) {
-            $onclick = sprintf("openTab(event, '%s')", $tab_id);
-            
-            printf('<button id="%s-button" class="tablinks%s" onclick="%s">%s</button>',
-                   $tab_id, (($count == 0) ? " active" : ""), $onclick, strip_tags($button_caption));
-
-            $count++;
-        }
-        
-        
-        echo '</div>' . "\n";
-    }
-}
-
 // prints the back to previous session link 
 function print_back_to_previous_page() {
     global $_SESSION;
@@ -494,6 +478,10 @@ function close_form() {
 function open_fieldset($descriptor=array()) {
     echo "<fieldset";
     
+    if (array_key_exists('id', $descriptor) && !empty($descriptor['id'])) {
+        printf(' id="%s"', strip_tags(trim($descriptor['id'])));
+    }
+    
     if (array_key_exists('disabled', $descriptor) && $descriptor['disabled']) {
         echo ' disabled';
     }
@@ -510,6 +498,97 @@ function open_fieldset($descriptor=array()) {
 function close_fieldset() {
     echo '</ul>'
        . '</fieldset>';
+}
+
+
+// $button_descriptors = array( 'tab-id' => 'button-caption' )
+function print_tab_navbuttons($button_descriptors) {
+    if (is_array($button_descriptors) && count($button_descriptors)) {
+        echo '<div class="tab">';
+        
+        $count = 0;
+        foreach ($button_descriptors as $tab_id => $button_caption) {
+            $onclick = sprintf("openTab(event, '%s')", $tab_id);
+            
+            printf('<button id="%s-button" class="tablinks%s" onclick="%s">%s</button>',
+                   $tab_id, (($count == 0) ? " active" : ""), $onclick, strip_tags($button_caption));
+
+            $count++;
+        }
+        
+        
+        echo '</div>' . "\n";
+    }
+}
+
+function print_tab_header($keywords=array(), $active=0) {
+    if (is_array($keywords) && count($keywords) > 0) {
+        echo '<div class="tab">';
+        
+        $count = 0;
+        foreach ($keywords as $key) {
+            if (is_array($key)) {
+                $tab_id = strtolower($key[0]) . "-tab";
+                $button_id = strtolower($key[0]) . "-button";
+                $button_caption = $key[1];
+            } else {
+                $tab_id = strtolower("$key-tab");
+                $button_id = strtolower("$key-button");
+                $button_caption = t('title', $key);
+            }
+            
+            $onclick = sprintf("openTab(event, '%s')", $tab_id);
+            
+            printf('<button id="%s" class="tablinks%s" onclick="%s">%s</button>',
+                   $button_id, (($count == $active) ? " active" : ""), $onclick, strip_tags($button_caption));
+        
+            $count++;
+        }
+        
+        echo '</div>' . "\n";
+        
+        
+    }
+}
+
+function open_tab($keywords=array(), $index=0, $display=false) {
+    if (array_key_exists($index, $keywords) && !empty($keywords[$index])) {
+        $key = $keywords[$index];
+        
+        if (is_array($key)) {
+            $tab_id = strtolower($key[0]) . "-tab";
+            $tab_title = $key[1];
+        } else {
+            $tab_id = strtolower("$key-tab");
+            $tab_title = t('title', $key);
+        }
+        
+        printf('<div id="%s" class="tabcontent"', $tab_id);
+        
+        if ($display) {
+            echo ' style="display: block"';
+        }
+        
+        echo '>' . "\n";
+    }
+}
+
+function close_tab($keywords=array(), $index=0) {
+    echo '</div>';
+    
+    if (array_key_exists($index, $keywords) && !empty($keywords[$index])) {
+        $key = $keywords[$index];
+        
+        if (is_array($key)) {
+            $tab_id = strtolower($key[0]) . "-tab";
+        } else {
+            $tab_id = strtolower("$key-tab");
+        }
+        
+        echo "<!-- #$tab_id -->";
+    }
+    
+    echo "\n";
 }
 
 ?>
