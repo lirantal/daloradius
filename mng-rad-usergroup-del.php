@@ -153,8 +153,8 @@
             }
             
         } else {
-            $failureMsg = sprintf("CSRF token error");
-            $logAction .= sprintf("CSRF token error on page: ");
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
         
     } else {
@@ -230,25 +230,26 @@
                                         'name' => 'submit',
                                         'value' => t('buttons','apply')
                                      );
-?>
+                                     
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','GroupInfo'),
+                                        "disabled" => (count($options) == 0)
+                                     );
 
-<form method="POST">
-    <fieldset>
-        <h302><?= t('title','GroupInfo') ?></h302>
+        open_form();
         
-        <ul style="margin: 10px auto">
-<?php
+        open_fieldset($fieldset1_descriptor);
+
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-?>
-
-        </ul>
-    </fieldset>
-</form>
-
-<?php
+        
+        close_fieldset();
+        
+        close_form();
     }
+
+    print_back_to_previous_page();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

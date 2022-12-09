@@ -31,7 +31,7 @@ define("DATE_REGEX", "/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/");
 define("ORDER_TYPE_REGEX", "/^(de|a)sc$/");
 define("IP_REGEX", "/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9]).){3}((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])$/");
 define("NETMASK_LENGTH_REGEX", "/^3[0-2]|[1-2][0-9]|[1-9]$/");
-define("MACADDR_REGEX", "/^(?:[0-9a-f]{2}([-:]))(?:[0-9a-f]{2}\1){4}[0-9a-f]{2}$/i");
+define("MACADDR_REGEX", '/^(?:[0-9A-Fa-f]{2}([-:]))(?:[0-9A-Fa-f]{2}\1){4}[0-9A-Fa-f]{2}$/');
 define("PINCODE_REGEX", "/^[a-zA-Z0-9]+$/");
 
 // this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
@@ -53,7 +53,7 @@ $valid_passwordTypes = array(
                                 "SHA1-Password",
                                 "User-Password",
                                 "Crypt-Password",
-                                "CHAP-Password"
+                                //~ "CHAP-Password"
                              );
 
 $valid_ops = array(
@@ -114,5 +114,18 @@ $acct_custom_query_options_default = array(
                                             "AcctSessionTime", "AcctInputOctets", "AcctOutputOctets", "CalledStationId",
                                             "CallingStationId", "AcctTerminateCause", "FramedIPAddress"
                                           );
+
+// validating values
+$valid_languages = array(
+                            "en" => "English", 
+                            "it" => "Italian", 
+                            "hu" => "Hungarian", 
+                            "ro" => "Romanian",
+                            "ru" => "Russian", 
+                            "ja" => "Japanese",
+                            "zh" => "Chinese",
+                            "es_ve" => "Spanish - Venezuelan", 
+                            "pt_br" => "Portuguese - Brazilian", 
+                        );
 
 ?>

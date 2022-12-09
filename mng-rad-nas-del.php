@@ -100,8 +100,8 @@
 
     } else {
         $success = false;
-        $failureMsg = sprintf("CSRF token error");
-        $logAction .= sprintf("CSRF token error on page: ");
+        $failureMsg = "CSRF token error";
+        $logAction .= "$failureMsg on page: ";
     }
 
     include_once('library/config_read.php');
@@ -125,24 +125,24 @@
     }
     
     if (!$success) {
-        $input_descriptor = array(
-                                    'name' => $field_name . "[]",
-                                    'id' => $field_name,
-                                    'type' => 'text',
-                                    'caption' => t('all','NasIPHost'),
-                                 );
-        
-        $options = $valid_values;                         
-        if (count($options) > 0) {
-            $input_descriptor['datalist'] = $options;
-        } else {
-            $input_descriptor['disabled'] = true;
-        }
+        $options = $valid_values;
         
         $input_descriptors1 = array();
         
-        $input_descriptors1[] = $input_descriptor;
-
+        $input_descriptors1[0] = array(
+                                        'name' => $field_name . "[]",
+                                        'id' => $field_name,
+                                        'type' => 'text',
+                                        'caption' => t('all','NasIPHost'),
+                                      );
+        
+        
+        if (count($options) > 0) {
+            $input_descriptors1[0]['datalist'] = $options;
+        } else {
+            $input_descriptors1[0]['disabled'] = true;
+        }
+        
         $input_descriptors1[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
@@ -154,36 +154,29 @@
                                         "type" => "hidden",
                                         "value" => dalo_csrf_token(),
                                      );
-    
-?>
+                                     
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','NASInfo'),
+                                        "disabled" => (count($options) == 0)
+                                     );
 
-<form method="POST">
-    <fieldset>
-        <h302><?= t('title','NASInfo') ?></h302>
+        open_form();
         
-        <ul style="margin: 10px auto">
-<?php
+        open_fieldset($fieldset1_descriptor);
+
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-?>
-
-        </ul>
-    </fieldset>
-</form>
-<?php
-    }
-?>
-        </div><!-- #contentnorightbar -->
         
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+        close_fieldset();
+        
+        close_form();
+    
+    }
 
-</body>
-</html>
+    print_back_to_previous_page();
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+?>
+

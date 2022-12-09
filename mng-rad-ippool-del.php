@@ -32,59 +32,95 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    isset($_REQUEST['poolname']) ? $poolname = $_REQUEST['poolname'] : $poolname = "";
-    isset($_REQUEST['ipaddress']) ? $ipaddress = $_REQUEST['ipaddress'] : $ipaddress = "";
 
-    $showRemoveDiv = "block";
+    include('library/opendb.php');
 
-    if (isset($_POST['poolname'])) {
-
-        $allPoolNames = "";
-        $allIPAddresses = "";
-
-        /* since the foreach loop will report an error/notice of undefined variable $value because
-        it is possible that the $poolname is not an array, but rather a simple GET request
-        with just some value, in this case we check if it's not an array and convert it to one with
-        a NULL 2nd element
-        */
-
-        if (is_array($poolname)) {
-            $itemsArray = $poolname;
-        } else {
-            $itemsArray = array($poolname."||".$ipaddress);
-        }
-
-        foreach ($itemsArray as $value) {
-
-            list($poolnamex, $ipaddress) = preg_split('/\|\|/', $value);
-
-            if ( (trim($poolnamex) != "") && (trim($ipaddress) != "") ) {
-
-                include 'library/opendb.php';
-
-                $allPoolNames .= $poolnamex . ", ";
-                $allIPAddresses .= $ipaddress .", ";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL']." WHERE ".
-                    " pool_name='".$dbSocket->escapeSimple($poolnamex)."' AND".
-                    " framedipaddress='".$dbSocket->escapeSimple($ipaddress)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg .= "Deleted IP Address <b>$ipaddress</b> for Pool Name <b>$poolnamex</b> from database <br>";
-                $logAction .= "Successfully deleted IP Address [$ipaddress] for Pool name [$poolnamex] on page: ";
-
-                include 'library/closedb.php';
-
-            }  else {
-                $failureMsg = "No IPAddress/Pool Name was entered, please specify an IPAddress/Pool Name to remove from database";
-                $logAction .= "Failed deleting empty IP Address/Pool Name on page: ";
-            } //if trim
-
-        } //foreach
-
-        $showRemoveDiv = "none";
+    // load valid_ids
+    $sql = sprintf("SELECT id FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $valid_ids = array();
+    while ($row = $res->fetchrow()) {
+        $valid_ids[] = intval($row[0]);
     }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            $arr = (!is_array($_POST['record_id'])) ? array( trim($_POST['record_id']) ) : $_POST['record_id'];
+            
+            
+            if (count($arr) > 0) {
+                
+                $ids = array();
+                
+                // pre-validate
+                foreach ($arr as $id) {
+                    
+                    $m = array();
+                    if (preg_match("/^record-([0-9]+)$/", $id, $m) === false) {
+                        continue;
+                    }
+                    
+                    $id = intval($m[1]);
+                    if (in_array($id, $valid_ids) && !in_array($id, $ids)) {
+                        $ids[] = $id;
+                    }
+                }
+                
+                // execute delete
+                if (count($ids) > 0) {
+                    
+                    $sql = sprintf("DELETE FROM %s WHERE id IN (%s)",
+                                   $configValues['CONFIG_DB_TBL_RADIPPOOL'], implode(", ", $ids));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $successMsg = sprintf("Deleted %s IP pool record(s)", $res);
+                        $logAction .= "$successMsg on page: ";
+                    } else {
+                        // DB Error
+                        $successMsg = "Error when deleting IP pool record(s)";
+                        $logAction .= "$successMsg on page: ";
+                    }
+                    
+                } else {
+                    // invalid
+                    $failureMsg = "Empty or invalid IP pool element(s)";
+                    $logAction .= sprintf("Failed deleting IP pool record(s) [%s] on page: ", $failureMsg);
+                }
+                
+            } else {
+                // invalid
+                $failureMsg = "Empty or invalid IP pool element(s)";
+                $logAction .= sprintf("Failed deleting IP pool record(s) [%s] on page: ", $failureMsg);
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+
+
+    $options = array();
+    $options_format = "%s: [%s]";
+
+    $sql = sprintf("SELECT id, pool_name, framedipaddress FROM %s ORDER BY pool_name, framedipaddress ASC",
+                   $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    while ($row = $res->fetchrow()) {
+        list($id, $pool_name, $framedipaddress) = $row;
+        $key = "record-" . $id;
+        $options[$key] = sprintf($options_format, $pool_name, $framedipaddress);
+    }
+    
+    include('library/closedb.php');
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -103,36 +139,51 @@
 
     include_once('include/management/actionMessages.php');
 
-?>
+    $input_descriptors1 = array();
 
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    $caption = sprintf($options_format, t('all','PoolName'), t('all','IPAddress'));
 
-        <fieldset>
+    $input_descriptors1[] = array(
+                                    'name' => 'record_id[]',
+                                    'id' => 'record_id',
+                                    'type' => 'select',
+                                    'caption' => $caption,
+                                    'options' => $options,
+                                    'multiple' => true,
+                                    'size' => 5,
+                                 );
 
-            <h302> <?php echo t('title','IPPoolInfo') ?> </h302>
-            <br/>
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-            <label for='poolname' class='form'><?php echo t('all','PoolName') ?></label>
-            <input name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
-            <br />
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+                                 
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','IPPoolInfo'),
+                                    "disabled" => (count($options) == 0)
+                                 );
 
-            <label for='ipaddress' class='form'><?php echo t('all','IPAddress') ?></label>
-            <input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=101 />
-            <br />
+    open_form();
+    
+    open_fieldset($fieldset1_descriptor);
 
-            <br/><br/>
-            <hr><br/>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
 
-            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+    print_back_to_previous_page();
 
-        </fieldset>
-
-
-        </form>
-    </div>
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

@@ -33,46 +33,73 @@
     $logDebugSQL = "";
     $log = "visited page: ";
     
+    include('library/opendb.php');
 
-    isset($_REQUEST['ratename']) ? $ratename = $_REQUEST['ratename'] : $ratename = "";
-
-    $showRemoveDiv = "block";
-
-    if (isset($_REQUEST['ratename'])) {
-
-        if (!is_array($ratename))
-            $ratename = array($ratename);
-
-        $allRates = "";
-
-        include 'library/opendb.php';
+    $valid_ratenames = array();
     
-        foreach ($ratename as $variable=>$value) {
-            if (trim($value) != "") {
+    $sql = sprintf("SELECT DISTINCT(ratename) FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    while ($row = $res->fetchrow()) {
+        $valid_ratenames[] = $row[0];
+    }
 
-                $name = $value;
-                $allRates .= $name . ", ";
-
-                // delete all rates 
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE rateName='".
-                        $dbSocket->escapeSimple($name)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            if (array_key_exists('ratename', $_POST) && !empty($_POST['ratename'])) {
+                $ratename = array();
+            
+                $tmparr = (!is_array($_POST['ratename'])) ? array( $_POST['ratename'] ) : $_POST['ratename'];
                 
-                $successMsg = "Deleted rate(s): <b> $allRates </b>";
-                $logAction .= "Successfully deleted rates(s) [$allRates] on page: ";
+                foreach ($tmparr as $tmp_name) {
+                    $tmp_name = trim($tmp_name);
+                    if (!in_array($tmp_name, $valid_ratenames)) {
+                        continue;
+                    }
                 
-            } else { 
-                $failureMsg = "no rate was entered, please specify a rate name to remove from database";
-                $logAction .= "Failed deleting rate(s) [$allRates] on page: ";
+                    $tmp_name = $dbSocket->escapeSimple($tmp_name);
+                    if (!in_array($tmp_name, $ratename)) {
+                        $ratename[] = $tmp_name;
+                    }
+                }
+                
+                if (count($ratename) > 0) {
+                
+                    $sql = sprintf("DELETE FROM %s WHERE %s IN ('%s')",
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], implode("', '", $ratename));
+                    $count = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    $successMsg = sprintf("Deleted %d rate(s)", intval($count));
+                    $logAction .= "$successMsg on page: ";
+                
+                } else {
+                    // invalid
+                    $failureMsg = "Empty or invalid rate name(s)";
+                    $logAction .= sprintf("Failed deleting rate(s) [%s] on page: ", $failureMsg);
+                }
+            } else {
+                // invalid
+                $failureMsg = "Empty or invalid rate name(s)";
+                $logAction .= sprintf("Failed deleting rate(s) [%s] on page: ", $failureMsg);
             }
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    } else {
+        // !POST
+        $ratename = (array_key_exists('ratename', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['ratename']))))
+                     ? str_replace("%", "", trim($_REQUEST['ratename'])) : "";
+        
+        if (empty($ratename) || !in_array($ratename, $valid_ratenames)) {
+            $ratename = "";
+        }
+    }
 
-        } //foreach
-
-        include 'library/closedb.php';
-
-        $showRemoveDiv = "none";
-    } 
+    include('library/opendb.php');
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -83,7 +110,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-bill-pos.php");
+    include("menu-bill-rates.php");
     
     if (!empty($ratename) && !is_array($ratename)) {
         $title .= " :: " . htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8');
@@ -94,33 +121,54 @@
 
     include_once('include/management/actionMessages.php');
     
-?>
+    if (!isset($successMsg)) {
+    
+        $input_descriptors1 = array();
 
-<div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        $input_descriptors1[] = array(
+                                    'name' => 'ratename[]',
+                                    'id' => 'ratename',
+                                    'type' => 'select',
+                                    'caption' => t('all','RateName'),
+                                    'options' => $valid_ratenames,
+                                    'multiple' => true,
+                                    'size' => 5,
+                                    'selected_value' => $ratename
+                                 );
+                                 
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
 
-    <fieldset>
+        $input_descriptors1[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
+                                     
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','RateInfo'),
+                                        "disabled" => (count($valid_ratenames) == 0)
+                                     );
 
-        <h302> <?php echo t('title','RateInfo') ?> </h302>
-        <br/>
+        open_form();
+        
+        open_fieldset($fieldset1_descriptor);
 
-        <label for='ratename' class='form'><?php echo t('all','RateName') ?></label>
-        <input name='ratename[]' type='text' id='ratename' value='<?php echo $ratename ?>' tabindex=100 />
-        <br/>
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
+        
+    }
 
-        <br/><br/>
-        <hr><br/>
+    print_back_to_previous_page();
 
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
-            class='button' />
-
-    </fieldset>
-
-    </form>
-    </div>
-
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

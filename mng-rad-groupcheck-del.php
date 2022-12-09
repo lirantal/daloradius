@@ -33,76 +33,94 @@
     $logDebugSQL = "";
 
 
-    $groupname = "";
-    $attribute = "";
-    $value = "";
+    include('library/opendb.php');
 
-    $showRemoveDiv = "block";
+    // load valid_ids
+    $sql = sprintf("SELECT id FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $valid_ids = array();
+    while ($row = $res->fetchrow()) {
+        $valid_ids[] = intval($row[0]);
+    }
 
-    if (isset($_POST['group'])) {
-        $group_array = $_POST['group'];
-    } else {
-        if (isset($_GET['groupname']))
-        $group_array = array($_GET['groupname']."||".$_GET['attribute']."||".$_GET['value']);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            $arr = (!is_array($_POST['record_id'])) ? array( trim($_POST['record_id']) ) : $_POST['record_id'];
+            
+            
+            if (count($arr) > 0) {
+                
+                $ids = array();
+                
+                // pre-validate
+                foreach ($arr as $id) {
+                    
+                    $m = array();
+                    if (preg_match("/^record-([0-9]+)$/", $id, $m) === false) {
+                        continue;
+                    }
+                    
+                    $id = intval($m[1]);
+                    if (in_array($id, $valid_ids) && !in_array($id, $ids)) {
+                        $ids[] = $id;
+                    }
+                }
+                
+                // execute delete
+                if (count($ids) > 0) {
+                    
+                    $sql = sprintf("DELETE FROM %s WHERE id IN (%s)",
+                                   $configValues['CONFIG_DB_TBL_RADGROUPCHECK'], implode(", ", $ids));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $successMsg = sprintf("Deleted %s groupcheck record(s)", $res);
+                        $logAction .= "$successMsg on page: ";
+                    } else {
+                        // DB Error
+                        $successMsg = "Error when deleting groupcheck record(s)";
+                        $logAction .= "$successMsg on page: ";
+                    }
+                    
+                } else {
+                    // invalid
+                    $failureMsg = "Empty or invalid groupcheck elements list";
+                    $logAction .= sprintf("Failed deleting groupcheck elements list [%s] on page: ", $failureMsg);
+                }
+                
+            } else {
+                // invalid
+                $failureMsg = "Empty or invalid groupcheck elements list";
+                $logAction .= sprintf("Failed deleting groupcheck elements list [%s] on page: ", $failureMsg);
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
     }
 
 
-    if (isset($group_array)) {
+    $options = array();
+    $options_format = "%s: [%s %s %s]";
 
-                $allGroups =  "";
-                $allAttributes =  "";
-                $allValues =  "";
-
-                foreach ($group_array as $group) {
-
-                        list($groupname, $attribute, $value) = preg_split('\|\|', $group);
-
-                        if (trim($groupname) != "") {
-
-                                $allGroups .= $groupname . ", ";
-                                $allAttributes .= $attribute . ", ";
-                                $allValues .= $value . ", ";
-
-                                if ( (trim($attribute) != "") && (trim($value) != "") ) {
-
-                                        include 'library/opendb.php';
-                                        // delete only a specific groupname and it's attribute
-                                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']."
-WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND Attribute='$attribute'";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
-
-                                        $successMsg = "Deleted Group(s): <b> $allGroups </b> with Attribute(s): <b> $allAttributes </b> and it's Value: <b> $allValues </b>";
-                                        $logAction .= "Successfully deleted group(s) [$allGroups] with attribute [$allAttributes] and it's value [$allValues] on page: ";
-
-                                        include 'library/closedb.php';
-
-                                } else {
-
-                                        include 'library/opendb.php';
-
-                                        $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK']." WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'";
-                                        $res = $dbSocket->query($sql);
-                                        $logDebugSQL .= $sql . "\n";
-
-                                        $successMsg = "Deleted all instances for Group(s): <b> $allGroups </b>";
-                                        $logAction .= "Successfully deleted all instances for group(s) [$allGroups] on page: ";
-
-                                        include 'library/closedb.php';
-
-                                }
-
-                        } else {
-
-                                        $failureMsg = "No groupname was entered, please specify a groupname to remove from database";
-                                        $logAction .= "Failed deleting empty group on page: ";
-                        }
-
-                } // foreach
-
-        $showRemoveDiv = "none";
-
-        } // if
+    $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s ORDER BY groupname, attribute DESC",
+                   $configValues['CONFIG_DB_TBL_RADGROUPCHECK']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    while ($row = $res->fetchrow()) {
+        list($id, $groupname, $attribute, $op, $value) = $row;
+        $key = "record-" . $id;
+        $options[$key] = sprintf($options_format, $groupname, $attribute, $op, $value);
+    }
+    
+    include('library/closedb.php');
 
 
     include_once("lang/main.php");
@@ -121,40 +139,50 @@ WHERE GroupName='".$dbSocket->escapeSimple($groupname)."'AND Value='$value' AND 
 
     include_once('include/management/actionMessages.php');
 
+    $input_descriptors1 = array();
 
-?>
+    $caption = sprintf($options_format, t('all','Groupname'), t('all','Attribute'), "op", t('all','Value'));
+    $input_descriptors1[] = array(
+                                    'name' => 'record_id[]',
+                                    'id' => 'record_id',
+                                    'type' => 'select',
+                                    'caption' => $caption,
+                                    'options' => $options,
+                                    'multiple' => true,
+                                    'size' => 5,
+                                 );
 
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-        <fieldset>
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+                                 
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','GroupInfo'),
+                                    "disabled" => (count($options) == 0)
+                                 );
 
-            <h302> <?php echo t('title','GroupInfo') ?> </h302>
-            <br/>
+    open_form();
+    
+    open_fieldset($fieldset1_descriptor);
 
-            <label for='groupname' class='form'><?php echo t('all','Groupname') ?></label>
-            <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=100 />
-            <br/>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
 
-            <label for='value' class='form'><?php echo t('all','Value') ?></label>
-            <input name='value' type='text' id='value' value='<?php echo $value ?>' tabindex=101 />
-            <br/>
+    print_back_to_previous_page();
 
-            <label for='attribute' class='form'><?php echo t('all','Attribute') ?></label>
-            <input name='attribute' type='text' id='attribute' value='<?php echo $attribute ?>' tabindex=102 />
-            <br/>
-
-            <br/><br/>
-            <hr><br/>
-
-            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
-
-        </fieldset>
-
-        </form>
-    </div>
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

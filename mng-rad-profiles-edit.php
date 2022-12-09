@@ -36,14 +36,16 @@
     include_once("library/validation.php");
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $profile = (array_key_exists('profile', $_POST) && !empty($_POST['profile']) && trim(str_replace("%", "", $_POST['profile'])))
-                 ? trim(str_replace("%", "", $_POST['profile'])) : "";
+        $profile_name = (array_key_exists('profile_name', $_POST) && !empty($_POST['profile_name']) &&
+                         str_replace("%", "", trim($_POST['profile_name'])))
+                      ? str_replace("%", "", trim($_POST['profile_name'])) : "";
     } else {
-        $profile = (array_key_exists('profile', $_REQUEST) && isset($_REQUEST['profile']) && trim(str_replace("%", "", $_REQUEST['profile'])))
-                 ? trim(str_replace("%", "", $_REQUEST['profile'])) : "";
+        $profile_name = (array_key_exists('profile_name', $_REQUEST) && isset($_REQUEST['profile_name']) &&
+                         str_replace("%", "", trim($_REQUEST['profile_name'])))
+                      ? str_replace("%", "", trim($_REQUEST['profile_name'])) : "";
     }
     
-    $profile_enc = (!empty($profile)) ? htmlspecialchars($profile, ENT_QUOTES, 'UTF-8') : "";
+    $profile_name_enc = (!empty($profile_name)) ? htmlspecialchars($profile_name, ENT_QUOTES, 'UTF-8') : "";
 
     include_once("lang/main.php");
     
@@ -68,8 +70,8 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (!empty($profile)) {
-        $title .= " :: $profile";
+    if (!empty($profile_name_enc)) {
+        $title .= " :: $profile_name_enc";
     } 
 
     include_once('include/management/populate_selectbox.php');
@@ -84,29 +86,43 @@
         $groups = array_keys(get_groups());
         
         // check if it exists
-        if (!in_array($profile, $groups)) {
+        if (!in_array($profile_name, $groups)) {
             // we empty the profile if the hs does not exist
-            $profile = "";
+            $profile_name = "";
         } else {
             include('library/opendb.php');
             include("library/attributes.php");
-            $skipList = array( "profile", "submit", "csrf_token" );
-            $count = handleAttributes($dbSocket, $profile, $skipList, false, 'group');
+            $skipList = array( "profile_name", "submit", "csrf_token" );
+            $count = handleAttributes($dbSocket, $profile_name, $skipList, false, 'group');
             include('library/closedb.php');
             
-            $successMsg = "Updated attributes for: <b> $profile </b>";
-            $logAction .= "Successfully updates attributes for profile [$profile] on page:";
+            $successMsg = "Updated attributes for: <b> $profile_name_enc </b>";
+            $logAction .= "Successfully updates attributes for profile [$profile_name] on page:";
         }
     }
     
-    if (empty($profile)) {
+    if (empty($profile_name)) {
         $failureMsg = "Profile name is invalid or empty";
         $logAction .= "Failed updating (possible empty or invalid profile name) profile on page: ";
     }
     
     include_once('include/management/actionMessages.php');
     
-    if (!empty($profile)) { 
+    if (!empty($profile_name)) { 
+        
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        $input_descriptors1[] = array(
+                                        "name" => "profile_name",
+                                        "type" => "hidden",
+                                        "value" => $profile_name,
+                                     );
+        
         $input_descriptors2 = array();
         $input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
                                        'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
@@ -140,26 +156,34 @@
                                   . 'Notice that for supported password-like attributes, you can just specify a plaintext value. '
                                   . 'The system will take care of correctly hashing it.'
                                   . '</small>';
+                                  
+    
+        $fieldset1_descriptor = array(
+                                    "title" => t('title','RADIUSCheck'),
+                                 );
+    
+        open_form();
+    
+        
 ?>
 
-<form name="mngradprofiles" method="POST">
-    <input type="hidden" value="<?= $profile ?>" name="profile">
-
-    <div id="RADIUSCheck-tab" class="tabcontent" style="display: block">
-        <fieldset>
-            <h302><?= t('title','RADIUSCheck') ?></h302>
-            <ul>
+        <div id="RADIUSCheck-tab" class="tabcontent" style="display: block">
+    
 <?php
+        open_fieldset($fieldset1_descriptor);
+
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
 
 
-
-    $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
-                      FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
-                     WHERE rc.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
-                                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                               $dbSocket->escapeSimple($profile));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
+        $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
+                          FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
+                         WHERE rc.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
+                                                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                                   $dbSocket->escapeSimple($profile_name));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
 
     if ($res->numRows() == 0) {
         echo '<div style="text-align: center">'
@@ -176,14 +200,15 @@
             foreach ($row as $i => $v) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
-
-            $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
+            
+            $id = intval($row[5]);
+            $id__attribute = sprintf('%d__%s', $id, $row[0]);
             $name = sprintf('editValues%s[]', $editCounter);
             $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
             
             echo '<li>';
-            printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile=%s&attribute=%s&tablename=%s">',
-                   urlencode($profile_enc), urlencode($id__attribute), $table);
+            printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile_name=%s&id=%d&tablename=%s">',
+                   urlencode($profile_name_enc), $id, $table);
             echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
             
             printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
@@ -239,18 +264,20 @@
     </div>
 
     <div class="tabcontent" id="RADIUSReply-tab">
-        <fieldset>
-            <h302><?= t('title','RADIUSReply') ?></h302>
 
-            <ul>
 <?php
 
+    $fieldset2_descriptor = array(
+                                    "title" => t('title','RADIUSReply'),
+                                 );
+
+    open_fieldset($fieldset2_descriptor);
 
     $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
                       FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
                      WHERE rc.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
                                                $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                               $dbSocket->escapeSimple($profile));
+                                               $dbSocket->escapeSimple($profile_name));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
 
@@ -275,8 +302,8 @@
             $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
             
             echo '<li>';
-            printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile=%s&attribute=%s&tablename=%s">',
-                   urlencode($profile_enc), urlencode($id__attribute), $table);
+            printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile_name=%s&id=%d&tablename=%s">',
+                   urlencode($profile_name_enc), $id, $table);
             echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
             
             printf('<label for="attribute" class="attributes">%s</label>', $row[0]);

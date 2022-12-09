@@ -104,8 +104,8 @@
         }
     } else {
         $success = false;
-        $failureMsg = sprintf("CSRF token error");
-        $logAction .= sprintf("CSRF token error on page: ");
+        $failureMsg = "CSRF token error";
+        $logAction .= "$failureMsg on page: ";
     }
     
     include('library/closedb.php');
@@ -124,7 +124,6 @@
     include("menu-mng-rad-realms.php");
     
     echo '<div id="contentnorightbar">';
-
     print_title_and_help($title, $help);
     
     if ($_SERVER['REQUEST_METHOD'] != 'GET') {
@@ -132,44 +131,52 @@
     }
     
     if (!$success) {
-?>
-            <form method="POST">
-                <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-                <fieldset>
-                    <h302><?= t('title','RealmInfo') ?></h302>
-                    
-                    <br>
-
-                    <label for="<?= "$field_name-id" ?>" class="form"><?= t('all','RealmName') ?></label>
-                    <input list="<?= "$field_name-list" ?>" name="<?= $field_name . "[]" ?>"
-                        type="text" id="<?= "$field_name-id" ?>" tabindex="101">
-<?php
-        if (count($valid_values) > 0) {
-            printf('<datalist id="%s">', "$field_name-list");
-            foreach ($valid_values as $value) {
-                printf('<option value="%s"></option>', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
-            }
-            echo '</datalist>';
-        }
-?>
-
-                </fieldset>
-                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" tabindex="102" class="button">
-            </form>
-<?php
-    }
-?>
-
-         </div><!-- #contentnorightbar -->
+        $options = $valid_values;
         
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+        $input_descriptors1 = array();
 
-</body>
-</html>
+        $input_descriptors1[] = array(
+                                    'name' => $field_name . "[]",
+                                    'id' => $field_name,
+                                    'type' => 'select',
+                                    'caption' => t('all','RealmName'),
+                                    'options' => $options,
+                                    'multiple' => true,
+                                    'size' => 5,
+                                 );
+
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors1[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
+        
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','RealmInfo'),
+                                        "disabled" => (count($options) == 0)
+                                     );
+
+        open_form();
+        
+        open_fieldset($fieldset1_descriptor);
+
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
+    }
+
+    print_back_to_previous_page();
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+?>

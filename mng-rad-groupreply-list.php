@@ -91,7 +91,7 @@
         /* END */
     
         // we execute and log the actual query
-        $sql = sprintf("SELECT groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
+        $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
@@ -119,7 +119,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('group[]', $action);
+        printTableFormControls('record_id[]', $action);
 ?>
                 </th>
             </tr>
@@ -145,17 +145,17 @@
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
             
-            list($groupname, $attribute, $op, $value) = $row;
+            list($id, $groupname, $attribute, $op, $value) = $row;
             
-            $checkbox_value = sprintf("%s||%s||%s", $groupname, $value, $attribute);
+            $checkbox_value = "record-" . $id;
             
             $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupreply-edit.php?groupname=%s&value=%s&attribute=%s">%s</a>',
-                                   urlencode($groupname), urlencode($value), urlencode($attribute), t('button','EditGroup'));
+                                   urlencode($groupname), urlencode($value), urlencode($attribute), t('button','EditGroupReply'));
             $onclick = 'javascript:return false;';
 ?>
             <tr>
                 <td>
-                    <input type="checkbox" name="group[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
+                    <input type="checkbox" name="record_id[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
                     <label for="<?= "checkbox-$count" ?>">
                         <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
                             <?= $groupname ?>
@@ -179,6 +179,8 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
     </table>
+    
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
 
 </form>
 

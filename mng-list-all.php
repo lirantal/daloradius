@@ -271,7 +271,7 @@
                     <label for="<?= "checkbox-$count" ?>">
                         <input type="checkbox" name="username[]" id="<?= "checkbox-$count" ?>" value="<?= $username ?>">
                     </label>
-                    </td>
+                </td>
                 <td><?= "$fullname" ?></td>
                 <td><?= "$img $tooltip" . sprintf(' <span class="badge badge-%s">%s</span>', strtolower($type), $type); ?></td>
                 <td><?= ($type == 'USER') ? $auth : "" ?></td>
@@ -300,7 +300,7 @@
         include_once("include/management/actionMessages.php");
     }
     
-    include('library/closedb.php');    
+    include('library/closedb.php');
 
     include('include/config/logging.php');
     

@@ -97,7 +97,7 @@
                             // or the last "password-like" check attribute
                             // they should delete all user related info stored in the db
                             
-                            $format = "Cannot delete the last check (password like?) attribute for the selected user (<strong>%s</strong>)";
+                            $format = "Cannot delete the last check (password like?) attribute for the selected user (%s)";
                             $failureMsg = sprintf($format,
                                                   htmlspecialchars($usernames[0], ENT_QUOTES, 'UTF-8'));
                             $logAction = sprintf("$format on page: ", $username[0]);
@@ -109,7 +109,7 @@
                             $res = $dbSocket->query($sql);
                             $logDebugSQL .= "$sql;\n";
                             
-                            $format = "Deleted attribute <strong>%s</strong> for user <strong>%s</strong>";
+                            $format = "Deleted attribute %s for user %s";
                             $successMsg = sprintf($format, htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8'),
                                                            htmlspecialchars($usernames[0], ENT_QUOTES, 'UTF-8'));
                             $logAction = sprintf("$format on page: ", $attribute, $usernames[0]);
@@ -166,7 +166,7 @@
                                 $logDebugSQL .= "$sql;\n";
                             }
                             
-                            $format = "<strong>%d user(s)</strong> have been deleted";
+                            $format = "%d user(s) have been deleted";
                             $successMsg = sprintf($format, $dbusersLen);
                             $logAction = sprintf("$format on page: ", $dbusersLen);
                             
@@ -208,7 +208,7 @@
                         $logDebugSQL .= "$sql;\n";
                     }
                     
-                    $format = "<strong>%d user' session(s)</strong> have been cleaned";
+                    $format = "%d user' session(s) have been cleaned";
                     $successMsg = sprintf($format, $userstimesLen);
                     $logAction = sprintf("$format on page: ", $userstimesLen);
                     
@@ -218,8 +218,8 @@
                 }
             }
         } else {
-            $failureMsg = sprintf("CSRF token error");
-            $logAction .= sprintf("CSRF token error on page: ");
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     }
 
@@ -288,32 +288,26 @@
                                     'name' => 'submit',
                                     'value' => t('buttons','apply')
                                  );
-?>
+                                 
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','AccountRemoval'),
+                                    "disabled" => (count($options) == 0)
+                                 );
 
-<form method="POST">
-    <fieldset>
-        <h302><?= t('title','AccountRemoval') ?></h302>
-        <ul style="margin: 10px auto">
-<?php
-        foreach ($input_descriptors1 as $input_descriptor) {
-            print_form_component($input_descriptor);
-        }
-?>
+    open_form();
+    
+    open_fieldset($fieldset1_descriptor);
 
-        </ul>
-    </fieldset>
-</form>
-<?php
-
-    if (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE']))) {
-        echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
-        printf('<a href="%s" title="Back to Previous Page">Back to Previous Page</a>', trim($_SESSION['PREV_LIST_PAGE']));
-        echo '</div>';
-        
-        unset($_SESSION['PREV_LIST_PAGE']);
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
     }
+    
+    close_fieldset();
+    
+    close_form();
+
+    print_back_to_previous_page();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>
-

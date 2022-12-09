@@ -26,6 +26,15 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+    
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -118,7 +127,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('poolname[]', $action);
+        printTableFormControls('record_id[]', $action);
 ?>
                 </th>
             </tr>
@@ -134,6 +143,7 @@
         
         <tbody>
 <?php
+        $li_style = 'margin: 7px auto';
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -146,7 +156,6 @@
                  $callingstationid, $expiry_time, $username, $pool_key) = $row;
             
             // tooltip stuff
-            $li_style = 'margin: 7px auto';
             $tooltipText = '<ul style="list-style-type: none">'
                      . sprintf('<li style="%s">', $li_style)
                      . sprintf('<a class="toolTip" href="mng-rad-ippool-edit.php?poolname=%s&ipaddressold=%s">%s</a></li>',
@@ -159,8 +168,7 @@
             $onclick = 'javascript:return false;';
             
             echo "<tr>";
-            printf('<td><input type="checkbox" name="poolname[]" value="%s||%s">%s</td>',
-                   urlencode($poolname), urlencode($framedipaddress), $id);
+            printf('<td><input type="checkbox" name="record_id[]" value="record-%s">%s</td>', $id, $id);
             printf("<td>%s</td>", $pool_name);
             printf('<td><a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a></td>", $onclick, $tooltipText, $framedipaddress);
             
@@ -180,6 +188,10 @@
 ?>
         
     </table>
+    
+    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+    
+</form>
 
 <?php
     } else {
@@ -188,29 +200,15 @@
     }
     
     include('library/closedb.php');
-?>
-
-</div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
 
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

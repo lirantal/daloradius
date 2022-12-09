@@ -37,8 +37,8 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-        $profile = (array_key_exists('profile', $_POST) && isset($_POST['profile']))
-                 ? trim(str_replace("%", "", $_POST['profile'])) : "";
+        $profile = (array_key_exists('profile', $_POST) && !empty(str_replace("%", "", trim($_POST['profile']))))
+                 ? str_replace("%", "", trim($_POST['profile'])) : "";
         $profile_enc = (!empty($profile)) ? htmlspecialchars($profile, ENT_QUOTES, 'UTF-8') : "";
     
         if (empty($profile)) {
@@ -46,10 +46,11 @@
             $failureMsg = "The specified profile name is empty or invalid";
             $logAction .= "Failed creating profile [empty or invalid profile name] on page: ";
         } else {
-
+            
+            include_once('include/management/populate_selectbox.php');
+            $groups = array_keys(get_groups());
             include('library/opendb.php');
             
-            $groups = array_keys(get_groups());
             if (in_array($profile, $groups)) {
                 // invalid profile name
                 $failureMsg = "This profile name [<strong>$profile_enc</strong>] is already in use";

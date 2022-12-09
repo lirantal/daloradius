@@ -137,7 +137,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('vendor[]', $action);
+        printTableFormControls('vendor__attribute[]', $action);
 ?>
                 </th>
             </tr>
@@ -171,8 +171,8 @@
 ?>
             <tr>
                 <td>
-                    <input type="checkbox" name="vendor[]" id="checkbox-<?= $counter ?>"
-                        value="<?= urlencode($this_vendor) . "||" . urlencode($this_attribute) ?>">
+                    <input type="checkbox" name="vendor__attribute[]" id="checkbox-<?= $counter ?>"
+                        value="<?= urlencode($this_vendor) . "__" . urlencode($this_attribute) ?>">
                     <label for="checkbox-<?= $counter ?>"><?= $this_id ?></label>
                 </td>
                 <td><?= $this_vendor ?></td>
@@ -194,6 +194,9 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
 ?>
     </table>
+    
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+    
 </form>
 
 <?php

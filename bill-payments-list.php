@@ -243,6 +243,8 @@
 ?>
     </table>
 
+    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+
 </form>
 
 <?php

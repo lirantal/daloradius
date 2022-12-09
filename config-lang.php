@@ -29,27 +29,25 @@
     include_once('library/config_read.php');
     $log = "visited page: ";
 
-    // validating values
-    $valid_values = array(
-                            "en" => "English", 
-                            "ru" => "Russian", 
-                            "hu" => "Hungarian", 
-                            "it" => "Italian", 
-                            "es_VE" => "Spanish - Venezuelan", 
-                            "pt_br" => "Portuguese - Brazilian", 
-                            "ja" => "Japanese"
-                         );
+    include("library/validation.php");
 
-    if (array_key_exists('submit', $_POST) && isset($_POST['submit'])) {
-        if (array_key_exists('CONFIG_LANG', $_POST) &&
-            isset($_POST['CONFIG_LANG']) &&
-            in_array(strtolower($_POST['CONFIG_LANG']), array_keys($valid_values))) {
-            
-            $configValues['CONFIG_LANG'] = $_POST['CONFIG_LANG'];
-            include("library/config_write.php");
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        
+            if (array_key_exists('CONFIG_LANG', $_POST) && !empty(strtolower(trim($_POST['CONFIG_LANG']))) &&
+                in_array(strtolower(trim($_POST['CONFIG_LANG'])), array_keys($valid_languages))) {
+                
+                $configValues['CONFIG_LANG'] = $_POST['CONFIG_LANG'];
+                include("library/config_write.php");
+            }
+        
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     }
-    
+
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -66,38 +64,45 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-?>
+    
+    $input_descriptors1 = array();
+    
+    $input_descriptors1[] = array(
+                                    'name' => 'CONFIG_LANG',
+                                    'type' => 'select',
+                                    'caption' => t('all','PrimaryLanguage'),
+                                    'options' => $valid_languages,
+                                    'selected_value' => $configValues['CONFIG_LANG']
+                                 );
 
-<form name="langsettings" method="POST">
-    <fieldset>
-        <h302><?= t('title','Settings') ?></h302>
-        <br>
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-        <ul>
-<?php
-            print_select_as_list_elem('CONFIG_LANG', t('all','PrimaryLanguage'), $valid_values, $configValues['CONFIG_LANG']);
-?>
-        
-            <li class="fieldset">
-                <br>
-                <hr>
-                <br>
-                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
-            </li>
-        </ul>
-    </fieldset>
-</form>
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+                                 
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','Settings'),
+                                 );
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    open_form();
+    
+    open_fieldset($fieldset1_descriptor);
+
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
+   
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

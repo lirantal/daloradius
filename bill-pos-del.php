@@ -33,115 +33,94 @@
     $logDebugSQL = "";
     $log = "visited page: ";
     
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace("%", "", $_GET['username']) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-    $logAction = "";
-    $logDebugSQL = "";
-
-    $showRemoveDiv = "block";
-
-    if ($username != '') {
-
-        $allUsernames = "";
-        $isSuccessful = 0;
-
-        /* since the foreach loop will report an error/notice of undefined variable $value because
-           it is possible that the $username is not an array, but rather a simple GET request
-           with just some value, in this case we check if it's not an array and convert it to one with
-           a NULL 2nd element
-        */
-        if (!is_array($username))
-            $username = array($username, NULL);
-
-        foreach ($username as $variable => $value) {
-
-            if (trim($variable) != "") {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", trim($_POST['username']))))
+                      ? str_replace("%", trim($_POST['username'])) : "";
             
-                $username = $value;
-                $allUsernames .= $username . ", ";
-
-                include 'library/opendb.php';
+            if (!empty($username)) {
+            
+                $delradacct = (array_key_exists('delradacct', $_POST) && strtolower(trim($_POST['delradacct'])) == 'yes');
+            
+                $tables = array(
+                                    $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                    $configValues['CONFIG_DB_TBL_RADREPLY'],
+                                    $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                               );
+                               
+                if ($delradacct) {
+                    $tables[] = $configValues['CONFIG_DB_TBL_RADACCT'];
+                }
+            
+                include('library/opendb.php');
+            
+                $format = "DELETE FROM %s WHERE username='%s'";
+                foreach ($tables as $table) {
+                    $sql = sprintf($format, $table, $dbSocket->escapeSimple($username));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                }
                 
                 // get user id from userbillinfo table 
-                $sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." WHERE username='".$dbSocket->escapeSimple($username)."'";
+                $sql = sprintf("SELECT id FROM %s WHERE username='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $dbSocket->escapeSimple($username));
                 $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-                $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-                $userId = $row['id'];
-                
-                
-                // delete all attributes associated with a username
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADREPLY']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                if (strtolower($delradacct) == "yes") {
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." WHERE Username='".$dbSocket->escapeSimple($username)."'";
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                }
-                
+                $logDebugSQL .= "$sql;\n";
+                $user_id = intval($res->fetchrow()[0]);
                 
                 // to remove all invoices and payments we need to get the invoices_id
-                $sql1 = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." WHERE user_id=".$userId;
-                $res2 = $dbSocket->query($sql1);
-                $logDebugSQL .= $sql1 . "\n";
-                while ($row = $res2->fetchRow(DB_FETCHMODE_ASSOC)) {
-
-                    // delete all invoice items
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." WHERE invoice_id='".$row['id']."'";
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";                    
-                        
-                    // delete all payment items
-                    $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE invoice_id='".$row['id']."'";
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                    
+                $sql = sprintf("SELECT id FROM %s WHERE user_id=%d",
+                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                $invoice_id = array();
+                while ($row = $res->fetchrow()) {
+                    $invoice_id[] = intval($row[0]);
                 }
                 
-                // remove all invoices by this user
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." WHERE user_id='".$userId."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+                $tables = array(
+                                    $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
+                                    $configValues['CONFIG_DB_TBL_DALOPAYMENTS']
+                               );
                 
+                $format = "DELETE FROM %s WHERE invoice_id IN (%s)";
+                
+                // delete all invoice items and all payment items
+                foreach ($tables as $table) {
+                    $sql = sprintf($format, $table, implode(", ", $invoice_id));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";  
+                }
 
-                $successMsg = "Deleted user(s): <b> $allUsernames </b>";
-                $logAction .= "Successfully deleted user(s) [$allUsernames] on page: ";
-
-                include 'library/closedb.php';
-
-            }  else { 
-                $failureMsg = "no user was entered, please specify a username to remove from database";        
-                $logAction .= "Failed deleting user(s) [$allUsernames] on page: ";
+                // remove all invoices by this user
+                $sql = sprintf("DELETE FROM %s WHERE user_id=%d",
+                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                include('library/closedb.php');
+            
+                $successMsg = "Deleted user: <strong>$username_enc</strong>";
+                $logAction .= "Successfully deleted user [$username] on page: ";
+            } else {
+                $failureMsg = "Empty or invalid username";
+                $logAction .= sprintf("Failed deleting user [%s] on page: ", $failureMsg);
             }
-
-
-        $showRemoveDiv = "none";
-
-        }//foreach
-        
-        
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    } else {
+        $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", trim($_REQUEST['username']))))
+                  ? str_replace("%", trim($_REQUEST['username'])) : "";
     }
-
+    
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    
     include_once("lang/main.php");
     include("library/layout.php");
 
@@ -153,7 +132,7 @@
 
     include("menu-bill-pos.php");
     
-    if (!empty($plans) && !is_array($plans)) {
+    if (!empty($username_enc) && !is_array($username_enc)) {
         $title .= " :: $username_enc";
     }
     
@@ -161,50 +140,70 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-
-?>
-
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
     
-    <fieldset>
-
-        <h302> <?php echo t('title','AccountRemoval') ?> </h302>
-        <br/>
-
-        <label for='username' class='form'><?php echo t('all','Username')?></label>
-        <input name='username[]' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-        <br />
-
-        <label for='delradacct' class='form'><?php echo t('all','RemoveRadacctRecords')?></label>
-        <select class='form' tabindex=102 name='delradacct' tabindex=101>
-            <option value='no'>no</option>
-            <option value='yes'>yes</option>
-        </select>
-        <br />
-
-        <br/><br/>
-        <hr><br/>
-        <input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 
-            class='button' />
-
-    </fieldset>
+    // load options
+    include('library/opendb.php');
     
-    </form>
-    </div>
-
-<?php
-    include('include/config/logging.php');
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
     
-    include_once("include/management/autocomplete.php");
-
-    if ($autoComplete) {
-        $inline_extra_js = "
-autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('username','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');";
-    } else {
-        $inline_extra_js = "";
+    $options = array( "" );
+    while ($row = $res->fetchrow()) {
+        $options[] = $row[0];
     }
     
-    print_footer_and_html_epilogue($inline_extra_js);
+    include('library/closedb.php');
+
+    $input_descriptors1 = array();
+
+    $input_descriptors1[] = array(
+                                'name' => 'username',
+                                'type' => 'select',
+                                'caption' => t('all','Username'),
+                                'options' => $options,
+                                'selected_value' => (!isset($successMsg) ? $username : "")
+                             );
+
+    $input_descriptors1[] = array(
+                                'name' => 'delradacct',
+                                'type' => 'select',
+                                'caption' => t('all','RemoveRadacctRecords'),
+                                'options' => array("", "yes", "no"),
+                             );
+
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+                                 
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','AccountRemoval'),
+                                    "disabled" => (count($options) == 0)
+                                 );
+
+    open_form();
+    
+    open_fieldset($fieldset1_descriptor);
+
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
+
+    print_back_to_previous_page();
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
+

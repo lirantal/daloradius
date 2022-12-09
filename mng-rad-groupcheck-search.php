@@ -29,21 +29,20 @@
     
     // init logging variables
     $log = "visited page: ";
-    $logAction = "";
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
 
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    //setting values for the order by and order type variables
-    isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "id";
-    isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
-
-    isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "%";
-
-    $search_groupname = $groupname; //feed the sidebar variables
-    $groupname = str_replace('*', '%', $groupname);
-
+    $groupname = (array_key_exists('groupname', $_GET) && !empty(str_replace("%", "", trim($_GET['groupname']))))
+               ? str_replace("%", "", trim($_GET['groupname'])) : "";
+    
+    $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
+    
+    //feed the sidebar variables
+    $search_groupname = $groupname_enc;
+    
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -55,107 +54,170 @@
     print_html_prologue($title, $langCode);
 
     include("menu-mng-rad-groups.php");
+    
+    $cols = array(
+                    "groupname" => t('all','Groupname'),
+                    "attribute" => t('all','Attribute'),
+                    "op" => t('all','Operator'),
+                    "value" => t('all','Value')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intdiv($colspan, 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
+
+
+    // start printing content
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     
-    include 'library/opendb.php';
-    include 'include/management/pages_numbering.php';        // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-    
-    //orig: used as method to get total rows - this is required for the pages_numbering.php page
-    $sql = "SELECT GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-            " WHERE GroupName LIKE '".$dbSocket->escapeSimple($groupname)."%' GROUP BY GroupName";
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
+
+    $sql_WHERE = (!empty($groupname))
+               ? sprintf(" WHERE groupname LIKE '%s%%'", $dbSocket->escapeSimple($groupname)) : "";
+
+    // we use this simplified query just to initialize $numrows
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK']) . $sql_WHERE;
     $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-
-    $sql = "SELECT GroupName, Attribute, op, Value FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-            " WHERE GroupName LIKE '".$dbSocket->escapeSimple($groupname)."%' ".
-            " ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-    $res = $dbSocket->query($sql);
-    $logDebugSQL = "";
-    $logDebugSQL .= $sql . "\n";
+    $numrows = $res->fetchrow()[0];
     
-    /* START - Related to pages_numbering.php */
-    $maxPage = ceil($numrows/$rowsPerPage);
-    /* END */
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+        
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        /* END */
+    
+        // we execute and log the actual query
+        $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK']);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
+        $partial_query_string = (!empty($groupname_enc) ? "&groupname=" . urlencode($groupname_enc) : "");
+                              
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-groupcheck-del.php";
 
-    echo "<form name='listgroupcheck' method='post' action='mng-rad-groupcheck-del.php'>";
+?>
 
-    echo "<table border='0' class='table1'>\n";
-    echo "
+<form name="listall" method="POST" action="<?= $action ?>">
+    <table border="0" class="table1">
         <thead>
+<?php
+        // page numbers are shown only if there is more than one page
+        if ($drawNumberLinks) {
+            echo '<tr style="background-color: white">';
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            echo '</td>' . '</tr>';
+        }
+?>
+
             <tr>
-            <th colspan='10' align='left'>
-
-            Select:
-            <a class=\"table\" href=\"javascript:SetChecked(1,'group[]','listgroupcheck')\">All</a>
-            <a class=\"table\" href=\"javascript:SetChecked(0,'group[]','listgroupcheck')\">None</a>
-            <br/>
-            <input class='button' type='button' value='Delete' onClick='javascript:removeCheckbox(\"listgroupcheck\",\"mng-rad-groupcheck-del.php\")' />
-            <br/><br/>
-    ";
-
-    if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-        setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-
-    echo "    </th></tr>
-            </thead>
-    ";
-
-    if ($orderType == "asc") {
-        $orderTypeNextPage = "desc";
-    } else  if ($orderType == "desc") {
-        $orderTypeNextPage = "asc";
-    }
-
-    echo "<thread> <tr>
-        <th scope='col'>
-        <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=groupname&orderType=$orderTypeNextPage\">
-        ".t('all','Groupname')."</a>
-        </th>
-
-        <th scope='col'>
-        <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=attribute&orderType=$orderTypeNextPage\">
-        ".t('all','Attribute')."</a>
-        </th>
-
-        <th scope='col'>
-        <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=op&orderType=$orderTypeNextPage\">
-        ".t('all','Operator')."</a>
-        </th>
-
-        <th scope='col'>
-        <a title='Sort' class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?orderBy=value&orderType=$orderTypeNextPage\">
-        ".t('all','Value')."</a>
-        </th>
-
-    </tr> </thread>";
-    while($row = $res->fetchRow()) {
-        echo "<tr>
-                                <td> <input type='checkbox' name='group[]' value='$row[0]||$row[1]||$row[3]'> 
-                                        <a class='tablenovisit' href='mng-rad-groupcheck-edit.php?groupname=$row[0]&value=$row[3]'> $row[0] </td>
-                                <td> $row[1] </td>
-                                <td> $row[2] </td>                                              
-                                <td> $row[3] </td>      
-        </tr>";
-    }
-
-    echo "
-        <tfoot>
-            <tr>
-            <th colspan='10' align='left'>
-    ";
-    setupLinks($pageNum, $maxPage, $orderBy, $orderType);
-    echo "
-            </th>
+                <th style="text-align: left" colspan="<?= $colspan ?>">
+<?php
+        printTableFormControls('record_id[]', $action);
+?>
+                </th>
             </tr>
-        </tfoot>
-    ";
+<?php
+        // second line of table header
+        echo "<tr>";
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+        echo "</tr>";
+?>
+        </thead>
+        
+        <tbody>
+<?php
+    
+        $count = 1;
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($id, $groupname, $attribute, $op, $value) = $row;
+            
+            $checkbox_value = "record-" . $id;
+            
+            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupcheck-edit.php?groupname=%s&value=%s&attribute=%s">%s</a>',
+                                   urlencode($groupname), urlencode($value), urlencode($attribute), t('button','EditGroup'));
+            $onclick = 'javascript:return false;';
+?>
+            <tr>
+                <td>
+                    <input type="checkbox" name="record_id[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
+                    <label for="<?= "checkbox-$count" ?>">
+                        <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
+                            <?= $groupname ?>
+                        </a>
+                    </label>
+                </td>
+                <td><?= $attribute ?></td>
+                <td><?= $op ?></td>
+                <td><?= $value ?></td>
+            </tr>
+<?php
 
-    echo "</table></form>";
+            $count++;
+        }
+?>
+        </tbody>
 
-    include 'library/closedb.php';
+<?php
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+?>
+    </table>
+
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+
+</form>
+
+<?php
+    } else {
+        $failureMsg = "Nothing to display";
+        include_once("include/management/actionMessages.php");
+    }
+    
+    include('library/closedb.php');
 
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>

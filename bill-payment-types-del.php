@@ -26,53 +26,85 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    include_once('library/config_read.php');    
     
     // init logging variables
     $logAction = "";
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    isset($_REQUEST['paymentname']) ? $paymentname = $_REQUEST['paymentname'] : $paymentname = "";
 
-    $showRemoveDiv = "block";
+    include('library/opendb.php');
 
-    if (isset($_REQUEST['paymentname'])) {
-
-        if (!is_array($paymentname))
-            $paymentname = array($paymentname);
-
-        $allPayments = "";
-
-        include 'library/opendb.php';
-    
-        foreach ($paymentname as $variable=>$value) {
-            if (trim($value) != "") {
-
-                $name = $value;
-                $allPayments .= $name . ", ";
-
-                // delete all payment types 
-                $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']." WHERE value='".
-                        $dbSocket->escapeSimple($name)."'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            if (array_key_exists('paymentname', $_POST) && !empty($_POST['paymentname'])) {
+                $paymentname = array();
+            
+                $tmparr = (!is_array($_POST['paymentname'])) ? array( $_POST['paymentname'] ) : $_POST['paymentname'];
                 
-                $successMsg = "Deleted payment type(s): <b> $allPayments </b>";
-                $logAction .= "Successfully deleted payment type(s) [$allPayments] on page: ";
+                foreach ($tmparr as $tmp_name) {
+                    $tmp_name = $dbSocket->escapeSimple(trim($tmp_name));
+                    if (!in_array($tmp_name, $paymentname)) {
+                        $paymentname[] = intval($tmp_name);
+                    }
+                }
                 
-            } else { 
-                $failureMsg = "no payment type was entered, please specify a rapayment type name to remove from database";
-                $logAction .= "Failed deleting payment type(s) [$allPayments] on page: ";
+                if (count($paymentname) > 0) {
+                    // delete all payment types 
+                    $sql = sprintf("DELETE FROM %s WHERE value IN ('%s')",
+                                   $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], implode("', '", $paymentname));
+                    $count = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    $successMsg = sprintf("Deleted %d payment type(s)", intval($count));
+                    $logAction .= "$successMsg on page: ";
+                    
+                } else {
+                    // invalid
+                    $failureMsg = "Empty or invalid payment name(s)";
+                    $logAction .= sprintf("Failed deleting payment type(s) [%s] on page: ", $failureMsg);
+                }
+                
+                
+                
+            } else {
+                $failureMsg = "Empty or invalid payment name(s)";
+                $logAction .= sprintf("Failed deleting payment type(s) [%s] on page: ", $failureMsg);
             }
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    } else {
+        $paymentname = (array_key_exists('paymentname', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['paymentname']))))
+                     ? str_replace("%", "", trim($_REQUEST['paymentname'])) : "";
+        
+        if (!empty($paymentname)) {
+            $sql = sprintf("SELECT COUNT(DISTINCT(value)) FROM %s WHERE value = '%s'",
+                           $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname));
+            $res = $dbSocket->query($sql);
+            $logDebugSQL .= "$sql;\n";
+            $exists = $res->fetchrow()[0] > 0;
+            
+            if (!$exists) {
+                $paymentname = "";
+            }
+        }
+    }
 
-        } //foreach
-
-        include 'library/closedb.php';
-
-        $showRemoveDiv = "none";
-    } 
-
+    // (re)load options
+    $sql = sprintf("SELECT DISTINCT(value) FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $options = array();
+    while ($row = $res->fetchrow()) {
+        $options[] = $row[0];
+    }
+    
+    include('library/closedb.php');
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -94,33 +126,51 @@
 
     include_once('include/management/actionMessages.php');
 
-?>
 
-    <div id="removeDiv" style="display:<?php echo $showRemoveDiv ?>;visibility:visible" >
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    $input_descriptors1 = array();
 
-    <fieldset>
+    $input_descriptors1[] = array(
+                                'name' => 'paymentname[]',
+                                'id' => 'paymentname',
+                                'type' => 'select',
+                                'caption' => t('all','PayTypeName'),
+                                'options' => $options,
+                                'multiple' => true,
+                                'size' => 5,
+                                'selected_value' => ((!isset($successMsg) && !empty($paymentname)) ? $paymentname : "")
+                             );
+                             
+    $input_descriptors1[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-        <h302> <?php echo t('title','PayTypeInfo') ?> </h302>
-        <br/>
+    $input_descriptors1[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
 
-        <label for='paymentname' class='form'><?php echo t('all','PayTypeName') ?></label>
-        <input name='paymentname[]' type='text' id='paymentname' value='<?php echo $paymentname ?>' tabindex=100 />
-        <br/>
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','PayTypeInfo'),
+                                    "disabled" => (count($options) == 0)
+                                 );
 
-        <br/><br/>
-        <hr><br/>
+    open_form();
+    
+    open_fieldset($fieldset1_descriptor);
 
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=1000 
-            class='button' />
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
 
-    </fieldset>
+    print_back_to_previous_page();
 
-    </form>
-    </div>
-
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>
