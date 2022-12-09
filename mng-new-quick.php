@@ -408,9 +408,7 @@
                                     "name" => "expiration",
                                     "caption" => t('all','Expiration'),
                                     "type" => "date",
-                                    "min" => "1970-01-01",
-                                    "max" => date('Y-m-d')
-                                    
+                                    "min" => date('Y-m-d', strtotime('+1 day')), // tomorrow
                                 );
     
     foreach ($input_descriptors1 as $input_descriptor) {
