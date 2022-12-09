@@ -53,7 +53,7 @@ $valid_passwordTypes = array(
                                 "SHA1-Password",
                                 "User-Password",
                                 "Crypt-Password",
-                                "CHAP-Password"
+                                //~ "CHAP-Password"
                              );
 
 $valid_ops = array(

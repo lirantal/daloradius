@@ -72,11 +72,11 @@ $langCode = str_replace("_", "-", pathinfo($langFile, PATHINFO_FILENAME));
 function t($a, $b = null, $c = null, $d = null) {
     global $l;
 
-    // dictionary will be modified by the for loop
-    $t = $l;
-
     // added a static null at the end of the $arr
     $arr = array( $a, $b, $c, $d, null );
+    
+    // dictionary will be modified by the for loop
+    $t = $l;
     
     // count($arr) - 1 == 4
     for ($i = 0; $i < 4; $i++) {
@@ -84,10 +84,11 @@ function t($a, $b = null, $c = null, $d = null) {
         $current = $arr[$i];
         $next = $arr[$i+1];
         
-        if ($next == null && array_key_exists($current, $t) && !empty($t[$current])) {
+        
+        if ($next == null && isset($t[$current])) {
             return $t[$current];
         }
-        
+            
         $t = $t[$current];
     }
 

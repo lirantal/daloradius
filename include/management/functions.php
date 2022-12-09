@@ -197,17 +197,17 @@ function get_user_group_mappings($dbSocket, $username) {
 }
 
 // give an open $dbSocket, an $username and an array of groupnames
-// inserts (if possible) an user-group mapping
-function add_user_to_groups($dbSocket, $username, $groups) {
+// inserts (if possible) an user-group mapping for each groupname
+function insert_multiple_user_group_mappings($dbSocket, $username, $groupnames) {
     global $configValues, $logDebugSQL;
 
-    if (!is_array($groups)) {
+    if (!is_array($groupnames)) {
         return false;
     }
 
-    $groups = array_unique($groups);
+    $groupnames = array_unique($groupnames);
     
-    if (count($groups) > 0) {
+    if (count($groupnames) == 0) {
         return false;
     }
 
@@ -216,10 +216,10 @@ function add_user_to_groups($dbSocket, $username, $groups) {
     }
 
     $counter = 0;
-    foreach ($groups as $groupname) {
+    foreach ($groupnames as $groupname) {
         $groupname = trim($groupname);
             
-        if (empty($group)) {
+        if (empty($groupname)) {
             continue;
         }
 
@@ -232,7 +232,7 @@ function add_user_to_groups($dbSocket, $username, $groups) {
         $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
                        $dbSocket->escapeSimple($username),
-                       $dbSocket->escapeSimple($group));
+                       $dbSocket->escapeSimple($groupname));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
         
@@ -245,14 +245,8 @@ function add_user_to_groups($dbSocket, $username, $groups) {
     
 }
 
-function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
-    global $configValues, $logDebugSQL;
-    
-    // if info already exists for this user we return false
-    if (user_exists($dbSocket, $username, $table_index)) {
-        return false;
-    }
-    
+function prepare_fields_and_values($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
+
     $fields = array();
     $values = array();
     foreach ($params as $field => $value) {
@@ -267,20 +261,111 @@ function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $t
         $values[] = $dbSocket->escapeSimple($value);
     }
 
-    if (count($fields) > 0) {
-
-        $sql = sprintf("INSERT INTO %s (`id`, `username`, ", $configValues[$table_index])
-             . "`" . implode("`, `", $fields)
-             . sprintf("`) VALUES (0, '%s', '", $dbSocket->escapeSimple($username))
-             . implode("', '", $values) . "')";
-        
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        return $res == 1;
+    if (count($fields) == 0) {
+        return null;
     }
     
-    return null;
+    return array( "fields" => $fields, "values" => $values );
+}
+
+function make_insert_query($table, $escaped_username, $fields, $values) {
+    $sql = sprintf("INSERT INTO %s (`id`, `username`, ", $table)
+         . "`" . implode("`, `", $fields)
+         . sprintf("`) VALUES (0, '%s', '", $escaped_username)
+         . implode("', '", $values) . "')";
+    
+    return $sql;
+}
+
+function make_update_query($table, $escaped_username, $fields, $values) {
+    $fieldsCount = count($fields);
+    
+    $setList = array();
+    for ($i = 0; $i < $fieldsCount; $i++) {
+        $setList[] = sprintf("`%s`='%s'", $fields[$i], $values[$i]);
+    }
+    
+    $sql = "";
+    if (count($setList) > 0) {
+        $sql = sprintf("UPDATE %s SET ", $table)
+             . implode(", ", $setList)
+             . sprintf(" WHERE `username`='%s'", $escaped_username);
+    }
+    
+    return $sql;
+}
+
+function update_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
+    global $configValues, $logDebugSQL;
+    
+    // if info do not exist for this user we return false
+    if (!user_exists($dbSocket, $username, $table_index)) {
+        return false;
+    }
+    
+    $arr = prepare_fields_and_values($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index);
+    
+    if (!is_array($arr)) {
+        return null;
+    }
+    
+    $sql = make_update_query($configValues[$table_index], $dbSocket->escapeSimple($username),
+                             $arr["fields"], $arr["values"]);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    return $res == 1;
+}
+
+function update_user_info($dbSocket, $username, $params) {
+    
+    $allowedFields = array(
+                            "id", "username", "firstname", "lastname", "email", "department", "company", "workphone",
+                            "homephone", "mobilephone", "address", "city", "state", "country", "zip", "notes",
+                            "changeuserinfo", "portalloginpassword", "enableportallogin", "creationdate",
+                            "creationby", "updatedate", "updateby"
+                          );
+                          
+    $skipFields = array( "id", "username" );
+    
+    return update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+}
+
+function update_user_billing_info($dbSocket, $username, $params) {
+    $allowedFields = array(
+                            "id", "username", "planName", "hotspot_id", "hotspotlocation", "contactperson", "company",
+                            "email", "phone", "address", "city", "state", "country", "zip", "paymentmethod", "cash",
+                            "creditcardname", "creditcardnumber", "creditcardverification", "creditcardtype",
+                            "creditcardexp", "notes", "changeuserbillinfo", "lead", "coupon", "ordertaker", "billstatus",
+                            "lastbill", "nextbill", "nextinvoicedue", "billdue", "postalinvoice", "faxinvoice",
+                            "emailinvoice", "batch_id", "creationdate", "creationby", "updatedate", "updateby"
+                          );
+    
+    $skipFields = array( "id", "username" );
+    
+    return update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
+}
+
+function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
+    global $configValues, $logDebugSQL;
+    
+    // if info do not exist for this user we return false
+    if (user_exists($dbSocket, $username, $table_index)) {
+        return false;
+    }
+    
+    $arr = prepare_fields_and_values($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index);
+    
+    if (!is_array($arr)) {
+        return null;
+    }
+    
+    $sql = make_insert_query($configValues[$table_index], $dbSocket->escapeSimple($username),
+                             $arr["fields"], $arr["values"]);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    return $res == 1;
 }
 
 function add_user_info($dbSocket, $username, $params) {
