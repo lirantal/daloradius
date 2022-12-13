@@ -1,6 +1,34 @@
-DALO_HEARTBEAT_ADDR="http://yourdomain.com/heartbeat.php"
-NAS_MAC="xx:xx:xx:xx:xx:xx"
+#!/bin/sh
+#
+# daloRADIUS Heartbeat agent
+# @version 1.0
+# @author Muhammed Al-Qadhy <witradius@gmail.com>
+
+#debbug oprions
+#set -x
+
+# ----------------------------------------------------------------------------
+# Configuration --------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# edit the settings below to apply configuration for your own deployment
+
+# Set to the URL of daloradius's heartbeat script location
+DALO_HEARTBEAT_ADDR="http://daloradius.com/heartbeat.php"
+
+# Set NAS MAC to the MAC address of LAN connected Linux node
+# MAC address format, according to how the NAS sends this information. For example: 00-aa-bb or 00:aa:bb
+NAS_MAC="00:1D:73:11:22:33"
+
+# Set to a unique, hard-to-figure-out key across all of your NASes.
+# This key is saved in daloRADIUS's configuration and so should also
+# be configured in daloRADIUS as well.
 SECRET_KEY="sillykey"
+
+# Do not edit past this point
+# ----------------------------------------------------------------------------
+# Configuration --------------------------------------------------------------
+# ----------------------------------------------------------------------------
+
 wan_iface=`uci get network.wan.device`
 wan_ip=`ifconfig eth0.2 | awk '/inet addr/{print substr ($2,6)}'`
 wan_mac=`ifconfig eth0.2 | awk '/HWaddr/{print substr ($5,0)}'`
