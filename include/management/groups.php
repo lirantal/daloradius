@@ -40,7 +40,7 @@ if (!isset($groupTerminology)) {
 
 $selected_groups = array();
 
-$sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority DESC",
+$sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority ASC",
                $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
 $res = $dbSocket->query($sql);
 

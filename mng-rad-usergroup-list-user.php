@@ -36,8 +36,8 @@
 
     include_once('library/config_read.php');
 
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace("%", "", $_GET['username']) : "";
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     // feed the sidebar
@@ -78,7 +78,7 @@
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+             ? $_GET['orderBy'] : array_keys($param_cols)[1];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
@@ -91,8 +91,8 @@
     include('library/opendb.php');
     include('include/management/pages_common.php');
     
-    $sql = sprintf("SELECT COUNT(*) FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                                                  $dbSocket->escapeSimple($username));
+    $sql = sprintf("SELECT COUNT(DISTINCT(groupname)) FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     $numrows = $res->fetchrow()[0];
@@ -210,26 +210,15 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>
