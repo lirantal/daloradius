@@ -15,9 +15,10 @@
 # Set to the URL of daloradius's heartbeat script location
 DALO_HEARTBEAT_ADDR="http://daloradius.com/heartbeat.php"
 
-# Set NAS MAC to the MAC address of LAN connected Linux node
+# This is Auto Set NAS MAC to the MAC address of LAN connected openwrt node
 # MAC address format, according to how the NAS sends this information. For example: 00-aa-bb or 00:aa:bb
-NAS_MAC="00:1D:73:11:22:33"
+# Need a way to convert this output from 00:aa:bb to 00-aa-bb as chilli (NAS) sends the MAC in this format.
+NAS_MAC=`ifconfig br-lan | awk '/HWaddr/{print substr ($5,1)}'`
 
 # Set to a unique, hard-to-figure-out key across all of your NASes.
 # This key is saved in daloRADIUS's configuration and so should also
@@ -50,12 +51,11 @@ uptime=`cat /proc/uptime | awk '{print ($1)}'`
 memfree=`cat /proc/meminfo | awk '/MemFree/{print substr($2,$3)}'`
 wan_bdown=`ifconfig eth0.2 | awk '/RX bytes/{print substr($2,7)}'`
 wan_bup=`ifconfig eth0.2 | awk '/TX bytes/{print substr($6,7)}'`
-#bdown=`awk '/'"$wan_iface"'/{print substr($1,6)}'  /proc/net/dev`	#in bytes, need to turn to kilobytes
-#bup=`awk '/'"$wan_iface"'/{print $9}'  /proc/net/dev`				#in bytes, need to turn to kilobytes
+#bdown=`awk '/'"$wan_iface"'/{print substr($1,6)}'  /proc/net/dev` #in byte
+#bup=`awk '/'"$wan_iface"'/{print $9}'  /proc/net/dev`	#in bytes, need to turn to kilobytes
 #kbdown=$((bdown/1024))
 #kbup=$((bup/1024))
 firmware=`cat /proc/cpuinfo | awk '/machine/{print substr($5,1)}'`
-
 # Snippet to get CPU % --------------------------------------------------------------
 # adopted from Paul Colby (http://colby.id.au)
 PREV_TOTAL=0
