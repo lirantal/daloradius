@@ -27,15 +27,15 @@ if (strpos($_SERVER['PHP_SELF'], '/library/validation.php') !== false) {
 }
 
 // commonly used regexes collection
-define("DATE_REGEX", "/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/");
-define("ORDER_TYPE_REGEX", "/^(de|a)sc$/");
-define("IP_REGEX", "/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9]).){3}((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])$/");
-define("NETMASK_LENGTH_REGEX", "/^3[0-2]|[1-2][0-9]|[1-9]$/");
+define("DATE_REGEX", '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/');
+define("ORDER_TYPE_REGEX", '/^(de|a)sc$/');
+define("IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9]).){3}((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])$/');
+define("NETMASK_LENGTH_REGEX", '/^3[0-2]|[1-2][0-9]|[1-9]$/');
 define("MACADDR_REGEX", '/^(?:[0-9A-Fa-f]{2}([-:]))(?:[0-9A-Fa-f]{2}\1){4}[0-9A-Fa-f]{2}$/');
-define("PINCODE_REGEX", "/^[a-zA-Z0-9]+$/");
+define("PINCODE_REGEX", '/^[a-zA-Z0-9]+$/');
 
 // this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
-define("LOOSE_IP_REGEX", "/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/");
+define("LOOSE_IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/');
 
 // some parameters can be validated using a whitelist.
 // here we collect some useful whitelist.
@@ -76,10 +76,10 @@ $valid_db_engines = array(
                             "informix" => "informix"
                          );
 
+// values taken from an instance of freeradius 3.0.21
 $valid_nastypes = array(
-                            "other", "cisco", "livingston", "computon", "max40xx",
-                            "multitech", "natserver", "pathras",
-                            "patton", "portslave", "tc", "usrhiper"
+                         "other", "cisco", "computone", "livingston", "juniper", "max40xx", "multitech",
+                         "netserver", "pathras", "patton", "portslave", "tc", "usrhiper"
                        );
 
 $acct_custom_query_options_all = array(
