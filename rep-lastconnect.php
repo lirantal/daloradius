@@ -25,7 +25,6 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
     
     include_once("lang/main.php");
@@ -53,26 +52,29 @@
         break;
     }
     
-    // in other cases we just check that syntax is ok
-    $date_regex = '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/';
+    include("library/validation.php");
     
+    // in other cases we just check that syntax is ok
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match($date_regex, $_GET['startdate'], $m) !== false &&
+                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
                ? $_GET['startdate'] : date("Y-m-01");
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match($date_regex, $_GET['enddate'], $m) !== false &&
+                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : date("Y-m-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')));
 
     // and in other cases we partially strip some character,
     // and leave validation/escaping to other functions used later in the script
-    $usernameLastConnect = (array_key_exists('usernameLastConnect', $_GET) && isset($_GET['usernameLastConnect']))
-                         ? str_replace("%", "", $_GET['usernameLastConnect']) : "";
+    $usernameLastConnect = (array_key_exists('usernameLastConnect', $_GET) &&
+                            !empty(str_replace("%", "", trim($_GET['usernameLastConnect']))))
+                         ? str_replace("%", "", trim($_GET['usernameLastConnect'])) : "";
     $username_enc = (!empty($usernameLastConnect)) ? htmlspecialchars($usernameLastConnect, ENT_QUOTES, 'UTF-8') : "";
     
     include("menu-reports.php");
+
+    $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
 
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
@@ -81,26 +83,35 @@
     // - its value can be used for table headings presentation
     $cols = array( 
                    $tableSetting['postauth']['user'] => t('all','Username'),
-                   "pass" => t('all','Password'),
-                   $tableSetting['postauth']['date'] => t('all','StartTime'),
-                   "reply" => t('all','RADIUSReply')
                  );
+    
+    if (!$hiddenPassword) {
+        $cols["pass"] = t('all','Password');
+    }
+    
+    $date_label = $tableSetting['postauth']['date'];
+    $cols[$date_label] = t('all','StartTime');
+    $cols["reply"] = t('all','RADIUSReply');
+    
     $colspan = count($cols);
     $half_colspan = intdiv($colspan, 2);
 
     // validating user passed parameters
 
+    $default_orderBy = array_keys($cols)[count($cols) - 2];
+    $default_orderType = "desc";
+    
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($cols)))
-             ? $_GET['orderBy'] : array_keys($cols)[0];
+             ? $_GET['orderBy'] : $default_orderBy;
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "asc";
+               ? strtolower($_GET['orderType']) : $default_orderType;
 
     $radiusReply = (array_key_exists('radiusReply', $_GET) && isset($_GET['radiusReply']) &&
-                    in_array($_GET['orderType'], array( "Any", "Access-Accept", "Access-Reject" )))
+                    in_array($_GET['radiusReply'], array( "Any", "Access-Accept", "Access-Reject" )))
                  ? $_GET['radiusReply'] : "Any";
 
     echo '<div id="contentnorightbar">';
@@ -201,24 +212,33 @@
         <tbody>
 <?php
         while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+            
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
 
-        // The table that is being produced is in the format of:
-        // +-------------+-------------+---------------+-----------+
-        // | user        | pass        | reply         | date      |   
-        // +-------------+-------------+---------------+-----------+
+            // The table that is being produced is in the format of:
+            // +-------------+-------------+---------------+-----------+
+            // | user        | pass (opt.) | reply         | date      |   
+            // +-------------+-------------+---------------+-----------+
 
             list($user, $pass, $reply, $starttime) = $row;
-?>
 
-            <tr>
-                <td><?= htmlspecialchars($user, ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= ($configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] == "yes") ? "[Password is hidden]"
-                                                                                 : htmlspecialchars($pass, ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= htmlspecialchars($starttime, ENT_QUOTES, 'UTF-8') ?></td>
-                <td style="color: <?= ($reply == "Access-Reject") ? "red" : "green"?>"><?= htmlspecialchars($reply, ENT_QUOTES, 'UTF-8') ?></td>
-            </tr>
+            echo "<tr>";
+            
+            printf("<td>%s</td>", $user);
+            if (!$hiddenPassword) {
+                printf("<td>%s</td>", $pass);
+            }
+            printf("<td>%s</td>", $starttime);
+            
+            $color = ($reply == "Access-Reject") ? "red" : "green";
+            printf('<td style="color: %s">%s</td>', $color, $reply);
+            
+            echo "</tr>";
 
-<?php
         }
 ?>
         </tbody>
