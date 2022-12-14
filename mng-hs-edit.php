@@ -50,12 +50,12 @@
     $edit_hotspotname = $name_enc;
     
     // check if it exists
-    $sql = sprintf("SELECT id FROM %s WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                                                            $dbSocket->escapeSimple($name));
+    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                                                               $dbSocket->escapeSimple($name));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
 
-    $exists = ($res->numRows() == 1);
+    $exists = $res->fetchrow()[0] > 0;
     
     if (!$exists) {
         // we empty the name if the hs does not exist
@@ -68,13 +68,13 @@
             
             if (!empty($name)) {
                 $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
-                               filter_var($_POST['macaddress'], FILTER_VALIDATE_MAC) &&
-                               filter_var($_POST['macaddress'], FILTER_VALIDATE_IP))
+                               (filter_var($_POST['macaddress'], FILTER_VALIDATE_MAC) ||
+                                filter_var($_POST['macaddress'], FILTER_VALIDATE_IP)))
                             ? $_POST['macaddress'] : "";
                 
                 // we check that this MAC/IP addr is not assigned to any other HS
                 $sql = sprintf("SELECT COUNT(id) FROM %s WHERE mac='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                                                                          $dbSocket->escapeSimple($mac));
+                                                                          $dbSocket->escapeSimple($macaddress));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
                 
@@ -114,7 +114,7 @@
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     
-                    if (!DB::isError($res)) {
+                    if (DB::isError($res)) {
                         // it seems that operator could not be added
                         $f = "Failed to update this hotspot [%s]";
                         $failureMsg = sprintf($f, $name_enc);
@@ -204,15 +204,21 @@
     if (!empty($name)) {
     
         // set form component descriptors
-        $input_descriptors = array();
+        $input_descriptors0 = array();
         
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+        
+        $input_descriptors0[] = array(
                                         "type" => "hidden",
                                         "value" => $name_enc,
                                         "name" => "name"
                                      );
 
-        $input_descriptors[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "name_presentation",
                                         "caption" => t('all','HotSpotName'),
                                         "type" => "text",
@@ -221,7 +227,7 @@
                                         "disabled" => true
                                      );
                                     
-        $input_descriptors[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "macaddress",
                                         "caption" => t('all','MACAddress'),
                                         "type" => "text",
@@ -229,7 +235,7 @@
                                         "tooltipText" => t('Tooltip','hotspotMacaddressTooltip')
                                      );
                                      
-        $input_descriptors[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "geocode",
                                         "caption" => t('all','Geocode'),
                                         "type" => "text",
@@ -237,56 +243,48 @@
                                         "tooltipText" => t('Tooltip','geocodeTooltip')
                                      );
         
-        $submit_descriptor = array(
+        $input_descriptors0[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
                                   );
         
         // set navbar stuff
-        $navbuttons = array(
-                              'HotspotInfo-tab' => t('title','HotspotInfo'),
-                              'ContactInfo-tab' => t('title','ContactInfo'),
-                           );
+        $navkeys = array( 'HotspotInfo', 'ContactInfo', );
+        
+        // print navbar controls
+        print_tab_header($navkeys);
+        
+        // open form
+        open_form();
+        
+        // open first tab (shown)
+        open_tab($navkeys, 0, true);
+        
+        // open a fieldset
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','HotspotInfo'),
+                                     );
 
-        print_tab_navbuttons($navbuttons);
-?>
-
-<form method="POST">
-    <div id="HotspotInfo-tab" class="tabcontent" style="display: block">
-        <fieldset>
-
-            <h302><?= t('title','HotspotInfo') ?></h302>
-
-            <ul style="margin: 30px auto">
-
-<?php
-                foreach ($input_descriptors as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-
-            </ul>
-        </fieldset>
-
-<?php
-        print_form_component($submit_descriptor);
-?>
-
-    </div><!-- #HotspotInfo-tab -->
-
-
-    <div id="ContactInfo-tab" class="tabcontent">
-
-<?php
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_tab($navkeys, 0);
+        
+        // open second tab
+        open_tab($navkeys, 1);
+        
         include_once('include/management/contactinfo.php');
-?>
-
-    </div><!-- #ContactInfo-tab -->
-
-</form>
-
-<?php
+        
+        close_tab($navkeys, 1);
+        
+        close_form();
+        
     }
 
     include('include/config/logging.php');
