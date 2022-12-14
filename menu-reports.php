@@ -96,7 +96,7 @@ include_once("include/management/autocomplete.php");
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-01-01") ?>" tabindex="6">
                             
                             <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
-                            <input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
+                            <input name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="7">
                          </form>
                     </li>
