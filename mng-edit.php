@@ -526,7 +526,7 @@ window.onload = function(){
                           );
         
         // set navbar stuff
-        $navkeys = array( 'AccountInfo', 'RADIUSCheck', 'RADIUSReply', 'UserInfo', 'BillingInfo', 'Groups', array( 'OtherInfo', "Other Info" ) );
+        $navkeys = array( 'AccountInfo', 'RADIUSCheck', 'RADIUSReply', 'UserInfo', 'BillingInfo', 'Groups', 'Attributes', array( 'OtherInfo', "Other Info" ) );
 
         // print navbar controls
         print_tab_header($navkeys);
@@ -814,15 +814,21 @@ window.onload = function(){
         close_fieldset();
         
         close_tab($navkeys, 5);
-        
+
         open_tab($navkeys, 6);
+
+        include_once('include/management/attributes.php');
+
+        close_tab($navkeys, 6);
+        
+        open_tab($navkeys, 7);
 
         include_once('include/management/userReports.php');
         userPlanInformation($username, 1);
         userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
         userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
 
-        close_tab($navkeys, 6);
+        close_tab($navkeys, 7);
 
         print_form_component($submit_descriptor);
 
