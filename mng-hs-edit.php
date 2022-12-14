@@ -225,7 +225,7 @@
                                         "name" => "macaddress",
                                         "caption" => t('all','MACAddress'),
                                         "type" => "text",
-                                        "value" => ((isset($macaddress)) ? $macaddress : ""),
+                                        "value" => ((isset($mac)) ? $mac : ""),
                                         "tooltipText" => t('Tooltip','hotspotMacaddressTooltip')
                                      );
                                      
