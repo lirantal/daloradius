@@ -84,13 +84,8 @@
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        //~ echo "<pre>";
-        //~ print_r($_POST);
-        //~ echo "</pre>";
         
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
-            
         
             // required later
             $currDate = date('Y-m-d H:i:s');
@@ -526,7 +521,10 @@ window.onload = function(){
                           );
         
         // set navbar stuff
-        $navkeys = array( 'AccountInfo', 'RADIUSCheck', 'RADIUSReply', 'UserInfo', 'BillingInfo', 'Groups', 'Attributes', array( 'OtherInfo', "Other Info" ) );
+        $navkeys = array( 
+                          'AccountInfo', 'RADIUSCheck', 'RADIUSReply', 'UserInfo', 'BillingInfo',
+                          'Groups', 'Attributes', array( 'OtherInfo', "Other Info" )
+                        );
 
         // print navbar controls
         print_tab_header($navkeys);
@@ -588,9 +586,9 @@ window.onload = function(){
 
         $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
                           FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
-                         WHERE rc.username='%s'", $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                                  $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                  $dbSocket->escapeSimple($username));
+                         WHERE rc.username='%s' ORDER BY rc.id ASC", $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                                                     $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                                                     $dbSocket->escapeSimple($username));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
@@ -602,17 +600,17 @@ window.onload = function(){
             
             echo '<ul>';
             
-            $editCounter = 0;
             while ($row = $res->fetchRow()) {
                 
                 foreach ($row as $i => $v) {
                     $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
 
-                $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
-                $name = sprintf('editValues%s[]', $editCounter);
+                $id = $row[5];
+                $id__attribute = sprintf('%s__%s', $id, $row[0]);
+                $name = sprintf('editValues%s[]', $id);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
-                $onclick = sprintf("document.getElementById('form-%d-radcheck').submit()", $editCounter);
+                $onclick = sprintf("document.getElementById('form-%d-radcheck').submit()", $id);
                 
                 echo '<li>';
                 printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
@@ -632,7 +630,7 @@ window.onload = function(){
 
 
                 if (!empty($row[3]) || !empty($row[4])) {
-                    $divId = sprintf("%s-Tooltip-%d-radcheck", $row[0], $editCounter);
+                    $divId = sprintf("%s-Tooltip-%d-radcheck", $row[0], $id);
                     $onclick = sprintf("toggleShowDiv('%s')", $divId);
                     printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
                     printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
@@ -650,9 +648,6 @@ window.onload = function(){
                 }
                 
                 echo '</li>';
-                
-                // we increment the counter for the html elements of the edit attributes
-                $editCounter++;
             }
             
             echo '</ul>';
@@ -677,9 +672,9 @@ window.onload = function(){
         
         $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
                           FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
-                         WHERE rc.username='%s'", $configValues['CONFIG_DB_TBL_RADREPLY'],
-                                                  $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                  $dbSocket->escapeSimple($username));
+                         WHERE rc.username='%s' ORDER BY rc.id ASC", $configValues['CONFIG_DB_TBL_RADREPLY'],
+                                                                     $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                                                     $dbSocket->escapeSimple($username));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
@@ -690,17 +685,17 @@ window.onload = function(){
         } else {
             
             echo '<ul>';
-            $editCounter = 0;
             while ($row = $res->fetchRow()) {
                 
                 foreach ($row as $i => $v) {
                     $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
 
-                $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
-                $name = sprintf('editValues%s[]', $editCounter);
+                $id = $row[5];
+                $id__attribute = sprintf('%s__%s', $id, $row[0]);
+                $name = sprintf('editValues%s[]', $id);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
-                $onclick = sprintf("document.getElementById('form-%d-radreply').submit()", $editCounter);
+                $onclick = sprintf("document.getElementById('form-%d-radreply').submit()", $id);
                 
                 echo '<li>';
                 printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
@@ -719,7 +714,7 @@ window.onload = function(){
                 printf('<input type="hidden" name="%s" value="radreply">', $name);
 
                 if (!empty($row[3]) || !empty($row[4])) {
-                    $divId = sprintf("%s-Tooltip-%d-radreply", $row[0], $editCounter);
+                    $divId = sprintf("%s-Tooltip-%d-radreply", $row[0], $id);
                     $onclick = sprintf("toggleShowDiv('%s')", $divId);
                     printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
                     printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
@@ -737,9 +732,6 @@ window.onload = function(){
                 }
                 
                 echo '</li>';
-                
-                // we increment the counter for the html elements of the edit attributes
-                $editCounter++;
             }
             echo '</ul>';
         }
@@ -844,18 +836,19 @@ window.onload = function(){
 
         foreach ($tables as $table_value => $table) {
 
-            $sql = sprintf("SELECT id, attribute, value FROM %s WHERE username='%s'",
+            $sql = sprintf("SELECT id, attribute, value FROM %s WHERE username='%s' ORDER BY id ASC",
                            $table, $dbSocket->escapeSimple($username));
             $res = $dbSocket->query($sql);
             $logDebugSQL .= "$sql;\n";
 
             if ($res->numRows() > 0) {
-                $counter = 0;
+                
                 while ($row = $res->fetchrow()) {
                     list($id, $attribute, $value) = $row;
+                    $id = intval($id);
                     
-                    $formId = sprintf("form-%d-%s", $counter, $table_value);
-                    $id__attribute = sprintf("%d__%s", intval($id), htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8'));
+                    $formId = sprintf("form-%d-%s", $id, $table_value);
+                    $id__attribute = sprintf("%d__%s", $id, htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8'));
                     
                     printf('<form id="%s" style="display: none" method="POST" action="mng-del.php">', $formId);
                     printf('<input type="hidden" name="username" value="%s">', $username_enc);
@@ -863,8 +856,6 @@ window.onload = function(){
                     printf('<input type="hidden" name="csrf_token" value="%s">', $csrf_token);
                     printf('<input type="hidden" name="tablename" value="%s">', $table_value);
                     echo '</form>';
-                    
-                    $counter++;
                 }
             }
         }
