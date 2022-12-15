@@ -319,8 +319,11 @@ function print_textarea($textarea_descriptor) {
         $textarea_descriptor['id'] = $textarea_descriptor['name'];
     }
 
+    $class = (array_key_exists('class', $textarea_descriptor) && !empty(trim($textarea_descriptor['class'])))
+           ? trim($textarea_descriptor['class']) : "form";
+
     printf('<label for="%s" class="form">%s</label>', $textarea_descriptor['id'], $textarea_descriptor['caption']);
-    printf('<textarea class="form" name="%s" id="%s"', $textarea_descriptor['name'], $textarea_descriptor['id']);
+    printf('<textarea class="%s" name="%s" id="%s"', $class, $textarea_descriptor['name'], $textarea_descriptor['id']);
     
     if (array_key_exists('tabindex', $textarea_descriptor)) {
         printf(' tabindex="%s"', $textarea_descriptor['tabindex']);

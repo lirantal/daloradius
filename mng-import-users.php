@@ -32,120 +32,157 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    isset($_POST['csvdata']) ? $csvdata = $_POST['csvdata'] : $csvdata = "";
-    isset($_POST['groups']) ? $groups = $_POST['groups'] : $groups = "";
-    isset($_POST['planName']) ? $planName = $_POST['planName'] : $planName = "";
-    isset($_POST['userType']) ? $userType = $_POST['userType'] : $userType = "";
+    // we import validation facilities
+    include_once("library/validation.php");
+    include("include/management/functions.php");
 
-    if (isset($_POST['submit'])) {
+    // custom valid authTypes
+    $valid_authTypes = array(
+                                "userAuth" => "Based on username and password",
+                                "otherAuth" => "Based on MAC addr/PIN code"
+                            );
 
-        $users = array();
-        if ( (isset($csvdata)) && (!empty($csvdata)) ) {
+    // if cleartext passwords are not allowed, 
+    // we remove Cleartext-Password from the $valid_passwordTypes array
+    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
+        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
+        $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
+    }
+    
+    include_once('include/management/populate_selectbox.php');
+    $valid_groups = get_groups();
+    $valid_planNames = get_plans();
 
-            $csvFormattedData = explode("\n", $csvdata);
-        
-            include 'library/opendb.php';
-
-            // initialize some required variables
-
-            $currDate = date('Y-m-d H:i:s');
-            $currBy = $_SESSION['operator_user'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             
-            $passwordType = $_POST['passwordType'];
+            $authType = (array_key_exists('authType', $_POST) && isset($_POST['authType']) &&
+                         in_array($_POST['authType'], array_keys($valid_authTypes))) ? $_POST['authType'] : array_keys($valid_authTypes)[0];
             
-            $userCount = 0;
+            $planName = (array_key_exists('planName', $_POST) && !empty($_POST['planName']) &&
+                         in_array($_POST['planName'], $valid_planNames))
+                      ? $_POST['planName'] : "";
             
-            //var_dump($csvFormattedData);
-            foreach($csvFormattedData as $csvLine) {
-                //list($user, $pass) = explode(",", $csvLine);
-                $users = explode(",", $csvLine);
-
-                //makeing sure user and pass are specified and are not empty
-                //columns by chance
-                if ( (isset($users[0]) && (!empty($users[0])))
-                        && 
-                        ((isset($users[1]) && (!empty($users[1])))) )
-                    {
-
-                        $user = trim($dbSocket->escapeSimple($users[0]));
-                        $pass = trim($dbSocket->escapeSimple($users[1]));
-
-                        // perform further cleanup on $pass to make sure it doesn't contain invalid chars like \r\n
-                        // whether they are literal or encoded
-                        $pass = str_replace("\\r", "", $pass);
-                        $pass = str_replace("\\n", "", $pass);
-                        $pass = str_replace(chr(0xC2), "", $pass);
-                        $pass = str_replace(chr(0xA0), "", $pass);
-                        
-                        $planName = trim($dbSocket->escapeSimple($planName));
-                        $userType = trim($dbSocket->escapeSimple($userType));
-                        
-                        if ($userType == "userType") {
-                            $passwordType = "Auth-Type";
-                            $pass = "Accept";
-                        }
-                        
-                        // insert username/password into radcheck
-                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-                                " (id,Username,Attribute,op,Value) ".
-                                " VALUES (0, '$user', '$passwordType', ".
-                                " ':=', '$pass')";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";
-
-                        // insert user into userinfo table
-                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-                                " (id,username,creationdate,creationby) ".
-                                " VALUES (0, '$user', '$currDate', '$currBy')";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";
-                        
-                        // associate user with groups (profiles)
-                        foreach($groups as $groupName) {
-                            
-                            if ( (isset($groupName)) && (!empty($groupName)) ) {
-                                
-                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName,GroupName,priority) ".
-                                    " VALUES ('".$dbSocket->escapeSimple($user)."', '".$dbSocket->escapeSimple($groupName)."',0) ";
-                                $res = $dbSocket->query($sql);
-                                $logDebugSQL .= $sql . "\n";
-                                
-                            }
-                        }
-                        
-                        
-                        // associate user with plans
-                        if ( (isset($planName)) && (!empty($planName)) ) {
-                            $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-                                    " (id,planname,username,creationdate,creationby) ".
-                                    " VALUES (0, '$planName', '$user', '$currDate', '$currBy')";
-                            $res = $dbSocket->query($sql);
-                            $logDebugSQL .= $sql . "\n";
-                        }
-
-
-
-
-
-                        
-                        $userCount++;
-
+            $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
+            
+            $csvdata = (array_key_exists('csvdata', $_POST) && isset($_POST['csvdata']))
+                     ? $_POST['csvdata'] : "";
+            
+            $csvFormattedData = (!empty($csvdata)) ? explode("\n", $csvdata) : array();
+            
+            $simpleList = (array_key_exists('simpleList', $_POST) && isset($_POST['simpleList']))
+                        ? $_POST['simpleList'] : "";
+            
+            $simpleListData = (!empty($simpleList)) ? explode("\n", $simpleList) : array();
+            
+            $data = array();
+            $passwordType = "";
+            
+            if (count($csvFormattedData) > 0) {
+                
+                $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
+                                 in_array($_POST['passwordType'], $valid_passwordTypes))
+                              ? $_POST['passwordType'] : $valid_passwordTypes[0];
+                
+                foreach ($csvFormattedData as $csvLine) {
+                    
+                    $arr = explode(",", $csvLine);
+                    
+                    if (count($arr) != 2) {
+                        continue;
                     }
+                    
+                    list($username, $password) = $arr;
+                    $username = trim($username);
+                    $password = trim($password);
+                    
+                    echo $username;
+                    echo $password;
+                    
+                    
+                    if (strpos("%", $username) === false &&
+                        preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
+                        preg_match(ALL_PRINTABLE_CHARS_REGEX, $password) &&
+                        !array_key_exists($username, $data)) {
+                        $data[$username] = $password;
+                    }
+                }
+            
+                
+            } else if (count($simpleListData) > 0) {
+            
+                $passwordType = "Auth-Type";
+            
+                foreach ($simpleListData as $simpleLine) {
+                    $username = trim($simpleLine);
+                    
+                    if (preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
+                        !array_key_exists($username, $data)) {
+                        $data[$username] = "Accept";
+                    }
+                }
+            
             }
             
-            include 'library/closedb.php';
-
-           $successMsg = "Successfully imported a total of <b>$userCount</b> users to database";
-           $logAction .= "Successfully imported a total of <b>$userCount</b> users to database on page: ";
-       
-        } else {
+            if (count($data) > 0 && !empty($passwordType)) {
+                
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $_SESSION['operator_user'];
+                
+                include('library/opendb.php');
+                
+                
+                $counter = 0;
+                foreach ($data as $subject => $value) {
+                    
+                    // skipping this user if it exists or insert fails
+                    if (user_exists($dbSocket, $subject) || 
+                        !insert_single_attribute($dbSocket, $subject, $passwordType, ":=", $value)) {
+                        continue;
+                    }
+                    
+                    // adding user info
+                    $params = array(
+                                        "creationdate" => $currDate,
+                                        "creationby" => $currBy,
+                                   );
+                    
+                    $addedUserInfo = add_user_info($dbSocket, $subject, $params);
+                    
+                    $groupsCount = insert_multiple_user_group_mappings($dbSocket, $subject, $groups);
+                    
+                    // adding billing info
+                    if (!empty($planName)) {
+                        $params["planName"] = $planName;
+                    
+                        $addedBillingInfo = add_user_billing_info($dbSocket, $subject, $params);
+                    }
+                    
+                    $counter++;
+                }
+                
+                include('library/closedb.php');
+                
+                if ($counter > 0) {
+                    $successMsg = "Successfully imported a total of <b>$counter</b> users to database";
+                    $logAction .= "Successfully imported a total of <b>$counter</b> users to database on page: ";
+                } else {
+                    $failureMsg = "No users have been imported to database";
+                    $logAction .= "No users have been imported to database on page: ";
+                }
+                
+            } else {
+                // invalid data
+                $failureMsg = "Empty or invalid data provided";
+                $logAction .= "Empty or invalid data provided on page: ";
+            }
             
-           $failureMsg = "No CSV data was provided";
-           $logAction .= "Failed importing users, no CSV data was provided on page: ";
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
-
-    } //if (isset)
-
+    }
 
     include_once("lang/main.php");
     include("library/layout.php");
@@ -170,90 +207,154 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
+    
+    if (!isset($successMsg)) {
+        
+        $input_descriptors0 = array();
+        
+        $input_descriptors0[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "authType",
+                                        "caption" => "Authentication Type",
+                                        "options" => $valid_authTypes,
+                                        "onchange" => "switchAuthType()",
+                                        "selected_value" => ((isset($failureMsg)) ? $authType : "")
+                                     );
 
-?>
+        $options = $valid_groups;
+        array_unshift($options, '');
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "groups[]",
+                                        "id" => "groups",
+                                        "caption" => t('all','Group'),
+                                        "options" => $options,
+                                        "multiple" => true,
+                                        "size" => 5,
+                                        "selected_value" => ((isset($failureMsg)) ? $groups : ""),
+                                        "tooltipText" => t('Tooltip','groupTooltip')
+                                     );
+                                     
+        $options = $valid_planNames;
+        array_unshift($options, '');
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "planName",
+                                        "caption" => t('all','PlanName'),
+                                        "options" => $options,
+                                        "selected_value" => ((isset($failureMsg)) ? $planName : ""),
+                                        "tooltipText" => t('Tooltip','planTooltip')
+                                     );
+        
+        open_form();
+        
+        // open a fieldset
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','ImportUsers'),
+                                     );
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-    <fieldset>
-
-        <h302> <?php echo t('title','ImportUsers'); ?> </h302>
-        <br/>
-
-        <ul>
-
-        Paste a CSV-formatted data input of users, expected format is: user,password<br/>
-        Note: any CSV fields beyond the first 2 (user and password) are ignored<br/>
-        <br/>
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
         
         
-        <li class='fieldset'>
-        <label for='passwordType' class='form'><?php echo t('all','PasswordType')?> </label>
-        <select class='form' tabindex=102 name='passwordType' >
-            <option value='Cleartext-Password'>Cleartext-Password</option>
-            <option value='User-Password'>User-Password</option>
-            <option value='Crypt-Password'>Crypt-Password</option>
-            <option value='MD5-Password'>MD5-Password</option>
-            <option value='SHA1-Password'>SHA1-Password</option>
-            <option value='CHAP-Password'>CHAP-Password</option>
-        </select>
-        </li>
+        // open a fieldset
+        $fieldset1_descriptor = array(
+                                        "title" => "Username/password info",
+                                        "id" => "userAuth-fieldset",
+                                     );
         
-        <li class='fieldset'>
-        <label for='group' class='form'><?php echo t('all','Group')?></label>
-        <?php   
-            include_once 'include/management/populate_selectbox.php';
-            populate_groups("Select Groups","groups[]");
-        ?>
-
-        <a class='tablenovisit' href='#'
-            onClick="javascript:ajaxGeneric('include/management/dynamic_groups.php','getGroups','divContainerGroups',genericCounter('divCounter')+'&elemName=groups[]');">Add</a>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('group')" />
-        <div id='divContainerGroups'>
-        </div>
-
-
-        <li class='fieldset'>
-        <label for='planName' class='form'><?php echo t('all','PlanName') ?></label>
-                <?php
-                       populate_plans("Select Plan","planName","form");
-                ?>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('planNameTooltip')" /> 
+        open_fieldset($fieldset1_descriptor);
         
-        <div id='planNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','planNameTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='userType' class='form'><?php echo t('all','UserType') ?></label>
-        <input type='checkbox' name='userType' value='userType' /> If users are MAC or PIN based authentication, check this box
-        </li>
-
-
-
-
-
+        $input_descriptors1[] = array(
+                                        "name" => "passwordType",
+                                        "caption" => t('all','PasswordType'),
+                                        "options" => $valid_passwordTypes,
+                                        "type" => "select",
+                                        "selected_value" => ((isset($failureMsg)) ? $passwordType : "")
+                                    );
+                                    
+        $input_descriptors1[] = array(
+                                        "caption" => t('all','CSVData'),
+                                        "type" => "textarea",
+                                        "class" => "form_fileimport",
+                                        "name" => "csvdata",
+                                        "content" => ((isset($failureMsg)) ? $csvdata : ""),
+                                     );
+                                        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
-        <li class='fieldset'>
-        <label for='csvdata' class='form'><?php echo t('all','CSVData') ?></label>
-        <textarea class='form_fileimport' name='csvdata' tabindex=101></textarea>
-        </li>
-
+        echo '<small style="color: black">Paste a CSV-formatted data input of users, expected format is: user,password<br>'
+           . '<strong>Note</strong>: any CSV fields beyond the first 2 (user and password) are ignored<br></small>';
         
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
+        close_fieldset();
+        
+        // open a fieldset
+        $fieldset2_descriptor = array(
+                                        "title" => "MAC addr/PIN code info",
+                                        "id" => "otherAuth-fieldset",
+                                     );
+        
+        open_fieldset($fieldset2_descriptor);
+        
+        $input_descriptors2[] = array(
+                                        "caption" => "Simple List",
+                                        "type" => "textarea",
+                                        "class" => "form_fileimport",
+                                        "name" => "simpleList",
+                                        "content" => ((isset($failureMsg)) ? $simpleList : ""),
+                                     );
+        
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        echo '<small style="color: black">Paste a simple list of MAC addresses or PIN codes<br>'
+           . '<strong>Note</strong>: each line a single MAC address or a PIN code<br></small>';
+        
+        close_fieldset();
+        
+        $button_descriptor = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                  );
+        
+        print_form_component($button_descriptor);
+        
+        close_form();
+    
+    }
 
-        </ul>
-    </fieldset>
-
-    </form>
-
-<?php
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+    $inline_extra_js = '
+function switchAuthType() {
+    var switcher = document.getElementById("authType");
+    
+    for (var i=0; i<switcher.length; i++) {
+        var fieldset_id = switcher[i].value + "-fieldset",
+            disabled = switcher.value != switcher[i].value,
+            fieldset = document.getElementById(fieldset_id);
+        
+        fieldset.disabled = disabled;
+        fieldset.style.display = (disabled) ? "none" : "block";
+    }
+}
+
+window.addEventListener("load", function() { switchAuthType(); });
+';
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
