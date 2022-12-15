@@ -25,12 +25,11 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-    
     include_once('library/config_read.php');
 
     // validate this parameter before including menu
-    $username = (array_key_exists('usernameOnline', $_GET) && isset($_GET['usernameOnline']))
-                    ? str_replace("%", "", $_GET['usernameOnline']) : "";
+    $username = (array_key_exists('usernameOnline', $_GET) && !empty(str_replace("%", "", trim($_GET['usernameOnline']))))
+              ? str_replace("%", "", trim($_GET['usernameOnline'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     // feed the sidebar
@@ -108,17 +107,17 @@
     print_title_and_help($title, $help);
 
     // set navbar stuff
-    $navbuttons = array(
-                            "Statistics-tab" => "Statistics",
-                            "Online-users-tab" => "Online/offline users",
-                            "Online-NAS-tab" => "Online NAS",
-                       );
+    $navkeys = array(
+                        array( 'stats', t('all','Statistics') ),
+                        array( 'online-users', "Online/offline users" ),
+                        array( 'online-nas', "Online NAS", ),
+                    );
 
-    print_tab_navbuttons($navbuttons);
+    // print navbar controls
+    print_tab_header($navkeys);
     
-?>
-                <div class="tabcontent" id="Statistics-tab" style="display: block">
-<?php
+    // open first tab (shown)
+    open_tab($navkeys, 0, true);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -225,33 +224,49 @@
 
         <tbody>
 <?php
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        $li_style = 'margin: 7px auto';
+        $count = 0;
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+            
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            //~ username, framedipaddress, callingstationid, starttime, sessiontime, nasipaddress,
+            //~ calledstationid, sessionid, upload, download, hotspot, nasshortname, firstname, lastname
         
-            $this_username = htmlspecialchars($row['username'], ENT_QUOTES, 'UTF-8');
-            $this_framedip = htmlspecialchars($row['framedipaddress'], ENT_QUOTES, 'UTF-8');
-            $this_nasip = htmlspecialchars($row['nasipaddress'], ENT_QUOTES, 'UTF-8');
-            $this_sessionid = htmlspecialchars($row['sessionid'], ENT_QUOTES, 'UTF-8');
+            list(
+                    $this_username, $this_framedipaddress, $this_callingstationid, $this_starttime, $this_sessiontime,
+                    $this_nasipaddress, $this_calledstationid, $this_sessionid, $this_upload, $this_download,
+                    $this_hotspot, $this_nasshortname, $this_firstname, $this_lastname
+                ) = $row;
+        
+            $this_sessiontime = time2str($this_sessiontime);
             
-            $name = htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8')
-                  . "<br>"
-                  . htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8');
-            $callingstationid = htmlspecialchars($row['callingstationid'], ENT_QUOTES, 'UTF-8');
-            $starttime = htmlspecialchars($row['starttime'], ENT_QUOTES, 'UTF-8');
+            $this_hotspot = (!empty($this_hotspot)) ? $this_hotspot : "(n/d)";
             
-            $totalTime = htmlspecialchars(time2str($row['sessiontime']), ENT_QUOTES, 'UTF-8');
+            $this_name = $this_firstname . "<br>" . $this_lastname;
             
-            $hotspot = htmlspecialchars($row['hotspot'], ENT_QUOTES, 'UTF-8');
-            $nasshortname = htmlspecialchars($row['nasshortname'], ENT_QUOTES, 'UTF-8');
+            $tmp = $this_upload + $this_download;
+            if ($tmp > 0) {
+                $this_upload = toxbyte($this_upload);
+                $this_download = toxbyte($this_download);
+                $this_traffic = t('all','Upload') . ": " . $this_upload
+                              . "<br>"
+                              . t('all','Download') . ": " . $this_download
+                              . "<br>"
+                              . t('all','TotalTraffic') . ": <strong>" . toxbyte($tmp) . "</strong>";
+            } else {
+                $this_traffic = "(n/d)";
+            }
 
-            $upload = htmlspecialchars(toxbyte($row['upload']), ENT_QUOTES, 'UTF-8');
-            $download = htmlspecialchars(toxbyte($row['download']), ENT_QUOTES, 'UTF-8');
-            $traffic = toxbyte($row['upload'] + $row['download']);
-            
             // tooltip and ajax stuff
-            $custom_attributes = sprintf("Acct-Session-Id=%s,Framed-IP-Address=%s", $this_sessionid, $this_framedip);
+            $custom_attributes = sprintf("Acct-Session-Id=%s,Framed-IP-Address=%s", $this_sessionid, $this_framedipaddress);
             $tooltip_disconnect_href = sprintf("config-maint-disconnect-user.php?username=%s&nasaddr=%s&customattributes=%s",
-                                               urlencode($this_username), urlencode($this_nasip), urlencode($custom_attributes));
-            $li_style = 'margin: 7px auto';
+                                               urlencode($this_username), urlencode($this_nasipaddress), urlencode($custom_attributes));
+            
             $tooltip = '<ul style="list-style-type: none">'
                      . sprintf('<li style="%s"><a class="toolTip" href="mng-edit.php?username=%s">%s</a></li>',
                                $li_style, urlencode($this_username), t('Tooltip','UserEdit'))
@@ -261,36 +276,27 @@
                      . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
             $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
                              . "'divContainerUserInfo','username=%s');", urlencode($this_username));
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="clearSessionsUsers[]" value="<?= "$this_username||$starttime" ?>">
-                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltip ?>'>
-                        <?= $this_username ?>
-                    </a>
-                </td>
-                <td><?= $name ?></td>
-                <td><?= $this_framedip ?></td>
-                <td><?= $callingstationid ?></td>
-                <td><?= $starttime ?></td>
-                <td><?= $totalTime ?></td>
-                <td><?= (!empty($hotspot)) ? $hotspot : "(n/d)" ?></td>
-                <td><?= $nasshortname ?></td>
-                <td>
-<?php
-            if (!empty($traffic)) {
-                echo t('all','Upload') . ": " . $upload
-                   . "<br>"
-                   . t('all','Download') . ": " . $download
-                   . "<br>"
-                   . t('all','TotalTraffic') . ": <strong>" . htmlspecialchars($traffic, ENT_QUOTES, 'UTF-8') . "</strong>";
-            } else {
-                echo "(n/d)";
+            
+            // print table row
+            printf('<tr id="row-%d">', $count);
+            
+            printf('<td><label for="checkbox-%d">', $count);
+            printf('<input type="checkbox" name="clearSessionsUsers[]" id="checkbox-%d" value="%s||%s"></label>',
+                   $count, $this_username, $this_starttime);
+            printf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>", $onclick, $tooltip, $this_username);
+            
+            $arr = array(
+                            $this_name, $this_framedipaddress, $this_calledstationid, $this_starttime,
+                            $this_sessiontime, $this_hotspot, $this_nasshortname, $this_traffic
+                        );
+            
+            foreach ($arr as $this_elem) {
+                printf("<td>%s</td>", $this_elem);
             }
-?>
-                </td>
-            </tr>
-<?php
+            
+            echo "</tr>";
+
+            $count++;
         }
 ?>
         </tbody>
@@ -313,17 +319,17 @@
     }
     
     include('library/closedb.php');
-?>
-            </div>
-
-            <div class="tabcontent" style="text-align: center" id="Online-users-tab">
-                <img src="library/graphs-reports-online-users.php" alt="Online users" style="margin: 30px auto">
-            </div>
-
-            <div class="tabcontent" style="text-align: center" id="Online-NAS-tab">
-                <img src="library/graphs-reports-online-nas.php" alt="Online NAS"  style="margin: 30px auto">
-            </div>
-<?php
+    
+    close_tab($navkeys, 0);
+    
+    $img_format = '<div style="text-align: center"><img src="%s" alt="%s" style="%s"></div>';
+    open_tab($navkeys, 1);
+    printf($img_format, "library/graphs-reports-online-users.php", "Online users", "margin: 30px auto");
+    close_tab($navkeys, 1);
+    
+    open_tab($navkeys, 2);
+    printf($img_format, "library/graphs-reports-online-nas.php", "Online NAS", "margin: 30px auto");
+    close_tab($navkeys, 2);
 
     include('include/config/logging.php');
     

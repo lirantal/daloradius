@@ -25,8 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-    
     include_once('library/config_read.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
     
     include_once("lang/main.php");
     
@@ -54,19 +58,19 @@
 
     // validating user passed parameters
 
+    $default_orderBy = array_keys($cols)[2];
+    $default_orderType = "desc";
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($cols)))
-             ? $_GET['orderBy'] : array_keys($cols)[0];
+             ? $_GET['orderBy'] : $default_orderBy;
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "asc";
-?>
-        <div id="contentnorightbar">
+               ? strtolower($_GET['orderType']) : $default_orderType;
 
-<?php
-
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('include/management/pages_common.php');
@@ -88,6 +92,7 @@
     $sql = implode(" UNION ", $sql_pieces);
     
     $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
     $numrows = $res->numRows();
 
     if ($numrows > 0) {
@@ -105,7 +110,7 @@
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
+        $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
 ?>
@@ -132,22 +137,18 @@
             <tbody>
 <?php
         while ($row = $res->fetchRow()) {
-            $section = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-            $item = htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8');
-            $creationdate = htmlspecialchars($row[2], ENT_QUOTES, 'UTF-8');
-            $creationby = htmlspecialchars($row[3], ENT_QUOTES, 'UTF-8');
-            $updatedate = htmlspecialchars($row[4], ENT_QUOTES, 'UTF-8');
-            $updateby = htmlspecialchars($row[5], ENT_QUOTES, 'UTF-8');
-?>
-                <tr>
-                    <td><?= $section ?></td>
-                    <td><?= $item ?></td>
-                    <td><?= $creationdate ?></td>
-                    <td><?= $creationby ?></td>
-                    <td><?= $updatedate ?></td>
-                    <td><?= $updateby ?></td>
-                </tr>
-<?php
+            $rowlen = count($row);
+            
+            // ~ section, item, creationdate, creationby, updatedate, updateby
+            
+            echo "<tr>";
+            
+            for ($i = 0; $i < $rowlen; $i++) {
+                printf("<td>%s</td>", htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8'));
+            }
+            
+            echo "</tr>";
+
         }
 ?>
             </tbody>
@@ -165,20 +166,7 @@
     }
 
     include('library/closedb.php');
-?>
-        </div><!-- #contentnorightbar -->
         
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

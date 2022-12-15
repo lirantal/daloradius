@@ -27,6 +27,11 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+    
     include_once("lang/main.php");
     
     include("library/layout.php");
