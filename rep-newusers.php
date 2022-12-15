@@ -26,17 +26,18 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
     
-    $date_regex = '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/';
+    include("library/validation.php");
 
     // we validate starting and ending dates
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match($date_regex, $_GET['startdate'], $m) !== false &&
+                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
                ? $_GET['startdate'] : "";
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match($date_regex, $_GET['enddate'], $m) !== false &&
+                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : "";
 
@@ -51,8 +52,6 @@
     }
     $logQuery .= "on page: ";
 
-    include_once('library/config_read.php');
-    
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -99,7 +98,7 @@
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "asc";
+               ? strtolower($_GET['orderType']) : "desc";
 
 
     echo '<div id="contentnorightbar">';
@@ -142,8 +141,8 @@
                      
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
+        $res = $dbSocket->query($sql);
         
         $per_page_numrows = $res->numRows();
         
@@ -160,18 +159,15 @@
         $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
         
         
-    // set navbar stuff
-    $navbuttons = array(
-                          'Statistics-tab' => "Statistics",
-                          'Graph-tab' => "Graph",
-                       );
+        // set navbar stuff
+        $navkeys = array( array( 'stats', t('all','Statistics') ), array( 'graphs', t('menu','Graphs') ), );
 
-    print_tab_navbuttons($navbuttons);
+        // print navbar controls
+        print_tab_header($navkeys);
+        
+        // open first tab (shown)
+        open_tab($navkeys, 0, true);
 ?>
-
-                <div class="tabcontent" id="Statistics-tab" style="display: block">
-
-                    <form name="usersonline" method="GET" style="margin-top: 50px">
                         <table border="0" class="table1">
                             <thead>
                                 <tr style="background-color: white">
@@ -194,15 +190,23 @@
                             
                             <tbody>
 <?php
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            $users = intval($row['users']);
-            $period = htmlspecialchars($row['period'], ENT_QUOTES, 'UTF-8');
-?>
-                                <tr>
-                                    <td><?= $period ?></td>
-                                    <td><?= $users ?></td>
-                                </tr>
-<?php
+        $count = 0;
+        while ($row = $res->fetchRow()) {
+            
+            // last field is used only for ordering purpose
+            $rowlen = count($row) - 1;
+            
+            // print table row
+            printf('<tr id="row-%d">', $count);
+            
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                printf("<td>%s</td>", $row[$i]);
+            }
+            
+            echo '</tr>';
+            
+            $count++;
         }
 ?>
                             </tbody>
@@ -213,21 +217,19 @@
 ?>
                             
                         </table>
-                    </form>
-
-                </div><!-- #Statistics-tab -->
-                
-                <div class="tabcontent" id="Graph-tab">
-                    <div style="text-align: center; margin-top: 50px">
 <?php
-                        $src = sprintf('library/graphs-reports-new-users.php?startdate=%s&enddate=%s', $startdate, $enddate);
-                        $alt = "monthly number of new users";
-?>
-                        <img src="<?= $src ?>" alt="<?= $alt ?>">
-                    </div>
-                </div><!-- #Graph-tab -->
+        close_tab($navkeys, 0);
+        
+        // open second tab
+        open_tab($navkeys, 1);
+        
+        $img_format = '<div style="text-align: center"><img src="%s" alt="%s" style="%s"></div>';
+        $src = sprintf('library/graphs-reports-new-users.php?startdate=%s&enddate=%s', $startdate, $enddate);
+        $alt = "monthly number of new users";
+        printf($img_format, $src, "Online users", "margin: 30px auto");
 
-<?php
+        close_tab($navkeys, 1);
+        
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
