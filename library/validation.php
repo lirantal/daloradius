@@ -37,14 +37,18 @@ define("PINCODE_REGEX", '/^[a-zA-Z0-9]+$/');
 // this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
 define("LOOSE_IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/');
 
+define("ALL_PRINTABLE_CHARS_REGEX", '/^[ -~]+$/');
+
 // some parameters can be validated using a whitelist.
 // here we collect some useful whitelist.
 // this lists can be also used for presentation purpose.
 // whitelists naming convention:
 // $valid_ [param_name] s
-$valid_authTypes = array( "userAuth" => "Username/password based",
-                          "macAuth" => "MAC Address base",
-                          "pincodeAuth" => "PIN code based" );
+$valid_authTypes = array( 
+                            "userAuth" => "Based on username and password",
+                            "macAuth" => "Based on MAC address",
+                            "pincodeAuth" => "Based on PIN code"
+                        );
 
 $valid_passwordTypes = array(
                                 "Cleartext-Password",

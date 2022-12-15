@@ -51,8 +51,8 @@
             $currBy = $operator;
     
             // TODO validate user input
-            $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
-                      ? trim(str_replace("%", "", $_POST['username'])) : "";
+            $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", "", trim($_POST['username']))))
+                      ? str_replace("%", "", trim($_POST['username'])) : "";
             $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
             $authType = (array_key_exists('authType', $_POST) && isset($_POST['authType']) &&
@@ -437,7 +437,8 @@
                                         "caption" => t('all','PINCode'),
                                         "type" => "text",
                                         "value" => ((isset($failureMsg)) ? $pincode : ""),
-                                        "tooltipText" => t('Tooltip','pincodeTooltip')
+                                        "tooltipText" => t('Tooltip','pincodeTooltip'),
+                                        "random" => true,
                                      );
                                      
         $button_descriptor = array(
@@ -546,8 +547,12 @@ function switchAuthType() {
     var switcher = document.getElementById("authType");
     
     for (var i=0; i<switcher.length; i++) {
-        var fieldset_id = switcher[i].value + "-fieldset";
-        document.getElementById(fieldset_id).disabled = (switcher.value != switcher[i].value);
+        var fieldset_id = switcher[i].value + "-fieldset",
+            disabled = switcher.value != switcher[i].value,
+            fieldset = document.getElementById(fieldset_id);
+        
+        fieldset.disabled = disabled;
+        fieldset.style.display = (disabled) ? "none" : "block";
     }
 }
 
