@@ -196,7 +196,7 @@
                 'groups' => array()
             );
             
-            $sql1 = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority DESC, groupname ASC",
+            $sql1 = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority ASC, groupname ASC",
                             $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($this_username));
             $res1 = $dbSocket->query($sql1);
             

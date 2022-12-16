@@ -28,24 +28,12 @@
     include_once('library/config_read.php');
     
     include_once("lang/main.php");
-    
     include("library/layout.php");
-
-    // print HTML prologue
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js"
-    );
-    
-    $title = t('Intro','mngsearch.php');
-    
-    print_html_prologue($title, $langCode, array(), $extra_js);
 
     // we partially strip some character and
     // leave validation/escaping to other functions used later in the script
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace("%", "", $_GET['username']) : "";
-    
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username))
                   ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8')
                   : "";
@@ -62,6 +50,17 @@
 
     //feed the sidebar variables
     $search_username = $username_enc;
+
+
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','mngsearch.php');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
 
     if (!empty($username_enc)) {
         $title .=  " :: " . $username_enc;
@@ -91,12 +90,10 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
-?>
 
-    <div id="contentnorightbar">
-
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+    
     include('library/opendb.php');
     include('include/management/pages_common.php');
 

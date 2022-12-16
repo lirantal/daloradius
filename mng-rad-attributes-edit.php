@@ -32,80 +32,116 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    isset($_REQUEST['vendor']) ? $vendor = $_REQUEST['vendor'] : $vendor = "";
-    isset($_REQUEST['attribute']) ? $attribute = $_REQUEST['attribute'] : $attribute = "";
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
-    if (isset($_POST["submit"])) {
+    // custom validation structures
+    $valid_tables = array("check", "reply");
 
-        isset($_POST['vendor']) ? $vendor = $_POST['vendor'] : $vendor = "";
-        isset($_POST['attributeOld']) ? $attributeOld = $_POST['attributeOld'] : $attributeOld = "";
-        isset($_POST['attribute']) ? $attribute = $_POST['attribute'] : $attribute = "";
-        isset($_POST['type']) ? $type = $_POST['type'] : $type = "";
-        isset($_POST['RecommendedOP']) ? $RecommendedOP = $_POST['RecommendedOP'] : $RecommendedOP = "";
-        isset($_POST['RecommendedTable']) ? $RecommendedTable = $_POST['RecommendedTable'] : $RecommendedTable = "";
-        isset($_POST['RecommendedTooltip']) ? $RecommendedTooltip = $_POST['RecommendedTooltip'] : $RecommendedTooltip = "";
-        isset($_POST['RecommendedHelper']) ? $RecommendedHelper = $_POST['RecommendedHelper'] : $RecommendedHelper = "";
-
-        include 'library/opendb.php';
-
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE vendor='".$dbSocket->escapeSimple($vendor).
-            "' AND attribute='".$dbSocket->escapeSimple($attribute)."'";
+    function attribute_vendor_exist($dbSocket, $attribute, $vendor) {
+        global $configValues, $logDebugSQL;
+        
+        $sql = sprintf("SELECT COUNT(DISTINCT(id)) FROM %s WHERE attribute='%s' AND vendor='%s'",
+                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                               $dbSocket->escapeSimple($attribute),
+                               $dbSocket->escapeSimple($vendor));
         $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($res->numRows() == 1) {
-            if (trim($vendor) != "" and trim($attribute) != "") {
-                // update vendor/attribute pairs to database
-                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." SET 
-                    type='".
-                    $dbSocket->escapeSimple($type)."', attribute='".$dbSocket->escapeSimple($attribute).
-                    "', RecommendedOP='".$dbSocket->escapeSimple($RecommendedOP).
-                    "', RecommendedTable='".$dbSocket->escapeSimple($RecommendedTable).
-                    "', RecommendedTooltip='".$dbSocket->escapeSimple($RecommendedTooltip).
-                    "', RecommendedHelper='".$dbSocket->escapeSimple($RecommendedHelper).
-                    "' WHERE Vendor='$vendor' AND Attribute='$attributeOld'";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg = "Updated database with vendor attribute: <b>$attribute</b> of vendor: <b>$vendor</b>";
-                $logAction .= "Successfully update vendor [$vendor] and attribute [$attribute] on page: ";
-            } else {
-                $failureMsg = "you must provide atleast a vendor name and attribute";    
-                $logAction .= "Failed updating vendor [$vendor] and attribute [$attribute] on page: ";
-            }
-        } else { 
-            $failureMsg = "You have tried to update a vendor's attribute that either is not present in the database or there
-                    may be more than 1 entry for this vendor attribute in database (attribute :$attribute)";
-            $logAction .= "Failed updating vendor attribute already in database [$attribute] on page: ";        
-        }
-    
-        include 'library/closedb.php';
-
+        $logDebugSQL .= "$sql;\n";
+        
+        return $res->fetchrow()[0] > 0;
     }
 
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
+            $vendor = (array_key_exists('vendor', $_POST) && !empty(str_replace("%", "", trim($_POST['vendor']))))
+                    ? str_replace("%", "", trim($_POST['vendor'])) : "";
+            $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
 
-    include 'library/opendb.php';
+            $attribute = (array_key_exists('attribute', $_POST) && !empty(str_replace("%", "", trim($_POST['attribute']))))
+                       ? str_replace("%", "", trim($_POST['attribute'])) : "";
+            $attribute_enc = (!empty($attribute)) ? htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8') : "";
 
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." WHERE vendor='".$dbSocket->escapeSimple($vendor).
-        "' AND attribute='".$dbSocket->escapeSimple($attribute)."'";
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= $sql . "\n";
+            $type = (array_key_exists('type', $_POST) && !empty(trim($_POST['type'])) &&
+                     in_array(trim($_POST['type']), $valid_attributeTypes))
+                  ? $_POST['type'] : "";
 
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+            $op = (array_key_exists('RecommendedOP', $_POST) && isset($_POST['RecommendedOP']) &&
+                   in_array($_POST['RecommendedOP'], $valid_ops))
+                ? $_POST['RecommendedOP'] : "";
+            
+            $table = (array_key_exists('RecommendedTable', $_POST) && isset($_POST['RecommendedTable']) &&
+                      in_array($_POST['RecommendedTable'], $valid_tables))
+                   ? $_POST['RecommendedTable'] : "";
+            
+            $helper = (array_key_exists('RecommendedHelper', $_POST) && isset($_POST['RecommendedHelper']) &&
+                       in_array($_POST['RecommendedHelper'], $valid_recommendedHelpers))
+                    ? $_POST['RecommendedHelper'] : "";
+            
+            $tooltip = (array_key_exists('RecommendedTooltip', $_POST) &&
+                        !empty(str_replace("%", "", trim($_POST['RecommendedTooltip']))))
+                     ? str_replace("%", "", trim($_POST['RecommendedTooltip'])) : "";
 
-    isset($row['Attribute']) ? $attribute = $row['Attribute'] : $attribute = "";
-    isset($row['Type']) ? $type = $row['Type'] : $type = "";
-    isset($row['Vendor']) ? $vendor = $row['Vendor'] : $vendor = "";
-    isset($row['RecommendedOP']) ? $RecommendedOP = $row['RecommendedOP'] : $RecommendedOP = "";
-    isset($row['RecommendedTable']) ? $RecommendedTable = $row['RecommendedTable'] : $RecommendedTable = "";
-    isset($row['RecommendedTooltip']) ? $RecommendedTooltip = $row['RecommendedTooltip'] : $RecommendedTooltip = "";
-    isset($row['RecommendedHelper']) ? $RecommendedHelper = $row['RecommendedHelper'] : $RecommendedHelper = "";
+            if (empty($vendor) || empty($attribute)) {
+                // vendor and attribute are required
+                $failureMsg = "vendor and/or attribute are empty or invalid";
+                $logAction .= "Failed updating attribute [$attribute] (possible empty/invalid vendor and/or attribute) on page: ";
+            } else {
+                
+                include('library/opendb.php');
+                
+                $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
+                
+                if (!$exists) {
+                    // vendor and/or attribute invalid
+                    $failureMsg = "vendor and/or attribute are invalid";
+                    $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
+                } else {
+                    
+                    $sql = sprintf("UPDATE %s
+                                       SET Type='%s', RecommendedOP='%s', RecommendedTable='%s',
+                                           RecommendedTooltip='%s', RecommendedHelper='%s'
+                                     WHERE Vendor='%s' AND Attribute='%s'",
+                                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($type),
+                                   $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($table),
+                                   $dbSocket->escapeSimple($tooltip), $dbSocket->escapeSimple($helper), 
+                                   $dbSocket->escapeSimple($vendor), $dbSocket->escapeSimple($attribute));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $format = "Attribute information has been updated in the dictionary (attribute: %s, vendor: %s)";
+                        $successMsg = sprintf($format, $attribute_enc, $vendor_enc);
+                        $logAction .= sprintf("$format on page: ", $attribute, $vendor);
+                    } else {
+                        $format = "An error occurred when updating attribute information in the dictionary (attribute: %s, vendor: %s)";
+                        $failureMsg = sprintf($format, $attribute_enc, $vendor_enc);
+                        $logAction .= sprintf("Failed to add an attribute [$format] on page: ", $attribute, $vendor);
+                    }
+                }
+                
+                include('library/closedb.php');
+            }
 
-    include 'library/closedb.php';
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    } else {
+        // !POST
+        
+        $vendor = (array_key_exists('vendor', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['vendor']))))
+                ? str_replace("%", "", trim($_REQUEST['vendor'])) : "";
+        $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
 
-    include_once("lang/main.php");
-    include("library/layout.php");
+        $attribute = (array_key_exists('attribute', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['attribute']))))
+                   ? str_replace("%", "", trim($_REQUEST['attribute'])) : "";
+        $attribute_enc = (!empty($attribute)) ? htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8') : "";
+    }
+
 
     // print HTML prologue
     $title = t('Intro','mngradattributesedit.php');
@@ -118,137 +154,147 @@
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
+    include('library/opendb.php');
+    
+    $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
+                    
+    if (!$exists) {
+        // vendor and/or attribute invalid
+        $failureMsg = "vendor and/or attribute are invalid";
+        $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
+        
+    } else {
+        $sql = sprintf("SELECT id, Type, Attribute, Value, Format, Vendor, RecommendedOP,
+                               RecommendedTable, RecommendedHelper, RecommendedTooltip
+                          FROM %s WHERE attribute='%s' AND vendor='%s' LIMIT 1",
+                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                       $dbSocket->escapeSimple($attribute),
+                       $dbSocket->escapeSimple($vendor));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        list(
+                $this_id, $this_Type, $this_Attribute, $this_Value, $this_Format,
+                $this_Vendor, $this_OP, $this_Table, $this_Helper, $this_Tooltip
+            ) = $res->fetchrow();
+            
+        
+    }
+    
+    include('library/closedb.php');
+
     include_once('include/management/actionMessages.php');
 
-?>
 
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-    <fieldset>
-
-        <h302> <?php echo t('title','VendorAttribute'); ?> </h302>
-        <br/>
-
-        <ul>
-
-        <input type='hidden' name='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' />
-
-        <li class='fieldset'>
-        <label for='vendor' class='form'><?php echo t('all','VendorName') ?></label>
-        <input disabled name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
+    if (!isset($successMsg) && !empty($vendor) && !empty($attribute)) {
         
-        <div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','vendorNameTooltip') ?>
-        </div>
-        </li>
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','VendorAttribute'),
+                                     );
 
-        <input type='hidden' name='attributeOld' value='<?php if (isset($attribute)) echo $attribute ?>' />
-
-        <li class='fieldset'>
-        <label for='attribute' class='form'><?php echo t('all','Attribute') ?></label>
-        <input name='attribute' type='text' id='attribute' value='<?php if (isset($attribute)) echo $attribute ?>' tabindex=101 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('attributeTooltip')" />
         
-        <div id='attributeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','attributeTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='type' class='form'><?php echo t('all','Type') ?></label>
-        <select name='type' type='text' id='type' class='form' tabindex=102 />
-        <option value='<?php echo $type; ?>'><?php echo $type; ?></option>
-        <?php
-            include_once('include/management/populate_selectbox.php');
-            drawTypes();
-        ?>
-        </select>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('typeTooltip')" />
+        $input_descriptors0 = array();
         
-        <div id='typeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','typeTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='RecommendedOP' class='form'><?php echo t('all','RecommendedOP') ?></label>
-        <select name='RecommendedOP' type='text' id='RecommendedOP' class='form' tabindex=103 />
-        <option value='<?php echo $RecommendedOP; ?>'><?php echo $RecommendedOP; ?></option>
-        <?php
-            include_once('include/management/populate_selectbox.php');
-            drawOptions();
-        ?>
-        </select>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('RecommendedOPTooltip')" />
+        $input_descriptors0[] = array(
+                                        "name" => "vendor",
+                                        "type" => "hidden",
+                                        "value" => (isset($vendor) ? $vendor : ""),
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        "name" => "attribute",
+                                        "type" => "hidden",
+                                        "value" => (isset($attribute) ? $attribute : ""),
+                                     );
         
-        <div id='RecommendedOPTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','RecommendedOPTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='RecommendedTable' class='form'><?php echo t('all','RecommendedTable') ?></label>
-        <select name='RecommendedTable' type='text' id='RecommendedTable' class='form' tabindex=104 />
-        <option value='<?php echo $RecommendedTable; ?>'><?php echo $RecommendedTable; ?></option>
-        <?php
-            include_once('include/management/populate_selectbox.php');
-            drawTables();
-        ?>
-        </select>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('RecommendedTableTooltip')" />
+        $input_descriptors0[] = array(
+                                        "name" => "vendor_presentation",
+                                        "caption" => t('all','VendorName'),
+                                        "type" => "text",
+                                        "tooltipText" => t('Tooltip','vendorNameTooltip'),
+                                        "value" => (isset($vendor) ? $vendor : ""),
+                                        "disabled" => true
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        "name" => "attribute_presentation",
+                                        "caption" => t('all','Attribute'),
+                                        "type" => "text",
+                                        "tooltipText" => t('Tooltip','attributeTooltip'),
+                                        "value" => (isset($attribute) ? $attribute : ""),
+                                        "disabled" => true
+                                     );
+                              
+        $input_descriptors0[] = array(
+                                        "name" => "type",
+                                        "caption" => t('all','Type'),
+                                        "type" => "text",
+                                        "datalist" => $valid_attributeTypes,
+                                        "value" => ((isset($type)) ? $type : ""),
+                                        "tooltipText" => t('Tooltip','typeTooltip'),
+                                     );
         
-        <div id='RecommendedTableTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','RecommendedTableTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='RecommendedTooltip' class='form'><?php echo t('all','RecommendedTooltip') ?></label>
-        <textarea class='form' name='RecommendedTooltip' type='text' id='RecommendedTooltip' tabindex=105 /><?php if (isset($RecommendedTooltip)) echo $RecommendedTooltip ?></textarea>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('RecommendedTooltipTooltip')" />
+        $input_descriptors0[] = array(
+                                        "name" => "RecommendedOP",
+                                        "caption" => t('all','RecommendedOP'),
+                                        "type" => "text",
+                                        "datalist" => $valid_ops,
+                                        "value" => ((isset($op)) ? $op : ""),
+                                        "tooltipText" => t('Tooltip','RecommendedOPTooltip'),
+                                     );
         
-        <div id='RecommendedTooltipTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','RecommendedTooltipTooltip') ?>
-        </div>
-        </li>
-
-
-        <li class='fieldset'>
-        <label for='RecommendedHelper' class='form'><?php echo t('all','RecommendedHelper') ?></label>
-        <select name='RecommendedHelper' type='text' id='RecommendedHelper' class='form' tabindex=104 />
-        <option value='<?php echo $RecommendedHelper; ?>'><?php echo $RecommendedHelper; ?></option>
-        <?php
-            include_once('include/management/populate_selectbox.php');
-            drawRecommendedHelper();
-        ?>
-        </select>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('RecommendedHelperTooltip')" />
+        $input_descriptors0[] = array(
+                                        "name" => "RecommendedTable",
+                                        "caption" => t('all','RecommendedTable'),
+                                        "type" => "text",
+                                        "datalist" => $valid_tables,
+                                        "value" => ((isset($table)) ? $table : ""),
+                                        "tooltipText" => t('Tooltip','RecommendedTableTooltip'),
+                                     );
         
-        <div id='RecommendedHelperTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','RecommendedHelperTooltip') ?>
-        </div>
-        </li>
-    
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
+        $input_descriptors0[] = array(
+                                        "name" => "RecommendedHelper",
+                                        "caption" => t('all','RecommendedHelper'),
+                                        "type" => "text",
+                                        "datalist" => $valid_recommendedHelpers,
+                                        "value" => ((isset($helper)) ? $helper : ""),
+                                        "tooltipText" => t('Tooltip','RecommendedHelperTooltip'),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "RecommendedTooltip",
+                                        "caption" => t('all','RecommendedTooltip'),
+                                        "type" => "textarea",
+                                        "tooltipText" => t('Tooltip','RecommendedTooltipTooltip'),
+                                        "value" => (isset($tooltip) ? $tooltip : "")
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
 
-        </ul>
-    </fieldset>
+        $input_descriptors0[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
+        
+        open_form();
+        
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
+    }
 
-    </form>
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
+
 ?>

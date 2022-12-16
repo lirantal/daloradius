@@ -101,9 +101,10 @@
     $_SESSION['reportType'] = "usernameListGeneric";
 
     // we use this simplified query just to initialize $numrows
-    $sql0 = sprintf("SELECT COUNT(DISTINCT(username)) AS username
-                       FROM %s
-                      WHERE attribute='Auth-Type' OR attribute LIKE '%%-Password'", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $sql0 = sprintf("SELECT COUNT(DISTINCT(rc.username)) AS username
+                       FROM %s AS rc, %s AS ui
+                      WHERE rc.username=ui.username AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')",
+                    $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
     $res = $dbSocket->query($sql0);
     $logDebugSQL .= "$sql0;\n";
     $numrows = $res->fetchrow()[0];
@@ -171,22 +172,25 @@
             $usernamelist[] = sprintf("'%s'", $dbSocket->escapeSimple($this_username));
         }
         
-        // with this second query we retrieve user status (enabled/disabled) and user groups list
-        $sql2 = sprintf("SELECT username, groupname FROM %s WHERE username IN (%s)",
-                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'], implode(", ", $usernamelist));
-        $res = $dbSocket->query($sql2);
-        $logDebugSQL .= "$sql2;\n";
+        if (count($usernamelist) > 0) {
+        
+            // with this second query we retrieve user status (enabled/disabled) and user groups list
+            $sql2 = sprintf("SELECT username, groupname FROM %s WHERE username IN (%s)",
+                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'], implode(", ", $usernamelist));
+            $res = $dbSocket->query($sql2);
+            $logDebugSQL .= "$sql2;\n";
 
-        // foreach user we update the enabled flag and the grouplist
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            $this_username = $row['username'];
-            $this_groupname = $row['groupname'];
+            // foreach user we update the enabled flag and the grouplist
+            while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+                $this_username = $row['username'];
+                $this_groupname = $row['groupname'];
 
-            if ($this_groupname === 'daloRADIUS-Disabled-Users') {
-                $records[$this_username]['enabled'] = false;
-            } else {
-                array_push($records[$this_username]['groups'],
-                           htmlspecialchars($this_groupname, ENT_QUOTES, 'UTF-8'));
+                if ($this_groupname === 'daloRADIUS-Disabled-Users') {
+                    $records[$this_username]['enabled'] = false;
+                } else {
+                    array_push($records[$this_username]['groups'],
+                               htmlspecialchars($this_groupname, ENT_QUOTES, 'UTF-8'));
+                }
             }
         }
         
@@ -274,7 +278,7 @@
                 </td>
                 <td><?= "$fullname" ?></td>
                 <td><?= "$img $tooltip" . sprintf(' <span class="badge badge-%s">%s</span>', strtolower($type), $type); ?></td>
-                <td><?= ($type == 'USER') ? $auth : "" ?></td>
+                <td><?= ($type == 'USER') ? $auth : "(n/a)" ?></td>
                 <td><?= $grouplist ?></td>
             </tr>
 <?php

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -21,50 +21,28 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
+
     include_once('library/config_read.php');
-    
+    $log = "visited page: ";
+
     include_once("lang/main.php");
     
     include("library/layout.php");
 
-    // print HTML prologue   
+    // print HTML prologue
     $title = t('Intro','repbatch.php');
+    $help = t('helpPage','repbatch');
     
     print_html_prologue($title, $langCode);
 
     include("menu-reports-batch.php");
     
-    $log = "visited page: ";
-?>
-        <div id="contentnorightbar">
-            <h2 id="Intro">
-                <a href="#" onclick="javascript:toggleShowDiv('helpPage')">
-                    <?= t('Intro','repbatch.php'); ?><h144>&#x2754;</h144>
-                </a>
-            </h2>
-
-            <div id="helpPage" style="display:none;visibility:visible"><?= t('helpPage','repbatch') ?><br></div>
-            <br>
-<?php
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+    
     include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+
 ?>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-        
-<?php
-    include('page-footer.php');
-?>
-
-        
-        </div><!-- #footer -->
-    </div>
-</div>
-
-
-</body>
-</html>

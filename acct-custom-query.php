@@ -25,6 +25,11 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";
@@ -34,10 +39,6 @@
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    include_once('library/config_read.php');
-    
-    include("library/validation.php");
-    
     $sqlfields = (array_key_exists('sqlfields', $_GET) && !empty($_GET['sqlfields']) && is_array($_GET['sqlfields']) &&
                   array_intersect($_GET['sqlfields'], $acct_custom_query_options_all) == $_GET['sqlfields'])
                ? $_GET['sqlfields'] : $acct_custom_query_options_default;
@@ -86,9 +87,6 @@
     $accounting_custom_enddate = $enddate;
     $accounting_custom_value = $where_value_enc;
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_js = array(
@@ -203,12 +201,14 @@
            . '<tbody>';
 
         // inserting the values of each field from the database to the table
+        $count = 0;
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            echo "<tr>";
+            printf('<tr id="row-%d">', $count);
             foreach ($sqlfields as $field) {
                 printf("<td>%s</td>", htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8'));
             }
-            echo "</tr>";
+            echo '</tr>';
+            $count++;
         }
 
         echo '</tbody>';

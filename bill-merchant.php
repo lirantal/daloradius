@@ -28,7 +28,7 @@
     $log = "visited page: ";
 
     include_once("lang/main.php");
-    
+    include("library/validation.php");
     include("library/layout.php");
 
     // print HTML prologue

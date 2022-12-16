@@ -25,6 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    $log = "visited page: ";
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // parameter validation
     $radiusLineCount = (array_key_exists('radiusLineCount', $_GET) && isset($_GET['radiusLineCount']) &&
@@ -37,13 +43,6 @@
                   ? $_GET['radiusFilter'] : "";
 
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
     // print HTML prologue
     $title = t('Intro','replogsradius.php') . " :: $radiusLineCount Lines Count";
     if (!empty($radiusFilter) && $radiusFilter !== '.+') {
@@ -55,23 +54,13 @@
 
     include ("menu-reports-logs.php");
 
-?>
-    <div id="contentnorightbar">
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+    
     include('library/exten-radius_log.php');
     include_once('include/management/actionMessages.php');
-?>
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
 
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+
+?>

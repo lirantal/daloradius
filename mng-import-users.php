@@ -32,9 +32,12 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // we import validation facilities
-    include_once("library/validation.php");
-    include("include/management/functions.php");
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+    include_once("include/management/functions.php");
+
+    include_once('include/management/populate_selectbox.php');
 
     // custom valid authTypes
     $valid_authTypes = array(
@@ -42,16 +45,15 @@
                                 "otherAuth" => "Based on MAC addr/PIN code"
                             );
 
+    $valid_groups = get_groups();
+    $valid_planNames = get_plans();
+
     // if cleartext passwords are not allowed, 
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
         strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
         $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
     }
-    
-    include_once('include/management/populate_selectbox.php');
-    $valid_groups = get_groups();
-    $valid_planNames = get_plans();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -184,8 +186,6 @@
         }
     }
 
-    include_once("lang/main.php");
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array();

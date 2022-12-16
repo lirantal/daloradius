@@ -25,16 +25,16 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
-    include_once('library/config_read.php');
-    
-    // we import validation facilities
-    include_once("library/validation.php");
     
     // required later
     $currDate = date('Y-m-d H:i:s');
@@ -385,10 +385,6 @@
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
     
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
@@ -677,13 +673,7 @@ window.onload = function(){
 <?php
     }
     
-    if (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE']))) {
-        echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
-        printf('<a href="%s" title="Back to Previous Page">Back to Previous Page</a>', trim($_SESSION['PREV_LIST_PAGE']));
-        echo '</div>';
-        
-        unset($_SESSION['PREV_LIST_PAGE']);
-    }
+    print_back_to_previous_page();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

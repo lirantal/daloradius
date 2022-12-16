@@ -27,17 +27,18 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
-    // set session's page variable
-    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
     
-    // we import validation facilities
-    include_once("library/validation.php");
-
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+    
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+    
     // if cleartext passwords are not allowed, 
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
@@ -100,9 +101,6 @@
         return ($res->numRows() == 1) ? intval($res->fetchRow()[0]) : 0;        
     }
     
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(

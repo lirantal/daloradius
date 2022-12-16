@@ -27,8 +27,9 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
-    // include validation utils
+    include_once("lang/main.php");
     include("library/validation.php");
+    include("library/layout.php");
     
     // validate this parameter before including menu
     $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
@@ -55,9 +56,6 @@
     $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
     $logDebugSQL = "";
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','acctdate.php');

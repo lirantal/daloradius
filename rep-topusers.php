@@ -27,7 +27,9 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     
+    include_once("lang/main.php");
     include("library/validation.php");
+    include("library/layout.php");
     
     $limit = (array_key_exists('limit', $_GET) && isset($_GET['limit']) && intval($_GET['limit']) > 0)
            ? intval($_GET['limit']) : "";
@@ -48,9 +50,6 @@
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','reptopusers.php');

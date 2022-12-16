@@ -32,8 +32,9 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // we import validation facilities
-    include_once("library/validation.php");
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     include_once('include/management/populate_selectbox.php');
     
@@ -78,10 +79,6 @@
         } // profile name not empty    
     }
 
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_js = array(

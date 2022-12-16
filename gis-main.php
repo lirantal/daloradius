@@ -74,18 +74,8 @@
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
-?>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

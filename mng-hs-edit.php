@@ -32,8 +32,10 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // we import validation facilities
-    include_once("library/validation.php");
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+    
 
     include('library/opendb.php');
 
@@ -169,9 +171,6 @@
 
     include('library/closedb.php');
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(

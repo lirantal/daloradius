@@ -32,12 +32,12 @@
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
 
+    include_once("lang/main.php");
+    include("library/layout.php");
+
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_js = array(
@@ -141,7 +141,8 @@
         
         <tbody>
 <?php
-        $count = 1;
+        $li_style = 'margin: 7px auto';
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -152,7 +153,6 @@
         
             list($name, $owner, $company, $type) = $row;
             
-            $li_style = 'margin: 7px auto';
             $tooltipText = '<ul style="list-style-type: none">'
                          . sprintf('<li style="%s"><a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a></li>',
                                    $li_style, urlencode($name), t('Tooltip','HotspotEdit'))
@@ -201,26 +201,16 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+
+    print_footer_and_html_epilogue($inline_extra_js);
+
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -14,20 +14,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
-*
- * Authors:	Liran Tal <liran@enginx.com>
+ *
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-        
-	include_once('library/config_read.php');
+
+    include_once('library/config_read.php');
     $log = "visited page: ";
-    
+
     include_once("lang/main.php");
-    
     include("library/layout.php");
 
     // print HTML prologue
@@ -37,24 +37,10 @@
     print_html_prologue($title, $langCode);
 
     include("menu-reports-status.php");
-
-?>
-		<div id="contentnorightbar">
-<?php
+    
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+    
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 ?>
-		
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    include_once('include/config/logging.php');
-    include('page-footer.php');
-?>
-
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

@@ -25,27 +25,27 @@
     $operator = $_SESSION['operator_user'];
 
     //~ include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     // validate this parameter before including menu
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-                    ? str_replace("%", "", $_GET['username']) : "";
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     $log = "visited page: ";
-    $logQuery = "performed query for [$username";
-    if (!empty($limit)) {
-        $logQuery .= " : $limit";
+    $logQuery = "performed query for ";
+    if (!empty($username)) {
+         $logQuery .= "username(s) starting with [$username] ";
+    } else {
+        $logQuery .= "all usernames ";
     }
-    $logQuery .= "] on page: ";
+    $logQuery .= "on page: ";
 
-    include_once('library/config_read.php');
     
-    include("library/validation.php");
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
     // print HTML prologue
     $title = t('Intro','repusername.php');
     $help = t('helpPage','repusername') . " " . $username_enc;

@@ -27,10 +27,8 @@
     include_once('library/config_read.php');
     $log = "visited page: ";
 
-    include("library/validation.php");
-
     include_once("lang/main.php");
-    
+    include("library/validation.php");
     include("library/layout.php");
 
     // print HTML prologue

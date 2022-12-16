@@ -65,6 +65,22 @@ $valid_ops = array(
                     ">=", "<", "<=", "=~", "!~", "=*", "!*"
                   );
 
+$valid_recommendedHelpers = array(
+                                    "date", "datetime", "authtype", "framedprotocol", "servicetype",
+                                    "kbitspersecond", "bitspersecond", "volumebytes", "mikrotikRateLimit",
+                                 );
+
+$valid_attributeTypes = array(
+                                "string",
+                                "integer",
+                                "ipaddr",
+                                "date",
+                                "octets",
+                                "ipv6addr",
+                                "ifid",
+                                "abinary",
+                             );
+
 $valid_db_engines = array(
                             "mysql" => "MySQL",
                             "pgsql" => "PostgreSQL",
@@ -86,6 +102,7 @@ $valid_nastypes = array(
                          "netserver", "pathras", "patton", "portslave", "tc", "usrhiper"
                        );
 
+// accounting custom-query options list
 $acct_custom_query_options_all = array(
                                         "RadAcctId",
                                         "AcctSessionId",
@@ -112,14 +129,110 @@ $acct_custom_query_options_all = array(
                                         "AcctStartDelay",
                                         "AcctStopDelay"
                                     );
-                                    
+
+// accounting custom-query options selected by default
 $acct_custom_query_options_default = array(
                                             "UserName", "Realm", "NASIPAddress", "AcctStartTime", "AcctStopTime",
                                             "AcctSessionTime", "AcctInputOctets", "AcctOutputOctets", "CalledStationId",
                                             "CallingStationId", "AcctTerminateCause", "FramedIPAddress"
                                           );
 
+// billing history query options list
+$bill_history_query_options_all = array(
+                                            "id" => t('all','ID'),
+                                            "username" => t('all','Username'),
+                                            "planId" => t('all','PlanId'),
+
+                                            "billAmount" => t('all','BillAmount'),
+                                            "billAction" => t('all','BillAction'),
+                                            "billPerformer" => t('all','BillPerformer'),
+                                            "billReason" => t('all','BillReason'),
+
+                                            "paymentmethod" => t('ContactInfo','PaymentMethod'),
+                                            "cash" => t('ContactInfo','Cash'),
+
+                                            "creditcardname" => t('ContactInfo','CreditCardName'),
+                                            "creditcardnumber" => t('ContactInfo','CreditCardNumber'),
+                                            "creditcardverification" => t('ContactInfo','CreditCardVerificationNumber'),
+                                            "creditcardtype" => t('ContactInfo','CreditCardType'),
+                                            "creditcardexp" => t('ContactInfo','CreditCardExpiration'),
+                                            "coupon" => t('all','Coupon'),
+                                            "discount" => t('all','Discount'),
+                                            "notes" => t('ContactInfo','Notes'),
+                                            "creationdate" => t('all','CreationDate'),
+                                            "creationby" => t('all','CreationBy'),
+                                            "updatedate" => t('all','UpdateDate'),
+                                            "updateby" => t('all','UpdateBy')
+                                       );
+
+// billing history query options selected by default
+$bill_history_query_options_default = array(
+                                                "username",
+                                                "planId",
+                                                "billAmount",
+                                                "billAction",
+                                                "billPerformer",
+                                                "paymentmethod"
+                                           );
+
+$bill_merchant_transactions_options_all = array(
+                                                    "id" => t('all','ID'),
+                                                    "username" => t('all','Username'),
+                                                    "password"  => t('all','Password'),
+                                                    "txnId"  => t('all','TxnId'),
+                                                    "planName" => t('all','PlanName'),
+                                                    "planId"  => t('all','PlanId'),
+                                                    "quantity"  => t('all','Quantity'),
+                                                    "business_email"  => t('all','ReceiverEmail'),
+                                                    "business_id"  => t('all','Business'),
+                                                    "payment_tax" => t('all','Tax'),
+                                                    "payment_cost"  => t('all','Cost'),
+                                                    "payment_fee" => t('all','TransactionFee'),
+                                                    "payment_total" => t('all','TotalCost'),
+                                                    "payment_currency" => t('all','PaymentCurrency'),
+                                                    "first_name" => t('all','FirstName'),
+                                                    "last_name" => t('all','LastName'),
+                                                    "payer_email" => t('all','PayerEmail'),
+                                                    "payer_address_name"  => t('all','AddressRecipient'),
+                                                    "payer_address_street"  => t('all','Street'),
+                                                    "payer_address_country" => t('all','Country'),
+                                                    "payer_address_country_code"  => t('all','CountryCode'),
+                                                    "payer_address_city" => t('all','City'),
+                                                    "payer_address_state" => t('all','State'),
+                                                    "payer_address_zip"  => t('all','Zip'),
+                                                    "payment_date" => t('all','PaymentDate'),
+                                                    "payment_status" => t('all','PaymentStatus'),
+                                                    "payer_status" => t('all','PayerStatus'),
+                                                    "payment_address_status" => t('all','PaymentAddressStatus'),
+                                                    "vendor_type" => t('all','VendorType')
+                                               );
+                                               
+$bill_merchant_transactions_options_default = array(
+                                                        "username",
+                                                        "planName",
+                                                        "payment_fee",
+                                                        "payment_total",
+                                                        "payment_currency",
+                                                        "first_name",
+                                                        "last_name",
+                                                        "payer_email",
+                                                        "payer_address_country",
+                                                        "payer_address_city",
+                                                        "payer_address_state",
+                                                        "payment_date",
+                                                        "payment_status",
+                                                        "vendor_type"
+                                                   );
+
 // validating values
+
+$valid_paymentStatus = array(
+                              "Any", "Completed",  "Denied",  "Expired",  "Failed",  "In-Progress",  "Pending", 
+                              "Processed",  "Refunded",  "Reversed",  "Canceled-Reversal",  "Voided", 
+                            );
+$valid_vendorTypes = array( "Any", "2Checkout", "PayPal" );
+$valid_billactions = array( "Any", "Refill Session Time", "Refill Session Traffic" );
+
 $valid_languages = array(
                             "en" => "English", 
                             "it" => "Italian", 

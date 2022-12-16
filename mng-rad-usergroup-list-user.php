@@ -156,11 +156,11 @@
         <tbody>
 <?php
         $li_style = 'margin: 7px auto';
-        $counter = 1;
+        $counter = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
             
-            echo '<tr>';
+            printf('<tr id="row-%d">', $counter);
             
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
@@ -201,6 +201,9 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
 ?>
     </table>
+    
+    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+    
 </form>
 
 <?php

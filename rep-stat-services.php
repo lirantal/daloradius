@@ -25,13 +25,11 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
-    include('include/config/logging.php');
-
-    include_once("lang/main.php");
     
+    $log = "visited page: ";
+    
+    include_once("lang/main.php");
     include("library/layout.php");
 
     // print HTML prologue
@@ -42,25 +40,12 @@
 
     include("menu-reports-status.php");
       
-?>    
-        <div id="contentnorightbar">
-
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+    
     include('library/exten-radius_server_info.php');
+    
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+
 ?>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">        
-<?php
-        include('page-footer.php');
-?>
-
-        </div><!-- #footer -->
-    </div>
-</div>
-
-
-</body>
-</html>

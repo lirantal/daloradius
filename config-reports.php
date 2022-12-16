@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -20,13 +20,13 @@
  *
  *********************************************************************************************************
  */
- 
-    include("library/checklogin.php");
+
+    include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include_once('library/config_read.php');
-    
-    
+    $log = "visited page: ";
+
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -38,27 +38,11 @@
     print_html_prologue($title, $langCode);
 
     include("menu-config-reports.php");
-
-?>
-                
-        <div id="contentnorightbar">
-
-<?php
+    
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-?>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

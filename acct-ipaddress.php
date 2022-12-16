@@ -27,7 +27,9 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    include_once("lang/main.php");
     include("library/validation.php");
+    include("library/layout.php");
     
     // validate this parameter before including menu
     $ipaddress = (array_key_exists('ipaddress', $_GET) && isset($_GET['ipaddress']) &&
@@ -43,10 +45,8 @@
                         ((!empty($ipaddress)) ? "IP address [$ipaddress]" : "all IP addresses"));
     $logDebugSQL = "";
     
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-    
+    // print HTML prologue
     $title = t('Intro','acctipaddress.php');
     $help = t('helpPage','acctipaddress');
     

@@ -25,11 +25,13 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
 
+    include_once("lang/main.php");
     include("library/validation.php");
+    include("library/layout.php");
+    
+    $log = "visited page: ";
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -48,10 +50,7 @@
         }
     }
 
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-
     // print HTML prologue
     $title = t('Intro','configlang.php');
     $help = t('helpPage','configlang');
