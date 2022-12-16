@@ -32,8 +32,9 @@
     $logAction = "";
     $logDebugSQL = "";
     
-    // we import validation facilities
-    include_once("library/validation.php");
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
     include_once("include/management/functions.php");
     
     
@@ -387,10 +388,7 @@
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
     
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff

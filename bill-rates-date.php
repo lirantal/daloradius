@@ -27,7 +27,14 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    // init loggin variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
+
+    include_once("lang/main.php");
     include("library/validation.php");
+    include("library/layout.php");
 
     //setting values for the order by and order type variables
     // and in other cases we partially strip some character,
@@ -57,15 +64,7 @@
     $billing_date_startdate = $startdate;
     $billing_date_enddate = $enddate;
 
-    // init loggin variables
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-    $logDebugSQL = "";
-
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-
     // print HTML prologue
     $extra_css = array();
     

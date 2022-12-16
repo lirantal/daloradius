@@ -28,12 +28,12 @@
     $log = "visited page: ";
 
     include_once("lang/main.php");
-    
+    include("library/validation.php");
     include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','billhistorymain.php');
-    $help = t('helpPage','billhistorymain');
+    $help = "";
     
     print_html_prologue($title, $langCode);
 

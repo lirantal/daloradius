@@ -25,18 +25,16 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include_once('library/config_read.php');
-    
     include_once("lang/main.php");
-    
-    // we import validation facilities
-    include_once("library/validation.php");
+    include("library/validation.php");
+    include("library/layout.php");
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nasname = (array_key_exists('nasname', $_POST) && isset($_POST['nasname'])) ? trim(str_replace("%", "", $_POST['nasname'])) : "";
@@ -95,7 +93,6 @@
 
     }
 
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(

@@ -25,6 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    $log = "visited page: ";
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // parameter validation
     $bootLineCount = (array_key_exists('bootLineCount', $_GET) && isset($_GET['bootLineCount']) &&
@@ -35,12 +41,6 @@
     $bootFilter = (array_key_exists('bootFilter', $_GET) && isset($_GET['bootFilter']))
                 ? $_GET['bootFilter'] : "";
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','replogsboot.php') . " :: $bootLineCount Lines Count";
@@ -52,27 +52,14 @@
     print_html_prologue($title, $langCode);
 
     include("menu-reports-logs.php");
-      
-?>    
-    <div id="contentnorightbar">
 
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/exten-boot_log.php');
     include_once('include/management/actionMessages.php');
-?>
-         </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
+
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>
-

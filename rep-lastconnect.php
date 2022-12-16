@@ -33,7 +33,7 @@
     $logDebugSQL = "";
     
     include_once("lang/main.php");
-    
+    include("library/validation.php");
     include("library/layout.php");
 
     // print HTML prologue
@@ -56,8 +56,6 @@
         $tableSetting['postauth']['date'] = 'authdate';
         break;
     }
-    
-    include("library/validation.php");
     
     // in other cases we just check that syntax is ok
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&

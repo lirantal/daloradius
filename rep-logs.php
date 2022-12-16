@@ -27,9 +27,9 @@
     include_once('library/config_read.php');
     $log = "visited page: ";
 
-    include_once("lang/main.php");
-    
+    include_once("lang/main.php");    
     include("library/layout.php");
+
 
     // print HTML prologue
     $title = t('Intro','replogs.php');
@@ -41,18 +41,8 @@
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-?>
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

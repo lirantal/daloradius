@@ -27,9 +27,13 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+
     // validate this parameter before including menu
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-                    ? str_replace("%", "", $_GET['username']) : "";
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
     // init logging variables
@@ -44,11 +48,6 @@
     //feed the sidebar variables
     $accounting_username = $username_enc;
     
-    include("library/validation.php");
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','acctusername.php');

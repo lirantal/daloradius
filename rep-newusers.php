@@ -28,7 +28,9 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     
+    include_once("lang/main.php");
     include("library/validation.php");
+    include("library/layout.php");
 
     // we validate starting and ending dates
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
@@ -52,9 +54,6 @@
     }
     $logQuery .= "on page: ";
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(

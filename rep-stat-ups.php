@@ -25,15 +25,14 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
+    
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
-    include('include/config/logging.php');
-
-    include_once("lang/main.php");
     
+    include_once("lang/main.php");
     include("library/layout.php");
+
 
     // print HTML prologue
     $title = "UPS Status";
@@ -42,11 +41,8 @@
     print_html_prologue($title, $langCode);
 
     include("menu-reports-status.php");
-      
-?>
-        <div id="contentnorightbar">
-<?php
 
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     exec("which apcaccess || command -v apcaccess", $output, $retStatus);
@@ -83,17 +79,8 @@
     if (!empty($failureMsg)) {
         include_once('include/management/actionMessages.php');
     }
-?>
-        </div>
-        
-        <div id="footer">
-<?php
-    include('page-footer.php');
-?>
-        </div>
-        
-    </div>
-</div>
 
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+
+?>

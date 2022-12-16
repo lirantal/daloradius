@@ -61,29 +61,9 @@
                 <b>daloRADIUS IRC</b>: you can find us at #daloradius on irc.freenode.net
             </p>
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>
-
-
 <?php
 
-    include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
-        
-	include_once('library/config_read.php');
-    $log = "visited page: ";
     include('include/config/logging.php');
+    print_footer_and_html_epilogue();
 
 ?>
-

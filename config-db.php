@@ -25,13 +25,13 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
     
     include_once("lang/main.php");
-    
     include("library/validation.php");
+    include("library/layout.php");
+    
+    $log = "visited page: ";
     
     $db_tbl_param_label = array(
                                     'CONFIG_DB_TBL_RADCHECK' => t('all','radcheck'), 
@@ -113,8 +113,6 @@
     }
     
     
-    include("library/layout.php");
-
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff

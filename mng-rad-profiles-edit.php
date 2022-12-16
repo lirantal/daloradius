@@ -32,8 +32,9 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // we import validation facilities
-    include_once("library/validation.php");
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $profile_name = (array_key_exists('profile_name', $_POST) && !empty($_POST['profile_name']) &&
@@ -47,9 +48,6 @@
     
     $profile_name_enc = (!empty($profile_name)) ? htmlspecialchars($profile_name, ENT_QUOTES, 'UTF-8') : "";
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(

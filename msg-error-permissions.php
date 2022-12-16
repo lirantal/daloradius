@@ -24,9 +24,11 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    $log = "visited page: ";
+
     include_once("lang/main.php");
-    
     include("library/layout.php");
+
 
     // print HTML prologue
     $title = t('Intro','msgerrorpermissions.php');
@@ -35,23 +37,14 @@
     print_html_prologue($title, $langCode);
 
     include("menu-home.php");
-?>
 
-                <div id="contentnorightbar">
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-    $failureMsg = t('helpPage','msgerrorpermissions');
-    include_once("include/management/actionMessages.php");
-?>
-                </div><!-- #contentnorightbar -->
-                        
-                <div id="footer">
-<?php
-    include('page-footer.php');
-?>
-                </div><!-- #footer -->
-            </div>
-        </div>
-    </body>
-</html>
 
+    $failureMsg = t('helpPage','msgerrorpermissions');
+    include_once('include/management/actionMessages.php');
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+
+?>

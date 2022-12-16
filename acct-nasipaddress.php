@@ -27,7 +27,9 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    include_once("lang/main.php");
     include("library/validation.php");
+    include("library/layout.php");
 
     // validate this parameter before including menu
     $onlyactive = (array_key_exists('only-active', $_GET) && isset($_GET['only-active']));
@@ -46,10 +48,7 @@
                         ((!empty($nasipaddress)) ? "NAS IP address [$nasipaddress]" : "all NAS IP addresses"));
     $logDebugSQL = "";
     
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-    
+    // print HTML prologue
     $title = t('Intro','acctnasipaddress.php');
     $help = t('helpPage','acctnasipaddress');
     

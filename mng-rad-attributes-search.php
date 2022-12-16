@@ -32,9 +32,9 @@
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
 
-    // get vendor name passed to us from menu-mng-rad-attributes.php
-    $attribute = (array_key_exists('attribute', $_GET) && isset($_GET['attribute']))
-            ? str_replace("%", "", $_GET['attribute']) : "";
+    // get attribute name passed to us from menu-mng-rad-attributes.php
+    $attribute = (array_key_exists('attribute', $_GET) && !empty(str_replace("%", "", trim($_GET['attribute']))))
+               ? str_replace("%", "", trim($_GET['attribute'])) : "";
 
     include_once("lang/main.php");
     
@@ -81,7 +81,7 @@
 
     $sql_WHERE = array();
     $sql_WHERE[] = "(type <> '' OR type IS NOT NULL)";
-    if (!empty($vendor)) {
+    if (!empty($attribute)) {
         $sql_WHERE[] = sprintf("attribute LIKE '%s%%'", $dbSocket->escapeSimple($attribute));
     }
     
