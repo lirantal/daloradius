@@ -47,7 +47,7 @@
         $cols[$sqlfield] = $bill_merchant_transactions_options_all[$sqlfield];
     }
     $colspan = count($cols);
-    $half_colspan = intdiv($colspan, 2);
+    $half_colspan = intval($colspan / 2);
     
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($bill_merchant_transactions_options_all)))

@@ -48,7 +48,7 @@
         $cols[$sqlfield] = $sqlfield;
     }
     $colspan = count($cols);
-    $half_colspan = intdiv($colspan, 2);
+    $half_colspan = intval($colspan / 2);
     
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($acct_custom_query_options_all)))
