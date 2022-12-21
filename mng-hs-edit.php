@@ -40,17 +40,13 @@
     include('library/opendb.php');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $name = (array_key_exists('name', $_POST) && isset($_POST['name']) && trim(str_replace("%", "", $_POST['name'])))
-              ? trim($_POST['name']) : "";
+        $name = (array_key_exists('name', $_POST) && !empty(str_replace("%", "", trim($_POST['name']))))
+              ? str_replace("%", "", trim($_POST['name']))) : "";
     } else {
-        $name = (array_key_exists('name', $_REQUEST) && isset($_REQUEST['name']) && trim(str_replace("%", "", $_REQUEST['name'])))
-              ? trim($_REQUEST['name']) : "";
+        $name = (array_key_exists('name', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['name']))))
+              ? str_replace("%", "", trim($_REQUEST['name'])) : "";
     }
 
-    
-    //feed the sidebar variables
-    $edit_hotspotname = $name_enc;
-    
     // check if it exists
     $sql = sprintf("SELECT COUNT(id) FROM %s WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
                                                                $dbSocket->escapeSimple($name));
@@ -66,6 +62,9 @@
 
     // from now on we can assume that $name is valid
     $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
+    
+    //feed the sidebar variables
+    $edit_hotspotname = $name_enc;
     
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
