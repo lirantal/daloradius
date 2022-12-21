@@ -140,7 +140,7 @@
             
             $li_style = 'margin: 7px auto';
             $tooltipText = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-edit.php?nashost=%s">%s</a></li>',
+                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-edit.php?nasname=%s">%s</a></li>',
                                    $li_style, urlencode($nasname), t('Tooltip','EditNAS'))
                          . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-del.php?nashost=%s">%s</a></li>',
                                    $li_style, urlencode($nasname), t('Tooltip','RemoveNAS'))

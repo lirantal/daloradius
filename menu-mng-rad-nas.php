@@ -67,7 +67,7 @@ $m_active = "Management";
                         </a>
                         
                         <form name="mngradnasedit" action="mng-rad-nas-edit.php" method="GET" class="sidebar">
-                            <input name="nashost" type="text" id="nashostEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
+                            <input name="nasname" type="text" id="nashostEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                                 tooltipText="<?= t('Tooltip','NasName'); ?>" tabindex="4">
                         </form>
                     </li>
