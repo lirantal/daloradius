@@ -46,7 +46,7 @@
         $name = (array_key_exists('name', $_REQUEST) && isset($_REQUEST['name']) && trim(str_replace("%", "", $_REQUEST['name'])))
               ? trim($_REQUEST['name']) : "";
     }
-    $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
+
     
     //feed the sidebar variables
     $edit_hotspotname = $name_enc;
@@ -63,8 +63,11 @@
         // we empty the name if the hs does not exist
         $name = "";
     }
-    
+
     // from now on we can assume that $name is valid
+    $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
+    
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             
@@ -82,7 +85,7 @@
                 
                 $exists = $res->fetchrow()[0] > 0;
                 
-                if (!$exitst) {
+                if (!$exists) {
                     $currDate = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
                     
