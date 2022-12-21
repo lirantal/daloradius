@@ -164,6 +164,7 @@
         $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
         
     } else {
+
         $sql = sprintf("SELECT Type, Value, Format, RecommendedOP, RecommendedTable, RecommendedHelper, RecommendedTooltip
                           FROM %s WHERE attribute='%s' AND vendor='%s' LIMIT 1",
                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
