@@ -67,7 +67,7 @@
                  );
 
     $colspan = count($cols);
-    $half_colspan = intdiv($colspan, 2);
+    $half_colspan = intval($colspan / 2);
                  
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }

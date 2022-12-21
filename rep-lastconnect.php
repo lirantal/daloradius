@@ -97,7 +97,7 @@
     $cols["reply"] = t('all','RADIUSReply');
     
     $colspan = count($cols);
-    $half_colspan = intdiv($colspan, 2);
+    $half_colspan = intval($colspan / 2);
 
     // validating user passed parameters
 

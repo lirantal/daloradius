@@ -29,8 +29,8 @@
     include_once('library/config_read.php');
     
     // validate this parameter before including menu
-    $batch_name = (array_key_exists('batch_name', $_GET) && isset($_GET['batch_name']))
-                    ? str_replace("%", "", $_GET['batch_name']) : "";
+    $batch_name = (array_key_exists('batch_name', $_GET) && !empty(str_replace("%", "", trim($_GET['batch_name']))))
+                ? str_replace("%", "", trim($_GET['batch_name'])) : "";
     $batch_name_enc = (!empty($batch_name)) ? htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8') : "";
 
     // feed the sidebar
@@ -59,7 +59,7 @@
                     t('all','CreationBy')
                   );
     $colspan1 = count($cols1);
-    $half_colspan1 = intdiv($colspan1, 2);
+    $half_colspan1 = intval($colspan1 / 2);
     
     // second table
     $cols2 = array(
@@ -68,7 +68,7 @@
                     t('all','StartTime')
                   );
     $colspan2 = count($cols2);
-    $half_colspan2 = intdiv($colspan2, 2);
+    $half_colspan2 = intval($colspan2 / 2);
     
     $param_cols2 = array();
     foreach ($cols2 as $k => $v) { if (!is_int($k)) { $param_cols2[$k] = $v; } }

@@ -50,7 +50,7 @@
                     'description' => t('all','NasDescription'),
                  );
     $colspan = count($cols);
-    $half_colspan = intdiv($colspan, 2);
+    $half_colspan = intval($colspan / 2);
                  
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
@@ -140,7 +140,7 @@
             
             $li_style = 'margin: 7px auto';
             $tooltipText = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-edit.php?nashost=%s">%s</a></li>',
+                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-edit.php?nasname=%s">%s</a></li>',
                                    $li_style, urlencode($nasname), t('Tooltip','EditNAS'))
                          . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-del.php?nashost=%s">%s</a></li>',
                                    $li_style, urlencode($nasname), t('Tooltip','RemoveNAS'))

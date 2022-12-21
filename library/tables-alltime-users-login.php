@@ -92,7 +92,7 @@ if ($numrows > 0) {
                    "logins" => "Logins/hits count"
                  );
     $colspan = count($cols);
-    $half_colspan = intdiv($colspan, 2);
+    $half_colspan = intval($colspan / 2);
     
     /* START - Related to pages_numbering.php */
     

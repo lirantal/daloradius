@@ -40,17 +40,13 @@
     include('library/opendb.php');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $name = (array_key_exists('name', $_POST) && isset($_POST['name']) && trim(str_replace("%", "", $_POST['name'])))
-              ? trim($_POST['name']) : "";
+        $name = (array_key_exists('name', $_POST) && !empty(str_replace("%", "", trim($_POST['name']))))
+              ? str_replace("%", "", trim($_POST['name']))) : "";
     } else {
-        $name = (array_key_exists('name', $_REQUEST) && isset($_REQUEST['name']) && trim(str_replace("%", "", $_REQUEST['name'])))
-              ? trim($_REQUEST['name']) : "";
+        $name = (array_key_exists('name', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['name']))))
+              ? str_replace("%", "", trim($_REQUEST['name'])) : "";
     }
-    $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
-    
-    //feed the sidebar variables
-    $edit_hotspotname = $name_enc;
-    
+
     // check if it exists
     $sql = sprintf("SELECT COUNT(id) FROM %s WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
                                                                $dbSocket->escapeSimple($name));
@@ -63,8 +59,14 @@
         // we empty the name if the hs does not exist
         $name = "";
     }
-    
+
     // from now on we can assume that $name is valid
+    $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
+    
+    //feed the sidebar variables
+    $edit_hotspotname = $name_enc;
+    
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             
@@ -82,7 +84,7 @@
                 
                 $exists = $res->fetchrow()[0] > 0;
                 
-                if (!$exitst) {
+                if (!$exists) {
                     $currDate = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
                     
@@ -163,7 +165,7 @@
         $logDebugSQL .= "$sql;\n";
         
         list(
-                $id, $name, $mac, $geocode, $owner, $email_owner, $manager, $email_manager, $address, $company, $phone1,
+                $id, $name, $macaddress, $geocode, $owner, $email_owner, $manager, $email_manager, $address, $company, $phone1,
                 $phone2, $type, $companywebsite, $companyemail, $companycontact, $companyphone,
                 $creationdate, $creationby, $updatedate, $updateby
             ) = $res->fetchRow();
@@ -230,7 +232,7 @@
                                         "name" => "macaddress",
                                         "caption" => t('all','MACAddress'),
                                         "type" => "text",
-                                        "value" => ((isset($mac)) ? $mac : ""),
+                                        "value" => ((isset($macaddress)) ? $macaddress : ""),
                                         "tooltipText" => t('Tooltip','hotspotMacaddressTooltip')
                                      );
                                      
