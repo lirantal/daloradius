@@ -238,11 +238,12 @@ $valid_languages = array(
                             "it" => "Italian", 
                             "hu" => "Hungarian", 
                             "ro" => "Romanian",
+                            "tr" => "Turkish",
                             "ru" => "Russian", 
                             "ja" => "Japanese",
                             "zh" => "Chinese",
                             "es_ve" => "Spanish - Venezuelan", 
-                            "pt_br" => "Portuguese - Brazilian", 
+                            "pt_br" => "Portuguese - Brazilian",
                         );
 
 ?>
