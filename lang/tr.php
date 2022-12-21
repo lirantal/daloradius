@@ -14,18 +14,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *		Turkish language file
+ * 
+ * Description:    Turkish language file
  *
- * Authors:	Liran Tal <liran@enginx.com>
- * Created By: Huseyin Yildirim <huseyinyildirim@hotmail.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Huseyin Yildirim <huseyinyildirim@hotmail.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * 
  *********************************************************************************************************
  */
- 
-$l['all']['daloRADIUS'] = "daloRADIUS " . $configValues['DALORADIUS_VERSION'];
-$l['all']['daloRADIUSVersion'] = "version " . $configValues['DALORADIUS_VERSION'];
-$l['all']['copyright1'] = "RADIUS yönetimi, raporlama, muhasebe ve faturalama <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> tarafından geliştirilmiştir.";
-$l['all']['copyright2'] = "&copy; 2007-2022 daloRADIUS Tüm hakları saklıdır. <a href=\"https://github.com/lirantal/daloradius\">Liran Tal</a> tarafından geliştirilmiştir. <br/> Tasarım <a href=\"http://www.sixshootermedia.com\">Six Shooter Media</a> tarafından yapılmıştır.";
+
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/lang/tr.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
+
+$l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
+$l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
+$l['all']['copyright1'] = 'RADIUS yönetimi, raporlama, muhasebe ve faturalama <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a> tarafından geliştirilmiştir.';
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+                        . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Pool Name";
 $l['all']['CalledStationId'] = "CalledStationId";
@@ -513,28 +522,28 @@ $l['Tooltip']['BusinessContactPersonTooltip'] = "";
 
 $l['Tooltip']['proxyNameTooltip'] = "Proxy name";
 $l['Tooltip']['proxyRetryDelayTooltip'] = "The time (in seconds) to wait <br/>
-					for a response from the proxy, <br/>
-					before re-sending the proxied request.";
+                    for a response from the proxy, <br/>
+                    before re-sending the proxied request.";
 $l['Tooltip']['proxyRetryCountTooltip'] = "The number of retries to send <br/>
-					before giving up, and sending a <br/>
-					reject message to the NAS.";
+                    before giving up, and sending a <br/>
+                    reject message to the NAS.";
 $l['Tooltip']['proxyDeadTimeTooltip'] = "If the home server does not respond <br/>
-					to any of the multiple retries, <br/>
-					then FreeRADIUS will stop sending it <br/>
-					proxy requests, and mark it 'dead'.";
+                    to any of the multiple retries, <br/>
+                    then FreeRADIUS will stop sending it <br/>
+                    proxy requests, and mark it 'dead'.";
 $l['Tooltip']['proxyDefaultFallbackTooltip'] = "If all exact matching realms <br/>
-						did not respond, we can try the <br/>
-						";
+                        did not respond, we can try the <br/>
+                        ";
 $l['Tooltip']['realmNameTooltip'] = "Realm name";
 $l['Tooltip']['realmTypeTooltip'] = "Set to radius for default";
 $l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS shared secret";
 $l['Tooltip']['realmAuthhostTooltip'] = "Realm authentication host";
 $l['Tooltip']['realmAccthostTooltip'] = "Realm accounting host";
 $l['Tooltip']['realmLdflagTooltip'] = "Allows for load balancing<br/>
-					Allowed values are 'fail_over' <br/>
-					and 'round_robin'.";
+                    Allowed values are 'fail_over' <br/>
+                    and 'round_robin'.";
 $l['Tooltip']['realmNostripTooltip'] = "Whether to strip or not the <br/>
-					realm suffix";
+                    realm suffix";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
@@ -543,16 +552,16 @@ $l['Tooltip']['vendorNameTooltip'] = "Example: Cisco<br/>&nbsp;&nbsp;&nbsp;
                                         The Vendor's name.<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['typeTooltip'] = "Example: string<br/>&nbsp;&nbsp;&nbsp;
                                         The attributes variable type<br/>&nbsp;&nbsp;&nbsp;
-					(string, integer, date, ipaddr).";
+                    (string, integer, date, ipaddr).";
 $l['Tooltip']['attributeTooltip'] = "Example: Framed-IPAddress<br/>&nbsp;&nbsp;&nbsp;
                                         The exact attribute name.<br/>&nbsp;&nbsp;&nbsp;";
 
 $l['Tooltip']['RecommendedOPTooltip'] = "Example: :=<br/>&nbsp;&nbsp;&nbsp;
                                         The recommended attribute's operator.<br/>&nbsp;&nbsp;&nbsp;
-					(one of: := == != etc...)";
+                    (one of: := == != etc...)";
 $l['Tooltip']['RecommendedTableTooltip'] = "Example: check<br/>&nbsp;&nbsp;&nbsp;
                                         The recommended target table.<br/>&nbsp;&nbsp;&nbsp;
-					(either check or reply).";
+                    (either check or reply).";
 $l['Tooltip']['RecommendedTooltipTooltip'] = "Example: the ip address for the user<br/>&nbsp;&nbsp;&nbsp;
                                         The recommended tooltip.<br/>&nbsp;&nbsp;&nbsp;";
 $l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be<br/>&nbsp;&nbsp;&nbsp;
@@ -594,47 +603,47 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you spec
 
 
 $l['Tooltip']['usernameTooltip'] = "The exact username as the user<br/>&nbsp;&nbsp;&nbsp;
-					will use to connect to the system";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";					
+                    will use to connect to the system";
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";                    
 $l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in<br/>&nbsp;&nbsp;&nbsp;
-					certain systems so take extra care";
+                    certain systems so take extra care";
 $l['Tooltip']['groupTooltip'] = "The user will be added to this group.<br/>&nbsp;&nbsp;&nbsp;
-					By assigning a user to a particular group<br/>&nbsp;&nbsp;&nbsp;
-					the user is subject to the group's attributes";
+                    By assigning a user to a particular group<br/>&nbsp;&nbsp;&nbsp;
+                    the user is subject to the group's attributes";
 $l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
-					The MAC Address format should be the same<br/>&nbsp;&nbsp;&nbsp;
-					as the NAS sends it. Mostly this is without<br/>&nbsp;&nbsp;&nbsp;
-					any characters.";
+                    The MAC Address format should be the same<br/>&nbsp;&nbsp;&nbsp;
+                    as the NAS sends it. Mostly this is without<br/>&nbsp;&nbsp;&nbsp;
+                    any characters.";
 $l['Tooltip']['pincodeTooltip'] = "Example: khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
-					This is the exact pincode as the user will enter it.<br/>&nbsp;&nbsp;&nbsp;
-					You may use alpha numeric characters, case is sensituve";
+                    This is the exact pincode as the user will enter it.<br/>&nbsp;&nbsp;&nbsp;
+                    You may use alpha numeric characters, case is sensituve";
 $l['Tooltip']['usernamePrefixTooltip'] = "Example: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
-					This username prefix will be added to<br/>&nbsp;&nbsp;&nbsp;
-					the generated username finally.";
+                    This username prefix will be added to<br/>&nbsp;&nbsp;&nbsp;
+                    the generated username finally.";
 $l['Tooltip']['instancesToCreateTooltip'] = "Example: 100<br/>&nbsp;&nbsp;&nbsp;
-					The amount of random users to create<br/>&nbsp;&nbsp;&nbsp;
-					with the specified profile.";
+                    The amount of random users to create<br/>&nbsp;&nbsp;&nbsp;
+                    with the specified profile.";
 $l['Tooltip']['lengthOfUsernameTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
-					The characters length of the username<br/>&nbsp;&nbsp;&nbsp;
-					to be created. Recommended 8-12 chars.";
+                    The characters length of the username<br/>&nbsp;&nbsp;&nbsp;
+                    to be created. Recommended 8-12 chars.";
 $l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
-					The characters length of the password<br/>&nbsp;&nbsp;&nbsp;
-					to be created. Recommended 8-12 chars.";
+                    The characters length of the password<br/>&nbsp;&nbsp;&nbsp;
+                    to be created. Recommended 8-12 chars.";
 
 
 $l['Tooltip']['hotspotNameTooltip'] = "Example: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
-					a friendly name of the hotspot<br/>";
+                    a friendly name of the hotspot<br/>";
 
 $l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00-aa-bb-cc-dd-ee<br/>&nbsp;&nbsp;&nbsp;
-					The MAC address of the NAS<br/>";
+                    The MAC address of the NAS<br/>";
 
 $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
-					This is the GooleMaps location code used<br/>&nbsp;&nbsp;&nbsp;
-					to pin the Hotspot/NAS on the map (see GIS).";
+                    This is the GooleMaps location code used<br/>&nbsp;&nbsp;&nbsp;
+                    to pin the Hotspot/NAS on the map (see GIS).";
 
 $l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user information <br/>
-					the Profiles listed in the Profiles tab will be ignored and <br/>
-					profiles will be re-assigned based on the Plans profile association";
+                    the Profiles listed in the Profiles tab will be ignored and <br/>
+                    profiles will be re-assigned based on the Plans profile association";
 
 /* ********************************************************************************** */
 
@@ -1592,20 +1601,20 @@ radius attributes";
 
 // accounting section
 $l['helpPage']['acctactive'] = "
-	Provides information that would prove useful for tracking Active or Expired users in the database 
-	in terms of users which have an Expiration attribute or a Max-All-Session attribute.
+    Provides information that would prove useful for tracking Active or Expired users in the database 
+    in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 ";
 $l['helpPage']['acctall'] = "
-	Provides full accounting information for all sessions in the database.
+    Provides full accounting information for all sessions in the database.
 <br/>
 ";
 $l['helpPage']['acctdate'] = "
-	Provides full accounting information for all sessions between the given 2 dates for a particular user.
+    Provides full accounting information for all sessions between the given 2 dates for a particular user.
 <br/>
 ";
 $l['helpPage']['acctipaddress'] = "
-	Provides full accounting information for all sessions that originated with a particular IP Address.
+    Provides full accounting information for all sessions that originated with a particular IP Address.
 <br/>
 ";
 
@@ -1613,136 +1622,136 @@ $l['helpPage']['acctplans'] = "";
 $l['helpPage']['acctmain'] = "
 <b>General Accounting</b><br/>
 <h200><b>User Accounting</b></h200> - 
-	Provides full accounting information for all sessions in the database for a particular user.
+    Provides full accounting information for all sessions in the database for a particular user.
 <br/>
 <h200><b>IP Accounting</b></h200> - 
-	Provides full accounting information for all sessions that originated with a particular IP Address.
+    Provides full accounting information for all sessions that originated with a particular IP Address.
 <br/>
 <h200><b>NAS Accounting</b></h200> - 
-	Provides full accounting information for all the sessions that the specific NAS IP address has handled.
+    Provides full accounting information for all the sessions that the specific NAS IP address has handled.
 <br/>
 <h200><b>Date Accounting</b></h200> - 
-	Provides full accounting information for all sessions between the given 2 dates for a particular user.
+    Provides full accounting information for all sessions between the given 2 dates for a particular user.
 <br/>
 <h200><b>All Accounting Records</b></h200> - 
-	Provides full accounting information for all sessions in the database.
+    Provides full accounting information for all sessions in the database.
 <br/>
 <h200><b>Active Records Accounting</b></h200> - 
-	Provides information that would prove useful for tracking Active or Expired users in the database 
-	in terms of users which have an Expiration attribute or a Max-All-Session attribute.
+    Provides information that would prove useful for tracking Active or Expired users in the database 
+    in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 
 <br/>
 <b>Sub-Category Accounting</b><br/>
 <h200><b>Custom</b></h200> - 
-	Provides the most flexible custom query to run on the database.
+    Provides the most flexible custom query to run on the database.
 <br/>
 <h200><b>Hotspots</b></h200> - 
-	Provides information on the different managed hotspots, comparison, and other useful information.
+    Provides information on the different managed hotspots, comparison, and other useful information.
 <br/>
 ";
 $l['helpPage']['acctnasipaddress'] = "
-	Provides full accounting information for all the sessions that the specific NAS IP address has handled.
+    Provides full accounting information for all the sessions that the specific NAS IP address has handled.
 <br/>
 ";
 $l['helpPage']['acctusername'] = "
-	Provides full accounting information for all sessions in the database for a particular user.
+    Provides full accounting information for all sessions in the database for a particular user.
 <br/>
 ";
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
-	Provides full accounting information for all sessions which originated from this specific Hotspot.
-	This list is computed by listing only those records in the radacct table with the CalledStationId
-	field which match a Hotspot's MAC Address entry in the Hotspot's management database.
+    Provides full accounting information for all sessions which originated from this specific Hotspot.
+    This list is computed by listing only those records in the radacct table with the CalledStationId
+    field which match a Hotspot's MAC Address entry in the Hotspot's management database.
 <br/>
 ";
 $l['helpPage']['accthotspotcompare'] = "
-	Provides basic accounting information for comparison between all the active hotspots found in the database.
-	Accounting information provided: <br/><br/>
-	Hotspot Name - The Hotspot's name <br/>
-	Unique Users - Users that have logined only through this hotspot <br/>
-	Total Hits - The total logins that were performed from this hotspot (unique and non unique) <br/>
-	Average Time - The average time a user spent in this hotspot <br/>
-	Total Time - The accumolated spent time of all users in this hotspot <br/>
+    Provides basic accounting information for comparison between all the active hotspots found in the database.
+    Accounting information provided: <br/><br/>
+    Hotspot Name - The Hotspot's name <br/>
+    Unique Users - Users that have logined only through this hotspot <br/>
+    Total Hits - The total logins that were performed from this hotspot (unique and non unique) <br/>
+    Average Time - The average time a user spent in this hotspot <br/>
+    Total Time - The accumolated spent time of all users in this hotspot <br/>
 
 <br/>
-	Provides a graph plot of different comparisons made <br/>
-	Graphs: <br/><br/>
-	Distribution of Unique users per hotspot <br/>
-	Distribution of Hits per hotspot <br/>
-	Distribution of Time usage per hotspot <br/>
+    Provides a graph plot of different comparisons made <br/>
+    Graphs: <br/><br/>
+    Distribution of Unique users per hotspot <br/>
+    Distribution of Hits per hotspot <br/>
+    Distribution of Time usage per hotspot <br/>
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
 <h200><b>Hotspot Accounting</b></h200> - 
-	Provides full accounting information for all sessions which originated from this specific Hotspot.
+    Provides full accounting information for all sessions which originated from this specific Hotspot.
 <br/>
 <h200><b>Hotspot Comparison</b></h200> - 
-	Provides basic accounting information for comparison between all the active hotspots found in the database.
-	Provides a graph plot of different comparisons made.
+    Provides basic accounting information for comparison between all the active hotspots found in the database.
+    Provides a graph plot of different comparisons made.
 <br/>
 ";
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
 <h200><b>Custom</b></h200> - 
-	Provides the most flexible custom query to run on the database.<br/>
-	You may adjust the query to it's max by modifying the settings in the left sidebar.<br/>
+    Provides the most flexible custom query to run on the database.<br/>
+    You may adjust the query to it's max by modifying the settings in the left sidebar.<br/>
 <br/>
-	<b> Between Dates </b> - Set the beginning and ending date.
+    <b> Between Dates </b> - Set the beginning and ending date.
 <br/>
-	<b> Where </b> - Set the field in the database you wish to match (like a key), choose if the value
-	to match to should be Equal (=) or it Contains part of the value you search for (like a regex). If you
-	choose to use the Contains operator you shouldn't add any wildcards of the common form '*' but rather
-	the value you input will automatically be searched in this form: *value* (or in mysql style: %value%).
+    <b> Where </b> - Set the field in the database you wish to match (like a key), choose if the value
+    to match to should be Equal (=) or it Contains part of the value you search for (like a regex). If you
+    choose to use the Contains operator you shouldn't add any wildcards of the common form '*' but rather
+    the value you input will automatically be searched in this form: *value* (or in mysql style: %value%).
 <br/>
-	<b> Query Accounting Fields </b> - You may choose which fields you would like to present in the resulting
-	list.
+    <b> Query Accounting Fields </b> - You may choose which fields you would like to present in the resulting
+    list.
 <br/>
-	<b> Order By </b> - Choose by which field you would like to order the results and it's type (Ascending
-	or descending)
+    <b> Order By </b> - Choose by which field you would like to order the results and it's type (Ascending
+    or descending)
 <br/>
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
 <h200><b>Cleanup stale-sessions</b></h200> - 
-	Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
-	user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
-	record (false positive).
+    Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
+    user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
+    record (false positive).
 <br/>
 <h200><b>Delete accounting records</b></h200> - 
-	Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
-	except for a supervised administrator access to this page.
+    Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
+    except for a supervised administrator access to this page.
 <br/>
 ";
 $l['helpPage']['acctmaintenancecleanup'] = "
 <h200><b>Cleanup Stale Sessions</b></h200> - Cleanup Stale Sessions by username or date.<br/><br/>
-	A stale session occurs when a user connection remains as active in FreeRADIUS (so, in daloRADIUS), but it does not exists in the NAS.
-	This is normally caused by a lost disconnect message from the NAS to FreeRADIUS.</br></br>
-	You have two choices to cleanup stale sessions, use them with caution:<br/>
-	&nbsp;&bullet; By Username: This option will <b>CLOSE</b> all opened sessions for a username in the FreeRADIUS database.<br/>
-	&nbsp;&bullet; By Date: This option will <b>DELETE</b> all opened sessions older than a date in the FreeRADIUS database.<br/>	
+    A stale session occurs when a user connection remains as active in FreeRADIUS (so, in daloRADIUS), but it does not exists in the NAS.
+    This is normally caused by a lost disconnect message from the NAS to FreeRADIUS.</br></br>
+    You have two choices to cleanup stale sessions, use them with caution:<br/>
+    &nbsp;&bullet; By Username: This option will <b>CLOSE</b> all opened sessions for a username in the FreeRADIUS database.<br/>
+    &nbsp;&bullet; By Date: This option will <b>DELETE</b> all opened sessions older than a date in the FreeRADIUS database.<br/>    
 ";
 $l['helpPage']['acctmaintenancedelete'] = "";
 
 
 
 $l['helpPage']['giseditmap'] = "
-	Edit Map Mode - in this mode you are able to either Add or Delete Hotspots simply by clicking
-	on a location of the map or by clicking on a hotspot (respectively).<br/><br/>
-	<b> Adding Hotspot </b> - Simply click on a clear location of the map, you will be asked to provide
-	the hotspot's name and it's MAC address. These are 2 crucial details later used to identify this hotspot
-	in the accounting table. Always provide the correct MAC Address!
+    Edit Map Mode - in this mode you are able to either Add or Delete Hotspots simply by clicking
+    on a location of the map or by clicking on a hotspot (respectively).<br/><br/>
+    <b> Adding Hotspot </b> - Simply click on a clear location of the map, you will be asked to provide
+    the hotspot's name and it's MAC address. These are 2 crucial details later used to identify this hotspot
+    in the accounting table. Always provide the correct MAC Address!
 <br/><br/>
-	<b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the 
-	database.
+    <b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the 
+    database.
 <br/>
 ";
 $l['helpPage']['gisviewmap'] = "
-	View Map Mode - in this mode you are able to browse the Hotspots as they are layed out
-	in icons across the maps provided by GoogleMaps service.<br/><br/>
+    View Map Mode - in this mode you are able to browse the Hotspots as they are layed out
+    in icons across the maps provided by GoogleMaps service.<br/><br/>
 
-	<b> Clicking a Hotspot </b> -Will provide you with more in-depth detail on the hotspot.
-	Such as the contact information for the hotspot, and statistics details.
+    <b> Clicking a Hotspot </b> -Will provide you with more in-depth detail on the hotspot.
+    Such as the contact information for the hotspot, and statistics details.
 <br/>
 ";
 $l['helpPage']['gismain'] = "
@@ -1804,13 +1813,13 @@ $l['messages']['loginerror'] = "<br/><br/>either of the following:<br/>
 $l['buttons']['savesettings'] = "Save Settings";
 $l['buttons']['apply'] = "Apply";
 
-$l['menu']['Home'] = "<em>H</em>ome</a>";
-$l['menu']['Managment'] = "<em>M</em>anagement</a>";
-$l['menu']['Reports'] = "<em>R</em>eports</a>";
-$l['menu']['Accounting'] = "<em>A</em>ccounting</a>";
-$l['menu']['Billing'] = "<em>B</em>illing</a>";
-$l['menu']['Gis'] = "<em>G</em>IS</a>";
-$l['menu']['Graphs'] = "<em>G</em>raphs</a>";
-$l['menu']['Config'] = "<em>C</em>onfig</a>";
-$l['menu']['Help'] = "<em>H</em>elp</a>";
+$l['menu']['Home'] = "Home";
+$l['menu']['Managment'] = "Management";
+$l['menu']['Reports'] = "Reports";
+$l['menu']['Accounting'] = "Accounting";
+$l['menu']['Billing'] = "Billing";
+$l['menu']['Gis'] = "GIS";
+$l['menu']['Graphs'] = "Graphs";
+$l['menu']['Config'] = "Config";
+$l['menu']['Help'] = "Help";
 ?>
