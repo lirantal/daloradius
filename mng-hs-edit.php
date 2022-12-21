@@ -165,7 +165,7 @@
         $logDebugSQL .= "$sql;\n";
         
         list(
-                $id, $name, $mac, $geocode, $owner, $email_owner, $manager, $email_manager, $address, $company, $phone1,
+                $id, $name, $macaddress, $geocode, $owner, $email_owner, $manager, $email_manager, $address, $company, $phone1,
                 $phone2, $type, $companywebsite, $companyemail, $companycontact, $companyphone,
                 $creationdate, $creationby, $updatedate, $updateby
             ) = $res->fetchRow();
@@ -232,7 +232,7 @@
                                         "name" => "macaddress",
                                         "caption" => t('all','MACAddress'),
                                         "type" => "text",
-                                        "value" => ((isset($mac)) ? $mac : ""),
+                                        "value" => ((isset($macaddress)) ? $macaddress : ""),
                                         "tooltipText" => t('Tooltip','hotspotMacaddressTooltip')
                                      );
                                      
