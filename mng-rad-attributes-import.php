@@ -32,119 +32,174 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    isset($_POST['vendor']) ? $vendor = $_POST['vendor'] : $vendor = "";
-    isset($_POST['dictionary']) ? $dictionary = $_POST['dictionary'] : $dictionary = "";
-
-    if (isset($_POST['submit'])) {
-
-        include 'library/opendb.php';
-
-        $myDictionary = preg_split('/\n/', $dictionary);            // we break the POST variable (continous string) into an array
-
-        $myVendor = $vendor;                            // by default we set the vendor name to be the file name
-        $myAttribute = '';                                // variables are initialized
-        $myType = '';
-
-        $vendorUnique = 1;                            // we set $vendorUnique boolean to be unique
-
-        foreach($myDictionary as $line) {
-
-            if (preg_match('/^#/', $line))
-                continue;                        // if a line starts with # then it's a comment, skip it
-
-            if (preg_match('/^\n/', $line))
-                continue;                        // if a line is empty, we skip it as well
-
-            if (preg_match('/^VALUE/', $line))
-                continue;                        // if a line starts with VALUE we have no use for it, we skip it
-
-            if (preg_match('/^BEGIN-VENDOR/', $line))
-                continue;                        // if a line starts with BEGIN-VENDOR we have no use for it,
-                                            // we skip it
-
-            if (preg_match('/^END-VENDOR/', $line))
-                continue;                        // if a line starts with END-VENDOR we have no use for it,
-                                            // we skip it
-
-
-            if (preg_match('/^VENDOR/', $line)) {                // extract vendor name
-
-                if (preg_match('/\t/', $line))
-                    list($junk, $vendorTmp) = preg_split('/\t+/', $line);        // check if line is splitted by a sequence of tabs
-                else if (preg_match('/ /', $line))
-                    list($junk, $vendorTmp) = preg_split('/[ ]+/', $line);        // check if line is splitted by a sequence of
-                                                    // whitespaces
-
-                if ($vendorTmp != "")
-                    $myVendor = "'".trim($vendorTmp)."'";
-
-                continue;
-            }
-
-
-            if (preg_match('/^ATTRIBUTE/', $line)) {                // extract attribute name
-
-                if (preg_match('/\t/', $line))
-                    list($junk, $attribute, $junk2, $type) = preg_split('/\t+/', $line);        // check if line is splitted by
-                                                            // a sequence of tabs
-                else if (preg_match('/ /', $line))
-                    list($junk, $attribute, $junk2, $type) = preg_split('/[ ]+/', $line);        // check if line is splitted by
-                                                            //a sequence of whitespaces
-                if ($attribute != "")
-                    $myAttribute = "'".trim($attribute)."'";
-                else
-                    $myAttribute = "NULL";
-
-                if ($type != "")
-                    $myType = "'".trim($type)."'";
-                else
-                    $myType = "NULL";
-
-                /*
-                // before we start inserting vendor dictionary attributes to the database we need to check that the vendor
-                // doesn't already exist - for now we don't check it...
-
-                                $sql = "SELECT Vendor FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
-                                                " WHERE Vendor = $myVendor";
-                                $res = $dbSocket->query($sql);
-                                $logDebugSQL .= $sql . "\n";
-
-                $row = $res->fetchRow();
-
-                $vendorName = $row[0];
-                if ($vendorName == $myVendor) {
-                    $vendorUnique = 0;
-                    break;
-                }
-                */
-
-                $myVendor = "'".$vendor."'";
-
-                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALODICTIONARY']." (Id, Type, Attribute, Vendor)".
-                                        " VALUES (0, $myType, $myAttribute, $myVendor)";
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= $sql . "\n";
-
-            }
-
-        } //foreach
-
-        if ($vendorUnique == 0) {
-                    $failureMsg = "The vendor name specified already exist in the database";
-                       $logAction .= "Failed adding duplicate vendor dictionary for vendor [$myVendor] on page: ";
-        } else {
-                   $successMsg = "Successfully added vendor dictionary <b>$myVendor</b> to database";
-                   $logAction .= "Successfully added vendor dictionary [$myVendor] to database on page: ";
-        }
-
-
-        include 'library/closedb.php';
-
-    } //if (isset)
-
-
     include_once("lang/main.php");
     include("library/layout.php");
+
+    $valid_importStrategies = array(
+                                        "insert_or_update" => "insert new/update already-known attributes",
+                                        "delete_then_insert" => "delete all already-known, then insert new attributes",
+                                        "only_insert_new" => "only insert new attributes"
+                                   );
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $importStrategy = (array_key_exists('importStrategy', $_POST) && isset($_POST['importStrategy']) &&
+                           in_array($_POST['importStrategy'], array_keys($valid_importStrategies)))
+                        ? $_POST['importStrategy'] : array_keys($valid_importStrategies)[0];
+
+        $detectVendor = (array_key_exists('detectVendor', $_POST) && isset($_POST['detectVendor']));
+        
+        $vendor = (!$detectVendor && array_key_exists('vendor', $_POST) && !empty(str_replace("%", "", trim($_POST['vendor']))))
+                ? str_replace("%", "", trim($_POST['vendor'])) : "";
+        $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
+
+        $dictionary = (array_key_exists('dictionary', $_POST) && !empty($_POST['dictionary']))
+                    ? $_POST['dictionary'] : "";
+        
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            if (empty($dictionary) || (!$detectVendor && empty($vendor))) {
+                if (empty($dictionary)) {
+                    // dictionary cannot be empty
+                    $failureMsg = "dictionary cannot be empty";
+                } else {
+                    // vendor cannot be empty when auto detect is turned off
+                    $failureMsg = "vendor cannot be empty when auto-detection is turned off";
+                }
+                $logAction .= "$failureMsg on page: ";
+                
+            } else {
+                // we break the POST variable (continous string) into an array
+                $myDictionary = explode("\n", $dictionary);
+                
+                $split_regex = '/\t+|\s+/';
+                $this_attributes = array();
+                $this_vendor = (!$detectVendor && !empty($vendor)) ? $vendor : "";
+
+                foreach ($myDictionary as $line) {
+                    $arr = preg_split($split_regex, trim($line));
+                    $arrlen = count($arr);
+                    
+                    //~ we need at least two elements
+                    //~ minimum arrlen == 2
+                    //~ maximum unknown (because we could have comments)
+                    if ($arrlen < 2) {
+                        continue;
+                    }
+                    
+                    if ($detectVendor && $arr[0] === "VENDOR") {
+                        //~ VENDOR       TestVendor1    1    # this could be a comment
+                        $this_vendor = $arr[1];
+                        continue;
+                    }
+                    
+                    if ($arr[0] === "ATTRIBUTE") {
+                        //~ example: ATTRIBUTE    TestAttr2      2    string    # this could be a comment
+                        $attr = $arr[1];
+                        $type = ($arrlen >= 4) ? $arr[3] : null;
+                            
+                        if (!in_array($attr, $this_attributes)) {
+                            $this_attributes[$attr] = $type;
+                        } else {
+                            if ($this_attributes[$attr] == null && $type != null) {
+                                $this_attributes[$attr] = $type;
+                            }
+                        }
+
+                        continue;
+                    }
+                }
+                
+                
+                if (empty($this_vendor)) {
+                    // cannot detect vendor
+                    $failureMsg = "vendor cannot be auto-detected from dictionary";
+                    $logAction .= "$failureMsg on page: ";
+                } else {
+                    include('library/opendb.php');
+                    
+                    $deleted = 0;
+                    $updated = 0;
+                    $inserted = 0;
+                    
+                    if ($importStrategy == "delete_then_insert") {
+                        // delete all, attributes will be inserted later
+                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE Vendor='%s'",
+                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                       $dbSocket->escapeSimple($this_vendor));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                        
+                        $deleted = intval($res->fetchrow()[0]);
+                        
+                        
+                        $sql = sprintf("DELETE FROM %s WHERE Vendor='%s'",
+                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                       $dbSocket->escapeSimple($this_vendor));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                    }
+                    
+                    foreach ($this_attributes as $this_attribute => $this_type) {
+                        $this_type = ($this_type == null) ? "NULL" : sprintf("'%s'", $dbSocket->escapeSimple($this_type));
+                        
+                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE Vendor='%s' AND Attribute='%s'",
+                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                       $dbSocket->escapeSimple($this_vendor), $dbSocket->escapeSimple($this_attribute));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                        
+                        $exists = $res->fetchrow()[0] > 0;
+                        
+                        if ($exists) {
+                            // if it exists and the strategy is insert_or_update we update and then continue
+                            if ($importStrategy == "insert_or_update") {
+                                $sql = sprintf("UPDATE %s SET Type=%s WHERE Vendor='%s' AND Attribute='%s'",
+                                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $this_type,
+                                               $dbSocket->escapeSimple($this_vendor),
+                                               $dbSocket->escapeSimple($this_attribute));
+                                $res = $dbSocket->query($sql);
+                                $logDebugSQL .= "$sql;\n";
+                                
+                                $updated++;
+                            }
+                            
+                            continue;
+                        }
+                        
+                        // we are here:
+                        // if the attribute does not exist hence needs to be inserted or 
+                        // if it used to exist but it has been previously deleted
+                        // because of the delete_then_insert strategy
+                        $sql = sprintf("INSERT INTO %s (Id, Type, Vendor, Attribute)
+                                                VALUES (0, %s, '%s', '%s')",
+                                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                        $this_type,
+                                        $dbSocket->escapeSimple($this_vendor),
+                                        $dbSocket->escapeSimple($this_attribute));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                        
+                        $inserted++;
+                        
+                    }
+                    
+                    include('library/closedb.php');
+                    
+                    $count = count($this_attributes);
+                    $format = "processed: %d, deleted: %d, inserted: %d, updated: %d attributes for vendor %s";
+                    $successMsg = sprintf($format, $count, $deleted, $inserted, $updated,
+                                          htmlspecialchars($this_vendor, ENT_QUOTES, 'UTF-8'));
+                    $logAction .= sprintf("$format on page: ", $count, $deleted, $inserted, $updated, $this_vendor);
+                }
+
+            }
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+    
 
     // print HTML prologue
     $title = t('Intro','mngradattributesimport.php');
@@ -159,46 +214,73 @@
 
     include_once('include/management/actionMessages.php');
 
-?>
+    if (!isset($successMsg)) {
+        
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','VendorAttribute'),
+                                     );
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        $input_descriptors0 = array();
 
-    <fieldset>
+        $input_descriptors0[] = array(
+                                        "caption" => "Dictionary import strategy",
+                                        "type" => "select",
+                                        "name" => "importStrategy",
+                                        "options" => $valid_importStrategies,
+                                        "selected_value" => ((isset($failureMsg)) ? $importStrategy : ""),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "vendor",
+                                        "caption" => t('all','VendorName'),
+                                        "type" => "text",
+                                        "tooltipText" => t('Tooltip','vendorNameTooltip'),
+                                        "value" => (isset($vendor) ? $vendor : ""),
+                                        "disabled" => (isset($detectVendor) ? $detectVendor : true)
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        "name" => "detectVendor",
+                                        "caption" => "Auto-detect vendor from dictionary",
+                                        "type" => "checkbox",
+                                        "checked" => (isset($detectVendor) ? $detectVendor : true),
+                                        "onclick" => "document.getElementById('vendor').disabled=document.getElementById('detectVendor').checked"
+                                     );
 
-        <h302> <?php echo t('title','VendorAttribute'); ?> </h302>
-        <br/>
+        $input_descriptors0[] = array(
+                                        "caption" => t('all','Dictionary'),
+                                        "type" => "textarea",
+                                        "class" => "form_fileimport",
+                                        "name" => "dictionary",
+                                        "content" => ((isset($failureMsg)) ? $dictionary : ""),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
 
-        <ul>
+        $input_descriptors0[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
+        
+        open_form();
+        
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
+        
+    }
 
-        <li class='fieldset'>
-        <label for='vendor' class='form'><?php echo t('all','VendorName') ?></label>
-        <input name='vendor' type='text' id='vendor' value='<?php if (isset($vendor)) echo $vendor ?>' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('vendorNameTooltip')" />
-
-        <div id='vendorNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','vendorNameTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='dictionary' class='form'><?php echo t('all','Dictionary') ?></label>
-        <textarea class='form_fileimport' name='dictionary' tabindex=102></textarea>
-        </li>
-
-
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
-
-        </ul>
-    </fieldset>
-
-    </form>
-
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

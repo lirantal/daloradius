@@ -164,8 +164,7 @@
         $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
         
     } else {
-        $sql = sprintf("SELECT id, Type, Attribute, Value, Format, Vendor, RecommendedOP,
-                               RecommendedTable, RecommendedHelper, RecommendedTooltip
+        $sql = sprintf("SELECT Type, Value, Format, RecommendedOP, RecommendedTable, RecommendedHelper, RecommendedTooltip
                           FROM %s WHERE attribute='%s' AND vendor='%s' LIMIT 1",
                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
                        $dbSocket->escapeSimple($attribute),
@@ -173,12 +172,8 @@
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
         
-        list(
-                $this_id, $this_Type, $this_Attribute, $this_Value, $this_Format,
-                $this_Vendor, $this_OP, $this_Table, $this_Helper, $this_Tooltip
-            ) = $res->fetchrow();
-            
-        
+        list($this_Type, $this_Value, $this_Format, $this_OP, $this_Table, $this_Helper, $this_Tooltip) = $res->fetchrow();
+
     }
     
     include('library/closedb.php');
@@ -230,7 +225,7 @@
                                         "caption" => t('all','Type'),
                                         "type" => "text",
                                         "datalist" => $valid_attributeTypes,
-                                        "value" => ((isset($type)) ? $type : ""),
+                                        "value" => ((isset($this_Type)) ? $this_Type : ""),
                                         "tooltipText" => t('Tooltip','typeTooltip'),
                                      );
         
@@ -239,7 +234,7 @@
                                         "caption" => t('all','RecommendedOP'),
                                         "type" => "text",
                                         "datalist" => $valid_ops,
-                                        "value" => ((isset($op)) ? $op : ""),
+                                        "value" => ((isset($this_OP)) ? $this_OP : ""),
                                         "tooltipText" => t('Tooltip','RecommendedOPTooltip'),
                                      );
         
@@ -248,7 +243,7 @@
                                         "caption" => t('all','RecommendedTable'),
                                         "type" => "text",
                                         "datalist" => $valid_tables,
-                                        "value" => ((isset($table)) ? $table : ""),
+                                        "value" => ((isset($this_Table)) ? $this_Table : ""),
                                         "tooltipText" => t('Tooltip','RecommendedTableTooltip'),
                                      );
         
@@ -257,7 +252,7 @@
                                         "caption" => t('all','RecommendedHelper'),
                                         "type" => "text",
                                         "datalist" => $valid_recommendedHelpers,
-                                        "value" => ((isset($helper)) ? $helper : ""),
+                                        "value" => ((isset($this_Helper)) ? $this_Helper : ""),
                                         "tooltipText" => t('Tooltip','RecommendedHelperTooltip'),
                                      );
         
@@ -266,7 +261,7 @@
                                         "caption" => t('all','RecommendedTooltip'),
                                         "type" => "textarea",
                                         "tooltipText" => t('Tooltip','RecommendedTooltipTooltip'),
-                                        "value" => (isset($tooltip) ? $tooltip : "")
+                                        "value" => (isset($this_Tooltip) ? $this_Tooltip : "")
                                      );
         
         $input_descriptors0[] = array(

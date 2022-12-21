@@ -129,7 +129,7 @@
     // load options
     $options = array();
     
-    $sql = sprintf("SELECT vendor, attribute FROM %s ORDER BY vendor, attribute DESC",
+    $sql = sprintf("SELECT vendor, attribute FROM %s ORDER BY vendor, attribute",
                    $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
@@ -150,7 +150,7 @@
                                     'caption' => t('all','VendorName') . " - " . t('all','Attribute'),
                                     'options' => $options,
                                     'multiple' => true,
-                                    'size' => 5,
+                                    'size' => 25,
                                  );
                                  
     $input_descriptors1[] = array(
