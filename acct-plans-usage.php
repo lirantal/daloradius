@@ -23,34 +23,34 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("include/management/functions.php");
+    include("library/layout.php");
 
 	//setting values for the order by and order type variables
 	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "username";
 	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
 
-	if ( (isset($_GET['username'])) && ($_GET['username']) ) {
-		$username = $_GET['username'];
-	} else {
-		$username = "%";
-	}
-	
-	if ( (isset($_GET['planname'])) && ($_GET['planname']) ) {
-		$planname = $_GET['planname'];
-	} else {
-		$planname = "%";
-	}
-
-	$date_regex = '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/';
-
-    // we validate starting and ending dates
+	$username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
+	$username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    
+    $planname = (array_key_exists('planname', $_GET) && !empty(str_replace("%", "", trim($_GET['planname']))))
+              ? str_replace("%", "", trim($_GET['planname'])) : "";
+    $planname_enc = (!empty($planname)) ? htmlspecialchars($planname, ENT_QUOTES, 'UTF-8') : "";
+    
+	// we validate starting and ending dates
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match($date_regex, $_GET['startdate'], $m) !== false &&
+                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
                ? $_GET['startdate'] : "";
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match($date_regex, $_GET['enddate'], $m) !== false &&
+                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : "";
 
@@ -61,6 +61,10 @@
         $logQuery .= " for user $username";
     }
     
+    if (!empty($planname)) {
+        $logQuery .= "for plan $planname";
+    }
+    
     if (!empty($startdate)) {
          $logQuery .= " from $startdate";
     }
@@ -69,10 +73,6 @@
     }
     $logQuery .= "on page: ";
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
@@ -80,8 +80,9 @@
     );
     
     $extra_js = array(
+        "library/javascript/pages_common.js",
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "library/javascript/tabs.js",
     );
     
     $title = t('Intro','acctplans.php');
@@ -91,6 +92,24 @@
     
     include("menu-accounting-plans.php");
 	
+    $cols = array(
+                    "username" => t('all','Username'),
+                    "planname" => t('all','PlanName'),
+                    "sessiontime" => t('all','UsedTime'),
+                    "plantimebank" => t('all','TotalTime'),
+                    sprintf("%s (%s)", t('all','TotalTraffic'), t('all','Bytes'))
+                 );
+    $colspan = count($cols);
+    $half_colspan = intval($colspan / 2);
+    
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($cols)))
+             ? $_GET['orderBy'] : array_keys($cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+               ? strtolower($_GET['orderType']) : "asc";
+    
 	//feed the sidebar variables
 	$accounting_plan_username = $username;
 	$accounting_plan_startdate = $startdate;
@@ -100,237 +119,179 @@
     print_title_and_help($title, $help);
 
 
-	include 'library/opendb.php';
-	include 'include/management/pages_common.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
-	$username = $dbSocket->escapeSimple($username);
-	$planname = $dbSocket->escapeSimple($planname);
-	$startdate = $dbSocket->escapeSimple($startdate);
-	$enddate = $dbSocket->escapeSimple($enddate);
-
-	// setup php session variables for exporting
-	$_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-	$_SESSION['reportQuery'] = 	" WHERE ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '$username')".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '$planname')".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".$configValues['CONFIG_DB_TBL_RADACCT'].".username)".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname = ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '$startdate' )".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '$enddate' )".
-			" GROUP BY ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username";
-	$_SESSION['reportType'] = "reportsPlansUsage";
-
-	include 'library/closedb.php';
-
-	include_once('include/management/userReports.php');
-	userPlanInformation($username, 1);
-	userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
-	userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
-
-	include 'library/opendb.php';
-	
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-	$sql = "".
-		"SELECT ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username as username,".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname as planname,".
-			"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctsessiontime) as sessiontime,".
-			"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctinputoctets) as upload,".
-			"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctoutputoctets) as download,".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeBank as planTimeBank,".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeType as planTimeType".
-		" FROM ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].",".
-			$configValues['CONFIG_DB_TBL_RADACCT'].",".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-		" WHERE ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '$username')".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '$planname')".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".$configValues['CONFIG_DB_TBL_RADACCT'].".username)".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname = ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '$startdate' )".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '$enddate' )".
-			" GROUP BY ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
+    // we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
+    include('library/opendb.php');
+    include_once('include/management/pages_common.php');
 
 	
- 	$sql = "".
-		"SELECT ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username as username,".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname as planname,".
-			"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctsessiontime) as sessiontime,".
-			"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctinputoctets) as upload,".
-			"SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctoutputoctets) as download,".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeBank as planTimeBank,".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeType as planTimeType".
-		" FROM ".
-			$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].",".
-			$configValues['CONFIG_DB_TBL_RADACCT'].",".
-			$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-		" WHERE ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username LIKE '$username')".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname LIKE '$planname')".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username = ".$configValues['CONFIG_DB_TBL_RADACCT'].".username)".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname = ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planname)".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime > '$startdate' )".
-			" AND ".
-			"(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime < '$enddate' )".
-			" GROUP BY ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
+    $sql_WHERE = array();
+    $partial_query_params = array();
+    
+    $sql_WHERE[] = "ubi.username = ra.username";
+    $sql_WHERE[] = "ubi.planname = bp.planname";
+    
+    $userExists = false;
+    if (!empty($username)) {
+        $sql_WHERE[] = sprintf("ubi.username = '%s'", $dbSocket->escapeSimple($username));
+        $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
+        
+        $userExists = user_exists($dbSocket, $username, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
+    }
+    
+    if (!empty($planname)) {
+        $sql_WHERE[] = sprintf("bp.planname = '%s'", $dbSocket->escapeSimple($planname));
+        $partial_query_params[] = sprintf("planname=%s", urlencode($planname_enc));
+        
+    }
+    
+    if (!empty($startdate)) {
+        $sql_WHERE[] = sprintf("ra.AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
+        $partial_query_params[] = sprintf("startdate=%s", $startdate);
+    }
 
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
+    if (!empty($enddate)) {
+        $sql_WHERE[] = sprintf("ra.AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
+        $partial_query_params[] = sprintf("enddate=%s", $enddate);
+    }
 
+    // setup php session variables for exporting
+    $_SESSION['reportTable'] = sprintf("%s AS ubi, %s AS ra, %s AS bp", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                                                        $configValues['CONFIG_DB_TBL_RADACCT'],
+                                                                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
+    $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE) . " GROUP BY ubi.username";
+    $_SESSION['reportType'] = "reportsPlansUsage";
 
-	echo "<table border='0' class='table1'>\n";
-        echo "
-                <thead>
-                        <tr>
-                        <th colspan='12' align='left'>
-
-                        <input class='button' type='button' value='CSV Export'
-                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
-                        />
-                        <br/>
-                <br/>
-        ";
-
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate&planname=$planname");
-
-	echo " </th></tr>
-			</thead>
-	";
-
-	if ($orderType == "asc") {
-			$orderTypeNextPage = "desc";
-	} else  if ($orderType == "desc") {
-			$orderTypeNextPage = "asc";
-	}
-	
-        echo "<thread> <tr>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=username&orderType=$orderTypeNextPage\">
-		".t('all','Username')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=planname&orderType=$orderTypeNextPage\">
-		".t('all','PlanName')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=sessiontime&orderType=$orderTypeNextPage\">
-		".t('all','UsedTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&planname=$planname&orderBy=plantimebank&orderType=$orderTypeNextPage\">
-		".t('all','TotalTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		".t('all','TotalTraffic')." (".t('all','Bytes').")</a>
-		</th>
-                </tr> </thread>";
-
-	while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-		
-		$perc = number_format((($row['sessiontime']/$row['planTimeBank'])*100),2);
-		if (($perc-100) > 0)
-			$percFormatted = "<font color='red'>$perc</font>";
-		else
-			$percFormatted = "$perc";
-			
-		printqn("<tr>
-                        <td> <a class='tablenovisit' href='#'
-						onClick='javascript:ajaxGeneric(\"include/management/retUserInfo.php\",\"retBandwidthInfo\",\"divContainerUserInfo\",\"username={$row['username']}\");return false;'
-                                tooltipText='
-								<a class=\"toolTip\" href=\"bill-pos-edit.php?username={$row['username']}\">
-	                                        ".t('Tooltip','UserEdit')."</a>
-                                        <br/><br/>
-
-                                        <div id=\"divContainerUserInfo\">
-                                                Loading...
-                                        </div>
-                                        <br/>'
-									>{$row['username']}</a>
-                        </td>
-				<td> {$row['planname']} </td>
-				<td> 
-					".time2str($row['sessiontime'])."
-					<b>($percFormatted)%</b>
-					</td>
-				<td> ".time2str($row['planTimeBank'])." </td>
-				<td> ".toxbyte($row['upload'] + $row['download'])."</td>
-		</tr>");
-
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-        ";
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate&planname=$planname");
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
-
-	echo "</table>";
-
-	include 'library/closedb.php';
+    $sql = sprintf("SELECT ubi.username AS username, ubi.planname AS planname, SUM(ra.acctsessiontime) AS sessiontime,
+                           SUM(ra.acctinputoctets) AS upload, SUM(ra.acctoutputoctets) AS download,
+                           bp.plantimebank AS plantimebank, bp.planTimeType AS planTimeType
+                      FROM %s %s", $_SESSION['reportTable'], $_SESSION['reportQuery']);
+    $logDebugSQL .= "$sql;\n";
+    $res = $dbSocket->query($sql);
+    
+    $numrows = $res->numRows();
+    
+    if ($numrows > 0) {
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        $sql = sprintf("SELECT ubi.username AS username, ubi.planname AS planname, SUM(ra.acctsessiontime) AS sessiontime,
+                           SUM(ra.acctinputoctets) AS upload, SUM(ra.acctoutputoctets) AS download,
+                           bp.plantimebank AS plantimebank, bp.planTimeType AS planTimeType
+                      FROM %s %s", $_SESSION['reportTable'], $_SESSION['reportQuery'])
+             . sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
+        
+        $partial_query_string = (count($partial_query_params) > 0)
+                              ? ("&" . implode("&", $partial_query_params)) : "";
 ?>
-			
-		</div>
+<table border="0" class="table1">
+    <thead>
+        <tr style="background-color: white">
+<?php
+            // page numbers are shown only if there is more than one page
+            if ($drawNumberLinks) {
+                printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+                echo '</td>';
+            }
+?>
+            <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
+                <input class="button" type="button" value="CSV Export"
+                    onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
+            </td>
 
+        </tr>
 
 <?php
+            // second line of table header
+            echo "<tr>";
+            printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+            echo "</tr>";
+?>
+    </thead>
+    
+<?php
+        echo '<tbody>';
+
+        $format = "<td>%s</td>";
+        while ($row = $res->fetchRow()) {
+            list(
+                    $this_username, $this_planname, $this_sessiontime, $this_upload,
+                    $this_download, $this_plantimebank, $this_plantimetype
+                ) = $row;
+            
+            $tmp = number_format(($this_sessiontime / $this_plantimebank) * 100, 2);
+            $this_percentage = sprintf('<span style="color: %s">%s%%</span>', (($tmp - 100 > 0) ? "red" : "green"), $tmp);
+        
+            $this_sessiontime = time2str($this_sessiontime);
+            $this_plantimebank = time2str($this_plantimebank);
+        
+            $this_traffic = toxbyte( $this_upload + $this_download );
+        
+            $this_username = htmlspecialchars($this_username, ENT_QUOTES, 'UTF-8');
+            $this_planname = htmlspecialchars($this_planname, ENT_QUOTES, 'UTF-8');
+            
+            
+            $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo',"
+                     . sprintf("'username=%s');return false;", $this_username);
+            
+            $tooltipText = sprintf('<a class=toolTip" href="bill-pos-edit.php?username=%s">%s</a>', $this_username, t('Tooltip','UserEdit'))
+                         . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
+
+            echo '<tr>';
+            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
+                   $onclick, $tooltip, $this_username);
+            printf($format, $this_planname);
+            printf($format, $this_sessiontime);
+            printf($format, $this_percentage);
+            printf($format, $this_plantimebank);
+            printf($format, $this_traffic);
+            echo '</tr>';
+
+        }
+
+        echo '</tbody>';
+
+        // tfoot
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+
+        echo '</table>';
+        
+        if ($userExists) {
+            include_once('include/management/userReports.php');
+            userPlanInformation($username, 1);
+            userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
+            userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
+        }
+    } else {
+        $failureMsg = "Nothing to display";
+    }
+
+    include_once("include/management/actionMessages.php");
+
+    include('library/closedb.php');
+
 	include('include/config/logging.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();
+";
+
+    if ($userExists) {
+        $inline_extra_js .= "window.onload = function() { setupAccordion() };";
+    }
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
-
-		
-		</div>
-		
-</div>
-</div>
-
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

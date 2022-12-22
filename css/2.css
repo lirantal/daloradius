@@ -6,6 +6,48 @@
     --pale-cerulean: #97c8ebff;
 }
 
+ /* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+  background-color: #f1f1f1;
+  color: black;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  outline: none;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.accordion-active, .accordion:hover {
+  background-color: #ddd;
+  border: 0;
+}
+
+.panel {
+  padding: 0;
+  margin-bottom: 10px;
+  background-color: white;
+  display: none;
+  overflow: hidden;
+} 
+
+.accordion:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: black;
+  float: right;
+  margin-left: 5px;
+}
+
+.accordion-active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+.panel table {
+    margin-bottom: 5px;
+}
+
 .badge {
     color: white;
     padding: 2px 4px;

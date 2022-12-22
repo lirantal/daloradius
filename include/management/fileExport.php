@@ -235,31 +235,32 @@ switch ($reportType) {
             break;
 
 		case "reportsPlansUsage":
-            $outputHeader = "Username, Planname, Used Time, Upload, Download, Plan Time, Plan Time Type" . "\n";
-            $outputContent = "";
-
-            $sql = "".
-                "SELECT ".
-                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username as username,".
-                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".planname as planname,".
-                    "SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctsessiontime) as sessiontime,".
-                    "SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctinputoctets) as upload,".
-                    "SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".acctoutputoctets) as download,".
-                    $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeBank as planTimeBank,".
-                    $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].".planTimeType as planTimeType".
-                " FROM ".
-                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].",".
-                    $configValues['CONFIG_DB_TBL_RADACCT'].",".
-                    $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                $reportQuery;
-
-            $res = $dbSocket->query($sql);
-            while($row = $res->fetchRow()) {
-                $outputContent .= implode(",", $row) . "\n";
-            }
+        
+            // we use this associative array for generating both,
+            // Output Header and SQL selected fields
+            $cols = array(
+                            "Username" => "username",
+                            "Plan Name" => "planname",
+                            "Used Time" => "sessiontime",
+                            "Upload" => "upload",
+                            "Download" => "download",
+                            "Plan Time" => "planTimeBank",
+                            "Plan Time Type" => "planTimeType",
+                         );
             
-            $output = $outputHeader . $outputContent;
-
+            $selected_fields = implode(", ", array_values($cols));
+            $sql = sprintf("SELECT %s FROM %s %s ORDER BY %s ASC",
+                           $selected_fields, $reportTable, $reportQuery, array_values($cols)[0]);
+            $res = $dbSocket->query($sql);
+            
+            // this is the output header
+            $output = implode(", ", array_keys($cols)) . "\n";
+            
+            // this is the remaining part of the output content
+            while($row = $res->fetchRow()) {
+                $output .= implode(",", $row) . "\n";
+            }
+        
             break;
 
         case "reportsBatchActiveUsers":

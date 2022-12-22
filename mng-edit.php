@@ -400,6 +400,7 @@
         "library/javascript/dynamic_attributes.js",
         "library/javascript/ajaxGeneric.js",
         "library/javascript/productive_funcs.js",
+        "library/javascript/pages_common.js",
         // js tabs stuff
         "library/javascript/tabs.js"
     );
@@ -864,6 +865,8 @@ window.onload = function(){
     print_back_to_previous_page();
 
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+    
+    $inline_extra_js = "window.onload = function() { setupAccordion() };";
+    print_footer_and_html_epilogue($inline_extra_js);
 
 ?>
