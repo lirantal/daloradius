@@ -47,6 +47,16 @@ function userSubscriptionAnalysis($username, $drawTable) {
     include('library/opendb.php');
 
     $username = $dbSocket->escapeSimple($username);
+    
+    $keys = array("Logins", "SUMSession", "SUMDownload", "SUMUpload", "SUMTraffic", );
+    
+    $data1 = array(
+                    "Logins" => array( "Label" => "Login Count", "Global" => "(n/a)", "Daily" => "(n/a)", "Weekly" => "(n/a)", "Monthly" => "(n/a)",  ),
+                    "SUMSession" => array( "Label" => "Session Time", "Global" => "(n/a)", "Daily" => "(n/a)", "Weekly" => "(n/a)", "Monthly" => "(n/a)",  ),
+                    "SUMDownload" => array( "Label" => "Downloaded Traffic", "Global" => "(n/a)", "Daily" => "(n/a)", "Weekly" => "(n/a)", "Monthly" => "(n/a)",  ),
+                    "SUMUpload" => array( "Label" => "Uploaded Traffic", "Global" => "(n/a)", "Daily" => "(n/a)", "Weekly" => "(n/a)", "Monthly" => "(n/a)",  ),
+                    "SUMTraffic" => array( "Label" => "Uploaded+Downloaded Traffic", "Global" => "(n/a)", "Daily" => "(n/a)", "Weekly" => "(n/a)", "Monthly" => "(n/a)",  ),
+                 );
 
     /*
      *********************************************************************************************************
@@ -54,20 +64,28 @@ function userSubscriptionAnalysis($username, $drawTable) {
      *********************************************************************************************************
      */
     $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
-                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
+                           SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
                       FROM %s WHERE UserName='%s' AND acctstoptime>0",
                    $configValues['CONFIG_DB_TBL_RADACCT'], $username);
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $userSumMaxAllSession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
-    $userSumDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
-    $userSumUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
-    $userSumAllTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
-                       ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
-                       : "(n/a)";
-    $userAllLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
-
+    foreach ($keys as $key) {
+        $value = "(n/a)";
+        
+        if (isset($row[$key])) {
+            if ($key == "SUMSession") {
+                $value = time2str($row[$key]);
+            } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
+                $value = toxbyte($row[$key]);
+            } else {
+                $value = $row[$key];
+            }
+        }
+        
+        $data1[$key]["Global"] = $value;
+    }
 
     /*
      *********************************************************************************************************
@@ -78,7 +96,8 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $nextMonth = date("Y-m-01", mktime(0, 0, 0, date("m")+ 1, date("d"), date("Y")));
 
     $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
-                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
+                           SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
                       FROM %s
                      WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
                        AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
@@ -86,14 +105,21 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $userSumMaxMonthlySession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
-    $userSumMonthlyDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
-    $userSumMonthlyUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
-    $userSumMonthlyTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
-                           ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
-                           : "(n/a)";
-    $userMonthlyLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
-
+    foreach ($keys as $key) {
+        $value = "(n/a)";
+        
+        if (isset($row[$key])) {
+            if ($key == "SUMSession") {
+                $value = time2str($row[$key]);
+            } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
+                $value = toxbyte($row[$key]);
+            } else {
+                $value = $row[$key];
+            }
+        }
+        
+        $data1[$key]["Monthly"] = $value;
+    }
 
     /*
      *********************************************************************************************************
@@ -103,7 +129,8 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
     $nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
     $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
-                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
+                           SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
                       FROM %s
                      WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
                        AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
@@ -111,14 +138,21 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $userSumMaxWeeklySession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
-    $userSumWeeklyDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
-    $userSumWeeklyUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
-    $userSumWeeklyTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
-                           ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
-                           : "(n/a)";
-    $userWeeklyLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
-
+    foreach ($keys as $key) {
+        $value = "(n/a)";
+        
+        if (isset($row[$key])) {
+            if ($key == "SUMSession") {
+                $value = time2str($row[$key]);
+            } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
+                $value = toxbyte($row[$key]);
+            } else {
+                $value = $row[$key];
+            }
+        }
+        
+        $data1[$key]["Weekly"] = $value;
+    }
 
     /*
      *********************************************************************************************************
@@ -128,22 +162,36 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $currDay = date("Y-m-d");
     $nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
     $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
-                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins'
+                           SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
+                           SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
                       FROM %s
                      WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
                        AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
                                                               $nextDay, $currDay, $username);
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-    $userSumMaxDailySession = (isset($row['SUMSession'])) ? time2str($row['SUMSession']) : "(n/a)";
-    $userSumDailyDownload = (isset($row['SUMDownload'])) ? toxbyte($row['SUMDownload']) : "(n/a)";
-    $userSumDailyUpload = (isset($row['SUMUpload'])) ? toxbyte($row['SUMUpload']) : "(n/a)";
-    $userSumDailyTraffic = (isset($row['SUMUpload']) && isset($row['SUMDownload']))
-                           ? (toxbyte($row['SUMUpload'] + $row['SUMDownload']))
-                           : "(n/a)";
-    $userDailyLogins = (isset($row['Logins'])) ? $row['Logins'] : "(n/a)";
     
+    foreach ($keys as $key) {
+        $value = "(n/a)";
+        
+        if (isset($row[$key])) {
+            if ($key == "SUMSession") {
+                $value = time2str($row[$key]);
+            } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
+                $value = toxbyte($row[$key]);
+            } else {
+                $value = $row[$key];
+            }
+        }
+        
+        $data1[$key]["Daily"] = $value;
+    }
+    
+    $data2 = array(
+                    "Expiration" => "(n/a)",
+                    "Session-Timeout" => "(n/a)",
+                    "Idle-Timeout" => "(n/a)",
+                  );
     
     /*
      *********************************************************************************************************
@@ -155,8 +203,9 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $userExpiration = (isset($row['Expiration'])) ? $row['Expiration'] : "(n/a)";
-
+    if (isset($row['Expiration'])) {
+        $data2["Expiration"] = $row['Expiration'];
+    }
 
     /*
      *********************************************************************************************************
@@ -168,8 +217,9 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $userSessionTimeout = (isset($row['Session-Timeout'])) ? $row['Session-Timeout'] : "(n/a)";
-
+    if (isset($row['Session-Timeout'])) {
+        $data2["Session-Timeout"] = $row['Session-Timeout'];
+    }
 
     /*
      *********************************************************************************************************
@@ -187,104 +237,61 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $userIdleTimeout = (isset($row['Idle-Timeout'])) ? $row['Idle-Timeout'] : "(n/a)";
-    
+    if (isset($row['Idle-Timeout'])) {
+        $data2["Idle-Timeout"] = $row['Idle-Timeout'];
+    }
+
     include('library/closedb.php');
     
     if ($drawTable == 1) {
-        $href = "javascript:toggleShowDiv('divSubscriptionAnalysis')";
-    
-        printf('
-<table border="0" class="table1" style="margin: 10px auto">
-    <thead>
-        <tr>
-            <th colspan="10" align="left">
-                <a class="table" href="%s">
-                    Subscription Analysis
-                </a>
-            </th>
-        </tr>
-    </thead>
-</table>' . "\n", $href);
+
+        // print headings
+        $labels = array("", "Global", "Monthly", "Weekly", "Daily", );
         
-        echo '
-<div id="divSubscriptionAnalysis">
-    <table border="0" class="table1">
-        <thread>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Global</th>
-                <th scope="col">Monthly</th>
-                <th scope="col">Weekly</th>
-                <th scope="col">Daily</th>
-            </tr> 
-        </thread>' . "\n";
+        printf('<button class="accordion accordion-active" type="button">%s</button>', "Subscription Analysis");
+        echo '<div class="panel" style="display: block">';
 
-        echo "
-        <tbody>
-            <tr>
-                <th>Session Used</th>
-                <td>$userSumMaxAllSession</td>
-                <td>$userSumMaxMonthlySession</td>
-                <td>$userSumMaxWeeklySession</td>
-                <td>$userSumMaxDailySession</td>
-            </tr>
-    
-            <tr>
-                <th>Session Download</th>
-                <td>$userSumDownload</td>
-                <td>$userSumMonthlyDownload</td>
-                <td>$userSumWeeklyDownload</td>
-                <td>$userSumDailyDownload</td>
-            </tr>
-    
-            <tr>
-                <th>Session Upload</th>
-                <td>$userSumUpload</td>
-                <td>$userSumMonthlyUpload</td>
-                <td>$userSumWeeklyUpload</td>
-                <td>$userSumDailyUpload</td>
-            </tr>
-    
-            <tr>
-                <th>Session Traffic (Up+Down)</th>
-                <td>$userSumAllTraffic</td>
-                <td>$userSumMonthlyTraffic</td>
-                <td>$userSumWeeklyTraffic</td>
-                <td>$userSumDailyTraffic</td>
-            </tr>
-
-            <tr>
-                <th>Logins</th>
-                <td>$userAllLogins</td>
-                <td>$userMonthlyLogins</td>
-                <td>$userWeeklyLogins</td>
-                <td>$userDailyLogins</td>
-            </tr>
-        </tbody>
-    </table>" . "\n";
-    
-    printf('
-    <table border="0" class="table1" style="margin: 10px auto">
-        <tbody>
-            <tr>
-                <th scope="col" align="right">Expiration</th>
-                <td scope="col" align="left">%s</td>
-            </tr>
+        echo '<table>'
+           . '<tr>';
+        
+        echo '<th style="width: 25%"></th>';
+        foreach ($labels as $label) {
+            if (empty($label)) {
+                continue;
+            }
             
-            <tr>
-                <th scope="col" align="right">Session-Timeout</th>
-                <td scope="col" align="left">%s</td>
-            </tr>
+            $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+            printf('<th>%s</th>', $label);
+        }
+        
+        echo '</tr>';
+        
+        // print other lines
+        foreach ($data1 as $arr) {
+            echo '<tr>';
             
-            <tr>
-                <th scope="col" align="right">Idle-Timeout</th>
-                <td scope="col" align="left">%s</td>
-            </tr>
-        </tbody>
-    </table>
-</div>', $userExpiration, $userSessionTimeout, $userIdleTimeout);
-
+            printf('<th style="width: 25%%;">%s</th>', $arr["Label"]);
+            for ($i = 1; $i < count($labels); $i++) {
+                $label = $labels[$i];
+                printf('<td>%s</td>', htmlspecialchars($arr[$label], ENT_QUOTES, 'UTF-8'));
+            }
+            
+            echo '</tr>';
+        }
+        
+        echo '</table>';
+        
+        // print other table
+        echo '<table>';
+        
+        foreach ($data2 as $label => $value) {
+            $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+            $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>', $label, $value);
+        }
+        
+        echo '</table>'
+           . '</div>';
     }
 }
 
@@ -320,15 +327,25 @@ function userPlanInformation($username, $drawTable) {
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $planName = empty($row['planName']) ? "(n/a)" : $row['planName'];
-    $planRecurringPeriod = empty($row['planRecurringPeriod']) ? "(n/a)" :$row['planRecurringPeriod'];  
-    $planTimeType = empty($row['planTimeType']) ? "(n/a)" : $row['planTimeType'];
+    $data2 = array(
+                    "planName" => array( "Label" => "Plan Name", "Value" => "(n/a)", ),
+                    "planRecurringPeriod" => array( "Label" => "Plan Recurring Period", "Value" => "(n/a)", ),
+                    "planTimeType" => array( "Label" => "Plan Time Type", "Value" => "(n/a)", ),
+                    "planBandwidthDown" => array( "Label" => "Plan Bandwidth Download", "Value" => "(n/a)", ),
+                    "planBandwidthUp" => array( "Label" => "Plan Bandwidth Upload", "Value" => "(n/a)", ),
+                 );
+    $fields = array_keys($data2);
+    
+    foreach ($fields as $field) {
+        if (!empty($row[$field])) {
+            $data2[$field]["Value"] = $row[$field];
+        }
+    }
+
+    
     $planTimeBank = empty($row['planTimeBank']) ? 0 : $row['planTimeBank'];
         
-    $planBandwidthUp = (isset($row['planBandwidthUp'])) ? $row['planBandwidthUp'] : "(n/a)";
-    $planBandwidthDown = (isset($row['planBandwidthDown'])) ? $row['planBandwidthDown'] : "(n/a)";
     $planTrafficTotal = (isset($row['planTrafficTotal'])) ? $row['planTrafficTotal'] : "(n/a)";
-
     $planTrafficDown = (isset($row['planTrafficDown'])) ? $row['planTrafficDown'] : 0;
     $planTrafficUp = (isset($row['planTrafficUp'])) ? $row['planTrafficUp'] : 0;
 
@@ -347,6 +364,15 @@ function userPlanInformation($username, $drawTable) {
     $trafficDownDiff = ($planTrafficDown != 0) ? ($planTrafficDown - $totalTrafficDown) : 0;
     $trafficUpDiff = ($planTrafficUp != 0) ? ($planTrafficUp - $totalTrafficUp) : 0;
     
+    
+    $table_header = array( "Item", "Allowed by plan", "Used", "Remainning", );
+    
+    $table_body = array(
+                            array( "Session Time", time2str($planTimeBank), time2str($totalTimeUsed), time2str($timeDiff), ),
+                            array( "Session Download", toxbyte($planTrafficDown), toxbyte($totalTrafficDown), toxbyte($trafficDownDiff), ),
+                            array( "Session Upload", toxbyte($planTrafficUp), toxbyte($totalTrafficUp), toxbyte($trafficUpDiff), ),
+                       );
+    
     include('library/closedb.php');
     
     /*
@@ -356,88 +382,45 @@ function userPlanInformation($username, $drawTable) {
      */    
     
     if ($drawTable == 1) {
-        $href = "javascript:toggleShowDiv('divPlanInformation')";
-    
-        printf('
-<table border="0" class="table1" style="margin: 10px auto">
-    <thead>
-        <tr>
-            <th colspan="10" align="left">
-                <a class="table" href="%s">
-                    Plan Information
-                </a>
-            </th>
-        </tr>
-    </thead>
-</table>' . "\n", $href);
+        printf('<button class="accordion accordion-active" type="button">%s</button>', "Plan Information");
+        echo '<div class="panel" style="display: block">';
 
-        echo '
-<div id="divPlanInformation" style="display:none;visibility:visible">
-    <table border="0" class="table1" style="margin: 10px auto">
-        <thread>
-            <tr>
-                <th scope="col">Item</th>
-                <th scope="col">Allowed by plan</th>
-                <th scope="col">Used </th>
-                <th scope="col">Remainning</th>
-            </tr>
-        </thread>' . "\n";
+        echo '<table>'
+           . '<tr>';
+        
+        // print header
+        foreach ($table_header as $label) {
+            $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+            printf('<th style="width: 25%%">%s</th>', $label);
+        }
+        
+        echo '</tr>';
+        
+        // print body
+        
+        foreach ($table_body as $arr) {
+            echo '<tr>';
+            foreach ($arr as $value) {
+                $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                printf('<td style="width: 25%%">%s</td>', $value);
+            }
+            echo '</tr>';
+        }
+        
+        echo '</table>';
 
-        echo "
-        <tbody>
-            <tr>
-                <td>Session Time</td>
-                <td>".time2str($planTimeBank)."</td>
-                <td>".time2str($totalTimeUsed)."</td>
-                <td>".time2str($timeDiff)."</td>
-            </tr>
-
-            <tr>
-                <td>Session Download</td>
-                <td>".toxbyte($planTrafficDown)."</td>
-                <td>".toxbyte($totalTrafficDown)."</td>
-                <td>".toxbyte($trafficDownDiff)."</td>
-            </tr>
-    
-            <tr>
-                <td>Session Upload</td>
-                <td>".toxbyte($planTrafficUp)."</td>
-                <td>".toxbyte($totalTrafficUp)."</td>
-                <td>".toxbyte($trafficUpDiff)."</td>
-            </tr>
-        </tbody>
-    </table>" . "\n";
-                
-
-        printf('
-    <table border="0" class="table1">
-        <tr>
-            <th scope="col" align="right">Plan Name</th> 
-            <td scope="col" align="left">%s</td>
-        </tr>
-
-        <tr>        
-            <th scope="col" align="right">Plan Recurring Period</th>
-            <td scope="col" align="left">%s</td>
-        </tr>
-
-        <tr>        
-            <th scope="col" align="right">Plan Time Type</th>
-            <td scope="col" align="left">%s</td>
-        </tr>
-
-        <tr>        
-            <th scope="col" align="right">Plan Bandwidth Up</th>
-            <td scope="col" align="left">%s</td>
-        </tr>
-
-        <tr>        
-            <th scope="col" align="right">Plan Bandwidth Down</th>
-            <td scope="col" align="left">%s</td>
-        </tr>
-    </table>
-</div>' . "\n", $planName, $planRecurringPeriod, $planTimeType, $planBandwidthUp, $planBandwidthDown);
-
+        // print other table
+        echo '<table>';
+        
+        foreach ($data2 as $field => $arr) {
+            $label = htmlspecialchars($arr["Label"], ENT_QUOTES, 'UTF-8');
+            $value = htmlspecialchars($arr["Value"], ENT_QUOTES, 'UTF-8');
+            printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>',
+                   $label, $value);
+        }
+        
+        echo '</table>'
+           . '</div>';
     }        
 }
 
@@ -465,81 +448,60 @@ function userConnectionStatus($username, $drawTable) {
     $sql = sprintf("SELECT AcctStartTime,
                            CASE WHEN AcctStopTime IS NULL THEN timestampdiff(SECOND,AcctStartTime,NOW())
                                 ELSE AcctSessionTime
-                            END AS AcctSessionTime, NASIPAddress, CalledStationId, FramedIPAddress, CallingStationId,
-                           AcctInputOctets, AcctOutputOctets
+                            END AS AcctSessionTime, AcctInputOctets, AcctOutputOctets,
+                           CONCAT(NASIPAddress, ' / %s: ', CalledStationId) AS NAS_IP_ID,
+                           CONCAT(FramedIPAddress, ' / %s: ', CallingStationId) AS User_IP_ID
                       FROM %s WHERE Username='%s'
-                     ORDER BY RadAcctId DESC LIMIT 1", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
+                     ORDER BY RadAcctId DESC LIMIT 1",
+                    "Station ID", "Station ID", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
+    
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
-    $userUpload = toxbyte($row['AcctInputOctets']);
-    $userDownload = toxbyte($row['AcctOutputOctets']);
-    $userLastConnected = $row['AcctStartTime'];
-    $userOnlineTime = time2str($row['AcctSessionTime']);
+    $data = array(
+                    "userStatus" => array( "Label" => "User Status", "Value" => $userStatus, ),
+                    "AcctStartTime" => array( "Label" => "Last Connection", "Value" => "(n/a)", ),
+                    "AcctSessionTime" => array( "Label" => "Online Time", "Value" => "(n/a)", ),
+                    
+                    "NAS_IP_ID" => array( "Label" => "Network Access Server (NAS)", "Value" => "(n/a)", ),
+                    "User_IP_ID" => array( "Label" => "User Device", "Value" => "(n/a)", ),
+                    
+                    "AcctInputOctets" => array( "Label" => "User Upload", "Value" => "(n/a)", ),
+                    "AcctOutputOctets" => array( "Label" => "User Download", "Value" => "(n/a)", ),                    
+                 );
 
-    $nasIPAddress = $row['NASIPAddress'];
-    $nasMacAddress = $row['CalledStationId'];
-    $userIPAddress = $row['FramedIPAddress'];
-    $userMacAddress = $row['CallingStationId'];
+    $fields = array_keys($data);
+    
+    foreach ($fields as $field) {
+        if (array_key_exists($field, $row) && !empty($row[$field])) {
+            
+            if ($field == "AcctSessionTime") {
+                $value = time2str($row[$field]);
+            } else if (in_array($field, array("AcctInputOctets", "AcctOutputOctets"))) {
+                $value = toxbyte($row[$field]);
+            } else {
+                $value = $row[$field];
+            }
+            
+            $data[$field]["Value"] = $value;
+        }
+    }
 
     include('library/closedb.php');
 
     if ($drawTable == 1) {
-        $href = "javascript:toggleShowDiv('divConnectionStatus')";
-    
-        printf('
-<table border="0" class="table1" style="margin: 10px auto">
-    <thead>
-        <tr>
-            <th colspan="10" align="left">
-                <a class="table" href="%s">
-                    Session Info
-                </a>
-            </th>
-        </tr>
-    </thead>
-</table>' . "\n", $href);
-
-        echo "
-<div id='divConnectionStatus' style='display:none;visibility:visible'>
-    <table border='0' class='table1' style='margin: 10px auto'>
-        <tr>        
-            <th scope='col' align='right'>User Status</th>
-            <td scope='col' align='left'>$userStatus</td>
-        </tr>
-
-        <tr>
-            <th scope='col' align='right'>Last Connection</th> 
-            <td scope='col' align='left'>$userLastConnected</td>
-        </tr>
-
-        <tr>
-            <th scope='col' align='right'>Online Time</th>
-            <td scope='col' align='left'>$userOnlineTime</td>
-        </tr>
-
-        <tr>
-            <th scope='col' align='right'>Server (NAS)</th>
-            <td scope='col' align='left'>$nasIPAddress (MAC: $nasMacAddress)</td>
-        </tr>
-
-        <tr>
-            <th scope='col' align='right'>User Workstation</th>
-            <td scope='col' align='left'>$userIPAddress (MAC: $userMacAddress)</td>
-        </tr>
-
-        <tr>
-            <th scope='col' align='right'>User Upload</th>
-            <td scope='col' align='left'>$userUpload</td>
-        </tr>
-
-        <tr>
-            <th scope='col' align='right'>User Download</th>
-            <td scope='col' align='left'>$userDownload</td>
-        </tr>
-    </table>
-</div>" . "\n";
-
+        printf('<button class="accordion accordion-active" type="button">%s</button>', "Session Information");
+        echo '<div class="panel" style="display: block">'
+           . '<table>';
+        foreach ($data as $field => $arr) {
+            $label = htmlspecialchars($arr["Label"], ENT_QUOTES, 'UTF-8');
+            $value = htmlspecialchars($arr["Value"], ENT_QUOTES, 'UTF-8');
+            printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>',
+                   $label, $value);
+        }
+        
+        echo '</table>'
+           . '</div>';
     }
 }
 

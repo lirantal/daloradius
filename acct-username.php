@@ -47,13 +47,16 @@
 
     //feed the sidebar variables
     $accounting_username = $username_enc;
-    
+
+    $extra_js = array(
+        "library/javascript/pages_common.js",
+    );
 
     // print HTML prologue
     $title = t('Intro','acctusername.php');
     $help = t('helpPage','acctusername');
 
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, array(), $extra_js);
     
     include("menu-accounting.php");
 
@@ -74,7 +77,7 @@
     $half_colspan = intval($colspan / 2);
     
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($acct_custom_query_options_all)))
+                in_array($_GET['orderBy'], array_keys($cols)))
              ? $_GET['orderBy'] : array_keys($cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
@@ -233,7 +236,10 @@ var tooltipObj = new DHTMLgoodies_formTooltip();
 tooltipObj.setTooltipPosition('right');
 tooltipObj.setPageBgColor('#EEEEEE');
 tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip()";
+tooltipObj.initFormFieldTooltip();
+
+window.onload = function() { setupAccordion() };
+";
     
     print_footer_and_html_epilogue($inline_extra_js);
 ?>
