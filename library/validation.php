@@ -41,6 +41,7 @@ define("LOOSE_IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){
 define("ALL_PRINTABLE_CHARS_REGEX", '/^[ -~]+$/');
 
 define("DB_TABLE_NAME_REGEX", '/^[a-zA-Z0-9_]+$/');
+define("ALLOWED_RANDOM_CHARS_REGEX", DB_TABLE_NAME_REGEX);
 
 // some parameters can be validated using a whitelist.
 // here we collect some useful whitelist.
