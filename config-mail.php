@@ -99,8 +99,6 @@
     }
 
     
-    print_r($invalid_input);
-    
     // print HTML prologue
     $title = t('Intro','configmail.php');
     $help = t('helpPage','configmail');
