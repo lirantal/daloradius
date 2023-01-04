@@ -25,7 +25,18 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+    $logQuery = "performed query for listing of records on page: ";
+    
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+    
     include_once('library/config_read.php');
+    
     include_once("lang/main.php");
     
     include("library/layout.php");
@@ -181,29 +192,15 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
 
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

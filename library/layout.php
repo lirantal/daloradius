@@ -461,6 +461,10 @@ function open_form($descriptor=array()) {
         echo ' disabled';
     }
     
+    if (array_key_exists('hidden', $descriptor) && $descriptor['hidden']) {
+        echo ' style="display: none"';
+    }
+    
     if (array_key_exists('action', $descriptor) && !empty($descriptor['action'])) {
         printf(' action="%s"', $descriptor['action']);
     }

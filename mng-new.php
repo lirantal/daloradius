@@ -483,7 +483,7 @@
             print_form_component($input_descriptor);
         }
         
-        close_fieldset($navkeys, 0);
+        close_fieldset();
         
         // open 1-st fieldset
         open_fieldset($fieldset1_descriptor);
