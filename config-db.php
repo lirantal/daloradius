@@ -53,6 +53,8 @@
                                     'CONFIG_DB_TBL_DALOBILLINGPLANS' => t('all','billingplans'), 
                                     'CONFIG_DB_TBL_DALOBILLINGRATES' => t('all','billingrates'), 
                                     'CONFIG_DB_TBL_DALOBILLINGHISTORY' => t('all','billinghistory'), 
+                                    'CONFIG_DB_TBL_DALOBATCHHISTORY' => t('button', 'BatchHistory'),
+                                    'CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES' => 'Billing Plans Profiles',
                                     'CONFIG_DB_TBL_DALOUSERBILLINFO' => t('all','billinginfo'), 
                                     'CONFIG_DB_TBL_DALOBILLINGINVOICE' => t('all','Invoice'), 
                                     'CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS' => t('all','InvoiceItems'), 
@@ -73,8 +75,6 @@
                                         'CONFIG_DB_PASS' => t('all','DatabasePass'),
                                         'CONFIG_DB_NAME' => t('all','DatabaseName'),
                                    );
-    
-    $tbl_name_regex = '^[a-zA-Z0-9_]+$';
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -98,7 +98,7 @@
 
             // validate table name
             foreach ($db_tbl_param_label as $param => $label) {
-                if (array_key_exists($param, $_POST) && isset($_POST[$param]) && preg_match($tbl_name_regex, $_POST[$param]) !== false) {
+                if (array_key_exists($param, $_POST) && isset($_POST[$param]) && preg_match(DB_TABLE_NAME_REGEX, $_POST[$param]) !== false) {
                     $configValues[$param] = $_POST[$param];
                 }
             }
@@ -191,7 +191,7 @@
                                         "name" => $name,
                                         "caption" => $caption,
                                         "value" => $configValues[$name],
-                                        "pattern" => $tbl_name_regex,
+                                        "pattern" => trim(DB_TABLE_NAME_REGEX, "/"),
                                         "type" => "text"
                                      );
     }
