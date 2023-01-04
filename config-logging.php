@@ -71,7 +71,7 @@
                         // this ensures that candidate_log_file starts with the log_path_prefix
                         substr($candidate_log_file, 0, strlen($log_path_prefix)) === $log_path_prefix &&
                         
-                        // this ensures that candidate_log_file does not contain ".."
+                        // this ensures that candidate_backup_file does not contain any ".." sequence
                         strpos($candidate_log_file, "..") === false &&
                         
                         // this ensures that candidate_log_file ends with the log_file_suffix

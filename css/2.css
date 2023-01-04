@@ -362,7 +362,7 @@ fieldset textarea {
 
 fieldset input[type=text], fieldset input[type=number],
 fieldset input[type=date], fieldset input[type=password],
-fieldset select {
+fieldset input[type=email], fieldset select {
     padding: 5px;
     margin: 4px;
     border: 1px solid var(--rich-black);
@@ -383,7 +383,7 @@ fieldset select {
 
 fieldset input[type=text]:disabled, fieldset input[type=numer]:disabled,
 fieldset input[type=date]:disabled, fieldset input[type=password]:disabled,
-fieldset select:disabled {
+fieldset input[type=email]:disabled, fieldset select:disabled {
     background-color: #eeeeee;
     border: 1px solid gray;
 }

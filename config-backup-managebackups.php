@@ -36,7 +36,29 @@
     include("library/layout.php");
     include_once("include/management/functions.php");
 
-    $file = (array_key_exists('file', $_POST) && isset($_POST['file'])) ? $_POST['file'] : "";
+    // validate path
+    $backup_path_prefix = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] . "/backup";
+    $backup_file_suffix = ".sql";
+
+    $file = "";
+    if (array_key_exists('file', $_POST) && !empty(trim($_POST['file']))) {
+        $candidate_backup_file = trim($_POST['file']);
+        
+        if (
+                // this ensures that candidate_backup_file does not contain any ".." sequence
+                strpos($candidate_backup_file, "..") === false &&
+                
+                // this ensures that candidate_backup_file does not contain any "/" char
+                strpos($candidate_backup_file, "/") === false &&
+                
+                // this ensures that candidate_backup_file ends with the backup_file_suffix
+                substr($candidate_backup_file, -strlen($backup_file_suffix)) === $backup_file_suffix
+           ) {
+            
+            $file = $candidate_backup_file;
+        }
+        
+    }
 
     $backupAction = (array_key_exists('action', $_POST) && isset($_POST['action']) &&
                      in_array($_POST['action'], array_keys($valid_backupActions))) ? $_POST['action'] : "";
@@ -63,15 +85,14 @@
                ? strtolower($_GET['orderType']) : "asc";
 
     // init backup paths
-    $filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] . "/backup";
-    $fileName = sprintf("%s/%s", $filePath, $file);
+    $fileName = sprintf("%s/%s", $backup_path_prefix, $file);
     $baseFile = basename($fileName);
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             
-            if (!empty($file) && !empty($backupAction) && is_dir($filePath) && is_readable($fileName)) {
+            if (!empty($file) && !empty($backupAction) && is_dir($backup_path_prefix) && is_readable($fileName)) {
         
                 $fileContents = file_get_contents($fileName);
                 $fileLen = strlen($fileContents);
@@ -163,6 +184,9 @@
                     $logAction .= "$failureMsg on page: ";
                 }
 
+            } else {
+                $failureMsg = sprintf("The requested action cannot be performed");
+                $logAction .= "$failureMsg on page: ";
             }
 
 
@@ -191,29 +215,29 @@
     // get backup info
     $backupInfo = array();
     
-    if (is_dir($filePath)) {
-        $files = scandir($filePath);
+    if (is_dir($backup_path_prefix)) {
+        $files = scandir($backup_path_prefix);
         if ($orderType == "desc") {
             rsort($files);
         }
     
         $skipList = array( ".", "..", ".svn", ".git" );
-        foreach ($files as $file) {
+        foreach ($files as $this_file) {
             
-            if (in_array($file, $skipList)) {
+            if (in_array($this_file, $skipList)) {
                 continue;
             }
 
-            list($junk, $date, $time) = explode("-", $file);
+            list($junk, $date, $time) = explode("-", $this_file);
             
             $fileDate = substr($date, 0, 4) . "-" . substr($date, 4, 2) . "-" . substr($date, 6, 2);
             $fileTime = substr($time, 0, 2) . ":" . substr($time, 2, 2) . ":" . substr($time, 4, 2);
 
-            $fileSize = filesize($filePath."/".$file);
+            $fileSize = filesize(sprintf("%s/%s", $backup_path_prefix, $this_file));
             
             $backupInfo[] = array(
                                     sprintf("%s, %s", $fileDate, $fileTime),
-                                    $file,
+                                    $this_file,
                                     toxbyte($fileSize),
                                  );
             

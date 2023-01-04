@@ -25,28 +25,80 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
+    
+    // init logging variables
     $log = "visited page: ";
-
+    $logAction = "";
+    $logDebugSQL = "";
+    
     include_once("lang/main.php");
-
-    if (isset($_REQUEST['submit'])) {
-
-        if (isset($_REQUEST['config_mail_smtpaddr']))
-            $configValues['CONFIG_MAIL_SMTPADDR'] = $_REQUEST['config_mail_smtpaddr'];
-        
-        if (isset($_REQUEST['config_mail_smtpport']))
-            $configValues['CONFIG_MAIL_SMTPPORT'] = $_REQUEST['config_mail_smtpport'];
-            
-        if (isset($_REQUEST['config_mail_smtp_fromemail']))
-            $configValues['CONFIG_MAIL_SMTPFROM'] = $_REQUEST['config_mail_smtp_fromemail'];
-        
-        include ("library/config_write.php");
-    }    
-
+    include("library/validation.php");
     include("library/layout.php");
 
+    $param_label = array(
+                            'CONFIG_MAIL_SMTPADDR' => t('all','SMTPServerAddress'),
+                            'CONFIG_MAIL_SMTPPORT' => t('all','SMTPServerPort'),
+                            'CONFIG_MAIL_SMTPFROM' => t('all','SMTPServerFromEmail'),
+                        );
+
+    $invalid_input = array();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            // validate email
+            if (
+                    array_key_exists('CONFIG_MAIL_SMTPFROM', $_POST) &&
+                    !empty(trim($_POST['CONFIG_MAIL_SMTPFROM'])) &&
+                    filter_var(trim($_POST['CONFIG_MAIL_SMTPFROM']), FILTER_VALIDATE_EMAIL)
+               ) {
+                $configValues['CONFIG_MAIL_SMTPFROM'] = trim($_POST['CONFIG_MAIL_SMTPFROM']);
+            } else {
+                $invalid_input['CONFIG_MAIL_SMTPFROM'] = $param_label['CONFIG_MAIL_SMTPFROM'];
+            }
+            
+            // validate port
+            if (
+                    array_key_exists('CONFIG_MAIL_SMTPPORT', $_POST) &&
+                    !empty(trim($_POST['CONFIG_MAIL_SMTPPORT'])) &&
+                    intval(trim($_POST['CONFIG_MAIL_SMTPPORT'])) >= 0 &&
+                    intval(trim($_POST['CONFIG_MAIL_SMTPPORT'])) <= 65535
+               ) {
+                $configValues['CONFIG_MAIL_SMTPPORT'] = intval(trim($_POST['CONFIG_MAIL_SMTPPORT']));
+            } else {
+                $invalid_input['CONFIG_MAIL_SMTPPORT'] = $param_label['CONFIG_MAIL_SMTPPORT'];
+            }
+            
+            // validate ip address/hostname
+            if (
+                    array_key_exists('CONFIG_MAIL_SMTPADDR', $_POST) &&
+                    !empty(trim($_POST['CONFIG_MAIL_SMTPADDR'])) &&
+                    (
+                        preg_match(HOSTNAME_REGEX, trim($_POST['CONFIG_MAIL_SMTPADDR'])) ||
+                        preg_match(IP_REGEX, trim($_POST['CONFIG_MAIL_SMTPADDR']))
+                    )
+               ) {
+                $configValues['CONFIG_MAIL_SMTPADDR'] = trim($_POST['CONFIG_MAIL_SMTPADDR']);
+            } else {
+                $invalid_input['CONFIG_MAIL_SMTPADDR'] = $param_label['CONFIG_MAIL_SMTPADDR'];
+            }
+            
+            if (count($invalid_input) > 0) {
+                $failureMsg = sprintf("Invalid input: [%s]", implode(", ", array_values($invalid_input)));
+                $logAction .= "$failureMsg on page: ";
+            } else {
+                include("library/config_write.php");
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+
+    
     // print HTML prologue
     $title = t('Intro','configmail.php');
     $help = t('helpPage','configmail');
@@ -60,50 +112,66 @@
     
     include_once('include/management/actionMessages.php');
 
-?>
+    $fieldset0_descriptor = array(
+                                    "title" => t('title','Settings')
+                                 );
 
-<form name="mailsettings" method="POST">
-    <fieldset>
-        <h302><?= t('title','Settings'); ?></h302>
-        
-        <br/>
+    $input_descriptors0 = array();
+    
+    
+    $input_descriptors0[] = array(
+                                        "type" => "text",
+                                        "caption" => t('all','SMTPServerAddress'),
+                                        "name" => 'CONFIG_MAIL_SMTPADDR',
+                                        "value" => (!array_key_exists('CONFIG_MAIL_SMTPADDR', $invalid_input)
+                                                    ? $configValues['CONFIG_MAIL_SMTPADDR'] : "")
+                                     );
+    
+    $input_descriptors0[] = array(
+                                        "type" => "number",
+                                        "caption" => t('all','SMTPServerPort'),
+                                        "name" => 'CONFIG_MAIL_SMTPPORT',
+                                        "value" => (!array_key_exists('CONFIG_MAIL_SMTPPORT', $invalid_input)
+                                                    ? $configValues['CONFIG_MAIL_SMTPPORT'] : ""),
+                                        "min" => 0,
+                                        "max" => 65535
+                                 );
+    
+    $input_descriptors0[] = array(
+                                        "type" => "email",
+                                        "caption" => t('all','SMTPServerFromEmail'),
+                                        "name" => 'CONFIG_MAIL_SMTPFROM',
+                                        "value" => (!array_key_exists('CONFIG_MAIL_SMTPFROM', $invalid_input)
+                                                    ? $configValues['CONFIG_MAIL_SMTPFROM'] : ""),
+                                     );
+    
+    $input_descriptors0[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-        <ul>
+    $input_descriptors0[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
 
-            <li class="fieldset">
-                <label for="config_mail_smtpaddr" class="form"><?= t('all','SMTPServerAddress') ?></label>
-                <input type="text" value="<?= $configValues['CONFIG_MAIL_SMTPADDR'] ?>" name="config_mail_smtpaddr">
-            </li>
-
-            <li class="fieldset">
-                <label for="config_mail_smtpport" class="form"><?= t('all','SMTPServerPort') ?></label>
-                <input type="number" min="0" max="65535" value="<?= $configValues['CONFIG_MAIL_SMTPPORT'] ?>" name="config_mail_smtpport">
-            </li>
-
-            <li class="fieldset">
-                <label for="config_mail_smtp_fromemail" class="form"><?= t('all','SMTPServerFromEmail') ?></label>
-                <input type="text" value="<?= $configValues['CONFIG_MAIL_SMTPFROM'] ?>" name="config_mail_smtp_fromemail">
-            </li>
-
-
-            <li class="fieldset">
-                <br/><hr><br/>
-                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
-            </li>
-        </ul>
-    </fieldset>
-</form>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    open_form();
+    
+    // open 0-th fieldset
+    open_fieldset($fieldset0_descriptor);
+    
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>
