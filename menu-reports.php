@@ -52,7 +52,7 @@ include_once("include/management/autocomplete.php");
                             <input name="usernameOnline" type="text" id="usernameOnline"
                                 <?= ($autoComplete) ? 'autocomplete="off"' : "" ?> placeholder="<?= t('all','Username') ?>"
                                 tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
-                                value="<?= (isset($usernameOnline)) ? $usernameOnline : "" ?>" tabindex="1">
+                                value="<?= (isset($username_enc)) ? $username_enc : "" ?>" tabindex="1">
                         </form>
                     </li>                            
 
@@ -66,7 +66,7 @@ include_once("include/management/autocomplete.php");
                             <input name="usernameLastConnect" type="text" id="usernameLastConnect"
                                 <?= ($autoComplete) ? 'autocomplete="off"' : "" ?> placeholder="<?= t('all','Username') ?>"
                                 tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
-                                value="<?= (isset($usernameLastConnect)) ? $usernameLastConnect : "" ?>" tabindex="2">
+                                value="<?= (isset($username_enc)) ? $username_enc : "" ?>" tabindex="2">
                             
                             <select class="generic" name="radiusreply" tabindex="3">
                                 <option value="Any">Any</option>
@@ -112,7 +112,7 @@ include_once("include/management/autocomplete.php");
                                 value="<?= (isset($limit) && intval($limit) > 0) ? $limit : "50" ?>" tabindex="8">
                             
                             <label for="usernameFilter">Username Filter</label>
-                            <input name="username" type="text" id="usernameFilter" value="<?= (isset($username)) ? $username : "" ?>"
+                            <input name="username" type="text" id="usernameFilter" value="<?= (isset($username_enc)) ? $username_enc : "" ?>"
                                  placeholder="<?= t('all','Username') ?>" tabindex="9">
             
                             <label style="user-select: none" for="startdate_topuser"><?= t('all','StartingDate') ?></label>

@@ -177,5 +177,7 @@ $input_descriptors4[] = array( 'caption' => t('all','OrderTaker'), 'type' => 'te
 </fieldset>
 
 <?php
-    echo $customApplyButton;
+    if (isset($customApplyButton)) {
+        echo $customApplyButton;
+    }
 ?>

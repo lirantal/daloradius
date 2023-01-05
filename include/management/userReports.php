@@ -171,20 +171,22 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
     
-    foreach ($keys as $key) {
-        $value = "(n/a)";
-        
-        if (isset($row[$key])) {
-            if ($key == "SUMSession") {
-                $value = time2str($row[$key]);
-            } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
-                $value = toxbyte($row[$key]);
-            } else {
-                $value = $row[$key];
+    if ($row) {
+        foreach ($keys as $key) {
+            $value = "(n/a)";
+            
+            if (isset($row[$key])) {
+                if ($key == "SUMSession") {
+                    $value = time2str($row[$key]);
+                } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
+                    $value = toxbyte($row[$key]);
+                } else {
+                    $value = $row[$key];
+                }
             }
+            
+            $data1[$key]["Daily"] = $value;
         }
-        
-        $data1[$key]["Daily"] = $value;
     }
     
     $data2 = array(
