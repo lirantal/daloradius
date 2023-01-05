@@ -84,18 +84,38 @@
         }
     }
 
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
+        $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", "", trim($_POST['username']))))
+                  ? str_replace("%", "", trim($_POST['username'])) : "";
+    } else {
+        $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['username']))))
+                  ? str_replace("%", "", trim($_REQUEST['username'])) : "";
+    }
+
+    // check if this user exists
+    $exists = user_exists($dbSocket, $username);
+
+    if (!$exists) {
+        // we reset the username if it does not exist
+        $username = "";
+    }
+
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+    //feed the sidebar variables
+    $edit_username = $username_enc;
+
+    // from now on we can assume that $username is valid
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
+
             // required later
             $currDate = date('Y-m-d H:i:s');
             $currBy = $operator;
-            
-            // TODO validate user input
-            $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
-                      ? str_replace("%", "", trim($_POST['username'])) : "";
 
+            // TODO validate user input
             $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
             $newgroups = (array_key_exists('newgroups', $_POST) && isset($_POST['newgroups'])) ? $_POST['newgroups'] : array();
             $groups_priority = (array_key_exists('groups_priority', $_POST) && isset($_POST['groups_priority'])) ? $_POST['groups_priority'] : array();
@@ -136,7 +156,7 @@
             $bi_creditcardtype = (array_key_exists('bi_creditcardtype', $_POST) && isset($_POST['bi_creditcardtype'])) ? $_POST['bi_creditcardtype'] : "";
             $bi_creditcardexp = (array_key_exists('bi_creditcardexp', $_POST) && isset($_POST['bi_creditcardexp'])) ? $_POST['bi_creditcardexp'] : "";
             $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
-        
+
             $bi_lead = (array_key_exists('bi_lead', $_POST) && isset($_POST['bi_lead'])) ? $_POST['bi_lead'] : "";
             $bi_coupon = (array_key_exists('bi_coupon', $_POST) && isset($_POST['bi_coupon'])) ? $_POST['bi_coupon'] : "";
             $bi_ordertaker = (array_key_exists('bi_ordertaker', $_POST) && isset($_POST['bi_ordertaker'])) ? $_POST['bi_ordertaker'] : "";
@@ -148,9 +168,9 @@
             $bi_postalinvoice = (array_key_exists('bi_postalinvoice', $_POST) && isset($_POST['bi_postalinvoice'])) ? $_POST['bi_postalinvoice'] : "";
             $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
             $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
-
+            
             $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
-
+            
             $planName = (array_key_exists('planName', $_POST) && isset($_POST['planName'])) ? trim($_POST['planName']) : "";
             $oldplanName = (array_key_exists('oldplanName', $_POST) && isset($_POST['oldplanName'])) ? trim($_POST['oldplanName']) : "";
 
@@ -315,8 +335,8 @@
                 $logAction .= sprintf("Successfully updated user %s on page: ", $username);
             
             } else { // if username != ""
-                $failureMsg = "no user was entered, please specify a username to edit";
-                $logAction .= "Failed updating attributes for user [$username] on page: ";
+                $failureMsg = "You have specified an empty or invalid username";
+                $logAction .= "empty or invalid username on page: ";
             }
         
         } else {
@@ -325,18 +345,12 @@
             $logAction .= "$failureMsg on page: ";
         }
         
-    } else {
-        $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-                  ? str_replace("%", "", trim($_GET['username'])) : "";
     }
 
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-    //feed the sidebar variables
-    $edit_username = $username_enc;
 
     if (empty($username)) {
-        $failureMsg = "no user was entered, please specify a username to edit";
+        $failureMsg = "You have specified an empty or invalid username";
+        $inline_extra_js = "";
     } else {
 
         /* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity */
@@ -381,6 +395,28 @@
                 $bi_billdue, $bi_postalinvoice, $bi_faxinvoice, $bi_emailinvoice, $bi_creationdate, $bi_creationby,
                 $bi_updatedate, $bi_updateby
             ) = $res->fetchRow();
+            
+        // inline extra javascript
+        $inline_extra_js = sprintf("var strUsername = 'username=%s';\n", $username_enc);
+    
+        $inline_extra_js .= '
+function disableUser() {
+    if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
+        ajaxGeneric("include/management/userOperations.php", "userDisable=true", "returnMessages", strUsername);
+        return true;
+    }
+}
+
+function enableUser() {
+    if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
+        ajaxGeneric("include/management/userOperations.php", "userEnable=true", "returnMessages", strUsername);
+        return true;
+    }
+}
+
+window.onload = function(){
+    ajaxGeneric("include/management/userOperations.php", "checkDisabled=true", "returnMessages", strUsername);
+};' . "\n";
     }
 
     include('library/closedb.php');
@@ -405,27 +441,7 @@
         "library/javascript/tabs.js"
     );
     
-    // inline extra javascript
-    $inline_extra_js = sprintf("var strUsername = 'username=%s';\n", $username_enc);
     
-    $inline_extra_js .= '
-function disableUser() {
-    if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
-        ajaxGeneric("include/management/userOperations.php", "userDisable=true", "returnMessages", strUsername);
-        return true;
-    }
-}
-
-function enableUser() {
-    if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
-        ajaxGeneric("include/management/userOperations.php", "userEnable=true", "returnMessages", strUsername);
-        return true;
-    }
-}
-
-window.onload = function(){
-    ajaxGeneric("include/management/userOperations.php", "checkDisabled=true", "returnMessages", strUsername);
-};' . "\n";
     
     $title = t('Intro','mngedit.php');
     $help = t('helpPage','mngedit');
@@ -441,13 +457,15 @@ window.onload = function(){
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
-    // ajax return div
-    echo '<div id="returnMessages"></div>';
-
     include_once('include/management/actionMessages.php');
-    include('include/management/populate_selectbox.php');
     
+    $inline_extra_js = "";
     if (!empty($username)) {
+    
+        // ajax return div
+        echo '<div id="returnMessages"></div>';
+        include('include/management/populate_selectbox.php');
+    
         // we have more than one form in this page so we can reuse many times the same csrf_token value
         $csrf_token = dalo_csrf_token();
         
@@ -858,7 +876,10 @@ window.onload = function(){
                 }
             }
         }
+        
         include('library/closedb.php');
+
+        $inline_extra_js = "window.onload = function() { setupAccordion() };";
 
     }
     
@@ -866,7 +887,6 @@ window.onload = function(){
 
     include('include/config/logging.php');
     
-    $inline_extra_js = "window.onload = function() { setupAccordion() };";
     print_footer_and_html_epilogue($inline_extra_js);
 
 ?>
