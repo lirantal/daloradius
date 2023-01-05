@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-bill-invoice.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -44,7 +44,7 @@ include_once("include/management/populate_selectbox.php");
                 
                 <h3>Invoice Management</h3>
                 <ul class="subnav">
-	
+    
                     <li>
                         <a href="javascript:document.invoicelist.submit();"><b>&raquo;</b><?= t('button','ListInvoices') ?></a>
                         
@@ -53,8 +53,8 @@ include_once("include/management/populate_selectbox.php");
                                 tooltipText="<?= t('Tooltip','Username') ?><br>"
                                 value="<?= (isset($edit_invoiceUsername)) ? $edit_invoiceUsername : "" ?>">
 <?php
-				$edit_invoice_status_id = (isset($edit_invoice_status_id)) ? $edit_invoice_status_id : "";
-				populate_invoice_status_id("Select Invoice Status","invoice_status_id","form", '', $edit_invoice_status_id);
+                $edit_invoice_status_id = (isset($edit_invoice_status_id)) ? $edit_invoice_status_id : "";
+                populate_invoice_status_id("Select Invoice Status","invoice_status_id","form", '', $edit_invoice_status_id);
 ?>
                         </form>
                     </li>

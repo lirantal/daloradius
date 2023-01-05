@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-hotspot.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -47,10 +47,10 @@ include_once("include/menu/accounting-subnav.php");
                         <form name="accthotspot" action="acct-hotspot-accounting.php" method="POST" class="sidebar">
 <?php
 
-	include('library/opendb.php');
+    include('library/opendb.php');
 
-	$sql = sprintf("SELECT name FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-	$res = $dbSocket->query($sql);
+    $sql = sprintf("SELECT name FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
     
     if ($numrows > 0) {
@@ -61,9 +61,9 @@ include_once("include/menu/accounting-subnav.php");
         }
         echo '</select><!-- .generic -->';
     }
-	include('library/closedb.php');
-	
-?>	
+    include('library/closedb.php');
+    
+?>    
                         </form>
                     </li>
 

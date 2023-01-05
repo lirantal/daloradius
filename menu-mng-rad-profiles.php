@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-profiles.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -35,7 +35,7 @@ $m_active = "Management";
 
 <?php
     include_once("include/menu/menu-items.php");
-	include_once("include/menu/management-subnav.php");
+    include_once("include/menu/management-subnav.php");
     include_once("include/management/autocomplete.php");
 ?>
 
@@ -102,12 +102,12 @@ $m_active = "Management";
             </div><!-- #sidebar -->
 
 <?php 
-	if ($autoComplete) {
+    if ($autoComplete) {
 ?>
 <script>
     /** Making usernameEdit interactive **/
     autoComEdit = new DHTMLSuite.autoComplete();
 </script>
 <?php
-	} 
+    } 
 ?>

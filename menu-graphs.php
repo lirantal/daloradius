@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-graphs.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -35,9 +35,9 @@ $m_active = "Graphs";
 
 
 <?php
-	include_once("include/menu/menu-items.php");
-	include_once("include/menu/graphs-subnav.php");
-	include_once("include/management/autocomplete.php");
+    include_once("include/menu/menu-items.php");
+    include_once("include/menu/graphs-subnav.php");
+    include_once("include/management/autocomplete.php");
     
     $timeunit_options = array(
                                 "daily" => t('all','Daily'),

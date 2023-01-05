@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-groups.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -147,11 +147,11 @@ include_once("include/management/autocomplete.php");
     tooltipObj.initFormFieldTooltip();
     
 <?php 
-	if ($autoComplete) {
+    if ($autoComplete) {
 ?>
     var autoComEdit = new DHTMLSuite.autoComplete();
 
 <?php
-	} 
+    } 
 ?>
 </script>

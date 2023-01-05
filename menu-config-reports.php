@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-config-reports.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 

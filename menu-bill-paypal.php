@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-bill-paypal.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -74,7 +74,7 @@ include_once("include/menu/billing-subnav.php");
                                 <h109><?= t('all','PayerEmail'); ?></h109><br>
                                 <input name="payer_email" type="text"
                                     value="<?= (isset($billing_paypal_payeremail)) ? $billing_paypal_payeremail : "*" ?>">
-			
+            
                                 <br><br>
 
                                 <h109><?= t('all','PaymentStatus'); ?></h109><br>
