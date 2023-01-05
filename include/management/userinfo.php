@@ -169,5 +169,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/userinfo.php') !== false) 
 </fieldset>
 
 <?php
-    echo $customApplyButton;
+    if (isset($customApplyButton)) {
+        echo $customApplyButton;
+    }
 ?>

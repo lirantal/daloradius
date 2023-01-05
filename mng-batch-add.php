@@ -42,7 +42,7 @@
     // if cleartext passwords are not allowed, 
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'cleartext') {
+        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'yes') {
         $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
         $valid_passwordTypes = array_values($valid_passwordTypes);
     }

@@ -24,10 +24,17 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+    
+    // init logging variables
     $log = "visited page: ";
-
+    $logAction = "";
+    $logDebugSQL = "";
+    
     include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     $param_label = array(
                             'CONFIG_IFACE_PASSWORD_HIDDEN' => t('all','PasswordHidden'),
@@ -35,42 +42,49 @@
                             'CONFIG_IFACE_AUTO_COMPLETE' => t('all','AjaxAutoComplete')
                         );
                   
-    // if the form has been submitted we validate and store the configuration
-    if (array_key_exists('submit', $_POST) && isset($_POST['submit'])) {
-        
-        foreach ($param_label as $param => $label) {
-            if (array_key_exists($param, $_POST) && isset($_POST[$param]) &&
-                in_array(strtolower($_POST[$param]), array("yes", "no"))) {
-                $configValues[$param] = $_POST[$param];
-            }
-        }
-        
-        if (array_key_exists('CONFIG_IFACE_TABLES_LISTING_NUM', $_POST) && isset($_POST['CONFIG_IFACE_TABLES_LISTING_NUM']) &&
-            intval($_POST['CONFIG_IFACE_TABLES_LISTING_NUM']) > 0 && intval($_POST['CONFIG_IFACE_TABLES_LISTING_NUM']) <= 100) {
-            $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = intval($_POST['CONFIG_IFACE_TABLES_LISTING_NUM']);
-        }
-        
-        include("library/config_write.php");
-    }
-                        
+    $invalid_input = array();
 
-    if (isset($_REQUEST['submit'])) {
-
-        if (isset($_REQUEST['config_iface_pass_hidden']))
-            $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = $_REQUEST['config_iface_pass_hidden'];
-        if (isset($_REQUEST['config_iface_tableslisting']))
-            $configValues['CONFIG_IFACE_TABLES_LISTING'] = $_REQUEST['config_iface_tableslisting'];
-        if (isset($_REQUEST['config_iface_tableslisting_num']))
-            $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = $_REQUEST['config_iface_tableslisting_num'];
-        if (isset($_REQUEST['config_iface_auto_complete']))
-            $configValues['CONFIG_IFACE_AUTO_COMPLETE'] = $_REQUEST['config_iface_auto_complete'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             
-            include ("library/config_write.php");
+            // validate yes/no params
+            foreach ($param_label as $param => $label) {
+                if (array_key_exists($param, $_POST) && !empty(trim($_POST[$param])) &&
+                    in_array(strtolower(trim($_POST[$param])), array("yes", "no"))) {
+                    $configValues[$param] = $_POST[$param];
+                } else {
+                    $invalid_input[$param] = $param_label[$param];
+                }
+            }
+            
+            // validate other param
+            if (
+                    array_key_exists('CONFIG_IFACE_TABLES_LISTING', $_POST) &&
+                    !empty(trim($_POST['CONFIG_IFACE_TABLES_LISTING'])) &&
+                    intval(trim($_POST['CONFIG_IFACE_TABLES_LISTING'])) >= 1 &&
+                    intval(trim($_POST['CONFIG_IFACE_TABLES_LISTING'])) <= 100
+               ) {
+                $configValues['CONFIG_IFACE_TABLES_LISTING'] = intval(trim($_POST['CONFIG_IFACE_TABLES_LISTING']));
+            } else {
+                $invalid_input['CONFIG_IFACE_TABLES_LISTING'] = t('all','TablesListing');
+            }
+            
+            
+            if (count($invalid_input) > 0) {
+                $failureMsg = sprintf("Invalid input: [%s]", implode(", ", array_values($invalid_input)));
+                $logAction .= "$failureMsg on page: ";
+            } else {
+                include("library/config_write.php");
+            }
+        
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
     }
+                  
     
-
-    include("library/layout.php");
-
     // print HTML prologue
     $title = t('Intro','configinterface.php');
     $help = t('helpPage','configinterface');
@@ -84,43 +98,61 @@
 
     include_once('include/management/actionMessages.php');
 
-?>
-
-<form name="interfacesettings" method="POST">
-    <fieldset>
-        <h302><?= t('title','Settings') ?></h302>
-        <br>
-        
-        <ul>
-<?php
+    $fieldset0_descriptor = array(
+                                    "title" => t('title','Settings')
+                                 );
+    
+    
+    $input_descriptors0 = array();
+    
     foreach ($param_label as $name => $label) {
-        print_select_as_list_elem($name, $label, array("no", "yes"), $configValues[$name]);
+        $input_descriptors0[] = array(
+                                        "type" => "select",
+                                        "options" => array( "yes", "no" ),
+                                        "caption" => $label,
+                                        "name" => $name,
+                                        "selected_value" => (!array_key_exists($name, $invalid_input)
+                                                             ? $configValues[$name] : "yes")
+                                     );
     }
-?>
-            <li class="fieldset">
-                <label for="CONFIG_IFACE_TABLES_LISTING" class="form"><?= t('all','TablesListing') ?></label>
-                <input type="number" min="1" max="100" value="<?= $configValues['CONFIG_IFACE_TABLES_LISTING'] ?>"
-                    name="CONFIG_IFACE_TABLES_LISTING" id="CONFIG_IFACE_TABLES_LISTING">
-            </li>
 
-            <li class="fieldset">
-                <br/><hr><br/>
-                <input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
-            </li>
-        </ul>
-    </fieldset>
-</form>
+    $input_descriptors0[] = array(
+                                    "type" => "number",
+                                    "caption" => t('all','TablesListing'),
+                                    "name" => 'CONFIG_IFACE_TABLES_LISTING',
+                                    "value" => (!array_key_exists('CONFIG_IFACE_TABLES_LISTING', $invalid_input)
+                                                ? $configValues['CONFIG_IFACE_TABLES_LISTING'] : ""),
+                                    "min" => 1,
+                                    "max" => 100
+                                 );
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    $input_descriptors0[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+
+    $input_descriptors0[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+
+    open_form();
+    
+    // open 0-th fieldset
+    open_fieldset($fieldset0_descriptor);
+    
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>
