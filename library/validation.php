@@ -48,6 +48,9 @@ define("ALLOWED_RANDOM_CHARS_REGEX", DB_TABLE_NAME_REGEX);
 // this lists can be also used for presentation purpose.
 // whitelists naming convention:
 // $valid_ [param_name] s
+$valid_radiusReplys = array( "Any", "Access-Accept", "Access-Reject" );
+
+
 $valid_backupActions = array( "download" => t('all','Download'), "rollback" => t('all','Rollback'), "delete" => "Delete");
 
 $valid_authTypes = array( 

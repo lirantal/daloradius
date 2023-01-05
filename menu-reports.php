@@ -67,13 +67,18 @@ include_once("include/management/autocomplete.php");
                                 <?= ($autoComplete) ? 'autocomplete="off"' : "" ?> placeholder="<?= t('all','Username') ?>"
                                 tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
                                 value="<?= (isset($username_enc)) ? $username_enc : "" ?>" tabindex="2">
+<?php
+                            $descr = array(
+                                            "caption" => "RADIUS Reply",
+                                            "type" => "select",
+                                            "name" => "radiusReply",
+                                            "options" => $valid_radiusReplys,
+                                            "selected_value" => ((isset($radiusReply)) ? $radiusReply : $valid_radiusReplys[0]),
+                                            "tabindex" => 3
+                                          );
                             
-                            <select class="generic" name="radiusreply" tabindex="3">
-                                <option value="Any">Any</option>
-                                <option value="Access-Accept">Access-Accept</option>
-                                <option value="Access-Reject">Access-Reject</option>
-                            </select>
-                            
+                            print_form_component($descr);
+?>
                             <label style="user-select: none" for="startdate_lastconnect"><?= t('all','StartingDate') ?></label>
                             <input name="startdate" type="date" id="startdate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
                                 value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="4">

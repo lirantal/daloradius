@@ -68,6 +68,10 @@
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : date("Y-m-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')));
 
+    $radiusReply = (array_key_exists('radiusReply', $_GET) && !empty(trim($_GET['radiusReply'])) &&
+                    in_array(trim($_GET['radiusReply']), $valid_radiusReplys))
+                 ? trim($_GET['radiusReply']) : $valid_radiusReplys[0];
+
     // and in other cases we partially strip some character,
     // and leave validation/escaping to other functions used later in the script
     $usernameLastConnect = (array_key_exists('usernameLastConnect', $_GET) &&
@@ -113,10 +117,7 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : $default_orderType;
 
-    $radiusReply = (array_key_exists('radiusReply', $_GET) && isset($_GET['radiusReply']) &&
-                    in_array($_GET['radiusReply'], array( "Any", "Access-Accept", "Access-Reject" )))
-                 ? $_GET['radiusReply'] : "Any";
-
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
@@ -238,7 +239,7 @@
             printf("<td>%s</td>", $starttime);
             
             $color = ($reply == "Access-Reject") ? "red" : "green";
-            printf('<td style="color: %s">%s</td>', $color, $reply);
+            printf('<td><span style="color: %s">%s</span></td>', $color, $reply);
             
             echo "</tr>";
 
