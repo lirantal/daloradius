@@ -151,51 +151,54 @@
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts']) &&
-            array_key_exists('type', $_POST) && $_POST['type'] == "batch") {
-            
-            $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])))
-                        ? htmlspecialchars(trim($_POST['batch_name']), ENT_QUOTES, 'UTF-8') : "";
-            
-            $accounts = $_POST['accounts'];
-            
-            if (array_key_exists('ticketInformation', $_POST) && !empty(trim($_POST['ticketInformation']))) {
-                $ticketInformation = "<strong>Information</strong>:<br>" . htmlspecialchars(trim($_POST['ticketInformation']), ENT_QUOTES, 'UTF-8');
-                $ticketInformation = str_replace("\n", "<br>", $ticketInformation);
-            }
-            
-            $plan = (array_key_exists('plan', $_POST) && !empty(trim($_POST['plan'])))
-                  ? trim($_POST['plan']) : "";
-            
-            $ticketCost = "";
-            $ticketTime = "";
-            
-            if (!empty($plan)) {
-                include_once('../../library/opendb.php');
-                include_once('../management/pages_common.php');
+        
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+    
+            if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts']) &&
+                array_key_exists('type', $_POST) && $_POST['type'] == "batch") {
+                
+                $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])))
+                            ? htmlspecialchars(trim($_POST['batch_name']), ENT_QUOTES, 'UTF-8') : "";
+                
+                $accounts = $_POST['accounts'];
+                
+                if (array_key_exists('ticketInformation', $_POST) && !empty(trim($_POST['ticketInformation']))) {
+                    $ticketInformation = "<strong>Information</strong>:<br>" . htmlspecialchars(trim($_POST['ticketInformation']), ENT_QUOTES, 'UTF-8');
+                    $ticketInformation = str_replace("\n", "<br>", $ticketInformation);
+                }
+                
+                $plan = (array_key_exists('plan', $_POST) && !empty(trim($_POST['plan'])))
+                      ? trim($_POST['plan']) : "";
+                
+                $ticketCost = "";
+                $ticketTime = "";
+                
+                if (!empty($plan)) {
+                    include_once('../../library/opendb.php');
+                    include_once('../management/pages_common.php');
 
-                $sql = sprintf("SELECT dbp.planCost AS planCost, dbp.planTimeBank AS planTimeBank, dbp.planCurrency AS planCurrency
-                                  FROM %s AS dbp WHERE dbp.planName='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($plan));
-                $res = $dbSocket->query($sql);
-                list($ticketCost, $ticketTime, $ticketCurrency) = $res->fetchRow();
+                    $sql = sprintf("SELECT dbp.planCost AS planCost, dbp.planTimeBank AS planTimeBank, dbp.planCurrency AS planCurrency
+                                      FROM %s AS dbp WHERE dbp.planName='%s'",
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($plan));
+                    $res = $dbSocket->query($sql);
+                    list($ticketCost, $ticketTime, $ticketCurrency) = $res->fetchRow();
 
-                $ticketCost = "$ticketCost $ticketCurrency";
-                $ticketTime = time2str($ticketTime);
+                    $ticketCost = "$ticketCost $ticketCurrency";
+                    $ticketTime = time2str($ticketTime);
 
-                include_once('../../library/closedb.php');
-            }
-            
-            $card_body_height = 10;
-            $card_foot_height = 30;
-            if (!empty($ticketCost)) {
-                $card_foot_height -= 5;
-                $card_body_height += 5;
-            }
-            if (!empty($ticketTime)) {
-                $card_foot_height -= 5;
-                $card_body_height += 5;
-            }
+                    include_once('../../library/closedb.php');
+                }
+                
+                $card_body_height = 10;
+                $card_foot_height = 30;
+                if (!empty($ticketCost)) {
+                    $card_foot_height -= 5;
+                    $card_body_height += 5;
+                }
+                if (!empty($ticketTime)) {
+                    $card_foot_height -= 5;
+                    $card_body_height += 5;
+                }
             
 ?>
 <!DOCTYPE html>
@@ -318,57 +321,58 @@ body {
     <body>
 
 <?php
-        // remove first element
-        array_shift($accounts);
-        
-        echo '<div class="container">';
-        
-        foreach ($accounts as $i => $account) {
-            list($username, $password) = $account;
+            // remove first element
+            array_shift($accounts);
             
-            if ($i != 0 && $i % 4 == 0) {
-                echo '</div><div class="container">';
-            }
+            echo '<div class="container">';
             
-            $trs = array(
-                            "User" => $username,
-                            "Pass" => $password
-                        );
-            
-            if (!empty($ticketTime)) {
-                $trs["Validity"] = $ticketTime;
-            }
-            
-            if (!empty($ticketCost)) {
-                $trs["Price"] = $ticketCost;
-            }
-            
-            echo '<div class="card">';
-            printf('<div class="card-head"><img src="%s"></div>', $ticketLogoFile); 
-            echo '<div class="card-body">'
-               . '<table>';
+            foreach ($accounts as $i => $account) {
+                list($username, $password) = $account;
+                
+                if ($i != 0 && $i % 4 == 0) {
+                    echo '</div><div class="container">';
+                }
+                
+                $trs = array(
+                                "User" => $username,
+                                "Pass" => $password
+                            );
+                
+                if (!empty($ticketTime)) {
+                    $trs["Validity"] = $ticketTime;
+                }
+                
+                if (!empty($ticketCost)) {
+                    $trs["Price"] = $ticketCost;
+                }
+                
+                echo '<div class="card">';
+                printf('<div class="card-head"><img src="%s"></div>', $ticketLogoFile); 
+                echo '<div class="card-body">'
+                   . '<table>';
 
-            foreach ($trs as $label => $value) {
-                printf('<tr><th>%s:</th><td>%s</td></tr>', $label, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
-            }
+                foreach ($trs as $label => $value) {
+                    printf('<tr><th>%s:</th><td>%s</td></tr>', $label, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+                }
 
-            echo '</table>'
-               . '</div>'
-               . '<div class="card-foot">';
-            printf('<p>%s</p>', $ticketInformation);
-            echo '</div>'
-               . '</div>';
+                echo '</table>'
+                   . '</div>'
+                   . '<div class="card-foot">';
+                printf('<p>%s</p>', $ticketInformation);
+                echo '</div>'
+                   . '</div>';
+                
+                $i++;
+            }
             
-            $i++;
-        }
-        
-        echo '</div>';
+            echo '</div>';
 ?>
 
     </body>
 </html>
 <?php
-            exit;
+                exit;
+            }
         }
     }
     
