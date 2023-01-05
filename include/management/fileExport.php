@@ -66,13 +66,13 @@ $reportTable = $_SESSION['reportTable'];
 // the following two functions tell the browser what file, size, etc. it should expect
 function exportCSVFile($output) {
 	header("Content-type: text/csv");
-	header(sprintf("Content-disposition: csv; filename=daloradius__%s.csv; size=%s", date("Ymd"), strlen($output)));
+	header(sprintf("Content-disposition: attachment; filename=daloradius__%s.csv; size=%s", date("Ymd"), strlen($output)));
 	print $output;
 }
 
 function exportPDFFile($output) {
 	header("Content-type: application/pdf");
-	header(sprintf("Content-disposition: pdf; filename=daloradius__%s.pdf; size=%s", date("Ymd"), strlen($output)));
+	header(sprintf("Content-disposition: attachment; filename=daloradius__%s.pdf; size=%s", date("Ymd"), strlen($output)));
 	print $output;
 }
 
