@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-nas.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -39,10 +39,10 @@ $m_active = "Management";
 
 <?php
     include_once("include/menu/menu-items.php");
-	include_once("include/menu/management-subnav.php");
+    include_once("include/menu/management-subnav.php");
     include_once("include/management/autocomplete.php");
 ?>
-		
+        
             <div id="sidebar">
 
                 <h2>Management</h2>

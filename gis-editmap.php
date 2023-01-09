@@ -21,13 +21,19 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
+
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
+    // init logging variables
     $log = "visited page: ";
+    $logAction = "";
     $logDebugSQL = "";
     
     if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
@@ -40,45 +46,63 @@
         include('library/opendb.php');
 
         if ($type == "add") {
-            (isset($_POST['hotspotname'])) ? $hotspot_name = $_POST['hotspotname'] : $hotspot_name = " ";
-            (isset($_POST['hotspotmac'])) ? $hotspot_mac = $_POST['hotspotmac'] : $hotspot_mac = " ";
-            (isset($_POST['hotspotgeo'])) ? $hotspot_geo = $_POST['hotspotgeo'] : $hotspot_geo = " ";
+            $hotspot_name = (array_key_exists('hotspotname', $_POST) && !empty(trim($_POST['hotspotname']))) ? trim($_POST['hotspotname']) : "";
+            $hotspot_mac = (
+                                array_key_exists('hotspotmac', $_POST) &&
+                                !empty(trim($_POST['hotspotmac'])) &&
+                                filter_var(trim($_POST['hotspotmac']), FILTER_VALIDATE_MAC) !== false
+                           ) ? trim($_POST['hotspotmac']) : "";
+                           
+            $hotspot_geo = (
+                                array_key_exists('hotspotgeo', $_POST) &&
+                                !empty(trim($_POST['hotspotgeo'])) &&
+                                preg_match('/\d+(\.\d+)?,\d+(\.\d+)?/', $_POST['hotspotgeo']) !== false
+                                ) ? trim($_POST['hotspotgeo']) : "";
+            
+            if (empty($hotspot_name) || empty($hotspot_mac) || empty($hotspot_geo)) {
+                $failureMsg = "Invalid input";
+            } else {
+            
+                $sql = sprintf("INSERT INTO %s (name, mac, geocode) VALUES (?, ?, ?)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+                $stmt = $dbSocket->prepare($sql);
+                $data = array($hotspot_name, $hotspot_mac, $hotspot_geo);
+                $res = $dbSocket->execute($stmt, $data);
+                $logDebugSQL .= "$sql;\n";
 
-            $sql = sprintf("INSERT INTO %s (name, mac, geocode) VALUES (?, ?, ?)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-            $stmt = $dbSocket->prepare($sql);
-            $data = array($hotspot_name, $hotspot_mac, $hotspot_geo);
-            $res = $dbSocket->execute($stmt, $data);
-            $logDebugSQL .= "$sql;\n";
-
-            $successMsg = "Added new Hotspot's Geo-Location information for hotspot: <b> $hotspot_name </b>";
+                $successMsg = sprintf("Added new Hotspot's Geo-Location information for hotspot: <strong>%s</strong>",
+                                      htmlspecialchars($hotspot_name, ENT_QUOTES, 'UTF-8'));
+            }
         }
 
         if ($type == "del") {
-            (isset($_POST['hotspotid'])) ? $hotspot_id = $_POST['hotspotid'] : $hotspot_id = -1;
+        
+            if (array_key_exists('hotspotid', $_POST) && !empty($_POST['hotspotid']) && intval($_POST['hotspotid']) > 0) {
+                $hotspot_id = intval($_POST['hotspotid']);
+                
+                $sql = sprintf("DELETE FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+                $stmt = $dbSocket->prepare($sql);
+                $res = $dbSocket->execute($stmt, $hotspot_id);
+                $logDebugSQL .= "$sql;\n";
 
-            $sql = sprintf("DELETE FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-            $stmt = $dbSocket->prepare($sql);
-            $res = $dbSocket->execute($stmt, $hotspot_id);
-            $logDebugSQL .= "$sql;\n";
-
-            $successMsg = "Deleted Hotspot's Geo-Location information for hotspot: <b> $hotspot_name </b>";
-
+                $successMsg = sprintf("Deleted Hotspot's Geo-Location information for hotspot ID: <strong>%d</strong>",
+                                      $hotspot_id);
+                
+            } else {
+                $failureMsg = "Invalid input";
+            }
         }
     
         include('library/closedb.php');
     
     }
     
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','giseditmap.php');
     $help = t('helpPage','giseditmap');
     
-    $extra_css = array("https://unpkg.com/leaflet@1.9.2/dist/leaflet.css");
-    $extra_js = array("https://unpkg.com/leaflet@1.9.2/dist/leaflet.js");
+    $extra_css = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.css");
+    $extra_js = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.js");
 
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
@@ -88,13 +112,68 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-?>
 
-    <div id="map" style="width: 800px; height: 600px; margin: 20px auto"></div>
+    // print map div
+    echo '<div id="map" style="width: 800px; height: 600px; margin: 20px auto"></div>' . "\n";
 
-<script>
-//<![CDATA[
+    // init (hidden) form components
+    $input_descriptors0 = array();
 
+    $input_descriptors0[] = array(
+                                    "type" => "hidden",
+                                    "name" => "type"
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "type" => "hidden",
+                                    "name" => "hotspotid"
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "type" => "hidden",
+                                    "name" => "hotspotname"
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "type" => "hidden",
+                                    "name" => "hotspotmac"
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "type" => "hidden",
+                                    "name" => "hotspotgeo"
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "type" => "hidden",
+                                    "name" => "csrf_token",
+                                    "value" => dalo_csrf_token()
+                                 );
+                                 
+    $form0_descriptor = array(
+                                "name" => "editmaps",
+                                "hidden" => true
+    
+                             );
+                             
+    open_form($form0_descriptor);
+    
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_form();
+
+    
+    // dynamically create inline extra javascript
+
+    $message2 = t('messages','gisedit2');
+    $message3 = t('messages','gisedit3');
+    $message4 = t('messages','gisedit4');
+    $message5 = t('messages','gisedit5');
+    $message6 = t('messages','gisedit6');
+    
+    $inline_extra_js = <<<EOF
 window.onload = function() {
     var map = L.map('map').setView([51.505, -0.09], 13);
     var group = L.featureGroup().addTo(map);
@@ -107,11 +186,11 @@ window.onload = function() {
     
     map.on('click', function(e){
         var geopoint = e.latlng.lat + "," + e.latlng.lng;
-        var add_val = confirm("<?= t('messages','gisedit4'); ?>" + " Geocode: " + geopoint)
+        var add_val = confirm("{$message4}" + " Geocode: " + geopoint)
         if (add_val) {
-            var hotspot_name = prompt("<?= t('messages','gisedit5'); ?>", "")
+            var hotspot_name = prompt("{$message5}", "")
             if (hotspot_name != null && hotspot_name != "") {
-                var hotspot_mac = prompt("<?= t('messages','gisedit6') ; ?>", "")
+                var hotspot_mac = prompt("{$message6}", "")
                 if (hotspot_mac != null && hotspot_mac != "") {
                     L.marker(e.latlng).addTo(group).bindTooltip(hotspot_name);
                     document.editmaps.type.value = "add";
@@ -125,9 +204,9 @@ window.onload = function() {
     });
     
     function remove(e) {
-        var remove_val = confirm("<?= t('messages','gisedit2'); ?>")
+        var remove_val = confirm("{$message2}")
         if (remove_val) {
-            var hotspot_name = prompt("<?= t('messages','gisedit3'); ?>", "")
+            var hotspot_name = prompt("{$message3}", "")
             if (hotspot_name != null && hotspot_name != "" && hotspot_name == e.target.options.title) {
                 e.target.remove();
                 document.editmaps.type.value = "del";
@@ -137,7 +216,9 @@ window.onload = function() {
         }
     }
 
-<?php
+EOF;
+
+    // retrieve markers (to add via js)
     include('library/opendb.php');
 
     $sql = sprintf("SELECT id, name, mac, geocode
@@ -153,28 +234,21 @@ window.onload = function() {
             $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
         }
         
-        printf("L.marker([%s], {id: %s, title: '%s'}).addTo(group).bindTooltip('%s').on('click', remove);",
-               $row[3], $row[0], $row[1], $row[1]);
+        list($id, $name, $mac, $geocode) = $row;
+        
+        $inline_extra_js .= sprintf("L.marker([%s], {id: %s, title: '%s'}).addTo(group).bindTooltip('%s').on('click', remove);\n",
+                                    $geocode, $id, $name, $name);
     }
     
     include('library/closedb.php');
-?>
+    
+    $inline_extra_js .= <<<EOF
+
     map.fitBounds(group.getBounds());
 }
 
-//]]>
-</script>
-
-<form name="editmaps" style="display: hidden" method="POST">
-    <input type="hidden" name="type" value="">
-    <input type="hidden" name="hotspotid" value="">
-    <input type="hidden" name="hotspotname" value="">
-    <input type="hidden" name="hotspotmac" value="">
-    <input type="hidden" name="hotspotgeo" value="">
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-</form>
-
-<?php
+EOF;
+    
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>

@@ -146,8 +146,8 @@
         
         } else {
             $operator_username = "";
-            $failureMsg = sprintf("CSRF token error");
-            $logAction .= sprintf("CSRF token error on page: ");
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     }
 
@@ -213,21 +213,15 @@
     
     if (!empty($operator_username)) {
         // set form component descriptors
-        $input_descriptors1 = array();
+        $input_descriptors0 = array();
         
-        $input_descriptors1[] = array(
-                                        "type" => "hidden",
-                                        "value" => dalo_csrf_token(),
-                                        "name" => "csrf_token"
-                                     );
-        
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "type" => "hidden",
                                         "value" => $operator_username_enc,
                                         "name" => "operator_username"
                                      );
 
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "id" => "operator_username_presentation",
                                         "name" => "operator_username_presentation",
                                         "caption" => t('all','Username'),
@@ -236,7 +230,7 @@
                                         "disabled" => true,
                                      );
                                     
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "id" => "operator_password",
                                         "name" => "operator_password",
                                         "caption" => t('all','Password'),
@@ -244,68 +238,62 @@
                                         "value" => ((isset($operator_password)) ? $operator_password : ""),
                                         "random" => true
                                      );
+                                  
+        // set navbar stuff
+        $navkeys = array( array( 'OperatorInfo', "Operator Info" ), 'ContactInfo', array( 'ACLSettings', "ACL Settings" ), );
+
+        // print navbar controls
+        print_tab_header($navkeys);
         
-        $submit_descriptor = array(
+        open_form();
+        
+        // tab 0
+        open_tab($navkeys, 0, true);
+        
+        $fieldset0_descriptor = array( "title" => "Account Settings" );
+        
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_tab($navkeys, 0);
+        
+        // tab 1
+        open_tab($navkeys, 1);
+        include_once('include/management/operatorinfo.php');
+        close_tab($navkeys, 1);
+        
+        // tab 2
+        open_tab($navkeys, 2);
+        include_once('include/management/operator_acls.php');
+        drawOperatorACLs($curr_operator_id);
+        close_tab($navkeys, 2);
+        
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+        
+                
+        $input_descriptors1[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
-                                  );
-                                  
-        // set navbar stuff
-        $navbuttons = array(
-                              'OperatorInfo-tab' => 'Operator Info',
-                              'ContactInfo-tab' => 'Contact Info',
-                              'ACLSettings-tab' => 'ACL Settings'
-                           );
-    
-        print_tab_navbuttons($navbuttons);
-?>
-
-<form method="POST">
-    <div id="OperatorInfo-tab" class="tabcontent" style="display: block">
-        <fieldset>
-            <h302>Account Settings</h302>
-            <br/>
-            
-            <ul>
-
-<?php
-                foreach ($input_descriptors1 as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-
-            </ul>
-        </fieldset>
+                                     );
         
-<?php
-        print_form_component($submit_descriptor);
-?>
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
-    </div>
-    
-     <div id="ContactInfo-tab" class="tabcontent">
-<?php
-        include_once('include/management/operatorinfo.php');
-?>
-     </div>
-    
-    <div id="ACLSettings-tab" class="tabcontent">
-        <fieldset>
-<?php
-            include_once('include/management/operator_acls.php');
-            drawOperatorACLs($curr_operator_id);
-?>
-        </fieldset>
+        close_form();
 
-<?php
-        print_form_component($submit_descriptor);
-?>
-
-    </div>
-</form>
-
-<?php
     }
     
     include('include/config/logging.php');

@@ -347,6 +347,10 @@
                 
             }
             
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     
     }
@@ -433,10 +437,7 @@ function refillSessionTraffic() {
         return true;    
     }
 }
-
-window.onload = function(){
-    ajaxGeneric("include/management/userOperations.php", "checkDisabled=true", "returnMessages", strUsername);
-};' . "\n";
+' . "\n";
     }
     
     include('library/closedb.php');
@@ -683,7 +684,14 @@ window.onload = function(){
 
         close_form();
 
-        $inline_extra_js = "window.onload = function() { setupAccordion() };";
+        $inline_extra_js = <<<EOF
+
+window.onload = function() {
+    setupAccordion();
+    ajaxGeneric("include/management/userOperations.php", "checkDisabled=true", "returnMessages", strUsername);
+};
+
+EOF;
     }
     
     print_back_to_previous_page();

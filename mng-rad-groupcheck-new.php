@@ -40,43 +40,51 @@
     
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
     
-        $groupname = (array_key_exists('groupname', $_POST) && isset($_POST['groupname']))
-                 ? trim(str_replace("%", "", $_POST['groupname'])) : "";
-        $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
-    
-        if (empty($groupname)) {
-            // profile required
-            $failureMsg = "The specified group name is empty or invalid";
-            $logAction .= "Failed creating a new group check mapping [empty or invalid group name] on page: ";
-        } else {
-            
-            include('library/opendb.php');
-            
-            $groups = array_keys(get_groups());
-            if (!in_array($groupname, $groups)) {
-                // invalid profile name
-                $failureMsg = "The chosen group [<strong>$groupname_enc</strong>] does not exist";
-                $logAction .= "Failed creating group check mapping [$groupname, does not exist] on page: ";
+            $groupname = (array_key_exists('groupname', $_POST) && isset($_POST['groupname']))
+                     ? trim(str_replace("%", "", $_POST['groupname'])) : "";
+            $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
+        
+            if (empty($groupname)) {
+                // profile required
+                $failureMsg = "The specified group name is empty or invalid";
+                $logAction .= "Failed creating a new group check mapping [empty or invalid group name] on page: ";
             } else {
-    
-                include("library/attributes.php");
-                $skipList = array( "groupname", "submit", "csrf_token" );
-                $count = handleAttributes($dbSocket, $groupname, $skipList, true, 'group');
-
-                if ($count > 0) {
-                    $successMsg = "Added new group check mapping for <strong>$groupname_enc</strong>";
-                    $logAction .= "Successfully added a new group [$groupname] on page: ";
+                
+                include('library/opendb.php');
+                
+                $groups = array_keys(get_groups());
+                if (!in_array($groupname, $groups)) {
+                    // invalid profile name
+                    $failureMsg = "The chosen group [<strong>$groupname_enc</strong>] does not exist";
+                    $logAction .= "Failed creating group check mapping [$groupname, does not exist] on page: ";
                 } else {
-                    $failureMsg = "Failed creating group [$groupname_enc], invalid or empty attributes list";
-                    $logAction .= "Failed creating group [$groupname], invalid or empty attributes list] on page: ";
-                }
+        
+                    include("library/attributes.php");
+                    $skipList = array( "groupname", "submit", "csrf_token" );
+                    $count = handleAttributes($dbSocket, $groupname, $skipList, true, 'group');
 
-            } // profile non-existent
-            
-            include('library/closedb.php');
-            
-        } // profile name not empty    
+                    if ($count > 0) {
+                        $successMsg = "Added new group check mapping for <strong>$groupname_enc</strong>";
+                        $logAction .= "Successfully added a new group [$groupname] on page: ";
+                    } else {
+                        $failureMsg = "Failed creating group [$groupname_enc], invalid or empty attributes list";
+                        $logAction .= "Failed creating group [$groupname], invalid or empty attributes list] on page: ";
+                    }
+
+                } // profile non-existent
+                
+                include('library/closedb.php');
+                
+            } // profile name not empty
+        
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
     }
 
 
@@ -101,46 +109,51 @@
     if (!isset($successMsg)) {
         
         // set form component descriptors
-        $input_descriptors1 = array();
+        $input_descriptors0 = array();
         
         $groups = get_groups();
         array_unshift($groups , '');
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "groupname",
                                         "caption" => t('all','Groupname'),
                                         "type" => "select",
                                         "options" => $groups,
                                         "selected_value" => ((isset($groupname)) ? $groupname : "")
                                      );
+
+        $input_descriptors1 = array();
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                     );
                                      
-        //~ $input_descriptors1[] = array(
-                                        //~ "type" => "submit",
-                                        //~ "name" => "submit",
-                                        //~ "value" => t('buttons','apply')
-                                     //~ );
-?>
-<form name="newgroupcheck" method="POST">
-    <fieldset>
-        <h302><?= t('title','GroupInfo') ?></h302>
+        open_form();
         
-        <ul>
-<?php
-            foreach ($input_descriptors1 as $input_descriptor) {
-                print_form_component($input_descriptor);
-            }
-?>
-
-        </ul>
-
-    </fieldset>
-
-<?php
-    include_once('include/management/attributes.php');
-?>
-
-</form>
-
-<?php
+        $fieldset0_descriptor = array( "title" => t('title','GroupInfo') );
+        
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        include_once('include/management/attributes.php');
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_form();
+        
     }
     
     include('include/config/logging.php');

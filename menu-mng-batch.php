@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-mng-batch.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -39,7 +39,7 @@ $m_active = "Management";
 
 <?php
     include_once("include/menu/menu-items.php");
-	include_once("include/menu/management-subnav.php");
+    include_once("include/menu/management-subnav.php");
     include_once("include/management/autocomplete.php");
 
     $menu_elements = array(
@@ -51,7 +51,7 @@ $m_active = "Management";
 
             <div id="sidebar">
                 <h2>Management</h2>
-	
+    
                 <h3>Batch Management</h3>
                 <ul class="subnav">
 <?php
@@ -75,5 +75,5 @@ $m_active = "Management";
     var autoComEdit = new DHTMLSuite.autoComplete();
 </script>
 <?php
-	} 
+    } 
 ?>

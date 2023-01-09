@@ -25,22 +25,24 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
-    $logDebugSQL = "";
 
     include_once("lang/main.php");
-    
+    include_once("library/validation.php");
     include("library/layout.php");
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+
 
     // print HTML prologue
     $title = t('Intro','gisviewmap.php');
     $help = t('helpPage','gisviewmap');
     
-    $extra_css = array("https://unpkg.com/leaflet@1.9.2/dist/leaflet.css");
-    $extra_js = array("https://unpkg.com/leaflet@1.9.2/dist/leaflet.js");
+    $extra_css = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.css");
+    $extra_js = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.js");
 
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
@@ -48,12 +50,12 @@
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-?>
+    
+    
+    // print map div
+    echo '<div id="map" style="width: 800px; height: 600px; margin: 20px auto"></div>' . "\n";
 
-    <div id="map" style="width: 800px; height: 600px; margin: 20px auto"></div>
-
-<script>
-
+    $inline_extra_js = <<<EOF
 window.onload = function() {
     var map = L.map('map').setView([51.505, -0.09], 13);
     var group = L.featureGroup().addTo(map);
@@ -63,8 +65,10 @@ window.onload = function() {
         subdomains: 'abcd',
         maxZoom: 20
     }).addTo(map);
-
-<?php
+    
+    
+EOF;
+    
     include('library/opendb.php');
 
     $sql = sprintf("SELECT id, name, mac, geocode
@@ -80,37 +84,33 @@ window.onload = function() {
             $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
         }
         
+        list($id, $name, $mac, $geocode) = $row;
+        
         $popup = sprintf('<b> Hotspot Name</b>: %s<br>'
                        . '<b>Mac Addr</b>: %s<br>'
                        . '<b>Geo Loc</b>: %s<br>'
-                       . '<a href=acct-hotspot-compare.php>Hotspot Comparison</a>'
+                       . '<a href=acct-hotspot-compare.php>%s</a>'
                        . '<br>'
-                       . '<a href="acct-hotspot-accounting.php?hotspot=%s">Hotspot Statistics</a>',
-                         $row[1], $row[2], $row[3], $row[1]);
+                       . '<a href="acct-hotspot-accounting.php?hotspot=%s">%s</a>',
+                         $name, $mac, $geocode, t('Intro','accthotspotcompare.php'), $name, t('Intro','accthotspot.php'));
         
         
         // Now, create a simple popup.
         // The original program provided a tabbed popup.
-        printf('L.marker([%s]).addTo(group).' . "bindTooltip('%s').bindPopup('%s');", $row[3], $row[1], $popup);
+        $inline_extra_js .= sprintf("L.marker([%s]).addTo(group).bindTooltip('%s').bindPopup('%s');",
+                                    $geocode, $name, $popup);
     }
     
     include('library/closedb.php');
-?>
+    
+    $inline_extra_js .= <<<EOF
+
     map.fitBounds(group.getBounds());
 }
 
-</script>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+EOF;
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue($inline_extra_js);
+    
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

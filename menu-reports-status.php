@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-mng-batch.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -34,7 +34,7 @@ $m_active = "Reports";
 
 <?php
     include_once("include/menu/menu-items.php");
-	include_once("include/menu/reports-subnav.php");
+    include_once("include/menu/reports-subnav.php");
     
     $status_menu_elements = array(
         "rep-stat-server.php" => array(t('button','ServerStatus'), "images/icons/reportsStatus.png"),

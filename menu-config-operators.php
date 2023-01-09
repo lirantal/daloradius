@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-config-operators.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -33,7 +33,7 @@ $m_active = "Config";
 
 ?>
 
-		
+        
 <?php
     include_once ("include/menu/menu-items.php");
     include_once ("include/menu/config-subnav.php");
@@ -41,7 +41,7 @@ $m_active = "Config";
 
             <div id="sidebar">
                 <h2>Configuration</h2>
-	
+    
                 <h3>Management</h3>
                 <ul class="subnav">
                     <li>

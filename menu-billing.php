@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-billing.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -49,12 +49,12 @@ include('library/closedb.php');
 ?>      
 
                 <div id="sidebar">
-		
-				<h2>Billing</h2>
-				
-				<h3>Billing Engine</h3>
-				<ul class="subnav">
-				
+        
+                <h2>Billing</h2>
+                
+                <h3>Billing Engine</h3>
+                <ul class="subnav">
+                
                     <li>
                         <a title="Prepaid Accounting" href="javascript:document.billprepaidhotspot.submit();">
                             <b>&raquo;</b>Prepaid Accounting
@@ -102,11 +102,11 @@ include('library/closedb.php');
                         </form>
                     </li>
 
-				</ul><!-- .subnav -->
-		
-				<h3>Rates Management</h3>
-				<ul class="subnav">
-				
+                </ul><!-- .subnav -->
+        
+                <h3>Rates Management</h3>
+                <ul class="subnav">
+                
                     <li><a title="Show rates" href="bill-rates-list.php"><b>&raquo;</b><?= t('button','ListRates') ?></a></li>
                     <li><a title="New rate" href="bill-rates-new.php"><b>&raquo;</b><?= t('button','NewRate') ?></a></li>
                     <li>
@@ -116,9 +116,9 @@ include('library/closedb.php');
                         </form>
                     </li>
                     <li><a title="Delete rate" href="bill-rates-del.php"><b>&raquo;</b><?= t('button','RemoveRate') ?></a></li>
-				</ul><!-- .subnav -->
+                </ul><!-- .subnav -->
             </div><!-- #sidebar -->
-		
+        
 <?php
     if isset($actionStatus) {
 ?>

@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-maintenance.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -42,7 +42,7 @@ $menu_elements = array(
 
             <div id="sidebar">
                 <h2>Accounting</h2>
-	
+    
                 <h3>Maintenance</h3>
                 <ul class="subnav">
 <?php

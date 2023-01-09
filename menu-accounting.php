@@ -23,7 +23,7 @@
 
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/menu-accounting.php') !== false) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -35,7 +35,7 @@ include_once("include/menu/menu-items.php");
 include_once("include/menu/accounting-subnav.php");
 include_once("include/management/autocomplete.php");
 
-?>	
+?>    
 
             <div id="sidebar">
                 <h2>Accounting</h2>

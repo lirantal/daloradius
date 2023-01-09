@@ -82,40 +82,48 @@
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (empty($username) || empty($groupname) || empty($groupnameOld)) {
-            // username and groupname are required
-            $failureMsg = "Username and groupname are required.";
-            $logAction .= "Failed updating user-group mapping (username and/or groupname missing or invalid): ";
-        } else {
-            // check if the new mapping is already in place
-            $sql = sprintf($mapping_check_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                                  $dbSocket->escapeSimple($username),
-                                                  $dbSocket->escapeSimple($groupname));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-
-            $new_mapping_inplace = intval($res->fetchrow()[0]) > 0;
-            
-            if ($new_mapping_inplace) {
-                // error
-                $failureMsg = "The chosen user mapping ($username_enc - $groupname_enc) is already in place.";
-                $logAction .= "Failed updating user-group mapping [$username - $groupname already in place]: ";
+        
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+    
+            if (empty($username) || empty($groupname) || empty($groupnameOld)) {
+                // username and groupname are required
+                $failureMsg = "Username and groupname are required.";
+                $logAction .= "Failed updating user-group mapping (username and/or groupname missing or invalid): ";
             } else {
-                $sql = sprintf("UPDATE %s SET groupname='%s', priority=%s WHERE username='%s' AND groupname='%s'",
-                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($groupname),
-                               $dbSocket->escapeSimple($priority), $dbSocket->escapeSimple($username),
-                               $dbSocket->escapeSimple($groupnameOld));
+                // check if the new mapping is already in place
+                $sql = sprintf($mapping_check_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                                      $dbSocket->escapeSimple($username),
+                                                      $dbSocket->escapeSimple($groupname));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
+
+                $new_mapping_inplace = intval($res->fetchrow()[0]) > 0;
                 
-                if (!DB::isError($res)) {
-                    $successMsg = "Updated user-group mapping [$username_enc, from $groupnameOld_enc to $groupname_enc]";
-                    $logAction .= "Updated user-group mapping [$username, from $groupnameOld to $groupname]: ";
+                if ($new_mapping_inplace) {
+                    // error
+                    $failureMsg = "The chosen user mapping ($username_enc - $groupname_enc) is already in place.";
+                    $logAction .= "Failed updating user-group mapping [$username - $groupname already in place]: ";
                 } else {
-                    $failureMsg = "DB Error when updating the chosen user mapping ($username_enc, from $groupnameOld_enc to $groupname_enc)";
-                    $logAction .= "Failed updating user-group mapping [$username, from $groupnameOld to $groupname, db error]: ";
+                    $sql = sprintf("UPDATE %s SET groupname='%s', priority=%s WHERE username='%s' AND groupname='%s'",
+                                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($groupname),
+                                   $dbSocket->escapeSimple($priority), $dbSocket->escapeSimple($username),
+                                   $dbSocket->escapeSimple($groupnameOld));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $successMsg = "Updated user-group mapping [$username_enc, from $groupnameOld_enc to $groupname_enc]";
+                        $logAction .= "Updated user-group mapping [$username, from $groupnameOld to $groupname]: ";
+                    } else {
+                        $failureMsg = "DB Error when updating the chosen user mapping ($username_enc, from $groupnameOld_enc to $groupname_enc)";
+                        $logAction .= "Failed updating user-group mapping [$username, from $groupnameOld to $groupname, db error]: ";
+                    }
                 }
             }
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     }
     
@@ -170,9 +178,9 @@
     if (!empty($username) && !empty($groupnameOld)) {
         include_once('include/management/populate_selectbox.php');
 
-        $input_descriptors1 = array();
+        $input_descriptors0 = array();
         
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "username-presentation",
                                         "caption" => t('all','Username'),
                                         "type" => "text",
@@ -181,13 +189,13 @@
                                         "disabled" => true,
                                      );
 
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "username",
                                         "type" => "hidden",
                                         "value" => $this_username,
                                      );
         
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "groupname-presentation",
                                         "caption" => (t('all','Groupname') . " (current)"),
                                         "type" => "text",
@@ -195,14 +203,14 @@
                                         "disabled" => true,
                                      );
                                      
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "groupOld",
                                         "type" => "hidden",
                                         "value" => $this_groupname,
                                      );
 
         $options = get_groups();
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "id" => "group",
                                         "name" => "group",
                                         "caption" => (t('all','Groupname') . " (new)"),
@@ -212,7 +220,7 @@
                                         "tooltipText" => t('Tooltip','groupTooltip')
                                      );
                                      
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
                                         "id" => "priority",
                                         "name" => "priority",
                                         "caption" => t('all','Priority'),
@@ -221,28 +229,32 @@
                                         "value" => $this_priority,
                                      );
 
-        $input_descriptors1[] = array(
+        $input_descriptors0[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+
+        $input_descriptors0[] = array(
                                         'type' => 'submit',
                                         'name' => 'submit',
                                         'value' => t('buttons','apply')
                                      );
-?>
-            <form name="newusergroup" method="POST">
-                <fieldset>
-                    <h302><?= t('title','GroupInfo') ?></h302>
 
-                    <ul>
-                    
-<?php
-                        foreach ($input_descriptors1 as $input_descriptor) {
-                            print_form_component($input_descriptor);
-                        }
-?>
+        $fieldset0_descriptor = array( "title" => t('title','GroupInfo') );
+        
+        open_form();
+        
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
 
-                    </ul>
-                </fieldset>
-            </form>
-<?php
     }
 
     include('include/config/logging.php');
