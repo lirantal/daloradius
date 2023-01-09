@@ -34,8 +34,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false
     
     <br>
 
-    <input checked type="radio" id="attribute-radio"
-        onclick="toggleAttributeSelectbox();document.getElementById('autocomplete-radio').checked=false">
+    <input checked type="radio" name="vendor_attribute_selection_type" onclick="toggleAttributeSelectbox()">
     <b> Locate Attribute via Vendor/Attribute </b>
     
     <br>
@@ -48,10 +47,10 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false
 <?php
             include('library/opendb.php');
 
-            $sql = sprintf("SELECT DISTINCT(vendor) AS vendor
+            $sql = sprintf("SELECT DISTINCT(Vendor) AS Vendor
                               FROM %s
-                             WHERE vendor<>'' AND vendor IS NOT NULL
-                             ORDER BY vendor ASC",
+                             WHERE Vendor <> '' AND Vendor IS NOT NULL
+                             ORDER BY Vendor ASC",
                            $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
             $res = $dbSocket->query($sql);
 
@@ -77,8 +76,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false
     
     <br>
     
-    <input type="radio" id="autocomplete-radio"
-        onclick="toggleAttributeCustom();document.getElementById('attribute-radio').checked=false">
+    <input type="radio" name="vendor_attribute_selection_type" onclick="toggleAttributeCustom()">
     <b> Quickly Locate attribute with autocomplete input</b>
     
     <br>
@@ -111,8 +109,6 @@ autoComEdit.add('dictAttributesCustom','include/management/dynamicAutocomplete.p
     </ul>
 
 </fieldset>
-
-<input type="submit" name="submit" value="<?= t('buttons','apply') ?>" class="button">
 
 <input type="hidden" value="0" id="divCounter">
 <div id="divContainer"></div>

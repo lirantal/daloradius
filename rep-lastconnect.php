@@ -89,6 +89,7 @@
     //   - for table ordering purpose
     // - its value can be used for table headings presentation
     $cols = array( 
+                   "fullname" => t('all','Name'),
                    $tableSetting['postauth']['user'] => t('all','Username'),
                  );
     
@@ -129,6 +130,8 @@
     // except for $usernameLastConnect, which has been only partially escaped,
     // all other query parameters have been validated earlier.
     $sql_WHERE = array();
+    $sql_WHERE[] = sprintf("ui.username = pa.%s", $tableSetting['postauth']['user']);
+    
     if (!empty($usernameLastConnect)) {
         $sql_WHERE[] = sprintf("pa.%s LIKE '%s%%'", $tableSetting['postauth']['user'],
                                                     $dbSocket->escapeSimple($usernameLastConnect));
@@ -141,16 +144,20 @@
     }
     
     // setup php session variables for exporting
-    $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADPOSTAUTH'];
+    $_SESSION['reportTable'] = sprintf("%s AS pa, %s AS ui",
+                                       $configValues['CONFIG_DB_TBL_RADPOSTAUTH'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
     $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
     //orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
-    $sql_format = "SELECT pa.%s, pa.pass, pa.reply, pa.%s FROM %s AS pa";
+    $sql_format = "SELECT CONCAT(ui.firstname, ' ', ui.lastname) AS fullname, pa.%s AS username,
+                          pa.pass, pa.reply, pa.%s
+                     FROM %s AS pa, %s AS ui";
     
     $sql = sprintf($sql_format, $tableSetting['postauth']['user'],
                                 $tableSetting['postauth']['date'],
-                                $configValues['CONFIG_DB_TBL_RADPOSTAUTH'])
+                                $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
+                                $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
          . $_SESSION['reportQuery'];
     
     $res = $dbSocket->query($sql);
@@ -168,7 +175,7 @@
         
         /* END */
         
-        $sql .= sprintf(" ORDER BY pa.%s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
 
@@ -199,11 +206,16 @@
 <?php
         // page numbers are shown only if there is more than one page
         if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
+            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
             echo '</td>';
         }
 ?>
+                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
+                    <input class="button" type="button" value="CSV Export"
+                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
+                </td>
+
             </tr>
             
             <tr>
@@ -224,14 +236,15 @@
             }
 
             // The table that is being produced is in the format of:
-            // +-------------+-------------+---------------+-----------+
-            // | user        | pass (opt.) | reply         | date      |   
-            // +-------------+-------------+---------------+-----------+
+            // +-------------+-------------+---------------+-----------+-----------+
+            // | fullname    | user        | pass (opt.)   | reply     | date      |   
+            // +-------------+-------------+---------------+-----------+-----------+
 
-            list($user, $pass, $reply, $starttime) = $row;
+            list($fullname, $user, $pass, $reply, $starttime) = $row;
 
             echo "<tr>";
             
+            printf("<td>%s</td>", $fullname);
             printf("<td>%s</td>", $user);
             if (!$hiddenPassword) {
                 printf("<td>%s</td>", $pass);

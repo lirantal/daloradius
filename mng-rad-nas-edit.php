@@ -173,13 +173,7 @@
         
         // set form component descriptors
         $input_descriptors0 = array();
-        
-        $input_descriptors0[] = array(
-                                        "name" => "csrf_token",
-                                        "type" => "hidden",
-                                        "value" => dalo_csrf_token(),
-                                     );
-        
+                
         $input_descriptors0[] = array(
                                         "name" => "nasname",
                                         "type" => "hidden",
@@ -249,11 +243,18 @@
                                         "content" => ((isset($description)) ? $description : "")
                                      );
 
-        $submit_descriptor = array(
+        $input_descriptors2 = array();
+        $input_descriptors2[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors2[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
-                                  );
+                                     );
 
         // fieldset
         $fieldset0_descriptor = array(
@@ -301,7 +302,9 @@
         
         close_tab($navkeys, 1);
         
-        print_form_component($submit_descriptor);
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
         close_form();
         

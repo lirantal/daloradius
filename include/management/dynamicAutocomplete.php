@@ -15,320 +15,160 @@
  *
  *********************************************************************************************************
  *
- * Authors:     Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
 include('../../library/checklogin.php');
 
+// we can handle these actions
+$allowedActions = array(
+                            'getAjaxAutocompletePaymentName',
+                            'getAjaxAutocompleteContactPerson',
+                            'getAjaxAutocompleteBatchNames',
+                            'getAjaxAutocompleteNASHost',
+                            'getAjaxAutocompleteHGHost',
+                            'getAjaxAutocompleteGroupName',
+                            'getAjaxAutocompleteRateName',
+                            'getAjaxAutocompleteBillingPlans',
+                            'getAjaxAutocompleteHotspots',
+                            'getAjaxAutocompleteUsernames',
+                            'getAjaxAutocompleteAttributes',
+                            'getAjaxAutocompleteVendorName',
+                       );
 
 
-/* getAjaxAutocompletePaymentName */
-if(isset($_GET['getAjaxAutocompletePaymentName'])) {
+// we set a default action
+$action = $allowedActions[0];
+foreach ($allowedActions as $allowedAction) {
+    // if isset an allowed action we set it as chosen action
+    // and exit the foreach loop
+    if (isset($_GET[$allowedAction])) {
+        $action = $allowedAction;
+        break;
+    }
+}
 
-        $getAjaxAutocompletePaymentName = $_GET['getAjaxAutocompletePaymentName'];
+// we set the value for the LIKE condition
+$like = (array_key_exists($action, $_GET) && !empty(trim($_GET[$action]))) ? trim($_GET[$action]) : "";
 
-        if ( (isset($getAjaxAutocompletePaymentName)) && ($getAjaxAutocompletePaymentName) ) {
+// we need like to be not empty
+if (empty($like)) {
+    exit;
+}
 
-                include '../../library/opendb.php';
+include('../../library/opendb.php');
 
-                $sql = "SELECT distinct(value) as value FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
-                        " WHERE value LIKE '$getAjaxAutocompletePaymentName%' ORDER BY value ASC";
-                $res = $dbSocket->query($sql);
+$like = $dbSocket->escapeSimple($like);
+$sql = "";
 
-                while($row = $res->fetchRow()) {
-                        echo "$row[0]###$row[0]|";
-                }
+switch ($action) {
+    
+    /* getAjaxAutocompletePaymentName */
+    default:
+    case 'getAjaxAutocompletePaymentName':
+    
+        $sql = sprintf("SELECT DISTINCT(value) AS value FROM %s WHERE value LIKE '%s%%'
+                         ORDER BY value ASC", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $like);
+    
+        break;
 
-                include '../../library/closedb.php';
-        }
+    /* getAjaxAutocompleteContactPerson */
+    case 'getAjaxAutocompleteContactPerson':
+        $sql = sprintf("SELECT DISTINCT(contactperson) AS contactperson FROM %s WHERE contactperson LIKE '%s%%'
+                         ORDER BY contactperson ASC", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $like);
+        break;
+    
+    /* getAjaxAutocompleteBatchNames */
+    case 'getAjaxAutocompleteBatchNames':
+        $sql = sprintf("SELECT DISTICT(batch_name) AS batchName FROM %s WHERE batchName LIKE '%s%%'
+                         ORDER BY batchName ASC", $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $like);
+        break;
+
+    /* getAjaxAutocompleteNASHost */
+    case 'getAjaxAutocompleteNASHost':
+        $sql = sprintf("SELECT DISTINCT(nasname) AS nasName FROM %s WHERE nasName LIKE '%s%%'
+                         ORDER BY nasName ASC", $configValues['CONFIG_DB_TBL_RADNAS'], $like);
+    
+        break;
+    
+        /* getAjaxAutocompleteHGHost */
+    case 'getAjaxAutocompleteHGHost':
+        $sql = sprintf("SELECT DISTINCT(nasipaddress) AS nasipaddress FROM %s WHERE nasipaddress LIKE '%s%%'
+                         ORDER BY nasipaddress ASC", $configValues['CONFIG_DB_TBL_RADHG'], $like);
+        break;
+
+    /* getAjaxAutocompleteGroupName */
+    case 'getAjaxAutocompleteGroupName':
+        $sql = sprintf("SELECT DISTINCT(GroupName) AS GroupName FROM %s WHERE GroupName LIKE '%s%%'
+                        ORDER BY GroupName ASC", $configValues['CONFIG_DB_TBL_RADGROUPCHECK'], $like)
+             . " UNION "
+             . sprintf("SELECT DISTINCT(GroupName) AS GroupName FROM %s WHERE GroupName LIKE '%s%%'
+                         ORDER BY GroupName ASC", $configValues['CONFIG_DB_TBL_RADGROUPREPLY'], $like);
+        break;
+
+    /* getAjaxAutocompleteRateName */
+    case 'getAjaxAutocompleteRateName':
+        $sql = sprintf("SELECT DISTINCT(rateName) AS rateName FROM %s WHERE rateName LIKE '%s%%'
+                         ORDER BY rateName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $like);
+            $res = $dbSocket->query($sql);
+        break;
+
+    /* getAjaxAutocompleteBillingPlans
+     * returns billing plan names from the billing_plans table
+     * matching the getAjaxAutocompleteBillingPlans value wildcad
+     */
+    case 'getAjaxAutocompleteBillingPlans':
+        $sql = sprintf("SELECT DISTINCT(planName) AS planName FROM %s WHERE planName LIKE '%s%%'
+                         ORDER BY planName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $like);
+        break;
+
+    /* getAjaxAutocompleteHotspots
+     * returns hotspot names from the hotspot table
+     * matching the getAjaxAutocompleteHotspots value wildcad
+     */
+    case 'getAjaxAutocompleteHotspots':
+        $sql = sprintf("SELECT DISTINCT(Name) AS hotspotName FROM %s WHERE hotspotName LIKE '%s%%'
+                         ORDER BY hotspotName ASC", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'], $like);
+        break;
+
+    /* getAjaxAutocompleteUsernames provides a trigger to this callback routine
+     * which returns the possible usernames in the radcheck table matching
+     * the getAjaxAutocompleteUsernames variable's value wildcard.
+     */
+    case 'getAjaxAutocompleteUsernames':
+        $sql = sprintf("SELECT DISTINCT(Username) AS Username FROM %s WHERE Username LIKE '%s%%'
+                         ORDER BY Username ASC", $configValues['CONFIG_DB_TBL_RADCHECK'], $like);
+        break;
+
+    /* getAjaxAutocompleteAttributes: if this GET variable is set then an sql query to the database is performed
+     * to retrieve all the possible attributes which match the wildcard syntax for the getAjaxAutocompleteAttributes
+     * variable's value, which is meant to produce an auto-complete possible values.
+     */
+    case 'getAjaxAutocompleteAttributes':
+        $sql = sprintf("SELECT DISTINCT(Attribute) AS Attribute FROM %s WHERE Attribute LIKE '%s%%'
+                         ORDER BY Attribute ASC", $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $like);
+        break;
+
+    /* getAjaxAutocompleteVendorName */
+    case 'getAjaxAutocompleteVendorName':
+        $sql = sprintf("SELECT DISTINCT(Vendor) AS vendorName FROM %s WHERE vendorName LIKE '%s%%'
+                         ORDER BY vendorName ASC", $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $like);
+        break;
 
 }
 
-
-
-/* getAjaxAutocompleteContactPerson */
-if(isset($_GET['getAjaxAutocompleteContactPerson'])) {
-
-        $getAjaxAutocompleteContactPerson = $_GET['getAjaxAutocompleteContactPerson'];
-
-	if ( (isset($getAjaxAutocompleteContactPerson)) && ($getAjaxAutocompleteContactPerson) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(contactperson), id FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-			" WHERE contactperson LIKE '$getAjaxAutocompleteContactPerson%' ORDER BY contactperson ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
+if (!empty($sql)) {
+    $res = $dbSocket->query($sql);
+    
+    while ($row = $res->fetchRow()) {
+        $value = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+        printf("%s###%s|", $value, $value);
+    }
 }
 
-
-
-
-/* getAjaxAutocompleteBatchNames */
-if(isset($_GET['getAjaxAutocompleteBatchNames'])) {
-
-        $getAjaxAutocompleteBatchNames = $_GET['getAjaxAutocompleteBatchNames'];
-
-	if ( (isset($getAjaxAutocompleteBatchNames)) && ($getAjaxAutocompleteBatchNames) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(batch_name) as batchName FROM ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
-			" WHERE batch_name LIKE '$getAjaxAutocompleteBatchNames%' ORDER BY batch_name ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
-}
-
-
-/* getAjaxAutocompleteNASHost */
-if(isset($_GET['getAjaxAutocompleteNASHost'])) {
-
-        $getAjaxAutocompleteNASHost = $_GET['getAjaxAutocompleteNASHost'];
-
-	if ( (isset($getAjaxAutocompleteNASHost)) && ($getAjaxAutocompleteNASHost) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(nasname) as nasName FROM ".$configValues['CONFIG_DB_TBL_RADNAS'].
-			" WHERE nasName LIKE '$getAjaxAutocompleteNASHost%' ORDER BY nasName ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
-}
-
-
-/* getAjaxAutocompleteHGHost */
-if(isset($_GET['getAjaxAutocompleteHGHost'])) {
-
-	$getAjaxAutocompleteHGHost = $_GET['getAjaxAutocompleteHGHost'];
-
-	if ( (isset($getAjaxAutocompleteHGHost)) && ($getAjaxAutocompleteHGHost) ) {
-
-		include '../../library/opendb.php';
-
-		$sql = "SELECT distinct(nasipaddress) as nasipaddress FROM ".$configValues['CONFIG_DB_TBL_RADHG'].
-		" WHERE nasipaddress LIKE '$getAjaxAutocompleteHGHost%' ORDER BY nasipaddress ASC";
-		$res = $dbSocket->query($sql);
-
-		while($row = $res->fetchRow()) {
-				echo "$row[0]###$row[0]|";
-		}
-
-		include '../../library/closedb.php';
-	}
-
-}
-
-
-
-/* getAjaxAutocompleteGroupName */
-if(isset($_GET['getAjaxAutocompleteGroupName'])) {
-
-        $getAjaxAutocompleteGroupName = $_GET['getAjaxAutocompleteGroupName'];
-
-	if ( (isset($getAjaxAutocompleteGroupName)) && ($getAjaxAutocompleteGroupName) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "(SELECT distinct(GroupName) AS GroupName FROM ".$configValues['CONFIG_DB_TBL_RADGROUPREPLY'].
-			" WHERE GroupName LIKE '$getAjaxAutocompleteGroupName%' ORDER BY GroupName ASC) ".
-                        " UNION (SELECT distinct(GroupName) AS GroupName FROM ".$configValues['CONFIG_DB_TBL_RADGROUPCHECK'].
-			" WHERE GroupName LIKE '$getAjaxAutocompleteGroupName%' ORDER BY GroupName ASC)";
-
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
-}
-
-
-
-
-
-/* getAjaxAutocompleteRateName */
-if(isset($_GET['getAjaxAutocompleteRateName'])) {
-
-        $getAjaxAutocompleteRateName = $_GET['getAjaxAutocompleteRateName'];
-
-	if ( (isset($getAjaxAutocompleteRateName)) && ($getAjaxAutocompleteRateName) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(rateName) as rateName FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].
-			" WHERE rateName LIKE '$getAjaxAutocompleteRateName%' ORDER BY rateName ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
-}
-
-
-
-
-/* getAjaxAutocompleteBillingPlans
- * returns billing plan names from the billing_plans table matching the getAjaxAutocompleteBillingPlans value wildcad
- */
-if(isset($_GET['getAjaxAutocompleteBillingPlans'])) {
-
-        $getAjaxAutocompleteBillingPlans = $_GET['getAjaxAutocompleteBillingPlans'];
-
-	if ( (isset($getAjaxAutocompleteBillingPlans)) && ($getAjaxAutocompleteBillingPlans) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(planName) as planName FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-			" WHERE planName LIKE '$getAjaxAutocompleteBillingPlans%' ORDER BY planName ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
-}
-
-
-
-/* getAjaxAutocompleteHotspots
- * returns hotspot names from the hotspot table matching the getAjaxAutocompleteHotspots value wildcad
- */
-if(isset($_GET['getAjaxAutocompleteHotspots'])) {
-
-        $getAjaxAutocompleteHotspots = $_GET['getAjaxAutocompleteHotspots'];
-
-	if ( (isset($getAjaxAutocompleteHotspots)) && ($getAjaxAutocompleteHotspots) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(Name) as Hotspot FROM ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			" WHERE Name LIKE '$getAjaxAutocompleteHotspots%' ORDER BY Name ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
-}
-
-
-
-/* getAjaxAutocompleteUsernames provides a trigger to this callback routine which returns the possible usernames in the
- * radcheck table matching the getAjaxAutocompleteUsernames variable's value wildcard.
- */
-if(isset($_GET['getAjaxAutocompleteUsernames'])) {
-
-        $getAjaxAutocompleteUsernames = $_GET['getAjaxAutocompleteUsernames'];
-
-
-	if ( (isset($getAjaxAutocompleteUsernames)) && ($getAjaxAutocompleteUsernames) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(Username) as Username FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-			" WHERE Username LIKE '$getAjaxAutocompleteUsernames%' ORDER BY Username ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-
-	}
-
-}
-
-
-
-
-/* getAjaxAutocompleteAttributes - if this GET variable is set then an sql query to the database is performed
- * to retrieve all the possible attributes which match the wildcard syntax for the getAjaxAutocompleteAttributes
- * variable's value, which is meant to produce an auto-complete possible values.
- *
- * This is working in accordance to the auto-complete javascript library.
- */
-if(isset($_GET['getAjaxAutocompleteAttributes'])) {
-
-        $getAjaxAutocompleteAttributes = $_GET['getAjaxAutocompleteAttributes'];
-
-	if ( (isset($getAjaxAutocompleteAttributes)) && ($getAjaxAutocompleteAttributes) ) {
-	
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(Attribute) as Attribute FROM dictionary WHERE Attribute LIKE '$getAjaxAutocompleteAttributes%' ".
-                "ORDER BY Vendor ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-
-	}
-
-}
-
-
-
-/* getAjaxAutocompleteVendorName */
-if(isset($_GET['getAjaxAutocompleteVendorName'])) {
-
-        $getAjaxAutocompleteVendorName = $_GET['getAjaxAutocompleteVendorName'];
-
-	if ( (isset($getAjaxAutocompleteVendorName)) && ($getAjaxAutocompleteVendorName) ) {
-
-	        include '../../library/opendb.php';
-
-	        $sql = "SELECT distinct(Vendor) as VendorName FROM ".$configValues['CONFIG_DB_TBL_DALODICTIONARY'].
-			" WHERE Vendor LIKE '$getAjaxAutocompleteVendorName%' ORDER BY VendorName ASC";
-	        $res = $dbSocket->query($sql);
-
-	        while($row = $res->fetchRow()) {
-	                echo "$row[0]###$row[0]|";
-	        }
-
-	        include '../../library/closedb.php';
-	}
-
-}
-
+include('../../library/closedb.php');
 
 ?>

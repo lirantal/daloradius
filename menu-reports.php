@@ -28,6 +28,7 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-reports.php') !== false) {
 }
 
 include_once("lang/main.php");
+include_once("library/validation.php");
 
 $m_active = "Reports";
 

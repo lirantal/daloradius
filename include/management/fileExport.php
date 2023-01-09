@@ -187,19 +187,18 @@ switch ($reportType) {
                     break;
             }
 
-            // alias for the CONFIG_DB_TBL_RADPOSTAUTH table
-            $as = "pa";
+            // pa & ui are aliases for the joined tables
             $cols = array(
-                            "Username" => "$as." . $tableSetting['postauth']['user'],
-                            "Password" => "$as.pass",
-                            "Start Time" => "$as.reply",
-                            "RADIUS Reply" => "$as." . $tableSetting['postauth']['date']
+                            "Fullname" => "CONCAT(ui.firstname, ' ', ui.lastname) AS fullname",
+                            "Username" => sprintf("pa.%s AS username", $tableSetting['postauth']['user']),
+                            "Start Time" => sprintf("pa.%s", $tableSetting['postauth']['date']),
+                            "RADIUS Reply" => "pa.reply",
                          );
 
-            $sql_format = "SELECT " . "$as." . implode(", $as.", array_values($cols))
-                        . " FROM %s AS %s %s"
-                        . " ORDER BY %s.%s ASC";
-            $sql = sprintf($sql_format, $configValues['CONFIG_DB_TBL_RADPOSTAUTH'], $as, $reportQuery, $as, $tableSetting['postauth']['user']);
+            $sql_format = "SELECT " . implode(", ", array_values($cols))
+                        . " FROM %s %s"
+                        . " ORDER BY username ASC";
+            $sql = sprintf($sql_format, $reportTable, $reportQuery);
 
             $res = $dbSocket->query($sql);
             
