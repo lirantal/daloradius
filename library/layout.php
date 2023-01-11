@@ -207,12 +207,6 @@ function print_input_field($input_descriptor) {
         }
     }
     
-    if ($input_descriptor['type'] == "number") {
-        if (array_key_exists('step', $input_descriptor)) {
-            printf(' step="%s"', $input_descriptor['step']);
-        }
-    }
-    
     if (in_array($input_descriptor['type'], array('button', 'submit'))) {
         echo ' class="button" style="display: block"';
     }
@@ -225,6 +219,10 @@ function print_input_field($input_descriptor) {
     
     if (array_key_exists('disabled', $input_descriptor) && $input_descriptor['disabled']) {
         echo ' disabled';
+    }
+    
+    if (array_key_exists('required', $input_descriptor) && $input_descriptor['required']) {
+        echo ' required';
     }
     
     if (array_key_exists('tabindex', $input_descriptor)) {

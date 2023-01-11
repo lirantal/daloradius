@@ -36,6 +36,22 @@ include_once("include/menu/billing-subnav.php");
 include_once("include/management/autocomplete.php");
 include_once("include/management/populate_selectbox.php");
 
+include('library/opendb.php');
+
+// get valid users
+$sql = sprintf("SELECT id, username FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+$res = $dbSocket->query($sql);
+$logDebugSQL .= "$sql;\n";
+
+$valid_users = array();
+while ($row = $res->fetchrow()) {
+    list($id, $value) = $row;
+    
+    $valid_users["user-$id"] = $value;
+}
+
+include('library/closedb.php');
+
 ?>
 
             <div id="sidebar">
@@ -62,9 +78,18 @@ include_once("include/management/populate_selectbox.php");
                     <li>
                         <a href="javascript:document.invoicenew.submit();"><b>&raquo;</b><?= t('button','NewInvoice') ?></a>
                         <form name="invoicenew" action="bill-invoice-new.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="invoiceUsernameNew" autocomplete="off"
-                                tooltipText="<?= t('Tooltip','Username') ?><br>"
-                                value="<?= (isset($edit_invoiceUsername)) ? $edit_invoiceUsername : "" ?>">
+<?php
+                        $options = $valid_users;
+                        array_unshift($options , '');
+                        $descriptor = array(
+                                                "name" => "user_id",
+                                                "caption" => t('all','Username'),
+                                                "type" => "select",
+                                                "options" => $options,
+                                                "selected_value" => (isset($user_id)) ? "user-$user_id" : "",
+                                             );
+                        print_form_component($descriptor);
+?>
                         </form>
                     </li>
 
@@ -120,7 +145,7 @@ include_once("include/management/populate_selectbox.php");
     if ($autoComplete) {
 ?>
     /** Making usernameEdit, invoiceUsername and invoiceUsernameNew interactive **/
-    var autoComEditElements = ["usernameEdit","invoiceUsername","invoiceUsernameNew"];
+    var autoComEditElements = ["usernameEdit","invoiceUsername"/*,"invoiceUsernameNew"*/];
     for (var i = 0; i < autoComEditElements.length; i++) {
         var autoComEdit = new DHTMLSuite.autoComplete();
         autoComEdit.add(autoComEditElements[i],
