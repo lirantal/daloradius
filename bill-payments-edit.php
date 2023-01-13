@@ -26,278 +26,296 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
-
-    include 'library/opendb.php';
-
-        isset($_REQUEST['payment_id']) ? $payment_id = $_REQUEST['payment_id'] : $payment_id = "";
-        isset($_REQUEST['payment_invoice_id']) ? $payment_invoice_id = $_REQUEST['payment_invoice_id'] : $payment_invoice_id = "";
-        isset($_REQUEST['payment_amount']) ? $payment_amount = $_REQUEST['payment_amount'] : $payment_amount = "";
-        isset($_REQUEST['payment_date']) ? $payment_date = $_REQUEST['payment_date'] : $payment_date = "";
-        isset($_REQUEST['payment_type_id']) ? $payment_type_id = $_REQUEST['payment_type_id'] : $payment_type_id = "";
-        isset($_REQUEST['payment_notes']) ? $payment_notes = $_REQUEST['payment_notes'] : $payment_notes = "";
-
-    $edit_payment_id = $payment_id; //feed the sidebar variables    
-
-    $logAction = "";
-    $logDebugSQL = "";
-
-    if (isset($_POST['submit'])) {
-
-                $payment_id = $_POST['payment_id'];
-
-        if (trim($payment_id) != "") {
-
-            $currDate = date('Y-m-d H:i:s');
-            $currBy = $_SESSION['operator_user'];
-
-            $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." SET ".
-            " invoice_id=".$dbSocket->escapeSimple($payment_invoice_id).", ".
-            " amount=".$dbSocket->escapeSimple($payment_amount).", ".
-            " date='".$dbSocket->escapeSimple($payment_date)."', ".
-            " type_id=".$dbSocket->escapeSimple($payment_type_id).", ".
-            " notes='".$dbSocket->escapeSimple($payment_notes)."', ".
-            " updatedate='$currDate', updateby='$currBy' ".
-            " WHERE id=".$dbSocket->escapeSimple($payment_id)."";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL = "";
-            $logDebugSQL .= $sql . "\n";
-            
-            $successMsg = "Updated payment type: <b> $payment_id </b>";
-            $logAction .= "Successfully updated payment type [$payment_id] on page: ";
-            
-        } else {
-            $failureMsg = "no payment type was entered, please specify a payment type to edit.";
-            $logAction .= "Failed updating payment type [$payment_id] on page: ";
-        }
-        
-    }
-    
-
-        $sql = "SELECT ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".invoice_id, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".amount, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".date, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".notes, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".creationdate, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".creationby, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".updatedate, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".updateby, ".
-                $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".value ".
-                " FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
-                " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
-                " ON ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".type_id=".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].".id ".
-        " WHERE ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].".id=".$dbSocket->escapeSimple($payment_id)."";
-
-
-
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= $sql . "\n";
-
-    $row = $res->fetchRow();
-    $payment_id = $row[0];
-    $payment_invoice_id = $row[1];
-    $payment_amount = $row[2];
-    $payment_date = $row[3];
-    $payment_type_id = $row[4];
-    $payment_notes = $row[5];
-    $creationdate = $row[6];
-    $creationby = $row[7];
-    $updatedate = $row[8];
-    $updateby = $row[9];
-    $payment_type_value = $row[10];
-
-    include 'library/closedb.php';
-
-
-    if (trim($payment_id) == "") {
-        $failureMsg = "no payment id was entered or found in database, please specify a payment id to edit";
-    }
-
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
 
     include_once("lang/main.php");
-    
+    include_once("library/validation.php");
     include("library/layout.php");
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+    
+    
+    include('library/opendb.php');
 
+    // get valid payment types
+    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $valid_paymentTypes = array( );
+    while ($row = $res->fetchrow()) {
+        list($id, $value) = $row;
+        
+        $valid_paymentTypes["paymentType-$id"] = $value;
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $payment_id = (array_key_exists('payment_id', $_POST) && intval(trim($_POST['payment_id'])) > 0)
+                    ? intval(trim($_POST['payment_id'])) : "";
+    } else {
+        $payment_id = (array_key_exists('payment_id', $_REQUEST) && intval(trim($_REQUEST['payment_id'])) > 0)
+                    ? intval(trim($_REQUEST['payment_id'])) : "";
+    }
+
+    // check if this payment exists
+    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE id=%d", $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $payment_id);
+    $res = $dbSocket->query($sql);
+    
+    $exists = intval($res->fetchrow()[0]) == 1;
+
+    if (!$exists) {
+        // we reset the payment if it does not exist
+        $payment_id = "";
+    }
+    
+    //feed the sidebar variables
+    $edit_payment_id = $payment_id;
+    
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        
+            if (empty($payment_id)) {
+                // required
+                $failureMsg = "invalid or empty payment id, please specify a valid payment id to edit.";
+                $logAction .= "invalid or empty payment id on page: ";
+            } else {
+                $sql_SET = array();
+                
+                // required later
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $operator;
+            
+                $sql_SET[] = sprintf("updatedate='%s'", $currDate);
+                $sql_SET[] = sprintf("updateby='%s'", $currBy);
+            
+                $payment_invoice_id = (array_key_exists('payment_invoice_id', $_POST) && intval(trim($_POST['payment_invoice_id'])) > 0)
+                                    ? intval(trim($_POST['payment_invoice_id'])) : "";
+                if (!empty($payment_invoice_id)) {
+                    $sql_SET[] = sprintf("invoice_id=%d", $payment_invoice_id);
+                }
+                
+                $payment_type_id = (array_key_exists('payment_type_id', $_POST) && !empty(trim($_POST['payment_type_id'])) &&
+                                    in_array(trim($_POST['payment_type_id']), array_keys($valid_paymentTypes)))
+                                 ? intval(str_replace("paymentType-", "", trim($_POST['payment_type_id']))) : "";
+                if (!empty($payment_type_id)) {
+                    $sql_SET[] = sprintf("type_id=%d", $payment_type_id);
+                }
+                
+                $payment_amount = (array_key_exists('payment_amount', $_POST) && is_numeric(trim($_POST['payment_amount'])))
+                                 ? trim($_POST['payment_amount']) : 0;
+                if ($payment_amount > 0) {
+                    $sql_SET[] = sprintf("amount='%s'", $payment_amount);
+                }
+
+                $payment_date = (
+                                    array_key_exists('payment_date', $_POST) &&
+                                    !empty(trim($_POST['payment_date'])) &&
+                                    preg_match(DATE_REGEX, trim($_POST['payment_date']), $m) !== false &&
+                                    checkdate($m[2], $m[3], $m[1])
+                                ) ? trim($_POST['payment_date']) : "";
+                if (!empty($payment_date)) {
+                    $sql_SET[] = sprintf("date='%s'", $payment_date);
+                }
+                                
+                $payment_notes = (array_key_exists('payment_notes', $_POST) && !empty(trim($_POST['payment_notes'])))
+                               ? trim($_POST['payment_notes']) : "";
+                if (!empty($payment_notes)) {
+                    $sql_SET[] = sprintf("notes='%s'", $dbSocket->escapeSimple($payment_notes));
+                }
+                
+                $sql = sprintf("UPDATE %s SET ", $configValues['CONFIG_DB_TBL_DALOPAYMENTS'])
+                     . implode(", ", $sql_SET)
+                     . sprintf(" WHERE id=%d", $payment_id);
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    $successMsg = "Successfully updated payment (id: #<strong>$payment_id</strong>)";
+                    $logAction .= "Successfully updated payment [id: #$payment_id] on page: ";
+                } else {
+                    $failureMsg = "Failed to updated payment (id: #<strong>$payment_id</strong>)";
+                    $logAction .= "Failed to updated payment [id: #$payment_id] on page: ";
+                }
+                
+            }
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+    
+        
+    if (empty($payment_id)) {
+        $failureMsg = "invalid or empty payment id entered, please specify a valid payment id to edit.";
+        $logAction .= "$failureMsg on page: ";
+    } else {
+    
+        $sql = sprintf("SELECT dp.id, dp.invoice_id, dp.amount, dp.date, dp.type_id, dp.notes,
+                               dp.creationdate, dp.creationby, dp.updatedate, dp.updateby, dpt.value
+                          FROM %s AS dp LEFT JOIN %s AS dpt ON dp.type_id = dpt.id
+                         WHERE dp.id=%d", $configValues['CONFIG_DB_TBL_DALOPAYMENTS'],
+                                          $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $payment_id);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+    
+        $row = $res->fetchrow();
+    
+        list(
+                $payment_id, $payment_invoice_id, $payment_amount, $payment_date, $payment_type_id,
+                $payment_notes, $creationdate, $creationby, $updatedate, $updateby, $value
+            ) = $row;
+    
+    }
+
+    include('library/closedb.php');
+
+    
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "css/tabs.css"
-    );
-    
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js",
-        "library/javascript/ajaxGeneric.js",
-        // js tabs stuff
-        "library/javascript/tabs.js"
-    );
-    
     $title = t('Intro','paymentsedit.php');
     $help = t('helpPage','paymentsedit');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
+    if (!empty($payment_id)) {
+        $title .= sprintf(" (id: #%d)", $payment_id);
+    }
+    
     include("menu-bill-payments.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
     
-    // set navbar stuff
-    $navbuttons = array(
-                          'PaymentInfo-tab' => t('title','PaymentInfo'),
-                          'Optional-tab' => t('title','Optional'),
-                       );
+    if (!empty($payment_id)) {
+    
+        // descriptors 0
+        $input_descriptors0 = array();
+        
+        $input_descriptors0[] = array(
+                                        "name" => "payment_invoice_id",
+                                        "caption" => t('all','PaymentInvoiceID'),
+                                        "type" => "number",
+                                        "value" => ((isset($payment_invoice_id)) ? $payment_invoice_id : ""),
+                                        "min" => 1,
+                                        "tooltipText" => t('Tooltip','paymentInvoiceTooltip')
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "payment_amount",
+                                        "caption" => t('all','PaymentAmount'),
+                                        "type" => "number",
+                                        "value" => ((isset($payment_amount)) ? $payment_amount : ""),
+                                        "min" => 0,
+                                        "step" => ".01",
+                                        "tooltipText" => t('Tooltip','amountTooltip')
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "payment_date",
+                                        "caption" => t('all','PaymentDate'),
+                                        "type" => "date",
+                                        "value" => ((isset($payment_date)) ? $payment_date : date("Y-m-d")),
+                                        "min" => date("1970-m-01")
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "payment_notes",
+                                        "caption" => t('all','PaymentNotes'),
+                                        "type" => "textarea",
+                                        "content" => ((isset($payment_notes)) ? $payment_notes : ""),
+                                        "tooltipText" => t('Tooltip','paymentNotesTooltip')
+                                     );
+        
+        $options = $valid_paymentTypes;
+        array_unshift($options , '');
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "payment_type_id",
+                                        "caption" => t('all','PaymentType'),
+                                        "options" => $options,
+                                        "selected_value" => ((isset($payment_type_id) && intval($payment_type_id) > 0) ? "paymentType-$payment_type_id" : ""),
+                                        "tooltipText" => t('Tooltip','paymentTypeIdTooltip')
+                                     );
+        
+        // descriptors 1
+        $input_descriptors1 = array();
+        $input_descriptors1[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'datetime-local',
+                                       'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
+        $input_descriptors1[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
+        $input_descriptors1[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'datetime-local',
+                                       'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
+        $input_descriptors1[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+        
+        // descriptors 2
+        $input_descriptors2 = array();
 
-    print_tab_navbuttons($navbuttons);
+        $input_descriptors2[] = array(
+                                        "name" => "payment_id",
+                                        "type" => "hidden",
+                                        "value" => ((isset($payment_id)) ? $payment_id : ""),
+                                     );
+        
+        $input_descriptors2[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        
+        $input_descriptors2[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+        
+        open_form();
+        
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','PaymentInfo'),
+                                     );
+                                     
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        // fieldset 1
+        $fieldset1_descriptor = array(
+                                        "title" => "Other Information",
+                                     );
+        
+        open_fieldset($fieldset1_descriptor);
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_form();
+    }
+    
+    
+    print_back_to_previous_page();
+    
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
     
 ?>
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-
-    <div class="tabcontent" id="PaymentInfo-tab" style="display: block">
-
-
-    <fieldset>
-
-        <h302> <?php echo t('title','PaymentInfo'); ?> </h302>
-        <br/>
-
-        <ul>
-
-            <li class='fieldset'>
-            <label for='payment_id' class='form'><?php echo t('all','PaymentId') ?></label>
-            <input disabled name='payment_id' type='text' id='payment_id' value='<?php echo $payment_id ?>' tabindex=100 />
-            </li>
-
-                <li class='fieldset'>
-                <label for='name' class='form'><?php echo t('all','PaymentInvoiceID') ?></label>
-                <input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo $payment_invoice_id ?>' tabindex=102 />
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentInvoiceTooltip')" />
-
-                <div id='paymentInvoiceTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo t('Tooltip','paymentInvoiceTooltip') ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <label for='payment_amount' class='form'><?php echo t('all','PaymentAmount') ?></label>
-                <input class='integer5len' name='payment_amount' type='text' id='payment_amount' value='<?php echo $payment_amount ?>' tabindex=103 />
-                   <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('payment_amount','increment')" />
-                   <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('payment_amount','decrement')"/>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" />
-
-                <div id='amountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo t('Tooltip','amountTooltip') ?>
-                </div>
-                </li>
-
-                <label for='payment_date' class='form'><?php echo t('all','PaymentDate')?></label>
-                <input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
-                <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
-                <br/>
-
-                <li class='fieldset'>
-                <label for='payment_type_id' class='form'><?php echo t('all','PaymentType')?></label>
-                <?php
-                        include_once('include/management/populate_selectbox.php');
-                        populate_payment_type_id("$payment_type_value", "payment_type_id", "form", "", "$payment_type_id");
-                ?>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentTypeIdTooltip')" />
-                <div id='paymentTypeIdTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo t('Tooltip','paymentTypeIdTooltip') ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <label for='payment_notes' class='form'><?php echo t('all','PaymentNotes') ?></label>
-                <textarea name='payment_notes' id='payment_notes'><?php echo $payment_notes ?></textarea>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentNotesTooltip')" />
-
-                <div id='paymentNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                        <img src='images/icons/comment.png' alt='Tip' border='0' />
-                        <?php echo t('Tooltip','paymentNotesTooltip') ?>
-                </div>
-                </li>
-
-
-            <li class='fieldset'>
-            <br/>
-            <hr><br/>
-            <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-                class='button' />
-            </li>
-
-        </ul>
-
-    </fieldset>
-
-    <input type=hidden value="<?php echo $payment_id ?>" name="payment_id"/>
-
-</div>
-
-<div class="tabcontent" id="Optional-tab">
-
-<fieldset>
-
-        <h302> Optional </h302>
-        <br/>
-
-        <br/>
-        <h301> Other </h301>
-        <br/>
-
-        <br/>
-        <label for='creationdate' class='form'><?php echo t('all','CreationDate') ?></label>
-        <input type="text" disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
-        <br/>
-
-        <label for='creationby' class='form'><?php echo t('all','CreationBy') ?></label>
-        <input type="text" disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
-        <br/>
-
-        <label for='updatedate' class='form'><?php echo t('all','UpdateDate') ?></label>
-        <input type="text" disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
-        <br/>
-
-        <label for='updateby' class='form'><?php echo t('all','UpdateBy') ?></label>
-        <input type="text" disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
-        <br/>
-
-
-        <br/><br/>
-        <hr><br/>
-
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-                class='button' />
-
-</fieldset>
-
-
-        </div>
-        <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
-
-</form>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

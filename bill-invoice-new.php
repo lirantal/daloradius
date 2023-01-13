@@ -21,162 +21,218 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-    // invoice details
-    isset($_POST['invoice_status_id']) ? $invoice_status_id = $_POST['invoice_status_id'] : $invoice_status_id = "";
-    isset($_POST['invoice_type_id']) ? $invoice_type_id = $_POST['invoice_type_id'] : $invoice_type_id = "";
-    isset($_POST['invoice_date']) ? $invoice_date = $_POST['invoice_date'] : $invoice_date = "";
-    isset($_POST['invoice_notes']) ? $invoice_notes = $_POST['invoice_notes'] : $invoice_notes = "";
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    include("include/management/functions.php");
     
-    isset($_POST['invoice_items']) ? $invoice_items = $_POST['invoice_items'] : $invoice_items = "";
-    
-    isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
-    isset($_GET['username']) ? $username = $_GET['username'] : $username = "";
-
-
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-
-    if (isset($_POST["submit"])) {
-        
-        isset($_POST['user_id']) ? $user_id = $_POST['user_id'] : $user_id = "";
-        
-        include 'library/opendb.php';
-
-        if (trim($user_id) != "") {
-
-            $currDate = date('Y-m-d H:i:s');
-            $currBy = $_SESSION['operator_user'];
-
-            if (!$invoice_status_id)
-                $invoice_status_id = 1;
-            
-            $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
-            " (id, user_id, date, status_id, type_id, notes, creationdate, creationby, updatedate, updateby) ".
-            " VALUES (0, '".$dbSocket->escapeSimple($user_id)."', '".
-            $dbSocket->escapeSimple($invoice_date)."', '".
-            $dbSocket->escapeSimple($invoice_status_id)."', '".
-            $dbSocket->escapeSimple($invoice_type_id)."', '".
-            $dbSocket->escapeSimple($invoice_notes)."', ".
-            " '$currDate', '$currBy', NULL, NULL)";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-
-            if (!PEAR::isError($res)) {
-
-                $invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" ); 
-                
-                // add the invoice items which the user created
-                addInvoiceItems($dbSocket, $invoice_id);
-                
-                $successMsg = "Added to database new invoice: <b>$invoice_id</b>";
-                $logAction .= "Successfully added new invoice [$invoice_id] on page: ";
-                
-            } else {
-                
-                $failureMsg = "Error in executing invoice INSERT statement";    
-                $logAction .= "Failed adding new invoice on page: ";
-
-            }
-                
-        } else {
-            $failureMsg = "you must provide a user id which matches the userbillinfo records";    
-            $logAction .= "Failed adding new invoice on page: ";    
-        }
     
-        include 'library/closedb.php';
+
+    include('library/opendb.php');
+    
+    // get valid statuses
+    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $valid_statuses = array();
+    while ($row = $res->fetchrow()) {
+        list($id, $value) = $row;
+        
+        $valid_statuses["status-$id"] = $value;
     }
-
-
-    function addInvoiceItems($dbSocket, $invoice_id = '') {
-
-        global $logDebugSQL;
-        global $configValues;
     
-        $currDate = date('Y-m-d H:i:s');
-        $currBy = $_SESSION['operator_user'];
+    // get valid types
+    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
     
-        // insert invoice's items
-        if (!empty($invoice_id)) {
+    $valid_types = array();
+    while ($row = $res->fetchrow()) {
+        list($id, $value) = $row;
+        
+        $valid_types["type-$id"] = $value;
+    }
     
-            foreach ($_POST as $itemName => $value) {
+    // get valid users
+    $sql = sprintf("SELECT id, username FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
     
-                if (substr($itemName, 0, 4) == 'item') {
-                                    
-                    error_log('processing: '.$itemName);
-                    
-                    $planId = $value['plan'];
-                    $amount = $value['amount'];
-                    $tax = $value['tax'];
-                    $notes = $value['notes'];
-    
-                    // if no amount is provided just break out
-                    if (empty($amount))
-                        break;
-                    
-                    $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].
-                            " (id, invoice_id, plan_id, amount, tax_amount, notes, ".
-                            " creationdate, creationby, updatedate, updateby) ".
-                            " VALUES (0, '".$invoice_id."', '".
-                            $dbSocket->escapeSimple($planId)."', '".
-                            $dbSocket->escapeSimple($amount)."', '".
-                            $dbSocket->escapeSimple($tax)."', '".
-                            $dbSocket->escapeSimple($notes)."', ".
-                            " '$currDate', '$currBy', NULL, NULL)";
-    
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= $sql . "\n";
-                    
-                }
-            }
-        }
+    $valid_users = array();
+    while ($row = $res->fetchrow()) {
+        list($id, $value) = $row;
+        
+        $valid_users["user-$id"] = $value;
     }
     
     
-    include 'library/opendb.php';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-    // let's try to get the user_id from the username 
-    if (empty($user_id)) {
-        $sql = "SELECT id FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-        " WHERE username = '".$dbSocket->escapeSimple($username)."'";
-        $res = $dbSocket->query($sql);
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-        $user_id = $row['id'];
-        $logDebugSQL .= $sql . "\n";
-    }
-    
-    $userInfo = array();
-    
-    if (isset($user_id) && (!empty($user_id))) {
-
-        $sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-        " WHERE id = '".$dbSocket->escapeSimple($user_id)."'";
-        $res = $dbSocket->query($sql);
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-        
-        $userInfo['contactperson'] = $row['contactperson'];
-        $userInfo['username'] = $row['username'];
-        $userInfo['city'] = $row['city'];
-        $userInfo['state'] = $row['state'];
-        
-        $logDebugSQL .= $sql . "\n";
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+                
+                // required later
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $operator;
                         
+                $user_id = (array_key_exists('user_id', $_POST) && !empty(trim($_POST['user_id'])) &&
+                            in_array(trim($_POST['user_id']), array_keys($valid_users)))
+                         ? intval(str_replace("user-", "", trim($_POST['user_id']))) : "";
+                
+                $invoice_type_id = (array_key_exists('invoice_type_id', $_POST) && !empty(trim($_POST['invoice_type_id'])) &&
+                                    in_array(trim($_POST['invoice_type_id']), array_keys($valid_types)))
+                                 ? intval(str_replace("type-", "", trim($_POST['invoice_type_id']))) : "";
+
+                $invoice_status_id = (array_key_exists('invoice_status_id', $_POST) && !empty(trim($_POST['invoice_status_id'])) &&
+                                      in_array(trim($_POST['invoice_status_id']), array_keys($valid_statuses)))
+                                   ? intval(str_replace("status-", "", trim($_POST['invoice_status_id']))) : 1;
+            
+                $invoice_date = (
+                                    array_key_exists('invoice_date', $_POST) &&
+                                    !empty(trim($_POST['invoice_date'])) &&
+                                    preg_match(DATE_REGEX, trim($_POST['invoice_date']), $m) !== false &&
+                                    checkdate($m[2], $m[3], $m[1])
+                                ) ? trim($_POST['invoice_date']) : date('Y-m-d');
+
+                $invoice_notes = (array_key_exists('invoice_notes', $_POST) && !empty(trim($_POST['invoice_notes'])))
+                               ? trim($_POST['invoice_notes']) : "";
+
+                
+                if (empty($user_id)) {
+                    // required/invalid
+                    $failureMsg = sprintf("The required field '%s' is empty or invalid", t('all','UserId'));
+                    $logAction .= "$failureMsg on page: ";
+                } else {
+                    $sql = sprintf("INSERT INTO %s (id, user_id, date, status_id, type_id, notes, creationdate, creationby)
+                                            VALUES (0, %d, '%s', %d, %d, '%s', '%s', '%s')",
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id, $invoice_date,
+                                   $invoice_status_id, $invoice_type_id, $dbSocket->escapeSimple($invoice_notes),
+                                   $currDate, $currBy);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        // retrieve invoice id
+                        $sql = sprintf("SELECT LAST_INSERT_ID() FROM %s",
+                                       $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']);
+                        $invoice_id = $dbSocket->getOne($sql);
+                        
+                        $items = add_invoice_items($dbSocket, $invoice_id, false);
+                        $successMsg = sprintf("Successfully added new invoice (id: #<strong>%d</strong>) with %d item(s)",
+                                              $invoice_id, $items);
+                        $logAction .= sprintf("Successfully added new invoice [id: #%d, items: %d] on page: ",
+                                              $invoice_id, $items);
+                    } else {
+                        $failureMsg = sprintf("Failed to add new invoice (id: #<strong>%d</strong>)", $invoice_id);
+                        $logAction .= sprintf("Failed to add new invoice [id: #%d] on page: ", $payment_id);
+                    }
+                }
+
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+        
+    } else {
+        $user_id = (array_key_exists('user_id', $_GET) && !empty(trim($_GET['user_id'])) &&
+                    in_array(trim($_GET['user_id']), array_keys($valid_users)))
+                 ? intval(str_replace("user-", "", trim($_GET['user_id']))) : "";
     }
     
-    include 'library/closedb.php';
+    
+    $username = (!empty($user_id)) ? $valid_users["user-$user_id"] : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
+    $inline_extra_js = "";
+    // with an invalid user_id we get an invalid username
+    // if the username is invalid we cannot procede
+    if (empty($username)) {
+        // required
+        $failureMsg = sprintf("The required field '%s' is empty or invalid", t('all','UserId'));
+        $logAction .= "$failureMsg on page: ";
+    } else {
+        
+        // select for active plans
+        $planSelect = '<select class="form" name="itemXXXXXXX[plan]">';
+        
+        
+        $sql = sprintf("SELECT DISTINCT(planName), id
+                          FROM %s WHERE planActive = 'yes'
+                         ORDER BY planName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
+        $res = $dbSocket->query($sql);
 
+        while ($row = $res->fetchRow()) {
+            list($planName, $id) = $row;
+            
+            $planSelect .= sprintf('<option value="%d">%s</option>',
+                                   intval($id), htmlspecialchars($planName, ENT_QUOTES, 'UTF-8'));
+        }
+        
+        $planSelect .= '</select>';
+        
+        $inline_extra_js = <<<EOF
+
+function addTableRow() {
+    var container = document.getElementById('container'),
+        counter = document.getElementById('counter'),
+        num = parseInt(counter.value) + 1,
+        trContainer = document.createElement('tr'),
+        trIdName = 'itemsRow' + num,
+        plansSelect = '$planSelect',
+        td1_name = `item\${num}[plan]`,
+        td2_name = `item\${num}[amount]`,
+        td3_name = `item\${num}[tax]`,
+        td4_name = `item\${num}[notes]`,
+        td5_onclick = `removeTableRow('\${trIdName}')`;
+    
+    trContainer.setAttribute('id', trIdName);
+    
+    var td1 = document.createElement('td');
+    td1.innerHTML = plansSelect.replace("itemXXXXXXX[plan]", td1_name);
+
+    var td2 = document.createElement('td');
+    td2.innerHTML = `<input type="number" min="0" step=".01" id="item\${num}_amount" name="\${td2_name}">`;
+
+	var td3 = document.createElement('td');
+	td3.innerHTML = `<input type="number" min="0" step=".01" id="item\${num}_tax" name="\${td3_name}">`;
+
+	var td4 = document.createElement('td');
+	td4.innerHTML = `<input type="text" id="item\${num}_notes" name="\${td4_name}">`;
+
+	var td5 = document.createElement('td');
+	td5.innerHTML = `<input type="button" name="remove\${num}_button" value="Remove Item" onclick="\${td5_onclick}" class="button">`;
+
+	trContainer.appendChild(td1);
+	trContainer.appendChild(td2);
+	trContainer.appendChild(td3);
+	trContainer.appendChild(td4);
+	trContainer.appendChild(td5);
+	container.appendChild(trContainer);
+    
+    counter.value = num;
+}
+
+function removeTableRow(rowId) {
+    document.getElementById('container').removeChild(document.getElementById(rowId));
+}
+EOF;
+
+    }
+    
+    include('library/closedb.php');
+    
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
@@ -190,69 +246,16 @@
         // js tabs stuff
         "library/javascript/tabs.js"
     );
+
     
-    include_once('include/management/populate_selectbox.php');
-    $planSelect = populate_plans("","itemXXXXXXX[plan]", "form", "", "", true);
-
-    $inline_extra_js = <<<EOF
-var itemCounter = 1;
-
-function addTableRow() {
-    itemCounter++;
-
-  	var container = document.getElementById('container');
-  	
-    var counter = document.getElementById('counter');
-    var num = counter.value + 1;
-  	counter.value = num;
-  	
-	var trContainer = document.createElement('tr');
-	var trIdName = 'itemsRow' + num;
-	trContainer.setAttribute('id', trIdName);
-
-	var plansSelect = "$planSelect";
-    
-    var td1_name = "item" + itemCounter + "[plan]",
-        td2_name = "item" + itemCounter + "[amount]",
-        td3_name = "item" + itemCounter + "[tax]",
-        td4_name = "item" + itemCounter + "[notes]",
-        td5_onclick = "removeTableRow('" + trIdName + "')";
-    
-    var td1 = document.createElement('td');
-    td1.innerHTML = plansSelect.replace("itemXXXXXXX[plan]", td1_name);
-
-	var td2 = document.createElement("td");
-    td2.innerHTML = '<input type="text" id="item' + num + '" name="' + td2_name + '">';
-
-	var td3 = document.createElement('td');
-	td3.innerHTML = '<input type="text" id="item' + num + '" name="' + td3_name + '">';
-
-	var td4 = document.createElement('td');
-	td4.innerHTML = '<input type="text" id="item' + num + '" name="' + td4_name + '">';
-
-	var td5 = document.createElement('td');
-	td5.innerHTML = '<input type="button" name="remove" value="Remove" onclick="' + td5_onclick + '" class="button">';
-
-	trContainer.appendChild(td1);
-	trContainer.appendChild(td2);
-	trContainer.appendChild(td3);
-	trContainer.appendChild(td4);
-	trContainer.appendChild(td5);
-	container.appendChild(trContainer);
-	  
-}
-
-function removeTableRow(rowCounter) {
-	  var container = document.getElementById('container');
-	  var trContainer = document.getElementById(rowCounter);
-	  container.removeChild(trContainer);
-	}    
-EOF;
-
-    $title = t('Intro','billinvoicesnew.php');
-    $help = t('helpPage','billinvoicesnew');
+    $title = t('Intro','billinvoicenew.php');
+    $help = t('helpPage','billinvoicenew');
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js, "", $inline_extra_js);
+
+    if (!empty($username_enc)) {
+        $title .=  " :: " . $username_enc;
+    }
 
     include("menu-bill-invoice.php");
 
@@ -261,143 +264,212 @@ EOF;
 
     include_once('include/management/actionMessages.php');
     
+    if (!empty($username)) {
+        include('library/opendb.php');
+        
+        $sql = sprintf("SELECT contactperson, city, state FROM %s WHERE id=%d",
+                       $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $user_id);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $row = $res->fetchRow();
+        list( $contactperson, $city, $state ) = $row;
+        
+        include('library/closedb.php');
+        
+        // print customer info
+        printf('<div><strong>Customer</strong>: <a href="bill-pos-edit.php?username=%s">%s</a><br>',
+               $username_enc, htmlspecialchars($contactperson, ENT_QUOTES, 'UTF-8'));
+        
+        $arr = array();
+        
+        if (!empty($city)) {
+            $arr[] = htmlspecialchars($city, ENT_QUOTES, 'UTF-8');
+        }
+        
+        if (!empty($state)) {
+            $arr[] = htmlspecialchars($state, ENT_QUOTES, 'UTF-8');
+        }
+        
+        if (count($arr) > 0) {
+            echo implode(", ", $arr);
+        }
+        
+        echo '</div>';
+        
+        // set navbar stuff
+        $navkeys = array( 'Invoice', 'Items', );
+
+        // print navbar controls
+        print_tab_header($navkeys);
+        
+        $input_descriptors0 = array();
+        
+        $options = $valid_statuses;
+        array_unshift($options , '');
+		$input_descriptors0[] = array(
+                                        "name" => "invoice_status_id",
+                                        "caption" => t('all','InvoiceStatus'),
+                                        "type" => "select",
+                                        "options" => $options,
+                                        "selected_value" => "status-$invoice_status_id",
+                                        "tooltipText" => t('Tooltip','invoiceStatusTooltip'),
+                                     );
+        
+        $options = $valid_types;
+        array_unshift($options , '');
+		$input_descriptors0[] = array(
+                                        "name" => "invoice_type_id",
+                                        "caption" => t('all','InvoiceType'),
+                                        "type" => "select",
+                                        "options" => $options,
+                                        "selected_value" => "type-$invoice_type_id",
+                                        "tooltipText" => t('Tooltip','invoiceTypeTooltip'),
+                                     );
     
-    // set navbar stuff
-    $navbuttons = array(
-                          'Invoice-tab' => t('title','Invoice'),
-                          'Items-tab' => t('title','Items'),
+        $options = $valid_users;
+        array_unshift($options , '');
+		$input_descriptors0[] = array(
+                                        "name" => "user_id",
+                                        "caption" => t('all','UserId'),
+                                        "type" => "select",
+                                        "options" => $options,
+                                        "selected_value" => "user-$user_id",
+                                        "tooltipText" => t('Tooltip','user_idTooltip'),
+                                     );
+
+        $input_descriptors0[] = array(
+                                        "name" => "invoice_date",
+                                        "caption" => t('all','PaymentDate'),
+                                        "type" => "date",
+                                        "value" => $invoice_date,
+                                        "min" => date("1970-m-01"),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "invoice_notes",
+                                        "caption" => t('ContactInfo','Notes'),
+                                        "type" => "textarea",
+                                        "content" => $invoice_notes,
+                                     );
+        
+        // opening form
+        open_form();
+        
+        // tab 0
+        open_tab($navkeys, 0, true);
+        
+        $fieldset0_descriptor = array( "title" => t('title','Invoice') );
+        
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_tab($navkeys, 0);
+        
+        // tab 1
+        open_tab($navkeys, 1);
+    
+        $fieldset1_descriptor = array( "title" => t('title','Items') );
+        
+        open_fieldset($fieldset1_descriptor);
+    
+        
+        $input_descriptors1 = array();
+        $input_descriptors1[] = array(
+                                        "type" => "button",
+                                        "name" => "addItem",
+                                        "value" => "Add Item",
+                                        "onclick" => "addTableRow()",
+                                      );
+        
+        $input_descriptors1[] = array(
+                                        "name" => "counter",
+                                        "type" => "hidden",
+                                        "value" => "0",
+                                     );
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        echo '<table class="table1" style="margin: 10px auto">'
+           . '<tbody id="container">'
+           . '<tr>';
+        
+        $headers = array(
+                            t('title','Plan'),
+                            t('all','Amount'),
+                            t('all','Tax'),
+                            t('ContactInfo','Notes'),
+                            'Action(s)'
                        );
-
-    print_tab_navbuttons($navbuttons);
-?>
-
-<form method="POST">
-
-    <div class="tabcontent" id="Invoice-tab" style="display: block">
         
-    <fieldset>
-
-        <h302> <?php echo t('title','Invoice'); ?> </h302>
-
-        <ul>
+        foreach ($headers as $header) {
+            printf("<th>%s</th>", $header);
+        }
         
-        <?php
-        echo 'Customer:<b/><br/>'; 
-        echo '<a href="/bill-pos-edit.php?username='.$userInfo['username'].'">'.$userInfo['contactperson'].'</a><br/>'.
-            $userInfo['city']. (!empty($userInfo['state']) ? ', '.$userInfo['state'] : '' );
-        echo '</b>';
-        ?>
-        <br/>
-
-        <li class='fieldset'>
-        <label for='invoice_status_id' class='form'><?php echo t('all','InvoiceStatus')?></label>
-        <?php
-                include_once('include/management/populate_selectbox.php');
-                populate_invoice_status_id("Select Status", "invoice_status_id", 'form', '', 1);
-        ?>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('invoice_status_id')" />
-        <div id='invoiceStatusTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','invoiceStatusTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='invoice_type_id' class='form'><?php echo t('all','InvoiceType')?></label>
-        <?php
-                include_once('include/management/populate_selectbox.php');
-                populate_invoice_type_id("Select Type", "invoice_type_id");
-        ?>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('invoice_type_id')" />
-        <div id='invoiceTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','invoiceTypeTooltip') ?>
-        </div>
-        </li>
-
-
-        <li class='fieldset'>
-        <label for='user_id' class='form'><?php echo t('all','UserId') ?></label>
-        <input name='user_id' type='text' id='user_id' value='<?php echo $user_id ?>' tabindex=101 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('user_idTooltip')" /> 
+        echo '</tr>' . "\n";
         
-        <div id='user_idTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','user_idTooltip') ?>
-        </div>
-        </li>
-
-
-
-        <label for='invoice_date' class='form'><?php echo t('all','Date')?></label>        
-        <input value='' id='invoice_date' name='invoice_date'  tabindex=108 />
-        <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'invoice_date', 'chooserSpan_invoicedate', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
-        <br/>
-
-        <label for='invoice_notes' class='form'><?php echo t('ContactInfo','Notes')?></label>
-        <textarea class='form' name='invoice_notes' ></textarea>
-
+        $this_id = rand();
+        $itemRowId = sprintf("itemsRow%d", $this_id);
+                
+        printf('<tr id="%s">', $itemRowId);
+                
+        $this_select = str_replace("itemXXXXXXX[plan]", sprintf("item%d[plan]", $this_id), $planSelect);
+        printf("<td>%s</td>", $this_select);
         
-        </ul>
+        $input_name_value = array(
+                                    "amount" => $this_amount,
+                                    "tax" => $this_tax_amount,
+                                 );
+        
+        foreach ($input_name_value as $name => $value) {
+            printf('<td><input type="number" min="0" step=".01" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
+                   $this_id, $name, $this_id, $name, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+        }
+        
+        printf('<td><input type="text" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
+               $this_id, "notes", $this_id, "notes", htmlspecialchars($this_notes, ENT_QUOTES, 'UTF-8'));
+        
+        $onclick = sprintf("removeTableRow('%s')", $itemRowId);
+        printf('<td><input type="button" name="remove" value="Remove Item" onclick="%s" class="button"></td>', $onclick);
+        
+        echo '</tr>'
+           . '</tbody>'
+           . '</table>';
+        
+        close_fieldset();
+        
+        close_tab($navkeys, 1);
+        
+        // descriptors 2
+        $input_descriptors2 = array();
     
-    </fieldset>
-    <div id="chooserSpan_invoicedate" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
-    </div>
-
-    <div class="tabcontent" id="Items-tab">
-    <fieldset>
-
-        <h302> <?php echo t('title','Items'); ?> </h302>
-        <input type='button' name='addItem' value='Add Item'
-            onclick="javascript:addTableRow();" class='button'>
-        <br/>
-
-
-        <input type="hidden" value="0" id="counter" />
-
-        <table BORDER="7" CELLPADDING="10">
-        <tbody id="container">
-        <tr>
-            <th>Plan</th>
-            <th>Item Amount</th>
-            <th>Item Tax</th>
-            <th>Notes</th>
-            <th>Actions</th>
-        </tr>
+        $input_descriptors2[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
         
-        <tr id="itemRowDefault">
-        <td>
-            <?php
-                populate_plans('Select Plan',"itemDefault[plan]", "form", "", '', true); 
-            ?>
-        </td>
-        <td><input type="text" name="itemDefault[amount]" id="itemDefault1"> </td>
-        <td><input type="text" name="itemDefault[tax]" id="itemDefault1"> </td>
-        <td><input type="text" name="itemDefault[notes]" id="itemDefault1"> </td>
-        <td><input type="button" class="button" onclick="javascript:removeTableRow('itemRowDefault');" value="Remove" name="remove"></td>
-        </tr>
+        $input_descriptors2[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
         
-        </tbody>
-        </table>
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
-    <br/>
-    </fieldset>
-    </div>
-
-    <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-
-</form>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+        close_form();
+    }
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
+   
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

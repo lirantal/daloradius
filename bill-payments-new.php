@@ -26,95 +26,121 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-    isset($_POST['payment_invoice_id']) ? $payment_invoice_id = $_POST['payment_invoice_id'] : $payment_invoice_id = "";
-    isset($_POST['payment_amount']) ? $payment_amount = $_POST['payment_amount'] : $payment_amount = "";
-    isset($_POST['payment_date']) ? $payment_date = $_POST['payment_date'] : $payment_date = "";
-    isset($_POST['payment_type_id']) ? $payment_type_id = $_POST['payment_type_id'] : $payment_type_id = "";
-    isset($_POST['payment_notes']) ? $paymentnotes = $_POST['payment_notes'] : $payment_notes = "";
-
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($_POST["submit"])) {
-        $payment_invoice_id = $_POST['payment_invoice_id'];
-        $payment_amount = $_POST['payment_amount'];
-        $payment_date = $_POST['payment_date'];
-        $payment_type_id = $_POST['payment_type_id'];
-        $payment_notes = $_POST['payment_notes'];
-        
-        include 'library/opendb.php';
 
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." WHERE invoice_id=".$dbSocket->escapeSimple($payment_invoice_id)." AND amount=".$dbSocket->escapeSimple($payment_amount)." AND date='".$dbSocket->escapeSimple($payment_date)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($res->numRows() == 0) {
-            if (trim($payment_invoice_id) != "" and trim($payment_amount)!="" and trim($payment_date)!="") {
-
-                $currDate = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
-                
-                // insert apyment type info
-                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPAYMENTS'].
-                    " (id, invoice_id, amount,date,type_id, notes, ".
-                    "  creationdate, creationby, updatedate, updateby) ".
-                    " VALUES (0, ".$dbSocket->escapeSimple($payment_invoice_id).", ".
-                    "".$dbSocket->escapeSimple($payment_amount).", ".
-                    "'".$dbSocket->escapeSimple($payment_date)."', ".
-                    "'".$dbSocket->escapeSimple($payment_type_id)."', ".
-                    "'".$dbSocket->escapeSimple($payment_notes)."', ".
-                    " '$currDate', '$currBy', NULL, NULL)";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg = "Added to database new payment for invoice: <b>$payment_invoice_id</b> <br/>";
-                $successMsg .= "<a href='bill-invoice-edit.php?invoice_id=$payment_invoice_id'> Show Invoice $payment_invoice_id </a>";
-                $logAction .= "Successfully added new payment for invoice [$payment_invoice_id] on page: ";
-                
-                
-            } else {
-                $failureMsg = "you must provide an invoice, an amount and a date ";    
-                $logAction .= "Failed adding new payment for invoice [$payment_invoice_id] on page: ";    
-            }
-        } else { 
-            $failureMsg = "You have tried to add a paymente that already exist in the database for the invoice: $payment_invoice_id";
-            $logAction .= "Failed adding new payment already in database for invoice [$payment_invoice_id] on page: ";        
-        }
+    include('library/opendb.php');
     
-        include 'library/closedb.php';
-
+    // get valid payment types
+    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $valid_paymentTypes = array( );
+    while ($row = $res->fetchrow()) {
+        list($id, $value) = $row;
+        
+        $valid_paymentTypes["paymentType-$id"] = $value;
     }
 
-    isset($_GET['payment_invoice_id']) ? $invoice_id = $_GET['payment_invoice_id'] : $invoice_id = "";
-    isset($_GET['payment_date']) ? $payment_date = $_GET['payment_date'] : $payment_date = date('Y-m-d H:i:s');
     
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        
+            // required later
+            $currDate = date('Y-m-d H:i:s');
+            $currBy = $operator;
+        
+            $required_fields = array();
+        
+            $payment_invoice_id = (array_key_exists('payment_invoice_id', $_POST) && intval(trim($_POST['payment_invoice_id'])) > 0)
+                                ? intval(trim($_POST['payment_invoice_id'])) : "";
+            if (empty($payment_invoice_id)) {
+                $required_fields['payment_invoice_id'] = t('all','PaymentInvoiceID');
+            }
+            
+            $payment_type_id = (array_key_exists('payment_type_id', $_POST) && !empty(trim($_POST['payment_type_id'])) &&
+                                in_array(trim($_POST['payment_type_id']), array_keys($valid_paymentTypes)))
+                             ? intval(str_replace("paymentType-", "", trim($_POST['payment_type_id']))) : "";
+            
+            $payment_amount = (array_key_exists('payment_amount', $_POST) && is_numeric(trim($_POST['payment_amount'])))
+                             ? trim($_POST['payment_amount']) : 0;
+            if (empty($payment_amount)) {
+                $required_fields['payment_amount'] = t('all','PaymentAmount');
+            }
+            
+            $payment_date = (
+                                array_key_exists('payment_date', $_POST) &&
+                                !empty(trim($_POST['payment_date'])) &&
+                                preg_match(DATE_REGEX, trim($_POST['payment_date']), $m) !== false &&
+                                checkdate($m[2], $m[3], $m[1])
+                            ) ? trim($_POST['payment_date']) : date('Y-m-d');
+            if (empty($payment_date)) {
+                $required_fields['payment_date'] = t('all','PaymentDate');
+            }
+            
+            $payment_notes = (array_key_exists('payment_notes', $_POST) && !empty(trim($_POST['payment_notes'])))
+                           ? trim($_POST['payment_notes']) : "";
+            
+            if (count($required_fields) > 0) {
+                // required/invalid
+                $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
+                $logAction .= "$failureMsg on page: ";
+            } else {
+                $sql = sprintf("INSERT INTO %s (id, invoice_id, amount, date, type_id, notes, creationdate, creationby)
+                                        VALUES (0, %d, %s, '%s', %d, '%s', '%s', '%s')",
+                               $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $payment_invoice_id, $payment_amount,
+                               $payment_date, $payment_type_id, $dbSocket->escapeSimple($payment_notes), $currDate, $currBy);
+                               
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    $successMsg = sprintf("Inserted new payment for invoice: #<strong>%d</strong><br>", $payment_invoice_id)
+                                . sprintf('<a href="bill-invoice-edit.php?invoice_id=%d">edit invoice #%d</a>',
+                                          $payment_invoice_id, $payment_invoice_id);
+                    $logAction .= "Successfully inserted new payment for invoice [#$payment_invoice_id] on page: ";
+                } else {
+                    $failureMsg = "Failed to insert new payment for invoice: #<strong>$payment_invoice_id</strong>";
+                    $logAction .= "Failed to insert new payment for invoice [#$payment_invoice_id] on page: ";
+                }
+            }
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    } else {
+        $payment_invoice_id = (array_key_exists('payment_invoice_id', $_REQUEST) && intval(trim($_REQUEST['payment_invoice_id'])) > 0)
+                            ? intval(trim($_REQUEST['payment_invoice_id'])) : "";
+        
+        $payment_date = (
+                            array_key_exists('payment_date', $_REQUEST) &&
+                            !empty(trim($_REQUEST['payment_date'])) &&
+                            preg_match(DATE_REGEX, trim($_REQUEST['payment_date']), $m) !== false &&
+                            checkdate($m[2], $m[3], $m[1])
+                        ) ? trim($_REQUEST['payment_date']) : "";
+    }
 
-    // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "css/tabs.css"
-    );
-    
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js",
-        "library/javascript/ajaxGeneric.js",
-        // js tabs stuff
-        "library/javascript/tabs.js"
-    );
-    
+
+    include('library/closedb.php');
+
+    // print HTML prologue   
     $title = t('Intro','paymentsnew.php');
     $help = t('helpPage','paymentsnew');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
     include("menu-bill-payments.php");
 
@@ -122,147 +148,103 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
+
+
+    if (!isset($successMsg)) {
     
-    // set navbar stuff
-    $navbuttons = array(
-                          'PaymentInfo-tab' => t('title','PaymentInfo'),
-                          'Optional-tab' => t('title','Optional'),
-                       );
-
-    print_tab_navbuttons($navbuttons);
-?>
-
-<form method="POST">
-
-    <div class="tabcontent" id="PaymentInfo-tab" style="display: block">
-
-    <fieldset>
-
-        <h302> <?php echo t('title','PaymentInfo'); ?> </h302>
-        <br/>
-
-        <ul>
-
-        <li class='fieldset'>
-        <label for='name' class='form'><?php echo t('all','PaymentInvoiceID') ?></label>
-        <input name='payment_invoice_id' type='text' id='payment_invoice_id' value='<?php echo $invoice_id ?>' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentInvoiceTooltip')" /> 
+        // descriptors 0
+        $input_descriptors0 = array();
         
-        <div id='paymentInvoiceTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','paymentInvoiceTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-           <label for='payment_amount' class='form'><?php echo t('all','PaymentAmount') ?></label>
-           <input class='integer5len' name='payment_amount' type='text' id='payment_amount' value='000.00' tabindex=103 />
-                   <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('payment_amount','increment')" />
-                   <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('payment_amount','decrement')"/>
-           <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('amountTooltip')" />
-   
-           <div id='amountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-               <img src='images/icons/comment.png' alt='Tip' border='0' />
-               <?php echo t('Tooltip','amountTooltip') ?>
-           </div>
-           </li>
-
-        <label for='payment_date' class='form'><?php echo t('all','PaymentDate')?></label>
-           <input value='<?php echo $payment_date ?>' id='payment_date' name='payment_date'  tabindex=108 />
-           <img src="library/js_date/calendar.gif" onclick="showChooser(this, 'payment_date', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);">
-        <br/>
-
-           <li class='fieldset'>
-           <label for='payment_type_id' class='form'><?php echo t('all','PaymentType')?></label>
-           <?php
-                   include_once('include/management/populate_selectbox.php');
-                   populate_payment_type_id("Select Payment Type", "payment_type_id");
-           ?>
-           <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentTypeIdTooltip')" />
-           <div id='paymentTypeIdTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-               <img src='images/icons/comment.png' alt='Tip' border='0' />
-               <?php echo t('Tooltip','paymentTypeIdTooltip') ?>
-           </div>
-           </li>
-
-        <li class='fieldset'>
-        <label for='payment_notes' class='form'><?php echo t('all','PaymentNotes') ?></label>
-        <textarea name='payment_notes'  class='form' tabindex=101 ></textarea>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentNotesTooltip')" /> 
+        $input_descriptors0[] = array(
+                                        "name" => "payment_invoice_id",
+                                        "caption" => t('all','PaymentInvoiceID'),
+                                        "type" => "number",
+                                        "value" => ((isset($payment_invoice_id)) ? $payment_invoice_id : ""),
+                                        "min" => 1,
+                                        "required" => true,
+                                        "tooltipText" => t('Tooltip','paymentInvoiceTooltip')
+                                     );
         
-        <div id='paymentNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','paymentNotesTooltip') ?>
-        </div>
-        </li>
+        $input_descriptors0[] = array(
+                                        "name" => "payment_amount",
+                                        "caption" => t('all','PaymentAmount'),
+                                        "type" => "number",
+                                        "value" => ((isset($payment_amount)) ? $payment_amount : ""),
+                                        "min" => 0,
+                                        "step" => ".01",
+                                        "required" => true,
+                                        "tooltipText" => t('Tooltip','amountTooltip')
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "payment_date",
+                                        "caption" => t('all','PaymentDate'),
+                                        "type" => "date",
+                                        "value" => ((!empty($payment_date)) ? $payment_date : date("Y-m-d")),
+                                        "required" => true,
+                                        "min" => date("1970-m-01")
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "payment_notes",
+                                        "caption" => t('all','PaymentNotes'),
+                                        "type" => "textarea",
+                                        "content" => ((isset($payment_notes)) ? $payment_notes : ""),
+                                        "tooltipText" => t('Tooltip','paymentNotesTooltip')
+                                     );
+        
+        $options = $valid_paymentTypes;
+        array_unshift($options , '');
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "payment_type_id",
+                                        "caption" => t('all','PaymentType'),
+                                        "options" => $options,
+                                        "selected_value" => ((isset($payment_type_id) && intval($payment_type_id) > 0) ? "paymentType-$payment_type_id" : ""),
+                                        "tooltipText" => t('Tooltip','paymentTypeIdTooltip')
+                                     );
+        
+        // descriptors 1
+        $input_descriptors1 = array();
+
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+        
+        open_form();
+        
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','PaymentInfo'),
+                                     );
+                                     
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_form();
+    }
     
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
-
-        </ul>
-    </fieldset>
-
-    </div>
-
-
-    <div class="tabcontent" id="Optional-tab">
-
-<fieldset>
-
-        <h302> Optional </h302>
-        <br/>
-
-        <br/>
-        <h301> Other </h301>
-        <br/>
-
-        <br/>
-        <label for='creationdate' class='form'><?php echo t('all','CreationDate') ?></label>
-        <input disabled value='<?php if (isset($creationdate)) echo $creationdate ?>' tabindex=313 />
-        <br/>
-
-        <label for='creationby' class='form'><?php echo t('all','CreationBy') ?></label>
-        <input disabled value='<?php if (isset($creationby)) echo $creationby ?>' tabindex=314 />
-        <br/>
-
-        <label for='updatedate' class='form'><?php echo t('all','UpdateDate') ?></label>
-        <input disabled value='<?php if (isset($updatedate)) echo $updatedate ?>' tabindex=315 />
-        <br/>
-
-        <label for='updateby' class='form'><?php echo t('all','UpdateBy') ?></label>
-        <input disabled value='<?php if (isset($updateby)) echo $updateby ?>' tabindex=316 />
-        <br/>
-
-
-        <br/><br/>
-        <hr><br/>
-
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-                class='button' />
-
-</fieldset>
-
-
-    </div>
-    <div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;"></div>
-
-</div>
-
-    </form>
-
-</div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
+    print_back_to_previous_page();
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

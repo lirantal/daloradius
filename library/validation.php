@@ -242,6 +242,15 @@ $valid_paymentStatus = array(
 $valid_vendorTypes = array( "Any", "2Checkout", "PayPal" );
 $valid_billactions = array( "Any", "Refill Session Time", "Refill Session Traffic" );
 
+$valid_planTypes = array( "Prepaid", "Postpaid", "2Checkout", "PayPal", );
+$valid_planRecurringPeriods = array( "Never", "Daily", "Weekly", "Monthly", "Quarterly", "Semi-Yearly", "Yearly", );
+$valid_planRecurringBillingSchedules = array( "Fixed", "Anniversary", );
+$valid_planCurrencys = array(
+                                "USD", "EUR", "GBP", "CAD", "JPY", "AUD", "NZD", "CHF", "HKD", "SGD",
+                                "SEK", "DKK", "PLN", "NOK", "HUF", "CZK", "ILS", "MXN", "KSH",
+                            );
+$valid_planTimeTypes = array( "Accumulative", "Time-To-Finish" );
+
 $valid_languages = array(
                             "en" => "English", 
                             "it" => "Italian", 

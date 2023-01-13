@@ -53,9 +53,9 @@
     include("menu-bill-plans.php");
 
     $cols = array(
-                    "planid" => t('all','PlanId'),
-                    "planname" => t('all','PlanName'),
-                    "plantype" => t('all','PlanType')
+                    "planName" => t('all','PlanName'),
+                    "planType" => t('all','PlanType'),
+                    "planActive" => t('all','PlanActive'),
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
@@ -81,7 +81,7 @@
     include('include/management/pages_common.php');
 
     // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(planId) FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
+    $sql = sprintf("SELECT COUNT(DISTINCT(planName)) FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
     $res = $dbSocket->query($sql);
     $numrows = $res->fetchrow()[0];
     
@@ -97,7 +97,7 @@
         
         /* END */
         
-        $sql = sprintf("SELECT planId, planName, planType FROM %s ORDER BY %s %s LIMIT %s, %s",
+        $sql = sprintf("SELECT planName, planType, planActive FROM %s ORDER BY %s %s LIMIT %s, %s",
                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
@@ -150,7 +150,7 @@
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
         
-            list($planId, $planName, $planType) = $row;
+            list($planName, $planType, $planActive) = $row;
             
             $tooltipText = '<ul style="list-style-type: none">'
                          . sprintf('<li style="%s"><a class="toolTip" href="bill-plans-edit.php?planName=%s">%s</a></li>',
@@ -165,12 +165,12 @@
                     <input type="checkbox" name="planName[]" value="<?= $planName ?>" id="<?= "checkbox-$count" ?>">
                     <label for="<?= "checkbox-$count" ?>">
                         <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                            <?= $planId ?>
+                            <?= $planName ?>
                         </a>
                     </label>
                 </td>
-                <td><?= $planName ?></td>
                 <td><?= $planType ?></td>
+                <td><?= $planActive ?></td>
             </tr>
 <?php
             $count++;

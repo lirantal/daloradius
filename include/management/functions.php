@@ -28,6 +28,63 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/functions.php') !== false)
     exit;
 }
 
+
+// add invoice items contained in the $_POST array.
+// a single items is an associatime array starting with the string 'item'
+// and containing exactly 4 elements: plan, amount, tax and notes
+function add_invoice_items($dbSocket, $invoice_id='', $clean_before_adding=true) {
+    global $configValues, $logDebugSQL;
+
+    if (empty($invoice_id) || intval($invoice_id) == 0) {
+        return 0;
+    }
+
+    $invoice_id = intval($invoice_id);
+
+    if ($clean_before_adding) {
+        // first remove all items for this invoice
+        $sql = sprintf("DELETE FROM %s WHERE invoice_id = %d",
+                       $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'], $invoice_id);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+    }
+    
+    $currDate = date('Y-m-d H:i:s');
+    $currBy = $_SESSION['operator_user'];
+    
+    // insert invoice's items
+    $items = 0;
+    foreach ($_POST as $itemName => $value) {
+        if (substr($itemName, 0, 4) != 'item' || ( !is_array($value) && count($value) != 4 )) {
+            continue;
+        }
+        
+        $planId = $value['plan'];
+        $amount = $value['amount'];
+        $tax = $value['tax'];
+        $notes = $value['notes'];
+        
+        // if no amount is provided just break out
+        if (empty($amount)) {
+            return 0;
+        }
+        
+        $sql = sprintf("INSERT INTO %s (id, invoice_id, plan_id, amount, tax_amount, notes, creationdate, creationby) ".
+                        " VALUES (0, %d, '%s', '%s', '%s', '%s', '%s', '$%s')",
+                        $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'], $invoice_id,
+                        $dbSocket->escapeSimple($planId), $dbSocket->escapeSimple($amount),
+                        $dbSocket->escapeSimple($tax), $dbSocket->escapeSimple($notes), $currDate, $currBy);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $items++;
+    }
+    
+    return $items;
+
+}
+
+    
 function insert_single_attribute($dbSocket, $subject, $attribute, $op, $value, $table_index='CONFIG_DB_TBL_RADCHECK') {
     global $configValues, $logDebugSQL;
     
@@ -193,6 +250,51 @@ function get_user_group_mappings($dbSocket, $username) {
     }
     
     return $result;
+    
+}
+
+// give an open $dbSocket, a $planName and an array of groupnames
+// inserts (if possible) an plan-group mapping for each groupname
+function insert_multiple_plan_group_mappings($dbSocket, $planName, $groupnames) {
+    global $configValues, $logDebugSQL;
+
+    if (!is_array($groupnames)) {
+        return false;
+    }
+
+    $groupnames = array_unique($groupnames);
+    
+    if (count($groupnames) == 0) {
+        return false;
+    }
+
+    $counter = 0;
+    foreach ($groupnames as $groupname) {
+        $groupname = trim($groupname);
+            
+        if (empty($groupname)) {
+            continue;
+        }
+
+        // check if group exists
+        if (!group_exists($dbSocket, $groupname)) {
+            continue;
+        }
+
+        // insert user-group mapping with default priority 0
+        $sql = sprintf("INSERT INTO %s (id, plan_name, profile_name) VALUES (0, '%s', '%s')",
+                       $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'], 
+                       $dbSocket->escapeSimple($planName),
+                       $dbSocket->escapeSimple($groupname));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        if (!DB::isError($res)) {
+            $counter++;
+        }
+    }
+    
+    return $counter;
     
 }
 

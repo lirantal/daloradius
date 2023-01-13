@@ -24,8 +24,8 @@
     include("../../library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    $invoice_id = (array_key_exists('invoice_id', $_GET) && !empty(str_replace("%", "", trim($_GET['invoice_id']))))
-                ? str_replace("%", "", trim($_GET['invoice_id'])) : "";
+    $invoice_id = (array_key_exists('invoice_id', $_GET) && intval(trim($_GET['invoice_id'])) > 0)
+                ? intval(trim($_GET['invoice_id'])) : "";
 
     $destination = (array_key_exists('destination', $_GET) && !empty(trim($_GET['destination'])) &&
                     in_array(strtolower(trim($_GET['destination'])), array( "download", "email", "preview" )))
@@ -170,10 +170,10 @@
         $customerInfo['invoiceNotes'] = $invoiceDetails['notes'];
 
         $ths = array(
-                        t('title','Plan']),
-                        t('all','Tax']),
-                        t('all','Amount']),
-                        t('ContactInfo','Notes']),
+                        t('title','Plan'),
+                        t('all','Tax'),
+                        t('all','Amount'),
+                        t('ContactInfo','Notes'),
                     );
         // populate user invoice items
         $invoice_items = "<table $tableTags><tr $tableTrTags>";
