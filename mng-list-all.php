@@ -25,7 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -33,12 +38,6 @@
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
-    include_once('library/config_read.php');
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_js = array(
