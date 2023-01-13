@@ -253,6 +253,51 @@ function get_user_group_mappings($dbSocket, $username) {
     
 }
 
+// give an open $dbSocket, a $planName and an array of groupnames
+// inserts (if possible) an plan-group mapping for each groupname
+function insert_multiple_plan_group_mappings($dbSocket, $planName, $groupnames) {
+    global $configValues, $logDebugSQL;
+
+    if (!is_array($groupnames)) {
+        return false;
+    }
+
+    $groupnames = array_unique($groupnames);
+    
+    if (count($groupnames) == 0) {
+        return false;
+    }
+
+    $counter = 0;
+    foreach ($groupnames as $groupname) {
+        $groupname = trim($groupname);
+            
+        if (empty($groupname)) {
+            continue;
+        }
+
+        // check if group exists
+        if (!group_exists($dbSocket, $groupname)) {
+            continue;
+        }
+
+        // insert user-group mapping with default priority 0
+        $sql = sprintf("INSERT INTO %s (id, plan_name, profile_name) VALUES (0, '%s', '%s')",
+                       $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'], 
+                       $dbSocket->escapeSimple($planName),
+                       $dbSocket->escapeSimple($groupname));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        if (!DB::isError($res)) {
+            $counter++;
+        }
+    }
+    
+    return $counter;
+    
+}
+
 // give an open $dbSocket, an $username and an array of groupnames
 // inserts (if possible) an user-group mapping for each groupname
 function insert_multiple_user_group_mappings($dbSocket, $username, $groupnames) {

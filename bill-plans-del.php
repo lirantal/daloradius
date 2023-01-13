@@ -37,11 +37,8 @@
 
     $valid_planNames = array();
     
-    $sql = sprintf("SELECT DISTINCT(planName) FROM %s
-                    UNION
-                    SELECT DISTINCT(plan_name) FROM %s",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES']);
+    $sql = sprintf("SELECT DISTINCT(planName) FROM %s ORDER BY planName ASC",
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     
