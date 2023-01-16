@@ -99,7 +99,12 @@
     
     $date_label = $tableSetting['postauth']['date'];
     $cols[$date_label] = t('all','StartTime');
-    $cols["reply"] = t('all','RADIUSReply');
+    
+    if ($radiusReply == 'Any') {
+        $cols["reply"] = t('all','RADIUSReply');
+    } else {
+        $cols[] = t('all','RADIUSReply');
+    }
     
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
@@ -115,7 +120,7 @@
              ? $_GET['orderBy'] : $default_orderBy;
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : $default_orderType;
 
     
@@ -130,8 +135,6 @@
     // except for $usernameLastConnect, which has been only partially escaped,
     // all other query parameters have been validated earlier.
     $sql_WHERE = array();
-    $sql_WHERE[] = sprintf("ui.username = pa.%s", $tableSetting['postauth']['user']);
-    
     if (!empty($usernameLastConnect)) {
         $sql_WHERE[] = sprintf("pa.%s LIKE '%s%%'", $tableSetting['postauth']['user'],
                                                     $dbSocket->escapeSimple($usernameLastConnect));
@@ -144,21 +147,18 @@
     }
     
     // setup php session variables for exporting
-    $_SESSION['reportTable'] = sprintf("%s AS pa, %s AS ui",
-                                       $configValues['CONFIG_DB_TBL_RADPOSTAUTH'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    $_SESSION['reportTable'] = sprintf("%s AS pa LEFT JOIN %s AS ui ON pa.%s = ui.username",
+                                       $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
+                                       $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                       $tableSetting['postauth']['user']);
     $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
-    //orig: used as maethod to get total rows - this is required for the pages_numbering.php page 
-    $sql_format = "SELECT CONCAT(ui.firstname, ' ', ui.lastname) AS fullname, pa.%s AS username,
-                          pa.pass, pa.reply, pa.%s
-                     FROM %s AS pa, %s AS ui";
     
-    $sql = sprintf($sql_format, $tableSetting['postauth']['user'],
-                                $tableSetting['postauth']['date'],
-                                $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
-                                $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
-         . $_SESSION['reportQuery'];
+    $sql = sprintf("SELECT CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
+                           pa.%s AS username, pa.pass, pa.reply, pa.%s
+                      FROM %s %s", $tableSetting['postauth']['user'], $tableSetting['postauth']['date'],
+                                   $_SESSION['reportTable'], $_SESSION['reportQuery']);
     
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
@@ -227,12 +227,14 @@
 
         <tbody>
 <?php
+        $td_format = '<td>%s</td>';
+        
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
             
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars(trim($row[$i]), ENT_QUOTES, 'UTF-8');
             }
 
             // The table that is being produced is in the format of:
@@ -244,15 +246,16 @@
 
             echo "<tr>";
             
-            printf("<td>%s</td>", $fullname);
-            printf("<td>%s</td>", $user);
+            printf($td_format, (!empty($fullname) ? $fullname : "(n/a)"));
+            printf($td_format, $user);
             if (!$hiddenPassword) {
-                printf("<td>%s</td>", $pass);
+                printf($td_format, $pass);
             }
-            printf("<td>%s</td>", $starttime);
+            printf($td_format, $starttime);
             
-            $color = ($reply == "Access-Reject") ? "red" : "green";
-            printf('<td><span style="color: %s">%s</span></td>', $color, $reply);
+            $reply = sprintf('<span style="color: %s">%s</span>',
+                             (($reply == "Access-Reject") ? "red" : "green"), $reply);
+            printf($td_format, $reply);
             
             echo "</tr>";
 
