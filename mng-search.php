@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -20,16 +20,17 @@
  *
  *********************************************************************************************************
  */
-
-    include ("library/checklogin.php");
+ 
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
-    include_once("lang/main.php");
-    include("library/layout.php");
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
     // we partially strip some character and
     // leave validation/escaping to other functions used later in the script
     $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
@@ -42,11 +43,15 @@
     $log = "visited page: ";
     $logQuery = "performed query for ";
     if (!empty($username)) {
-         $logQuery .= "username(s) starting with [$username] ";
+         $logQuery .= sprintf("user(s) related to %s ", $username);
     } else {
-        $logQuery .= "all usernames ";
+        $logQuery .= "all users ";
     }
     $logQuery .= "on page: ";
+    $logDebugSQL = "";
+
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     //feed the sidebar variables
     $search_username = $username_enc;
@@ -66,16 +71,34 @@
         $title .=  " :: " . $username_enc;
     }
 
-    $help = (!empty($username_enc)) ? "looked for user $username_enc" : "no user specified";
+    $help = ((!empty($username_enc))
+          ? sprintf("user(s) related to <em>%s</em>", $username_enc)
+          : "all users") . " are shown";
 
     include ("menu-mng-users.php");
     
-    // these three variable can be used for validation an presentation purpose
+    $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
+    
+    // the array $cols has multiple purposes:
+    // - its keys (when non-numerical) can be used
+    //   - for validating user input
+    //   - for table ordering purpose
+    // - its value can be used for table headings presentation
+    //
+    // the variables cols, colspan, and half_colspan
+    // can be used for validation an presentation purpose
     $cols = array(
-                   'id' => t('all','ID'),
-                   'username' => t('all','Username'),
-                   'fullname' => 'Full name'
+                    "id" => t('all','ID'),
+                    "fullname" => t('all','Name'),
+                    "username" => t('all','Username'),
                  );
+
+    if (!$hiddenPassword) {
+        $cols["auth"] = t('all','Password');
+    }
+    
+    $cols[] = t('title','Groups');
+    
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
                  
@@ -88,45 +111,55 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "desc";
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+               ? strtolower($_GET['orderType']) : "asc";
+
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+    echo '<div id="returnMessages"></div>';
     
     include('library/opendb.php');
     include('include/management/pages_common.php');
 
-    $sql_WHERE = array();
+    // sql where is like: join_condition AND (nested_condition1) AND (nested_condition2)
+    
+    // init nested condition 1
+    $nested_condition1 = array( "rc.attribute='Auth-Type'", "rc.attribute LIKE '%%-Password'" );
+    
+    // init nested condition 2
+    $nested_condition2 = array();
     if (!empty($username)) {
-        array_push($sql_WHERE,
-                   sprintf("ui.username LIKE '%s%%'", $dbSocket->escapeSimple($username)),
-                   sprintf("ui.username LIKE '%s%%'", $dbSocket->escapeSimple($username)),
-                   sprintf("ui.firstname LIKE '%s%%'", $dbSocket->escapeSimple($username)),
-                   sprintf("ui.lastname LIKE '%s%%'", $dbSocket->escapeSimple($username)),
-                   sprintf("ui.homephone LIKE '%s%%'", $dbSocket->escapeSimple($username)),
-                   sprintf("ui.workphone LIKE '%s%%'", $dbSocket->escapeSimple($username)),
-                   sprintf("ui.mobilephone LIKE '%s%%'", $dbSocket->escapeSimple($username)));
+        $arr = array( "username", "firstname", "lastname", "homephone", "workphone", "mobilephone" );
+        $value_prefix = $dbSocket->escapeSimple($username);
+        foreach ($arr as $field_name) {
+            $nested_condition2[] = sprintf("ui.%s LIKE '%s%%'", $field_name, $value_prefix);
+        }
     }
-
+    
+    // init SQL WHERE (with join condition already set)
+    $sql_WHERE = array( "rc.username=ui.username" );
+    
+    // imploding nested condition 1
+    $sql_WHERE[] = sprintf("(%s)", implode(" OR ", $nested_condition1));
+    
+    //imploding nested_condition 2
+    if (count($nested_condition2) > 0) {
+        $sql_WHERE[] = sprintf("(%s)", implode(" OR ", $nested_condition2));
+    }
+    
     // setup php session variables for exporting
-    $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADCHECK'];
-    $_SESSION['reportQuery'] = sprintf(" WHERE username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+    $_SESSION['reportTable'] = sprintf("%s AS rc, %s AS ui", $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                                             $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "usernameListGeneric";
 
-    $sql_format = "SELECT DISTINCT(ui.username) AS username,
-                          CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
-                          ui.id, IFNULL(rug.username, 0) AS disabled
-                   FROM %s AS ui LEFT JOIN %s AS rug ON rug.username=ui.username AND rug.groupname='daloRADIUS-Disabled-Users'";
-    $sql = sprintf($sql_format, $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $configValues['CONFIG_DB_TBL_RADUSERGROUP']);
-    if (count($sql_WHERE) > 0) {
-        $sql .= " WHERE " . implode(" OR ", $sql_WHERE);
-    }
-    $sql .= " GROUP BY username";
-    
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-    
+    // we use this simplified query just to initialize $numrows
+    $sql0 = sprintf("SELECT COUNT(ui.id) AS id FROM %s %s", $_SESSION['reportTable'], $_SESSION['reportQuery']);
+    $res = $dbSocket->query($sql0);
+    $logDebugSQL .= "$sql0;\n";
+    $numrows = $res->fetchrow()[0];
+
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
         
@@ -140,11 +173,76 @@
         /* END */
                      
         // we execute and log the actual query
-        $sql .= " ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
+        // sql1 get id, username, password, firstname and lastname
+        $sql1 = sprintf("SELECT ui.id AS id, rc.username AS username, rc.value AS auth, rc.attribute,
+                                CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname
+                           FROM %s %s", $_SESSION['reportTable'], $_SESSION['reportQuery'])
+              . sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql1);
+        $logDebugSQL .= "$sql1;\n";
         
-        $per_page_numrows = $res->numRows();
+        
+        // init $records and $usernamelist arrays
+        $records = array();
+        $usernamelist = array();
+        
+        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            // we start storing data...
+            // the enable flag is initialized to true
+            // and the groups list is empty
+            $this_username = $row['username'];
+            
+            if (array_key_exists($this_username, $records)) {
+                continue;
+            }
+            
+            // we try to get the type of this user
+            if ($row['attribute'] == 'Auth-Type' && $row['auth'] == 'Accept') {
+                if (filter_var($this_username, FILTER_VALIDATE_MAC)) {
+                    $type = 'MAC';
+                } else {
+                    $type = 'PIN';
+                }
+            } else {
+                $type = 'USER';
+            }
+            
+            $records[$this_username] = array(
+                'auth' => $row['auth'],
+                'fullname' => $row['fullname'],
+                'enabled' => true,
+                'groups' => array(),
+                'type' => $type,
+                'id' => $row['id']
+            );
+            // in the same pass we init the $usernamelist
+            $usernamelist[] = sprintf("'%s'", $dbSocket->escapeSimple($this_username));
+            
+        }
+        
+        $per_page_numrows = count($usernamelist);
+        
+        if ($per_page_numrows > 0) {
+        
+            // with this second query we retrieve user status (enabled/disabled) and user groups list
+            $sql2 = sprintf("SELECT username, groupname FROM %s WHERE username IN (%s)",
+                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'], implode(", ", $usernamelist));
+            $res = $dbSocket->query($sql2);
+            $logDebugSQL .= "$sql2;\n";
+
+            // foreach user we update the enabled flag and the grouplist
+            while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+                $this_username = $row['username'];
+                $this_groupname = $row['groupname'];
+
+                if ($this_groupname === 'daloRADIUS-Disabled-Users') {
+                    $records[$this_username]['enabled'] = false;
+                } else {
+                    array_push($records[$this_username]['groups'],
+                               htmlspecialchars($this_groupname, ENT_QUOTES, 'UTF-8'));
+                }
+            }
+        }
         
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
@@ -155,7 +253,7 @@
         $action = "mng-del.php";
 ?>
         
-<form name="searchusers" method="POST" action="<?= $action ?>">
+<form name="listall" method="POST" action="<?= $action ?>">
     <table border="0" class="table1">
         <thead>
             <tr style="background-color: white">
@@ -175,8 +273,13 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('username[]', $action, 'searchusers');
+        printTableFormControls('username[]', $action);
 ?>
+                    <input class="button" type="button" value="Disable"
+                        onclick="javascript:disableCheckbox('listall','include/management/userOperations.php')">
+                    <input class="button" type="button" value="Enable"
+                        onclick="javascript:enableCheckbox('listall','include/management/userOperations.php')">
+
                 </th>
             </tr>
             
@@ -190,51 +293,56 @@
         
         <tbody>
 <?php
-        while ($row = $res->fetchRow()) {
-            // username, fullname, ui.id, disabled
+
+        $li_style = 'margin: 7px auto';
+        $count = 0;
+        foreach ($records as $username => $data) {
+            $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+            $type = $data['type'];
+            $id = intval($data['id']);
             
-            $disabled = $row[3] !== '0';
-            
-            $img = ($disabled)
+            $img = (!$data['enabled'])
                  ? '<img title="user is disabled" src="images/icons/userStatusDisabled.gif" alt="[disabled]">'
                  : '<img title="user is enabled" src="images/icons/userStatusActive.gif" alt="[enabled]">';
-
-            $this_username_enc = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-            $this_fullname_enc = htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8');
-
-            $id = intval($row[2]);
-
+            
+            $auth = htmlspecialchars($data['auth'], ENT_QUOTES, 'UTF-8');
+            
+            $fullname = htmlspecialchars($data['fullname'], ENT_QUOTES, 'UTF-8');
+            $grouplist = implode("<br>", $data['groups']);
+            
             // tooltip and ajax stuff
-            $li_style = 'margin: 7px auto';
-            $tooltip = '<ul style="list-style-type: none">'
+            $tooltipText = '<ul style="list-style-type: none">'
                      . sprintf('<li style="%s"><a class="toolTip" href="mng-edit.php?username=%s">%s</a></li>',
-                               $li_style, urlencode($this_username_enc), t('Tooltip','UserEdit'))
+                               $li_style, urlencode($username), t('Tooltip','UserEdit'))
                      . sprintf('<li style="%s"><a class="toolTip" href="config-maint-test-user.php?username=%s&password=%s">%s</a></li>',
-                               $li_style, urlencode($this_username_enc), urlencode($this_fullname_enc), t('all','TestUser'))
+                               $li_style, urlencode($username), urlencode($fullname), t('all','TestUser'))
                      . sprintf('<li style="%s"><a class="toolTip" href="acct-username.php?username=%s">%s</a></li>',
-                               $li_style, urlencode($this_username_enc), t('all','Accounting'))
+                               $li_style, urlencode($username), t('all','Accounting'))
                      . '</ul>'
                      . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
 
             $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username="
-                     . urlencode($this_username_enc) . "');return false;";
-?>
+                     . urlencode($username) . "');return false;";
+                     
+            echo '<tr>';
+            printf('<td><input type="checkbox" name="username[]" value="%s" id="checkbox-%d">', $username, $count);
+            printf('<label for="checkbox-%d">%d</label></td>', $count, $id);
+            printf('<td>%s</td>', $fullname);
+            printf('<td>%s <a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a>",
+                   $img, $onclick, $tooltipText, $username);
+            printf(' <span class="badge badge-%s">%s</span></td>', strtolower($type), $type);
+            
+            if (!$hiddenPassword) {
+                echo '<td>'
+                   . (($type == 'USER') ? $auth : "(n/a)")
+                   . '</td>';
+            }
+            
+            printf('<td>%s</td>', $grouplist);
+            
+            echo '</tr>';
 
-            <tr>
-                <td>
-                    <input type="checkbox" name="username[]" value="<?= $this_username_enc ?>">
-                    <?= $id ?>
-                </td>
-                <td>
-                    <?= $img ?>
-                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltip ?>'>
-                        <?= $this_username_enc ?>
-                    </a>
-                </td>
-                <td><?= $this_fullname_enc ?></td>
-            </tr>
-
-<?php
+            $count++;
         }
 ?>
         </tbody>

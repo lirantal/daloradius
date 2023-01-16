@@ -119,15 +119,16 @@ switch ($reportType) {
         // we use this associative array for generating both,
         // Output Header and SQL selected fields
         $cols = array(
-                        "Id" => "id",
-                        "Username" => "username",
-                        "Attribute" => "attribute",
-                        "Value" => "value"
+                        "Id" => "ui.id",
+                        "Fullname" => "CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname",
+                        "Username" => "rc.username",
+                        "Attribute" => "rc.attribute",
+                        "Auth" => "rc.value"
                      );
         
         $selected_fields = implode(", ", array_values($cols));
         $sql = sprintf("SELECT %s FROM %s %s ORDER BY %s ASC",
-                       $selected_fields, $reportTable, $reportQuery, array_values($cols)[1]);
+                       $selected_fields, $reportTable, $reportQuery, array_values($cols)[0]);
         $res = $dbSocket->query($sql);
         
         // this is the output header
@@ -187,9 +188,12 @@ switch ($reportType) {
                     break;
             }
 
+            
             // pa & ui are aliases for the joined tables
             $cols = array(
-                            "Fullname" => "CONCAT(ui.firstname, ' ', ui.lastname) AS fullname",
+                            "Fullname" => "IF(STRCMP(CONCAT(ui.firstname, ' ', ui.lastname), ' ') = 0, "
+                                            . "'(n/a)', "
+                                            . "CONCAT(ui.firstname, ' ', ui.lastname))",
                             "Username" => sprintf("pa.%s AS username", $tableSetting['postauth']['user']),
                             "Start Time" => sprintf("pa.%s", $tableSetting['postauth']['date']),
                             "RADIUS Reply" => "pa.reply",
@@ -197,8 +201,8 @@ switch ($reportType) {
 
             $sql_format = "SELECT " . implode(", ", array_values($cols))
                         . " FROM %s %s"
-                        . " ORDER BY username ASC";
-            $sql = sprintf($sql_format, $reportTable, $reportQuery);
+                        . " ORDER BY %s DESC";
+            $sql = sprintf($sql_format, $reportTable, $reportQuery, array_values($cols)[2]);
 
             $res = $dbSocket->query($sql);
             
