@@ -102,7 +102,7 @@ include_once("include/management/autocomplete.php");
                     <form name="billratesedit" action="bill-rates-edit.php" method="GET" class="sidebar">
                         <input name="ratename" type="text" id="ratename" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                             tooltipText="<?= t('Tooltip','RateName'); ?><br>"
-                            value="<?= (isset($edit_rateName)) ? $edit_rateName : "" ?>">
+                            value="<?= (isset($edit_ratename)) ? $edit_ratename : "" ?>">
                     </form>
                 </li>
                 <li>
