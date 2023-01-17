@@ -22,82 +22,126 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
+    $log = "visited page: ";
 
-    isset($_REQUEST['username']) ? $username = trim($_REQUEST['username']) : $username = '';
-    isset($_REQUEST['enddate']) ? $enddate = trim($_REQUEST['enddate']) : $enddate = "";
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
-    $logAction = '';
-    $logDebugSQL = '';
 
-    if (isset($_POST['submit'])) {
-
-        if ($username != '') {
-
-            include 'library/opendb.php';
-
-            $sql = 'SELECT count(*) FROM ' . $configValues['CONFIG_DB_TBL_RADACCT'] .
-                   ' WHERE username = "' . $username . '" AND acctstoptime is NULL;';
-
-            $res = $dbSocket->query($sql);
-
-            $logDebugSQL .= $sql . "\n";
-
-            $row = $res->fetchRow();
-
-            if($row[0] > 0) {
-
-                $sql = 'UPDATE ' . $configValues['CONFIG_DB_TBL_RADACCT'] .
-                       ' SET acctstoptime = NOW(), acctterminatecause = "Admin-Reset"'.
-                       ' WHERE username = "' . $username . '" AND acctstoptime is NULL;'; 
-
-                $res = $dbSocket->query($sql);
+    include('library/opendb.php');
+    
+    // valid min/max dates
+    $sql = sprintf("SELECT DATE(MIN(acctstarttime)), DATE(MAX(acctstarttime)) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    list($mindate, $maxdate) = $res->fetchrow();
+    
+    // valid usernames
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $valid_usernames = array();
+    while ($row = $res->fetchrow()) {
+        $valid_usernames[] = $row[0];
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            $username = (array_key_exists('username', $_POST) && !empty(trim($_POST['username'])) &&
+                         in_array(trim($_POST['username']), $valid_usernames))
+                      ? trim($_POST['username']) : "";
+            
+            $enddate = (array_key_exists('enddate', $_POST) && isset($_POST['enddate']) &&
+                        preg_match(DATE_REGEX, $_POST['enddate'], $m) !== false &&
+                        checkdate($m[2], $m[3], $m[1]))
+                     ? $_POST['enddate'] : "";
+                     
+            if (!empty($username)) {
                 
-                $logDebugSQL .= $sql . "\n";
+                $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+                
+                $sql = sprintf("SELECT COUNT(radacctid) FROM %s WHERE username='%s' AND acctstoptime IS NULL",
+                               $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                $numrows = intval($res->fetchrow()[0]);
+                
+                if ($numrows > 0) {
+                    $sql = sprintf("UPDATE %s SET acctstoptime=NOW(), acctterminatecause='Admin-Reset'
+                                     WHERE username='%s' AND acctstoptime IS NULL",
+                                   $configValues['CONFIG_DB_TBL_RADACCT'],
+                                   $dbSocket->escapeSimple($username)); 
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
 
-                $successMsg = "Cleaned up stale sessions for username: <b> $username </b>";
-                $logAction .= "Successfully cleaned up stale sessions for username [$username] on page: ";
+                    if (!DB::isError($res)) {
+                        $successMsg = "Cleaned up stale sessions for user: $username_enc";
+                        $logAction .= "Successfully cleaned up stale sessions for username [$username] on page: ";
+                    } else {
+                        $failureMsg = "Cannot clean up stale sessions for user: $username_enc";
+                        $logAction .= "$failureMsg page: ";
+                    }
+
+                } else {
+                    // nothing to delete
+                    $failureMsg = "There are no stale sessions for user [$username_enc]";
+                    $logAction .= "Cannot clean up stale sessions for user $username [no stale sessions for this user] on page: ";
+                }
+                
+            } else if (!empty($enddate)) {
+                if ($enddate >= $mindate && $enddate <= $maxdate) {
+                
+                    // delete all stale sessions in the database that occur until $enddate
+                    $sql = sprintf("DELETE FROM %s
+                                          WHERE acctstarttime < '%s'
+                                            AND (acctstoptime = '0000-00-00 00:00:00' OR acctstoptime IS NULL)",
+                                   $configValues['CONFIG_DB_TBL_RADACCT'], $enddate);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql\n";
+
+                    if (!DB::isError($res)) {
+                        $successMsg = "Cleaned up stale sessions until date: $enddate";
+                        $logAction .= "Successfully cleaned up stale sessions until date [$enddate] on page: ";
+                    } else {
+                        $failureMsg = "Cannot clean up stale sessions until date: $enddate";
+                        $logAction .= "$failureMsg page: ";
+                    }
+
+                    
+                } else {
+                    // invalid
+                    $failureMsg = "Cannot clean up stale sessions: $enddate is invalid";
+                    $logAction .= "$failureMsg page: ";
+                }
+            } else {
+                // invalid
+                $failureMsg = "Cannot clean up stale sessions: provided empty/invalid username or ending date";
+                $logAction .= "$failureMsg page: ";
             }
-            else {
-
-                $failureMsg = "There are no stale sessions for user [$username]";
-                $logAction .= "Failed performing close stale sessions on user [$username] because there are no stale sessions for that user on page: ";
-            }
-
-            include 'library/closedb.php';
-        }
-        else if ($enddate != '') {
-
-            include 'library/opendb.php';
-
-            // delete all stale sessions in the database that occur until $enddate
-            $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-                    " WHERE AcctStartTime<'".$dbSocket->escapeSimple($enddate)."'".
-                    " AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime IS NULL)";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-
-            $successMsg = "Cleaned up stale sessions until date: <b> $enddate </b>";
-            $logAction .= "Successfully cleaned up stale sessions until date [$enddate] on page: ";
-
-            include 'library/closedb.php';
-
-        }
-        else {
-            $failureMsg = "No username or ending date was entered, please specify a username or ending date for cleaning up stale sessions from the database";
-            $logAction .= "Failed cleaning up stale sessions due to lack of username or ending date on page: ";
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
     }
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
+    include('library/closedb.php');
+
 
     // print HTML prologue
     $extra_css = array(
@@ -116,92 +160,100 @@
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-accounting-maintenance.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
     
     // set navbar stuff
-    $navbuttons = array(
-                          'CleanupRecordsByUsername-tab' => t('title','CleanupRecordsByUsername'),
-                          'CleanupRecordsByDate-tab' => t('title','CleanupRecordsByDate'),
-                       );
+    $navkeys = array( 'CleanupRecordsByUsername', 'CleanupRecordsByDate', );
 
-    print_tab_navbuttons($navbuttons);
-?>
+    // print navbar controls
+    print_tab_header($navkeys);
+    
+    $options = $valid_usernames;
+    array_unshift($options , '');
 
+    $input_descriptors0 = array();
+    $input_descriptors0[] = array(
+                                    'name' => 'username',
+                                    'type' => 'select',
+                                    'caption' => t('all','Username'),
+                                    'options' => $options,
+                                    'selected_value' => $username
+                                 );
+    
+    $fieldset0_descriptor = array(
+                                    "title" => t('title','CleanupRecordsByUsername'),
+                                    "disabled" => (count($valid_usernames) == 0)
+                                 );           
+    
+    $input_descriptors1 = array();
+    $input_descriptors1[] = array(
+                                    'name' => 'enddate',
+                                    'caption' => t('all','CleanupSessions'),
+                                    'type' => 'date',
+                                    'value' => $enddate,
+                                    'min' => $mindate,
+                                    'max' => $maxdate,
+                                 );
 
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','CleanupRecordsByDate'),
+                                    "disabled" => (count($valid_usernames) == 0)
+                                 );
 
-            
+    open_form();
+    
+    // open tab 0
+    open_tab($navkeys, 0, true);
+    
+    open_fieldset($fieldset0_descriptor);
 
-                <div class="tabcontent" id="CleanupRecordsByUsername-tab" style="display: block">
-
-                    <fieldset>
-
-                        <h302> <?php echo t('title','CleanupRecordsByUsername'); ?> </h302>
-                        <br/>
-
-                        <label for='username' class='form'><?php echo t('all','Username')?></label>
-                        <input name="username" type="text" id="usernameEdit" autocomplete="off"
-                        tooltipText='<?php echo t('Tooltip','Username'); ?> <br/>'
-                        value="<?php if (isset($username)) echo $username; ?>" tabindex=100>
-
-<?php
-    include_once("include/management/autocomplete.php");
-
-    if ($autoComplete) {
-        echo "<script type=\"text/javascript\">
-                /** Making usernameEdit interactive **/
-                autoComEdit = new DHTMLSuite.autoComplete();
-                autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-                </script>";
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
     }
-?>
-                        <br/><br/>
-                        <hr><br/>
+    
+    close_fieldset();
+    
+    close_tab($navkeys, 0);
 
-                        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+    // open tab 1
+    open_tab($navkeys, 1);
+    
+    open_fieldset($fieldset1_descriptor);
 
-                    </fieldset>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_tab($navkeys, 1);
+    
+    $input_descriptors2 = array();
+    $input_descriptors2[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+    
+    $input_descriptors2[] = array(
+                                    "type" => "submit",
+                                    "name" => "submit",
+                                    "value" => t('buttons','apply')
+                                  );
 
-                </div>
+    foreach ($input_descriptors2 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
 
-                <div class="tabcontent" id="CleanupRecordsByDate-tab">
+    close_form();
+    
+    print_back_to_previous_page();
 
-                    <fieldset>
-                        <h302> <?php echo t('title','CleanupRecordsByDate') ?> </h302>
-                        <br/>
-
-                        <label for='enddate' class='form'><?php echo t('all','CleanupSessions')?></label>
-                        <input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
-                        <img src="library/js_date/calendar.gif" onclick=
-                        "showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
-
-                        <br/><br/>
-                        <hr><br/>
-                        <input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 class='button' />
-                    </fieldset>
-
-                    <div id="chooserSpan" class="dateChooser select-free"
-                        style="display: none; visibility: hidden; width: 160px;">
-                    </div>
-
-                </div>
-
-
-    </form>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

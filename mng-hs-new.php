@@ -159,12 +159,6 @@
         $input_descriptors0 = array();
         
         $input_descriptors0[] = array(
-                                        "type" => "hidden",
-                                        "value" => dalo_csrf_token(),
-                                        "name" => "csrf_token"
-                                     );
-        
-        $input_descriptors0[] = array(
                                         "name" => "name",
                                         "caption" => t('all','HotSpotName'),
                                         "type" => "text",
@@ -188,7 +182,15 @@
                                         "tooltipText" => t('Tooltip','geocodeTooltip')
                                      );
         
-        $input_descriptors0[] = array(
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+        
+        $input_descriptors1[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
@@ -227,6 +229,10 @@
         include_once('include/management/contactinfo.php');
         
         close_tab($navkeys, 1);
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
         close_form();
 

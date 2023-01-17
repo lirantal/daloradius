@@ -20,65 +20,114 @@
  *
  *********************************************************************************************************
  */
-
+ 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
- 
-    isset($_REQUEST['enddate']) ? $enddate = $_REQUEST['enddate'] : $enddate = "";
-    isset($_REQUEST['startdate']) ? $startdate = $_REQUEST['startdate'] : $startdate = "";
-    isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
-
-    $logAction =  "";
-    $logDebugSQL = "";
-
-    if (isset($_POST['submit'])) {
-
-        if ( (trim($startdate) != "") || (trim($enddate) != "") || (trim($username) != "") ) {
-            
-            include 'library/opendb.php';
-
-            $deleteUsername = "";
-            if (trim($username) != "")
-                $deleteUsername = " AND Username='$username'";
-
-            $deleteEnddate = "";
-            if (trim($enddate) != "")
-                $deleteEnddate = " AND AcctStartTime<'".$dbSocket->escapeSimple($enddate)."'";
-
-            $deleteStartdate = "";
-            if (trim($startdate) != "")
-                $deleteStartdate = " AND AcctStartTime>'".$dbSocket->escapeSimple($startdate)."'";
-
-
-            $sql = "DELETE FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].
-                " WHERE 1=1".
-                " $deleteStartdate".
-                " $deleteEnddate".
-                " $deleteUsername ";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-
-            $successMsg = "Deleted records between <b>$startdate</b> to <b>$enddate</b> for user <b>$username</b>";
-            $logAction .= "Successfully deleted records between [$startdate] and [$enddate] for user [$username] on page: ";
-
-            include 'library/closedb.php';
-
-        }  else { 
-            $failureMsg = "no username, ending date or starting date was provided, please at least one of those";
-            $logAction .= "Failed deleting records from database, missing fields on page: ";
-        }
-
-    }
-
-
     include_once('library/config_read.php');
+    
+    // init logging variables
+    $logAction = "";
+    $logDebugSQL = "";
     $log = "visited page: ";
 
     include_once("lang/main.php");
-    
+    include("library/validation.php");
     include("library/layout.php");
+    
+    
+    include('library/opendb.php');
+    
+    // valid min/max dates
+    $sql = sprintf("SELECT DATE(MIN(acctstarttime)), DATE(MAX(acctstarttime)) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    list($mindate, $maxdate) = $res->fetchrow();
+    
+    // valid usernames
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $valid_usernames = array();
+    while ($row = $res->fetchrow()) {
+        $valid_usernames[] = $row[0];
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            $required_fields = array();
+            $sql_WHERE = array();
+            
+            $username = (array_key_exists('username', $_POST) && !empty(trim($_POST['username'])) &&
+                         in_array(trim($_POST['username']), $valid_usernames))
+                      ? trim($_POST['username']) : "";
+            if (empty($username)) {
+                $required_fields['username'] = t('all','Username');
+            } else {
+                $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+                $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($username));
+            }
+            
+            $startdate = (array_key_exists('startdate', $_POST) && isset($_POST['startdate']) &&
+                          preg_match(DATE_REGEX, $_POST['startdate'], $m) !== false &&
+                          checkdate($m[2], $m[3], $m[1]))
+                       ? $_POST['startdate'] : "";
+            if (empty($startdate)) {
+                $required_fields['startdate'] = t('all','StartingDate');
+            } else {
+                $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $startdate);
+            }
+            
+            $enddate = (array_key_exists('enddate', $_POST) && isset($_POST['enddate']) &&
+                        preg_match(DATE_REGEX, $_POST['enddate'], $m) !== false &&
+                        checkdate($m[2], $m[3], $m[1]))
+                     ? $_POST['enddate'] : "";
+            if (empty($enddate)) {
+                $required_fields['enddate'] = t('all','EndingDate');
+            } else {
+                $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $enddate);
+            }
+            
+            // further checks
+            if (!empty($startdate) && !empty($enddate) && $startdate >= $mindate && $enddate <= $maxdate && $startdate > $enddate) {
+                $required_fields['startdate'] = t('all','StartingDate');
+                $required_fields['enddate'] = t('all','EndingDate');
+            }
+            
+            if (count($required_fields) > 0) {
+                // required/invalid
+                $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
+                $logAction .= "$failureMsg on page: ";
+            } else {
+                
+                $sql = sprintf("DELETE FROM %s WHERE %s", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                                          implode(" AND ", $sql_WHERE));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    $successMsg = sprintf("Deleted accounting records for user %s [period: %s - %s]",
+                                          $username_enc, $startdate, $enddate);
+                    $logAction .= "$successMsg on page: ";
+                } else {
+                    $failureMsg = sprintf("Failed to deleted accounting records for user %s [period: %s - %s]",
+                                          $username_enc, $startdate, $enddate);
+                    $logAction .= "$failureMsg page: ";
+                }
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+
+    include('library/closedb.php');
+    
 
     // print HTML prologue
     $title = t('Intro','acctmaintenancedelete.php');
@@ -87,57 +136,75 @@
     print_html_prologue($title, $langCode);
 
     include("menu-accounting-maintenance.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
-?>
+    
+    $options = $valid_usernames;
+    array_unshift($options , '');
+    
+    $input_descriptors0 = array();
 
-        
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-    <fieldset>
+    $input_descriptors0[] = array(
+                                    'name' => 'username',
+                                    'type' => 'select',
+                                    'caption' => t('all','Username'),
+                                    'options' => $options,
+                                    'selected_value' => $username
+                                 );
 
-        <h302> <?php echo t('title','DeleteRecords') ?> </h302>
-        <br/>
+    $input_descriptors0[] = array(
+                                    'name' => 'startdate',
+                                    'caption' => t('all','StartingDate'),
+                                    'type' => 'date',
+                                    'value' => $startdate,
+                                    'min' => $mindate,
+                                    'max' => $maxdate,
+                                 );
+                                 
+    $input_descriptors0[] = array(
+                                    'name' => 'enddate',
+                                    'caption' => t('all','EndingDate'),
+                                    'type' => 'date',
+                                    'value' => $enddate,
+                                    'min' => $mindate,
+                                    'max' => $maxdate,
+                                 );
+                                 
+    $input_descriptors0[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+    
+    $input_descriptors0[] = array(
+                                    "type" => "submit",
+                                    "name" => "submit",
+                                    "value" => t('buttons','apply')
+                                  );
+    
+    $fieldset0_descriptor = array(
+                                    "title" => t('title','DeleteRecords'),
+                                    "disabled" => (count($valid_usernames) == 0)
+                                 );
+                                 
+    open_form();
+    
+    open_fieldset($fieldset0_descriptor);
 
-        <label for='username' class='form'><?php echo t('all','Username')?></label>
-        <input name='username' type='text' id='username' value='<?php echo $username ?>' tabindex=100 />
-        <br />
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_form();
 
-        <label for='startdate' class='form'><?php echo t('all','StartingDate')?></label>
-        <input name='startdate' type='text' id='startdate' value='<?php echo $startdate ?>' tabindex=100 />
-        <img src="library/js_date/calendar.gif" onclick=
-        "showChooser(this, 'startdate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
-        <br />
+    print_back_to_previous_page();
 
-        <label for='enddate' class='form'><?php echo t('all','EndingDate')?></label>
-        <input name='enddate' type='text' id='enddate' value='<?php echo $enddate ?>' tabindex=100 />
-        <img src="library/js_date/calendar.gif" onclick=
-        "showChooser(this, 'enddate', 'chooserSpan', 1950, <?php echo date('Y', time());?>, 'Y-m-d H:i:s', true);" >
-        <br />
-
-        <br/><br/>
-        <hr><br/>
-        <input type="submit" name="submit" value="<?php echo t('buttons','apply') ?>" tabindex=1000 class='button' />
-
-    </fieldset>
-
-    <div id="chooserSpan" class="dateChooser select-free" 
-        style="display: none; visibility: hidden; width: 160px;">
-    </div>
-
-</form>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
+    
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

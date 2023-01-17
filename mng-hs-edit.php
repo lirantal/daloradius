@@ -41,7 +41,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = (array_key_exists('name', $_POST) && !empty(str_replace("%", "", trim($_POST['name']))))
-              ? str_replace("%", "", trim($_POST['name']))) : "";
+              ? str_replace("%", "", trim($_POST['name'])) : "";
     } else {
         $name = (array_key_exists('name', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['name']))))
               ? str_replace("%", "", trim($_REQUEST['name'])) : "";
@@ -208,18 +208,6 @@
         $input_descriptors0 = array();
         
         $input_descriptors0[] = array(
-                                        "type" => "hidden",
-                                        "value" => dalo_csrf_token(),
-                                        "name" => "csrf_token"
-                                     );
-        
-        $input_descriptors0[] = array(
-                                        "type" => "hidden",
-                                        "value" => $name_enc,
-                                        "name" => "name"
-                                     );
-
-        $input_descriptors0[] = array(
                                         "name" => "name_presentation",
                                         "caption" => t('all','HotSpotName'),
                                         "type" => "text",
@@ -244,7 +232,20 @@
                                         "tooltipText" => t('Tooltip','geocodeTooltip')
                                      );
         
-        $input_descriptors0[] = array(
+        $input_descriptors1 = array();
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+        
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => $name_enc,
+                                        "name" => "name"
+                                     );
+        
+        $input_descriptors1[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
@@ -283,6 +284,10 @@
         include_once('include/management/contactinfo.php');
         
         close_tab($navkeys, 1);
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
         close_form();
         

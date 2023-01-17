@@ -32,19 +32,19 @@
     include("library/layout.php");
     
     // validate this parameter before including menu
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-                    ? str_replace("%", "", $_GET['username']) : "";
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
+    $startdate = (array_key_exists('startdate', $_GET) && !empty(trim($_GET['startdate'])) &&
+                  preg_match(DATE_REGEX, trim($_GET['startdate']), $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : "";
+               ? trim($_GET['startdate']) : "";
 
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
+    $enddate = (array_key_exists('enddate', $_GET) && !empty(trim($_GET['enddate'])) &&
+                preg_match(DATE_REGEX, trim($_GET['enddate']), $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : "";
+             ? trim($_GET['enddate']) : "";
     
     //feed the sidebar variables
     $accounting_date_username = $username_enc;
@@ -58,6 +58,8 @@
 
 
     $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js",
         "library/javascript/pages_common.js",
     );
 
@@ -72,6 +74,7 @@
     $cols = array(
                     "radacctid" => t('all','ID'),
                     "hotspot" => t('all','HotSpot'),
+                    "nasipaddress" => t('all','NASIPAddress'),
                     "username" => t('all','Username'),
                     "framedipaddress" => t('all','IPAddress'),
                     "acctstarttime" => t('all','StartTime'),
@@ -80,16 +83,15 @@
                     "acctinputoctets" => sprintf("%s (%s)", t('all','Upload'), t('all','Bytes')),
                     "acctoutputoctets" => sprintf("%s (%s)", t('all','Download'), t('all','Bytes')),
                     "acctterminatecause" => t('all','Termination'),
-                    "nasipaddress" => t('all','NASIPAddress'),
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
     
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+    $orderBy = (array_key_exists('orderBy', $_GET) && !empty($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($cols)))
              ? $_GET['orderBy'] : array_keys($cols)[0];
 
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+    $orderType = (array_key_exists('orderType', $_GET) && !empty($_GET['orderType']) &&
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "asc";
 
@@ -169,7 +171,7 @@
             // page numbers are shown only if there is more than one page
             if ($drawNumberLinks) {
                 printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
                 echo '</td>';
             }
 ?>
@@ -188,51 +190,76 @@
 ?>
     </thead>
 
-    <tbody>
 <?php
-            $simple_td_format = '<td>%s</td>';
+            echo '<tbody>';
+
+            
             $li_style = 'margin: 7px auto';
+            $trs = array();
 
             while ($row = $res->fetchRow()) {
-                foreach ($row as $i => $value) {
-                    $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-                }
                 
-                echo "<tr>";
-                printf($simple_td_format, $row[0]);
+                list(
+                        $radacctid, $hotspot, $username, $framedipaddress,
+                        $acctstarttime, $acctstoptime, $acctsessiontime, $acctinputoctets,
+                        $acctoutputoctets, $acctterminatecause, $nasipaddress
+                    ) = $row;
                 
-                $onclick = "javascript:ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','divContainerHotspotInfo'"
-                         . sprintf(",'hotspot=%s');return false;", $row[1]);
+                $tr = array();
+                
+                // radacctid
+                $tr[] = intval($radacctid);
+                
+                // hotspot
+                $hotspot = htmlspecialchars($hotspot, ENT_QUOTES, 'UTF-8');
+                $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','divContainerHotspotInfo'"
+                         . sprintf(",'hotspot=%s');return false;", $hotspot);
                 $tooltip = '<ul style="list-style-type: none">'
                          . sprintf('<li style="%s"><a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a></li>',
-                                   $li_style, urlencode($row[1]), t('Tooltip','HotspotEdit'))
+                                   $li_style, urlencode($hotspot), t('Tooltip','HotspotEdit'))
                          . sprintf('<li style="%s"><a class="toolTip" href="acct-hotspot-compare.php">%s</a></li>',
                                    $li_style, t('all','Compare'))
                          . '</ul>'
                          . '<div style="margin: 15px auto" id="divContainerHotspotInfo">Loading...</div>';
                 
-                printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
-                       $onclick, $tooltip, $row[1]);
+                $tr[] = sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a>",
+                                $onclick, $tooltip, $hotspot);
                 
+                // nasipaddress
+                $tr[] = htmlspecialchars($nasipaddress, ENT_QUOTES, 'UTF-8');
+                
+                // username
+                $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
                 $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo',"
-                         . sprintf("'username=%s');return false;", $row[2]);
-                $tooltip = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>', $row[2], t('Tooltip','UserEdit'))
+                         . sprintf("'username=%s');return false;", $username);
+                $tooltip = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>', urlencode($username), t('Tooltip','UserEdit'))
                          . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
-                printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
-                       $onclick, $tooltip, $row[2]);
-
-                printf($simple_td_format, $row[3]);
-                printf($simple_td_format, $row[4]);
-                printf($simple_td_format, $row[5]);
+                $tr[] = sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a>",
+                                $onclick, $tooltip, $username);
                 
-                printf($simple_td_format, time2str($row[6]));
-                printf($simple_td_format, toxbyte($row[7]));
-                printf($simple_td_format, toxbyte($row[8]));
-                printf($simple_td_format, $row[9]);
-                printf($simple_td_format, $row[10]);
-            
-                echo "</tr>";
-            
+                // other values
+                $tr[] = htmlspecialchars($framedipaddress, ENT_QUOTES, 'UTF-8');
+                $tr[] = htmlspecialchars($acctstarttime, ENT_QUOTES, 'UTF-8');
+                $tr[] = htmlspecialchars($acctstoptime, ENT_QUOTES, 'UTF-8');
+                $tr[] = time2str($acctsessiontime);
+                $tr[] = toxbyte($acctinputoctets);
+                $tr[] = toxbyte($acctoutputoctets);
+                $tr[] = htmlspecialchars($acctterminatecause, ENT_QUOTES, 'UTF-8');
+                
+                $trs[] = $tr;
+            }
+
+            // draw tr(s)
+            $simple_td_format = '<td>%s</td>' . "\n";
+
+            foreach ($trs as $tr) {
+                echo '<tr>';
+                
+                foreach ($tr as $td) {
+                    printf($simple_td_format, $td);
+                }
+                
+                echo '</tr>';
             }
 
             echo '</tbody>';
