@@ -26,61 +26,76 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-    isset($_POST['paymentname']) ? $paymentname = $_POST['paymentname'] : $paymentname = "";
-    isset($_POST['paymentnotes']) ? $paymentnotes = $_POST['paymentnotes'] : $paymentnotes = "";
-
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($_POST["submit"])) {
-        $paymentname = $_POST['paymentname'];
-        $paymentnotes = $_POST['paymentnotes'];
-        
-        include 'library/opendb.php';
+    include('library/opendb.php');
 
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']." WHERE value='".$dbSocket->escapeSimple($paymentname)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($res->numRows() == 0) {
-            if (trim($paymentname) != "") {
-
-                $currDate = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
-                
-                // insert apyment type info
-                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'].
-                    " (id, value, notes, ".
-                    "  creationdate, creationby, updatedate, updateby) ".
-                    " VALUES (0, '".$dbSocket->escapeSimple($paymentname)."', '".
-                    $dbSocket->escapeSimple($paymentnotes)."', ".
-                    " '$currDate', '$currBy', NULL, NULL)";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg = "Added to database new payment type: <b>$paymentname</b>";
-                $logAction .= "Successfully added new payment type [$paymentname] on page: ";
-            } else {
-                $failureMsg = "you must provide a payment type name";    
-                $logAction .= "Failed adding new payment type [$paymentname] on page: ";    
-            }
-        } else { 
-            $failureMsg = "You have tried to add a payment type that already exist in the database: $paymentname";
-            $logAction .= "Failed adding new payment type already in database [$paymentname] on page: ";        
-        }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-        include 'library/closedb.php';
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            $paymentname = (array_key_exists('paymentname', $_POST) && !empty(trim($_POST['paymentname'])))
+                     ? trim($_POST['paymentname']) : "";
+            $paymentname_enc = (!empty($paymentname)) ? htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8') : "";
+            
+            $paymentnotes = (array_key_exists('paymentnotes', $_POST) && !empty(trim($_POST['paymentnotes'])))
+                          ? trim($_POST['paymentnotes']) : "";
+                          
+            
+            if (empty($paymentname)) {
+                // required
+            } else {
+                // check if this payment name exists
+                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE value='%s'", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'],
+                                                                          $dbSocket->escapeSimple($paymentname));
+                $res = $dbSocket->query($sql);
+                
+                $exists = intval($res->fetchrow()[0]) == 1;
 
+                if ($exists) {
+                    // invalid
+                } else {
+                    // required later
+                    $currDate = date('Y-m-d H:i:s');
+                    $currBy = $operator;
+                    
+                    // insert apyment type info
+                    $sql = sprintf("INSERT INTO %s (id, value, notes, creationdate, creationby)
+                                            VALUES (0, '%s', '%s', '%s', '%s')",
+                                   $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname),
+                                   $dbSocket->escapeSimple($paymentnotes), $currDate, $currBy);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $successMsg = "Successfully inserted new payment type (<strong>$paymentname_enc</strong>)";
+                        $logAction .= "Successfully inserted new payment type [$paymentname] on page: ";
+                    } else {
+                        $failureMsg = "Failed to insert new payment type (<strong>$paymentname_enc</strong>)";
+                        $logAction .= "Failed to insert new payment type [$paymentname] on page: ";
+                    }
+                }
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
     }
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
+    include('library/closedb.php');
 
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-
     // print HTML prologue
     $title = t('Intro','paymenttypesnew.php');
     $help = t('helpPage','paymenttypesnew');
@@ -88,66 +103,66 @@
     print_html_prologue($title, $langCode);
 
     include("menu-bill-payments.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
 
-?>
-
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-
-
-    <fieldset>
-
-        <h302> <?php echo t('title','PayTypeInfo'); ?> </h302>
-        <br/>
-
-        <ul>
-
-        <li class='fieldset'>
-        <label for='name' class='form'><?php echo t('all','PayTypeName') ?></label>
-        <input name='paymentname' type='text' id='paymentname' value='' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentTypeTooltip')" /> 
+    if (!isset($successMsg)) {
+        // descriptors 0
+        $input_descriptors0 = array();
         
-        <div id='paymentTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','paymentTypeTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='paymentnotes' class='form'><?php echo t('all','PayTypeNotes') ?></label>
-        <input name='paymentnotes' type='text' id='paymentnotes' value='' tabindex=101 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('paymentTypeNotesTooltip')" /> 
+        $input_descriptors0[] = array(
+                                        'name' => 'paymentname',
+                                        'caption' => t('all','PayTypeName'),
+                                        'type' => 'text',
+                                        'value' => $paymentname,
+                                        'tooltipText' => t('Tooltip','paymentTypeTooltip'),
+                                     );
         
-        <div id='paymentTypeNotesTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','paymentTypeNotesTooltip') ?>
-        </div>
-        </li>
+        $input_descriptors0[] = array(
+                                        "name" => "paymentnotes",
+                                        "caption" => t('all','PayTypeNotes'),
+                                        "type" => "textarea",
+                                        "content" => $paymentnotes,
+                                        'tooltipText' => t('Tooltip','paymentTypeNotesTooltip'),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+                                      
+        
+        open_form();
+        
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','PayTypeInfo'),
+                                     );
+                                     
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_form();
+    }
+
+    print_back_to_previous_page();
     
-        </li>
-
-        </ul>
-    </fieldset>
-
-    <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-
- </form>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

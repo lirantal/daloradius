@@ -26,74 +26,114 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-
-    include 'library/opendb.php';
-
-        isset($_REQUEST['paymentname']) ? $paymentname = $_REQUEST['paymentname'] : $paymentname = "";
-        isset($_REQUEST['paymentnotes']) ? $paymentnotes = $_REQUEST['paymentnotes'] : $paymentnotes = "";
-
-    $edit_paymentname = $paymentname; //feed the sidebar variables    
-
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($_POST['submit'])) {
-
-                $paymentname = $_POST['paymentname'];
-                $paymentnotes = $_POST['paymentnotes'];
-
-        if (trim($paymentname) != "") {
-
-            $currDate = date('Y-m-d H:i:s');
-            $currBy = $_SESSION['operator_user'];
-
-            $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']." SET ".
-            " value='".$dbSocket->escapeSimple($paymentname)."', ".
-            " notes='".$dbSocket->escapeSimple($paymentnotes).    "', ".
-            " updatedate='$currDate', updateby='$currBy' ".
-            " WHERE value='".$dbSocket->escapeSimple($paymentname)."'";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL = "";
-            $logDebugSQL .= $sql . "\n";
-            
-            $successMsg = "Updated payment type: <b> $paymentname </b>";
-            $logAction .= "Successfully updated payment type [$paymentname] on page: ";
-            
-        } else {
-            $failureMsg = "no payment type was entered, please specify a payment type to edit.";
-            $logAction .= "Failed updating payment type [$paymentname] on page: ";
-        }
-        
+    
+    include('library/opendb.php');
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $paymentname = (array_key_exists('paymentname', $_POST) && !empty(trim($_POST['paymentname'])))
+                     ? trim($_POST['paymentname']) : "";
+    } else {
+        $paymentname = (array_key_exists('paymentname', $_REQUEST) && !empty(trim($_REQUEST['paymentname'])))
+                     ? trim($_REQUEST['paymentname']) : "";
     }
     
-
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']." WHERE value='".$dbSocket->escapeSimple($paymentname)."'";
+    
+    // check if this payment name exists
+    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE value='%s'", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'],
+                                                              $dbSocket->escapeSimple($paymentname));
     $res = $dbSocket->query($sql);
-    $logDebugSQL .= $sql . "\n";
+    
+    $exists = intval($res->fetchrow()[0]) == 1;
 
-    $row = $res->fetchRow();
-    $paymenttype = $row[1];
-    $paymentnotes = $row[2];
-    $creationdate = $row[3];
-    $creationby = $row[4];
-    $updatedate = $row[5];
-    $updateby = $row[6];
+    if (!$exists) {
+        // we reset the payment name if it does not exist
+        $paymentname = "";
+    }
+    
+    $paymentname_enc = (!empty($paymentname)) ? htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8') : "";
+    
+    //feed the sidebar variables
+    $edit_paymentname = $paymentname_enc;
 
-    include 'library/closedb.php';
-
-
-    if (trim($paymentname) == "") {
-        $failureMsg = "no payment type was entered or found in database, please specify a payment type to edit";
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        
+            if (empty($paymentname)) {
+                // required
+                $failureMsg = "invalid or empty payment type, please specify a valid payment type to edit.";
+                $logAction .= "invalid or empty payment type on page: ";
+            } else {
+                $sql_SET = array();
+                
+                // required later
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $operator;
+            
+                $sql_SET[] = sprintf("updatedate='%s'", $currDate);
+                $sql_SET[] = sprintf("updateby='%s'", $currBy);
+                
+                $paymentnotes = (array_key_exists('paymentnotes', $_POST) && !empty(trim($_POST['paymentnotes'])))
+                              ? trim($_POST['paymentnotes']) : "";
+                if (!empty($paymentnotes)) {
+                    $sql_SET[] = sprintf("notes='%s'", $dbSocket->escapeSimple($paymentnotes));
+                }
+                
+                $sql = sprintf("UPDATE %s SET ", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'])
+                     . implode(", ", $sql_SET)
+                     . sprintf(" WHERE value='%s'", $dbSocket->escapeSimple($paymentname));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    $successMsg = "Successfully updated payment type (<strong>$paymentname_enc</strong>)";
+                    $logAction .= "Successfully updated payment type [$paymentname] on page: ";
+                } else {
+                    $failureMsg = "Failed to updated payment type (<strong>$paymentname_enc</strong>)";
+                    $logAction .= "Failed to updated payment type [$paymentname] on page: ";
+                }
+            }
+        
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
     }
 
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-
-    include_once("lang/main.php");
+    if (empty($paymentname)) {
+        $failureMsg = "invalid or empty payment type entered, please specify a valid payment type to edit.";
+        $logAction .= "$failureMsg on page: ";
+    } else {
     
-    include("library/layout.php");
+        $sql = sprintf("SELECT id, notes, creationdate, creationby, updatedate, updateby FROM %s WHERE value='%s'",
+                       $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname));
+        
+    
+
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+    
+        $row = $res->fetchrow();
+    
+        list( $id, $notes, $creationdate, $creationby, $updatedate, $updateby ) = $row;
+    
+    }
+
+    include('library/closedb.php');
+    
 
     // print HTML prologue
     $extra_css = array(
@@ -114,100 +154,108 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (isset($paymentname)) {
-        $title .= ":: $paymentname";
+    if (!empty($paymentname)) {
+        $title .= ":: $paymentname_enc";
     } 
 
     include("menu-bill-payments.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
     
-    $input_descriptors2 = array();
-    $input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
-    $input_descriptors2[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
-    $input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
-    $input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
-    
-    // set navbar stuff
-    $navbuttons = array(
-                          'PayTypeInfo-tab' => t('title','PayTypeInfo'),
-                          'Optional-tab' => t('title','Optional'),
-                       );
-
-    print_tab_navbuttons($navbuttons);
-    
-    include_once('include/management/actionMessages.php');
-?>
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-    <div class="tabcontent" id="PayTypeInfo-tab" style="display: block">
-
-
-        <fieldset>
-
-            <h302> <?php echo t('title','PayTypeInfo'); ?> </h302>
-            <br/>
-
-            <ul>
-
-                <li class='fieldset'>
-                <label for='paymentname' class='form'><?php echo t('all','PayTypeName') ?></label>
-                <input disabled name='paymentname' type='text' id='paymentname' value='<?php echo $paymentname ?>' tabindex=100 />
-                </li>
-
-                <li class='fieldset'>
-                <label for='paymentnotes' class='form'><?php echo t('all','PayTypeNotes') ?></label>
-
-                        <input class='text' name='paymentnotes' type='text' id='paymentnotes' value='<?php echo $paymentnotes ?>' tabindex=101 />
-
-                </li>
-
-                
-
-            </ul>
-
-        </fieldset>
-
-        <input type="hidden" value="<?php echo $paymentname ?>" name="paymentname"/>
-
-    </div>
-
-    <div class="tabcontent" id="Optional-tab">
-        <fieldset>
-
-            <h302> Optional </h302>
-            <h301> Other </h301>
-            
-            <ul style="margin: 30px auto">
-
-<?php
-                foreach ($input_descriptors2 as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-            </ul>
-        </fieldset>
-    </div>
-    
-    <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-</form>
-
-        </div><!-- #contentnorightbar -->
+    if (!empty($paymentname)) {
+        // descriptors 0
+        $input_descriptors0 = array();
         
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+        $input_descriptors0[] = array(
+                                        'name' => 'paymentname-presentation',
+                                        'caption' => t('all','PayTypeName'),
+                                        'type' => 'text',
+                                        'disabled' => true,
+                                        'value' => $paymentname,
+                                        'tooltipText' => t('Tooltip','paymentTypeTooltip'),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "name" => "paymentnotes",
+                                        "caption" => t('all','PayTypeNotes'),
+                                        "type" => "textarea",
+                                        "content" => $paymentnotes,
+                                        'tooltipText' => t('Tooltip','paymentTypeNotesTooltip'),
+                                     );
+                                     
+        $input_descriptors1 = array();
+        
+        $input_descriptors1[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'datetime-local',
+                                       'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
+        $input_descriptors1[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
+        $input_descriptors1[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'datetime-local',
+                                       'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
+        $input_descriptors1[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+        
+        $input_descriptors2 = array();
+        
+        $input_descriptors2[] = array(
+                                        "name" => "paymentname",
+                                        "type" => "hidden",
+                                        "value" => $paymentname,
+                                     );
+        
+        $input_descriptors2[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        
+        $input_descriptors2[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+                                      
+        
+        open_form();
+        
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','PayTypeInfo'),
+                                     );
+                                     
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        // fieldset 1
+        $fieldset1_descriptor = array(
+                                        "title" => "Other Information",
+                                     );
+        
+        open_fieldset($fieldset1_descriptor);
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_form();
+    }
 
-</body>
-</html>
+    print_back_to_previous_page();
+    
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+
+?>

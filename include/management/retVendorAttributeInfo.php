@@ -24,7 +24,7 @@
 include('../../library/checklogin.php');
 
 
-// username and divContainer are required
+// attribute and divContainer are required
 if (array_key_exists('attribute', $_GET) && isset($_GET['attribute']) &&
     array_key_exists('divContainer', $_GET) && isset($_GET['divContainer'])) {
     

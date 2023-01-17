@@ -16,75 +16,113 @@
  *********************************************************************************************************
  *
  * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
  
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-    isset($_POST['ratename']) ? $ratename = $_POST['ratename'] : $ratename = "";
-    isset($_POST['ratetypenum']) ? $ratetypenum = $_POST['ratetypenum'] : $ratetypenum = "";
-    isset($_POST['ratetypetime']) ? $ratetypetime = $_POST['ratetypetime'] : $ratetypetime = "";
-    isset($_POST['ratecost']) ? $ratecost = $_POST['ratecost'] : $ratecost = "";
-
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($_POST["submit"])) {
-        $ratename = $_POST['ratename'];
-        $ratetypenum = $_POST['ratetypenum'];
-        $ratetypetime = $_POST['ratetypetime'];
-        $ratecost = $_POST['ratecost'];
-        
-        include 'library/opendb.php';
+    include('library/opendb.php');
 
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE rateName='".$dbSocket->escapeSimple($ratename)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($res->numRows() == 0) {
-            if (trim($ratename) != "" and trim($ratetypenum) != "" and trim($ratetypetime) != "" and trim($ratecost) != "") {
-
-                $currDate = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
-                
-                $ratetype = "$ratetypenum/$ratetypetime";
-
-                // insert rate info
-                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].
-                    " (id, ratename, ratetype, ratecost, ".
-                    "  creationdate, creationby, updatedate, updateby) ".
-                    " VALUES (0, '".$dbSocket->escapeSimple($ratename)."', '".
-                    $dbSocket->escapeSimple($ratetype)."',".$dbSocket->escapeSimple($ratecost).",".
-                    " '$currDate', '$currBy', NULL, NULL)";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg = "Added to database new rate: <b>$ratename</b>";
-                $logAction .= "Successfully added new rate [$ratename] on page: ";
-            } else {
-                $failureMsg = "you must provide a rate name, type and cost";    
-                $logAction .= "Failed adding new rate [$ratename] on page: ";    
-            }
-        } else { 
-            $failureMsg = "You have tried to add a rate that already exist in the database: $ratename";
-            $logAction .= "Failed adding new rate already in database [$ratename] on page: ";        
-        }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-        include 'library/closedb.php';
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            // required later
+            $currDate = date('Y-m-d H:i:s');
+            $currBy = $operator;
+        
+            $required_fields = array();
+            
+            $ratename = (array_key_exists('ratename', $_POST) && !empty(trim($_POST['ratename'])))
+                      ? trim($_POST['ratename']) : "";
+            if (empty($ratename)) {
+                $required_fields['ratename'] = t('all','RateName');
+            } else {
+                $ratename_enc = htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8');
+            }
+            
+            $ratecost = (array_key_exists('ratecost', $_POST) && intval(trim($_POST['ratecost'])) > 0)
+                      ? intval(trim($_POST['ratecost'])) : "";
+            if (empty($ratecost)) {
+                $required_fields['ratecost'] = t('all','RateCost');
+            }
+            
+            $ratetypenum = (array_key_exists('ratetypenum', $_POST) && intval(trim($_POST['ratetypenum'])) > 0)
+                      ? intval(trim($_POST['ratetypenum'])) : "";
+            if (empty($ratetypenum)) {
+                $required_fields['ratetypenum'] = t('all','RateType') . " (number)";
+            }
+            
+            $ratetypetime = (array_key_exists('ratetypetime', $_POST) && !empty(trim($_POST['ratetypetime'])) &&
+                             in_array(trim($_POST['ratetypetime']), $valid_timeUnits))
+                          ? trim($_POST['ratetypetime']) : "";
+            if (empty($ratetypetime)) {
+                $required_fields['ratetypetime'] = t('all','RateType') . " (time unit)";
+            }
+            
+            if (count($required_fields) > 0) {
+                // required/invalid
+                $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
+                $logAction .= "$failureMsg on page: ";
+            } else {
+            
+                // check if this rate exists
+                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE rateName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'],
+                                                                               $dbSocket->escapeSimple($ratename));
+                $res = $dbSocket->query($sql);
+                
+                $exists = intval($res->fetchrow()[0]) == 1;
 
+                if ($exists) {
+                    // invalid
+                    $failureMsg = sprintf("You have provided an invalid rate name");
+                    $logAction .= "$failureMsg on page: ";
+                } else {
+                    
+                    $ratetype = sprintf("%d/%s", $ratetypenum, $ratetypetime);
+                    
+                    $sql = sprintf("INSERT INTO %s (id, ratename, ratetype, ratecost, creationdate, creationby, updatedate, updateby)
+                                            VALUES (0, '%s', '%s', %d, '%s', '%s', NULL, NULL)",
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $dbSocket->escapeSimple($ratename),
+                                   $dbSocket->escapeSimple($ratetype), $ratecost, $currDate, $currBy);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    if (!DB::isError($res)) {
+                        $successMsg = "Successfully inserted new rate (<strong>$ratename_enc</strong>)";
+                        $logAction .= "Successfully inserted new rate [$ratename] on page: ";
+                    } else {
+                        $failureMsg = "Failed to inserted new rate (<strong>$ratename_enc</strong>)";
+                        $logAction .= "Failed to inserted new rate [$ratename] on page: ";
+                    }
+                }
+            }
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
     }
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
+    include('library/closedb.php');
 
+    
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
@@ -104,132 +142,94 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (isset($paymentname)) {
-        $title .= ":: $paymentname";
-    } 
-
     include("menu-bill-rates.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
     
-    $input_descriptors2 = array();
-    $input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
-    $input_descriptors2[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
-    $input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
-    $input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
-                                   'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+    if (!isset($successMsg)) {
+        // descriptors 0
+        $input_descriptors0 = array();
+        
+        $input_descriptors0[] = array(
+                                        'name' => 'ratename',
+                                        'caption' => t('all','RateName'),
+                                        'type' => 'text',
+                                        'value' => $ratename,
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        "name" => "ratetypenum",
+                                        "caption" => t('all','RateType') . " (number)",
+                                        "type" => "number",
+                                        "value" => $ratetypenum,
+                                        "min" => 1,
+                                     );
+        
+        $options = $valid_timeUnits;
+        array_unshift($options , '');
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "ratetypetime",
+                                        "caption" => t('all','RateType') . " (time unit)",
+                                        "options" => $options,
+                                        "selected_value" => $ratetypetime,
+                                        "tooltipText" => t('Tooltip','rateTypeTooltip')
+                                     );
     
-    // set navbar stuff
-    $navbuttons = array(
-                          'RateInfo-tab' => t('title','RateInfo'),
-                          'Optional-tab' => t('title','Optional'),
-                       );
-
-    print_tab_navbuttons($navbuttons);
+        $input_descriptors0[] = array(
+                                        "name" => "ratecost",
+                                        "caption" => t('all','RateCost'),
+                                        "type" => "number",
+                                        "value" => $ratecost,
+                                        "min" => 1,
+                                        "tooltipText" => t('Tooltip','rateCostTooltip')
+                                     );
     
-?>
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-    <div class="tabcontent" id="RateInfo-tab" style="display: block">
-
-        <fieldset>
-
-        <h302> <?php echo t('title','RateInfo'); ?> </h302>
-        <br/>
-
-        <ul>
-
-        <li class='fieldset'>
-        <label for='name' class='form'><?php echo t('all','RateName') ?></label>
-        <input name='ratename' type='text' id='ratename' value='' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateNameTooltip')" /> 
         
-        <div id='rateNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','rateNameTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='ratetype' class='form'><?php echo t('all','RateType') ?></label>
-
-        <input class='integer' name='ratetypenum' type='text' id='ratetypenum' value='1' tabindex=101 />
-                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratetypenum','increment')" />
-                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratetypenum','decrement')"/>
-
-                <select class='form' tabindex=102 name='ratetypetime' id='ratetypetime' >
-                        <option value='second'>second</option>
-                        <option value='minute'>minute</option>
-                        <option value='hour'>hour</option>
-                        <option value='day'>day</option>
-                        <option value='week'>week</option>
-                        <option value='month'>month</option>
-                </select>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateTypeTooltip')" /> 
+        // descriptors 1
+        $input_descriptors1 = array();
         
-        <div id='rateTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','rateTypeTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='ratecost' class='form'><?php echo t('all','RateCost') ?></label>
-        <input class='integer' name='ratecost' type='text' id='ratecost' value='1' tabindex=103 />
-                <img src="images/icons/bullet_arrow_up.png" alt="+" onclick="javascript:changeInteger('ratecost','increment')" />
-                <img src="images/icons/bullet_arrow_down.png" alt="-" onclick="javascript:changeInteger('ratecost','decrement')"/>
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('rateCostTooltip')" /> 
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
         
-        <div id='rateCostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','rateCostTooltip') ?>
-        </div>
-        </li>
-
-        </ul>
-    </fieldset>
-
-    </div>
-
-
-    <div class="tabcontent" id="Optional-tab">
-        <fieldset>
-
-            <h302> Optional </h302>
-            <h301> Other </h301>
-            
-            <ul style="margin: 30px auto">
-
-<?php
-                foreach ($input_descriptors2 as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-            </ul>
-        </fieldset>
-    </div>
-
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
     
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-                class='button' />
-
-</form>
-
-        </div><!-- #contentnorightbar -->
+        open_form();
         
-        <div id="footer">
-<?php
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','RateInfo'),
+                                     );
+                                     
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_form();
+    
+    }
+    
+    print_back_to_previous_page();
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

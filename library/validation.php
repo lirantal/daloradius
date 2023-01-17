@@ -251,6 +251,8 @@ $valid_planCurrencys = array(
                             );
 $valid_planTimeTypes = array( "Accumulative", "Time-To-Finish" );
 
+$valid_timeUnits = array( "second", "minute", "hour", "day", "week", "month", );
+
 $valid_languages = array(
                             "en" => "English", 
                             "it" => "Italian", 

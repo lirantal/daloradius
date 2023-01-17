@@ -37,7 +37,8 @@
 
     $valid_ratenames = array();
     
-    $sql = sprintf("SELECT DISTINCT(ratename) FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES']);
+    $sql = sprintf("SELECT DISTINCT(ratename) FROM %s ORDER BY ratename ASC",
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGRATES']);
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     
@@ -66,13 +67,18 @@
                 
                 if (count($ratename) > 0) {
                 
-                    $sql = sprintf("DELETE FROM %s WHERE %s IN ('%s')",
+                    $sql = sprintf("DELETE FROM %s WHERE ratename IN ('%s')",
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], implode("', '", $ratename));
                     $count = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     
-                    $successMsg = sprintf("Deleted %d rate(s)", intval($count));
-                    $logAction .= "$successMsg on page: ";
+                    if (!DB::isError($res)) {
+                        $successMsg = sprintf("Deleted %d rate(s)", intval($count));
+                        $logAction .= "$successMsg on page: ";
+                    } else {
+                        $failureMsg = "Failed deleting rate(s)";
+                        $logAction .= sprintf("Failed deleting rate(s) [%s] on page: ", $failureMsg);
+                    }
                 
                 } else {
                     // invalid
@@ -99,7 +105,7 @@
         }
     }
 
-    include('library/opendb.php');
+    include('library/closedb.php');
 
     include_once("lang/main.php");
     include("library/layout.php");
