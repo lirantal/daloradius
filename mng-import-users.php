@@ -98,10 +98,6 @@
                     $username = trim($username);
                     $password = trim($password);
                     
-                    echo $username;
-                    echo $password;
-                    
-                    
                     if (strpos("%", $username) === false &&
                         preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
                         preg_match(ALL_PRINTABLE_CHARS_REGEX, $password) &&
