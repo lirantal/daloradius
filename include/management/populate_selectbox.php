@@ -268,6 +268,33 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
 }
 
 
+function get_huntgroups() {
+    global $configValues;
+
+    include('library/opendb.php');
+    
+    $sql = sprintf("SELECT `id`, `groupname`, `nasipaddress`, `nasportid` FROM `%s` ORDER BY `id` ASC",
+                   $configValues['CONFIG_DB_TBL_RADHG']);
+    $res = $dbSocket->query($sql);
+    
+    $result = array();
+
+    while ($row = $res->fetchrow()) {
+
+        list( $id, $groupname, $nasipaddress, $nasportid ) = $row;
+
+        $key = sprintf("huntgroup-%d", intval($id));
+        $value = sprintf("%s:%s (%s)", $nasipaddress, $nasportid, $groupname);
+
+        $result[$key] = $value;
+    }
+    
+    include('library/closedb.php');
+    
+    return $result;
+}
+
+
 function get_users() {
     global $configValues;
 

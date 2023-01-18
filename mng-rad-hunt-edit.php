@@ -21,186 +21,221 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    include_once("include/management/populate_selectbox.php");
 
-
-    include 'library/opendb.php';
-
-    $nasipaddress = "";
-    $nasportid = "";
-    $groupname = "";
-
-    isset($_REQUEST['nasipaddress']) ? $nasipaddress = $_REQUEST['nasipaddress'] : $nasipaddress = "";
-    isset($_REQUEST['groupname']) ? $groupname = $_REQUEST['groupname'] : $groupname = "";
-
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    // fill-in nashost details in html textboxes
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG']." WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddress).
-            "' AND groupname='".$dbSocket->escapeSimple($groupname)."'";
-    $res = $dbSocket->query($sql);
-    $logDebugSQL = "";
-    $logDebugSQL .= $sql . "\n";
+    // load valid huntgroups
+    $valid_huntgroups = get_huntgroups();
 
-    $row = $res->fetchRow();        // array fetched with values from $sql query
 
-    // assignment of values from query to local variables
-    // to be later used in html to display on textboxes (input)
-    $groupname = $row[1];
-    $nasipaddress = $row[2];
-    $nasportid = $row[3];
-    
-
-    if (isset($_POST['submit'])) {
-    
-        $nasipaddressold = $_REQUEST['nasipaddressold'];
-        $nasipaddress = $_REQUEST['nasipaddress'];
-        $nasportid = $_REQUEST['nasportid'];
-        $nasportidold = $_REQUEST['nasportidold'];
-        $groupname = $_REQUEST['groupname'];
-
-            
-        include 'library/opendb.php';
-
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADHG'].
-        " WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddressold).
-        "' AND nasportid='". $dbSocket->escapeSimple($nasportidold)."' ";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($res->numRows() == 1) {
-
-            if (trim($nasipaddress) != "" and trim($groupname) != "") {
-
-                if (!$nasportid) {
-                    $nasportid = 0;
-                }
-
-                // insert nas details
-                $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADHG'].
-                    " SET nasipaddress='".$dbSocket->escapeSimple($nasipaddress)."', ".
-                    " groupname='".$dbSocket->escapeSimple($groupname)."', ".
-                    " nasportid=".$dbSocket->escapeSimple($nasportid)." ".
-                    " WHERE nasipaddress='".$dbSocket->escapeSimple($nasipaddressold)."'".
-                    " AND nasportid='". $dbSocket->escapeSimple($nasportidold)."' ";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg = "Updated HG settings in database: <b> $nasipaddress - $nasportid</b>  ";
-                $logAction .= "Successfully updated attributes for hg [$nasipaddress - $nasportid] on page: ";
-            } else {
-                $failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both hg Host and HG GroupName ";
-                $logAction .= "Failed updating attributes for hg [$nasipaddress - $nasportid] on page: ";
-            }
-            
-        } elseif ($res->numRows() > 1) {
-            $failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> already exists in the database
-            <br/> Please check that there are no duplicate entries in the database";
-            $logAction .= "Failed updating attributes for already existing hg [$nasipaddress - $nasportid] on page: ";
-        } else {
-            $failureMsg = "The HG IP/Host - Port <b> $nasipaddress  - $nasportid</b> doesn't exist at all in the database.
-            <br/>Please re-check the nashost ou specified.";
-            $logAction .= "Failed updating empty nas on page: ";
-        }
-
-        include 'library/closedb.php';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $item = (array_key_exists('item', $_POST) && !empty(str_replace("%", "", trim($_POST['item']))))
+              ? str_replace("%", "", trim($_POST['item'])) : "";
+    } else {
+        $item = (array_key_exists('item', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['item']))))
+              ? str_replace("%", "", trim($_REQUEST['item'])) : "";
     }
 
-    if (isset($_REQUEST['nasipaddress']))
-        $nasipaddress = $_REQUEST['nasipaddress'];
-    else
-        $nasipaddress = "";
+    $exists = in_array($item, array_keys($valid_huntgroups));
 
-    if (trim($nasipaddress) == "") {
-        $failureMsg = "no HG Host or HG GroupName was entered, it is required that you specify both HG Host and HG GroupName";
-    }        
+    if (!$exists) {
+        // we reset the rate if it does not exist
+        $item = "";
+        $internal_id = "";
+    } else {
+        $internal_id = intval(str_replace("huntgroup-", "", $item));
+    }
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
+    //feed the sidebar variables
+    $selected_huntgroup = $item;
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
+
+    include('library/opendb.php');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+
+            if (empty($internal_id)) {
+                // required
+                $failureMsg = sprintf("Selected an empty/invalid huntgroup element");
+                $logAction .= "$failureMsg on page: ";
+            } else {
+
+                $nasipaddress = (array_key_exists('nasipaddress', $_POST) && !empty(trim($_POST['nasipaddress'])) &&
+                                 filter_var(trim($_POST['nasipaddress']), FILTER_VALIDATE_IP) !== false)
+                              ? trim($_POST['nasipaddress']) : "";
+
+                $groupname = (array_key_exists('groupname', $_POST) && !empty(str_replace("%", "", trim($_POST['groupname']))))
+                           ? str_replace("%", "", trim($_POST['groupname'])) : "";
+
+                $nasportid = (array_key_exists('nasportid', $_POST) && intval(trim($_POST['nasportid'])) > 0)
+                           ? intval(trim($_POST['nasportid'])) : 0;
+
+                if (empty($nasipaddress) || empty($groupname)) {
+                    // required
+                    $failureMsg = sprintf("Empty/invalid IP address and/or group name");
+                    $logAction .= "$failureMsg on page: ";
+                } else {
+
+                    $sql = sprintf("SELECT COUNT(id)
+                                      FROM %s
+                                     WHERE nasipaddress=? AND nasportid=?", $configValues['CONFIG_DB_TBL_RADHG']);
+                    $prep = $dbSocket->prepare($sql);
+                    $values = array( $nasipaddress, $nasportid, );
+                    $res = $dbSocket->execute($prep, $values);
+                    $logDebugSQL .= "$sql;\n";
+
+                    $exists = $res->fetchrow()[0] > 0;
+
+                    if ($exists) {
+                        // invalid
+                        $failureMsg = sprintf("%s/%s already in db", t('all','HgIPHost'), t('all','HgPortId'));
+                        $logAction .= "$failureMsg on page: ";
+                    } else {
+                        $sql = sprintf("UPDATE %s
+                                           SET groupname=?, nasipaddress=?, nasportid=?
+                                         WHERE id=?", $configValues['CONFIG_DB_TBL_RADHG']);
+                        $prep = $dbSocket->prepare($sql);
+                        $values = array( $groupname, $nasipaddress, $nasportid, $internal_id );
+                        $res = $dbSocket->execute($prep, $values);
+                        $logDebugSQL .= "$sql;\n";
+
+                        if (!DB::isError($res)) {
+                            $successMsg = "Successfully updated huntgroup item";
+                            $logAction .= "Successfully updated huntgroup item [$nasipaddress/$nasportid $groupname] on page: ";
+                        } else {
+                            $failureMsg = "Failed to update huntgroup item";
+                            $logAction .= "Failed to inserted new huntgroup [$nasipaddress/$nasportid $groupname] on page: ";
+                        }
+                    }
+                }
+            }
+
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+
+    if (empty($internal_id)) {
+        $failureMsg = sprintf("Selected an empty/invalid huntgroup element");
+        $logAction .= "Failed updating (possible empty or invalid HS name) HS on page: ";
+    } else {
+        $sql = sprintf("SELECT groupname, nasipaddress, nasportid FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_RADHG']);
+        $prep = $dbSocket->prepare($sql);
+        $values = array( $internal_id );
+        $res = $dbSocket->execute($prep, $values);
+        $logDebugSQL .= "$sql;\n";
+
+        list( $groupname, $nasipaddress, $nasportid ) = $res->fetchrow();
+    }
+
+    include('library/closedb.php');
+
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "css/tabs.css"
-    );
-    
-    $extra_js = array(
-        // js tabs stuff
-        "library/javascript/tabs.js"
-    );
-    
     $title = t('Intro','mngradhuntedit.php');
     $help = t('helpPage','mngradhuntedit');
-    
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (isset($nasipaddress)) {
-        $title .= ":: $nasipaddress";
-    } 
+    print_html_prologue($title, $langCode);
 
     include("menu-mng-rad-hunt.php");
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-    
+
     include_once('include/management/actionMessages.php');
-    
-?>
 
-<form name="newhg" method="post">
-            
+    if (!empty($internal_id)) {
 
-        <input type="hidden" value="<?php echo $nasipaddress ?>" name="nasipaddressold" />
-        <input type="hidden" value="<?php echo $nasportid ?>" name="nasportidold" />
+        // descriptors 0
+        $input_descriptors0 = array();
 
+        $input_descriptors0[] = array(
+                                        'name' => 'nasipaddress',
+                                        'caption' => t('all','HgIPHost'),
+                                        'type' => 'text',
+                                        'value' => $nasipaddress,
+                                        'pattern' => trim(IP_REGEX, '/'),
+                                        'required' => true
+                                     );
 
-        <fieldset>
+        $input_descriptors0[] = array(
+                                        'name' => 'groupname',
+                                        'caption' => t('all','HgGroupName'),
+                                        'type' => 'text',
+                                        'value' => $groupname,
+                                        'required' => true
+                                     );
 
-                <h302> <?php echo t('title','HGInfo') ?> </h302>
-                <br/>
+        $input_descriptors0[] = array(
+                                        'name' => 'nasportid',
+                                        'caption' => t('all','HgPortId'),
+                                        'type' => 'text',
+                                        'value' => $nasportid
+                                     );
+        // descriptors 1
+        $input_descriptors1 = array();
 
-                <label for='nasipaddress' class='form'><?php echo t('all','HgIPHost') ?></label>
-                <input name='nasipaddress' type='text' id='nasipaddress' value='<?php echo $nasipaddress ?>' tabindex=100 />
-                <br />
+        $input_descriptors1[] = array(
+                                        "name" => "item",
+                                        "type" => "hidden",
+                                        "value" => sprintf("huntgroup-%d", $internal_id),
+                                     );
 
-                <label for='groupname' class='form'><?php echo t('all','HgGroupName') ?></label>
-                <input name='groupname' type='text' id='groupname' value='<?php echo $groupname ?>' tabindex=101 />
-                <br />
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
 
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
 
-                <label for='nasportid' class='form'><?php echo t('all','HgPortId') ?></label>
-                <input name='nasportid' type='text' id='nasportid' value='<?php echo $nasportid ?>' tabindex=104 />
-                <br />
+        open_form();
 
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','HGInfo'),
+                                     );
 
+        open_fieldset($fieldset0_descriptor);
 
-                <br/><br/>
-                <hr><br/>
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
 
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+        close_fieldset();
 
-        </fieldset>
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
 
-</form>
+        close_form();
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    }
+
+    print_back_to_previous_page();
+
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>
