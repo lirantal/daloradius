@@ -207,7 +207,7 @@
         // page numbers are shown only if there is more than one page
         if ($drawNumberLinks) {
             printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
+            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
             echo '</td>';
         }
 ?>
