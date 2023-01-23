@@ -31,15 +31,8 @@ include_once("lang/main.php");
 
 $m_active = "Management";
 
-?>
-
-    <script src="library/javascript/rounded-corners.js"></script>
-    <script src="library/javascript/form-field-tooltip.js"></script>
-    <link rel="stylesheet" href="css/form-field-tooltip.css" media="screen">
-
-<?php
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/management-subnav.php");
+include_once ("include/menu/menu-items.php");
+include_once ("include/menu/management-subnav.php");
 ?>
         
             <div id="sidebar">
@@ -63,10 +56,23 @@ $m_active = "Management";
                             <b>&raquo;</b><?= t('button','EditIPPool') ?>
                         </a>
                         <form name="mngradippooledit" action="mng-rad-ippool-edit.php" method="GET" class="sidebar">
-                            <input name="poolname" type="text" tooltipText="<?= t('Tooltip','PoolName'); ?><br>"
-                                value="<?= (isset($poolname)) ? $poolname : "" ?>" tabindex="4">
-                            <input name="ipaddressold" type="text" tooltipText="<?= t('Tooltip','IPAddress'); ?><br>"
-                            value="<?= (isset($ipaddressold)) ? $ipaddressold : "" ?>" tabindex="5">
+<?php
+
+include_once("include/management/populate_selectbox.php");
+$menu_valid_ippools = get_ippools();
+
+$options = $menu_valid_ippools;
+array_unshift($options , '');
+$ippools_select = array(
+                                "name" => "item",
+                                "caption" => sprintf("%s - %s", t('all','PoolName'), t('all','IPAddress')),
+                                "type" => "select",
+                                "options" => $options,
+                                "selected_value" => (isset($selected_ippool) ? $selected_ippool : ""),
+                             );
+print_form_component($ippools_select);
+
+?>
                         </form>
                     </li>
                     <li>
@@ -76,11 +82,3 @@ $m_active = "Management";
                     </li>
                 </ul><!-- .subnav -->
             </div><!-- #sidebar -->
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>

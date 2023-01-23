@@ -60,6 +60,7 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
+
     // print HTML prologue
     $title = t('Intro','mngradhuntlist.php');
     $help = t('helpPage','mngradhuntlist');
@@ -167,7 +168,7 @@
                           . sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>", $onclick, $tooltipText)
                           . $id . '</a>' . '</label>';
             
-            // other row eleents
+            // other row elements
             $tr[] = htmlspecialchars($nasipaddress, ENT_QUOTES, 'UTF-8');
             $tr[] = htmlspecialchars($nasportid, ENT_QUOTES, 'UTF-8');
             $tr[] = htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8');

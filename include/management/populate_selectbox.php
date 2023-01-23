@@ -268,6 +268,59 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
 }
 
 
+function get_proxies() {
+     global $configValues;
+
+    include('library/opendb.php');
+    
+    $sql = sprintf("SELECT id, proxyname FROM %s ORDER BY proxyname ASC", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
+    $res = $dbSocket->query($sql);
+    
+    $result = array();
+
+    while ($row = $res->fetchrow()) {
+
+        list( $id, $proxyname ) = $row;
+
+        $key = sprintf("proxy-%d", intval($id));
+        $value = $proxyname;
+
+        $result[$key] = $value;
+    }
+    
+    include('library/closedb.php');
+    
+    return $result;
+}
+
+
+function get_ippools() {
+     global $configValues;
+
+    include('library/opendb.php');
+    
+    $sql = sprintf("SELECT id, pool_name, framedipaddress FROM %s ORDER BY pool_name ASC, framedipaddress ASC",
+                   $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+    $res = $dbSocket->query($sql);
+    
+    $result = array();
+
+    while ($row = $res->fetchrow()) {
+
+        list( $id, $pool_name, $framedipaddress ) = $row;
+
+        $key = sprintf("ippool-%d", intval($id));
+        $value = sprintf("%s - %s", $pool_name, $framedipaddress);
+
+        $result[$key] = $value;
+    }
+    
+    include('library/closedb.php');
+    
+    return $result;
+}
+
+
 function get_huntgroups() {
     global $configValues;
 

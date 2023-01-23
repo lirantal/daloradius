@@ -77,7 +77,8 @@
                 
                 if ($exists) {
                     // invalid
-                    $failureMsg = sprintf("%s/%s already in db", t('all','HgIPHost'), t('all','HgPortId'));
+                    $failureMsg = sprintf("The chosen %s/%s pair is already contained in a group",
+                                          t('all','HgIPHost'), t('all','HgPortId'));
                     $logAction .= "$failureMsg on page: ";
                 } else {
                     $sql = sprintf("INSERT INTO %s (id, groupname, nasipaddress, nasportid)
