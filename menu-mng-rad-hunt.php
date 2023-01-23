@@ -33,7 +33,7 @@ $m_active = "Management";
 
 include_once("include/menu/menu-items.php");
 include_once("include/menu/management-subnav.php");
-include_once("include/management/autocomplete.php");
+
 ?>
         
             <div id="sidebar">
@@ -57,11 +57,23 @@ include_once("include/management/autocomplete.php");
                             <b>&raquo;</b><?= t('button','EditHG') ?>
                         </a>
                         <form name="mngradhuntedit" action="mng-rad-hunt-edit.php" method="GET" class="sidebar">
-                            <input name="nasipaddress" type="text" id="nashostEdit" tabindex="4"
-                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','hgNasIpAddress'); ?><br>">
-                            <input name="groupname" type="text" value="" tabindex="5"
-                                    tooltipText="<?= t('Tooltip','hgGroupName'); ?><br>">                                            
+<?php
+
+include_once("include/management/populate_selectbox.php");
+$menu_valid_huntgroups = get_huntgroups();
+
+$options = $menu_valid_huntgroups;
+array_unshift($options , '');
+$huntgroups_select = array(
+                                "name" => "item",
+                                "caption" => "Huntgroup item",
+                                "type" => "select",
+                                "options" => $options,
+                                "selected_value" => (isset($selected_huntgroup) ? $selected_huntgroup : ""),
+                             );
+print_form_component($huntgroups_select);
+
+?>
                         </form>
                     </li>
                     <li>
@@ -72,22 +84,3 @@ include_once("include/management/autocomplete.php");
                     
                 </ul><!-- .subnav -->
             </div><!-- #sidebar -->
-
-<script>
-<?php
-    if ($autoComplete) {
-?>
-
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('nashostEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteHGHost');
-    
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-

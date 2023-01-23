@@ -1578,9 +1578,8 @@ in FreeRADIUS's config file to actually log these.<br/>
 <b>Sub-Category Reports</b><br/>
 <h200><b>Logs</b></h200> - Provides access to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
 <h200><b>Status</b></h200> - Provides information on server status and RADIUS Components status";
-$l['helpPage']['repstatradius'] = "Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.
-";
-$l['helpPage']['repstatserver'] = "Provides general information about the FreeRADIUS daemon and MySQL Database server";
+$l['helpPage']['repstatradius'] = "Provides general information about the FreeRADIUS daemon and MySQL/MariaDB Database server";
+$l['helpPage']['repstatserver'] = "Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.";
 $l['helpPage']['repstatus'] = "<b>Status</b><br/>
 <h200><b>Server Status</b></h200> - Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
 <h200><b>RADIUS Status</b></h200> - Provides general information about the FreeRADIUS daemon and MySQL Database server";

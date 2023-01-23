@@ -45,7 +45,6 @@ $pageNum = (array_key_exists('page', $_REQUEST) && isset($_REQUEST['page']) &&
 
 $offset = ($pageNum - 1) * $rowsPerPage;
 
-$self = $_SERVER['PHP_SELF'];
 
 // this function returns a string containing paged-navigation controls
 function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", $request2="", $request3="") {

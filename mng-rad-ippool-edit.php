@@ -21,68 +21,130 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
-
-	isset($_GET['poolname']) ? $poolname = $_GET['poolname'] : $poolname = "";
-	isset($_GET['ipaddress']) ? $ipaddress = $_GET['ipaddress'] : $ipaddress = "";
-	isset($_GET['ipaddressold']) ? $ipaddressold = $_GET['ipaddressold'] : $ipaddressold = "";
-
-	$logAction = "";
-	$logDebugSQL = "";
-
-	if (isset($_POST['submit'])) {
-	
-		$poolname = $_POST['poolname'];
-		$ipaddress = $_POST['ipaddress'];
-		$ipaddressold = $_POST['ipaddressold'];
-
-		include 'library/opendb.php';
-
-		$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADIPPOOL'].
-			" WHERE pool_name='".$dbSocket->escapeSimple($poolname)."'".
-			" AND framedipaddress='".$dbSocket->escapeSimple($ipaddressold)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-
-		if ($res->numRows() == 1) {
-
-			if (trim($poolname) != "" and trim($ipaddress) != "" and trim($ipaddressold) != "") {
-
-				// insert ippool name and ip address
-				$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADIPPOOL'].
-					" SET framedipaddress='".$dbSocket->escapeSimple($ipaddress)."'".
-					" WHERE pool_name='".$dbSocket->escapeSimple($poolname)."'".
-					" AND framedipaddress='".$dbSocket->escapeSimple($ipaddressold)."'";
-				$res = $dbSocket->query($sql);
-				$logDebugSQL .= $sql . "\n";
-			
-				$successMsg = "Updated database with new IP Address: <b>$ipaddress</b> for Pool Name: <b>$poolname</b>";
-				$logAction .= "Successfully updated IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
-			} else {
-				$failureMsg = "IP Address left unchanged";
-				$logAction .= "IP Address left unchanged";
-				//$failureMsg = "No IP Address or Pool Name was entered, it is required that you specify both";
-				//$logAction .= "Failed updating (missing ipaddress/poolname) IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
-			}
-		} else {
-			$failureMsg = "The IP Address <b>$ipaddress</b> for Pool Name <b>$poolname</b> doesn't exist in database";
-			$logAction .= "Failed updating non-existing IP Address [$ipaddress] for Pool Name [$poolname] on page: ";
-		}
-
-		include 'library/closedb.php';
-	}
-	
-
-	include_once('library/config_read.php');
-    $log = "visited page: ";
-
-	 include_once("lang/main.php");
-    
+    include_once("lang/main.php");
+    include_once("library/validation.php");
     include("library/layout.php");
+    include_once("include/management/populate_selectbox.php");
+
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+    
+    // load valid ippools
+    $valid_ippools = get_ippools();
+    
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $item = (array_key_exists('item', $_POST) && !empty(str_replace("%", "", trim($_POST['item']))))
+              ? str_replace("%", "", trim($_POST['item'])) : "";
+    } else {
+        $item = (array_key_exists('item', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['item']))))
+              ? str_replace("%", "", trim($_REQUEST['item'])) : "";
+    }
+
+    $exists = in_array($item, array_keys($valid_ippools));
+    
+    if (!$exists) {
+        // we reset the rate if it does not exist
+        $item = "";
+        $internal_id = "";
+    } else {
+        $internal_id = intval(str_replace("ippool-", "", $item));
+    }
+
+    //feed the sidebar variables
+    $selected_ippool = $item;
+
+
+    include('library/opendb.php');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+
+            if (empty($internal_id)) {
+                // required
+                $failureMsg = sprintf("Selected an empty/invalid ippool item");
+                $logAction .= "$failureMsg on page: ";
+            } else {
+            
+                $pool_name = (array_key_exists('pool_name', $_POST) && !empty(str_replace("%", "", trim($_POST['pool_name']))))
+                           ? str_replace("%", "", trim($_POST['pool_name'])) : "";
+                          
+                $framedipaddress = (array_key_exists('framedipaddress', $_POST) && !empty(trim($_POST['framedipaddress'])) &&
+                                    filter_var(trim($_POST['framedipaddress']), FILTER_VALIDATE_IP) !== false)
+                                 ? trim($_POST['framedipaddress']) : "";
+                
+                if (empty($framedipaddress) || empty($pool_name)) {
+                    // required
+                    $failureMsg = sprintf("Empty/invalid %s and/or %s", t('all','PoolName'), t('all','IPAddress'));
+                    $logAction .= "$failureMsg on page: ";
+                } else {
+                
+                    $sql = sprintf("SELECT COUNT(id)
+                                      FROM %s
+                                     WHERE framedipaddress=?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+                    $prep = $dbSocket->prepare($sql);
+                    $values = array( $framedipaddress, );
+                    $res = $dbSocket->execute($prep, $values);
+                    $logDebugSQL .= "$sql;\n";
+
+                    $exists = $res->fetchrow()[0] > 0;
+
+                     if ($exists) {
+                        // invalid
+                        $failureMsg = sprintf("The chosen %s is already contained in a pool", t('all','IPAddress'));
+                        $logAction .= "$failureMsg on page: ";
+                    } else {
+                        $sql = sprintf("UPDATE %s
+                                           SET pool_name=?, framedipaddress=?
+                                         WHERE id=?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+                        $prep = $dbSocket->prepare($sql);
+                        $values = array( $pool_name, $framedipaddress, $internal_id );
+                        $res = $dbSocket->execute($prep, $values);
+                        $logDebugSQL .= "$sql;\n";
+
+                        if (!DB::isError($res)) {
+                            $successMsg = "Successfully updated ippool item";
+                            $logAction .= "Successfully updated ippool item [$framedipaddress, $pool_name] on page: ";
+                        } else {
+                            $failureMsg = "Failed to update ippool item";
+                            $logAction .= "Failed to inserted new ippool [$framedipaddress, $pool_name] on page: ";
+                        }
+                    }
+                }
+            }
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+    
+    if (empty($internal_id)) {
+        $failureMsg = sprintf("Selected an empty/invalid ippool element");
+        $logAction .= "Failed updating ippool element (possible empty or invalid ippool element id) on page: ";
+    } else {
+        $sql = sprintf("SELECT pool_name, framedipaddress
+                          FROM %s
+                         WHERE id=?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+        $prep = $dbSocket->prepare($sql);
+        $values = array( $internal_id );
+        $res = $dbSocket->execute($prep, $values);
+        $logDebugSQL .= "$sql;\n";
+
+        list( $pool_name, $framedipaddress ) = $res->fetchrow();
+    }
+
+    include('library/closedb.php');
+    
 
     // print HTML prologue
     $title = t('Intro','mngradippoolnew.php');
@@ -96,45 +158,76 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-?>
+    
+    
+    if (!empty($internal_id)) {
 
-<form name="newippool" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-    <fieldset>
+        // descriptors 0
+        $input_descriptors0 = array();
 
-        <h302> <?php echo t('title','IPPoolInfo') ?> </h302>
-        <br/>
+        $input_descriptors0[] = array(
+                                        'name' => 'pool_name',
+                                        'caption' => t('all','PoolName'),
+                                        'type' => 'text',
+                                        'value' => $pool_name,
+                                        'required' => true
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        'name' => 'framedipaddress',
+                                        'caption' => t('all','IPAddress'),
+                                        'type' => 'text',
+                                        'value' => $framedipaddress,
+                                        'pattern' => trim(IP_REGEX, '/'),
+                                        'required' => true
+                                     );
+                                     
+        // descriptors 1
+        $input_descriptors1 = array();
 
-        <label for='poolname' class='form'><?php echo t('all','PoolName') ?></label>
-        <input name='poolname' type='hidden' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
-        <input disabled name='poolname' type='text' id='poolname' value='<?php echo $poolname ?>' tabindex=100 />
-        <br />
+        $input_descriptors1[] = array(
+                                        "name" => "item",
+                                        "type" => "hidden",
+                                        "value" => sprintf("ippool-%d", $internal_id),
+                                     );
 
-        <label for='ipaddressold' class='form'><?php echo t('all','IPAddress') ?></label>
-        <input name='ipaddressold' type='text' id='ipaddressold' value='<?php echo $ipaddressold ?>' tabindex=101 />
-        <br />
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
 
-        <label for='ipaddress' class='form'>New <?php echo t('all','IPAddress') ?></label>
-        <input name='ipaddress' type='text' id='ipaddress' value='<?php echo $ipaddress ?>' tabindex=102 />
-        <br />
+        $input_descriptors1[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+        open_form();
 
-        <br/><br/>
-        <hr><br/>
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','IPPoolInfo'),
+                                     );
 
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' class='button' />
+        open_fieldset($fieldset0_descriptor);
 
-    </fieldset>
-</form>
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+        close_fieldset();
+
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_form();
+
+    }
+
+    print_back_to_previous_page();
+
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
+    
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

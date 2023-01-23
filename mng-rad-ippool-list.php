@@ -24,8 +24,9 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
     
     // init logging variables
     $log = "visited page: ";
@@ -34,19 +35,7 @@
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
-    // print HTML prologue
-    $title = t('Intro','mngradippoollist.php');
-    $help = t('helpPage','mngradippoollist');
-    
-    print_html_prologue($title, $langCode);
-
-    include("menu-mng-rad-ippool.php");
-    
     $cols = array(
                     "id" => t('all','ID'),
                     "pool_name" => t('all','PoolName'),
@@ -71,10 +60,20 @@
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "desc";
-               
+               ? strtolower($_GET['orderType']) : "asc";
+    
+
+    // print HTML prologue
+    $title = t('Intro','mngradippoollist.php');
+    $help = t('helpPage','mngradippoollist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-mng-rad-ippool.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -110,7 +109,7 @@
         // printTableFormControls function parameter
         $action = "mng-rad-ippool-del.php";
 ?>
-<form name="listall" method="GET" action="<?= $action ?>">
+<form name="listall" method="POST" action="<?= $action ?>">
 
     <table border="0" class="table1">
         <thead>
@@ -127,7 +126,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('record_id[]', $action);
+        printTableFormControls('item[]', $action);
 ?>
                 </th>
             </tr>
@@ -144,40 +143,68 @@
         <tbody>
 <?php
         $li_style = 'margin: 7px auto';
-        while ($row = $res->fetchRow()) {
-            $rowlen = count($row);
         
-            // escape row elements
-            for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
-            }
+        // prepare table rows
+        $table_rows = array();
+        
+        $count = 1;
+        
+        while ($row = $res->fetchRow()) {
+            
+            $tr = array();
             
             list($id, $pool_name, $framedipaddress, $nasipaddress, $calledstationid,
                  $callingstationid, $expiry_time, $username, $pool_key) = $row;
             
+            // preparing checkbox
+            $id = intval($id);
+            $item_id = sprintf("ippool-%d", $id);
+            $checkbox_id = sprintf("checkbox-%d", $count);
+            
             // tooltip stuff
             $tooltipText = '<ul style="list-style-type: none">'
                      . sprintf('<li style="%s">', $li_style)
-                     . sprintf('<a class="toolTip" href="mng-rad-ippool-edit.php?poolname=%s&ipaddressold=%s">%s</a></li>',
-                               urlencode($poolname), urlencode($framedipaddress), t('Tooltip','EditIPAddress'))
+                     . sprintf('<a class="toolTip" href="mng-rad-ippool-edit.php?item=%s">%s</a></li>',
+                               $item_id, t('Tooltip','EditIPAddress'))
                      . sprintf('<li style="%s">', $li_style)
-                     . sprintf('<a class="toolTip" href="mng-rad-ippool-del.php?poolname=%s&ipaddress=%s">%s</a></li>',
-                               urlencode($poolname), urlencode($framedipaddress), t('Tooltip','RemoveIPAddress'))
+                     . sprintf('<a class="toolTip" href="mng-rad-ippool-del.php?item=%s">%s</a></li>',
+                               $item_id, t('Tooltip','RemoveIPAddress'))
                      . '</ul>';
                      
             $onclick = 'javascript:return false;';
             
-            echo "<tr>";
-            printf('<td><input type="checkbox" name="record_id[]" value="record-%s">%s</td>', $id, $id);
-            printf("<td>%s</td>", $pool_name);
-            printf('<td><a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a></td>", $onclick, $tooltipText, $framedipaddress);
+            $tr[] = sprintf('<input type="checkbox" name="item[]" value="%s" id="%s">', $item_id, $checkbox_id)
+                          . sprintf('<label for="%s">', $checkbox_id)
+                          . sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>", $onclick, $tooltipText)
+                          . $id . '</a>' . '</label>';
             
-            // simply print remaining row elements
-            for ($i = 3; $i < $rowlen; $i++) {
-                printf("<td>%s</td>", $row[$i]);
+            // other row elements
+            $tr[] = htmlspecialchars($pool_name, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($framedipaddress, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($nasipaddress, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($calledstationid, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($callingstationid, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($expiry_time, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($pool_key, ENT_QUOTES, 'UTF-8');
+
+            $table_rows[] = $tr;
+
+            $count++;
+
+        }
+        
+        // draw tr(s)
+        $simple_td_format = '<td>%s</td>' . "\n";
+
+        foreach ($table_rows as $tr) {
+            echo '<tr>';
+            
+            foreach ($tr as $td) {
+                printf($simple_td_format, $td);
             }
             
-            echo "</tr>";
+            echo '</tr>';
         }
 ?>        
         </tbody>

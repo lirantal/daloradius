@@ -156,22 +156,28 @@ function get_system_load() {
 // Get Memory System MemTotal|MemFree
 // @return array Memory System MemTotal|MemFree
 function get_memory() {
-    $file_name = "/proc/meminfo";
-    $mem_array = array();
-
-    $buffer = file($file_name);
-
-    while (list($key, $value) = each($buffer)) {
-        if (strpos($value, ':') !== false) {
-            $match_line = explode(':', $value);
-            $match_value = explode(' ', trim($match_line[1]));
-            if (is_numeric($match_value[0])) {
-                $mem_array[trim($match_line[0])] = trim($match_value[0]);
-            }
+    $result = array();
+    $proc_meminfo = explode("\n", file_get_contents("/proc/meminfo"));
+    
+    if (empty($proc_meminfo)) {
+        return $result;
+    }
+    
+    foreach ($proc_meminfo as $line) {
+        $matches = array();
+        if (
+                preg_match('/^([^:]+)\:\s+(\d+)\s+[a-zA-Z]{2}$/', $line, $matches) === false ||
+                count($matches) != 3
+           ) {
+            continue;
         }
+
+        $key = $matches[1];
+        $value = $matches[2];
+        $result[$key] = intval($value);
     }
 
-    return $mem_array;
+    return $result;
 }
 
 
@@ -190,26 +196,34 @@ function convert_ToMB($value) {
 }
 
 
-
-// Get all network names devices (eth[0-9])
+// Get all network names devices
 // @return array Get list network name interfaces
 function get_interface_list() {
-    $devices = array();
-    $file_name = "/proc/net/dev";
-
-    if ($fopen_file = fopen($file_name, 'r')) {
-        while ($buffer = fgets($fopen_file, 4096)) {
-            if (preg_match("/eth[0-9][0-9]*/i", trim($buffer), $match)) {
-                $devices[] = $match[0];
-            }
-        }
-        $devices = array_unique($devices);
-        sort($devices);
-        fclose ($fopen_file);
+    $result = array();
+    $proc_net_dev = explode("\n", file_get_contents("/proc/net/dev"));
+    
+    if (empty($proc_net_dev)) {
+        return $result;
     }
-    return $devices;
+    
+    foreach ($proc_net_dev as $line) {
+        $matches = array();
+        
+        if (
+                preg_match('/^\s*([^:]+):/', $line, $matches) === false ||
+                count($matches) != 2
+           ) {
+            continue;
+        }
+        
+        $iface = $matches[1];
+        if ($iface !== 'lo') {
+            $result[] = $iface;
+        }            
+    }
+    
+    return $result;
 }
-
 
 
 // Get ip address
@@ -276,7 +290,7 @@ function get_mask_addr($ifname) {
 
 // memory info
 $meminfo = get_memory();
-$memused = ($meminfo['MemTotal'] - $meminfo['MemFree']);
+$meminfo['MemUsed'] = $meminfo['MemTotal'] - $meminfo['MemFree'];
 
 // hdd info
 $hddfreespace = get_hdd_freespace();
@@ -324,7 +338,7 @@ $iflist = get_interface_list();
   </tr>
   <tr>
     <td class="summaryKey">Mem. Used</td>
-    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($memused) ?></span></td>
+    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($meminfo['MemUsed']) ?></span></td>
   </tr>
 </table>
 

@@ -23,73 +23,67 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    
+
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
+
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    include_once("include/management/populate_selectbox.php");
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include('library/opendb.php');
+    // load valid huntgroups
+    $valid_huntgroups = get_huntgroups();
+
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $item = (array_key_exists('item', $_POST) && !empty($_POST['item'])) ? $_POST['item'] : "";
+    } else {
+        $item = (array_key_exists('item', $_REQUEST) && !empty($_REQUEST['item'])) ? $_REQUEST['item'] : "";
+    }
+
+    $arr = array();
+    $tmp = (!is_array($item)) ? array( $item ) : $item;
+    foreach ($tmp as $tmp_item) {
+        if (!in_array($tmp_item, array_keys($valid_huntgroups))) {
+            continue;
+        }
+
+        $arr[] = $tmp_item;
+    }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
-            $arr = array();
-        
-            if (array_key_exists('nashost', $_POST) && !empty($_POST['nashost'])) {
-                $arr = (!is_array($_POST['nashost'])) ? array( $_POST['nashost'] ) : $_POST['nashost'];
-            } else if (array_key_exists('nasipaddress', $_POST) && !empty(trim($_POST['nasipaddress']))) {
-             
-                if (array_key_exists('nasportid', $_POST) && !empty(trim($_POST['nasportid']))) {
-                    $arr = array( trim($_POST['nasipaddress']) . "||" . trim($_POST['nasportid']) );
-                } else {
-                    $arr = array( trim($_POST['nasipaddress']) );
-                }
-            }
 
-            if (count($arr) > 0) {
+            if (count($arr) == 0) {
+                // invalid
+                $failureMsg = "Empty or invalid huntgroup(s)";
+                $logAction .= sprintf("Failed deleting huntgroup(s) [%s] on page: ", $failureMsg);
+            } else {
+                include('library/opendb.php');
 
                 $deleted = 0;
-                foreach ($arr as $arr_elem) {
-                    
-                    $sql_WHERE = array();
-                    
-                    if (preg_match('/^[a-zA-Z0-9_-.]+\|\|/[0-9]+$', $arr_elem) !== false) {
-                        $tmp = explode("||", $arr_elem);
-                        if (count($tmp) != 2) {
-                            continue;
-                        }
-                        
-                        list($addr, $port) = $tmp;
-                        $addr = trim($addr);
-                        $port = trim($port);
-                        
-                        if (empty($addr) || empty($port)) {
-                            continue;
-                        }
-                        
-                        $sql_WHERE[] = sprintf("nasipaddress='%s'", $dbSocket->escapeSimple($addr));
-                        $sql_WHERE[] = sprintf("nasportid='%s'", $dbSocket->escapeSimple($port));
-                    } else if (preg_match('/^[a-zA-Z0-9_-.]+$', $arr_elem) !== false) {
-                        $sql_WHERE[] = sprintf("nasipaddress='%s'", $dbSocket->escapeSimple($addr));
-                    } else {
-                        continue;
-                    }
-                    
-                    $sql = sprintf("DELETE FROM %s", $configValues['CONFIG_DB_TBL_RADHG'])
-                         . " WHERE " . implode(" AND ", $sql_WHERE);
-                    $res = $dbSocket->query($sql);
+                foreach ($arr as $arr_item) {
+
+                    $internal_id = intval(str_replace("huntgroup-", "", $arr_item));
+
+                    $sql = sprintf("DELETE FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_RADHG']);
+                    $prep = $dbSocket->prepare($sql);
+                    $values = array( $internal_id, );
+                    $res = $dbSocket->execute($prep, $values);
                     $logDebugSQL .= "$sql;\n";
-                    
+
                     if (!DB::isError($res)) {
                         $deleted++;
                     }
                 }
-                
-                if ($deleted > 0) {                
+
+                if ($deleted > 0) {
                     $successMsg = sprintf("Deleted %s huntgroup(s)", $deleted);
                     $logAction .= "$successMsg on page: ";
                 } else {
@@ -98,12 +92,9 @@
                     $logAction .= sprintf("Failed deleting huntgroup(s) [%s] on page: ", $failureMsg);
                 }
 
-            } else {
-                // invalid
-                $failureMsg = "Empty or invalid huntgroup(s)";
-                $logAction .= sprintf("Failed deleting huntgroup(s) [%s] on page: ", $failureMsg);
+                include('library/closedb.php');
             }
-        
+
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -111,52 +102,53 @@
         }
     }
 
-    include_once("lang/main.php");
-    include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','mngradhuntdel.php');
     $help = t('helpPage','mngradhuntdel');
-    
+
     print_html_prologue($title, $langCode);
 
     include("menu-mng-rad-hunt.php");
-    
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-    
-    if (!isset($successMsg)) {
-    
-        $sql = sprintf("SELECT nasipaddress, nasportid FROM %s", $configValues['CONFIG_DB_TBL_RADHG']);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $options = array();
-        while ($row = $res->fetchrow()) {
-            $tmp = $row[0] . "||" . $row[1];
-            
-            if (in_array($tmp, array_keys($options))) {
-                continue;
-            }
-            
-            $options[$tmp] = sprintf("%s:%s", $row[0], $row[1]);
-        }
-    
-    
-        $input_descriptors1 = array();
 
-        $input_descriptors1[] = array(
-                                        'name' => 'nashost[]',
-                                        'id' => 'nashost',
+    if (!isset($successMsg)) {
+
+        $options = $valid_huntgroups;
+
+        $input_descriptors0 = array();
+
+        $input_descriptors0[] = array(
+                                        'name' => 'item[]',
+                                        'id' => 'item',
                                         'type' => 'select',
-                                        'caption' => t('all','HgIPHost') . ":" . t('all','HgPortId'),
+                                        'caption' => sprintf("%s:%s (%s)", t('all','HgIPHost'), t('all','HgPortId'), t('all','HgGroupName')),
                                         'options' => $options,
                                         'multiple' => true,
+                                        'selected_value' => ((count($arr) > 0) ? $arr : ""),
                                         'size' => 5,
                                      );
-                                 
+
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','HGInfo'),
+                                        "disabled" => (count($options) == 0)
+                                     );
+
+        open_form();
+
+        open_fieldset($fieldset0_descriptor);
+
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_fieldset();
+
+        $input_descriptors1 = array();
         $input_descriptors1[] = array(
                                         "name" => "csrf_token",
                                         "type" => "hidden",
@@ -168,29 +160,18 @@
                                         'name' => 'submit',
                                         'value' => t('buttons','apply')
                                      );
-                                     
-        $fieldset1_descriptor = array(
-                                        "title" => t('title','HGInfo'),
-                                        "disabled" => (count($options) == 0)
-                                     );
-
-        open_form();
-        
-        open_fieldset($fieldset1_descriptor);
 
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
-        close_fieldset();
-        
-        close_form();
-    }
 
-    include('library/closedb.php');
+        close_form();
+
+    }
 
     print_back_to_previous_page();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
+
 ?>

@@ -25,104 +25,170 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
-    isset($_GET['proxyname']) ? $proxyname = $_GET['proxyname'] : $proxyname = "";
-
-    $logAction = "";
-    $logDebugSQL = "";
-
-    if (isset($_POST["submit"])) {
-
-        isset($_POST['proxyname']) ? $proxyname = $_POST['proxyname'] : $proxyname = "";
-        isset($_POST['retry_delay']) ? $retry_delay = $_POST['retry_delay'] : $retry_delay = "";
-        isset($_POST['retry_count']) ? $retry_count = $_POST['retry_count'] : $retry_count = "";
-        isset($_POST['dead_time']) ? $dead_time = $_POST['dead_time'] : $dead_time = "";
-        isset($_POST['default_fallback']) ? $default_fallback = $_POST['default_fallback'] :  $default_fallback = "";
-        
-        include 'library/opendb.php';
-
-        if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
-            $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-            $fileFlag = 1;
-        } else {
-            $filenameRealmsProxys = "";
-            $fileFlag = 0;
-        }
-
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS'].
-            " WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if (trim($proxyname) != "") {
-
-            if (!(file_exists($filenameRealmsProxys))) {
-                $logAction .= "Failed non-existed proxys configuration file [$filenameRealmsProxys] on page: ";
-                $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save proxys information to the file";
-                $fileFlag = 0;
-            }
-
-            if (!(is_writable($filenameRealmsProxys))) {
-                $logAction .= "Failed writing proxys configuration to file [$filenameRealmsProxys] on page: ";
-                $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save proxys information to the file";
-                $fileFlag = 0;
-            }
-
-            $currDate = date('Y-m-d H:i:s');
-            $currBy = $_SESSION['operator_user'];
-
-            // update proxy entry in database
-            $sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOPROXYS']." SET ".
-                " retry_delay=".$dbSocket->escapeSimple($retry_delay).", ".
-                " retry_count=".$dbSocket->escapeSimple($retry_count).", ".
-                " dead_time=".$dbSocket->escapeSimple($dead_time).", ".
-                " default_fallback=".$dbSocket->escapeSimple($default_fallback).", ".
-                                " updatedate='$currDate', updateby='$currBy' ".
-                " WHERE proxyname='$proxyname';";
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
-
-            $successMsg = "Updated database proxy: <b>$proxyname</b>";
-            $logAction .= "Successfully updated proxy [$proxyname] on page: ";
-
-            /*******************************************************************/
-            /* enumerate from database all proxy entries */
-            include_once('include/management/saveRealmsProxys.php');
-            /*******************************************************************/
-
-        } else {
-            $failureMsg = "you must provide atleast a proxy name";
-            $logAction .= "Failed updating proxy [$proxyname] on page: ";    
-        }
-    
-        include 'library/closedb.php';
-
-    }
-
-
-    include 'library/opendb.php';
-
-    // fill-in proxy information in html elements
-    $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOPROXYS'].
-            " WHERE proxyname='".$dbSocket->escapeSimple($proxyname)."'";
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= $sql . "\n";
-
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-    $retry_count = $row['retry_count'];
-    $retry_delay = $row['retry_delay'];
-    $dead_time = $row['dead_time'];
-    $default_fallback = $row['default_fallback'];
-
-    include 'library/closedb.php';
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
-
 
     include_once("lang/main.php");
-    
+    include_once("library/validation.php");
     include("library/layout.php");
+    include_once("include/management/populate_selectbox.php");
+
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+    
+    // load valid proxies
+    $valid_proxies = get_proxies();
+
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $item = (array_key_exists('item', $_POST) && !empty(str_replace("%", "", trim($_POST['item']))))
+              ? str_replace("%", "", trim($_POST['item'])) : "";
+    } else {
+        $item = (array_key_exists('item', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['item']))))
+              ? str_replace("%", "", trim($_REQUEST['item'])) : "";
+    }
+
+    $exists = in_array($item, array_keys($valid_proxies));
+    
+    if (!$exists) {
+        // we reset the rate if it does not exist
+        $item = "";
+        $internal_id = "";
+    } else {
+        $internal_id = intval(str_replace("proxy-", "", $item));
+    }
+
+    //feed the sidebar variables
+    $selected_proxy = $item;
+
+    include('library/opendb.php');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+
+            if (empty($internal_id)) {
+                // required
+                $failureMsg = sprintf("Selected an empty/invalid proxy");
+                $logAction .= "$failureMsg on page: ";
+            } else {
+                
+                $proxyname = (array_key_exists('proxyname', $_POST) && !empty(str_replace("%", "", trim($_POST['proxyname']))))
+                           ? str_replace("%", "", trim($_POST['proxyname'])) : "";
+                           
+                if (empty($proxyname)) {
+                    // required
+                    $failureMsg = sprintf("Empty/invalid %s", t('all','ProxyName'));
+                    $logAction .= "$failureMsg on page: ";
+                } else {
+                    $sql = sprintf("SELECT COUNT(id)
+                                      FROM %s
+                                     WHERE proxyname=? AND id<>?", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
+                    $prep = $dbSocket->prepare($sql);
+                    $values = array( $proxyname, $internal_id, );
+                    $res = $dbSocket->execute($prep, $values);
+                    $logDebugSQL .= "$sql;\n";
+
+                    $exists = $res->fetchrow()[0] > 0;
+                    
+                    if ($exists) {
+                        // invalid
+                        $failureMsg = sprintf("The chosen %s is already in use", t('all','ProxyName'));
+                        $logAction .= "$failureMsg on page: ";
+                    } else {
+                        // required later
+                        $currDate = date('Y-m-d H:i:s');
+                        $currBy = $operator;
+                        
+                        $retry_delay = (array_key_exists('retry_delay', $_POST) && intval(trim($_POST['retry_delay'])) > 0)
+                                     ? intval(trim($_POST['retry_delay'])) : "";
+                        
+                        $retry_count = (array_key_exists('retry_count', $_POST) && intval(trim($_POST['retry_count'])) > 0)
+                                     ? intval(trim($_POST['retry_count'])) : "";
+                                     
+                        $dead_time = (array_key_exists('dead_time', $_POST) && intval(trim($_POST['dead_time'])) > 0)
+                                   ? intval(trim($_POST['dead_time'])) : "";
+                                   
+                        $default_fallback = (array_key_exists('default_fallback', $_POST) && intval(trim($_POST['default_fallback'])) > 0)
+                                          ? intval(trim($_POST['default_fallback'])) : "";
+                        
+                        $sql = sprintf("UPDATE %s
+                                           SET retry_delay=?, retry_count=?, dead_time=?,
+                                               default_fallback=?, updatedate=?, updateby=?
+                                         WHERE proxyname=?", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
+                        $prep = $dbSocket->prepare($sql);
+                        $values = array( $retry_delay, $retry_count, $dead_time, $default_fallback, $currDate, $currBy, $proxyname );
+                        $res = $dbSocket->execute($prep, $values);
+                        $logDebugSQL .= "$sql;\n";
+
+                        if (!DB::isError($res)) {
+                            $successMsg = "Successfully updated proxy";
+                            $logAction .= "Successfully updated proxy [$proxyname] on page: ";
+                            
+                            // write file
+                            if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
+                                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                                $fileFlag = 1;
+                            } else {
+                                $filenameRealmsProxys = "";
+                                $fileFlag = 0;
+                            }
+                            
+                            if (!(file_exists($filenameRealmsProxys))) {
+                                $logAction .= "Failed non-existed proxys configuration file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save proxys information to the file";
+                                $fileFlag = 0;
+                            }
+
+                            if (!(is_writable($filenameRealmsProxys))) {
+                                $logAction .= "Failed writing proxys configuration to file [$filenameRealmsProxys] on page: ";
+                                $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save proxys information to the file";
+                                $fileFlag = 0;
+                            }
+                            
+                            /*******************************************************************/
+                            /* enumerate from database all proxy entries */
+                            include_once('include/management/saveRealmsProxys.php');
+                            /*******************************************************************/
+                            
+                            
+                        } else {
+                            $failureMsg = "Failed to update proxy";
+                            $logAction .= "Failed to update proxy [$proxyname] on page: ";
+                        }
+                    }
+                }
+                
+            }
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+    
+    if (empty($internal_id)) {
+        $failureMsg = sprintf("Selected an empty/invalid proxy item");
+        $logAction .= "Failed updating this proxy (possible empty or invalid proxy item) on page: ";
+    } else {
+        $sql = sprintf("SELECT proxyname, retry_delay, retry_count, dead_time, default_fallback,
+                               creationdate, creationby, updatedate, updateby
+                          FROM %s
+                         WHERE id=?", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
+        $prep = $dbSocket->prepare($sql);
+        $values = array( $internal_id );
+        $res = $dbSocket->execute($prep, $values);
+        $logDebugSQL .= "$sql;\n";
+
+        list(
+                $proxyname, $retry_delay, $retry_count, $dead_time, $default_fallback,
+                $creationdate, $creationby, $updatedate, $updateby
+            ) = $res->fetchrow();
+    }
+
+    include('library/closedb.php');
+
 
     // print HTML prologue
     $title = t('Intro','mngradproxysedit.php');
@@ -131,107 +197,129 @@
     print_html_prologue($title, $langCode);
 
     include("menu-mng-rad-realms.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
 
-?>
+    if (!empty($internal_id)) {
 
+        // descriptors 0
+        $input_descriptors0 = array();
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        $input_descriptors0[] = array(
+                                        'name' => 'proxyname',
+                                        'caption' => t('all','ProxyName'),
+                                        'type' => 'text',
+                                        'value' => $proxyname,
+                                        'required' => true,
+                                        'tooltipText' => t('Tooltip','proxyNameTooltip'),
+                                     );
 
-
-    <fieldset>
-
-        <h302> <?php echo t('title','ProxyInfo'); ?> </h302>
-        <br/>
-
-        <ul>
-
-        <input type='hidden' name='proxyname'  id='proxyname' value='<?php if (isset($proxyname)) echo $proxyname; ?>' />
-
-                <li class='fieldset'>
-                <label for='proxyname' class='form'><?php echo t('all','ProxyName') ?></label>
-                <input disabled name='proxyname' type='text' id='proxyname' 
-                    value='<?php if (isset($proxyname)) echo $proxyname; ?>' tabindex=100>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyNameTooltip')" />
-            
-                <div id='proxyNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                    <img src='images/icons/comment.png' alt='Tip' border='0' />
-                    <?php echo t('Tooltip','proxyNameTooltip') ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <label for='retry_delay' class='form'><?php echo t('all','RetryDelay') ?></label>
-                <input name='retry_delay' type='text' id='retry_delay' 
-                        value='<?php if (isset($retry_delay)) echo $retry_delay; ?>' tabindex=102>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyRetryDelayTooltip')" />
-                
-                <div id='proxyRetryDelayTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                    <img src='images/icons/comment.png' alt='Tip' border='0' />
-                    <?php echo t('Tooltip','proxyRetryDelayTooltip') ?>
-                </div>
-                </li>
-                <li class='fieldset'>
-                <label for='retry_count' class='form'><?php echo t('all','RetryCount') ?></label>
-                <input name='retry_count' type='text' id='retry_count' 
-                    value='<?php if (isset($retry_count)) echo $retry_count; ?>' tabindex=103>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyRetryCountTooltip')" />
-                
-                <div id='proxyRetryCountTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                    <img src='images/icons/comment.png' alt='Tip' border='0' />
-                    <?php echo t('Tooltip','proxyRetryCountTooltip') ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <label for='dead_time' class='form'><?php echo t('all','DeadTime') ?></label>
-                <input name='dead_time' type='text' id='dead_time' 
-                    value='<?php if (isset($dead_time)) echo $dead_time; ?>' tabindex=104>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyDeadTimeTooltip')" />
-                
-                <div id='proxyDeadTimeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                    <img src='images/icons/comment.png' alt='Tip' border='0' />
-                    <?php echo t('Tooltip','proxyDeadTimeTooltip') ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <label for='default_fallback' class='form'><?php echo t('all','DefaultFallback') ?></label>
-                <input name='default_fallback' type='text' id='default_fallback' 
-                    value='<?php if (isset($default_fallback)) echo $default_fallback; ?>' tabindex=104>
-                <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('proxyDefaultFallbackTooltip')" />
-                
-                <div id='proxyDefaultFallbackTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-                    <img src='images/icons/comment.png' alt='Tip' border='0' />
-                    <?php echo t('Tooltip','proxyDefaultFallbackTooltip') ?>
-                </div>
-                </li>
-
-                <li class='fieldset'>
-                <br/>
-                <hr><br/>
-                <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
-
-        </ul>
-    </fieldset>
-
-
-</form>
-
-        </div><!-- #contentnorightbar -->
+        $input_descriptors0[] = array(
+                                        'name' => 'retry_delay',
+                                        'caption' => t('all','RetryDelay'),
+                                        'type' => 'number',
+                                        'value' => $retry_delay,
+                                        'tooltipText' => t('Tooltip','proxyRetryDelayTooltip'),
+                                     );
         
-        <div id="footer">
-<?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+        $input_descriptors0[] = array(
+                                        'name' => 'retry_count',
+                                        'caption' => t('all','RetryCount'),
+                                        'type' => 'number',
+                                        'value' => $retry_count,
+                                        'tooltipText' => t('Tooltip','proxyRetryCountTooltip'),
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        'name' => 'dead_time',
+                                        'caption' => t('all','DeadTime'),
+                                        'type' => 'number',
+                                        'value' => $dead_time,
+                                        'tooltipText' => t('Tooltip','proxyDeadTimeTooltip'),
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        'name' => 'default_fallback',
+                                        'caption' => t('all','DefaultFallback'),
+                                        'type' => 'number',
+                                        'value' => $default_fallback,
+                                        'tooltipText' => t('Tooltip','proxyDefaultFallbackTooltip'),
+                                     );
+        
+        // descriptors 1
+        $input_descriptors1 = array();
+        $input_descriptors1[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'datetime-local',
+                                       'disabled' => true, 'value' => ((isset($creationdate)) ? $creationdate : '') );
+        $input_descriptors1[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($creationby)) ? $creationby : '') );
+        $input_descriptors1[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'datetime-local',
+                                       'disabled' => true, 'value' => ((isset($updatedate)) ? $updatedate : '') );
+        $input_descriptors1[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
+                                       'disabled' => true, 'value' => ((isset($updateby)) ? $updateby : '') );
+        
+        // descriptors 2
+        $input_descriptors2 = array();
 
-</body>
-</html>
+        $input_descriptors2[] = array(
+                                        "name" => "item",
+                                        "type" => "hidden",
+                                        "value" => sprintf("proxy-%d", $internal_id),
+                                     );
+
+        $input_descriptors2[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors2[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                      );
+
+        open_form();
+
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','ProxyInfo'),
+                                     );
+
+        open_fieldset($fieldset0_descriptor);
+
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_fieldset();
+        
+        // fieldset 1
+        $fieldset1_descriptor = array(
+                                        "title" => "Other Information",
+                                     );
+
+        open_fieldset($fieldset1_descriptor);
+
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_fieldset();
+
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_form();
+
+    }
+
+    print_back_to_previous_page();
+
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();
+
+?>

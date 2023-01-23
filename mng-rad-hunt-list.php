@@ -27,27 +27,23 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+
     // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    // print HTML prologue
-    $title = t('Intro','mngradhuntlist.php');
-    $help = t('helpPage','mngradhuntlist');
-    
-    print_html_prologue($title, $langCode);
-    include("menu-mng-rad-hunt.php");
-    
     $cols = array(
                     "id" => t('all','HgID'),
                     "nasipaddress" => t('all','HgIPHost'),
+                    "nasportid" => t('all','HgPortId'),
                     "groupname" => t('all','HgGroupName'),
-                    "nasportid" => t('all','HgPortId')
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
@@ -64,6 +60,15 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
+
+    // print HTML prologue
+    $title = t('Intro','mngradhuntlist.php');
+    $help = t('helpPage','mngradhuntlist');
+    
+    print_html_prologue($title, $langCode);
+    
+    include("menu-mng-rad-hunt.php");
+    
     // start printing content
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -89,8 +94,8 @@
         /* END */
                      
         // we execute and log the actual query
-        $sql = sprintf("SELECT id, groupname, nasipaddress, nasportid FROM %s", $configValues['CONFIG_DB_TBL_RADHG']);
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $sql = sprintf("SELECT id, groupname, nasipaddress, nasportid FROM %s ORDER BY %s %s LIMIT %s, %s",
+                       $configValues['CONFIG_DB_TBL_RADHG'], $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
         
@@ -117,7 +122,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('nashost[]', $action);
+        printTableFormControls('item[]', $action);
 ?>
                 </th>
             </tr>
@@ -133,44 +138,57 @@
         <tbody>
 <?php
         $li_style = 'margin: 7px auto';
+        
+        // prepare table rows
+        $table_rows = array();
+        
         $count = 1;
         while ($row = $res->fetchRow()) {
-            $rowlen = count($row);
-        
-            // escape row elements
-            for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
-            }
+            
+            $tr = array();
             
             list($id, $groupname, $nasipaddress, $nasportid) = $row;
             
+            // preparing checkbox
+            $id = intval($id);
+            $item_id = sprintf("huntgroup-%d", $id);
+            $checkbox_id = sprintf("checkbox-%d", $count);
+            
             $tooltipText = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-hunt-edit.php?nasipaddress=%s&nasportid=%s">%s</a></li>',
-                                   $li_style, urlencode($nasipaddress), urlencode($nasportid), t('Tooltip','EditHG'))
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-hunt-del.php?nasipaddress=%s&nasportid=%s">%s</a></li>',
-                                   $li_style, urlencode($nasipaddress), urlencode($nasportid), t('Tooltip','RemoveHG'))
+                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-hunt-edit.php?item=%s">%s</a></li>',
+                                   $li_style, $item_id, t('Tooltip','EditHG'))
+                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-hunt-del.php?item[]=%s">%s</a></li>',
+                                   $li_style, $item_id, t('Tooltip','RemoveHG'))
                          . '</ul>';
             
             $onclick = 'javascript:return false;';
             
-            $checkbox_value = sprintf("%s||%s", $nasipaddress, $nasportid);
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="nashost[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>">
-                        <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                            <?= $id ?>
-                        </a>
-                    </label>
-                </td>
-                <td><?= $nasipaddress ?></td>
-                <td><?= $groupname ?></td>
-                <td><?= $nasportid ?></td>
-            </tr>
-<?php
+            $tr[] = sprintf('<input type="checkbox" name="item[]" value="%s" id="%s">', $item_id, $checkbox_id)
+                          . sprintf('<label for="%s">', $checkbox_id)
+                          . sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>", $onclick, $tooltipText)
+                          . $id . '</a>' . '</label>';
+            
+            // other row elements
+            $tr[] = htmlspecialchars($nasipaddress, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($nasportid, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8');
+
+            $table_rows[] = $tr;
 
             $count++;
+        }
+        
+        // draw tr(s)
+        $simple_td_format = '<td>%s</td>' . "\n";
+
+        foreach ($table_rows as $tr) {
+            echo '<tr>';
+            
+            foreach ($tr as $td) {
+                printf($simple_td_format, $td);
+            }
+            
+            echo '</tr>';
         }
 ?>
         </tbody>
@@ -181,6 +199,8 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
     </table>
+
+    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
 
 </form>
 

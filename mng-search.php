@@ -246,7 +246,7 @@
         
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (!empty($username_enc) ? "&usernameOnline=" . urlencode($username_enc) : "");
+        $partial_query_string = (!empty($username_enc) ? "&username=" . urlencode($username_enc) : "");
         
         // this can be passed as form attribute and 
         // printTableFormControls function parameter

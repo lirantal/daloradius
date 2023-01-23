@@ -45,6 +45,7 @@
     include("menu-mng-rad-realms.php");
     
     $cols = array(
+                    "id" => t('all','ID'),
                     "proxyname" => t('all','ProxyName'),
                     "creationdate" => t('all','CreationDate'),
                     "creationby" => t('all','CreationBy'),
@@ -64,7 +65,7 @@
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "desc";
+               ? strtolower($_GET['orderType']) : "asc";
   
     // start printing content
     echo '<div id="contentnorightbar">';
@@ -94,16 +95,20 @@
         //~ id, proxyname, retry_delay, retry_count, dead_time, default_fallback, creationdate, creationby, updatedate, updateby, 
 
         // we execute and log the actual query
-        $sql = sprintf("SELECT proxyname, creationdate, creationby, updatedate, updateby
+        $sql = sprintf("SELECT id, proxyname, creationdate, creationby, updatedate, updateby
                           FROM %s", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
+        
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-proxys-del.php";
 ?>
 
-<form name="listall" method="POST" action="mng-rad-proxys-del.php">
+<form name="listall" method="POST" action="<?= $action ?>">
 
     <table border="0" class="table1">
         <thead>
@@ -120,7 +125,7 @@
             <tr>
                 <th style="text-align: left" colspan="<?= $colspan ?>">
 <?php
-        printTableFormControls('proxyname[]', 'mng-rad-proxys-del.php')
+        printTableFormControls('item[]', $action);
 ?>
                 </th>
             </tr>
@@ -136,38 +141,55 @@
         
         <tbody>
 <?php
+
+        // prepare table rows
+        $table_rows = array();
+        
         $count = 1;
         while ($row = $res->fetchRow()) {
-            $rowlen = count($row);
-        
-            // escape row elements
-            for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
-            }
-        
-            list($proxyname, $creationdate, $creationby, $updatedate, $updateby) = $row;
+            
+            list($id, $proxyname, $creationdate, $creationby, $updatedate, $updateby) = $row;
+            
+            // preparing checkbox
+            $id = intval($id);
+            $item_id = sprintf("proxy-%d", $id);
+            $checkbox_id = sprintf("checkbox-%d", $count);
             
             // tooltip stuff
+            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-proxys-edit.php?item=%s">%s</a>',
+                                   $item_id, t('Tooltip','EditProxy'));
+            
             $onclick = 'javascript:return false;';
         
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-proxys-edit.php?proxyname=%s">%s</a>',
-                                   urlencode($proxyname), t('Tooltip','EditProxy'));
+            $tr[] = sprintf('<input type="checkbox" name="item[]" value="%s" id="%s">', $item_id, $checkbox_id)
+                          . sprintf('<label for="%s">', $checkbox_id)
+                          . sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>", $onclick, $tooltipText)
+                          . $id . '</a>' . '</label>';
         
-            echo "<tr>";
-            printf('<td><input type="checkbox" name="proxyname[]" value="%s" id="checkbox%s">', $proxyname, $count);
-            printf('<label for="checkbox%s">', $count);
-            printf('<a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a>",
-                   $onclick, $tooltipText, $proxyname);
-            echo "</label></td>";
+            // other row elements
+            $tr[] = htmlspecialchars($proxyname, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($creationdate, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($creationby, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($updatedate, ENT_QUOTES, 'UTF-8');
+            $tr[] = htmlspecialchars($updateby, ENT_QUOTES, 'UTF-8');
+
+            $table_rows[] = $tr;
+
+            $count++;
+
+        }
+        
+        // draw tr(s)
+        $simple_td_format = '<td>%s</td>' . "\n";
+
+        foreach ($table_rows as $tr) {
+            echo '<tr>';
             
-            // simply print remaining row elements
-            for ($i = 1; $i < $rowlen; $i++) {
-                printf("<td>%s</td>", $row[$i]);
+            foreach ($tr as $td) {
+                printf($simple_td_format, $td);
             }
             
-            echo "</tr>";
-            
-            $count++;
+            echo '</tr>';
         }
 ?>
         </tbody>
@@ -177,36 +199,28 @@
 ?>
         
     </table>
+    
     <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+
 </form>
- 
+
 <?php
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
     
-    include('library/closedb.php');
-?>
+        include('library/closedb.php');
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>
