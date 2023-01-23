@@ -128,14 +128,17 @@
                 $currBy = $_SESSION['operator_user'];
 
                 include('library/opendb.php');
-
+                include("library/attributes.php");
 
                 $counter = 0;
                 foreach ($data as $subject => $value) {
+                    $value = hashPasswordAttribute($passwordType, $value);
 
                     // skipping this user if it exists or insert fails
-                    if (user_exists($dbSocket, $subject) ||
-                        !insert_single_attribute($dbSocket, $subject, $passwordType, ":=", $value)) {
+                    if (
+                            user_exists($dbSocket, $subject) ||
+                            !insert_single_attribute($dbSocket, $subject, $passwordType, ":=", $value)
+                       ) {
                         continue;
                     }
 
