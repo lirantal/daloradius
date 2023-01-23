@@ -21,58 +21,147 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
-    isset($_REQUEST['username']) ? $username = $_REQUEST['username'] : $username = "";
-    isset($_REQUEST['password']) ? $password = $_REQUEST['password'] : $password = "";
-    isset($_REQUEST['radius']) ? $radius = $_REQUEST['radius'] : $radius = $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'];
-    isset($_REQUEST['radiusport']) ? $radiusport = $_REQUEST['radiusport'] : $radiusport = $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'];
-    isset($_REQUEST['nasport']) ? $nasport = $_REQUEST['nasport'] : $nasport = $configValues['CONFIG_MAINT_TEST_USER_NASPORT'];
-    isset($_REQUEST['secret']) ? $secret = $_REQUEST['secret'] : $secret = $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'];
-    isset($_REQUEST['dictionaryPath']) ? $dictionaryPath = $_REQUEST['dictionaryPath'] : $dictionaryPath = $configValues['CONFIG_PATH_RADIUS_DICT'];
-        
-    if (isset($_REQUEST['submit'])) {
-
-        include_once('library/exten-maint-radclient.php');
-        
-        $username = $_REQUEST['username'];
-        $password = $_REQUEST['password'];
-
-        // process advanced options to pass to radclient
-        isset($_REQUEST['debug']) ? $debug = $_REQUEST['debug'] : $debug = "no";
-        isset($_REQUEST['timeout']) ? $timeout = $_REQUEST['timeout'] : $timeout = 3;
-        isset($_REQUEST['retries']) ? $retries = $_REQUEST['retries'] : $retries = 3;
-        isset($_REQUEST['count']) ? $count = $_REQUEST['count'] : $count = 1;
-        isset($_REQUEST['retries']) ? $requests = $_REQUEST['requests'] : $requests = 3;
-
-        // create the optional arguments variable
-
-        // convert the debug = yes to the actual debug option which is "-x" to pass to radclient
-        if ($debug == "yes")
-            $debug = "-x";
-        else
-            $debug = "";
-
-        $options = array("count" => $count, "requests" => $requests,
-                    "retries" => $retries, "timeout" => $timeout,
-                    "debug" => $debug, "dictionary" => $dictionaryPath
-                    );
-
-        $successMsg = user_auth($options, $username, $password, $radius, $radiusport, $secret);
-        $logAction = "Informative action performed on user [$username] on page: ";    
-    }
-
-    
     include_once('library/config_read.php');
-    $log = "visited page: ";
 
     include_once("lang/main.php");
-    
+    include_once("library/validation.php");
     include("library/layout.php");
+    include("include/management/functions.php");
+    include("library/exten-maint-radclient.php");
 
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
+
+    $radclient_path = is_radclient_present();
+
+    if ($radclient_path !== false) {
+
+        $dictionaryDir = '/usr/share/freeradius';
+        $valid_dictionaries = array();
+        if ($handle = opendir($dictionaryDir)) {
+            while (false !== ($file = readdir($handle))) {
+                if (substr( $file, 0, 11 ) === 'dictionary.') {
+                    $valid_dictionaries[] = str_replace('dictionary.', '', $file);
+                }
+            }
+
+            closedir($handle);
+        }
+
+        asort($valid_dictionaries);
+
+        $radius_addr = (
+                            isset($_REQUEST['radius_addr']) &&
+                            !empty(trim($_REQUEST['radius_addr'])) &&
+                            filter_var(trim($_REQUEST['radius_addr']), FILTER_VALIDATE_IP) !== false
+                       ) ? trim($_REQUEST['radius_addr']) : "127.0.0.1";
+        
+        $radius_port = (
+                            isset($_REQUEST['radius_port']) &&
+                            !empty(trim($_REQUEST['radius_port'])) &&
+                            intval(trim($_REQUEST['radius_port'])) >= 0 &&
+                            intval(trim($_REQUEST['radius_port'])) <= 65535
+                       ) ? intval(trim($_REQUEST['radius_port'])) : 1812;
+
+        $username = (isset($_REQUEST['username']) && !empty(trim($_REQUEST['username']))) ? trim($_REQUEST['username']) : "";
+        $secret = (isset($_REQUEST['secret']) && !empty(trim($_REQUEST['secret']))) ? trim($_REQUEST['secret']) : "testing123";
+
+        include('library/opendb.php');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+                include('library/opendb.php');
+                
+                if (!user_exists($dbSocket, $username)) {
+                    // required
+                    $failureMsg = "This user does not exist";
+                } else {
+                    $selected_dictionary = (isset($_POST['selected_dictionary']) && !empty(trim($_POST['selected_dictionary'])) &&
+                                       in_array(trim($_POST['selected_dictionary']), $valid_dictionaryPaths))
+                                    ? trim($_POST['selected_dictionary']) : "";
+                    
+                    $dictionaryPath = (!empty($selected_dictionary)) ? "$dictionaryDir/dictionary.$selected_dictionary" : "";
+                    
+                    $debug = (isset($_POST['debug']) && in_array($_POST['debug'], array("yes", "no"))) ? $_POST['debug'] : "no";
+                    $timeout = (isset($_POST['timeout']) && intval($_POST['timeout']) > 0) ? intval($_POST['timeout']) : 3;
+                    $retries = (isset($_POST['retries']) && intval($_POST['retries']) > 0) ? intval($_POST['retries']) : 3;
+                    $count = (isset($_POST['count']) && intval($_POST['count']) > 0) ? intval($_POST['count']) : 1;
+                    $requests = (isset($_POST['requests']) && intval($_POST['requests']) > 0) ? intval($_POST['requests']) : 1;
+                    
+                    $password1 = (isset($_POST['password1']) && !empty(trim($_POST['password1']))) ? trim($_POST['password1']) : "";
+                    $password2 = (isset($_POST['password2']) && !empty(trim($_POST['password2']))) ? trim($_POST['password2']) : "";
+                    
+                    // this will be passed to user_auth function
+                    $params =  array(
+                                        "server" => $radius_addr,
+                                        "port" => $radius_port,
+                                        "username" => $username,
+                                        "secret" => $secret,
+                                        "count" => $count,
+                                        "requests" => $requests,
+                                        "retries" => $retries,
+                                        "timeout" => $timeout,
+                                        "debug" => ($debug == "yes"),
+                                        "dictionary" => $dictionaryPath
+                                    );
+                   
+                    
+                    $error = false;
+                    if (empty($password1)) {
+                        $error = true;
+                        $failureMsg = "The provided password is empty or invalid";
+                    } else if (empty($password2)) {
+                        $error = true;
+                        $failureMsg = "The provided password (confirmation) is empty or invalid";
+                    } else if ($password1 !== $password2) {
+                        $error = true;
+                        $failureMsg = "Password and password (confirmation) should match";
+                    } else {
+                        $params["password"] = $password1;
+                        $params["password_type"] = "User-Password"; 
+                    }
+
+                    if (!$error) {
+                        $result = user_auth($params);
+                        
+                        $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+                        
+                        if ($result["error"]) {
+                            $failureMsg = sprintf("Cannot perform informative action on user [<strong>%s</strong>, reason: <strong>%s</strong>]",
+                                                  $username_enc, $result["output"]);
+                            $logAction .= sprintf("Cannot perform informative action on user [%s, reason: %s] on page: ",
+                                                 $username, $result["output"]);
+                        } else {
+                            $successMsg = sprintf('Performed informative action on user <strong>%s</strong>. <pre style="margin: 10px auto; font-family: monospace">%s</pre>',
+                                                  $username_enc, $result["output"]);
+                            $logAction .= sprintf("Performed informative action on user [%s] on page: ",
+                                                 $username, $result["output"]);
+                        }
+                    }
+                }
+                
+                include('library/closedb.php');
+                
+            } else {
+                // csrf
+                $failureMsg = "CSRF token error";
+                $logAction .= "$failureMsg on page: ";
+            }
+        }
+    } else {
+        $failureMsg = "Cannot perform informative action [radclient binary not found on the system]";
+        $logAction .= "$failureMsg on page: ";
+    }
+    
+    
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
@@ -96,99 +185,138 @@
     
     include_once('include/management/actionMessages.php');
     
-    $input_descriptors1 = array();
-    $input_descriptors1[] = array( "name" => "username", "caption" => t('all','Username'),
-                                   "type" => "text", "value" => ((isset($username)) ? $username : ""), );
-    $input_descriptors1[] = array( "name" => "password", "caption" => t('all','Password'),
-                                   "type" => "text", "value" => ((isset($password)) ? $password : ""), );
-    $input_descriptors1[] = array( "name" => "radius", "caption" => t('all','RadiusServer'),
-                                   "type" => "text", "value" => ((isset($radius)) ? $radius : ""), );
-    $input_descriptors1[] = array( "name" => "radiusport", "caption" => t('all','RadiusPort'),
-                                   "type" => "text", "value" => ((isset($radiusport)) ? $radiusport : ""), );
-    $input_descriptors1[] = array( "name" => "nasport", "caption" => t('all','NasPorts'),
-                                   "type" => "text", "value" => ((isset($nasport)) ? $nasport : ""), );
-    $input_descriptors1[] = array( "name" => "secret", "caption" => t('all','NasSecret'),
-                                   "type" => "text", "value" => ((isset($secret)) ? $secret : ""), );
-
-    $input_descriptors2 = array();
-    $input_descriptors2[] = array( "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"), );
-    $input_descriptors2[] = array( "name" => "timeout", "caption" => t('all','Timeout'), "type" => "number", "value" => "3", "min" => "1", );
-    $input_descriptors2[] = array( "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0", );
-    $input_descriptors2[] = array( "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1", );
-    $input_descriptors2[] = array( "name" => "requests", "caption" => t('all','Requests'), "type" => "number", "value" => "3", "min" => "1", );
-    $input_descriptors2[] = array( "name" => "dictionaryPath", "caption" => t('all','RADIUSDictionaryPath'), "type" => "text",
-                                   "value" => ((isset($dictionaryPath)) ? $dictionaryPath : ""), );
-
-    $button_descriptor = array(
-                                "type" => "submit",
-                                "name" => "submit",
-                                "value" => "Test"
-                              );
-
-    // set navbar stuff
-    $navbuttons = array(
-                          'Settings-tab' => t('title','Settings'),
-                          'Advanced-tab' => t('title','Advanced'),
-                       );
-
-    print_tab_navbuttons($navbuttons);
-?>
-
-<form name="mainttestuser" method="POST">
+    if ($radclient_path !== false) {
     
-    <div id="Settings-tab" class="tabcontent" title="<?= t('title','Settings') ?>" style="display: block">
-        <fieldset>
-
-            <h302> Test User Connectivity </h302>
-            
-            <ul style="margin: 30px auto">
-<?php
-                foreach ($input_descriptors1 as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-            </ul>
-
-        </fieldset>
+        $input_descriptors0 = array();
+        $input_descriptors0[] = array( 
+                                        "name" => "username",
+                                        "caption" => t('all','Username'),
+                                        "type" => "text",
+                                        "value" => ((isset($username)) ? $username : ""),
+                                     );
         
-<?php
-        print_form_component($button_descriptor);
-?>
-            
-    </div><!-- #Settings-tab -->
+        $input_descriptors0[] = array( 
+                                        "name" => "password1",
+                                        "caption" => t('all','Password'),
+                                        "type" => "password",
+                                     );
+                                     
+        $input_descriptors0[] = array( 
+                                        "name" => "password2",
+                                        "caption" => t('all','Password') . " (confirmation)",
+                                        "type" => "password",
+                                     );
+                                       
+        $input_descriptors0[] = array(
+                                        "name" => "radius_addr",
+                                        "caption" => t('all','RadiusServer'),
+                                        "type" => "text",
+                                        "value" => ((isset($radius_addr)) ? $radius_addr : "127.0.0.1"),
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        "name" => "radius_port",
+                                        "caption" => t('all','RadiusPort'),
+                                        "type" => "number",
+                                        "min" => 0,
+                                        "max" => 65535,
+                                        "value" => ((isset($radius_port)) ? $radius_port : 1812),
+                                     );
         
-        <div id="Advanced-tab" class="tabcontent" title="<?= t('title','Advanced') ?>">
-            <fieldset>
+        $input_descriptors0[] = array( "name" => "secret",
+                                       "caption" => t('all','NasSecret'),
+                                       "type" => "text",
+                                       "value" => ((isset($secret)) ? $secret : "testing123"),
+                                     );
 
-                <h302><?= t('title','Advanced') ?></h302>
+        $input_descriptors1 = array();
+        $input_descriptors1[] = array( "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"), );
+        $input_descriptors1[] = array( "name" => "timeout", "caption" => t('all','Timeout'), "type" => "number", "value" => "3", "min" => "1", );
+        $input_descriptors1[] = array( "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0", );
+        $input_descriptors1[] = array( "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1", );
+        $input_descriptors1[] = array( "name" => "requests", "caption" => t('all','Requests'), "type" => "number", "value" => "3", "min" => "1", );
 
-            <ul style="margin: 30px auto">
-<?php
-                foreach ($input_descriptors2 as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-            </ul>
-
-            </fieldset>
-
-<?php
-        print_form_component($button_descriptor);
-?>
+        if (count($valid_dictionaries) > 0) {
             
-    </div><!-- #Advanced-tab -->
-</form>
+            $options = $valid_dictionaries;
+            array_unshift($options, "");
+            
+            $input_descriptors1[] = array(
+                                            "name" => "dictionaryPath",
+                                            "caption" => t('all','RADIUSDictionaryPath'),
+                                            "type" => "select",
+                                            "selected_value" => ((isset($dictionaryPath)) ? $dictionaryPath : ""),
+                                            "options" => $options,
+                                         );
+        }
+        $input_descriptors2 = array();
 
-        </div><!-- #contentnorightbar -->
+        $input_descriptors2[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors2[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('all','TestUser'),
+                                     );
+
+        // set navbar stuff
+        $navkeys = array( 'Settings', 'Advanced', );
+
+        // print navbar controls
+        print_tab_header($navkeys);
         
-        <div id="footer">
-<?php
+        // open form
+        open_form();
+        
+        // open tab 0 (shown)
+        open_tab($navkeys, 0, true);
+
+        // open a fieldset
+        $fieldset0_descriptor = array(
+                                        "title" => "Test User Connectivity",
+                                     );
+
+        open_fieldset($fieldset0_descriptor);
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_tab($navkeys, 0);
+
+        // open tab 1
+        open_tab($navkeys, 1);
+        
+        // open a fieldset
+        $fieldset1_descriptor = array(
+                                        "title" => t('title','Advanced'),
+                                     );
+
+        open_fieldset($fieldset1_descriptor);
+        
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_fieldset();
+        
+        close_tab($navkeys, 1);
+        
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_form();
+    }
+
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>
