@@ -90,9 +90,9 @@
                 
                     $sql = sprintf("SELECT COUNT(id)
                                       FROM %s
-                                     WHERE framedipaddress=?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+                                     WHERE framedipaddress=? AND id<>?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
                     $prep = $dbSocket->prepare($sql);
-                    $values = array( $framedipaddress, );
+                    $values = array( $framedipaddress, $internal_id );
                     $res = $dbSocket->execute($prep, $values);
                     $logDebugSQL .= "$sql;\n";
 

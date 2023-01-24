@@ -40,11 +40,11 @@
     include('library/opendb.php');
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $ratename = (array_key_exists('ratename', $_POST) && !empty(trim($_POST['ratename'])))
-                  ? trim($_POST['ratename']) : "";
+        $ratename = (array_key_exists('ratename', $_POST) && !empty(str_replace("%", "", trim($_POST['ratename']))))
+                  ? str_replace("%", "", trim($_POST['ratename'])) : "";
     } else {
-        $ratename = (array_key_exists('ratename', $_REQUEST) && !empty(trim($_REQUEST['ratename'])))
-                  ? trim($_REQUEST['ratename']) : "";
+        $ratename = (array_key_exists('ratename', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['ratename']))))
+                  ? str_replace("%", "", trim($_REQUEST['ratename'])) : "";
     }
 
 

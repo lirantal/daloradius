@@ -41,11 +41,11 @@
     include('library/opendb.php');
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $paymentname = (array_key_exists('paymentname', $_POST) && !empty(trim($_POST['paymentname'])))
-                     ? trim($_POST['paymentname']) : "";
+        $paymentname = (array_key_exists('paymentname', $_POST) && !empty(str_replace("%", "", trim($_POST['paymentname']))))
+                     ? str_replace("%", "", trim($_POST['paymentname'])) : "";
     } else {
-        $paymentname = (array_key_exists('paymentname', $_REQUEST) && !empty(trim($_REQUEST['paymentname'])))
-                     ? trim($_REQUEST['paymentname']) : "";
+        $paymentname = (array_key_exists('paymentname', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['paymentname']))))
+                     ? str_replace("%", "", trim($_REQUEST['paymentname'])) : "";
     }
     
     

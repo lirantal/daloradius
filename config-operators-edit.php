@@ -37,10 +37,10 @@
     include('library/opendb.php');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $operator_username = (array_key_exists('operator_username', $_POST) && isset($_POST['operator_username']))
+        $operator_username = (array_key_exists('operator_username', $_POST) && !empty(trim(str_replace("%", "", $_POST['operator_username']))))
                            ? trim(str_replace("%", "", $_POST['operator_username'])) : "";
     } else {
-        $operator_username = (array_key_exists('operator_username', $_REQUEST) && isset($_REQUEST['operator_username']))
+        $operator_username = (array_key_exists('operator_username', $_REQUEST) && !empty(trim(str_replace("%", "", $_REQUEST['operator_username']))))
                            ? trim(str_replace("%", "", $_REQUEST['operator_username'])) : "";
     }
     $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";

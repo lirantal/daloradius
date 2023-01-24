@@ -38,7 +38,7 @@
     $logDebugSQL = "";
     
     // load valid proxies
-    $valid_proxies = get_proxies();
+    $valid_proxynames = get_proxies();
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -49,7 +49,7 @@
               ? str_replace("%", "", trim($_REQUEST['item'])) : "";
     }
 
-    $exists = in_array($item, array_keys($valid_proxies));
+    $exists = in_array($item, array_keys($valid_proxynames));
     
     if (!$exists) {
         // we reset the rate if it does not exist
