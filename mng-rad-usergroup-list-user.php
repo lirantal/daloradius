@@ -167,7 +167,7 @@
                 
                 if ($i == 0) {
                     $tooltipText = '<ul style="list-style-type: none">'
-                                 . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-usergroup-edit.php?username=%s&group=%s">%s</a></li>',
+                                 . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-usergroup-edit.php?username=%s&current_group=%s">%s</a></li>',
                                            $li_style, urlencode($username_enc), urlencode($row[$i]), t('Tooltip','EditUserGroup'))
                                  . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-usergroup-del.php?username=%s&group=%s">%s</a></li>',
                                            $li_style, urlencode($username_enc), urlencode($row[$i]), t('Tooltip','DeleteUserGroup'))

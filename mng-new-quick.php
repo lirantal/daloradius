@@ -469,7 +469,7 @@
     
     close_tab($navkeys, 0);
 
-    // open 1-th tab (shown)
+    // open 1-th tab
     open_tab($navkeys, 1);
     
     $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" ', t('buttons','apply'))
@@ -480,7 +480,7 @@
     
     close_tab($navkeys, 1);
     
-    // open 2-th tab (shown)
+    // open 2-th tab
     open_tab($navkeys, 2);
     
     $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
@@ -489,6 +489,8 @@
     close_tab($navkeys, 2);
     
     close_form();
+
+    print_back_to_previous_page();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

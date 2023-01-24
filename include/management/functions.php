@@ -70,7 +70,7 @@ function add_invoice_items($dbSocket, $invoice_id='', $clean_before_adding=true)
         }
         
         $sql = sprintf("INSERT INTO %s (id, invoice_id, plan_id, amount, tax_amount, notes, creationdate, creationby) ".
-                        " VALUES (0, %d, '%s', '%s', '%s', '%s', '%s', '$%s')",
+                        " VALUES (0, %d, '%s', '%s', '%s', '%s', '%s', '%s')",
                         $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'], $invoice_id,
                         $dbSocket->escapeSimple($planId), $dbSocket->escapeSimple($amount),
                         $dbSocket->escapeSimple($tax), $dbSocket->escapeSimple($notes), $currDate, $currBy);
@@ -238,7 +238,7 @@ function get_user_group_mappings($dbSocket, $username) {
     $username = trim($username);
     $result = array();
     
-    $sql = sprintf("SELECT DISTINCT(groupname) FROM %s WHERE username='%s'",
+    $sql = sprintf("SELECT DISTINCT(groupname) FROM %s WHERE username='%s' ORDER BY groupname ASC",
                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
