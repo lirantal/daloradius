@@ -24,41 +24,19 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
+
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
-    include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    $invoice_id = (array_key_exists('invoice_id', $_GET) && isset($_GET['invoice_id']) &&
-                   preg_match('/^[0-9]+$/', $_GET['invoice_id']) !== false)
-                ? $_GET['invoice_id'] : "";
-    
-    $user_id = (array_key_exists('user_id', $_GET) && isset($_GET['user_id']) &&
-                preg_match('/^[0-9]+$/', $_GET['user_id']) !== false)
-             ? $_GET['user_id'] : "";
-
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace('%', '', $_GET['username']) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
-    $edit_username = $username_enc;
-    $edit_invoice_id = $invoice_id;
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue    
-    $title = t('Intro','paymentslist.php');
-    $help = t('helpPage','paymentslist');
-    
-    print_html_prologue($title, $langCode);
-    
-    include("menu-bill-payments.php");
-    
     $cols = array(
                     "id" => t('all','ID'),
                     "invoice_id" => t('all','PaymentInvoiceID'),
@@ -81,6 +59,32 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
+
+    $invoice_id = (array_key_exists('invoice_id', $_GET) && isset($_GET['invoice_id']) &&
+                   preg_match('/^[0-9]+$/', $_GET['invoice_id']) !== false)
+                ? $_GET['invoice_id'] : "";
+    
+    $user_id = (array_key_exists('user_id', $_GET) && isset($_GET['user_id']) &&
+                preg_match('/^[0-9]+$/', $_GET['user_id']) !== false)
+             ? $_GET['user_id'] : "";
+
+    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+              ? str_replace('%', '', $_GET['username']) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    
+    // feed the sidebar
+    $edit_username = $username_enc;
+    $edit_invoice_id = $invoice_id;
+
+    
+    // print HTML prologue    
+    $title = t('Intro','paymentslist.php');
+    $help = t('helpPage','paymentslist');
+    
+    print_html_prologue($title, $langCode);
+    
+    include("menu-bill-payments.php");
+    
 
     // start printing content
     echo '<div id="contentnorightbar">';
@@ -254,6 +258,7 @@
     }
     
     include('library/closedb.php');
+    
     include('include/config/logging.php');
     
     $inline_extra_js = "

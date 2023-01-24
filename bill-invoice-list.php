@@ -24,45 +24,18 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
+
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
-    include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
-
-    $user_id = (array_key_exists('user_id', $_GET) && isset($_GET['user_id']) &&
-            preg_match('/^[0-9]+$/', $_GET['user_id']) !== false)
-         ? $_GET['user_id'] : "";
-         
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace('%', '', $_GET['username']) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-    $invoice_status_id = (array_key_exists('invoice_status_id', $_GET) && isset($_GET['invoice_status_id']) &&
-                          preg_match('/^[0-9]+$/', $_GET['invoice_status_id']) !== false)
-                       ? $_GET['invoice_status_id'] : "";
-
-    $edit_invoice_status_id = $invoice_status_id;
-    $edit_invoiceUsername = $username_enc;    
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js"
-    );
-    
-    $title = t('Intro','billinvoicelist.php');
-    $help = t('helpPage','billinvoicelist');
-    
-    print_html_prologue($title, $langCode, array(), $extra_js);
-
-    include("menu-bill-invoice.php");
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
                     "id" => t('all','Invoice'),
@@ -88,6 +61,37 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
 
+    $user_id = (array_key_exists('user_id', $_GET) && isset($_GET['user_id']) &&
+            preg_match('/^[0-9]+$/', $_GET['user_id']) !== false)
+         ? $_GET['user_id'] : "";
+         
+    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
+              ? str_replace('%', '', $_GET['username']) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+    $invoice_status_id = (array_key_exists('invoice_status_id', $_GET) && isset($_GET['invoice_status_id']) &&
+                          preg_match('/^[0-9]+$/', $_GET['invoice_status_id']) !== false)
+                       ? $_GET['invoice_status_id'] : "";
+
+    // feed the sidebar
+    $edit_invoice_status_id = $invoice_status_id;
+    $edit_invoiceUsername = $username_enc;    
+
+    
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','billinvoicelist.php');
+    $help = t('helpPage','billinvoicelist');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
+
+    include("menu-bill-invoice.php");
+
+    
     // start printing content
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -268,26 +272,15 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

@@ -26,33 +26,17 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-
-    // init loggin variables
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-    $logDebugSQL = "";
-
-    // get vendor name passed to us from menu-mng-rad-attributes.php
-    $vendor = (array_key_exists('vendor', $_GET) && isset($_GET['vendor']))
-            ? str_replace("%", "", $_GET['vendor']) : "";
-
     include_once("lang/main.php");
-    
     include("library/layout.php");
 
-    // print HTML prologue
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js"
-    );
-    
-    $title = t('Intro','mngradattributeslist.php');
-    $help = t('helpPage','mngradattributeslist');
-    
-    print_html_prologue($title, $langCode, array(), $extra_js);
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
 
-    include("menu-mng-rad-attributes.php");
-    
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
     $cols = array(
                     "id" => t('all','VendorID'),
                     "vendor" => t('all','VendorName'),
@@ -72,6 +56,24 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
+    // get vendor name passed to us from menu-mng-rad-attributes.php
+    $vendor = (array_key_exists('vendor', $_GET) && isset($_GET['vendor']))
+            ? str_replace("%", "", $_GET['vendor']) : "";
+
+
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','mngradattributeslist.php');
+    $help = t('helpPage','mngradattributeslist');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
+
+    include("menu-mng-rad-attributes.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

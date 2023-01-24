@@ -74,7 +74,6 @@
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
-
     include('library/opendb.php');
     include('include/management/pages_common.php');
 

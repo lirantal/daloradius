@@ -25,20 +25,41 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
-    
-    // init loggin variables
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    $logQuery = "performed query on page: ";
     $logDebugSQL = "";
-    
+
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    include_once("lang/main.php");
+    $cols = array(
+                    "id" => t('all','ID'),
+                    "contactperson" => t('ContactInfo','ContactPerson'),
+                    "company" => t('ContactInfo','Company'),
+                    "username" => t('all','Username'),
+                    t('all','Password'),
+                    "planname" => t('ContactInfo','PlanName')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intval($colspan / 2);
+                 
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
     
-    include("library/layout.php");
+    // whenever possible we use a whitelist approach
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+               ? strtolower($_GET['orderType']) : "asc";
+
 
     // print HTML prologue
     $extra_js = array(
@@ -65,29 +86,6 @@
     }
 
     include("menu-bill-pos.php");
-
-    $cols = array(
-                    "id" => t('all','ID'),
-                    "contactperson" => t('ContactInfo','ContactPerson'),
-                    "company" => t('ContactInfo','Company'),
-                    "username" => t('all','Username'),
-                    t('all','Password'),
-                    "planname" => t('ContactInfo','PlanName')
-                 );
-    $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
-                 
-    $param_cols = array();
-    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
-    // whenever possible we use a whitelist approach
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[0];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "asc";
 
 
     // start printing content

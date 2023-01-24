@@ -24,29 +24,23 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
+
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
-    include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue    
-    $title = t('Intro','configoperatorslist.php');
-    $help = t('helpPage','configoperatorslist');
-    
-    print_html_prologue($title, $langCode);
-
-    include("menu-config-operators.php");
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
                     "id" => t('all','ID'), 
                     "username" => t('all','Username')
-    );
+                 );
     
     if (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes") {
         $cols[] = t('all','Password');
@@ -72,6 +66,15 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
+
+    // print HTML prologue    
+    $title = t('Intro','configoperatorslist.php');
+    $help = t('helpPage','configoperatorslist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-config-operators.php");
+
                
     // start printing content
     echo '<div id="contentnorightbar">';
@@ -201,26 +204,15 @@
     }
     
     include('library/closedb.php');
-?>
-                
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip()";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

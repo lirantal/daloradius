@@ -25,25 +25,18 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-    
-    // init logging variables
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-    $logDebugSQL = "";
-    
     include_once('library/config_read.php');
     include_once("lang/main.php");
-    
     include("library/layout.php");
 
-    // print HTML prologue
-    $title = t('Intro','mngradproxys.php');
-    $help = t('helpPage','mngradproxyslist');
-    
-    print_html_prologue($title, $langCode);
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
 
-    include("menu-mng-rad-realms.php");
-    
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
     $cols = array(
                     "id" => t('all','ID'),
                     "proxyname" => t('all','ProxyName'),
@@ -66,6 +59,15 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
+
+    // print HTML prologue
+    $title = t('Intro','mngradproxys.php');
+    $help = t('helpPage','mngradproxyslist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-mng-rad-realms.php");
   
     // start printing content
     echo '<div id="contentnorightbar">';

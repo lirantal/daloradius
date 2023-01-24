@@ -26,34 +26,17 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
-              ? str_replace("%", "", trim($_GET['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
-    // feed the sidebar
-    $usernameList = $username_enc;
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $title = t('Intro','mngradusergrouplist');
-    $help = t('helpPage','mngradusergrouplist');
-    
-    print_html_prologue($title, $langCode);
-
-    include ("menu-mng-rad-usergroup.php");
-    
     $cols = array(
         "username" => t('all','Username'),
         "fullname" => t('all','Name'),
@@ -75,6 +58,23 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    
+    // feed the sidebar
+    $usernameList = $username_enc;
+    
+    
+    // print HTML prologue
+    $title = t('Intro','mngradusergrouplist');
+    $help = t('helpPage','mngradusergrouplist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-mng-rad-usergroup.php");
+    
                
     // start printing content
     echo '<div id="contentnorightbar">';
@@ -166,7 +166,7 @@
             $li_style = 'margin: 7px auto';
             $tooltipText_format = '<ul style="list-style-type: none">'
                                 . sprintf('<li style="%s">', $li_style) 
-                                . '<a class="toolTip" href="mng-rad-usergroup-edit.php?username=%s&group=%s">%s</a>'
+                                . '<a class="toolTip" href="mng-rad-usergroup-edit.php?username=%s&current_group=%s">%s</a>'
                                 . '</li>'
                                 . sprintf('<li style="%s">', $li_style)
                                 . '<a class="toolTip" href="mng-rad-usergroup-list-user.php?username=%s&group=%s">%s</a>'
