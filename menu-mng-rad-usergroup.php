@@ -72,7 +72,7 @@ include_once("include/management/autocomplete.php");
                         <form name="mngradusrgrpedit" action="mng-rad-usergroup-edit.php" method="GET" class="sidebar">
                             <input name="username" type="text" value="" id="usernameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                                 tooltipText="<?= t('Tooltip','Username'); ?><br>" tabindex="6">
-                            <input name="group" type="text" value="" id="groupnameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
+                            <input name="current_group" type="text" value="" id="groupnameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
                                 tooltipText="<?= t('Tooltip','GroupName'); ?><br>" tabindex="7">
                         </form>
                     </li>
