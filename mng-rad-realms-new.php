@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -20,105 +20,118 @@
  *
  *********************************************************************************************************
  */
-
+ 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    include("include/management/functions.php");
+    include_once("include/management/populate_selectbox.php");
+    
+    // init logging variables
+    $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($_POST["submit"])) {
+    // load valid realmnames
+    $valid_realmnames = get_realms();
 
-        isset($_POST['realmname']) ? $realmname = $_POST['realmname'] : $realmname = "";
-        isset($_POST['type']) ? $type = $_POST['type'] : $type = "";
-        isset($_POST['authhost']) ?$authhost = $_POST['authhost'] : $authhost = "";
-        isset($_POST['accthost']) ? $accthost = $_POST['accthost'] : $accthost = "";
-        isset($_POST['secret']) ? $secret = $_POST['secret'] : $secert = "";
-        isset($_POST['ldflag']) ? $ldflag = $_POST['ldflag'] : $ldflag = "";
-        isset($_POST['nostrip']) ? $nostrip = $_POST['nostrip'] : $nostrip = "";
-        isset($_POST['hints']) ? $hints = $_POST['hints'] : $hints = "";
-        isset($_POST['notrealm']) ? $notrealm = $_POST['notrealm'] :  $notrealm = "";
-        
-        include 'library/opendb.php';
+    $valid_types = array( "fail-over", "load-balance", "client-balance", "client-port-balance", "keyed-balance" );
 
-        if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
-            $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-            $fileFlag = 1;
-        } else {
-            $filenameRealmsProxys = "";
-            $fileFlag = 0;
-        }
 
-        $sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_DALOREALMS'].
-                " WHERE realmname='".$dbSocket->escapeSimple($realmname)."'";
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
-
-        if ($res->numRows() == 0) {
-
-            if (!(file_exists($filenameRealmsProxys))) {
-                $logAction .= "Failed non-existed realms configuration file [$filenameRealmsProxys] on page: ";
-                $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save realms information to the file";
-                $fileFlag = 0;
-            }
+    include('library/opendb.php');
     
-            if (!(is_writable($filenameRealmsProxys))) {
-                $logAction .= "Failed writing realms configuration to file [$filenameRealmsProxys] on page: ";    
-                $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save realms information to the file";
-                $fileFlag = 0;
-            }    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if (trim($realmname) != "") {
-
-                $currDate = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
-
-                // insert realm to database
-                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOREALMS'].
-                    " (id,realmname,type,authhost,accthost,secret,ldflag,nostrip,hints,notrealm,creationdate,creationby,".
-                    "    updatedate,updateby) ".
-                    " VALUES (0, '".
-                    $dbSocket->escapeSimple($realmname)."', '".$dbSocket->escapeSimple($type)."', '".
-                    $dbSocket->escapeSimple($authhost)."','".$dbSocket->escapeSimple($accthost)."','".
-                    $dbSocket->escapeSimple($secret)."','".$dbSocket->escapeSimple($ldflag)."','".
-                    $dbSocket->escapeSimple($nostrip)."','".$dbSocket->escapeSimple($hints)."','".
-                    $dbSocket->escapeSimple($notrealm)."' ".
-                    ", '$currDate', '$currBy', NULL, NULL)";
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= $sql . "\n";
-
-                $successMsg = "Added to database new realm: <b>$realmname</b>";
-                $logAction .= "Successfully added new realm [$realmname] on page: ";
-
-                /*******************************************************************/
-                /* enumerate from database all realm entries */
-                include_once('include/management/saveRealmsProxys.php');
-                /*******************************************************************/
-
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            $realmname = (array_key_exists('realmname', $_POST) && !empty(str_replace("%", "", trim($_POST['realmname']))) &&
+                          !in_array(str_replace("%", "", trim($_POST['realmname'])), $valid_realmnames))
+                       ? str_replace("%", "", trim($_POST['realmname'])) : "";
+            $realmname_enc = (!empty($realmname)) ? htmlspecialchars($realmname, ENT_QUOTES, 'UTF-8') : "";
+            
+            if (empty($realmname)) {
+                // emptyn invalid or already existent
+                $failureMsg = sprintf("Empty or invalid %s", t('all','RealmName'));
+                $logAction .= "$failureMsg on page: ";
             } else {
-                $failureMsg = "you must provide at least a realm name";
-                $logAction .= "Failed adding new realm [$realmname] on page: ";    
+                $type = (array_key_exists('type', $_POST) && !empty(trim($_POST['type'])) && in_array(trim($_POST['type']), $valid_types))
+                      ? trim($_POST['type']) : $valid_types[0];
+                $nostrip = (array_key_exists('nostrip', $_POST) && strtolower(trim($_POST['nostrip'])) === "yes");
+                $authhost = (array_key_exists('authhost', $_POST) && !empty(trim($_POST['authhost']))) ? trim($_POST['authhost']) : "";
+                $accthost = (array_key_exists('accthost', $_POST) && !empty(trim($_POST['accthost']))) ? trim($_POST['accthost']) : "";
+                $secret = (array_key_exists('secret', $_POST) && !empty(trim($_POST['secret']))) ? trim($_POST['secret']) : "";
+                
+                $ldflag = (array_key_exists('ldflag', $_POST) && !empty(trim($_POST['ldflag']))) ? trim($_POST['ldflag']) : "";
+                $hints = (array_key_exists('hints', $_POST) && !empty(trim($_POST['hints']))) ? trim($_POST['hints']) : "";
+                $notrealm = (array_key_exists('notrealm', $_POST) && !empty(trim($_POST['notrealm']))) ? trim($_POST['notrealm']) : "";
+                
+                // required later
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $operator;
+                
+                $sql = sprintf("INSERT INTO %s (id, type, authhost, accthost, secret, ldflag, nostrip, hints,
+                                                notrealm, creationdate, creationby, updatedate, updateby, realmname)
+                                        VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?)",
+                               $configValues['CONFIG_DB_TBL_DALOREALMS']);
+                $prep = $dbSocket->prepare($sql);
+                $values = array( 
+                                    $type, $authhost, $accthost, $secret, $ldflag,
+                                    $nostrip, $hints, $notrealm, $currDate, $currBy, $realmname
+                               );
+                $res = $dbSocket->execute($prep, $values);
+                $logDebugSQL .= "$sql;\n";
+                
+                if (!DB::isError($res)) {
+                    $successMsg = sprintf('Successfully inserted new realm in db [<a href="mng-rad-realms-edit.php?realmname=%s">Edit</a>]',
+                                          urlencode($realmname_enc), $realmname_enc);
+                    $logAction .= "Successfully inserted new realm $realmname in db";
+                    
+                    // write file
+                    if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
+                        $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
+                        $fileFlag = 1;
+                    } else {
+                        $filenameRealmsProxys = "";
+                        $fileFlag = 0;
+                    }
+                    
+                    if (!(file_exists($filenameRealmsProxys))) {
+                        $logAction .= "Failed non-existed realm configuration file [$filenameRealmsProxys] on page: ";
+                        $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save realm information to the file";
+                        $fileFlag = 0;
+                    }
+
+                    if (!(is_writable($filenameRealmsProxys))) {
+                        $logAction .= "Failed writing realm configuration to file [$filenameRealmsProxys] on page: ";
+                        $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save realm information to the file";
+                        $fileFlag = 0;
+                    }
+                    
+                    /*******************************************************************/
+                    /* enumerate from database all proxy entries */
+                    include_once('include/management/saveRealmsProxys.php');
+                    /*******************************************************************/
+                } else {
+                    $failureMsg = "Failed to insert new realm in db";
+                    $logAction .= "$failureMsg on page: ";
+                }
             }
-
-        } else { 
-            $failureMsg = "You have tried to add a realm that already exist in the database: $realmname";
-            $logAction .= "Failed adding new realm already in database [$realmname] on page: ";
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
-
-        include 'library/closedb.php';
-
     }
+    
+    include('library/closedb.php');
 
-    include_once('library/config_read.php');
-    $log = "visited page: ";
-
-    
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(
@@ -127,9 +140,7 @@
     );
     
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js",
-        "library/javascript/ajaxGeneric.js",
+        "library/javascript/pages_common.js",
         // js tabs stuff
         "library/javascript/tabs.js"
     );
@@ -139,180 +150,170 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (isset($profile)) {
-        $title .= ":: $profile";
+    if (isset($realmname_enc)) {
+        $title .= ":: $realmname_enc";
     } 
 
     include("menu-mng-rad-realms.php");
     echo '<div id="contentnorightbar">';
+    
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
 
-    // set navbar stuff
-    $navbuttons = array(
-                          'RealmInfo-tab' => t('title','RealmInfo'),
-                          'Advanced-tab' => t('title','Advanced'),
-                       );
-
-    print_tab_navbuttons($navbuttons);
-
-
-?>
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-    <div class="tabcontent" id="RealmInfo-tab" style="display: block">
-
-    <fieldset>
-
-        <h302> <?php echo t('title','RealmInfo'); ?> </h302>
-        <br/>
-
-        <ul>
-
-        <li class='fieldset'>
-        <label for='realmname' class='form'><?php echo t('all','RealmName') ?></label>
-        <input name='realmname' type='text' id='realmname' value='' tabindex=100 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNameTooltip')" />
+    if (!isset($successMsg)) {
         
-        <div id='realmNameTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmNameTooltip') ?>
-        </div>
-        </li>
+        // set navbar stuff
+        $navkeys = array( 'RealmInfo', 'Advanced' );
 
-        <li class='fieldset'>
-        <label for='type' class='form'><?php echo t('all','Type') ?></label>
-        <input name='type' type='text' id='type' value='' tabindex=101 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmTypeTooltip')" />
+        // print navbar controls
+        print_tab_header($navkeys);
         
-        <div id='realmTypeTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmTypeTooltip') ?>
-        </div>
-        </li>
+        // descriptors 0
+        $input_descriptors0 = array();
 
-        <li class='fieldset'>
-        <label for='authhost' class='form'><?php echo t('all','AuthHost') ?></label>
-        <input name='authhost' type='text' id='authhost' value='' tabindex=102 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmAuthhostTooltip')" />
+        $input_descriptors0[] = array(
+                                        'name' => 'realmname',
+                                        'caption' => t('all','RealmName'),
+                                        'type' => 'text',
+                                        'value' => $realmname,
+                                        'required' => true,
+                                        'tooltipText' => t('Tooltip','realmNameTooltip'),
+                                     );
+                                     
+        $options = $valid_types;
+        array_unshift($options, '');
+        $input_descriptors0[] = array(
+                                        "type" =>"select",
+                                        "name" => "type",
+                                        "caption" => t('all','Type'),
+                                        "options" => $options,
+                                        "selected_value" => ((isset($type)) ? $type : ""),
+                                        "tooltipText" => t('Tooltip','realmTypeTooltip')
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        'name' => 'authhost',
+                                        'caption' => t('all','AuthHost'),
+                                        'type' => 'text',
+                                        'value' => ((isset($authhost)) ? $authhost : ""),
+                                        'tooltipText' => t('Tooltip','realmAuthhostTooltip'),
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        'name' => 'accthost',
+                                        'caption' => t('all','AcctHost'),
+                                        'type' => 'text',
+                                        'value' => ((isset($accthost)) ? $accthost : ""),
+                                        'tooltipText' => t('Tooltip','realmAccthostTooltip'),
+                                     );
+
+        $input_descriptors0[] = array(
+                                        'name' => 'secret',
+                                        'caption' => t('all','AcctHost'),
+                                        'type' => 'text',
+                                        'value' => ((isset($secret)) ? $secret : ""),
+                                        'tooltipText' => t('Tooltip','realmSecretTooltip'),
+                                     );
+
+        // descriptors 2
+        $input_descriptors2 = array();
+        $input_descriptors2[] = array(
+                                        "type" =>"select",
+                                        "name" => "type",
+                                        "caption" => t('all','Nostrip'),
+                                        "options" => array( "yes", "no" ),
+                                        "selected_value" => ((isset($nostrip) && $nostrip) ? "yes" : "no"),
+                                        "tooltipText" => t('Tooltip','realmNostripTooltip')
+                                     );
+                                     
+        $input_descriptors2[] = array(
+                                        'name' => 'ldflag',
+                                        'caption' => t('all','Ldflag'),
+                                        'type' => 'text',
+                                        'value' => ((isset($ldflag)) ? $ldflag : ""),
+                                        'tooltipText' => t('Tooltip','realmLdflagTooltip'),
+                                     );
+                                     
+        $input_descriptors2[] = array(
+                                        'name' => 'hints',
+                                        'caption' => t('all','Hints'),
+                                        'type' => 'text',
+                                        'value' => ((isset($hints)) ? $hints : ""),
+                                        'tooltipText' => t('Tooltip','realmHintsTooltip'),
+                                     );
+                                     
+        $input_descriptors2[] = array(
+                                        'name' => 'notrealm',
+                                        'caption' => t('all','Notrealm'),
+                                        'type' => 'text',
+                                        'value' => ((isset($notrealm)) ? $notrealm : ""),
+                                        'tooltipText' => t('Tooltip','realmNotrealmTooltip'),
+                                     );
+
+        open_form();
+
+        // tab 0
+        open_tab($navkeys, 0, true);
+
+        // fieldset 0
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','RealmInfo'),
+                                     );
+
+        open_fieldset($fieldset0_descriptor);
+
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_fieldset();
         
-        <div id='realmAuthhostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmAuthhostTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='accthost' class='form'><?php echo t('all','AcctHost') ?></label>
-        <input name='accthost' type='text' id='accthost' value='' tabindex=103 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmAccthostTooltip')" />
+        close_tab($navkeys, 0);
         
-        <div id='realmAccthostTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmAccthostTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='secret' class='form'><?php echo t('all','RealmSecret') ?></label>
-        <input name='secret' type='text' id='secret' value='' tabindex=104 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmSecretTooltip')" />
+        // tab 1
+        open_tab($navkeys, 1);
         
-        <div id='realmSecretTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmSecretTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' />
-        </li>
-
-        </ul>
-    </fieldset>
-
-    </div>
-
-
-    <div class="tabcontent" id="Advanced-tab">
-
-    <fieldset>
-
-        <h302> <?php echo t('title','RealmInfo'); ?> </h302>
-        <br/>
-        <ul>
-
-        <li class='fieldset'>
-        <label for='ldflag' class='form'><?php echo t('all','Ldflag') ?></label>
-        <input name='ldflag' type='text' id='ldflag' value='' tabindex=105 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmLdflagTooltip')" />
+        // fieldset 1
+        $fieldset2_descriptor = array(
+                                        "title" => t('title','Advanced'),
+                                     );
         
-        <div id='realmLdflagTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmLdflagTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='nostrip' class='form'><?php echo t('all','Nostrip') ?></label>
-        <input name='nostrip' type='text' id='nostrip' value='' tabindex=106 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmNostripTooltip')" />
+        open_fieldset($fieldset2_descriptor);
         
-        <div id='realmNostripTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmNostripTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='hints' class='form'><?php echo t('all','Hints') ?></label>
-        <input name='hints' type='text' id='hints' value='' tabindex=107 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realmHintsTooltip')" />
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
-        <div id='realmHintsTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmHintsTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <label for='notrealm' class='form'><?php echo t('all','Notrealm') ?></label>
-        <input name='notrealm' type='text' id='notrealm' value='' tabindex=108 />
-        <img src='images/icons/comment.png' alt='Tip' border='0' onClick="javascript:toggleShowDiv('realrealmNotrealmTooltipmHintsTooltip')" />
+        close_fieldset();
         
-        <div id='realmNotrealmTooltip'  style='display:none;visibility:visible' class='ToolTip'>
-            <img src='images/icons/comment.png' alt='Tip' border='0' />
-            <?php echo t('Tooltip','realmNotrealmTooltip') ?>
-        </div>
-        </li>
-
-        <li class='fieldset'>
-        <br/>
-        <hr><br/>
-        <input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000 class='button' /> 
-        </li>
-
-        </ul>
-    </fieldset>
-
-    </div>
-
-</form>
-
-        </div><!-- #contentnorightbar -->
+        close_tab($navkeys, 1);
         
-        <div id="footer">
-<?php
+        $input_descriptors3 = array();
+        
+        $input_descriptors3[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors3[] = array(
+                                        "type" => "submit",
+                                        "name" => "submit",
+                                        "value" => t('buttons','apply')
+                                     );
+        
+        foreach ($input_descriptors3 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_form();
+        
+    }
+
+    print_back_to_previous_page();
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

@@ -69,15 +69,17 @@
                     $currBy = $operator;
                     
                     // insert apyment type info
-                    $sql = sprintf("INSERT INTO %s (id, value, notes, creationdate, creationby)
-                                            VALUES (0, '%s', '%s', '%s', '%s')",
+                    $sql = sprintf("INSERT INTO %s (id, value, notes, creationdate, creationby, updatedate, updateby)
+                                            VALUES (0, '%s', '%s', '%s', '%s', NULL, NULL)",
                                    $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname),
                                    $dbSocket->escapeSimple($paymentnotes), $currDate, $currBy);
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     
                     if (!DB::isError($res)) {
-                        $successMsg = "Successfully inserted new payment type (<strong>$paymentname_enc</strong>)";
+                        $successMsg = sprintf('Successfully inserted new payment type (<strong>%s</strong>) '
+                                            . '[<a href="bill-payment-types-edit.php?paymentname=%s" title="Edit">Edit</a>]',
+                                              $paymentname_enc, urlencode($paymentname_enc));
                         $logAction .= "Successfully inserted new payment type [$paymentname] on page: ";
                     } else {
                         $failureMsg = "Failed to insert new payment type (<strong>$paymentname_enc</strong>)";

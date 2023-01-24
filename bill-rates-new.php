@@ -104,7 +104,9 @@
                     $logDebugSQL .= "$sql;\n";
                     
                     if (!DB::isError($res)) {
-                        $successMsg = "Successfully inserted new rate (<strong>$ratename_enc</strong>)";
+                        $successMsg = sprintf('Successfully inserted new rate (<strong>%s</strong>) '
+                                            . '<a href="bill-rates-edit.php?ratename=%s" title="Edit">%s</a>',
+                                              $ratename_enc, $ratename_enc, urlencode($ratename_enc));
                         $logAction .= "Successfully inserted new rate [$ratename] on page: ";
                     } else {
                         $failureMsg = "Failed to inserted new rate (<strong>$ratename_enc</strong>)";

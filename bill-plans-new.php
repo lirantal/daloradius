@@ -114,9 +114,9 @@
                                                     planTrafficUp, planTrafficDown, planTrafficRefillCost, planRecurring,
                                                     planRecurringPeriod, planRecurringBillingSchedule, planCost,
                                                     planSetupCost, planTax, planCurrency, planGroup, planActive,
-                                                    creationdate, creationby)
+                                                    creationdate, creationby, updatedate, updateby)
                                             VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-                                                    '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+                                                    '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', NULL, NULL)",
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($planName),
                                    $dbSocket->escapeSimple($planId), $dbSocket->escapeSimple($planType),
                                    $dbSocket->escapeSimple($planTimeBank), $dbSocket->escapeSimple($planTimeType),
@@ -135,9 +135,16 @@
                     // billing_plans_profiles table for later on
                     $groupsCount = insert_multiple_plan_group_mappings($dbSocket, $planName, $groups);
                     
-                    $format = "A new %s named %s has been successfully added to database. %d %s have been associated to this %s";
-                    $successMsg = sprintf($format, t('all','PlanName'), $planName_enc, $groupsCount, t('title','Profiles'), t('all','PlanName'));
-                    $logAction .= sprintf("$format on page: ", t('all','PlanName'), $groupsCount, t('title','Profiles'), t('all','PlanName'));
+                    if (!DB::isError($res)) {
+                        $format = "A new %s named %s has been successfully added to database. %d %s have been associated to this %s";
+                        $successMsg = sprintf($format . ' [<a href="bill-plans-edit.php?planName=%s" title="Edit">Edit</a>]', t('all','PlanName'),
+                                              $planName_enc, $groupsCount, t('title','Profiles'), t('all','PlanName'), urlencode($planName_enc));
+                        $logAction .= sprintf("$format on page: ", t('all','PlanName'), $groupsCount, t('title','Profiles'), t('all','PlanName'));
+                    } else {
+                        $failureMsg = "Failed to insert a new plan to database";
+                        $logAction .= "$failureMsg on page: ";
+                    }
+
                 }
                 
                 include('library/closedb.php');

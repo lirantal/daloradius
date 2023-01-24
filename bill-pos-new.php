@@ -368,13 +368,16 @@
                         
                     }
                     
-                    if ($notificationWelcome === 'yes') {
-                        include("include/common/notificationsWelcome.php");
-                        
-                    }
+                    $successMsg = sprintf('Inserted new user <strong>%s</strong>: ', $username_enc)
+                                . sprintf('<a href="bill-pos-edit.php?username=%s" title="Edit">%s</a>',
+                                          $username_enc, urlencode($username_enc))
+                                . '<ul style="color: black">'
+                                . sprintf("<li><strong>attributes count</strong>: %d</li>", $attributesCount)
+                                . sprintf("<li><strong>groups count</strong>: %d</li>", $groupsCount)
+                                . sprintf("<li><strong>user info</strong>: %s</li>", $addedUserInfo)
+                                . "</ul>";
                     
-                    $successMsg = "Added to database new user: <b> $username_enc </b>";
-                    $logAction .= "Successfully added new user [$username] on page: ";
+                    $logAction .= sprintf("Successfully inserted new %s [%s] on page: ", $what, $u);
                 }
             }
         
@@ -549,6 +552,8 @@
         close_form();
 
     }
+    
+    print_back_to_previous_page();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

@@ -89,11 +89,18 @@
                     $logDebugSQL .= "$sql;\n";
                     
                     if (!DB::isError($res)) {
-                        $successMsg = "Successfully inserted new huntgroup (<strong>$groupname_enc</strong>)";
-                        $logAction .= "Successfully inserted new huntgroup [$groupname] on page: ";
+                        // retrieve item id
+                        $sql = sprintf("SELECT CONCAT('huntgroup-', LAST_INSERT_ID()) FROM %s",
+                                       $configValues['CONFIG_DB_TBL_RADHG']);
+                        $item_id = $dbSocket->getOne($sql);
+                        
+                        $successMsg = sprintf("Successfully added a new huntgroup item (item id: %s)", $item_id)
+                                    . sprintf(' [<a href="mng-rad-hunt-edit.php?item=%s" title="Edit">Edit</a>]',
+                                              urlencode($item_id));
+                        $logAction .= "Successfully added a new huntgroup item (item id: $item_id) on page: ";
                     } else {
-                        $failureMsg = "Failed to inserted new huntgroup (<strong>$groupname_enc</strong>)";
-                        $logAction .= "Failed to inserted new huntgroup [$groupname_enc] on page: ";
+                        $failureMsg = "Failed adding a new huntgroup item (item id: $item_id)";
+                        $logAction .= "$failureMsg on page: ";
                     }
                 }
                 

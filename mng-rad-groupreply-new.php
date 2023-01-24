@@ -67,11 +67,18 @@
                     $count = handleAttributes($dbSocket, $groupname, $skipList, true, 'group');
 
                     if ($count > 0) {
-                        $successMsg = "Added new group reply mapping for <strong>$groupname_enc</strong>";
-                        $logAction .= "Successfully added a new group [$groupname] on page: ";
+                        // retrieve item id
+                        $sql = sprintf("SELECT CONCAT('groupreply-', LAST_INSERT_ID()) FROM %s",
+                                       $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
+                        $item_id = $dbSocket->getOne($sql);
+                        
+                        $successMsg = sprintf("Successfully added a new groupreply item (item id: %s)", $item_id)
+                                    . sprintf(' [<a href="mng-rad-groupreply-edit.php?item=%s" title="Edit">Edit</a>]',
+                                              urlencode($item_id));
+                        $logAction .= "Successfully added a new groupreply item (item id: $item_id) on page: ";
                     } else {
-                        $failureMsg = "Failed creating group [$groupname_enc], invalid or empty attributes list";
-                        $logAction .= "Failed creating group [$groupname], invalid or empty attributes list] on page: ";
+                        $failureMsg = "Failed adding a new groupreply item (item id: $item_id), invalid or empty attributes list";
+                        $logAction .= "Failed adding a new groupreply item (item id: $item_id) [invalid or empty attributes list] on page: ";
                     }
 
                 } // profile non-existent
@@ -156,6 +163,8 @@
         close_form();
         
     }
+    
+    print_back_to_previous_page();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

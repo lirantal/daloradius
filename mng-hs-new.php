@@ -20,18 +20,22 @@
  *
  *********************************************************************************************************
  */
-
-    include ("library/checklogin.php");
+ 
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include_once('library/config_read.php');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
@@ -104,14 +108,16 @@
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     
-                    if (DB::isError($res)) {
+                    if (!DB::isError($res)) {
+                        $successMsg = sprintf('Successfully added a new hotspot (<strong>%s</strong>) '
+                                            . '<a href="mng-hs-edit.php?name=%s" title="Edit">Edit</a>',
+                                              $name_enc, urlencode($name_enc));
+                        $logAction .= "Successfully added a new hotspot [$name] on page: ";
+                    } else {
                         // it seems that operator could not be added
-                        $f = "Failed to add this new hotspot [%s] to database";
+                        $f = "Failed to add a new hostspot [%s] to database";
                         $failureMsg = sprintf($f, $name_enc);
                         $logAction .= sprintf($f, $name);
-                    } else {
-                        $successMsg = sprintf("Added to database new hotspot: <strong>%s</strong>", $name_enc);
-                        $logAction .= sprintf("Successfully added new hotspot [%s] on page: ", $name);
                     }
                 }
                 
@@ -125,10 +131,7 @@
         }
     }
 
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
@@ -237,6 +240,8 @@
         close_form();
 
     }
+
+    print_back_to_previous_page();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
