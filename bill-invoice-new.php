@@ -113,8 +113,9 @@
                     $failureMsg = sprintf("The required field '%s' is empty or invalid", t('all','UserId'));
                     $logAction .= "$failureMsg on page: ";
                 } else {
-                    $sql = sprintf("INSERT INTO %s (id, user_id, date, status_id, type_id, notes, creationdate, creationby)
-                                            VALUES (0, %d, '%s', %d, %d, '%s', '%s', '%s')",
+                    $sql = sprintf("INSERT INTO %s (id, user_id, date, status_id, type_id, notes,
+                                                    creationdate, creationby, updatedate, updateby)
+                                            VALUES (0, %d, '%s', %d, %d, '%s', '%s', '%s', NULL, NULL)",
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id, $invoice_date,
                                    $invoice_status_id, $invoice_type_id, $dbSocket->escapeSimple($invoice_notes),
                                    $currDate, $currBy);
@@ -468,6 +469,8 @@ EOF;
         
         close_form();
     }
+    
+    print_back_to_previous_page();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

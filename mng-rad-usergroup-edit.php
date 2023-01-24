@@ -34,30 +34,27 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // declaring variables
-        $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
-                  ? trim(str_replace("%", "", $_POST['username'])) : "";
-        $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-        $groupname = (array_key_exists('group', $_POST) && isset($_POST['group']))
-                   ? trim(str_replace("%", "", $_POST['group'])) : "";
+        $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", "", trim($_POST['username']))))
+                  ? str_replace("%", "", trim($_POST['username'])) : "";
+        $groupname = (array_key_exists('group', $_POST) && !empty(str_replace("%", "", trim($_POST['group']))))
+                   ? str_replace("%", "", trim($_POST['group'])) : "";
         $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
 
-        $groupnameOld = (array_key_exists('groupOld', $_POST) && isset($_POST['groupOld']))
-                      ? trim(str_replace("%", "", $_POST['groupOld'])) : "";
-        $groupnameOld_enc = (!empty($groupnameOld)) ? htmlspecialchars($groupnameOld, ENT_QUOTES, 'UTF-8') : "";
+        $current_groupname = (array_key_exists('current_group', $_POST) && !empty(str_replace("%", "", trim($_POST['current_group']))))
+                      ? str_replace("%", "", trim($_POST['current_group'])) : "";
 
         $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']) &&
-                     intval(trim($_POST['priority'])) >= 0) ? intval(trim($_POST['priority'])) : 1;
+                     intval(trim($_POST['priority'])) >= 0) ? intval(trim($_POST['priority'])) : 0;
     } else {
         // declaring variables
-        $username = (array_key_exists('username', $_REQUEST) && isset($_REQUEST['username']))
-                  ? trim(str_replace("%", "", $_REQUEST['username'])) : "";
-        $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-        $groupnameOld = (array_key_exists('group', $_REQUEST) && isset($_REQUEST['group']))
-                      ? trim(str_replace("%", "", $_REQUEST['group'])) : "";
-        $groupnameOld_enc = (!empty($groupnameOld)) ? htmlspecialchars($groupnameOld, ENT_QUOTES, 'UTF-8') : "";
+        $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['username']))))
+                  ? str_replace("%", "", trim($_REQUEST['username'])) : "";
+        $current_groupname = (array_key_exists('current_group', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['current_group']))))
+                      ? str_replace("%", "", trim($_REQUEST['current_group'])) : "";
     }
+
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    $current_groupname_enc = (!empty($current_groupname)) ? htmlspecialchars($current_groupname, ENT_QUOTES, 'UTF-8') : "";
 
     // feed the sidebar
     $usernameList = $username_enc;
@@ -69,7 +66,7 @@
     // check if the old mapping is already in place
     $sql = sprintf($mapping_check_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
                                           $dbSocket->escapeSimple($username),
-                                          $dbSocket->escapeSimple($groupnameOld));
+                                          $dbSocket->escapeSimple($current_groupname));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     
@@ -78,14 +75,14 @@
     if (!$old_mapping_inplace) {
         // if the mapping is not in place we reset user and group
         $username = "";
-        $groupnameOld = "";
+        $current_groupname = "";
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
     
-            if (empty($username) || empty($groupname) || empty($groupnameOld)) {
+            if (empty($username) || empty($groupname) || empty($current_groupname)) {
                 // username and groupname are required
                 $failureMsg = "Username and groupname are required.";
                 $logAction .= "Failed updating user-group mapping (username and/or groupname missing or invalid): ";
@@ -107,16 +104,16 @@
                     $sql = sprintf("UPDATE %s SET groupname='%s', priority=%s WHERE username='%s' AND groupname='%s'",
                                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($groupname),
                                    $dbSocket->escapeSimple($priority), $dbSocket->escapeSimple($username),
-                                   $dbSocket->escapeSimple($groupnameOld));
+                                   $dbSocket->escapeSimple($current_groupname));
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     
                     if (!DB::isError($res)) {
-                        $successMsg = "Updated user-group mapping [$username_enc, from $groupnameOld_enc to $groupname_enc]";
-                        $logAction .= "Updated user-group mapping [$username, from $groupnameOld to $groupname]: ";
+                        $successMsg = "Updated user-group mapping [$username_enc, from $current_groupname_enc to $groupname_enc]";
+                        $logAction .= "Updated user-group mapping [$username, from $current_groupname to $groupname]: ";
                     } else {
-                        $failureMsg = "DB Error when updating the chosen user mapping ($username_enc, from $groupnameOld_enc to $groupname_enc)";
-                        $logAction .= "Failed updating user-group mapping [$username, from $groupnameOld to $groupname, db error]: ";
+                        $failureMsg = "DB Error when updating the chosen user mapping ($username_enc, from $current_groupname_enc to $groupname_enc)";
+                        $logAction .= "Failed updating user-group mapping [$username, from $current_groupname to $groupname, db error]: ";
                     }
                 }
             }
@@ -127,14 +124,14 @@
         }
     }
     
-    if (empty($username) || empty($groupnameOld)) {
+    if (empty($username) || empty($current_groupname)) {
         $failureMsg = "the user-group you have specified is empty or invalid";
         $logAction .= "Failed updating user-group [empty or invalid user-group] on page: ";
     } else {
         // retrieve mapping from database
         $sql = sprintf("SELECT username, groupname, priority FROM %s WHERE username='%s' AND groupname='%s'",
                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
-                       $dbSocket->escapeSimple($groupnameOld));
+                       $dbSocket->escapeSimple($current_groupname));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
         
@@ -173,9 +170,10 @@
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
+    
     include_once('include/management/actionMessages.php');
     
-    if (!empty($username) && !empty($groupnameOld)) {
+    if (!empty($username) && !empty($current_groupname)) {
         include_once('include/management/populate_selectbox.php');
 
         $input_descriptors0 = array();
@@ -204,7 +202,7 @@
                                      );
                                      
         $input_descriptors0[] = array(
-                                        "name" => "groupOld",
+                                        "name" => "current_group",
                                         "type" => "hidden",
                                         "value" => $this_groupname,
                                      );
@@ -225,7 +223,7 @@
                                         "name" => "priority",
                                         "caption" => t('all','Priority'),
                                         "type" => "number",
-                                        "min" => "1",
+                                        "min" => "0",
                                         "value" => $this_priority,
                                      );
 

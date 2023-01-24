@@ -27,88 +27,144 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false
     exit;
 }
 
+include('library/opendb.php');
+
+$vendors = array( "" );
+$sql = sprintf("SELECT DISTINCT(Vendor) AS Vendor
+                  FROM %s
+                 WHERE Vendor<>'' AND Vendor IS NOT NULL
+                 ORDER BY Vendor ASC",
+               $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+$res = $dbSocket->query($sql);
+while ($row = $res->fetchRow()) {
+    $vendors[] = $row[0];
+}
+
+$attributes = array();
+if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) && strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") {
+    $sql = sprintf("SELECT DISTINCT(attribute)
+                      FROM %s
+                     WHERE attribute<>'' AND attribute IS NOT NULL
+                     ORDER BY attribute ASC",
+                    $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+
+    $res = $dbSocket->query($sql);
+    while ($row = $res->fetchRow()) {
+        $attributes[] = $row[0];
+    }
+
+}
+
+include('library/closedb.php');
+
+$_fieldset0_descriptor = array(
+                                "title" => t('title','Attributes') . " (dictionary)",
+                             );
+
+//
+$_input_descriptors0 = array();
+$_input_descriptors0[] = array(
+                                "name" => "vendor_attribute_selection_type",
+                                "caption" => "Select attribute from vendor/attribute list",
+                                "type" => "radio",
+                                "onclick" => "toggleAttributeSelectbox()",
+                                "checked" => true
+                              );
+
+$_input_descriptors0[] = array(
+                                "name" => "dictVendors0",
+                                "caption" => "Vendor",
+                                "type" => "select",
+                                "onchange" => "getAttributesList(this,'dictAttributesDatabase')",
+                                "options" => $vendors,
+                              );
+
+$_input_descriptors0[] = array(
+                                "name" => "reloadAttributes",
+                                "value" => "Reload Vendors",
+                                "type" => "button",
+                                "onclick" => "getVendorsList('dictVendors0')",
+                              );
+
+$_input_descriptors0[] = array(
+                                "name" => "dictAttributesDatabase",
+                                "caption" => "Attribute",
+                                "type" => "select",
+                              );
+
+$_input_descriptors0[] = array(
+                                "name" => "addAttributesVendor",
+                                "value" => "Add Attribute",
+                                "type" => "button",
+                                "onclick" => "parseAttribute(1)",
+                              );
+
+$_fieldset1_descriptor = array(
+                                "title" => t('title','Attributes') . " (custom)",
+                             );
+
+$_input_descriptors1[] = array(
+                                "name" => "vendor_attribute_selection_type",
+                                "caption" => "Use autocomplete to select the attribute",
+                                "type" => "radio",
+                                "onclick" => "toggleAttributeCustom()"
+                              );
+
+$_input_descriptors1[] = array(
+                                "name" => "dictAttributesCustom",
+                                "caption" => "Custom Attribute",
+                                "type" => "text",
+                                "onclick" => "toggleAttributeCustom()",
+                                "datalist" => $attributes,
+                                "disabled" => true
+                              );
+
+$_input_descriptors1[] = array(
+                                "name" => "addAttributesCustom",
+                                "value" => "Add Attribute",
+                                "type" => "button",
+                                "onclick" => "parseAttribute(2)",
+                                "disabled" => true
+                              );
+
+$_input_descriptors2 = array();
+
+$_input_descriptors2[] = array(
+                                'type' => 'submit',
+                                'name' => 'submit',
+                                'value' => t('buttons','apply')
+                             );
+
+$_input_descriptors2[] = array(
+                                "name" => "divCounter",
+                                "value" => "0",
+                                "type" => "hidden",
+                              );
+
+open_form();
+    
+open_fieldset($_fieldset0_descriptor);
+
+foreach ($_input_descriptors0 as $input_descriptor) {
+    print_form_component($input_descriptor);
+}
+
+close_fieldset();
+
+open_fieldset($_fieldset1_descriptor);
+
+foreach ($_input_descriptors1 as $input_descriptor) {
+    print_form_component($input_descriptor);
+}
+
+close_fieldset();
+
+foreach ($_input_descriptors2 as $input_descriptor) {
+    print_form_component($input_descriptor);
+}
+
+close_form();
+
 ?>
 
-<fieldset>
-    <h302> <?= t('title','Attributes') ?> </h302>
-    
-    <br>
-
-    <input checked type="radio" name="vendor_attribute_selection_type" onclick="toggleAttributeSelectbox()">
-    <b> Locate Attribute via Vendor/Attribute </b>
-    
-    <br>
-
-    <ul>
-        <li class="fieldset">
-            <label for="dictVendors0" class="form">Vendor:</label>
-            <select id="dictVendors0" onchange="getAttributesList(this,'dictAttributesDatabase')" class="form">
-                <option value="">Select Vendor...</option>
-<?php
-            include('library/opendb.php');
-
-            $sql = sprintf("SELECT DISTINCT(Vendor) AS Vendor
-                              FROM %s
-                             WHERE Vendor <> '' AND Vendor IS NOT NULL
-                             ORDER BY Vendor ASC",
-                           $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-            $res = $dbSocket->query($sql);
-
-            while ($row = $res->fetchRow()) {
-                $vendor = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-                printf('<option value="%s">%s</option>', $vendor, $vendor);
-            }
-
-            include('library/closedb.php');
-?>
-            </select>
-            <input type="button" name="reloadAttributes" id="reloadAttributes" value="Reload Vendors"
-                onclick="getVendorsList('dictVendors0');" class="button">
-        </li>
-        
-        <li class="fieldset">
-            <label for="attribute" class="form">Attribute:</label>
-            <select id="dictAttributesDatabase" class="form"></select>
-            <input type="button" name="addAttributes" value="Add Attribute" id="addAttributesVendor"
-                onclick="javascript:parseAttribute(1);" class="button">
-        </li>
-    </ul>
-    
-    <br>
-    
-    <input type="radio" name="vendor_attribute_selection_type" onclick="toggleAttributeCustom()">
-    <b> Quickly Locate attribute with autocomplete input</b>
-    
-    <br>
-
-    <ul>
-        <li class="fieldset">
-            <label for="attribute" class="form">Custom Attribute:</label>
-            <input disabled type="text" id="dictAttributesCustom" autocomplete="off">
-        
-<?php
-
-            include_once('library/config_read.php');
-
-            if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
-                strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") {
-
-                include_once("include/management/autocomplete.php");
-
-                echo "
-<script>
-autoComEdit.add('dictAttributesCustom','include/management/dynamicAutocomplete.php','_large','getAjaxAutocompleteAttributes');
-</script>
-";
-            }
-
-?>
-            <input disabled type="button" name="addAttributes" value="Add Attribute" id="addAttributesCustom"
-                onclick="parseAttribute(2);" class="button">
-        </li>
-    </ul>
-
-</fieldset>
-
-<input type="hidden" value="0" id="divCounter">
 <div id="divContainer"></div>

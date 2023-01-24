@@ -538,6 +538,8 @@
 
     }
     
+    print_back_to_previous_page();
+    
     include('include/config/logging.php');
     
     $inline_extra_js = '

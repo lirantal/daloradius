@@ -39,11 +39,11 @@
     
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $planName = (array_key_exists('planName', $_POST) && !empty(trim($_POST['planName'])))
-                  ? trim($_POST['planName']) : "";
+        $planName = (array_key_exists('planName', $_POST) && !empty(str_replace("%", "", trim($_POST['planName']))))
+                  ? str_replace("%", "", trim($_POST['planName'])) : "";
     } else {
-        $planName = (array_key_exists('planName', $_REQUEST) && !empty(trim($_REQUEST['planName'])))
-                  ? trim($_REQUEST['planName']) : "";
+        $planName = (array_key_exists('planName', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['planName']))))
+                  ? str_replace("%", "", trim($_REQUEST['planName'])) : "";
     }
     
     

@@ -82,11 +82,18 @@
                     $logDebugSQL .= "$sql;\n";
                     
                     if (!DB::isError($res)) {
-                        $successMsg = "Successfully inserted new ippool item";
-                        $logAction .= "Successfully inserted new ippool item [pool name: $pool_name, item: $framedipaddress] on page: ";
+                        // retrieve item id
+                        $sql = sprintf("SELECT CONCAT('ippool-', LAST_INSERT_ID()) FROM %s",
+                                       $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+                        $item_id = $dbSocket->getOne($sql);
+                        
+                        $successMsg = sprintf("Successfully added a new ippool item (item id: %s)", $item_id)
+                                    . sprintf(' [<a href="mng-rad-ippool-edit.php?item=%s" title="Edit">Edit</a>]',
+                                              urlencode($item_id));
+                        $logAction .= "Successfully added a new ippool item (item id: $item_id) on page: ";
                     } else {
-                        $failureMsg = "Failed to insert new ippool item";
-                        $logAction .= "Failed to insert new ippool item [pool name: $pool_name, item: $framedipaddress] on page: ";
+                        $failureMsg = "Failed adding a new ippool item (item id: $item_id)";
+                        $logAction .= "$failureMsg on page: ";
                     }
                 }
                 

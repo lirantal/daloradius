@@ -26,32 +26,17 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
-    // init loggin variables
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-
-    // print HTML prologue
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js"
-    );
-    
-    $title = t('Intro','billplanslist.php');
-    $help = t('helpPage','billplanslist');
-    
-    print_html_prologue($title, $langCode, array(), $extra_js);
-
-    include("menu-bill-plans.php");
-
     $cols = array(
                     "planName" => t('all','PlanName'),
                     "planType" => t('all','PlanType'),
@@ -71,6 +56,20 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
+
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/ajaxGeneric.js"
+    );
+    
+    $title = t('Intro','billplanslist.php');
+    $help = t('helpPage','billplanslist');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
+
+    include("menu-bill-plans.php");
 
 
     // start printing content

@@ -38,12 +38,10 @@
 
     // process the profile name here for presentation purpose
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $profile_name = (array_key_exists('profile_name', $_POST) && !empty($_POST['profile_name']) &&
-                         str_replace("%", "", trim($_POST['profile_name'])))
+        $profile_name = (array_key_exists('profile_name', $_POST) && !empty(str_replace("%", "", trim($_POST['profile_name']))))
                       ? str_replace("%", "", trim($_POST['profile_name'])) : "";
     } else {
-        $profile_name = (array_key_exists('profile_name', $_REQUEST) && isset($_REQUEST['profile_name']) &&
-                         str_replace("%", "", trim($_REQUEST['profile_name'])))
+        $profile_name = (array_key_exists('profile_name', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['profile_name']))))
                       ? str_replace("%", "", trim($_REQUEST['profile_name'])) : "";
     }
     

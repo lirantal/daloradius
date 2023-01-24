@@ -31,11 +31,35 @@ include_once("lang/main.php");
 
 $m_active = "Management";
 
-?>
+include_once ("include/menu/menu-items.php");
+include_once ("include/menu/management-subnav.php");
 
-<?php
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/management-subnav.php");
+include_once("include/management/populate_selectbox.php");
+$menu_valid_proxies = get_proxies();
+
+$options = $menu_valid_proxies;
+array_unshift($options , '');
+$proxies_select = array(
+                                "name" => "proxyname",
+                                "caption" => t('all','Proxy'),
+                                "type" => "select",
+                                "options" => $options,
+                                "selected_value" => (isset($selected_proxy) ? $selected_proxy : ""),
+                             );
+
+$menu_valid_realmnames = get_realms();
+$options = $menu_valid_realmnames;
+array_unshift($options , '');
+
+$realmnames_select = array(
+                                "name" => "realmname",
+                                "caption" => t('all','Realm'),
+                                "type" => "select",
+                                "options" => $options,
+                                "selected_value" => (isset($selected_realmname) ? $selected_realmname : ""),
+                             );
+
+unset($options);
 ?>
 
             <div id="sidebar">
@@ -59,8 +83,7 @@ $m_active = "Management";
                         </a>
                         <form name="mngradrealmedit" action="mng-rad-realms-edit.php" method="GET" class="sidebar">
 <?php
-                        include_once('include/management/populate_selectbox.php');
-                        populate_realms("Select Realm","realmname","generic");
+                        print_form_component($realmnames_select);
 ?>
                         </form>
                     </li>
@@ -91,7 +114,7 @@ $m_active = "Management";
                         </a>
                         <form name="mngradproxyedit" action="mng-rad-proxys-edit.php" method="GET" class="sidebar">
 <?php
-                        populate_proxys("Select Proxy","proxyname","generic");
+                        print_form_component($proxies_select);
 ?>
                         </form>
                     </li>

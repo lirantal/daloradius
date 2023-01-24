@@ -26,6 +26,8 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";
@@ -34,24 +36,7 @@
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
-    // print HTML prologue
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js"
-    );
-    
-    $title = t('Intro','mngbatchlist.php');
-    $help = t('helpPage','mngbatchlist');
-    
-    print_html_prologue($title, $langCode, array(), $extra_js);
-
-    include("menu-mng-batch.php");
-    
     $cols = array(
                     "bid" => t('all','BatchName'),
                     t('all','HotSpot'),
@@ -78,6 +63,20 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
 
+
+    // print HTML prologue
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js"
+    );
+    
+    $title = t('Intro','mngbatchlist.php');
+    $help = t('helpPage','mngbatchlist');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
+
+    include("menu-mng-batch.php");
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
@@ -240,6 +239,7 @@
 ?>
         
     </table>
+</form>
 
 <?php
     } else {

@@ -120,7 +120,7 @@
                             $logAction .= "Successfully updated huntgroup item [$nasipaddress/$nasportid $groupname] on page: ";
                         } else {
                             $failureMsg = "Failed to update huntgroup item";
-                            $logAction .= "Failed to inserted new huntgroup [$nasipaddress/$nasportid $groupname] on page: ";
+                            $logAction .= "Failed to update huntgroup item [$nasipaddress/$nasportid $groupname] on page: ";
                         }
                     }
                 }
@@ -134,8 +134,8 @@
     }
 
     if (empty($internal_id)) {
-        $failureMsg = sprintf("Selected an empty/invalid huntgroup element");
-        $logAction .= "Failed updating (possible empty or invalid HS name) HS on page: ";
+        $failureMsg = sprintf("Selected an empty/invalid huntgroup item");
+        $logAction .= "Failed updating this huntgroup (possible empty/invalid huntgroup item) on page: ";
     } else {
         $sql = sprintf("SELECT groupname, nasipaddress, nasportid FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_RADHG']);
         $prep = $dbSocket->prepare($sql);

@@ -26,26 +26,16 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
 
-    // init loggin variables
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $title = t('Intro','mngradgroupchecklist.php');
-    $help = t('helpPage','mngradgroupchecklist');
-    
-    print_html_prologue($title, $langCode);
-
-    include("menu-mng-rad-groups.php");
 
     $cols = array(
                     "groupname" => t('all','Groupname'),
@@ -68,6 +58,13 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
+    // print HTML prologue
+    $title = t('Intro','mngradgroupchecklist.php');
+    $help = t('helpPage','mngradgroupchecklist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-mng-rad-groups.php");
 
     // start printing content
     echo '<div id="contentnorightbar">';
@@ -151,8 +148,8 @@
             
             $checkbox_value = "record-" . $id;
             
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupcheck-edit.php?groupname=%s&value=%s&attribute=%s">%s</a>',
-                                   urlencode($groupname), urlencode($value), urlencode($attribute), t('button','EditGroupCheck'));
+            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupcheck-edit.php?item=groupcheck-%d">%s</a>',
+                                   $id, t('button','EditGroupCheck'));
             $onclick = 'javascript:return false;';
 ?>
             <tr>

@@ -108,7 +108,9 @@
                     
                     if (!DB::isError($res)) {
                         $format = "The new attribute has been inserted in the dictionary (attribute: %s, vendor: %s)";
-                        $successMsg = sprintf($format, $attribute_enc, $vendor_enc);
+                        $successMsg = sprintf($format, $attribute_enc, $vendor_enc)
+                                    . sprintf(' [<a href="mng-rad-attributes-edit.php?vendor=%s&attribute=%s" title="Edit">%s</a>]',
+                                              urlencode($vendor_enc), urlencode($attribute_enc));
                         $logAction .= sprintf("$format on page: ", $attribute, $vendor);
                     } else {
                         $format = "An error occurred when adding the new attribute to a dictionary (attribute: %s, vendor: %s)";
@@ -234,6 +236,8 @@
         
         close_form();
     }
+    
+    print_back_to_previous_page();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

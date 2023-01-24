@@ -176,13 +176,18 @@ function print_input_field($input_descriptor) {
         printf('<label for="%s" class="form">%s</label>', $input_descriptor['id'], $input_descriptor['caption']);
     }
     
-    $value = (array_key_exists('value', $input_descriptor) && !empty($input_descriptor['value']))
-           ? htmlspecialchars($input_descriptor['value'], ENT_QUOTES, 'UTF-8') : "";
-    
     printf('<input type="%s" name="%s" id="%s"', $input_descriptor['type'],
                                                  $input_descriptor['name'],
                                                  $input_descriptor['id']);
-    if (!empty($value)) {
+    
+    
+    if (array_key_exists('value', $input_descriptor) &&
+        (!empty(trim($input_descriptor['value'])) || trim($input_descriptor['value']) == "0")
+       ) {
+        $value = htmlspecialchars(trim($input_descriptor['value']), ENT_QUOTES, 'UTF-8');
+    }
+    
+    if (isset($value)) {
         printf(' value="%s"', $value);
     }
     
@@ -192,17 +197,23 @@ function print_input_field($input_descriptor) {
     }
     
     if (in_array($input_descriptor['type'], array("number", "date"))) {
-        if (array_key_exists('min', $input_descriptor)) {
-            printf(' min="%s"', $input_descriptor['min']);
+        if (array_key_exists('min', $input_descriptor) &&
+            (!empty(trim($input_descriptor['min'])) || trim($input_descriptor['min']) == "0")
+           ) {
+            printf(' min="%s"', trim($input_descriptor['min']));
         }
         
-        if (array_key_exists('max', $input_descriptor)) {
-            printf(' max="%s"', $input_descriptor['max']);
+        if (array_key_exists('max', $input_descriptor) &&
+            (!empty(trim($input_descriptor['max'])) || trim($input_descriptor['max']) == "0")
+           ) {
+            printf(' max="%s"', trim($input_descriptor['max']));
         }
         
         if ($input_descriptor['type'] == "number") {
-            if (array_key_exists('step', $input_descriptor)) {
-                printf(' step="%s"', $input_descriptor['step']);
+            if (array_key_exists('step', $input_descriptor) &&
+                (!empty(trim($input_descriptor['step'])) || trim($input_descriptor['step']) == "0")
+           ) {
+                printf(' step="%s"', trim($input_descriptor['step']));
             }
         }
     }

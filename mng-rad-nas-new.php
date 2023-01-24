@@ -90,13 +90,15 @@
                     $logDebugSQL .= "$sql;\n";
                     
                     if (!DB::isError($res)) {
-                        // it seems that operator could not be added
-                        $f = "Failed to add this new NAS [%s] to database";
-                        $failureMsg = sprintf($f, $nasname_enc);
-                        $logAction .= sprintf($f, $nasname_enc);
+                        $successMsg = sprintf('Successfully added a new NAS (<strong>%s</strong>) '
+                                            . '<a href="mng-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
+                                              $nasname_enc, urlencode($nasname_enc));
+                        $logAction .= "Successfully added a new NAS [$nasname] on page: ";
                     } else {
-                        $successMsg = sprintf("Added to database new NAS: <strong>%s</strong>", $nasname_enc);
-                        $logAction .= sprintf("Successfully added new NAS [%s] on page: ", $nasname);
+                        // it seems that operator could not be added
+                        $f = "Failed to add a new NAS [%s] to database";
+                        $failureMsg = sprintf($f, $nasname_enc);
+                        $logAction .= sprintf($f, $nasname);
                     }
                 }
                 
@@ -136,12 +138,6 @@
 
         // set form component descriptors
         $input_descriptors0 = array();
-        
-        $input_descriptors0[] = array(
-                                        "name" => "csrf_token",
-                                        "type" => "hidden",
-                                        "value" => dalo_csrf_token(),
-                                     );
         
         $input_descriptors0[] = array(
                                         "name" => "nasname",
@@ -205,11 +201,18 @@
                                         "content" => ((isset($nasdescription)) ? $nasdescription : "")
                                      );
 
-        $submit_descriptor = array(
+        $input_descriptors2 = array();
+        $input_descriptors2[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+
+        $input_descriptors2[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
-                                  );
+                                     );
 
         // fieldset
         $fieldset0_descriptor = array(
@@ -257,11 +260,15 @@
         
         close_tab($navkeys, 1);
         
-        print_form_component($submit_descriptor);
+        foreach ($input_descriptors2 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
         close_form();
 
     }
+
+    print_back_to_previous_page();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

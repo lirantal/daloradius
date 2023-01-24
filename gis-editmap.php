@@ -57,7 +57,7 @@
                                 array_key_exists('hotspotgeo', $_POST) &&
                                 !empty(trim($_POST['hotspotgeo'])) &&
                                 preg_match('/^\d+(\.\d+)?,\d+(\.\d+)?$/', trim($_POST['hotspotgeo'])) !== false
-                                ) ? trim($_POST['hotspotgeo']) : "";
+                           ) ? trim($_POST['hotspotgeo']) : "";
             
             if (empty($hotspot_name) || empty($hotspot_mac) || empty($hotspot_geo)) {
                 $failureMsg = "Invalid input";

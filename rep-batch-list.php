@@ -25,21 +25,18 @@
     $operator = $_SESSION['operator_user'];
 
     //~ include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
-    
     include_once("lang/main.php");
-    
     include("library/layout.php");
 
-    // print HTML prologue   
-    $title = t('Intro','repbatchlist.php');
-    $help = t('helpPage','repbatchlist');
-    
-    print_html_prologue($title, $langCode);
-    
-    include("menu-reports-batch.php");
-    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
     $cols = array(
                     'id' => t('all','BatchName'),
                     t('all','HotSpot'),
@@ -70,6 +67,14 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
+    // print HTML prologue   
+    $title = t('Intro','repbatchlist.php');
+    $help = t('helpPage','repbatchlist');
+    
+    print_html_prologue($title, $langCode);
+    
+    include("menu-reports-batch.php");
                
     // start printing content
     echo '<div id="contentnorightbar">';
@@ -210,29 +215,15 @@
     }
     
     include('library/closedb.php');
-?>
-
-</div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
 
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    $inline_extra_js = "
+var tooltipObj = new DHTMLgoodies_formTooltip();
+tooltipObj.setTooltipPosition('right');
+tooltipObj.setPageBgColor('#EEEEEE');
+tooltipObj.setTooltipCornerSize(15);
+tooltipObj.initFormFieldTooltip();";
+    
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

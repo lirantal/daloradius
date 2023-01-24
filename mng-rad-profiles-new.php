@@ -65,11 +65,13 @@
                     $count = handleAttributes($dbSocket, $profile, $skipList, true, 'group');
 
                     if ($count > 0) {
-                        $successMsg = "Added new profile: <b> $profile_enc </b>";
-                        $logAction .= "Successfully added a new profile [$profile] on page: ";
+                        $successMsg = sprintf("Successfully added a new profile (<strong>%s</strong>)", $profile_enc)
+                                    . sprintf(' [<a href="mng-rad-profiles-edit.php?profile_name=%s" title="Edit">Edit</a>]',
+                                              urlencode($profile_enc));
+                        $logAction .= "Successfully added a new profile ($profile) on page: ";
                     } else {
-                        $failureMsg = "Failed creating profile [$profile_enc], invalid or empty attributes list";
-                        $logAction .= "Failed creating profile [$profile], invalid or empty attributes list] on page: ";
+                        $failureMsg = "Failed adding a new profile (<strong>$profile_enc</strong>), invalid or empty attributes list";
+                        $logAction .= "Failed adding a new profile ($profile) [invalid or empty attributes list] on page: ";
                     }
 
                 } // profile non-existent
@@ -161,6 +163,8 @@
         close_form();
 
     }
+    
+    print_back_to_previous_page();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

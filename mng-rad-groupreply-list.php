@@ -26,23 +26,16 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-
-    // init loggin variables
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-    $logDebugSQL = "";
-
     include_once("lang/main.php");
-    
     include("library/layout.php");
 
-    // print HTML prologue
-    $title = t('Intro','mngradgroupreplylist.php');
-    $help = t('helpPage','mngradgroupreplylist');
-    
-    print_html_prologue($title, $langCode);
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
 
-    include("menu-mng-rad-groups.php");
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
                     "groupname" => t('all','Groupname'),
@@ -64,6 +57,14 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
+    // print HTML prologue
+    $title = t('Intro','mngradgroupreplylist.php');
+    $help = t('helpPage','mngradgroupreplylist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-mng-rad-groups.php");
 
 
     // start printing content
@@ -149,8 +150,8 @@
             
             $checkbox_value = "record-" . $id;
             
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupreply-edit.php?groupname=%s&value=%s&attribute=%s">%s</a>',
-                                   urlencode($groupname), urlencode($value), urlencode($attribute), t('button','EditGroupReply'));
+            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupreply-edit.php?item=groupreply-%d">%s</a>',
+                                   $id, t('button','EditGroupReply'));
             $onclick = 'javascript:return false;';
 ?>
             <tr>

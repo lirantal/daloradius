@@ -20,147 +20,155 @@
  *
  *********************************************************************************************************
  */
-
+ 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    $operator_id = $_SESSION['operator_id'];
 
     include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
+    
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include_once('library/config_read.php');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $operator_username = (array_key_exists('operator_username', $_POST) && isset($_POST['operator_username']))
-                           ? trim(str_replace("%", "", $_POST['operator_username'])) : "";
-        $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";
-        $operator_password = (array_key_exists('operator_password', $_POST) && isset($_POST['operator_password'])) ? trim($_POST['operator_password']) : "";
+        
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        
+            $operator_username = (array_key_exists('operator_username', $_POST) && isset($_POST['operator_username']))
+                               ? trim(str_replace("%", "", $_POST['operator_username'])) : "";
+            $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";
+            $operator_password = (array_key_exists('operator_password', $_POST) && isset($_POST['operator_password'])) ? trim($_POST['operator_password']) : "";
 
-        $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? trim($_POST['firstname']) : "";
-        $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? trim($_POST['lastname']) : "";
-        $title = (array_key_exists('title', $_POST) && isset($_POST['title'])) ? trim($_POST['title']) : "";
-        $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? trim($_POST['department']) : "";
-        $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? trim($_POST['company']) : "";
-        $phone1 = (array_key_exists('phone1', $_POST) && isset($_POST['phone1'])) ? trim($_POST['phone1']) : "";
-        $phone2 = (array_key_exists('phone2', $_POST) && isset($_POST['phone2'])) ? trim($_POST['phone2']) : "";
-        $email1 = (array_key_exists('email1', $_POST) && isset($_POST['email1'])) ? trim($_POST['email1']) : "";
-        $email2 = (array_key_exists('email2', $_POST) && isset($_POST['email2'])) ? trim($_POST['email2']) : "";
-        $messenger1 = (array_key_exists('messenger1', $_POST) && isset($_POST['messenger1'])) ? trim($_POST['messenger1']) : "";
-        $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
-        $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
+            $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? trim($_POST['firstname']) : "";
+            $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? trim($_POST['lastname']) : "";
+            $title = (array_key_exists('title', $_POST) && isset($_POST['title'])) ? trim($_POST['title']) : "";
+            $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? trim($_POST['department']) : "";
+            $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? trim($_POST['company']) : "";
+            $phone1 = (array_key_exists('phone1', $_POST) && isset($_POST['phone1'])) ? trim($_POST['phone1']) : "";
+            $phone2 = (array_key_exists('phone2', $_POST) && isset($_POST['phone2'])) ? trim($_POST['phone2']) : "";
+            $email1 = (array_key_exists('email1', $_POST) && isset($_POST['email1'])) ? trim($_POST['email1']) : "";
+            $email2 = (array_key_exists('email2', $_POST) && isset($_POST['email2'])) ? trim($_POST['email2']) : "";
+            $messenger1 = (array_key_exists('messenger1', $_POST) && isset($_POST['messenger1'])) ? trim($_POST['messenger1']) : "";
+            $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
+            $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
 
-        include('library/opendb.php');
+            include('library/opendb.php');
 
-        if (empty($operator_username) || empty($operator_password)) {
-            // if statement returns false which means that the user has left an empty field for
-            // either the username or password, or both
+            if (empty($operator_username) || empty($operator_password)) {
+                // if statement returns false which means that the user has left an empty field for
+                // either the username or password, or both
 
-            $failureMsg = "username or password are empty";
-            $logAction .= "Failed adding (possible empty user/pass) new operator on page: ";
-        } else {
-            $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
-                           $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_username));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-            
-            $exists = ($res->fetchrow()[0] == 1);
-            
-            if ($exists) {
-                // if statement returns false which means there is at least one operator
-                // in the database with the same username
-
-                $failureMsg = sprintf("operator already exists in database: <b>%s</b>", $operator_username_enc);
-                $logAction .= "Failed adding new operator user already existing in database [$operator_username] on page: ";
+                $failureMsg = "username or password are empty";
+                $logAction .= "Failed adding (possible empty user/pass) new operator on page: ";
             } else {
-                $currDate = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
-
-                // insert username and password of operator into the database
-                $sql = sprintf("INSERT INTO %s (id, username, password, firstname, lastname, title, department, company,
-                                                phone1, phone2, email1, email2, messenger1, messenger2, notes, creationdate,
-                                                creationby, updatedate, updateby)
-                                        VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-                                                '%s', '%s', '%s', '%s', '%s', '%s')", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
-                               $operator_username, $operator_password, $firstname, $lastname, $title, $department, $company,
-                               $phone1, $phone2, $email1, $email2, $messenger1, $messenger2, $notes,
-                               $currDate, $currBy, $currDate, $currBy);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                // lets make sure we've inserted the new operator successfully and grab his operator_id
-                $sql = sprintf("SELECT id FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
-                                                                        $dbSocket->escapeSimple($operator_username));
+                $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_username));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
                 
-                $numrows = $res->numRows();
+                $exists = ($res->fetchrow()[0] == 1);
                 
-                if ($numrows == 1) {
+                if ($exists) {
+                    // if statement returns false which means there is at least one operator
+                    // in the database with the same username
+
+                    $failureMsg = sprintf("operator already exists in database: <b>%s</b>", $operator_username_enc);
+                    $logAction .= "Failed adding new operator user already existing in database [$operator_username] on page: ";
+                } else {
+                    $currDate = date('Y-m-d H:i:s');
+                    $currBy = $_SESSION['operator_user'];
+
+                    // insert username and password of operator into the database
+                    $sql = sprintf("INSERT INTO %s (id, username, password, firstname, lastname, title, department, company,
+                                                    phone1, phone2, email1, email2, messenger1, messenger2, notes, creationdate,
+                                                    creationby, updatedate, updateby)
+                                            VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+                                                    '%s', '%s', '%s', '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
+                                   $operator_username, $operator_password, $firstname, $lastname, $title, $department, $company,
+                                   $phone1, $phone2, $email1, $email2, $messenger1, $messenger2, $notes, $currDate, $currBy);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+
+                    // lets make sure we've inserted the new operator successfully and grab his operator_id
+                    $sql = sprintf("SELECT id FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
+                                                                            $dbSocket->escapeSimple($operator_username));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
                     
-                    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-                    $new_operator_id = intval($row['id']);
-
-                    // left piece of the query which is the same for all common values to insert
-                    $sql0 = sprintf("INSERT INTO %s (operator_id, file, access) VALUES ",
-                                    $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL']);
-
-                    $sql_piece_format = sprintf("(%s", $new_operator_id) . ", '%s', '%s')";
-                    $sql_pieces = array();
-
-                    // insert operators acl for this operator
-                    foreach ($_POST as $field => $access) {
-                        
-                        if (preg_match('/^ACL_/', $field) === false) {
-                            continue;
-                        }
-                        
-                        $file = substr($field, 4);
-                        $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($file),
-                                                                   $dbSocket->escapeSimple($access));
-                    } // foreach
+                    $numrows = $res->numRows();
                     
-                    if (count($sql_pieces) > 0) {
-                        $sql = $sql0 . implode(", ", $sql_pieces);
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
+                    if ($numrows == 1) {
                         
-                        if (DB::isError($res)) {
-                            // it seems that operator could not be added
-                            $f = "Failed to add this new operator [%s] to database";
-                            $failureMsg = sprintf($f, $operator_username_enc);
-                            $logAction .= sprintf($f, $operator_username);
-                        } else {
-                            $successMsg = sprintf("Added to database new operator user: <strong>%s</strong>",
-                                                  $operator_username_enc);
-                            $logAction .= sprintf("Successfully added new operator user [%s] on page: ",
-                                                  $operator_username);
+                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        $new_operator_id = intval($row['id']);
+
+                        // left piece of the query which is the same for all common values to insert
+                        $sql0 = sprintf("INSERT INTO %s (operator_id, file, access) VALUES ",
+                                        $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL']);
+
+                        $sql_piece_format = sprintf("(%s", $new_operator_id) . ", '%s', '%s')";
+                        $sql_pieces = array();
+
+                        // insert operators acl for this operator
+                        foreach ($_POST as $field => $access) {
+                            
+                            if (preg_match('/^ACL_/', $field) === false) {
+                                continue;
+                            }
+                            
+                            $file = substr($field, 4);
+                            $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($file),
+                                                                       $dbSocket->escapeSimple($access));
+                        } // foreach
+                        
+                        if (count($sql_pieces) > 0) {
+                            $sql = $sql0 . implode(", ", $sql_pieces);
+                            $res = $dbSocket->query($sql);
+                            $logDebugSQL .= "$sql;\n";
+                            
+                            if (!DB::isError($res)) {
+                                $successMsg = sprintf('Successfully added new operator (<strong>%s</strong>) '
+                                                    . '<a href="config-operators-edit.php?operator_username=%s" title="Edit">%s</a>',
+                                                      $operator_username_enc, $operator_username_enc, urlencode($operator_username_enc));
+                                $logAction .= "Successfully added new operator [$operator_username] on page: ";
+                            } else {
+                                // it seems that operator could not be added
+                                $f = "Failed to add this new operator [%s] to database";
+                                $failureMsg = sprintf($f, $operator_username_enc);
+                                $logAction .= sprintf($f, $operator_username);
+                            }
+
                         }
+                    
+                    } else { //if numrows()
+                        // it seems that operator could not be added
+                        $f = "Failed to add this new operator [%s] to database";
+                        $failureMsg = sprintf($f, $operator_username_enc);
+                        $logAction .= sprintf($f, $operator_username);
                     }
-                
-                } else { //if numrows()
-                    // it seems that operator could not be added
-                    $f = "Failed to add this new operator [%s] to database";
-                    $failureMsg = sprintf($f, $operator_username_enc);
-                    $logAction .= sprintf($f, $operator_username);
                 }
+                
             }
             
+            include('library/closedb.php');
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
         }
-        
-        include('library/closedb.php');
-
     } // if form was submitted
     
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
     
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(
@@ -188,9 +196,9 @@
     if (!isset($successMsg)) {
     
         // set form component descriptors
-        $input_descriptors = array();
+        $input_descriptors0 = array();
         
-        $input_descriptors[] = array(
+        $input_descriptors0[] = array(
                                         "id" => "operator_username",
                                         "name" => "operator_username",
                                         "caption" => t('all','Username'),
@@ -199,7 +207,7 @@
                                         "random" => true
                                      );
                                     
-        $input_descriptors[] = array(
+        $input_descriptors0[] = array(
                                         "id" => "operator_password",
                                         "name" => "operator_password",
                                         "caption" => t('all','Password'),
@@ -208,68 +216,68 @@
                                         "random" => true
                                      );
         
-        $submit_descriptor = array(
+        // set navbar stuff
+        $navkeys = array( 'OperatorInfo', 'ContactInfo', 'ACLSettings', );
+
+        // print navbar controls
+        print_tab_header($navkeys);
+        
+        open_form();
+    
+        // tab 0
+        open_tab($navkeys, 0, true);
+    
+        $fieldset0_descriptor = array(
+                                        "title" => t('title','PlanInfo')
+                                     );
+
+        open_fieldset($fieldset0_descriptor);
+
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_fieldset();
+
+        close_tab($navkeys, 0);
+
+        // tab 1
+        open_tab($navkeys, 1);
+
+        include_once('include/management/operatorinfo.php');
+
+        close_tab($navkeys, 1);
+
+        // tab 2
+        open_tab($navkeys, 2);
+
+        include_once('include/management/operator_acls.php');
+        drawOperatorACLs();
+
+        close_tab($navkeys, 2);
+
+        $input_descriptors1 = array();
+
+        $input_descriptors1[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        
+        $input_descriptors1[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
-                                  );
-                                  
-        // draw navbar
-        $navbuttons = array(
-                              'OperatorInfo-tab' => 'Operator Info',
-                              'ContactInfo-tab' => 'Contact Info',
-                              'ACLSettings-tab' => 'ACL Settings'
-                           );
+                                      );
 
-        print_tab_navbuttons($navbuttons);
-    
-?>
-
-<form name="newoperator" method="POST">
-    <div id="OperatorInfo-tab" class="tabcontent" style="display: block">
-        <fieldset>
-            <h302>Account Settings</h302>
-            
-            <ul style="margin: 30px auto">
-
-<?php
-                foreach ($input_descriptors as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-
-            </ul>
-        </fieldset>
+        foreach ($input_descriptors1 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
         
-<?php
-        print_form_component($submit_descriptor);
-?>
-        
-    </div>
-
-    <div id="ContactInfo-tab" class="tabcontent">
-<?php
-        include_once('include/management/operatorinfo.php');
-?>
-     </div>
-     
-     <div id="ACLSettings-tab" class="tabcontent">
-        <fieldset>
-<?php
-            include_once('include/management/operator_acls.php');
-            drawOperatorACLs();
-?>
-        </fieldset>
-
-<?php
-        print_form_component($submit_descriptor);
-?>
-
-    </div>
-</form>
-
-<?php
+        close_form();
     }
+
+    print_back_to_previous_page();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

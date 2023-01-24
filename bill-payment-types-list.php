@@ -25,28 +25,17 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
-    
-    // init loggin variables
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $title = t('Intro','paymenttypeslist.php');
-    $help = t('helpPage','paymenttypeslist');
-    
-    print_html_prologue($title, $langCode);
-
-    include("menu-bill-payments.php");
 
     $cols = array(
                     "id" => t('all','ID'),
@@ -68,6 +57,14 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
+    // print HTML prologue
+    $title = t('Intro','paymenttypeslist.php');
+    $help = t('helpPage','paymenttypeslist');
+    
+    print_html_prologue($title, $langCode);
+
+    include("menu-bill-payments.php");
 
 
     // start printing content

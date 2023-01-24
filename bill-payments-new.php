@@ -97,8 +97,9 @@
                 $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
                 $logAction .= "$failureMsg on page: ";
             } else {
-                $sql = sprintf("INSERT INTO %s (id, invoice_id, amount, date, type_id, notes, creationdate, creationby)
-                                        VALUES (0, %d, %s, '%s', %d, '%s', '%s', '%s')",
+                $sql = sprintf("INSERT INTO %s (id, invoice_id, amount, date, type_id, notes,
+                                                creationdate, creationby, updatedate, updateby)
+                                        VALUES (0, %d, %s, '%s', %d, '%s', '%s', '%s', NULL, NULL)",
                                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $payment_invoice_id, $payment_amount,
                                $payment_date, $payment_type_id, $dbSocket->escapeSimple($payment_notes), $currDate, $currBy);
                                
@@ -107,7 +108,7 @@
                 
                 if (!DB::isError($res)) {
                     $successMsg = sprintf("Inserted new payment for invoice: #<strong>%d</strong><br>", $payment_invoice_id)
-                                . sprintf('<a href="bill-invoice-edit.php?invoice_id=%d">edit invoice #%d</a>',
+                                . sprintf('<a href="bill-invoice-edit.php?invoice_id=%d" title="Edit">edit invoice #%d</a>',
                                           $payment_invoice_id, $payment_invoice_id);
                     $logAction .= "Successfully inserted new payment for invoice [#$payment_invoice_id] on page: ";
                 } else {

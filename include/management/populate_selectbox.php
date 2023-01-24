@@ -268,6 +268,26 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
 }
 
 
+function get_realms() {
+    global $configValues;
+
+    include('library/opendb.php');
+    
+    $sql = sprintf("SELECT realmname FROM %s ORDER BY realmname ASC", $configValues['CONFIG_DB_TBL_DALOREALMS']);
+    $res = $dbSocket->query($sql);
+    
+    $result = array();
+
+    while ($row = $res->fetchrow()) {
+        $result[] = $row[0];
+    }
+    
+    include('library/closedb.php');
+    
+    return $result;
+}
+
+
 function get_proxies() {
      global $configValues;
 
