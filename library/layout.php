@@ -369,30 +369,36 @@ function print_select($select_descriptor) {
         printf(' size="%s"', $select_descriptor['size']);
     }
     
+    if (!array_key_exists('options', $select_descriptor) || !is_array($select_descriptor['options'])) {
+        echo ' disabled';
+    }
+    
     echo '>';
     
-    foreach ($select_descriptor['options'] as $key => $elem) {
-        
-        $value = ((!is_int($key)) ? $key : $elem);
-        $caption = htmlspecialchars($elem, ENT_QUOTES, 'UTF-8');
-        
-        printf('<option value="%s"', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
-        
-        if (array_key_exists('selected_value', $select_descriptor) && !empty($select_descriptor['selected_value'])) {
+    if (array_key_exists('options', $select_descriptor) && is_array($select_descriptor['options'])) {    
+        foreach ($select_descriptor['options'] as $key => $elem) {
             
-            $selected_values = (!is_array($select_descriptor['selected_value']))
-                             ? array( $select_descriptor['selected_value'] )
-                             : $select_descriptor['selected_value'];
+            $value = ((!is_int($key)) ? $key : $elem);
+            $caption = htmlspecialchars($elem, ENT_QUOTES, 'UTF-8');
             
-            foreach ($selected_values as $selected_value) {
-                if ($selected_value === $value) {
-                    echo ' selected';
-                    break;
+            printf('<option value="%s"', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+            
+            if (array_key_exists('selected_value', $select_descriptor) && !empty($select_descriptor['selected_value'])) {
+                
+                $selected_values = (!is_array($select_descriptor['selected_value']))
+                                 ? array( $select_descriptor['selected_value'] )
+                                 : $select_descriptor['selected_value'];
+                
+                foreach ($selected_values as $selected_value) {
+                    if ($selected_value === $value) {
+                        echo ' selected';
+                        break;
+                    }
                 }
             }
+            
+            printf('>%s</option>', $caption);
         }
-        
-        printf('>%s</option>', $caption);
     }
     echo '</select>';
 }

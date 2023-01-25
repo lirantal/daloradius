@@ -32,6 +32,7 @@ if (strpos($_SERVER['PHP_SELF'], '/library/config_write.php') !== false) {
 
 // useful variables
 $configFile = dirname(__FILE__) . '/daloradius.conf.php';
+clearstatcache(true, $_configFile);
 $date = date("D M j G:i:s T Y");
 
 //
@@ -101,6 +102,6 @@ if ($writtenBytes > 0) {
 } else {
     $failureMsg = sprintf("Could not open the file for writing: <strong>%s</strong>", $configFile)
                 . "<br>Check file permissions. The file should be writable by the webserver's user/group";
-} 
+}
 
 ?>
