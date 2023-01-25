@@ -29,7 +29,7 @@ if (strpos($_SERVER['PHP_SELF'], '/library/opendb.php') !== false) {
     exit;
 }
 
-	include_once(dirname(__FILE__) . '/config_read.php');
+	include(dirname(__FILE__) . '/config_read.php');
 	include(dirname(__FILE__) . '/tableConventions.php');
     
     // setup database connection information according to the session's location name which is held in $SESSION['location_name'].
