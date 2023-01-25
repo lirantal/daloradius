@@ -24,24 +24,24 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
     
+    include('library/config_read.php');
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+    include_once("include/management/functions.php");
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
-    include_once("include/management/functions.php");
-
     // if cleartext passwords are not allowed, 
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'yes') {
-        $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
+        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
+        $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -60,8 +60,9 @@
                          in_array($_POST['authType'], array_keys($valid_authTypes))) ? $_POST['authType'] : array_keys($valid_authTypes)[0];
             
             $password = (array_key_exists('password', $_POST) && isset($_POST['password'])) ? $_POST['password'] : "";
-            $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
-                             in_array($_POST['passwordType'], $valid_passwordTypes)) ? $_POST['passwordType'] : "";
+            
+            $passwordType = (array_key_exists('passwordType', $_POST) && !empty(trim($_POST['passwordType'])) &&
+                             in_array(trim($_POST['passwordType']), $valid_passwordTypes)) ? trim($_POST['passwordType']) : $valid_passwordTypes[0];
             
             $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
                            filter_var(trim(strtoupper($_POST['macaddress'])), FILTER_VALIDATE_MAC)) ? trim(strtoupper($_POST['macaddress'])) : "";

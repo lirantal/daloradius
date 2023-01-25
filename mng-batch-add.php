@@ -21,31 +21,27 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
+    
+    include('library/config_read.php');
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+    include_once("include/management/functions.php");
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
     
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
-    include_once("include/management/functions.php");
-    
-    // set session's page variable
-    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-    
     // if cleartext passwords are not allowed, 
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'yes') {
-        $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
-        $valid_passwordTypes = array_values($valid_passwordTypes);
+        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
+        $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
     }
     
     include('library/opendb.php');

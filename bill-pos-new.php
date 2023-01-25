@@ -21,29 +21,28 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/config_read.php');
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
-
+    
     include_once("lang/main.php");
     include_once("library/validation.php");
     include("library/layout.php");
     include_once("include/management/functions.php");
-
+    include('include/management/pages_common.php');
+    
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include('include/management/pages_common.php');
-
     // if cleartext passwords are not allowed, 
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) !== 'yes') {
-        $valid_passwordTypes = array_diff($valid_passwordTypes, array("Cleartext-Password"));
+        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
+        $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
     }
     
     $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
