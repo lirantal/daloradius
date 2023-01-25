@@ -56,7 +56,7 @@
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
-    include('library/exten-syslog_log.php');
+    include('library/extensions/syslog_log.php');
     include_once('include/management/actionMessages.php');
 
     include('include/config/logging.php');

@@ -14,19 +14,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
+ * 
+ * Description:    displays a welcome page for the main index.php file
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Miguel García <miguelvisgarcia@gmail.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
 // prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/library/googlemaps.php') !== false) {
-    header("Location: ../index.php");
+if (strpos($_SERVER['PHP_SELF'], '/library/extensions/welcome_page.php') !== false) {
+    header("Location: ../../index.php");
     exit;
 }
-
 ?>
 
-<script src="//maps.google.com/maps?file=api&v=3&key=ABQIAAAAvDA1LFHpWKREw2gtHBYMbRSA7TeyclIs2Du2iixdj2Lkq9VI1xRmDifIqWHjs4ZLwlTSuYn5lYba7A"></script>
+<div style="text-align: center">
+    <h2>daloRADIUS Web Management Server</h2>
+    <h3><?= t('all', 'daloRADIUSVersion') ?> / <?= htmlspecialchars($configValues['DALORADIUS_DATE'], ENT_QUOTES, 'UTF-8') ?></h3>
+    <h4><a href="mailto:liran.tal@gmail.com">Liran Tal</a></h4>
+    <img src="images/daloradius_logo.jpg" style="border: 0; margin-top: 50px">
+</div>

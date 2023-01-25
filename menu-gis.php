@@ -56,17 +56,4 @@ $m_active = "Gis";
                         </a>
                     </li>
                 </ul><!-- .subnav -->
-
-                <h3>Settings</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= t('button','RegisterGoogleMapsAPI') ?>" href="javascript:document.gisregister.submit();" tabindex="3">
-                            <b>&raquo;</b><?= t('button','RegisterGoogleMapsAPI')?>
-                        </a>
-                        <form name="gisregister" action="gis-main.php" method="POST" class="sidebar">
-                            <input name="code" type="text" tabindex="4" pattern="[a-zA-Z0-9_-]+">
-                            <input class="sidebutton" name="submit" type="submit" value="Register code" tabindex="5">
-                        </form>
-                    </li>
-                </ul><!-- .subnav -->
             </div><!-- #sidebar -->

@@ -917,7 +917,7 @@ per disconnettere un utente e terminare la sua sessione nel NAS dato.<br/>
 $l['helpPage']['configmainttestuser'] = "
 <h200><b>Test Connettività Utente</b></h200> - Manda un Access-Request al server RADIUS per verificare se le credenziali di un utente sono valide.<br/>
 daloRADIUS usa l'utilità radclient per fare test e ritorna i risultati del comando dopo che ha finito. <br/>
-daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile d'ambiente \$PATH variable, se così non è si devono effettuare delle modifiche al file library/exten-maint-radclient.php.<br/><br/>
+daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile d'ambiente \$PATH variable, se così non è si devono effettuare delle modifiche al file library/extensions/maintenance_radclient.php.<br/><br/>
 
 Tenere presente che il test potrebbe impiegare un pò di tempo per finire (diversi secondi [10-20 secondi or più]) perchè nel caso di errori radclient potrebbe ritrasmettere i pacchetti.
 
@@ -935,7 +935,7 @@ mentre gli altri sono configurati sulla porta 1700.
 
 daloRADIUS utilizza l'utilità radclient per effettuare test e ritorna i risultati del comando dopo che questo ha finito. <br/>
 daloRADIUS conta sul fato che il binaario radclient sia disponibile nella variabile \$PATH, se così non è, si devono 
-effettuare correzioni al file library/exten-maint-radclient.php.<br/><br/>
+effettuare correzioni al file library/extensions/maintenance_radclient.php.<br/><br/>
 
 Si tenga presente che potrebbe metterci un pò (10 - 20 secondi o più) perchè nel caso di errori 
 radclient ritrasmetterà i pacchetti.

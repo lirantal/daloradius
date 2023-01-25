@@ -39,32 +39,22 @@
     include("library/layout.php");
 
     // print HTML prologue
-    $title = t('Intro','replogsdaloradius.php') . " :: $daloradiusLineCount Lines Count";
+    $title = t('Intro','replogsdaloradius.php');
     $help = t('helpPage','replogsdaloradius');
     
     print_html_prologue($title, $langCode);
 
+    $title .= sprintf(" :: %d Lines Count", $daloradiusLineCount);
+
     include("menu-reports-logs.php");
 
-?>    
-
-    <div id="contentnorightbar">
-<?php
+    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-
-    include('library/exten-daloradius_log.php');
+    
+    include('library/extensions/daloradius_log.php');
     include_once('include/management/actionMessages.php');
-?>
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>    

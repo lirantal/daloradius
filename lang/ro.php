@@ -1128,7 +1128,7 @@ $l['helpPage']['configmainttestuser'] = '
 <h200> <b> Test Conectivitate utilizatorului </ b> </ h200> - Trimite-o Cerere de acces la RADIUS server pentru a verifica dac? un utilizator de acreditare sunt valide. <br/> 
 daloRADIUS utilizeaz? radclient binare de utilitate pentru a efectua, de test ?i returneaz? rezultate de comanda dupa ce se termina. <br/> 
 daloRADIUS conteaz? pe radclient binar fiind disponibile ?n \ $ PATH variabil? de mediu, ?n cazul ?n care acesta nu este, v? rug?m s? face?i 
-corec?ii la biblioteca / extinderea-maint-radclient.php fi?ier. <br/> <br/> 
+corec?ii la library/extensions/maintenance_radclient.php fi?ier. <br/> <br/> 
 
 V? rug?m s? re?ine?i c? poate dura un timp pentru a testa pentru a termina (p?n? la c?teva secunde [10-20 secunde sau a?a]), din cauza e?ecurilor ?i 
 radclient va retransmite pachetele. 
@@ -1146,7 +1146,7 @@ documenta?ia pentru acest lucru. ?n plus, este necesar s? se cunoasc? SNC portur
 
 daloRADIUS utilizeaz? radclient binare de utilitate pentru a efectua, de test ?i returneaz? rezultate de comanda dupa ce se termina. <br/> 
 daloRADIUS conteaz? pe radclient binar fiind disponibile ?n \ $ PATH variabil? de mediu, ?n cazul ?n care acesta nu este, v? rug?m s? face?i 
-corec?ii la biblioteca / extinderea-maint-radclient.php fi?ier. <br/> <br/> 
+corec?ii la library/extensions/maintenance_radclient.php fi?ier. <br/> <br/> 
 
 V? rug?m s? re?ine?i c? poate dura un timp pentru a testa pentru a termina (p?n? la c?teva secunde [10-20 secunde sau a?a]), din cauza e?ecurilor ?i 
 radclient va retransmite pachetele. 

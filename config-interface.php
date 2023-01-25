@@ -29,7 +29,6 @@
     include_once("lang/main.php");
     include("library/validation.php");
     include("library/layout.php");
-    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";

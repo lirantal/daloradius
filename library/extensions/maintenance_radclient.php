@@ -28,9 +28,9 @@
 
 
 // prevent this file to be directly accessed
-$extension_file = '/library/exten-maint-radclient.php';
+$extension_file = '/library/extensions/maintenance_radclient.php';
 if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit;
 }
 

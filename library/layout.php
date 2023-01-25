@@ -29,13 +29,10 @@ if (strpos($_SERVER['PHP_SELF'], '/library/layout.php') !== false) {
 const DEFAULT_COMMON_CSS = array(
     "css/2.css",
     "css/form-field-tooltip.css",
-    "library/js_date/datechooser.css"
 );
 
 const DEFAULT_COMMON_JS = array(
     "library/javascript/pages_common.js",
-    "library/js_date/date-functions.js",
-    "library/js_date/datechooser.js",
     "library/javascript/rounded-corners.js",
     "library/javascript/form-field-tooltip.js"
 );

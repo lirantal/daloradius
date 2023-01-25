@@ -25,8 +25,8 @@
  */
 
 // prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/library/exten-radius_server_info.php') !== false) {
-    header("Location: ../index.php");
+if (strpos($_SERVER['PHP_SELF'], '/library/extensions/radius_server_info.php') !== false) {
+    header("Location: ../../index.php");
     exit;
 }
 

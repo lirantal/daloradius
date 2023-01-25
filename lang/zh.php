@@ -1478,7 +1478,7 @@ $l['helpPage']['configmainttestuser'] = "
 <h200><b>测试用户连接</b></h200> - RADIUS服务器的访问请求发送给检查用户凭证是否有效。<br/>
 ddaloradius使用RADIUS客户端二进制实用程序来执行测试并返回命令结果完成后。 <br/>
 daloRADIUS计数的RADIUS客户端的二进制文件在\$ PATH环境变量可用，如果不是，请
-更正库/exten-maint-radclient.php 文件<br/><br/>
+更正库/extensions/maintenance_radclient.php 文件<br/><br/>
 
 请注意，它可能需要一段时间的测试完成（几秒[ 10-20秒左右]）由于故障和
 radclient将重发的数据包。
@@ -1498,7 +1498,7 @@ $l['helpPage']['configmaintdisconnectuser'] = "
 
 ddaloradius使用RADIUS客户端二进制实用程序来执行测试并返回命令结果完成后。 <br/>
 daloRADIUS计数的RADIUS客户端的二进制文件在\$ PATH环境变量可用，如果不是，请
-更正库/exten-maint-radclient.php 文件<br/><br/
+更正库/extensions/maintenance_radclient.php 文件<br/><br/
 
 请注意，它可能需要一段时间的测试完成（几秒[ 10-20秒左右]）由于故障和
 radclient将重发的数据包。
