@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -26,15 +26,14 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
 
     $param_label = array(
                             'CONFIG_MAIL_SMTPADDR' => t('all','SMTPServerAddress'),
@@ -46,7 +45,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
+
             // validate email
             if (
                     array_key_exists('CONFIG_MAIL_SMTPFROM', $_POST) &&
@@ -57,7 +56,7 @@
             } else {
                 $invalid_input['CONFIG_MAIL_SMTPFROM'] = $param_label['CONFIG_MAIL_SMTPFROM'];
             }
-            
+
             // validate port
             if (
                     array_key_exists('CONFIG_MAIL_SMTPPORT', $_POST) &&
@@ -69,7 +68,7 @@
             } else {
                 $invalid_input['CONFIG_MAIL_SMTPPORT'] = $param_label['CONFIG_MAIL_SMTPPORT'];
             }
-            
+
             // validate ip address/hostname
             if (
                     array_key_exists('CONFIG_MAIL_SMTPADDR', $_POST) &&
@@ -83,14 +82,14 @@
             } else {
                 $invalid_input['CONFIG_MAIL_SMTPADDR'] = $param_label['CONFIG_MAIL_SMTPADDR'];
             }
-            
+
             if (count($invalid_input) > 0) {
                 $failureMsg = sprintf("Invalid input: [%s]", implode(", ", array_values($invalid_input)));
                 $logAction .= "$failureMsg on page: ";
             } else {
                 include("library/config_write.php");
             }
-            
+
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -98,18 +97,18 @@
         }
     }
 
-    
+
     // print HTML prologue
     $title = t('Intro','configmail.php');
     $help = t('helpPage','configmail');
-    
+
     print_html_prologue($title, $langCode);
 
     include("menu-config.php");
-    
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-    
+
     include_once('include/management/actionMessages.php');
 
     $fieldset0_descriptor = array(
@@ -117,8 +116,8 @@
                                  );
 
     $input_descriptors0 = array();
-    
-    
+
+
     $input_descriptors0[] = array(
                                         "type" => "text",
                                         "caption" => t('all','SMTPServerAddress'),
@@ -126,7 +125,7 @@
                                         "value" => (!array_key_exists('CONFIG_MAIL_SMTPADDR', $invalid_input)
                                                     ? $configValues['CONFIG_MAIL_SMTPADDR'] : "")
                                      );
-    
+
     $input_descriptors0[] = array(
                                         "type" => "number",
                                         "caption" => t('all','SMTPServerPort'),
@@ -136,7 +135,7 @@
                                         "min" => 0,
                                         "max" => 65535
                                  );
-    
+
     $input_descriptors0[] = array(
                                         "type" => "email",
                                         "caption" => t('all','SMTPServerFromEmail'),
@@ -144,7 +143,7 @@
                                         "value" => (!array_key_exists('CONFIG_MAIL_SMTPFROM', $invalid_input)
                                                     ? $configValues['CONFIG_MAIL_SMTPFROM'] : ""),
                                      );
-    
+
     $input_descriptors0[] = array(
                                     "name" => "csrf_token",
                                     "type" => "hidden",
@@ -158,20 +157,19 @@
                                  );
 
     open_form();
-    
+
     // open 0-th fieldset
     open_fieldset($fieldset0_descriptor);
-    
+
     foreach ($input_descriptors0 as $input_descriptor) {
         print_form_component($input_descriptor);
     }
-    
+
     close_fieldset();
-    
+
     close_form();
-    
+
     include('include/config/logging.php');
-    
     print_footer_and_html_epilogue();
 
 ?>

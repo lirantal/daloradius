@@ -24,8 +24,8 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/config_read.php');
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
 
     include_once("lang/main.php");
     include_once("library/validation.php");
@@ -37,6 +37,18 @@
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
+
+    if (isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'])) {
+        $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = "127.0.0.1";
+    }
+
+    if (isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'])) {
+        $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
+    }
+
+    if (isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'])) {
+        $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = "testing123";
+    }
 
     $radclient_path = is_radclient_present();
 
@@ -60,17 +72,20 @@
                             isset($_REQUEST['radius_addr']) &&
                             !empty(trim($_REQUEST['radius_addr'])) &&
                             filter_var(trim($_REQUEST['radius_addr']), FILTER_VALIDATE_IP) !== false
-                       ) ? trim($_REQUEST['radius_addr']) : "127.0.0.1";
+                       ) ? trim($_REQUEST['radius_addr']) : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'];
         
         $radius_port = (
                             isset($_REQUEST['radius_port']) &&
                             !empty(trim($_REQUEST['radius_port'])) &&
                             intval(trim($_REQUEST['radius_port'])) >= 0 &&
                             intval(trim($_REQUEST['radius_port'])) <= 65535
-                       ) ? intval(trim($_REQUEST['radius_port'])) : 1812;
+                       ) ? intval(trim($_REQUEST['radius_port'])) : intval($configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT']);
+
+        $secret = (isset($_REQUEST['secret']) && !empty(trim($_REQUEST['secret'])))
+                ? trim($_REQUEST['secret']) : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'];
 
         $username = (isset($_REQUEST['username']) && !empty(trim($_REQUEST['username']))) ? trim($_REQUEST['username']) : "";
-        $secret = (isset($_REQUEST['secret']) && !empty(trim($_REQUEST['secret']))) ? trim($_REQUEST['secret']) : "testing123";
+        
 
         include('library/opendb.php');
 
@@ -145,6 +160,12 @@
                             $logAction .= sprintf("Performed informative action on user [%s] on page: ",
                                                  $username, $result["output"]);
                         }
+                        
+                        // update configuration
+                        $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = $radius_addr;
+                        $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = $radius_port;
+                        $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = $secret;
+                        include("library/config_write.php");
                     }
                 }
                 
@@ -211,7 +232,7 @@
                                         "name" => "radius_addr",
                                         "caption" => t('all','RadiusServer'),
                                         "type" => "text",
-                                        "value" => ((isset($radius_addr)) ? $radius_addr : "127.0.0.1"),
+                                        "value" => ((isset($radius_addr)) ? $radius_addr : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER']),
                                      );
                                      
         $input_descriptors0[] = array(
@@ -220,13 +241,13 @@
                                         "type" => "number",
                                         "min" => 0,
                                         "max" => 65535,
-                                        "value" => ((isset($radius_port)) ? $radius_port : 1812),
+                                        "value" => ((isset($radius_port)) ? $radius_port : $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT']),
                                      );
         
         $input_descriptors0[] = array( "name" => "secret",
                                        "caption" => t('all','NasSecret'),
                                        "type" => "text",
-                                       "value" => ((isset($secret)) ? $secret : "testing123"),
+                                       "value" => ((isset($secret)) ? $secret : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET']),
                                      );
 
         $input_descriptors1 = array();

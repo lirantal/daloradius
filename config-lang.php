@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -26,23 +26,25 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-
     include_once("lang/main.php");
     include("library/validation.php");
     include("library/layout.php");
-    
+
+    // init logging variables
     $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
+
             if (array_key_exists('CONFIG_LANG', $_POST) && !empty(strtolower(trim($_POST['CONFIG_LANG']))) &&
                 in_array(strtolower(trim($_POST['CONFIG_LANG'])), array_keys($valid_languages))) {
-                
+
                 $configValues['CONFIG_LANG'] = $_POST['CONFIG_LANG'];
                 include("library/config_write.php");
             }
-        
+
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -50,11 +52,11 @@
         }
     }
 
-    
+
     // print HTML prologue
     $title = t('Intro','configlang.php');
     $help = t('helpPage','configlang');
-    
+
     print_html_prologue($title, $langCode);
 
     include("menu-config.php");
@@ -63,10 +65,10 @@
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-    
-    $input_descriptors1 = array();
-    
-    $input_descriptors1[] = array(
+
+    $input_descriptors0 = array();
+
+    $input_descriptors0[] = array(
                                     'name' => 'CONFIG_LANG',
                                     'type' => 'select',
                                     'caption' => t('all','PrimaryLanguage'),
@@ -74,34 +76,35 @@
                                     'selected_value' => $configValues['CONFIG_LANG']
                                  );
 
-    $input_descriptors1[] = array(
+    $input_descriptors0[] = array(
                                     "name" => "csrf_token",
                                     "type" => "hidden",
                                     "value" => dalo_csrf_token(),
                                  );
 
-    $input_descriptors1[] = array(
+    $input_descriptors0[] = array(
                                     'type' => 'submit',
                                     'name' => 'submit',
                                     'value' => t('buttons','apply')
                                  );
-                                 
-    $fieldset1_descriptor = array(
+
+    $fieldset0_descriptor = array(
                                     "title" => t('title','Settings'),
                                  );
 
     open_form();
-    
-    open_fieldset($fieldset1_descriptor);
 
-    foreach ($input_descriptors1 as $input_descriptor) {
+    // open 0-th fieldset
+    open_fieldset($fieldset0_descriptor);
+
+    foreach ($input_descriptors0 as $input_descriptor) {
         print_form_component($input_descriptor);
     }
-    
+
     close_fieldset();
-    
+
     close_form();
-   
+
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>
