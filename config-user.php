@@ -24,19 +24,18 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/config_read.php');
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
     
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
     
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
-
-
     $invalid_input = array();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -103,16 +102,14 @@
                                     "options" => array( "yes", "no" ),
                                     "caption" => "Allow cleartext password in db",
                                     "name" => 'CONFIG_DB_PASSWORD_ENCRYPTION',
-                                    "selected_value" => (!array_key_exists('CONFIG_DB_PASSWORD_ENCRYPTION', $invalid_input)
-                                                         ? $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] : "yes")
+                                    "selected_value" => $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'],
                                  );
 
     $input_descriptors0[] = array(
                                         "type" => "text",
                                         "caption" => t('all','RandomChars'),
                                         "name" => 'CONFIG_USER_ALLOWEDRANDOMCHARS',
-                                        "value" => (!array_key_exists('CONFIG_USER_ALLOWEDRANDOMCHARS', $invalid_input)
-                                                    ? $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] : ""),
+                                        "value" => $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'],
                                         "pattern" => trim(ALLOWED_RANDOM_CHARS_REGEX, "/")
                                      );
 

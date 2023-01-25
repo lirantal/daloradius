@@ -31,15 +31,15 @@ if (strpos($_SERVER['PHP_SELF'], '/library/config_read.php') !== false) {
 }
 
 $_configFile = dirname(__FILE__) . '/daloradius.conf.php';
+clearstatcache(true, $_configFile);
+unset($configValues);
 include($_configFile);
 
 // strip slashes (if any)
 foreach ($configValues as $_configOption => $_configElem) {
-    if (is_array($_configElem)) {
-        continue;
+    if (!is_array($_configElem)) {
+        $configValues[$_configOption] = stripslashes($_configElem);
     }
-    
-    $configValues[$_configOption] = stripslashes($_configElem);
 }
 
 ?>

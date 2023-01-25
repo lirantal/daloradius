@@ -45,7 +45,7 @@
 ?>
 
             <p>
-                One of several communication mediums available at your disposal:<br/><br/>
+                There are several communication media available at your disposal:<br/><br/>
 
                 <b>daloRADIUS website</b>: <a href="http://www.daloradius.com">daloRADIUS blog</a><br/><br/>
                 <b>daloRADIUS Project at GitHub</b>: <a href="https://github.com/lirantal/daloradius">GitHub project</a><br/>

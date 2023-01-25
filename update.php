@@ -27,7 +27,7 @@ $failureMsg = "";                            // variable initializtion
 $successMsg = "";                            // variable initializtion
 
 include("library/checklogin.php");
-include_once('library/config_read.php');
+include('library/config_read.php');
 
 /*
   * updateErrorHandler()

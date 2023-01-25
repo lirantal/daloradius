@@ -129,11 +129,11 @@ $_input_descriptors1[] = array(
 
 $_input_descriptors2 = array();
 
-$_input_descriptors2[] = array(
-                                'type' => 'submit',
-                                'name' => 'submit',
-                                'value' => t('buttons','apply')
-                             );
+//~ $_input_descriptors2[] = array(
+                                //~ 'type' => 'submit',
+                                //~ 'name' => 'submit',
+                                //~ 'value' => t('buttons','apply')
+                             //~ );
 
 $_input_descriptors2[] = array(
                                 "name" => "divCounter",
@@ -141,8 +141,7 @@ $_input_descriptors2[] = array(
                                 "type" => "hidden",
                               );
 
-open_form();
-    
+
 open_fieldset($_fieldset0_descriptor);
 
 foreach ($_input_descriptors0 as $input_descriptor) {
@@ -162,8 +161,6 @@ close_fieldset();
 foreach ($_input_descriptors2 as $input_descriptor) {
     print_form_component($input_descriptor);
 }
-
-close_form();
 
 ?>
 
