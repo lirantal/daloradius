@@ -14,13 +14,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *        this script displays the radius log file.
- *              Of course proper premissions must be applied
- *              on the log file for the web server to be able to read it
  *
- * Authors:     Liran Tal <liran@enginx.com>
- *              Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    this script displays the radius log file. Of course, proper premissions
+ *                 must be applied on the log file for the web server to be able to read it
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */

@@ -14,14 +14,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *        This code allows for running the 'radtest' binary tool provided with freeradius
- *        for performing a dry-run check to see if a user is able to successfully login
- *        or that there may be problems connecting.
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Giso Kegal <kegel@barum.de>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    this code allows for running the 'radclient' binary tool provided with FreeRADIUS
+ *                 for performing a dry-run check to see if a user is able to successfully login
+ *                 or there may be problems connecting.
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Giso Kegal <kegel@barum.de>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
