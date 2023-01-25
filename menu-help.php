@@ -44,8 +44,9 @@ $m_active = "Help";
                 <h3>Support</h3>
 
                 <p class="news">
-                    daloRADIUS version svn-trnk
-                    RADIUS Management 
+                    daloRADIUS - RADIUS Management<br>
+                    version <?= $configValues['DALORADIUS_VERSION'] ?> / <?= $configValues['DALORADIUS_DATE'] ?>
+                     
                     <a href="https://github.com/lirantal/daloradius" class="more">Read More &raquo;</a>
                 </p>
 
