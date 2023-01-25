@@ -44,20 +44,22 @@
 
 
     // print HTML prologue
-    $title = t('Intro','replogsradius.php') . " :: $radiusLineCount Lines Count";
-    if (!empty($radiusFilter) && $radiusFilter !== '.+') {
-        $title .= " with filter set to " . htmlspecialchars($radiusFilter, ENT_QUOTES, 'UTF-8');
-    }
+    $title = t('Intro','replogsradius.php');
     $help = t('helpPage','replogsradius');
     
     print_html_prologue($title, $langCode);
+
+    $title .= sprintf(" :: %d Lines Count", $radiusLineCount);
+    if (!empty($radiusFilter) && $radiusFilter !== '.+') {
+        $title .= " with filter set to " . htmlspecialchars($radiusFilter, ENT_QUOTES, 'UTF-8');
+    }
 
     include ("menu-reports-logs.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
-    include('library/exten-radius_log.php');
+    include('library/extensions/radius_log.php');
     include_once('include/management/actionMessages.php');
 
     include('include/config/logging.php');

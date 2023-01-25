@@ -14,18 +14,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description: displays a welcome page for the main index.php file
+ * 
+ * Description:    displays a welcome page for the main index.php file
  *
- * Authors:     Liran Tal <liran@enginx.com>
- *              Miguel García <miguelvisgarcia@gmail.com>
- *              Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Miguel García <miguelvisgarcia@gmail.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
 // prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/library/exten-welcome_page.php') !== false) {
-    header("Location: ../index.php");
+if (strpos($_SERVER['PHP_SELF'], '/library/extensions/welcome_page.php') !== false) {
+    header("Location: ../../index.php");
     exit;
 }
 ?>

@@ -51,7 +51,7 @@
 
     } else {
 
-        include_once('library/exten-maint-radclient.php');
+        include_once('library/extensions/maintenance_radclient.php');
         
         $username = $_REQUEST['username'];
 

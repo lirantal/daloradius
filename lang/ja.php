@@ -1642,7 +1642,7 @@ $l['helpPage']['configmaint'] = "
 $l['helpPage']['configmainttestuser'] = "
 <h200><b>ユーザの接続テスト</b></h200> - RADIUS サーバにアクセスリクエストを送り、ユーザの証明書が有効であるかどうかをチェックします<br/>
 daloRADIUS は radclient バイナリユーティリティを利用してテストを実行し、それが終わるとそのコマンドの結果を返します。<br/>
-daloRADIUS はあなたの\$PATH環境変数に radclient バイナリが利用できることを期待します。そうでない場合、library/exten-maint-radclient.php ファイルを修正してください。<br/><br/>
+daloRADIUS はあなたの\$PATH環境変数に radclient バイナリが利用できることを期待します。そうでない場合、library/extensions/maintenance_radclient.php ファイルを修正してください。<br/><br/>
 
 接続失敗や radclient のパケット再転送が起こるため、テストが完了するまでにはしばらく時間がかかる (10-20 秒程度まで) ことに注意してください。
 
@@ -1662,7 +1662,7 @@ $l['helpPage']['configmaintdisconnectuser'] = "
 <br/><br/>
 
 daloRADIUS は radclient バイナリユーティリティを利用してテストを実行し、それが終わるとそのコマンドの結果を返します。<br/>
-daloRADIUS はあなたの\$PATH環境変数に radclient バイナリが利用できることを期待します。そうでない場合、library/exten-maint-radclient.php ファイルを修正
+daloRADIUS はあなたの\$PATH環境変数に radclient バイナリが利用できることを期待します。そうでない場合、library/extensions/maintenance_radclient.php ファイルを修正
 してください。<br/><br/>
 
 接続失敗や radclient のパケット再転送が起こるため、テストが完了するまでにはしばらく時間がかかる (10-20 秒程度まで) ことに注意してください。

@@ -25,13 +25,12 @@
  */
 
 // prevent this file to be directly accessed
-$extension_file = '/library/exten-server_info.php';
+$extension_file = '/library/extensions/server_info.php';
 if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit;
 }
 
-include_once('include/management/pages_common.php');
 
 // returns system name and version
 function get_system_name_and_version() {
@@ -156,6 +155,7 @@ function get_system_load() {
 // Get Memory System MemTotal|MemFree
 // @return array Memory System MemTotal|MemFree
 function get_memory() {
+    $units = array( 'kB' => 10, 'MB' => 20, 'GB' => 30 );
     $result = array();
     $proc_meminfo = explode("\n", file_get_contents("/proc/meminfo"));
     
@@ -166,33 +166,44 @@ function get_memory() {
     foreach ($proc_meminfo as $line) {
         $matches = array();
         if (
-                preg_match('/^([^:]+)\:\s+(\d+)\s+[a-zA-Z]{2}$/', $line, $matches) === false ||
-                count($matches) != 3
+                preg_match('/^([^:]+)\:\s+(\d+)\s+([a-zA-Z]{2})$/', $line, $matches) === false ||
+                count($matches) != 4
            ) {
             continue;
         }
 
         $key = $matches[1];
-        $value = $matches[2];
-        $result[$key] = intval($value);
+        $value = intval($matches[2]);
+        $i = $matches[3];
+        
+        if (in_array($i, $units)) {
+            $value *= pow(2, $units[$i]);
+        }
+        
+        $result[$key] = $value;
     }
-
+    
     return $result;
 }
 
 
 //Get FreeDiskSpace
 function get_hdd_freespace() {
-$df = disk_free_space("/");
-return $df;
+    $bytes = disk_free_space("/");
+    return convert_ToMB($bytes);
 }
 
 
 // Convert value to MB
 // @param decimal $value
 // @return int Memory MB
-function convert_ToMB($value) {
-    return round($value / 1024) . " MB\n";
+function convert_ToMB($bytes) {
+    $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB' );
+    $base = 1024;
+    
+    $i = min((int)log($bytes, $base), count($si_prefix) - 1);
+    
+    return sprintf('%1.2f %s' , ($bytes / pow($base, $i)), $si_prefix[$i]);
 }
 
 
@@ -347,7 +358,7 @@ $iflist = get_interface_list();
 <table class="summarySection">
   <tr>
     <td class="summaryKey">Free Drive Space</td>
-    <td class="summaryValue"><span class="sleft"><?= toxbyte($hddfreespace) ?></span></td>
+    <td class="summaryValue"><span class="sleft"><?= $hddfreespace ?></span></td>
   </tr>
 </table>
 

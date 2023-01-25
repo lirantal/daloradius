@@ -43,7 +43,7 @@
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
-    include('library/exten-radius_server_info.php');
+    include('library/extensions/radius_server_info.php');
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

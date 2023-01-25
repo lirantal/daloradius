@@ -1133,7 +1133,7 @@ $l['helpPage']['configmainttestuser'] = "
 <h200><b>Testar conectividade do usuario</b></h200> - Envie uma solicitação de acesso ao servidor RADIUS para verificar se as credenciais do usuário são válidas.<br/>
 O daloRADIUS usa o utilitário binário radclient para executar o teste e retorna os resultados do comando após a conclusão. <br/>
 O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ PATH; caso contrário, faça
-correções no arquivo library / exten-maint-radclient.php.<br/><br/>
+correções no arquivo library/extensions/maintenance_radclient.php.<br/><br/>
 
 Observe que pode demorar um pouco para o teste terminar (até vários segundos [10-20 segundos]] devido a falhas e
 O radclient retransmitirá os pacotes.
@@ -1152,7 +1152,7 @@ enquanto outros estão configurados para receber o pacote na porta 1700.
 
 O daloRADIUS usa o utilitário binário radclient para executar o teste e retorna os resultados do comando após a conclusão. <br/>
 O daloRADIUS conta que o binário radclient está disponível na sua variável de ambiente \ PATH; caso contrário, faça
-correções no arquivo library / exten-maint-radclient.php.<br/><br/>
+correções no arquivo library/extensions/maintenance_radclient.php.<br/><br/>
 
 Observe que pode demorar um pouco para o teste terminar (até vários segundos [10-20 segundos]] devido a falhas e
 O radclient retransmitirá os pacotes.

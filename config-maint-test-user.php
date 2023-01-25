@@ -31,7 +31,7 @@
     include_once("library/validation.php");
     include("library/layout.php");
     include("include/management/functions.php");
-    include("library/exten-maint-radclient.php");
+    include("library/extensions/maintenance_radclient.php");
 
     // init logging variables
     $log = "visited page: ";
@@ -145,27 +145,39 @@
                     }
 
                     if (!$error) {
-                        $result = user_auth($params);
-                        
-                        $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
-                        
-                        if ($result["error"]) {
-                            $failureMsg = sprintf("Cannot perform informative action on user [<strong>%s</strong>, reason: <strong>%s</strong>]",
-                                                  $username_enc, $result["output"]);
-                            $logAction .= sprintf("Cannot perform informative action on user [%s, reason: %s] on page: ",
-                                                 $username, $result["output"]);
-                        } else {
-                            $successMsg = sprintf('Performed informative action on user <strong>%s</strong>. <pre style="margin: 10px auto; font-family: monospace">%s</pre>',
-                                                  $username_enc, $result["output"]);
-                            $logAction .= sprintf("Performed informative action on user [%s] on page: ",
-                                                 $username, $result["output"]);
-                        }
+                        $failureMsg = "";
+                        $successMsg = "";
                         
                         // update configuration
                         $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = $radius_addr;
                         $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = $radius_port;
                         $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = $secret;
                         include("library/config_write.php");
+                        
+                        if (!empty($successMsg)) {
+                            $successMsg .= str_repeat("<br>", 3);
+                        }
+                        
+                        if (!empty($failureMsg)) {
+                            $successMsg .= str_repeat("<br>", 3);
+                        }
+                        
+                        // test user
+                        $result = user_auth($params);
+                        
+                        $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+                        
+                        if ($result["error"]) {
+                            $failureMsg .= sprintf("Cannot perform informative action on user [<strong>%s</strong>, reason: <strong>%s</strong>]",
+                                                  $username_enc, $result["output"]);
+                            $logAction .= sprintf("Cannot perform informative action on user [%s, reason: %s] on page: ",
+                                                 $username, $result["output"]);
+                        } else {
+                            $successMsg .= sprintf('Performed informative action on user <strong>%s</strong>. <pre style="margin: 10px auto; font-family: monospace">%s</pre>',
+                                                  $username_enc, $result["output"]);
+                            $logAction .= sprintf("Performed informative action on user [%s] on page: ",
+                                                 $username, $result["output"]);
+                        }
                     }
                 }
                 

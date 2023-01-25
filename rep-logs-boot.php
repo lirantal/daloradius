@@ -43,20 +43,22 @@
 
 
     // print HTML prologue
-    $title = t('Intro','replogsboot.php') . " :: $bootLineCount Lines Count";
-    if (!empty($bootFilter) && $bootFilter !== '.+') {
-        $title .= " with filter set to " . htmlspecialchars($bootFilter, ENT_QUOTES, 'UTF-8');
-    }
+    $title = t('Intro','replogsboot.php');
     $help = t('helpPage','replogsboot');
     
     print_html_prologue($title, $langCode);
+
+    $title .= sprintf(" :: %d Lines Count", $bootLineCount);
+    if (!empty($bootFilter) && $bootFilter !== '.+') {
+        $title .= " with filter set to " . htmlspecialchars($bootFilter, ENT_QUOTES, 'UTF-8');
+    }
 
     include("menu-reports-logs.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
-    include('library/exten-boot_log.php');
+    include('library/extensions/boot_log.php');
     include_once('include/management/actionMessages.php');
     
     include('include/config/logging.php');

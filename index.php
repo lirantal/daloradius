@@ -41,7 +41,7 @@
                     <h2 id="Intro"><a href="#"></a></h2>
                     <p>
 <?php 
-    include('library/exten-welcome_page.php');
+    include('library/extensions/welcome_page.php');
 ?>
                     </p>
                 </div><!-- #contentnorightbar -->
