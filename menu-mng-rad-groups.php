@@ -90,7 +90,7 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','NewGroupCheck')) ?>" href="mng-rad-groupcheck-new.php" tabindex="12">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsAdd.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsAdd.png">
                             <?= t('button','NewGroupCheck') ?>
                         </a>
                     </li>
@@ -101,12 +101,12 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','ListGroupCheck')) ?>" href="mng-rad-groupcheck-list.php" tabindex="9">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsList.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsList.png">
                             <?= t('button','ListGroupCheck') ?></a></li>
                     <li>
                         <a title="<?= strip_tags(t('button','SearchGroupCheck')) ?>" href="javascript:document.mngradgroupchecksearch.submit();" tabindex="10">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsList.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsList.png">
                             <?= t('button','SearchGroupCheck') ?>
                         </a>
                         <form name="mngradgroupchecksearch" action="mng-rad-groupcheck-search.php" method="GET" class="sidebar">
@@ -117,7 +117,7 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','EditGroupCheck')) ?>" href="javascript:document.mngradgrpchkedit.submit();" tabindex="13">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsEdit.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsEdit.png">
                             <?= t('button','EditGroupCheck') ?>
                         </a>
                         <form name="mngradgrpchkedit" action="mng-rad-groupcheck-edit.php" method="GET" class="sidebar">
@@ -129,7 +129,7 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','RemoveGroupCheck')) ?>" href="mng-rad-groupcheck-del.php" tabindex="16">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsRemove.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsRemove.png">
                             <?= t('button','RemoveGroupCheck') ?>
                         </a>
                     </li>
@@ -143,7 +143,7 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','NewGroupReply')) ?>" href="mng-rad-groupreply-new.php" tabindex="4">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsAdd.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsAdd.png">
                             <?= t('button','NewGroupReply') ?>
                         </a>
                     </li>
@@ -153,14 +153,14 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','ListGroupReply')) ?>" href="mng-rad-groupreply-list.php" tabindex="1">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsList.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsList.png">
                             <?= t('button','ListGroupReply') ?>
                         </a>
                     </li>
                     <li>
                         <a title="<?= strip_tags(t('button','SearchGroupReply')) ?>" href="javascript:document.mngradgroupreplysearch.submit();" tabindex="2">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsList.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsList.png">
                             <?= t('button','SearchGroupReply') ?>
                         </a>
                         <form name="mngradgroupreplysearch" action="mng-rad-groupreply-search.php" method="GET" class="sidebar">
@@ -171,7 +171,7 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','EditGroupReply')) ?>" href="javascript:document.mngradgrprplyedit.submit();" tabindex="5">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsEdit.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsEdit.png">
                             <?= t('button','EditGroupReply') ?>
                         </a>
                         <form name="mngradgrprplyedit" action="mng-rad-groupreply-edit.php" method="GET" class="sidebar">
@@ -184,7 +184,7 @@ $menu_radgroupcheck_select = array(
                     <li>
                         <a title="<?= strip_tags(t('button','RemoveGroupReply')) ?>" href="mng-rad-groupreply-del.php" tabindex="8">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsRemove.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsRemove.png">
                             <?= t('button','RemoveGroupReply') ?>
                         </a>
                     </li>

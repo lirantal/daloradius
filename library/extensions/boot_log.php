@@ -28,7 +28,7 @@
 // prevent this file to be directly accessed
 $extension_file = '/library/extensions/boot_log.php';
 if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit;
 }
 

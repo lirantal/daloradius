@@ -66,12 +66,12 @@ function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", 
         $href_prev   = sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3);
         $href_first  = sprintf($href_format, 1, $orderBy, $orderType, $request1, $request2, $request3);
         
-        $prev  = sprintf($link_format, $labels['prev'], $href_prev, $labels['prev'], "images/icons/r.gif");
-        $first = sprintf($link_format, $labels['first'], $href_first, $labels['first'], "images/icons/rw.gif");
+        $prev  = sprintf($link_format, $labels['prev'], $href_prev, $labels['prev'], "static/images/icons/r.gif");
+        $first = sprintf($link_format, $labels['first'], $href_first, $labels['first'], "static/images/icons/rw.gif");
         
     } else {
-        $prev  = sprintf($link_disabled_format, $labels['prev'], "images/icons/r_non.gif");
-        $first = sprintf($link_disabled_format, $labels['first'], "images/icons/rw_non.gif");
+        $prev  = sprintf($link_disabled_format, $labels['prev'], "static/images/icons/r_non.gif");
+        $first = sprintf($link_disabled_format, $labels['first'], "static/images/icons/rw_non.gif");
 
     }
 
@@ -81,12 +81,12 @@ function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", 
         $href_next = sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3);
         $href_last = sprintf($href_format, $maxPage, $orderBy, $orderType, $request1, $request2, $request3);
         
-        $next = sprintf($link_format, $labels['next'], $href_next, $labels['next'], "images/icons/f.gif");
-        $last = sprintf($link_format, $labels['last'], $href_last, $labels['last'], "images/icons/ff.gif");
+        $next = sprintf($link_format, $labels['next'], $href_next, $labels['next'], "static/images/icons/f.gif");
+        $last = sprintf($link_format, $labels['last'], $href_last, $labels['last'], "static/images/icons/ff.gif");
 
     } else {
-        $next  = sprintf($link_disabled_format, $labels['next'], "images/icons/f_non.gif");    // we're on the last page, don't enable 'next' link
-        $last = sprintf($link_disabled_format, $labels['last'], "images/icons/ff_non.gif");    // nor 'last page' link    
+        $next  = sprintf($link_disabled_format, $labels['next'], "static/images/icons/f_non.gif");    // we're on the last page, don't enable 'next' link
+        $last = sprintf($link_disabled_format, $labels['last'], "static/images/icons/ff_non.gif");    // nor 'last page' link    
     }
 
     $greyColorBeg = '<span style="color: #5F5A59">';

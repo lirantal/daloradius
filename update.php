@@ -1808,7 +1808,7 @@ if (isset($_POST['submit'])) {
         
                 <div id="header">
 
-                                <h1><a href="index.php"> <img src="images/daloradius_small.png" border=0/></a></h1>
+                                <h1><a href="index.php"> <img src="static/images/daloradius_small.png" border=0/></a></h1>
                                 <h2>
                                     Radius Management, Reporting and Accounting by <a href="https://github.com/lirantal/daloradius">Liran Tal</a>                                
                                 </h2>

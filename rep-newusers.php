@@ -33,15 +33,15 @@
     include("library/layout.php");
 
     // we validate starting and ending dates
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
+    $startdate = (array_key_exists('startdate', $_GET) && !empty(trim($_GET['startdate'])) &&
+                  preg_match(DATE_REGEX, trim($_GET['startdate']), $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : "";
+               ? trim($_GET['startdate']) : "";
 
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
+    $enddate = (array_key_exists('enddate', $_GET) && !empty(trim($_GET['enddate'])) &&
+                preg_match(DATE_REGEX, trim($_GET['enddate']), $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : "";
+             ? trim($_GET['enddate']) : "";
 
     // init logging variables
     $log = "visited page: ";
@@ -58,12 +58,12 @@
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
-        "css/tabs.css"
+        "static/css/tabs.css"
     );
     
     $extra_js = array(
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "static/js/tabs.js"
     );
     
     $title = t('Intro','repnewusers.php');
@@ -164,7 +164,7 @@
         // print navbar controls
         print_tab_header($navkeys);
         
-        // open first tab (shown)
+        // tab 0
         open_tab($navkeys, 0, true);
 ?>
                         <table border="0" class="table1">
@@ -219,14 +219,15 @@
 <?php
         close_tab($navkeys, 0);
         
-        // open second tab
+        $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+        
+        // tab 1
         open_tab($navkeys, 1);
         
-        $img_format = '<div style="text-align: center"><img src="%s" alt="%s" style="%s"></div>';
-        $src = sprintf('library/graphs-reports-new-users.php?startdate=%s&enddate=%s', $startdate, $enddate);
+        $src = sprintf("library/graphs/new_users.php?startdate=%s&enddate=%s", $startdate, $enddate);
         $alt = "monthly number of new users";
-        printf($img_format, $src, "Online users", "margin: 30px auto");
-
+        printf($img_format, $src, $alt);
+        
         close_tab($navkeys, 1);
         
     } else {

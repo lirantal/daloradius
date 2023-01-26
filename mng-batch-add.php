@@ -109,16 +109,16 @@
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
-        "css/tabs.css"
+        "static/css/tabs.css"
     );
     
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js",
-        "library/javascript/productive_funcs.js",
-        "library/javascript/dynamic_attributes.js",
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
+        "static/js/productive_funcs.js",
+        "static/js/dynamic_attributes.js",
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "static/js/tabs.js"
     );
     
     $title = t('Intro','mngbatch.php');

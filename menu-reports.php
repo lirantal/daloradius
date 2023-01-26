@@ -45,7 +45,7 @@ include_once("include/management/autocomplete.php");
                 <ul class="subnav">
                     <li>
                         <a title="<?= strip_tags(t('button','OnlineUsers')) ?>" href="javascript:document.reponline.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsOnlineUsers.gif">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsOnlineUsers.gif">
                             <?= t('button','OnlineUsers') ?>
                         </a>
                             
@@ -59,7 +59,7 @@ include_once("include/management/autocomplete.php");
 
                     <li>
                         <a title="<?= t('button','LastConnectionAttempts') ?>" href="javascript:document.replastconnect.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsLastConnection.png">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLastConnection.png">
                             <?= t('button','LastConnectionAttempts') ?>
                         </a>
                         
@@ -92,7 +92,7 @@ include_once("include/management/autocomplete.php");
                     
                     <li>
                         <a title="<?= strip_tags(t('button','NewUsers')) ?>" href="javascript:document.repnewusers.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/userList.gif">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/userList.gif">
                             <?= t('button','NewUsers') ?>
                         </a>
 
@@ -109,7 +109,7 @@ include_once("include/management/autocomplete.php");
                     
                     <li>
                         <a title="<?= strip_tags(t('button','TopUser')) ?>" href="javascript:document.topusers.submit();"><b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/reportsTopUsers.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/reportsTopUsers.png">
                             <?= t('button','TopUser') ?>
                         </a>
                         
@@ -140,7 +140,7 @@ include_once("include/management/autocomplete.php");
 
                     <li>
                         <a title="<?= strip_tags(t('button','History')) ?>" href="rep-history.php">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsHistory.png">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsHistory.png">
                             <?= t('button','History') ?>
                         </a>
                     </li>

@@ -49,7 +49,7 @@
     $accounting_username = $username_enc;
 
     $extra_js = array(
-        "library/javascript/pages_common.js",
+        "static/js/pages_common.js",
     );
 
     // print HTML prologue

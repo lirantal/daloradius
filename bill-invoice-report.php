@@ -69,8 +69,8 @@
     $extra_css = array();
     
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js",
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
     );
     
     $title = t('Intro','billinvoicereport.php');

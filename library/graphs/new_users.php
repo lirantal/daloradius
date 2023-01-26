@@ -23,22 +23,22 @@
  *********************************************************************************************************
  */
 
-    include('checklogin.php');
-
-    $date_regex = '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/';
+    include('../checklogin.php');
+    include('../../lang/main.php');
+    include('../validation.php');
 
     // we validate starting and ending dates
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match($date_regex, $_GET['startdate'], $m) !== false &&
+    $startdate = (array_key_exists('startdate', $_GET) && !empty(trim($_GET['startdate'])) &&
+                  preg_match(DATE_REGEX, trim($_GET['startdate']), $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : "";
+               ? trim($_GET['startdate']) : "";
 
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match($date_regex, $_GET['enddate'], $m) !== false &&
+    $enddate = (array_key_exists('enddate', $_GET) && !empty(trim($_GET['enddate'])) &&
+                preg_match(DATE_REGEX, trim($_GET['enddate']), $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : "";
+             ? trim($_GET['enddate']) : "";
 
-    include('opendb.php');
+    include('../opendb.php');
 
     $limit = 24;
 
@@ -46,7 +46,7 @@
     if (!empty($enddate)) {
         $sql_WHERE_pieces[] = sprintf("CreationDate <= '%s'", $dbSocket->escapeSimple($enddate));
     }
-    
+
     if (!empty($startdate)) {
         $sql_WHERE_pieces[] = sprintf("CreationDate >= '%s'", $dbSocket->escapeSimple($startdate));
     }
@@ -67,16 +67,16 @@
         $labels[] = strval($row[1]);
     }
 
-    include('closedb.php');
+    include('../closedb.php');
 
     $title = "new users amount";
     $xtitle = "per-month distribution";
     $ytitle = "users";
-    
-    
+
+
     include_once('jpgraph/jpgraph.php');
     include_once('jpgraph/jpgraph_bar.php');
-    
+
     // create the graph
     $graph = new Graph(1024, 384, 'auto');
     $graph->SetScale('textint');
@@ -85,27 +85,27 @@
     $graph->SetTickDensity(TICKD_SPARSE, TICKD_SPARSE);
     $graph->img->SetMargin(110, 20, 20, 110);
     $graph->title->Set($title);
-    
+
     // setup x-axis
-    
+
     $graph->xaxis->title->Set($xtitle);
     $graph->xaxis->title->SetMargin(60);
     $graph->xaxis->SetLabelAngle(60);
     $graph->xaxis->SetTickLabels($labels);
-    $graph->xaxis->HideLastTickLabel(); 
-    
+    $graph->xaxis->HideLastTickLabel();
+
     // setup y-axis
     $graph->yaxis->title->Set($ytitle);
     $graph->yaxis->title->SetMargin(40);
     $graph->yaxis->SetLabelAngle(45);
     $graph->yaxis->scale->SetGrace(25);
-    
+
     // create the linear plot
     $plot = new BarPlot($values);
     $plot->value->Show();
     $plot->value->SetFormat('%d');
     $plot->value->SetAngle(45);
-    
+
     // add the plot to the graph
     $graph->Add($plot);
 

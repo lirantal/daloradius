@@ -66,8 +66,8 @@
 
     // print HTML prologue
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js"
+        "static/js/ajax.js",
+        "static/js/dynamic_attributes.js"
     );
     
     $title = t('Intro','mngbatchlist.php');

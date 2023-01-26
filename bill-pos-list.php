@@ -63,8 +63,8 @@
 
     // print HTML prologue
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js"
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js"
     );
     
     $title = t('Intro','billposlist.php');
@@ -202,8 +202,8 @@
             list($username, $id, $value, $attribute, $contactperson, $billstatus, $planname, $company, $firstname, $disabled) = $row;
             
             $img = (boolval($disabled))
-                 ? '<img title="user is disabled" src="images/icons/userStatusDisabled.gif" alt="[disabled]">'
-                 : '<img title="user is enabled" src="images/icons/userStatusActive.gif" alt="[enabled]">';
+                 ? '<img title="user is disabled" src="static/images/icons/userStatusDisabled.gif" alt="[disabled]">'
+                 : '<img title="user is enabled" src="static/images/icons/userStatusActive.gif" alt="[enabled]">';
             
             $auth = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes")
                   ? "[Password is hidden]" : $value;

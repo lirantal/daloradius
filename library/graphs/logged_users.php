@@ -19,7 +19,7 @@
  *                 produces a barchart containing min/max number of user
  *                 accounted on every day of the specified month;
  *                 if a full date is specified, the barchart
- *                 reports the per-hour distribution of users accounted 
+ *                 reports the per-hour distribution of users accounted
  *                 on the specified date.
  *
  * Authors:        Liran Tal <liran@enginx.com>
@@ -29,7 +29,7 @@
  *********************************************************************************************************
  */
 
-include('checklogin.php');
+include('../checklogin.php');
 
 $day = (array_key_exists('day', $_GET) && isset($_GET['day']) &&
         intval($_GET['day']) > 0 && intval($_GET['day']) <= 31)
@@ -47,7 +47,7 @@ $year = (array_key_exists('year', $_GET) && isset($_GET['year']) &&
 
 
 
-include('opendb.php');
+include('../opendb.php');
 
 include_once('jpgraph/jpgraph.php');
 include_once('jpgraph/jpgraph_bar.php');
@@ -64,7 +64,7 @@ $graph->title->SetMargin(20);
 // pre-set x-axis
 $graph->xaxis->title->SetMargin(60);
 $graph->xaxis->SetLabelAngle(60);
-$graph->xaxis->HideLastTickLabel(); 
+$graph->xaxis->HideLastTickLabel();
 
 // pre-set y-axis
 $graph->yaxis->title->SetMargin(40);
@@ -76,9 +76,9 @@ if (!empty($day)) {
     $date_obj = new DateTime();
     $date_obj->setDate($year, $month, $day);
     $date_str = $date_obj->format('Y-m-d');
-    
+
     // we get a table containing starting_day, starting_hour and ending_day, ending_hour
-    $sql = sprintf("SELECT DATE(acctstarttime) AS starting_day, HOUR(acctstarttime) AS starting_hour, 
+    $sql = sprintf("SELECT DATE(acctstarttime) AS starting_day, HOUR(acctstarttime) AS starting_hour,
                            HOUR(DATE_ADD(acctstoptime, INTERVAL 1 HOUR)) AS ending_day, DATE(acctstoptime) AS ending_hour
                       FROM %s
                      WHERE acctstarttime <= '%s'
@@ -89,39 +89,39 @@ if (!empty($day)) {
 
     $values = array();
     while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-        
+
         // if starting day == ending day, we need to count on a per-hour basis up to ending_hour,
         // otherwise we consider the whole day up to 23:59
         $ending_hour = ($row['starting_day'] == $row['ending_day']) ? intval($row['ending_hour']) : 23;
-        
+
         for ($i = $row['starting_hour']; $i <= $ending_hour; $i++) {
             $label = $i;
             $values[$label] = (in_array($label, array_keys($values))) ? $values[$label] + 1 : 1;
         }
     }
-   
+
     // we set labels and fill empty $values spots
     $labels = array();
-   
+
     for ($i = 0; $i <= 23; $i++) {
         if (!array_key_exists($i, $values)) {
             $values[$i] = 0;
         }
         $labels[$i] = sprintf("%s:00-%s:59", $i, $i);
     }
-   
+
     // we sort the values
     ksort($values);
 
     // set graph title
     $graph_title = sprintf("hour distribution of users accounted on %s", $date_str);
-    
+
     $xtitle = "time slot";
-    
+
     // create the linear plot
     $plot = new BarPlot($values);
-    
-    $plot->value->SetFormat('%d'); 
+
+    $plot->value->SetFormat('%d');
     $plot->value->Show();
     $plot->value->SetAngle(45);
 
@@ -131,31 +131,31 @@ if (!empty($day)) {
     $startdate_obj->setDate($year, $month, 1);
     $startdate_obj->setTime(0, 0);
     $startdate_str = $startdate_obj->format('Y-m-d');
-    
+
     $enddate_obj = clone $startdate_obj;
     $enddate_obj->add(new DateInterval("P1M"));
     $enddate_str = $enddate_obj->format('Y-m-d');
-    
+
     $tot_values = array();
     $min_values = array();
     $max_values = array();
-    
+
     // iterate through each day of the selected interval
     for ($dt_obj = $startdate_obj; $dt_obj <= $enddate_obj; $dt_obj->modify('+1 day')) {
         $date = $dt_obj->format('Y-m-d');
-        
+
         $sql = sprintf("SELECT HOUR(acctstarttime) AS h, COUNT(DISTINCT(radacctid)) FROM %s
                          WHERE DATE(acctstarttime) <= '%s'
                            AND (DATE(acctstoptime) >= '%s'OR (acctsessiontime = 0 AND acctinputoctets = 0 AND acctoutputoctets = 0))
                          GROUP BY h", $configValues['CONFIG_DB_TBL_RADACCT'], $date, $date);
         $result = $dbSocket->query($sql);
-        
+
         while ($row = $result->fetchRow()) {
             $counter = intval($row[1]);
-            
+
             // populate data arrays
             $tot_values[$date] = (array_key_exists($date, $tot_values)) ? $tot_values[$date] + $counter : $counter;
-            
+
             if (!array_key_exists($date, $min_values)) {
                 $min_values[$date] = $counter;
             } else {
@@ -163,7 +163,7 @@ if (!empty($day)) {
                     $min_values[$date] = $counter;
                 }
             }
-            
+
             if (!array_key_exists($date, $max_values)) {
                 $max_values[$date] = $counter;
             } else {
@@ -173,33 +173,33 @@ if (!empty($day)) {
             }
         }
     }
-    
+
     ksort($tot_values);
     ksort($min_values);
     ksort($max_values);
-    
+
     $labels = array();
     foreach ($tot_values as $label => $value) {
         $labels[] = sprintf("%s\n(%s)", $label, $value);
     }
-    
+
     // finish setting up graph
     $graph_title = sprintf("min/max per-day accounted users from %s to %s", $startdate_str, $enddate_str);
-    
+
     $xtitle = "time slot (total hits)";
-    
+
     // setup plots
     $bplot_max = new BarPlot(array_values($max_values));
     $bplot_min = new BarPlot(array_values($min_values));
-    
+
     $bplot_min->value->Show();
-    $bplot_min->value->SetFormat('%d'); 
+    $bplot_min->value->SetFormat('%d');
     $bplot_min->value->SetAngle(45);
-    
+
     $bplot_max->value->Show();
-    $bplot_max->value->SetFormat('%d'); 
+    $bplot_max->value->SetFormat('%d');
     $bplot_max->value->SetAngle(45);
-    
+
     $plot = new GroupBarPlot(array($bplot_min, $bplot_max));
 }
 
@@ -216,6 +216,6 @@ $graph->Add($plot);
 // display the graph
 $graph->Stroke();
 
-include('closedb.php');
+include('../closedb.php');
 
 ?>

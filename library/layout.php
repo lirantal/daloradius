@@ -27,14 +27,14 @@ if (strpos($_SERVER['PHP_SELF'], '/library/layout.php') !== false) {
 }
 
 const DEFAULT_COMMON_CSS = array(
-    "css/2.css",
-    "css/form-field-tooltip.css",
+    "static/css/2.css",
+    "static/css/form-field-tooltip.css",
 );
 
 const DEFAULT_COMMON_JS = array(
-    "library/javascript/pages_common.js",
-    "library/javascript/rounded-corners.js",
-    "library/javascript/form-field-tooltip.js"
+    "static/js/pages_common.js",
+    "static/js/rounded-corners.js",
+    "static/js/form-field-tooltip.js"
 );
 
 // this function can be used for printing the HTML prologue
@@ -422,7 +422,7 @@ function print_form_component($descriptor) {
     if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
         $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
         $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
-        printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip"></a>', $onclick);
+        printf('<a href="#" onclick="%s"><img src="static/images/icons/comment.png" alt="Tip"></a>', $onclick);
         printf('<div id="%s" style="display:none; visibility:visible" class="ToolTip">%s</div>',
                $tooltip_box_id, $descriptor['tooltipText']);
     }
@@ -434,7 +434,7 @@ function print_form_component($descriptor) {
 
         
         //~ echo '<div class="tooltip">';
-        //~ printf('<a href="#" onclick="%s"><img src="images/icons/comment.png" alt="Tip" style="vertical-align: middle"></a>', $onclick);
+        //~ printf('<a href="#" onclick="%s"><img src="static/images/icons/comment.png" alt="Tip" style="vertical-align: middle"></a>', $onclick);
         //~ printf('<span id="%s" class="tooltiptext">%s</span>', $tooltip_box_id, $descriptor['tooltipText']);
         //~ echo '</div>';
     //~ }

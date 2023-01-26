@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -28,36 +28,27 @@
     $log = "visited page: ";
 
     include_once("lang/main.php");
-    
+
     include("library/layout.php");
 
     // print HTML prologue
     $title = t('Intro','mngmain.php');
     $help = "";
-    
+
     print_html_prologue($title, $langCode);
 
     include("menu-mng-users.php");
-    
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
-?>
+    $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+    $alt = "Total Users";
+    $src = "library/graphs/total_users.php";
 
-            <div style="text-align: center">
-                <img alt="Total Users" src="library/chart-mng-total-users.php">
-            </div>
+    printf($img_format, $src, $alt);
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>

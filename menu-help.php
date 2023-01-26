@@ -30,11 +30,9 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-help.php') !== false) {
 include_once("lang/main.php");
 
 $m_active = "Help";
-?> 
 
-<?php
-    include_once("include/menu/menu-items.php");
-    include_once("include/menu/help-subnav.php");
+include_once("include/menu/menu-items.php");
+include_once("include/menu/help-subnav.php");
 ?>
 
             <div id="sidebar">
@@ -45,7 +43,7 @@ $m_active = "Help";
 
                 <p class="news">
                     daloRADIUS - RADIUS Management<br>
-                    version <?= $configValues['DALORADIUS_VERSION'] ?> / <?= $configValues['DALORADIUS_DATE'] ?>
+                    <?= t('all', 'daloRADIUSVersion') ?> / <?= htmlspecialchars($configValues['DALORADIUS_DATE'], ENT_QUOTES, 'UTF-8') ?>
                      
                     <a href="https://github.com/lirantal/daloradius" class="more">Read More &raquo;</a>
                 </p>

@@ -189,9 +189,9 @@
     $extra_css = array();
 
     $extra_js = array(
-        "library/javascript/productive_funcs.js",
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js",
+        "static/js/productive_funcs.js",
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
     );
 
     $title = t('Intro','mngimportusers.php');

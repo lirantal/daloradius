@@ -14,12 +14,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *         this script process some important server information and displays it
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Carlos Cesario <carloscesario@gmail.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    this script process some important server information and displays it
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Carlos Cesario <carloscesario@gmail.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -373,7 +373,7 @@ $iflist = get_interface_list();
     <td class="stitle"><?= $ifname ?></td>
   </tr>
   <tr>
-    <td class="summaryKey">Ip</td>
+    <td class="summaryKey">IP</td>
     <td class="summaryValue"><span class="sleft"><?= get_ip_addr($ifname) ?></span></td>
   </tr>
   <tr>

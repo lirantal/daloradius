@@ -60,7 +60,7 @@ $m_active = "Graphs";
 
                 <li>
                     <a title="<?= strip_tags(t('button','UserLogins')) ?>" tabindex="1" href="javascript:document.overall_logins.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/graphsGeneral.gif"><?= t('button','UserLogins') ?>
+                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif"><?= t('button','UserLogins') ?>
                     </a>
                     <form name="overall_logins" action="graphs-overall_logins.php" method="GET" class="sidebar">
                         <input tabindex="2" name="username" type="text" id="usernameLogins" list="usernames"
@@ -82,7 +82,7 @@ $m_active = "Graphs";
 
                 <li>
                     <a title="<?= strip_tags(t('button','UserDownloads')) ?>" tabindex="4" href="javascript:document.overall_download.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/graphsGeneral.gif"><?= t('button','UserDownloads') ?>
+                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif"><?= t('button','UserDownloads') ?>
                     </a>
                     <form name="overall_download" action="graphs-overall_download.php" method="GET" class="sidebar">
                         <input tabindex="5" name="username" type="text" id="usernameDownloads"
@@ -114,7 +114,7 @@ $m_active = "Graphs";
 
                 <li>
                     <a title="<?= strip_tags(t('button','UserUploads')) ?>" tabindex="8" href="javascript:document.overall_upload.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/graphsGeneral.gif">
+                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
                         <?= t('button','UserUploads') ?>
                     </a>
                     <form name="overall_upload" action="graphs-overall_upload.php" method="GET" class="sidebar">
@@ -151,7 +151,7 @@ $m_active = "Graphs";
             <ul class="subnav">
                 <li>
                     <a title="<?= strip_tags(t('button','TotalLogins')) ?>" tabindex="11" href="javascript:document.alltime_logins.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/graphsGeneral.gif">
+                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
                         <?= t('button','TotalLogins') ?>
                     </a>
                     <form name="alltime_logins" action="graphs-alltime_logins.php" method="GET" class="sidebar">
@@ -169,7 +169,7 @@ $m_active = "Graphs";
 
                 <li>
                     <a title="<?= strip_tags(t('button','TotalTraffic')) ?>" tabindex="13" href="javascript:document.alltime_traffic_compare.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/graphsGeneral.gif">
+                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
                         <?= t('button','TotalTraffic') ?>
                     </a>
                     <form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="GET" class="sidebar">
@@ -197,7 +197,7 @@ $m_active = "Graphs";
 
                 <li>
                     <a title="<?= strip_tags(t('button','LoggedUsers')) ?>" tabindex="16" href="javascript:document.logged_users.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/graphsGeneral.gif">
+                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
                         <?= t('button','LoggedUsers') ?>
                     </a>
                     <form name="logged_users" action="graphs-logged_users.php" method="GET" class="sidebar">

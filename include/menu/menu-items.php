@@ -48,7 +48,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/menu-items.php') !== false) {
                 
                 <h1>
                     <a title="<?= strip_tags(t('menu','Home')) ?>" href="index.php">
-                        <img style="border: 0" src="images/daloradius_small.png">
+                        <img style="border: 0" src="static/images/daloradius_small.png">
                     </a>
                 </h1>
                 <h2><?= t('all','copyright1') ?></h2>

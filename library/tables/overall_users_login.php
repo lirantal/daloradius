@@ -25,9 +25,9 @@
  */
 
 // prevent this file to be directly accessed
-$extension_file = '/library/tables-overall-users-login.php';
+$extension_file = '/library/tables/overall_users_login.php';
 if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit;
 }
 
@@ -54,7 +54,7 @@ $label_param['month'] = "Month of year";
 $label_param['year'] = "Year";
 
 
-include('opendb.php');
+include('library/opendb.php');
 include('include/management/pages_common.php');
 
 if (!empty($username)) {
@@ -62,22 +62,22 @@ if (!empty($username)) {
                    $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
-    
+
     $is_valid = $numrows == 1;
 }
 
-if ($is_valid) {    
+if ($is_valid) {
     switch ($type) {
         case "yearly":
             $selected_param = "year";
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "logins", "year" )))
                      ? strtolower($_GET['orderBy']) : "year";
-        
+
             $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
                       FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY year";
             break;
-        
+
         case "monthly":
             $selected_param = "month";
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
@@ -89,7 +89,7 @@ if ($is_valid) {
                            CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
                       FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY month";
             break;
-            
+
         default:
         case "daily":
             $selected_param = "day";
@@ -101,45 +101,45 @@ if ($is_valid) {
                      GROUP BY day";
             break;
     }
-    
+
     $sql = sprintf($sql . " ORDER BY %s %s", $configValues['CONFIG_DB_TBL_RADACCT'],
                                              $dbSocket->escapeSimple($username), $orderBy, $orderType);
     $res = $dbSocket->query($sql);
-    
+
     $numrows = $res->numRows();
-    
+
     if ($numrows > 0) {
         // $cols is needed only if $numwrows > 0
-        $cols = array( 
+        $cols = array(
                        $selected_param => $label_param[$selected_param],
                        "logins" => "Logins/hits count"
                      );
         $colspan = count($cols);
         $half_colspan = intval($colspan / 2);
-    
+
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-    
-    
+
+
         $total_data = 0;
         while ($row = $res->fetchRow()) {
             $total_data += intval($row[1]);
         }
-        
+
         $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
-        
+
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = sprintf("&type=%s&username=%s&goto_stats=true", $type, $username_enc);
@@ -151,7 +151,7 @@ if ($is_valid) {
     <br>
     <table border="0" class="table1">
         <thead>
-        
+
 <?php
         // page numbers are shown only if there is more than one page
         if ($drawNumberLinks) {
@@ -160,7 +160,7 @@ if ($is_valid) {
             setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
             echo '</td>' . '</tr>';
         }
-        
+
         // second line of table header
         echo "<tr>";
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
@@ -168,14 +168,14 @@ if ($is_valid) {
 ?>
 
         </thead>
-        
+
         <tbody>
 <?php
-    
+
         $per_page_data = 0;
         while ($row = $res->fetchRow()) {
             $data = intval($row[1]);
-            
+
             echo "<tr>"
                . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
                . "<td>" . $data . "</td>"
@@ -187,7 +187,7 @@ if ($is_valid) {
 
         <tfoot>
             <tr>
-            
+
                 <th scope="col" colspan="<?= $half_colspan + ($colspan % 2) ?>">
 <?php
                     echo "displayed <strong>$per_page_numrows</strong> record(s)";
@@ -196,7 +196,7 @@ if ($is_valid) {
                     }
 ?>
                 </th>
-                
+
                 <th scope="col" colspan="<?= $half_colspan ?>">
 <?php
                     echo "<strong>$per_page_data</strong> login(s)";
@@ -205,7 +205,7 @@ if ($is_valid) {
                     }
 ?>
                 </th>
-                
+
             </tr>
 
 <?php
@@ -221,7 +221,7 @@ if ($is_valid) {
         }
 ?>
         </tfoot>
-        
+
     </table>
 </div>
 
@@ -231,7 +231,7 @@ if ($is_valid) {
         // $numrows <= 0
         $failureMsg = "No login(s) found for this user";
     }
-    
+
 } else {
     // username not valid
     $failureMsg = "You must provide a valid username";
@@ -241,6 +241,6 @@ if (!empty($failureMsg)) {
     include_once("include/management/actionMessages.php");
 }
 
-include('closedb.php');
+include('library/closedb.php');
 
 ?>
