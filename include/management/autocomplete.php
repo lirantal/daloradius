@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -15,32 +15,32 @@
  *
  *********************************************************************************************************
  *
- * Authors:     Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
-
 
     include_once("library/config_read.php");
 
     /**
      * Checking if the AJAX functionality should be loaded
      */
-    if( (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE'])) &&
-                (strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") )
-    {
-        $autoComplete = true; # Set boolean for throughout the page
-        echo "
-		<script type=\"text/javascript\" src=\"library/javascript/ajax.js\"></script>
-		<script type=\"text/javascript\" src=\"library/javascript/dhtmlSuite-common.js\"></script>
-		<script type=\"text/javascript\" src=\"library/javascript/auto-complete.js\"></script>
-		<script>
-			var DHTML_SUITE_THEME_FOLDER = './';
-			var DHTML_SUITE_JS_FOLDER = 'library/javascript/';
-			var DHTML_SUITE_THEME = '.';
-		</script>
-        ";
-    }
+    if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+        strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") {
 
+        $autoComplete = true; # Set boolean for throughout the page
+        echo <<<EOF
+<script src="library/javascript/ajax.js"></script>
+<script src="library/javascript/dhtmlSuite-common.js"></script>
+<script src="library/javascript/auto-complete.js"></script>
+
+<script>
+    var DHTML_SUITE_THEME_FOLDER = './';
+    var DHTML_SUITE_JS_FOLDER = 'library/javascript/';
+    var DHTML_SUITE_THEME = '.';
+</script>
+EOF;
+    }
 
 ?>
