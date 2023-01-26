@@ -147,7 +147,7 @@
 
     $ticketInformation = "<strong>Information</strong>:<br>to use this card, please connect your device to the nearest ssid."
                        . "Open your web browser and enter each needed field.";
-    $ticketLogoFile = "/images/daloradius_small.png";
+    $ticketLogoFile = "/static/images/daloradius_small.png";
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {

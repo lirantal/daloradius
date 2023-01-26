@@ -98,9 +98,9 @@
 
     // print HTML prologue
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js",
-        "library/javascript/ajaxGeneric.js",
+        "static/js/ajax.js",
+        "static/js/dynamic_attributes.js",
+        "static/js/ajaxGeneric.js",
     );
     
     $title = t('Intro','mngradgroupreplynew.php');

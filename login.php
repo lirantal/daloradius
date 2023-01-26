@@ -45,10 +45,10 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
         <title>daloRADIUS :: Login</title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-        <link rel="stylesheet" href="css/1.css" media="screen">
-        <link rel="stylesheet" href="css/style.css" media="screen">
+        <link rel="stylesheet" href="static/css/1.css" media="screen">
+        <link rel="stylesheet" href="static/css/style.css" media="screen">
         
-        <script src="library/javascript/pages_common.js"></script>
+        <script src="static/js/pages_common.js"></script>
     </head>
 
     <body onload="document.login.operator_user.focus()">
@@ -57,7 +57,7 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                 <div id="header">
                     <h1>
                         <a href="index.php">
-                            <img alt="daloRADIUS logo" style="border: 0" src="images/daloradius_small.png">
+                            <img alt="daloRADIUS logo" style="border: 0" src="static/images/daloradius_small.png">
                         </a>
                     </h1>
                     <h2><?= t('all','copyright1') ?></h2>

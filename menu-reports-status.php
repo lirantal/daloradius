@@ -37,14 +37,14 @@ $m_active = "Reports";
     include_once("include/menu/reports-subnav.php");
     
     $status_menu_elements = array(
-        "rep-stat-server.php" => array(t('button','ServerStatus'), "images/icons/reportsStatus.png"),
-        "rep-stat-services.php" => array(t('button','ServicesStatus'), "images/icons/reportsStatus.png")
+        "rep-stat-server.php" => array(t('button','ServerStatus'), "static/images/icons/reportsStatus.png"),
+        "rep-stat-services.php" => array(t('button','ServicesStatus'), "static/images/icons/reportsStatus.png")
     );
     
     $peripherals_menu_elements = array(
-        "rep-stat-cron.php" => array("CRON Status", "images/icons/reportsStatus.png"),
-        "rep-stat-ups.php" => array("UPS Status", "images/icons/reportsStatus.png"),
-        "rep-stat-raid.php" => array("RAID Status", "images/icons/reportsStatus.png")
+        "rep-stat-cron.php" => array("CRON Status", "static/images/icons/reportsStatus.png"),
+        "rep-stat-ups.php" => array("UPS Status", "static/images/icons/reportsStatus.png"),
+        "rep-stat-raid.php" => array("RAID Status", "static/images/icons/reportsStatus.png")
     );
     $element_format = '<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>';
 ?>      

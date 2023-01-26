@@ -58,9 +58,9 @@
 
 
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js",
-        "library/javascript/pages_common.js",
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
+        "static/js/pages_common.js",
     );
 
     // print HTML prologue

@@ -47,21 +47,21 @@ $m_active = "Management";
                     <li>
                         <a title="<?= strip_tags(t('button','ListProfiles')) ?>" href="mng-rad-profiles-list.php" tabindex="1">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsList.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsList.png">
                             <?= t('button','ListProfiles') ?>
                         </a>
                     </li>
                     <li>
                         <a title="<?= strip_tags(t('button','NewProfile')) ?>" href="mng-rad-profiles-new.php" tabindex="2">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsAdd.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsAdd.png">
                             <?= t('button','NewProfile') ?>
                         </a>
                     </li>
                     <li>
                         <a title="<?= strip_tags(t('button','EditProfile')) ?>" href="javascript:document.mngradprofileedit.submit();" tabindex="3">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsEdit.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsEdit.png">
                             <?= t('button','EditProfile') ?>
                         </a>
                         <form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="GET" class="sidebar">
@@ -85,7 +85,7 @@ $m_active = "Management";
                     <li>
                         <a title="<?= strip_tags(t('button','DuplicateProfile')) ?>" href="mng-rad-profiles-duplicate.php" tabindex="4">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsEdit.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsEdit.png">
                             <?= t('button','DuplicateProfile') ?>
                         </a>
                     </li>
@@ -93,7 +93,7 @@ $m_active = "Management";
                     <li>
                         <a title="<?= strip_tags(t('button','RemoveProfile')) ?>" href="mng-rad-profiles-del.php" tabindex="5">
                             <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="images/icons/groupsRemove.png">
+                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsRemove.png">
                             <?= t('button','RemoveProfile') ?>
                         </a>
                     </li>

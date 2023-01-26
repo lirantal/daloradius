@@ -62,7 +62,7 @@ $m_active = "Reports";
                 <ul class="subnav">
                     <li>
                         <a title="<?= strip_tags(t('button','daloRADIUSLog')) ?>" href="javascript:document.daloradius_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsLogs.png">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
                             <?= t('button','daloRADIUSLog') ?>
                         </a>
                         <form name="daloradius_log" action="rep-logs-daloradius.php" method="GET" class="sidebar">
@@ -94,7 +94,7 @@ $m_active = "Reports";
 
                     <li>
                         <a title="<?= strip_tags(t('button','RadiusLog')) ?>" href="javascript:document.radius_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsLogs.png">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
                             <?= t('button','RadiusLog') ?>
                         </a>
                         <form name="radius_log" action="rep-logs-radius.php" method="GET" class="sidebar">
@@ -125,7 +125,7 @@ $m_active = "Reports";
 
                     <li>
                         <a title="<?= strip_tags(t('button','SystemLog')) ?>" href="javascript:document.system_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsLogs.png">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
                             <?= t('button','SystemLog') ?>
                         </a>
                         <form name="system_log" action="rep-logs-system.php" method="GET" class="sidebar">
@@ -142,7 +142,7 @@ $m_active = "Reports";
 
                     <li>
                         <a title="<?= strip_tags(t('button','BootLog')) ?>" href="javascript:document.boot_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="images/icons/reportsLogs.png">
+                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
                             <?= t('button','BootLog') ?>
                         </a>
                         <form name="boot_log" action="rep-logs-boot.php" method="GET" class="sidebar">

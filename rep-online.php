@@ -52,14 +52,14 @@
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
-        "css/tabs.css"
+        "static/css/tabs.css"
     );
 
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js",
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "static/js/tabs.js"
     );
 
     $title = t('Intro','reponline.php');

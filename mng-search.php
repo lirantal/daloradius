@@ -59,8 +59,8 @@
 
     // print HTML prologue
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/ajaxGeneric.js"
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js"
     );
     
     $title = t('Intro','mngsearch.php');
@@ -302,8 +302,8 @@
             $id = intval($data['id']);
             
             $img = (!$data['enabled'])
-                 ? '<img title="user is disabled" src="images/icons/userStatusDisabled.gif" alt="[disabled]">'
-                 : '<img title="user is enabled" src="images/icons/userStatusActive.gif" alt="[enabled]">';
+                 ? '<img title="user is disabled" src="static/images/icons/userStatusDisabled.gif" alt="[disabled]">'
+                 : '<img title="user is enabled" src="static/images/icons/userStatusActive.gif" alt="[enabled]">';
             
             $auth = htmlspecialchars($data['auth'], ENT_QUOTES, 'UTF-8');
             

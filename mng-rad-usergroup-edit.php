@@ -148,13 +148,13 @@
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
-        "css/tabs.css"
+        "static/css/tabs.css"
     );
     
     $extra_js = array(
-        "library/javascript/productive_funcs.js",
+        "static/js/productive_funcs.js",
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "static/js/tabs.js"
     );
     
     $title = t('Intro','mngradusergroupedit');

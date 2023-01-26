@@ -428,17 +428,17 @@ window.onload = function(){
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
-        "css/tabs.css"
+        "static/css/tabs.css"
     );
     
     $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js",
-        "library/javascript/ajaxGeneric.js",
-        "library/javascript/productive_funcs.js",
-        "library/javascript/pages_common.js",
+        "static/js/ajax.js",
+        "static/js/dynamic_attributes.js",
+        "static/js/ajaxGeneric.js",
+        "static/js/productive_funcs.js",
+        "static/js/pages_common.js",
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "static/js/tabs.js"
     );
     
     
@@ -631,7 +631,7 @@ window.onload = function(){
                 
                 echo '<li>';
                 printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
-                echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
+                echo '<img src="static/images/icons/delete.png" border="0" alt="Remove"></a>';
                 
                 printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
 
@@ -649,7 +649,7 @@ window.onload = function(){
                 if (!empty($row[3]) || !empty($row[4])) {
                     $divId = sprintf("%s-Tooltip-%d-radcheck", $row[0], $id);
                     $onclick = sprintf("toggleShowDiv('%s')", $divId);
-                    printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
+                    printf('<img src="static/images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
                     printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
                     
                     if (!empty($row[3])) {
@@ -716,7 +716,7 @@ window.onload = function(){
                 
                 echo '<li>';
                 printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
-                echo '<img src="images/icons/delete.png" border="0" alt="Remove"></a>';
+                echo '<img src="static/images/icons/delete.png" border="0" alt="Remove"></a>';
 
                 printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
 
@@ -733,7 +733,7 @@ window.onload = function(){
                 if (!empty($row[3]) || !empty($row[4])) {
                     $divId = sprintf("%s-Tooltip-%d-radreply", $row[0], $id);
                     $onclick = sprintf("toggleShowDiv('%s')", $divId);
-                    printf('<img src="images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
+                    printf('<img src="static/images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
                     printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
                     
                     if (!empty($row[3])) {

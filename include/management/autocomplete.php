@@ -31,13 +31,13 @@
 
         $autoComplete = true; # Set boolean for throughout the page
         echo <<<EOF
-<script src="library/javascript/ajax.js"></script>
-<script src="library/javascript/dhtmlSuite-common.js"></script>
-<script src="library/javascript/auto-complete.js"></script>
+<script src="static/js/ajax.js"></script>
+<script src="static/js/dhtmlSuite-common.js"></script>
+<script src="static/js/auto-complete.js"></script>
 
 <script>
     var DHTML_SUITE_THEME_FOLDER = './';
-    var DHTML_SUITE_JS_FOLDER = 'library/javascript/';
+    var DHTML_SUITE_JS_FOLDER = 'static/js/';
     var DHTML_SUITE_THEME = '.';
 </script>
 EOF;

@@ -373,8 +373,8 @@ function printTableHead($cols, $orderBy="", $orderType="asc", $partial_query_str
             $href_desc = sprintf($href_format, $param, 'desc');
 
             $img_format = '<img src="%s" alt="%s">';
-            $img_asc = sprintf($img_format, 'images/icons/arrow_up.png', '^');
-            $img_desc = sprintf($img_format, 'images/icons/arrow_down.png', 'v');
+            $img_asc = sprintf($img_format, 'static/images/icons/arrow_up.png', '^');
+            $img_desc = sprintf($img_format, 'static/images/icons/arrow_down.png', 'v');
 
             $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
             $disabled_a_format = '<a title="%s" role="link" aria-disabled="true" style="opacity:0.25">%s</a>';

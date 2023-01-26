@@ -177,13 +177,13 @@
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
-        "css/tabs.css"
+        "static/css/tabs.css"
     );
     
     $extra_js = array(
-        "library/javascript/pages_common.js",
+        "static/js/pages_common.js",
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "static/js/tabs.js"
     );
     
     $title = t('Intro','mnghsedit.php');

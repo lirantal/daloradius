@@ -47,12 +47,12 @@
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
-        "css/tabs.css"
+        "static/css/tabs.css"
     );
     
     $extra_js = array(
         // js tabs stuff
-        "library/javascript/tabs.js"
+        "static/js/tabs.js"
     );
     
     $title = t('Intro','graphsloggedusers.php');
