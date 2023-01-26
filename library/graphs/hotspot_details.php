@@ -24,7 +24,7 @@
  *********************************************************************************************************
  */
 
-    include('checklogin.php');
+    include('../checklogin.php');
 
     // validate parameters
     $category = (array_key_exists('category', $_GET) && isset($_GET['category']) &&
@@ -37,19 +37,19 @@
             $dbfield = "SUM(ra.acctsessiontime)";
             $label_format = "%s (%s seconds)";
             break;
-     
+
         case "avg_session_time":
             $title = "per-hotspot average session time";
             $dbfield = "AVG(ra.acctsessiontime)";
             $label_format = "%s (%s seconds)";
             break;
-            
+
         case "login_hits":
             $title = "per-hotspot login hits";
             $dbfield = "COUNT(ra.radacctid)";
             $label_format = "%s (%s login hits)";
             break;
-            
+
         default:
         case "unique_users":
             $title = "per-hotspot unique users";
@@ -58,7 +58,7 @@
             break;
     }
 
-    include('opendb.php');
+    include('../opendb.php');
 
     $values = array();
     $labels = array();
@@ -75,14 +75,14 @@
         $value = intval($row[1]);
         $labels[] = sprintf($label_format, $row[0], $value);
         $values[] = $value;
-        
+
     }
 
-    include('closedb.php');
-    
+    include('../closedb.php');
+
     include_once('jpgraph/jpgraph.php');
     include_once('jpgraph/jpgraph_pie.php');
-     
+
     $graph = new PieGraph(1024, 768);
     $graph->SetShadow();
     $graph->legend->SetLayout(LEGEND_VERT);
@@ -90,11 +90,11 @@
     $graph->clearTheme();
     $graph->SetFrame(false);
     $graph->title->Set($title);
-    
+
     $plot = new PiePlot($values);
     $plot->SetTheme("water");
     $plot->SetLegends($labels);
-    
+
     $graph->Add($plot);
     $graph->Stroke();
 

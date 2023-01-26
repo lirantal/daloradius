@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Description:    this extension creates a pie chart of online users
  *
  * Authors:        Liran Tal <liran@enginx.com>
@@ -23,10 +23,10 @@
  *********************************************************************************************************
  */
 
-    include('checklogin.php');
+    include('../checklogin.php');
 
-    include('opendb.php');
-    
+    include('../opendb.php');
+
     // getting total users
     $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
     $res = $dbSocket->query($sql);
@@ -40,18 +40,18 @@
     $res = $dbSocket->query($sql);
     $totalUsersOnline = $res->fetchrow()[0];
 
-    include('closedb.php');
+    include('../closedb.php');
 
     $values = array();
     $labels = array();
 
     if ($totalUsers > 0) {
         $totalUsersOffline = $totalUsers - $totalUsersOnline;
-        
+
         $value = intval($totalUsersOffline);
         $labels[] = sprintf("%d user(s) offline", $value);
         $values[] = $value;
-        
+
         if ($totalUsersOnline > 0) {
             $value = intval($totalUsersOnline);
             $labels[] = sprintf("%d user(s) online", $value);
@@ -61,7 +61,7 @@
 
     include_once('jpgraph/jpgraph.php');
     include_once('jpgraph/jpgraph_pie.php');
-     
+
     $graph = new PieGraph(1024, 768);
     $graph->SetShadow();
     $graph->legend->SetLayout(LEGEND_VERT);
@@ -69,11 +69,11 @@
     $graph->clearTheme();
     $graph->SetFrame(false);
     $graph->title->Set("online/offline users");
-    
+
     $plot = new PiePlot($values);
     $plot->SetTheme("water");
     $plot->SetLegends($labels);
-    
+
     $graph->Add($plot);
     $graph->Stroke();
 

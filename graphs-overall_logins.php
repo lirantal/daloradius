@@ -89,7 +89,7 @@
         // tab 0
         open_tab($navkeys, 0, true);
 
-        $src = sprintf("library/graphs-overall-users-data.php?category=login&type=%s&user=%s", $type, $username_enc);
+        $src = sprintf("library/graphs/overall_users_data.php?category=login&type=%s&user=%s", $type, $username_enc);
         $alt = sprintf("%s login/hit statistics for user %s", ucfirst($type), $username_enc);
 
         echo '<div style="text-align: center; margin-top: 50px">';

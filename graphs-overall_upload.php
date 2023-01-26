@@ -94,7 +94,7 @@
         // tab 0
         open_tab($navkeys, 0, true);
 
-        $src = sprintf("library/graphs-overall-users-data.php?category=upload&type=%s&size=%s&user=%s", $type, $size, $username_enc);
+        $src = sprintf("library/graphs/overall_users_data.php?category=upload&type=%s&size=%s&user=%s", $type, $size, $username_enc);
         $alt = sprintf("traffic uploaded by user %s", $username_enc);
 
         echo '<div style="text-align: center; margin-top: 50px">';

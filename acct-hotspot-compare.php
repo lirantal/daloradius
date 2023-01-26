@@ -24,38 +24,17 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include_once('library/config_read.php');
     include('library/check_operator_perm.php');
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
-    include_once('library/config_read.php');
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "css/tabs.css"
-    );
-    
-    $extra_js = array(
-        "library/javascript/ajax.js",
-        "library/javascript/dynamic_attributes.js",
-        // js tabs stuff
-        "library/javascript/tabs.js"
-    );
-    
-    $title = t('Intro','accthotspotcompare.php');
-    $help = t('helpPage','accthotspotcompare');
-    
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
-
-    include("menu-accounting-hotspot.php"); 
-    
     $cols = array(
                     "hotspot" => t('all','HotSpot'),
                     "uniqueusers" => t('all','UniqueUsers'),
@@ -80,7 +59,28 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
+    
+    
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "css/tabs.css"
+    );
+    
+    $extra_js = array(
+        "library/javascript/ajax.js",
+        "library/javascript/dynamic_attributes.js",
+        // js tabs stuff
+        "library/javascript/tabs.js"
+    );
+    
+    $title = t('Intro','accthotspotcompare.php');
+    $help = t('helpPage','accthotspotcompare');
+    
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
+    include("menu-accounting-hotspot.php"); 
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
@@ -121,19 +121,21 @@
         
 
         // set navbar stuff
-        $navbuttons = array(
-                                "AccountInfo-tab" => "Account Info",
-                                "unique_users-tab" => "Graphs - Unique users",
-                                "login_hits-tab" => "Graphs - Login hits",
-                                "total_session_time-tab" => "Graphs - Total sess. time",
-                                "avg_session_time-tab" => "Graphs - Average sess. time",
-                           );
+        $navkeys = array(
+                                array( 'AccountInfo', "Account Info" ),
+                                array( 'UniqueUsers', "Unique Users Chart" ),
+                                array( 'LoginHits', "Login Hits Chart" ),
+                                array( 'TotalSessionTime', "Total Sess. Time Chart" ),
+                                array( 'AvgSessionTime', "Average Sess. Time Chart" ),
+                            );
 
-        print_tab_navbuttons($navbuttons);
-
+        // print navbar controls
+        print_tab_header($navkeys);
+        
+        // tab 0
+        open_tab($navkeys, 0, true);
 ?>
 
-<div class="tabcontent" id="AccountInfo-tab" style="display: block">
     <table border="0" class="table1">
         <thead>
             
@@ -180,26 +182,27 @@
         printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
 ?>
     </table>
-</div><!-- #AccountInfo-tab -->
-
-<div class="tabcontent" style="text-align: center" id="unique_users-tab">
-    <img src="library/graphs-hotspot-compare.php?category=unique_users">
-</div>
-
-<div class="tabcontent" style="text-align: center" id="login_hits-tab">
-    <img src="library/graphs-hotspot-compare.php?category=login_hits">
-</div>
-
-<div class="tabcontent" style="text-align: center" id="total_session_time-tab">
-    <img src="library/graphs-hotspot-compare.php?category=total_session_time">
-</div>
-
-<div class="tabcontent" style="text-align: center" id="avg_session_time-tab">
-    <img src="library/graphs-hotspot-compare.php?category=avg_session_time">
-</div>
-
 
 <?php
+        // tab 0
+        close_tab($navkeys, 0);
+        
+        $categories = array( "unique_users", "login_hits", "total_session_time", "avg_session_time", );
+        $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+        
+        foreach ($categories as $i => $category) {
+            
+            // tab $i+1
+            open_tab($navkeys, $i+1);
+            
+            $src = sprintf("library/graphs/hotspot_details.php?category=%s", $category);
+            $alt = sprintf("hotspot details (category: %s)", str_replace("_", " ", $category));
+            printf($img_format, $src, $alt);
+            
+            close_tab($navkeys, $i+1);
+            
+        }
+    
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
@@ -209,4 +212,5 @@
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
+
 ?>

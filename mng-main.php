@@ -42,23 +42,21 @@
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
-?>
+    $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+    $alt = "Total Users";
+    $src = "library/graphs/total_users.php";
 
-            <div style="text-align: center">
-                <img alt="Total Users" src="library/chart-mng-total-users.php">
-            </div>
-
-<?php
+    printf($img_format, $src, $alt);
 
     include('include/config/logging.php');
-    
+
     $inline_extra_js = "
 var tooltipObj = new DHTMLgoodies_formTooltip();
 tooltipObj.setTooltipPosition('right');
 tooltipObj.setPageBgColor('#EEEEEE');
 tooltipObj.setTooltipCornerSize(15);
 tooltipObj.initFormFieldTooltip()";
-    
+
     print_footer_and_html_epilogue($inline_extra_js);
 
 ?>

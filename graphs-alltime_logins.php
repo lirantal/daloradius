@@ -79,7 +79,7 @@
     open_tab($navkeys, 0, true);
 
     $alt = sprintf("%s all-time login/hit statistics", ucfirst($type));
-    $src = sprintf("library/graphs-alltime-users-data.php?category=login&type=%s", $type);
+    $src = sprintf("library/graphs/alltime_users_data.php?category=login&type=%s", $type);
 
     echo '<div style="text-align: center; margin-top: 50px">';
     printf('<img alt="%s" src="%s">', $alt, $src);

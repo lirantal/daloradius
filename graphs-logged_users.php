@@ -24,28 +24,25 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-	include('library/check_operator_perm.php');
+    include_once('library/config_read.php');
+    include('library/check_operator_perm.php');
 
-    $date_check_regex = '/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/';
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     $logged_users_on_date = (array_key_exists('logged_users_on_date', $_GET) && isset($_GET['logged_users_on_date']) &&
-                             preg_match($date_check_regex, $_GET['logged_users_on_date'], $m) !== false &&
+                             preg_match(DATE_REGEX, $_GET['logged_users_on_date'], $m) !== false &&
                              checkdate($m[2], $m[3], $m[1])) ? $_GET['logged_users_on_date'] : date("Y-m-d");
 
-    preg_match($date_check_regex, $logged_users_on_date, $match);
-    $month = $match[2];
-    $day = $match[3];
-    $year = $match[1];
+    preg_match(DATE_REGEX, $logged_users_on_date, $match);
+    $month = intval($match[2]);
+    $day = intval($match[3]);
+    $year = intval($match[1]);
 
     $log = "visited page: ";
     $logQuery = "performed query on the following interval  [$day - $month - $year] on page: ";
 
-
-    include_once('library/config_read.php');
-	
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(
@@ -69,41 +66,37 @@
     print_title_and_help($title, $help);
     
     // set navbar stuff
-    $navbuttons = array(
-                          'Daily-tab' => "Graph (day)",
-                          'Monthly-tab' => "Graph (month)",
-                       );
-                       
-    print_tab_navbuttons($navbuttons);
+    $navkeys = array(
+                            array( 'Daily', "Daily Chart" ),
+                            array( 'Monthly', "Monthly Chart" ),
+                        );
+
+    // print navbar controls
+    print_tab_header($navkeys);
+
+    $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+
+    // tab 0
+    open_tab($navkeys, 0, true);
     
-?>
-
-            <div class="tabcontent" id="Daily-tab" style="display: block">
-                <div style="text-align: center; margin-top: 50px;">
-                    <img src="library/graphs-logged_users.php?day=<?= $day ?>&month=<?=$month ?>&year=<?= $year ?>">
-                </div>
-            </div>
-
-        
-        
-            <div class="tabcontent" id="Monthly-tab">
-                <div style="text-align: center; margin-top: 50px;">
-                    <img src="library/graphs-logged_users.php?month=<?=$month ?>&year=<?= $year ?>">
-                </div>
-            </div>
-            
-        </div><!-- #contentnorightbar -->
-		
-        <div id="footer">
-		
-<?php
+    $daily_src = sprintf("library/graphs/logged_users.php?day=%02d&month=%02d&year=%04d", $day, $month, $year);
+    $daily_alt = sprintf("user accounted per-hour on the %04d-%02d-%02d", $year, $month, $day);
+    
+    printf($img_format, $daily_src, $daily_alt);
+    
+    close_tab($navkeys, 0);
+    
+    // tab 1
+    open_tab($navkeys, 1);
+    
+    $monthly_src = sprintf("library/graphs/logged_users.php?month=%02d&year=%04d", $month, $year);
+    $monthly_alt = sprintf("min/max user accounted per-day in the month %02d-%04d", $month, $year);
+    
+    printf($img_format, $monthly_src, $monthly_alt);
+    
+    close_tab($navkeys, 1);
+    
     include('include/config/logging.php');
-    include('page-footer.php');
+    print_footer_and_html_epilogue();
+
 ?>
-
-		</div><!-- #footer -->
-    </div>
-</div>
-
-</body>
-</html>

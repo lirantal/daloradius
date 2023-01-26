@@ -24,7 +24,11 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include_once('library/config_read.php');
     include('library/check_operator_perm.php');
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // validate parameters
     $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
@@ -41,74 +45,60 @@
     $traffic_compare_type = $type;
     $traffic_compare_size = $size;
 
-    include_once('library/config_read.php');
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
         "css/tabs.css"
     );
-    
+
     $extra_js = array(
         // js tabs stuff
         "library/javascript/tabs.js"
     );
-    
+
     $title = t('Intro','graphsalltimetrafficcompare.php');
     $help = t('helpPage','graphsalltimetrafficcompare');
-    
+
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    include("menu-graphs.php");	
-    
+    include("menu-graphs.php");
+
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-    
+
     // set navbar stuff
-    $navbuttons = array(
-                          'Download-tab' => "Download Graph",
-                          'Upload-tab' => "Upload Graph",
-                       );
-                       
-    print_tab_navbuttons($navbuttons);
-    
-?>
+    $navkeys = array(
+                            array( 'Download', "Download Chart" ),
+                            array( 'Upload', "Upload Chart" ),
+                        );
 
-            
-            <div class="tabcontent" id="Download-tab" style="display: block">
-                <div style="text-align: center; margin-top: 50px;">
-<?php
-    $download_src = sprintf("library/graphs-alltime-users-data.php?category=download&type=%s&size=%s", $type, $size);
+    // print navbar controls
+    print_tab_header($navkeys);
+
+    $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+
+    // tab 0
+    open_tab($navkeys, 0, true);
+
+    $download_src = sprintf("library/graphs/alltime_users_data.php?category=download&type=%s&size=%s", $type, $size);
     $download_alt = sprintf("%s all-time download traffic (in %s) statistics", ucfirst($type), $size);
-?>
-                    <img alt="<?= $download_alt ?>" src="<?= $download_src ?>">
-                </div>
-            </div>
- 
-            <div class="tabcontent" id="Upload-tab">
-                <div style="text-align: center; margin-top: 50px">
-<?php
-    $upload_src = sprintf("library/graphs-alltime-users-data.php?category=upload&type=%s&size=%s", $type, $size);
+
+    printf($img_format, $download_src, $download_alt);
+
+    close_tab($navkeys, 0);
+
+    // tab 1
+    open_tab($navkeys, 1);
+
+    $upload_src = sprintf("library/graphs/alltime_users_data.php?category=upload&type=%s&size=%s", $type, $size);
     $upload_alt = sprintf("%s all-time upload traffic (in %s) statistics", ucfirst($type), $size);
-?>
-                    <img alt="<?= $upload_alt ?>" src="<?= $upload_src ?>">
-                </div>
-            </div>
-            
-        </div><!-- #contentnorightbar -->
 
-		<div id="footer">		
-<?php
+    printf($img_format, $upload_src, $upload_alt);
+
+    close_tab($navkeys, 1);
+
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-		</div><!-- #footer -->
-    </div>
-</div>
+    print_footer_and_html_epilogue();
 
-</body>
-</html>
+?>
