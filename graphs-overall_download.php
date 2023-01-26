@@ -23,12 +23,16 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    
+
+    include_once('library/config_read.php');
     include('library/check_operator_perm.php');
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // validate (or pre-validate) parameters
     $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
-    
+
     $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
              in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
           ? strtolower($_GET['type']) : "daily";
@@ -46,32 +50,27 @@
     $overall_download_type = $type;
     $overall_download_size = $size;
 
-    include_once('library/config_read.php');
-
     // init logging variables
     $log = "visited page: ";
     if (!empty($username)) {
         $logQuery = "performed query for user [$username] of type [$type] on page: ";
     }
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
         "css/tabs.css"
     );
-    
+
     $extra_js = array(
         // js tabs stuff
         "library/javascript/tabs.js"
     );
-    
+
     $title = t('Intro','graphsoveralldownload.php');
     $help = t('helpPage','graphsoveralldownload');
-    
+
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     include("menu-graphs.php");
@@ -79,52 +78,58 @@
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
+    $inline_extra_js = "";
     if (!empty($username)) {
+
+        // set navbar stuff
+        $navkeys = array(
+                            array( 'Graphs', t('menu', 'Graphs') ),
+                            array( 'Statistics', t('all', 'Statistics') ),
+                        );
+
+        // print navbar controls
+        print_tab_header($navkeys);
+
+
+        // tab 0
+        open_tab($navkeys, 0, true);
+
         $src = sprintf("library/graphs-overall-users-data.php?category=download&type=%s&size=%s&user=%s", $type, $size, $username_enc);
         $alt = sprintf("traffic downloaded by user %s", $username_enc);
-        
-        // set navbar stuff
-        $navbuttons = array(
-                              'Graph-tab' => "Graph",
-                              'Statistics-tab' => "Statistics",
-                           );
 
-        print_tab_navbuttons($navbuttons);
-?>
-            
-            <div class="tabcontent" id="Graph-tab" style="display: block">
-                <div style="text-align: center; margin-top: 50px">
-                    <img alt="<?= $alt ?>" src="<?= $src ?>">
-                </div>
-            </div>
+        echo '<div style="text-align: center; margin-top: 50px">';
+        printf('<img alt="%s" src="%s">', $alt, $src);
+        echo '</div>';
 
-            <div class="tabcontent" id="Statistics-tab">
-                <div style="margin-top: 50px">
-<?php
-        include("library/tables-overall-users-download.php");
-?>
-                </div>
-            </div>
+        close_tab($navkeys, 0);
 
-<?php
+        // tab 1
+        open_tab($navkeys, 1);
+
+        echo '<div style="text-align: center; margin-top: 50px">';
+        include('library/tables/overall_users_download.php');
+        echo '</div>';
+
+        close_tab($navkeys, 1);
+
+
+        if ($goto_stats) {
+            $button_id = sprintf("%s-button", strtolower($navkeys[1][0]));
+            $inline_extra_js = <<<EOF
+
+window.addEventListener('load', function() {
+    document.getElementById('{$button_id}').click();
+});
+
+EOF;
+        }
+
     } else {
         $failureMsg = "You must provide a valid username";
         include_once("include/management/actionMessages.php");
     }
-    
-    include('include/config/logging.php');
 
-    if ($goto_stats) {
-        $inline_extra_js = "
-window.addEventListener('load', function() {
-    var stats_tab = document.getElementById('Statistics-tab'),
-        stats_btn = document.getElementById(stats_tab.id + '-button');
-    stats_btn.click();
-});
-";
-    } else {
-        $inline_extra_js = "";
-    }
-    
+    include('include/config/logging.php');
     print_footer_and_html_epilogue($inline_extra_js);
+
 ?>

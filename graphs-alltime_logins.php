@@ -24,11 +24,15 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include_once('library/config_read.php');
     include('library/check_operator_perm.php');
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // validate (or pre-validate) parameters
     $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
-    
+
     $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
              in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
           ? strtolower($_GET['type']) : "daily";
@@ -36,22 +40,17 @@
     //feed the sidebar variables
     $alltime_login_type = $type;
 
-    include_once('library/config_read.php');
-
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query of type [$type] on page: ";
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $extra_css = array(
         // css tabs stuff
         "css/tabs.css"
     );
-    
+
     $extra_js = array(
         // js tabs stuff
         "library/javascript/tabs.js"
@@ -59,50 +58,56 @@
 
     $title = t('Intro','graphsalltimelogins.php');
     $help = t('helpPage','graphsalltimelogins');
-    
+
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    include("menu-graphs.php");    
+    include("menu-graphs.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     // set navbar stuff
-    $navbuttons = array(
-                          'Graph-tab' => "Graph",
-                          'Statistics-tab' => "Statistics",
-                       );
+    $navkeys = array(
+                        array( 'Graphs', t('menu', 'Graphs') ),
+                        array( 'Statistics', t('all', 'Statistics') ),
+                    );
 
-    print_tab_navbuttons($navbuttons);
+    // print navbar controls
+    print_tab_header($navkeys);
 
-?>
-            <div class="tabcontent" id="Graph-tab" style="display: block">
-                <div style="text-align: center; margin-top: 50px">
-<?php
-    $alt = ucfirst($type) . " all-time login/hit statistics";
-    $src = "library/graphs-alltime-users-data.php?category=login&type=" . $type;
-?>
-                    <img alt="<?= $alt ?>" src="<?= $src ?>">
-                </div>
-            </div><!-- #Graph-tab -->
+    // tab 0
+    open_tab($navkeys, 0, true);
 
-            <div class="tabcontent" id="Statistics-tab">    
-                <div style="margin-top: 50px">
-<?php
-    include("library/tables-alltime-users-login.php");
-    
+    $alt = sprintf("%s all-time login/hit statistics", ucfirst($type));
+    $src = sprintf("library/graphs-alltime-users-data.php?category=login&type=%s", $type);
+
+    echo '<div style="text-align: center; margin-top: 50px">';
+    printf('<img alt="%s" src="%s">', $alt, $src);
+    echo '</div>';
+
+    close_tab($navkeys, 0);
+
+    // tab 1
+    open_tab($navkeys, 1);
+
+    echo '<div style="text-align: center; margin-top: 50px">';
+    include('library/tables/alltime_users_login.php');
+    echo '</div>';
+
+    close_tab($navkeys, 1);
+
+    $inline_extra_js = "";
     if ($goto_stats) {
-?>
-                    <script>
-                        window.addEventListener('load', function() {
-                            var stats_tab = document.getElementById('Statistics-tab'),
-                                stats_btn = document.getElementById(stats_tab.id + '-button');
-                            stats_btn.click();
-                        });
-                    </script>
-<?php
+        $button_id = sprintf("%s-button", strtolower($navkeys[1][0]));
+        $inline_extra_js = <<<EOF
+
+window.addEventListener('load', function() {
+    document.getElementById('{$button_id}').click();
+});
+
+EOF;
     }
 
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>

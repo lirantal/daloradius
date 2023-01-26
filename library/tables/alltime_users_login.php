@@ -24,9 +24,9 @@
  */
 
 // prevent this file to be directly accessed
-$extension_file = '/library/tables-alltime-users-login.php';
+$extension_file = '/library/tables/alltime_users_login.php';
 if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit;
 }
 
@@ -44,7 +44,7 @@ $label_param['day'] = "Day of month";
 $label_param['month'] = "Month of year";
 $label_param['year'] = "Year";
 
-include('opendb.php');
+include('library/opendb.php');
 include('include/management/pages_common.php');
 
 
@@ -57,7 +57,7 @@ switch ($type) {
         $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(username) AS logins
                  FROM %s GROUP BY year ORDER BY %s %s";
         break;
-    
+
     case "monthly":
         $selected_param = "month";
         $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
@@ -68,7 +68,7 @@ switch ($type) {
                        CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
                   FROM %s GROUP BY month ORDER BY %s %s";
         break;
-    
+
     default:
     case "daily":
         $selected_param = "day";
@@ -87,36 +87,36 @@ $numrows = $res->numRows();
 
 if ($numrows > 0) {
     // $cols is needed only if $numwrows > 0
-    $cols = array( 
+    $cols = array(
                    $selected_param => $label_param[$selected_param],
                    "logins" => "Logins/hits count"
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-    
+
     /* START - Related to pages_numbering.php */
-    
+
     // when $numrows is set, $maxPage is calculated inside this include file
     include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                           // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-    
+
     // here we decide if page numbers should be shown
     $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-    
+
     /* END */
-    
-    
+
+
     $total_data = 0;
     while ($row = $res->fetchRow()) {
         $total_data += intval($row[1]);
     }
-    
+
     $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
     $res = $dbSocket->query($sql);
     $logDebugSQL = "$sql;\n";
-    
+
     $per_page_numrows = $res->numRows();
-    
+
     // the partial query is built starting from user input
     // and for being passed to setupNumbering and setupLinks functions
     $partial_query_string = sprintf("&type=%s&goto_stats=true", $type);
@@ -136,7 +136,7 @@ if ($numrows > 0) {
         setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
         echo '</td>' . '</tr>';
     }
-    
+
     // second line of table header
     echo "<tr>";
     printTableHead($cols, $orderBy, $orderType, $partial_query_string);
@@ -146,11 +146,11 @@ if ($numrows > 0) {
 
         <tbody>
 <?php
-        
+
     $per_page_data = 0;
     while ($row = $res->fetchRow()) {
         $data = intval($row[1]);
-        
+
         echo "<tr>"
            . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
            . "<td>" . $data . "</td>"
@@ -159,10 +159,10 @@ if ($numrows > 0) {
     }
 ?>
         </tbody>
-        
+
         <tfoot>
             <tr>
-            
+
                 <th scope="col" colspan="<?= $half_colspan + ($colspan % 2) ?>">
 <?php
                     echo "displayed <strong>$per_page_numrows</strong> record(s)";
@@ -171,7 +171,7 @@ if ($numrows > 0) {
                     }
 ?>
                 </th>
-                
+
                 <th scope="col" colspan="<?= $half_colspan ?>">
 <?php
                     echo "<strong>$per_page_data</strong> login(s)";
@@ -180,7 +180,7 @@ if ($numrows > 0) {
                     }
 ?>
                 </th>
-                
+
             </tr>
 
 <?php
@@ -207,5 +207,5 @@ if ($numrows > 0) {
     include_once("include/management/actionMessages.php");
 }
 
-include('closedb.php');
+include('library/closedb.php');
 ?>
