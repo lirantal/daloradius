@@ -52,7 +52,7 @@ function DHTMLgoodies_formTooltip()
 	this.currentTooltipObj = false,
 	this.tooltipDiv = false,
 	this.tooltipText = false;
-	this.imagePath = 'images/';
+	this.imagePath = 'static/images/';
 	this.arrowImageFile = 'green-arrow.gif';
 	this.arrowImageFileRight = 'green-arrow-right.gif';
 	this.tooltipWidth = 200;
