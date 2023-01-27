@@ -77,7 +77,7 @@
         $radius_port = (
                             isset($_REQUEST['radius_port']) &&
                             !empty(trim($_REQUEST['radius_port'])) &&
-                            intval(trim($_REQUEST['radius_port'])) >= 0 &&
+                            intval(trim($_REQUEST['radius_port'])) >= 1 &&
                             intval(trim($_REQUEST['radius_port'])) <= 65535
                        ) ? intval(trim($_REQUEST['radius_port'])) : intval($configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT']);
 
@@ -111,6 +111,8 @@
                     $count = (isset($_POST['count']) && intval($_POST['count']) > 0) ? intval($_POST['count']) : 1;
                     $requests = (isset($_POST['requests']) && intval($_POST['requests']) > 0) ? intval($_POST['requests']) : 1;
                     
+                    $simulate = (isset($_POST['simulate']) && $_POST['simulate'] === "on");
+                    
                     $password1 = (isset($_POST['password1']) && !empty(trim($_POST['password1']))) ? trim($_POST['password1']) : "";
                     $password2 = (isset($_POST['password2']) && !empty(trim($_POST['password2']))) ? trim($_POST['password2']) : "";
                     
@@ -125,7 +127,8 @@
                                         "retries" => $retries,
                                         "timeout" => $timeout,
                                         "debug" => ($debug == "yes"),
-                                        "dictionary" => $dictionaryPath
+                                        "dictionary" => $dictionaryPath,
+                                        "simulate" => $simulate,
                                     );
                    
                     
@@ -251,7 +254,7 @@
                                         "name" => "radius_port",
                                         "caption" => t('all','RadiusPort'),
                                         "type" => "number",
-                                        "min" => 0,
+                                        "min" => 1,
                                         "max" => 65535,
                                         "value" => ((isset($radius_port)) ? $radius_port : $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT']),
                                      );
@@ -260,6 +263,13 @@
                                        "caption" => t('all','NasSecret'),
                                        "type" => "text",
                                        "value" => ((isset($secret)) ? $secret : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET']),
+                                     );
+
+        $input_descriptors0[] = array(
+                                        "name" => "simulate",
+                                        "caption" => "Simulate (only show command, don't execute)",
+                                        "type" => "checkbox",
+                                        "checked" => (isset($simulate) ? $simulate : false),
                                      );
 
         $input_descriptors1 = array();

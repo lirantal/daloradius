@@ -75,9 +75,9 @@
             
             $shortname = (array_key_exists('shortname', $_POST) && !empty(str_replace("%", "", trim($_POST['shortname']))))
                        ? str_replace("%", "", trim($_POST['shortname'])) : "";
-            $ports = (array_key_exists('ports', $_POST) && isset($_POST['ports']) &&
-                      is_int($_POST['ports']) && intval($_POST['ports']) >= 0 && intval($_POST['ports']) <= 65535)
-                   ? intval($_POST['ports']) : "";
+            $ports = (array_key_exists('ports', $_POST) && !empty(trim($_POST['ports'])) &&
+                      intval(trim($_POST['ports'])) >= 1 && intval(trim($_POST['ports'])) <= 65535)
+                   ? intval(trim($_POST['ports'])) : "";
             
             $description = (array_key_exists('description', $_POST) && !empty(str_replace("%", "", trim($_POST['description']))))
                          ? str_replace("%", "", trim($_POST['description'])) : "";
@@ -103,13 +103,13 @@
                 $logDebugSQL .= "$sql;\n";
 
                 if (!DB::isError($res)) {
+                    $successMsg = sprintf("Edited NAS: <strong>%s</strong>", $nasname_enc);
+                    $logAction .= sprintf("Successfully edited NAS [%s] on page: ", $nasname);
+                } else {
                     // it seems that operator could not be added
                     $f = "Failed to add edit NAS [%s] to database";
                     $failureMsg = sprintf($f, $nasname_enc);
                     $logAction .= sprintf($f, $nasname);
-                } else {
-                    $successMsg = sprintf("Edited NAS: <strong>%s</strong>", $nasname_enc);
-                    $logAction .= sprintf("Successfully edited NAS [%s] on page: ", $nasname);
                 }
                 
             }
@@ -217,9 +217,10 @@
                                         "name" => "ports",
                                         "caption" => t('all','NasPorts'),
                                         "type" => "number",
-                                        "min" => "0",
+                                        "min" => "1",
                                         "max" => "65535",
-                                        "value" => ((isset($ports)) ? $ports : "")
+                                        "value" => ((isset($ports)) ? $ports : ""),
+                                        "tooltipText" => "e.g. 1700, 3799, etc.",
                                      );
                                      
         $input_descriptors1[] = array(
