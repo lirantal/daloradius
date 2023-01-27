@@ -35,8 +35,8 @@ $m_active = "Config";
 
 
 <?php
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/config-subnav.php");
+
+
     
     $menu_elements = array(
         "config-backup-managebackups.php" => array(t('button','ManageBackups'), "static/images/icons/configMaintenance.png"),

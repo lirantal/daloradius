@@ -15,20 +15,9 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-// prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/include/menu/help-subnav.php') !== false) {
-    header("Location: ../../index.php");
-    exit;
-}
-
-?>
-                <ul id="subnav">
-                    <li>&nbsp;</li>
-                </ul><!-- #subnav -->
-            </div>
+header("Location: ../../index.php");

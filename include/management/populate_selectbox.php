@@ -368,6 +368,30 @@ function get_huntgroups() {
 }
 
 
+function get_online_users() {
+    global $configValues;
+
+    include('library/opendb.php');
+
+    $sql = sprintf("SELECT DISTINCT(username)
+                      FROM %s
+                     WHERE AcctStopTime IS NULL
+                        OR AcctStopTime='0000-00-00 00:00:00'
+                     ORDER BY username ASC", $configValues['CONFIG_DB_TBL_RADACCT']);
+    $res = $dbSocket->query($sql);
+
+    $result = array();
+    while ($row = $res->fetchRow()) {
+        $username = $row[0];
+        $result[$username] = $username;
+    }
+    
+    include('library/closedb.php');
+    
+    return $result;
+}
+
+
 function get_users() {
     global $configValues;
 

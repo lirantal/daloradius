@@ -33,8 +33,8 @@ $m_active = "Reports";
 
 
 <?php
-    include_once("include/menu/menu-items.php");
-    include_once("include/menu/reports-subnav.php");
+    
+
     
     $status_menu_elements = array(
         "rep-stat-server.php" => array(t('button','ServerStatus'), "static/images/icons/reportsStatus.png"),

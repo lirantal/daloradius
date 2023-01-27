@@ -31,8 +31,8 @@ include_once("lang/main.php");
 
 $m_active = "Accounting";
 
-include_once("include/menu/menu-items.php");
-include_once("include/menu/accounting-subnav.php");
+
+
 ?>
 
             <div id="sidebar">

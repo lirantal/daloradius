@@ -35,8 +35,8 @@ $m_active = "Gis";
 
 
 <?php
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/gis-subnav.php");
+
+
 ?>      
 
             <div id="sidebar">

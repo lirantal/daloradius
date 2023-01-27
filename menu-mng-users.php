@@ -31,8 +31,8 @@ include_once("lang/main.php");
 
 $m_active = "Managment";
 
-include_once("include/menu/menu-items.php");
-include_once("include/menu/management-subnav.php");
+
+
 include_once("include/management/autocomplete.php");
 ?>
 
@@ -123,4 +123,3 @@ include_once("include/management/autocomplete.php");
     tooltipObj.setTooltipCornerSize(15);
     tooltipObj.initFormFieldTooltip();
 </script>
-

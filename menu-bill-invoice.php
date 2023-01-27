@@ -31,8 +31,8 @@ include_once("lang/main.php");
 
 $m_active = "Billing";
 
-include_once("include/menu/menu-items.php");
-include_once("include/menu/billing-subnav.php");
+
+
 include_once("include/management/autocomplete.php");
 include_once("include/management/populate_selectbox.php");
 
