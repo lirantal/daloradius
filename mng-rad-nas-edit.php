@@ -21,22 +21,21 @@
  *********************************************************************************************************
  */
 
-   include("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/config_read.php');
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
-    
-    
     include('library/opendb.php');
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {

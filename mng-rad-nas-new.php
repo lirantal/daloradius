@@ -24,17 +24,17 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/config_read.php');
     include('library/check_operator_perm.php');
-    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -51,8 +51,9 @@
             
             $shortname = (array_key_exists('shortname', $_POST) && !empty(str_replace("%", "", trim($_POST['shortname']))))
                        ? str_replace("%", "", trim($_POST['shortname'])) : "";
-            $nasports = (array_key_exists('nasports', $_POST) && !empty(str_replace("%", "", trim($_POST['nasports']))))
-                      ? str_replace("%", "", trim($_POST['nasports'])) : "";
+            $nasports = (array_key_exists('nasports', $_POST) && !empty(trim($_POST['nasports'])) &&
+                         intval(trim($_POST['nasports'])) >= 1 && intval(trim($_POST['nasports'])) <= 65535)
+                      ? intval(trim($_POST['nasports'])) : "";
             
             $nasdescription = (array_key_exists('nasdescription', $_POST) && !empty(str_replace("%", "", trim($_POST['nasdescription']))))
                             ? str_replace("%", "", trim($_POST['nasdescription'])) : "";
@@ -175,9 +176,10 @@
                                         "name" => "nasports",
                                         "caption" => t('all','NasPorts'),
                                         "type" => "number",
-                                        "min" => "0",
+                                        "min" => "1",
                                         "max" => "65535",
-                                        "value" => ((isset($nasports)) ? $nasports : "")
+                                        "value" => ((isset($nasports)) ? $nasports : ""),
+                                        "tooltipText" => "e.g. 1700, 3799, etc.",
                                      );
                                      
         $input_descriptors1[] = array(
