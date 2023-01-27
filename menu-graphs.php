@@ -35,8 +35,8 @@ $m_active = "Graphs";
 
 
 <?php
-    include_once("include/menu/menu-items.php");
-    include_once("include/menu/graphs-subnav.php");
+    
+
     include_once("include/management/autocomplete.php");
     
     $timeunit_options = array(

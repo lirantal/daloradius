@@ -35,8 +35,8 @@ $m_active = "Config";
 
 
 <?php
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/config-subnav.php");
+
+
     
     $menu_elements = array(
         "config-maint-test-user.php" => array(t('button','TestUserConnectivity'), "static/images/icons/configMaintenance.png"),

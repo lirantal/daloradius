@@ -55,48 +55,94 @@ function print_html_prologue($title, $lang='en',
     foreach ($css as $href) {
         printf('<link rel="stylesheet" href="%s" />' . "\n", $href);
     }
-    
+
     if (!empty($inline_extra_css)) {
         echo "<style>" . $inline_extra_css . "</style>" . "\n";
     }
-    
+
     $js = array_merge($common_js, $extra_js);
     foreach ($js as $src) {
         printf('<script src="%s"></script>' . "\n", $src);
     }
-    
+
     if (!empty($inline_extra_js)) {
         echo "<script>" . $inline_extra_js . "</script>" . "\n";
-    } 
+    }
 ?>
 </head>
 
 <body>
     <div id="wrapper">
         <div id="innerwrapper">
+<?php
+        print_topbar();
+}
 
+
+function print_header() {
+    global $_SESSION;
+?>
+    <span id="login_data">
+        Welcome, <strong><?= htmlspecialchars($_SESSION['operator_user'], ENT_QUOTES, 'UTF-8') ?></strong>.
+        <a href="logout.php" title="Logout" style="padding: 1px; background-color: #FF8040; color: white">
+            <strong>&times;</strong>
+        </a>
+        <br>
+        Location: <strong><?= htmlspecialchars($_SESSION['location_name'], ENT_QUOTES, 'UTF-8') ?></strong>.
+    </span><!-- #login_data -->
+
+    <span class="sep">&nbsp;</span>
+
+    <form action="mng-search.php" method="GET">
+        <input name="username" value="" placeholder="<?= t('button','SearchUsers') ?>"
+            title="<?= strip_tags(t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard')) ?>">
+    </form>
+
+    <span class="sep">&nbsp;</span>
+
+    <h1>
+        <a title="<?= strip_tags(t('menu','Home')) ?>" href="index.php">
+            <img style="border: 0" src="static/images/daloradius_small.png">
+        </a>
+    </h1>
+    <h2><?= t('all','copyright1') ?></h2>
+    <a name="top"></a>
 <?php
 }
+
+
+function print_topbar() {
+    echo '<div id="header">';
+    print_header();
+
+    // print nav items
+    include_once("include/menu/nav.php");
+
+    // print subnav items
+    include_once("include/menu/subnav.php");
+    echo '</div><!-- #header -->' . "\n";
+}
+
 
 function print_footer_and_html_epilogue($inline_extra_js="") {
     echo '</div><!-- #contentnorightbar -->' . "\n"
        . '<div id="footer">';
-       
+
     include('page-footer.php');
-    
+
     echo '</div><!-- #footer -->' . "\n"
        . '</div><!-- #innerwrapper -->' . "\n"
        . '</div><!-- #wrapper -->' . "\n";
-    
+
     if (!empty($inline_extra_js)) {
         echo "<script>" . "\n"
            . $inline_extra_js . "\n"
            . "</script>" . "\n";
     }
-       
+
     echo '</body>'
        . '</html>';
-    
+
 }
 
 // this function can be used for printing pages title and help
@@ -129,7 +175,7 @@ function print_select_as_list_elem($name, $label, $options, $selected_value="") 
         $value = htmlspecialchars(
                                   ((!is_int($key)) ? $key : $elem),
                                   ENT_QUOTES, 'UTF-8');
-        
+
         $caption = htmlspecialchars($elem, ENT_QUOTES, 'UTF-8');
         $selected = ($selected_value === $value) ? " selected" : "";
         printf('<option value="%s"%s>%s</option>', $value, $selected, $caption);
@@ -150,11 +196,11 @@ function print_select_as_list_elem($name, $label, $options, $selected_value="") 
                             //~ "tooltipText" => t('Tooltip','usernameTooltip'),
                             //~ "pattern" => "[a-zA-Z0-9_]+",
                             //~ "disabled" => true,
-                            
+
                             //~ "min" => 1|2018-10-30, (type=number|date specific)
                             //~ "max" => 10|2022-01-29, (type=number|date specific)
                             //~ "step" => 1, (type=number specific)
-                            
+
                             //~ "onclick" => "javascript:..."
                             //~ "checked" => true (type=checkbox specific)
                          //~ );
@@ -164,48 +210,48 @@ function print_input_field($input_descriptor) {
     if (!array_key_exists('id', $input_descriptor) || empty($input_descriptor['id'])) {
         $input_descriptor['id'] = $input_descriptor['name'];
     }
-    
+
     $input_descriptor['type'] = (!array_key_exists('type', $input_descriptor))
                               ? "text" : strtolower($input_descriptor['type']);
-    
+
     if (array_key_exists('caption', $input_descriptor) && !empty($input_descriptor['caption']) &&
         !in_array($input_descriptor['type'], array('hidden', 'button', 'submit'))) {
         printf('<label for="%s" class="form">%s</label>', $input_descriptor['id'], $input_descriptor['caption']);
     }
-    
+
     printf('<input type="%s" name="%s" id="%s"', $input_descriptor['type'],
                                                  $input_descriptor['name'],
                                                  $input_descriptor['id']);
-    
-    
+
+
     if (array_key_exists('value', $input_descriptor) &&
         (!empty(trim($input_descriptor['value'])) || trim($input_descriptor['value']) == "0")
        ) {
         $value = htmlspecialchars(trim($input_descriptor['value']), ENT_QUOTES, 'UTF-8');
     }
-    
+
     if (isset($value)) {
         printf(' value="%s"', $value);
     }
-    
+
     if ($input_descriptor['type'] == "password") {
         printf(' maxlength="%s"', $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH']);
         printf(' minlength="%s"', $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH']);
     }
-    
+
     if (in_array($input_descriptor['type'], array("number", "date"))) {
         if (array_key_exists('min', $input_descriptor) &&
             (!empty(trim($input_descriptor['min'])) || trim($input_descriptor['min']) == "0")
            ) {
             printf(' min="%s"', trim($input_descriptor['min']));
         }
-        
+
         if (array_key_exists('max', $input_descriptor) &&
             (!empty(trim($input_descriptor['max'])) || trim($input_descriptor['max']) == "0")
            ) {
             printf(' max="%s"', trim($input_descriptor['max']));
         }
-        
+
         if ($input_descriptor['type'] == "number") {
             if (array_key_exists('step', $input_descriptor) &&
                 (!empty(trim($input_descriptor['step'])) || trim($input_descriptor['step']) == "0")
@@ -214,49 +260,49 @@ function print_input_field($input_descriptor) {
             }
         }
     }
-    
+
     if (in_array($input_descriptor['type'], array('button', 'submit'))) {
         echo ' class="button" style="display: block"';
     }
-    
+
     if (in_array($input_descriptor['type'], array("checkbox", "radio"))) {
         if (array_key_exists('checked', $input_descriptor) && $input_descriptor['checked']) {
             echo ' checked';
         }
     }
-    
+
     if (array_key_exists('disabled', $input_descriptor) && $input_descriptor['disabled']) {
         echo ' disabled';
     }
-    
+
     if (array_key_exists('required', $input_descriptor) && $input_descriptor['required']) {
         echo ' required';
     }
-    
+
     if (array_key_exists('tabindex', $input_descriptor)) {
         printf(' tabindex="%s"', $input_descriptor['tabindex']);
     }
-    
+
     if (array_key_exists('pattern', $input_descriptor)) {
         printf(' pattern="%s"', $input_descriptor['pattern']);
     }
-    
+
     if (array_key_exists('title', $input_descriptor)) {
         printf(' title="%s"', $input_descriptor['title']);
     }
-    
+
     if (array_key_exists('onclick', $input_descriptor)) {
         printf(' onclick="%s"', $input_descriptor['onclick']);
     }
-    
+
     if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist'])) {
         printf(' list="%s-list"', $input_descriptor['id']);
     }
-    
+
     if (array_key_exists('tooltipText', $input_descriptor)) {
         printf(' placeholder="%s"', strip_tags($input_descriptor['tooltipText']));
     }
-    
+
     echo '>';
 
     if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist'])) {
@@ -275,7 +321,7 @@ function print_input_field($input_descriptor) {
         printf('<input type="button" name="%s" id="%s" value="Random" class="button" onclick="%s">',
                $name_and_id, $name_and_id, $onclick);
     }
-    
+
 }
 //~ $input_descriptor = array(
                             //~ "id" => "sessiontimeout",
@@ -294,17 +340,17 @@ function print_calculated_select($select_descriptor) {
     printf('<input type="%s" name="%s" id="%s"', $select_descriptor['type'],
                                                  $select_descriptor['name'],
                                                  $select_descriptor['id']);
-    
+
     if (array_key_exists('tabindex', $select_descriptor)) {
         printf(' tabindex="%s"', $select_descriptor['tabindex']);
     }
-    
+
     echo '>';
-    
+
     $onchange = sprintf("javascript:setText(this.id, '%s')", $select_descriptor['id']);
-    
+
     printf('<select onchange="%s" id="option-%d" class="form">', $onchange,  rand());
-    
+
     foreach ($select_descriptor['options'] as $value => $label) {
         printf('<option value="%s">%s</option>' . "\n", $value, $label);
     }
@@ -330,17 +376,17 @@ function print_textarea($textarea_descriptor) {
 
     printf('<label for="%s" class="form">%s</label>', $textarea_descriptor['id'], $textarea_descriptor['caption']);
     printf('<textarea class="%s" name="%s" id="%s"', $class, $textarea_descriptor['name'], $textarea_descriptor['id']);
-    
+
     if (array_key_exists('tabindex', $textarea_descriptor)) {
         printf(' tabindex="%s"', $textarea_descriptor['tabindex']);
     }
-    
+
     echo '>';
-    
+
     if (isset($textarea_descriptor['content'])) {
         echo htmlspecialchars($textarea_descriptor['content'], ENT_QUOTES, 'UTF-8');
     }
-    
+
     echo '</textarea>';
 }
 
@@ -353,39 +399,39 @@ function print_select($select_descriptor) {
 
     printf('<label for="%s" class="form">%s</label>', $select_descriptor['id'], $select_descriptor['caption']);
     printf('<select class="form" name="%s" id="%s"', $select_descriptor['name'], $select_descriptor['id']);
-    
+
     if (array_key_exists('onchange', $select_descriptor)) {
         printf(' onchange="%s"', $select_descriptor['onchange']);
     }
-    
+
     if (array_key_exists('multiple', $select_descriptor)) {
         echo ' multiple';
     }
-    
+
     if (array_key_exists('size', $select_descriptor) && intval($select_descriptor['size']) > 0) {
         printf(' size="%s"', $select_descriptor['size']);
     }
-    
+
     if (!array_key_exists('options', $select_descriptor) || !is_array($select_descriptor['options'])) {
         echo ' disabled';
     }
-    
+
     echo '>';
-    
-    if (array_key_exists('options', $select_descriptor) && is_array($select_descriptor['options'])) {    
+
+    if (array_key_exists('options', $select_descriptor) && is_array($select_descriptor['options'])) {
         foreach ($select_descriptor['options'] as $key => $elem) {
-            
+
             $value = ((!is_int($key)) ? $key : $elem);
             $caption = htmlspecialchars($elem, ENT_QUOTES, 'UTF-8');
-            
+
             printf('<option value="%s"', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
-            
+
             if (array_key_exists('selected_value', $select_descriptor) && !empty($select_descriptor['selected_value'])) {
-                
+
                 $selected_values = (!is_array($select_descriptor['selected_value']))
                                  ? array( $select_descriptor['selected_value'] )
                                  : $select_descriptor['selected_value'];
-                
+
                 foreach ($selected_values as $selected_value) {
                     if ($selected_value === $value) {
                         echo ' selected';
@@ -393,7 +439,7 @@ function print_select($select_descriptor) {
                     }
                 }
             }
-            
+
             printf('>%s</option>', $caption);
         }
     }
@@ -418,7 +464,7 @@ function print_form_component($descriptor) {
     } else {
         print_input_field($descriptor);
     }
-    
+
     if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
         $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
         $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
@@ -426,25 +472,25 @@ function print_form_component($descriptor) {
         printf('<div id="%s" style="display:none; visibility:visible" class="ToolTip">%s</div>',
                $tooltip_box_id, $descriptor['tooltipText']);
     }
-    
+
     //~ if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
         //~ $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
         //~ $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
-        
 
-        
+
+
         //~ echo '<div class="tooltip">';
         //~ printf('<a href="#" onclick="%s"><img src="static/images/icons/comment.png" alt="Tip" style="vertical-align: middle"></a>', $onclick);
         //~ printf('<span id="%s" class="tooltiptext">%s</span>', $tooltip_box_id, $descriptor['tooltipText']);
         //~ echo '</div>';
     //~ }
-    
+
     if (!in_array($descriptor['type'], array('hidden', 'button', 'submit'))) {
         echo '</li>' . "\n";
     }
 }
 
-// prints the back to previous session link 
+// prints the back to previous session link
 function print_back_to_previous_page() {
     global $_SESSION;
 
@@ -452,7 +498,7 @@ function print_back_to_previous_page() {
         echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
         printf('<a href="%s" title="Back to Previous Page">Back to Previous Page</a>', trim($_SESSION['PREV_LIST_PAGE']));
         echo '</div>';
-        
+
         unset($_SESSION['PREV_LIST_PAGE']);
     }
 }
@@ -466,27 +512,27 @@ function open_form($descriptor=array()) {
             $descriptor['id'] = $descriptor['name'];
         }
     }
-    
+
     printf('<form name="%s" id="%s"', $descriptor['name'], $descriptor['id']);
-    
+
     if (array_key_exists('disabled', $descriptor) && $descriptor['disabled']) {
         echo ' disabled';
     }
-    
+
     if (array_key_exists('hidden', $descriptor) && $descriptor['hidden']) {
         echo ' style="display: none"';
     }
-    
+
     if (array_key_exists('action', $descriptor) && !empty($descriptor['action'])) {
         printf(' action="%s"', $descriptor['action']);
     }
-    
+
     if (array_key_exists('method', $descriptor) && !empty($descriptor['method'])) {
         $descriptor['method'] = strtoupper($descriptor['method']);
     } else {
         $descriptor['method'] = "POST";
     }
-    
+
     printf(' method="%s">', strtoupper($descriptor['method']));
 }
 
@@ -496,21 +542,21 @@ function close_form() {
 
 function open_fieldset($descriptor=array()) {
     echo "<fieldset";
-    
+
     if (array_key_exists('id', $descriptor) && !empty($descriptor['id'])) {
         printf(' id="%s"', strip_tags(trim($descriptor['id'])));
     }
-    
+
     if (array_key_exists('disabled', $descriptor) && $descriptor['disabled']) {
         echo ' disabled';
     }
-    
+
     echo ">";
-    
+
     if (array_key_exists('title', $descriptor) && !empty($descriptor['title'])) {
         printf('<h302>%s</h302>', strip_tags(trim($descriptor['title'])));
     }
-    
+
     echo '<ul style="margin: 10px auto">';
 }
 
@@ -524,18 +570,18 @@ function close_fieldset() {
 function print_tab_navbuttons($button_descriptors) {
     if (is_array($button_descriptors) && count($button_descriptors)) {
         echo '<div class="tab">';
-        
+
         $count = 0;
         foreach ($button_descriptors as $tab_id => $button_caption) {
             $onclick = sprintf("openTab(event, '%s')", $tab_id);
-            
+
             printf('<button id="%s-button" class="tablinks%s" onclick="%s">%s</button>',
                    $tab_id, (($count == 0) ? " active" : ""), $onclick, strip_tags($button_caption));
 
             $count++;
         }
-        
-        
+
+
         echo '</div>' . "\n";
     }
 }
@@ -543,7 +589,7 @@ function print_tab_navbuttons($button_descriptors) {
 function print_tab_header($keywords=array(), $active=0) {
     if (is_array($keywords) && count($keywords) > 0) {
         echo '<div class="tab">';
-        
+
         $count = 0;
         foreach ($keywords as $key) {
             if (is_array($key)) {
@@ -555,25 +601,25 @@ function print_tab_header($keywords=array(), $active=0) {
                 $button_id = strtolower("$key-button");
                 $button_caption = t('title', $key);
             }
-            
+
             $onclick = sprintf("openTab(event, '%s')", $tab_id);
-            
+
             printf('<button id="%s" class="tablinks%s" onclick="%s">%s</button>',
                    $button_id, (($count == $active) ? " active" : ""), $onclick, strip_tags($button_caption));
-        
+
             $count++;
         }
-        
+
         echo '</div>' . "\n";
-        
-        
+
+
     }
 }
 
 function open_tab($keywords=array(), $index=0, $display=false) {
     if (array_key_exists($index, $keywords) && !empty($keywords[$index])) {
         $key = $keywords[$index];
-        
+
         if (is_array($key)) {
             $tab_id = strtolower($key[0]) . "-tab";
             $tab_title = $key[1];
@@ -581,32 +627,32 @@ function open_tab($keywords=array(), $index=0, $display=false) {
             $tab_id = strtolower("$key-tab");
             $tab_title = t('title', $key);
         }
-        
+
         printf('<div id="%s" class="tabcontent"', $tab_id);
-        
+
         if ($display) {
             echo ' style="display: block"';
         }
-        
+
         echo '>' . "\n";
     }
 }
 
 function close_tab($keywords=array(), $index=0) {
     echo '</div>';
-    
+
     if (array_key_exists($index, $keywords) && !empty($keywords[$index])) {
         $key = $keywords[$index];
-        
+
         if (is_array($key)) {
             $tab_id = strtolower($key[0]) . "-tab";
         } else {
             $tab_id = strtolower("$key-tab");
         }
-        
+
         echo "<!-- #$tab_id -->";
     }
-    
+
     echo "\n";
 }
 

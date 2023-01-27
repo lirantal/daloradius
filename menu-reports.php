@@ -32,8 +32,8 @@ include_once("library/validation.php");
 
 $m_active = "Reports";
 
-include_once("include/menu/menu-items.php");
-include_once("include/menu/reports-subnav.php");
+
+
 include_once("include/management/autocomplete.php");
 
 ?>      

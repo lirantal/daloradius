@@ -31,8 +31,8 @@ include_once("lang/main.php");
 
 $m_active = "Management";
 
-include_once("include/menu/menu-items.php");
-include_once("include/menu/management-subnav.php");
+
+
 
 
 // init select components
@@ -194,4 +194,3 @@ $menu_radgroupcheck_select = array(
                 </ul><!-- .subnav -->
                 
             </div><!-- #sidebar -->
-

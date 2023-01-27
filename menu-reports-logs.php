@@ -35,8 +35,8 @@ $m_active = "Reports";
 
 
 <?php
-    include_once ("include/menu/menu-items.php");
-    include_once ("include/menu/reports-subnav.php");
+
+
     
     function print_options($options, $selected_value="") {
         foreach ($options as $value => $label) {

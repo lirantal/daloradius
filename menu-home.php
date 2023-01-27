@@ -35,8 +35,8 @@ $m_active = "Home";
 
 
 <?php
-    include_once("include/menu/menu-items.php");
-    include_once("include/menu/home-subnav.php");
+    
+
     
     $status_menu_elements = array(
                                     'rep-stat-server.php' => t('button','ServerStatus'),
@@ -87,4 +87,3 @@ $m_active = "Home";
                     <a target="_blank" href="https://github.com/lirantal/daloradius" class="more">Read More &raquo;</a>
                 </p>
             </div><!-- #sidebar -->
-

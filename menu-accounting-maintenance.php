@@ -31,8 +31,9 @@ include_once("lang/main.php");
 
 $m_active = "Accounting";
 
-include_once("include/menu/menu-items.php");
-include_once("include/menu/accounting-subnav.php");
+
+//~
+include_once("include/menu/auto_subnav.php");
 
 $menu_elements = array(
                         "acct-maintenance-cleanup.php" => t('button','CleanupStaleSessions'),
