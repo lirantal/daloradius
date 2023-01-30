@@ -40,7 +40,8 @@ $nav = array(
             );
 
 // detect category from the PHP_SELF name
-$detect_category = explode("-", trim($_SERVER['PHP_SELF'], "/"))[0];
+$basename = basename($_SERVER['PHP_SELF']);
+$detect_category = substr($basename, 0, strpos($basename, '-'));
 if (!in_array($detect_category, array_keys($nav))) {
     $detect_category = "home";
 }
