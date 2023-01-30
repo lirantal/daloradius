@@ -155,7 +155,7 @@ function get_system_load() {
 // Get Memory System MemTotal|MemFree
 // @return array Memory System MemTotal|MemFree
 function get_memory() {
-    $units = array( 'kB' => 10, 'MB' => 20, 'GB' => 30 );
+    $units = array( 'kB' => 10, 'MB' => 20, 'GB' => 30, 'TB' => 40 );
     $result = array();
     $proc_meminfo = explode("\n", file_get_contents("/proc/meminfo"));
     
@@ -166,7 +166,7 @@ function get_memory() {
     foreach ($proc_meminfo as $line) {
         $matches = array();
         if (
-                preg_match('/^([^:]+)\:\s+(\d+)\s+([a-zA-Z]{2})$/', $line, $matches) === false ||
+                preg_match('/^([^:]+)\:\s+(\d+)\s+([kMGT]B)$/', $line, $matches) === false ||
                 count($matches) != 4
            ) {
             continue;
@@ -176,7 +176,7 @@ function get_memory() {
         $value = intval($matches[2]);
         $i = $matches[3];
         
-        if (in_array($i, $units)) {
+        if (in_array($i, array_keys($units))) {
             $value *= pow(2, $units[$i]);
         }
         
