@@ -172,8 +172,6 @@ function get_memory() {
             continue;
         }
 
-        //~ print_r($matches);
-
         $key = $matches[1];
         $value = intval($matches[2]);
         $i = $matches[3];
