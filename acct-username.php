@@ -36,6 +36,7 @@
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
+    
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query ";
@@ -91,6 +92,8 @@
     $sql_WHERE = "";
     $partial_query_string = "";
     if (!empty($username)) {
+        include('library/opendb.php');
+        
         $sql_WHERE = sprintf(" WHERE username='%s'", $dbSocket->escapeSimple($username));
         $partial_query_string = sprintf("&username=%s", urlencode($username_enc));
 
@@ -99,7 +102,7 @@
         $_SESSION['reportQuery'] = $sql_WHERE;
         $_SESSION['reportType'] = "accountingGeneric";
 
-        include('library/opendb.php');
+        
         include_once('include/management/pages_common.php');
 
         $sql = sprintf("SELECT COUNT(radacctid) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']) . $sql_WHERE;
