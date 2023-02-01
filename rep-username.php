@@ -52,7 +52,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-reports.php");
+    include("include/menu/sidebar.php");
     
     $cols = array(
                     'id' => t('all','ID'),

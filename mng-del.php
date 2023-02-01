@@ -234,7 +234,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include ("menu-mng-users.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($username) && !is_array($username)) {
         $title .= " :: " . htmlspecialchars($username, ENT_QUOTES, 'UTF-8');

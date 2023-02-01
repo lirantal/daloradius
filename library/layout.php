@@ -134,11 +134,21 @@ function print_footer_and_html_epilogue($inline_extra_js="") {
        . '</div><!-- #innerwrapper -->' . "\n"
        . '</div><!-- #wrapper -->' . "\n";
 
+    echo "<script>" . "\n";
+    echo <<<EOF
+    var tooltipObj = new DHTMLgoodies_formTooltip();
+    tooltipObj.setTooltipPosition('right');
+    tooltipObj.setPageBgColor('#EEEEEE');
+    tooltipObj.setTooltipCornerSize(15);
+    tooltipObj.initFormFieldTooltip();
+
+EOF;
+
     if (!empty($inline_extra_js)) {
-        echo "<script>" . "\n"
-           . $inline_extra_js . "\n"
-           . "</script>" . "\n";
+        echo $inline_extra_js . "\n";
     }
+    
+    echo "</script>" . "\n";
 
     echo '</body>'
        . '</html>';
@@ -288,7 +298,8 @@ function print_input_field($input_descriptor) {
     }
 
     if (array_key_exists('title', $input_descriptor)) {
-        printf(' title="%s"', $input_descriptor['title']);
+        $title = str_replace("\n", " ", strip_tags($input_descriptor['title']));
+        printf(' title="%s"', preg_replace('/\s+/', ' ', $title));
     }
 
     if (array_key_exists('onclick', $input_descriptor)) {
@@ -296,17 +307,24 @@ function print_input_field($input_descriptor) {
     }
 
     if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist'])) {
-        printf(' list="%s-list"', $input_descriptor['id']);
+        $datalist_id = sprintf("%s-%d-list", $input_descriptor['id'], rand());
+        printf(' list="%s"', $datalist_id);
     }
 
     if (array_key_exists('tooltipText', $input_descriptor)) {
-        printf(' placeholder="%s"', strip_tags($input_descriptor['tooltipText']));
+        $tooltipText = str_replace('"', "'", strip_tags($input_descriptor['tooltipText']));
+        
+        printf(' placeholder="%s"', $tooltipText);
+        
+        if (array_key_exists('sidebar', $input_descriptor) && $input_descriptor['sidebar'] !== false) {
+            printf(' tooltipText="%s"', $tooltipText);
+        }
     }
 
     echo '>';
 
     if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist'])) {
-        printf('<datalist id="%s-list">', $input_descriptor['id']);
+        printf('<datalist id="%s">', $datalist_id);
         foreach ($input_descriptor['datalist'] as $value) {
             $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
             printf('<option value="%s">' . "\n", $value);
@@ -391,21 +409,28 @@ function print_textarea($textarea_descriptor) {
 }
 
 //~ descriptor array( "type" => "select", "id" => ..., "name" => ..., "options" => array( "value" => "caption", ..)
-//~ "selected_value" => "value", "caption" => ...
+//~ "selected_value" => "value", "caption" => ..., "integer_value" => true
 function print_select($select_descriptor) {
     if (!array_key_exists('id', $select_descriptor) || empty($select_descriptor['id'])) {
         $select_descriptor['id'] = $select_descriptor['name'];
     }
 
-    printf('<label for="%s" class="form">%s</label>', $select_descriptor['id'], $select_descriptor['caption']);
+    if (isset($select_descriptor['caption'])) {
+        printf('<label for="%s" class="form">%s</label>', $select_descriptor['id'], $select_descriptor['caption']);
+    }
     printf('<select class="form" name="%s" id="%s"', $select_descriptor['name'], $select_descriptor['id']);
 
     if (array_key_exists('onchange', $select_descriptor)) {
         printf(' onchange="%s"', $select_descriptor['onchange']);
     }
 
-    if (array_key_exists('multiple', $select_descriptor)) {
+    if (array_key_exists('multiple', $select_descriptor) && $select_descriptor['multiple'] !== false) {
         echo ' multiple';
+    }
+
+    if (array_key_exists('title', $select_descriptor)) {
+        $title = str_replace("\n", " ", strip_tags($select_descriptor['title']));
+        printf(' title="%s"', preg_replace('/\s+/', ' ', $title));
     }
 
     if (array_key_exists('size', $select_descriptor) && intval($select_descriptor['size']) > 0) {
@@ -416,12 +441,29 @@ function print_select($select_descriptor) {
         echo ' disabled';
     }
 
+    if (array_key_exists('tooltipText', $input_descriptor)) {
+        $tooltipText = str_replace('"', "'", strip_tags($input_descriptor['tooltipText']));
+        
+        if (!empty($tooltipText)) {        
+            printf(' placeholder="%s"', $tooltipText);
+            
+            if (array_key_exists('sidebar', $input_descriptor) && $input_descriptor['sidebar'] !== false) {
+                printf(' tooltipText="%s"', $tooltipText);
+            }
+        }
+    }
+
     echo '>';
 
     if (array_key_exists('options', $select_descriptor) && is_array($select_descriptor['options'])) {
         foreach ($select_descriptor['options'] as $key => $elem) {
 
-            $value = ((!is_int($key)) ? $key : $elem);
+            if (array_key_exists('integer_value', $select_descriptor) && $select_descriptor['integer_value'] !== false) {
+                $value = intval($key);
+            } else {
+                $value = ((!is_int($key)) ? $key : $elem);
+            }
+            
             $caption = htmlspecialchars($elem, ENT_QUOTES, 'UTF-8');
 
             printf('<option value="%s"', htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
@@ -444,9 +486,33 @@ function print_select($select_descriptor) {
         }
     }
     echo '</select>';
+    
+    if (array_key_exists('show_controls', $select_descriptor) && $select_descriptor['show_controls'] !== false &&
+        array_key_exists('multiple', $select_descriptor) && $select_descriptor['multiple'] !== false) {
+        $id = $select_descriptor['id'];
+        $js_function_name = sprintf("select_%d", rand());
+        
+        echo <<<EOF
+<a style="display: inline" href="#" onclick="{$js_function_name}('all')">Select All</a>
+<a style="display: inline" href="#" onclick="{$js_function_name}('none')">Select None</a>
+
+<script>
+    function {$js_function_name}(what) {
+        var selected = (what == 'all'),
+            sqlfields = document.getElementById('{$id}');
+    
+        for (var i = 0; i < sqlfields.options.length; i++) {
+            sqlfields.options[i].selected = selected;
+        }
+    }
+</script>
+
+EOF;
+    }
 }
 
 // wrapper for printing form components
+// if exists the keyword 'sidebar' we don't show tooltip icon
 function print_form_component($descriptor) {
 
     if (!array_key_exists('id', $descriptor) || empty($descriptor['id'])) {
@@ -465,8 +531,9 @@ function print_form_component($descriptor) {
         print_input_field($descriptor);
     }
 
-    if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
-        $tooltip_box_id = sprintf('%s-tooltip', $descriptor['id']);
+    if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText']) &&
+        (!array_key_exists('sidebar', $descriptor) || $descriptor['sidebar'] === false)) {
+        $tooltip_box_id = sprintf('%s-%d-tooltip', $descriptor['id'], rand());
         $onclick = sprintf("javascript:toggleShowDiv('%s')", $tooltip_box_id);
         printf('<a href="#" onclick="%s"><img src="static/images/icons/comment.png" alt="Tip"></a>', $onclick);
         printf('<div id="%s" style="display:none; visibility:visible" class="ToolTip">%s</div>',
@@ -654,6 +721,140 @@ function close_tab($keywords=array(), $index=0) {
     }
 
     echo "\n";
+}
+
+
+// menu layout
+
+function menu_open($title) {
+    printf('<div id="sidebar"><h2>%s</h2>' . "\n", $title);
+}
+
+function menu_close() {
+    echo '</div><!-- #sidebar -->' . "\n";
+}
+
+function menu_open_section($title) {
+    printf('<h3>%s</h3><ul class="subnav">' . "\n", $title);
+    
+}
+
+function menu_close_section() {
+    echo '</ul><!-- .subnav -->' . "\n";
+    
+}
+
+function menu_print_textarea($descriptor) {
+    echo '<li>'
+       . '<p class="news">' . "\n"
+       . $descriptor['content']
+       . '</p><!-- .news -->' . "\n";
+    
+    if (array_key_exists('readmore', $descriptor)) {
+        $readmore = $descriptor['readmore'];
+        
+        printf('<a style="margin-top: 20px; text-align: right" target="_blank" href="%s" title="%s" class="more">%s</a>',
+               $readmore['href'], $readmore['title'], $readmore['label']);
+    }
+    
+    echo '</li>' . "\n";
+}
+
+function menu_print_form($descriptor) {
+    $keys = array( 'title', 'action', 'method' );
+    foreach ($keys as $key) {
+        $descriptor[$key] = strip_tags(trim($descriptor[$key]));
+    }
+    
+    $descriptor['action'] = $descriptor['action'];
+    
+    $label = '<b>&raquo;</b>';
+    if (isset($descriptor['img']['src'])) {
+        $label .= sprintf('<img style="margin-right:5px; border:0" src="%s">', $descriptor['img']['src']);
+    }
+    $label .= $descriptor['title'];
+    
+    $form_name = "form_" . rand();
+    
+    echo '<li>';
+    
+    printf('<a title="%s" href="javascript:document.%s.submit()">%s</a>', $descriptor['title'], $form_name, $label);
+    printf('<form name="%s" action="%s" method="%s" class="sidebar">',
+           $form_name, urlencode($descriptor['action']), strtoupper($descriptor['method']));
+    
+    foreach ($descriptor['form_components'] as $form_component) {
+        print_form_component($form_component);
+    }
+    
+    echo '</form><!-- .sidebar -->' . "\n"
+       . '</li>' . "\n";
+}
+
+function menu_print_link($descriptor) {
+    $descriptor['label'] = strip_tags(trim($descriptor['label']));
+    
+    if (!isset($descriptor['title'])) {
+        $descriptor['title'] = $descriptor['label'];
+    } else {
+        $descriptor['title'] = strip_tags(trim($descriptor['title']));
+    }
+    
+    $label = '<b>&raquo;</b>';
+    if (isset($descriptor['img']['src'])) {
+        $label .= sprintf('<img style="margin-right:5px; border:0" src="%s">', $descriptor['img']['src']);
+    }
+    $label .= $descriptor['label'];
+    
+    printf('<li><a href="%s" title="%s">%s</a></li>' . "\n", $descriptor['href'], $descriptor['title'], $label);
+}
+
+function menu_print_item($descriptor) {
+    
+    switch ($descriptor['type']) {
+        default:
+        case 'link':
+            menu_print_link($descriptor);
+            break;
+            
+        case 'textarea':
+            menu_print_textarea($descriptor);
+            break;
+            
+        case 'form':
+            menu_print_form($descriptor);
+            break;
+    }
+    
+}
+
+function menu_print($menu) {
+    
+    // open menu
+    menu_open($menu['title']);
+    
+    // get sections
+    $sections = $menu['sections'];
+    
+    foreach ($sections as $section) {
+        
+        // open current section
+        menu_open_section($section['title']);
+        
+        // get descriptors for the current section
+        $descriptors = $section['descriptors'];
+        
+        foreach ($descriptors as $descriptor) {
+            menu_print_item($descriptor);
+        }
+        
+        // close current section
+        menu_close_section();
+        
+    }
+    
+    // close menu
+    menu_close();
+    
 }
 
 ?>

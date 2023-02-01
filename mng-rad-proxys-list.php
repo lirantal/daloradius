@@ -67,7 +67,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-mng-rad-realms.php");
+    include("include/menu/sidebar.php");
   
     // start printing content
     echo '<div id="contentnorightbar">';
@@ -163,6 +163,7 @@
             
             $onclick = 'javascript:return false;';
         
+            $tr = array();
             $tr[] = sprintf('<input type="checkbox" name="item[]" value="%s" id="%s">', $item_id, $checkbox_id)
                           . sprintf('<label for="%s">', $checkbox_id)
                           . sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>", $onclick, $tooltipText)
@@ -213,16 +214,9 @@
         include_once("include/management/actionMessages.php");
     }
     
-        include('library/closedb.php');
+    include('library/closedb.php');
 
     include('include/config/logging.php');
     
-    $inline_extra_js = "
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip()";
-    
-    print_footer_and_html_epilogue($inline_extra_js);
+    print_footer_and_html_epilogue();
 ?>

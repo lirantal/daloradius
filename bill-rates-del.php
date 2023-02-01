@@ -116,7 +116,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-bill-rates.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($ratename) && !is_array($ratename)) {
         $title .= " :: " . htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8');

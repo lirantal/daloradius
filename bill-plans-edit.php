@@ -223,7 +223,7 @@
         $title .= " :: $planName_enc";
     }
 
-    include("menu-bill-plans.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

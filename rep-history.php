@@ -42,7 +42,7 @@
     
     print_html_prologue($title, $langCode);
     
-    include ("menu-reports.php");
+    include("include/menu/sidebar.php");
 
     // these three variable can be used for validation an presentation purpose
     $cols = array(

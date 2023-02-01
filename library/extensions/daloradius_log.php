@@ -51,21 +51,28 @@ if (array_key_exists('CONFIG_LOG_FILE', $configValues) && isset($configValues['C
                                   $logfile_enc);
         } else {
             // get its content
-            $logcontent = file_get_contents($logfile);
-            if (!empty($logcontent)) {
-                $counter = $daloradiusLineCount;
-                $fileReversed = array_reverse(file($logfile));
-
-                echo '<div style="font-family: monospace">';
-                foreach ($fileReversed as $line) {
-                    if ($counter == 0) {
-                        break;
-                    }
-                    echo nl2br(htmlspecialchars($line, ENT_QUOTES, 'UTF-8'), false);
-                    $counter--;
+            $logcontent = file($logfile);
+            if ($logcontent !== false && count($logcontent) > 0) {
+                $reversed_content = array_reverse($logcontent);
                 
+                // set internal count & filter
+                $_count = (isset($count) && is_numeric($count)) ? $count : 50;
+                $_filter = (isset($filter) && !empty($filter)) ? preg_quote($filter, "/") : "";
+                
+                echo '<div style="font-family: monospace">';
+                foreach ($reversed_content as $line) {
+                    if (empty($_filter) || preg_match("/$_filter/i", $line)) {
+                        if ($_count == 0) {
+                            break;
+                        }
+                        
+                        echo nl2br(htmlspecialchars($line, ENT_QUOTES, 'UTF-8'), false);
+                        $_count--;
+                    }
                 }
                 echo '</div>';
+            } else {
+                $failureMsg = sprintf("It looks like log file <strong>%s</strong> is empty.", $logfile_enc);
             }
         }
     }

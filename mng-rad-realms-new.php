@@ -154,7 +154,7 @@
         $title .= ":: $realmname_enc";
     } 
 
-    include("menu-mng-rad-realms.php");
+    include("include/menu/sidebar.php");
     echo '<div id="contentnorightbar">';
     
     print_title_and_help($title, $help);

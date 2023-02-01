@@ -130,7 +130,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-bill-pos.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($username_enc) && !is_array($username_enc)) {
         $title .= " :: $username_enc";

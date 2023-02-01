@@ -21,7 +21,7 @@
  */
 
 // prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/include/menu/auto_subnav.php') !== false) {
+if (strpos($_SERVER['PHP_SELF'], '/include/menu/subnav.php') !== false) {
     header("Location: ../../index.php");
     exit;
 }
@@ -50,7 +50,7 @@ $subnav["config"] = array(
 $subnav["rep"] = array(
                             'General' => 'rep-main.php',
                             'Logs' => 'rep-logs.php',
-                            'Status' => 'rep-status.php',
+                            'Status' => 'rep-stat.php',
                             'Batch Users' => 'rep-batch.php',
                             'Dashboard' => 'rep-hb.php',
                         );

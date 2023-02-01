@@ -172,9 +172,6 @@ function populate_invoice_type_id($defaultOption = "Select Status", $elementName
 }
 
 
-
-
-
 /*
  * populate_hotspots
  * creates a select box and populates it with all hotspots
@@ -208,6 +205,28 @@ function populate_hotspots($defaultOption = "Select Hotspot", $elementName = "",
         include 'library/closedb.php';
 
     echo "</select>";
+}
+
+function get_invoice_status_id() {
+    global $configValues;
+
+    include('library/opendb.php');
+
+    $sql = sprintf("SELECT id, value FROM %s ORDER BY value ASC",
+                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']);
+    $res = $dbSocket->query($sql);
+
+    $result = array();
+    while($row = $res->fetchRow()) {
+        list($id, $value) = $row;
+        $id = intval($id);
+        
+        $result[$id] = $value;
+    }
+
+    include('library/closedb.php');
+
+    return $result;
 }
 
 function get_active_plans() {
@@ -265,26 +284,6 @@ function populate_plans($defaultOption = "Select Plan", $elementName = "", $cssC
         echo "</select>";
 
         include 'library/closedb.php';
-}
-
-
-function get_realms() {
-    global $configValues;
-
-    include('library/opendb.php');
-    
-    $sql = sprintf("SELECT realmname FROM %s ORDER BY realmname ASC", $configValues['CONFIG_DB_TBL_DALOREALMS']);
-    $res = $dbSocket->query($sql);
-    
-    $result = array();
-
-    while ($row = $res->fetchrow()) {
-        $result[] = $row[0];
-    }
-    
-    include('library/closedb.php');
-    
-    return $result;
 }
 
 
@@ -346,7 +345,7 @@ function get_huntgroups() {
 
     include('library/opendb.php');
     
-    $sql = sprintf("SELECT `id`, `groupname`, `nasipaddress`, `nasportid` FROM `%s` ORDER BY `id` ASC",
+    $sql = sprintf("SELECT `id`, `groupname`, `nasipaddress`, `nasportid` FROM `%s` ORDER BY `groupname`, `nasipaddress` ASC",
                    $configValues['CONFIG_DB_TBL_RADHG']);
     $res = $dbSocket->query($sql);
     
@@ -367,73 +366,6 @@ function get_huntgroups() {
     return $result;
 }
 
-
-function get_online_users() {
-    global $configValues;
-
-    include('library/opendb.php');
-
-    $sql = sprintf("SELECT DISTINCT(username)
-                      FROM %s
-                     WHERE AcctStopTime IS NULL
-                        OR AcctStopTime='0000-00-00 00:00:00'
-                     ORDER BY username ASC", $configValues['CONFIG_DB_TBL_RADACCT']);
-    $res = $dbSocket->query($sql);
-
-    $result = array();
-    while ($row = $res->fetchRow()) {
-        $username = $row[0];
-        $result[$username] = $username;
-    }
-    
-    include('library/closedb.php');
-    
-    return $result;
-}
-
-
-function get_users() {
-    global $configValues;
-
-    include('library/opendb.php');
-
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_RADCHECK']);
-
-    $res = $dbSocket->query($sql);
-
-    $result = array();
-    
-    while ($row = $res->fetchRow()) {
-        $username = $row[0];
-        $result[$username] = $username;
-    }
-
-    include('library/closedb.php');
-    
-    return $result;
-}
-
-
-function get_plans() {
-    global $configValues;
-
-    include('library/opendb.php');
-
-    $sql = sprintf("SELECT DISTINCT(planName)
-                      FROM %s WHERE planActive = 'yes'
-                     ORDER BY planName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
-    $res = $dbSocket->query($sql);
-
-    $result = array();
-    while ($row = $res->fetchRow()) {
-        $result[] = $row[0];
-    }
-
-    include('library/closedb.php');
-    
-    return $result;
-
-}
 
 function get_groups() {
     global $configValues;
@@ -470,6 +402,120 @@ function get_groups() {
     return $result;
 }
 
+
+function list_from_db($sql) {
+    include('library/opendb.php');
+    
+    $res = $dbSocket->query($sql);
+
+    $result = array();
+    while ($row = $res->fetchRow()) {
+        $result[] = $row[0];
+    }
+    include('library/closedb.php');
+    
+    return $result;
+}
+
+
+function get_payment_types() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(value) FROM %s ORDER BY value ASC", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
+    return list_from_db($sql);   
+}
+
+function get_realms() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(realmname) FROM %s ORDER BY realmname ASC", $configValues['CONFIG_DB_TBL_DALOREALMS']);
+    return list_from_db($sql);
+}
+
+
+function get_online_users() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(username)
+                      FROM %s
+                     WHERE AcctStopTime IS NULL
+                        OR AcctStopTime='0000-00-00 00:00:00'
+                     ORDER BY username ASC", $configValues['CONFIG_DB_TBL_RADACCT']);
+    return list_from_db($sql);
+}
+
+
+function get_users($TBL_KEY='CONFIG_DB_TBL_RADCHECK') {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s ORDER BY username ASC", $configValues[$TBL_KEY]);
+    return list_from_db($sql);
+}
+
+
+function get_nas_names() {
+    global $configValues;
+    $sql = sprintf("SELECT nasname FROM %s ORDER BY nasname ASC", $configValues['CONFIG_DB_TBL_RADNAS']);
+    return list_from_db($sql);
+}
+
+
+function get_plans() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(planName)
+                      FROM %s WHERE planActive='yes'
+                     ORDER BY planName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
+    return list_from_db($sql);
+}
+
+
+function get_ratenames() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(rateName) FROM %s ORDER BY rateName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES']);
+    return list_from_db($sql);
+}
+
+
+function get_groups_that_have_users() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(groupname) FROM %s ORDER BY groupname ASC", $configValues['CONFIG_DB_TBL_RADUSERGROUP']);
+    return list_from_db($sql);
+}
+
+function get_users_that_have_groups() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_RADUSERGROUP']);
+    return list_from_db($sql);
+}
+
+
+function get_operators() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
+    return list_from_db($sql);
+}
+
+function get_attributes() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(attribute) AS attribute FROM %s ORDER BY attribute ASC", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+    return list_from_db($sql);
+}
+
+function get_vendors() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(Vendor) AS Vendor FROM %s ORDER BY Vendor ASC", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
+    return list_from_db($sql);
+}
+
+function get_hotspots() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(name) FROM %s ORDER BY name ASC", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    return list_from_db($sql);
+}
+
+function get_batch_names() {
+    global $configValues;
+    $sql = sprintf("SELECT DISTINCT(batch_name) FROM %s batch_name ORDER BY batch_name ASC",
+                   $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY']);
+    return list_from_db($sql);
+}
+    
 /*
  * populate_groups
  * creates a select box and populates it with all groups from radgroupreply and

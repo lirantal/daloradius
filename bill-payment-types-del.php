@@ -115,7 +115,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-bill-payments.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($paymentname) && !is_array($paymentname)) {
         $title .= " :: " . htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8');

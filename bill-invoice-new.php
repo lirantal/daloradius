@@ -31,26 +31,18 @@
     include_once("library/validation.php");
     include("library/layout.php");
     include("include/management/functions.php");
+    include_once("include/management/populate_selectbox.php");
     
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
     
+    // get valid statuses
+    $valid_statuses = get_invoice_status_id();
 
     include('library/opendb.php');
     
-    // get valid statuses
-    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $valid_statuses = array();
-    while ($row = $res->fetchrow()) {
-        list($id, $value) = $row;
-        
-        $valid_statuses["status-$id"] = $value;
-    }
     
     // get valid types
     $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']);
@@ -61,19 +53,20 @@
     while ($row = $res->fetchrow()) {
         list($id, $value) = $row;
         
-        $valid_types["type-$id"] = $value;
+        $valid_types[$id] = $value;
     }
     
     // get valid users
-    $sql = sprintf("SELECT id, username FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    $sql = sprintf("SELECT id, username FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
-    
+
     $valid_users = array();
     while ($row = $res->fetchrow()) {
         list($id, $value) = $row;
+        $id = intval($id);
         
-        $valid_users["user-$id"] = $value;
+        $valid_users[$id] = $value;
     }
     
     
@@ -87,15 +80,15 @@
                         
                 $user_id = (array_key_exists('user_id', $_POST) && !empty(trim($_POST['user_id'])) &&
                             in_array(trim($_POST['user_id']), array_keys($valid_users)))
-                         ? intval(str_replace("user-", "", trim($_POST['user_id']))) : "";
+                         ? intval(trim($_POST['user_id'])) : "";
                 
                 $invoice_type_id = (array_key_exists('invoice_type_id', $_POST) && !empty(trim($_POST['invoice_type_id'])) &&
                                     in_array(trim($_POST['invoice_type_id']), array_keys($valid_types)))
-                                 ? intval(str_replace("type-", "", trim($_POST['invoice_type_id']))) : "";
+                                 ? intval(trim($_POST['invoice_type_id'])) : "";
 
                 $invoice_status_id = (array_key_exists('invoice_status_id', $_POST) && !empty(trim($_POST['invoice_status_id'])) &&
                                       in_array(trim($_POST['invoice_status_id']), array_keys($valid_statuses)))
-                                   ? intval(str_replace("status-", "", trim($_POST['invoice_status_id']))) : 1;
+                                   ? intval(trim($_POST['invoice_status_id'])) : 1;
             
                 $invoice_date = (
                                     array_key_exists('invoice_date', $_POST) &&
@@ -148,11 +141,11 @@
     } else {
         $user_id = (array_key_exists('user_id', $_GET) && !empty(trim($_GET['user_id'])) &&
                     in_array(trim($_GET['user_id']), array_keys($valid_users)))
-                 ? intval(str_replace("user-", "", trim($_GET['user_id']))) : "";
+                 ? intval(trim($_GET['user_id'])) : "";
     }
     
     
-    $username = (!empty($user_id)) ? $valid_users["user-$user_id"] : "";
+    $username = (!empty($user_id)) ? $valid_users[$user_id] : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     
@@ -258,7 +251,7 @@ EOF;
         $title .=  " :: " . $username_enc;
     }
 
-    include("menu-bill-invoice.php");
+    include("include/menu/sidebar.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -307,36 +300,36 @@ EOF;
         $input_descriptors0 = array();
         
         $options = $valid_statuses;
-        array_unshift($options , '');
-		$input_descriptors0[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "invoice_status_id",
                                         "caption" => t('all','InvoiceStatus'),
                                         "type" => "select",
                                         "options" => $options,
-                                        "selected_value" => "status-$invoice_status_id",
+                                        "selected_value" => $invoice_status_id,
                                         "tooltipText" => t('Tooltip','invoiceStatusTooltip'),
+                                        "integer_value" => true,
                                      );
         
         $options = $valid_types;
-        array_unshift($options , '');
-		$input_descriptors0[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "invoice_type_id",
                                         "caption" => t('all','InvoiceType'),
                                         "type" => "select",
                                         "options" => $options,
-                                        "selected_value" => "type-$invoice_type_id",
+                                        "selected_value" => $invoice_type_id,
                                         "tooltipText" => t('Tooltip','invoiceTypeTooltip'),
+                                        "integer_value" => true,
                                      );
     
         $options = $valid_users;
-        array_unshift($options , '');
-		$input_descriptors0[] = array(
+        $input_descriptors0[] = array(
                                         "name" => "user_id",
                                         "caption" => t('all','UserId'),
                                         "type" => "select",
                                         "options" => $options,
-                                        "selected_value" => "user-$user_id",
+                                        "selected_value" => $user_id,
                                         "tooltipText" => t('Tooltip','user_idTooltip'),
+                                        "integer_value" => true,
                                      );
 
         $input_descriptors0[] = array(

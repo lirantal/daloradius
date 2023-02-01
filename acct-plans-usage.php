@@ -72,6 +72,7 @@
          $logQuery .= " to $enddate";
     }
     $logQuery .= "on page: ";
+    $logDebugSQL = "";
 
     // print HTML prologue
     $extra_css = array(
@@ -90,7 +91,7 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
-    include("menu-accounting-plans.php");
+    include("include/menu/sidebar.php");
 	
     $cols = array(
                     "username" => t('all','Username'),
@@ -281,17 +282,8 @@
 
 	include('include/config/logging.php');
     
-    $inline_extra_js = "
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();
-";
-
-    if ($userExists) {
-        $inline_extra_js .= "window.onload = function() { setupAccordion() };";
-    }
+    $inline_extra_js = ($userExists)
+                     ? "window.onload = function() { setupAccordion() };" : "";
     
     print_footer_and_html_epilogue($inline_extra_js);
 ?>

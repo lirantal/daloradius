@@ -73,7 +73,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-config-operators.php");
+    include("include/menu/sidebar.php");
 
                
     // start printing content

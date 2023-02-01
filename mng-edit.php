@@ -452,7 +452,7 @@ window.onload = function(){
         $title .= " :: $username_enc";
     }
 
-    include("menu-mng-users.php");
+    include("include/menu/sidebar.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -464,7 +464,7 @@ window.onload = function(){
     
         // ajax return div
         echo '<div id="returnMessages"></div>';
-        include('include/management/populate_selectbox.php');
+        include_once('include/management/populate_selectbox.php');
     
         // we have more than one form in this page so we can reuse many times the same csrf_token value
         $csrf_token = dalo_csrf_token();

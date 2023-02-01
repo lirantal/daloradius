@@ -186,7 +186,7 @@
         $title .= sprintf(" (id: #%d)", $payment_id);
     }
     
-    include("menu-bill-payments.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

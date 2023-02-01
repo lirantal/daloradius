@@ -37,7 +37,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-help.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -47,16 +47,16 @@
             <p>
                 There are several communication media available at your disposal:<br/><br/>
 
-                <b>daloRADIUS website</b>: <a href="http://www.daloradius.com">daloRADIUS blog</a><br/><br/>
-                <b>daloRADIUS Project at GitHub</b>: <a href="https://github.com/lirantal/daloradius">GitHub project</a><br/>
+                <b>daloRADIUS website</b>: <a target="_blank" href="http://www.daloradius.com">daloRADIUS blog</a><br/><br/>
+                <b>daloRADIUS Project at GitHub</b>: <a target="_blank" href="https://github.com/lirantal/daloradius">GitHub project</a><br/>
                 At GitHub you may find the trackers for submitting tickets for support, bugs or features for next releases.<br/>
                 The official daloRADIUS package is available at
                 GitHub as well.<br/><br/>
-                <b>daloRADIUS Project at SourceForge</b>: <a href="http://sourceforge.net/projects/daloradius/">SourceForge project</a><br/>
+                <b>daloRADIUS Project at SourceForge</b>: <a target="_blank" href="http://sourceforge.net/projects/daloradius/">SourceForge project</a><br/>
                 Forums and the mailing list archive to review and search for issues.<br/>
                 The daloRADIUS packages here are old, use the GitHub ones instead.<br/><br/>
                 <b>daloRADIUS Mailing List</b>: Email to daloradius-users@lists.sourceforge.net, though registration to the mailing list<br/>
-                is required first <a href="https://lists.sourceforge.net/lists/listinfo/daloradius-users">here</a><br/><br/>
+                is required first <a target="_blank" href="https://lists.sourceforge.net/lists/listinfo/daloradius-users">here</a><br/><br/>
 
                 <b>daloRADIUS IRC</b>: you can find us at #daloradius on irc.freenode.net
             </p>

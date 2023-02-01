@@ -44,7 +44,7 @@ DHTMLSuite.autoComplete=function(){
    var ajax_optionDiv_iframe;   
    
    // set values
-   this.layoutCss='auto-complete.css';
+   this.layoutCss='static/css/auto-complete.css';
    this.ajaxBox_offsetX = 0;
    this.ajaxBox_offsetY = 0;
    this.ajax_list_currentLetters = new Array();

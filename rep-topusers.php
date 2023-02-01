@@ -31,8 +31,6 @@
     include("library/validation.php");
     include("library/layout.php");
     
-    $limit = (array_key_exists('limit', $_GET) && isset($_GET['limit']) && intval($_GET['limit']) > 0)
-           ? intval($_GET['limit']) : "";
     
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
                   preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
@@ -50,15 +48,6 @@
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
-
-    // print HTML prologue
-    $title = t('Intro','reptopusers.php');
-    $help = t('helpPage','reptopusers') . " " . $orderBy;
-    
-    print_html_prologue($title, $langCode);
-    
-    include ("menu-reports.php");
-
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
     //   - for validating user input
@@ -70,10 +59,10 @@
                     'acctstarttime' => t('all','StartTime'),
                     'acctstoptime' => t('all','StopTime'),
                     'Time' => t('all','TotalTime'),
-                    'Upload' => t('all','Upload') . " (" . t('all','Bytes') . ")",
-                    'Download' => t('all','Download') . " (" . t('all','Bytes') . ")",
+                    'Upload' => t('all','Upload'),
+                    'Download' => t('all','Download'),
                     'acctterminatecause' => t('all','Termination'),
-                    'nasipaddress' => t('all','NASIPAddress')
+                    'nasipaddress' => t('all','NASIPAddress'),
     );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
@@ -91,11 +80,16 @@
 
     // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for [order by: $orderBy";
-    if (!empty($limit)) {
-        $logQuery .= " / limit: $limit";
-    }
-    $logQuery .= "] on page: ";
+    $logQuery = "performed query for [order by: $orderBy] on page: ";
+    
+
+    // print HTML prologue
+    $title = t('Intro','reptopusers.php');
+    $help = t('helpPage','reptopusers') . " " . $orderBy;
+    
+    print_html_prologue($title, $langCode);
+    
+    include("include/menu/sidebar.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -117,7 +111,7 @@
     
     if (!empty($enddate)) {
         $partial_query_params[] = sprintf("enddate=%s", urlencode(htmlspecialchars($enddate, ENT_QUOTES, 'UTF-8')));
-        $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($enddate));
+        $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
     }
     
     if (!empty($username)) {
@@ -132,8 +126,7 @@
     
     $sql = "SELECT DISTINCT(ra.username) AS username, ra.FramedIPAddress, ra.AcctStartTime, MAX(ra.AcctStopTime), 
                    SUM(ra.AcctSessionTime) AS Time, SUM(ra.AcctInputOctets) AS Upload,
-                   SUM(ra.AcctOutputOctets) AS Download, ra.AcctTerminateCause, ra.NASIPAddress,
-                   SUM(ra.AcctInputOctets + ra.AcctOutputOctets) AS Bandwidth
+                   SUM(ra.AcctOutputOctets) AS Download, ra.AcctTerminateCause, ra.NASIPAddress
             FROM " . $configValues['CONFIG_DB_TBL_RADACCT'] . " AS ra";
     
     if (count($sql_WHERE) > 0) {
@@ -142,10 +135,6 @@
     
     $sql .= " GROUP BY username";
     
-    if (!empty($limit)) {
-        $partial_query_params[] = sprintf("limit=%d", $limit);
-        $sql .= sprintf(" LIMIT %d", $limit);
-    }
     
     $logDebugSQL = "$sql;\n";
     $res = $dbSocket->query($sql);

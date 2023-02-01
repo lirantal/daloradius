@@ -110,7 +110,7 @@
     } 
 
     
-    include("menu-mng-rad-profiles.php");
+    include("include/menu/sidebar.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
