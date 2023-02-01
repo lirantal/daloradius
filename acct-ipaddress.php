@@ -52,7 +52,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-accounting.php");
+    include("include/menu/sidebar.php");
 
     $cols = array(
                     "radacctid" => t('all','ID'),

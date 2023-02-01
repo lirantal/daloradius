@@ -89,7 +89,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-bill-invoice.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($invoice_id) && !is_array($invoice_id)) {
         $title .= " :: #" . htmlspecialchars($invoice_id, ENT_QUOTES, 'UTF-8');

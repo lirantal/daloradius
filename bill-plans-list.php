@@ -69,7 +69,7 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("menu-bill-plans.php");
+    include("include/menu/sidebar.php");
 
 
     // start printing content

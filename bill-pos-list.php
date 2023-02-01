@@ -85,7 +85,7 @@
         $title .=  " :: " . $planname_enc;
     }
 
-    include("menu-bill-pos.php");
+    include("include/menu/sidebar.php");
 
 
     // start printing content

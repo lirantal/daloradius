@@ -160,7 +160,7 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    include("menu-config-maint.php");
+    include("include/menu/sidebar.php");
     
 
     echo '<div id="contentnorightbar">';

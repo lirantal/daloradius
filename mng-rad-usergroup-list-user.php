@@ -57,7 +57,7 @@
         $title .= " :: $username_enc";
     }
 
-    include("menu-mng-rad-usergroup.php");
+    include("include/menu/sidebar.php");
 
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used

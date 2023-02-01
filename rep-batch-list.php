@@ -74,7 +74,7 @@
     
     print_html_prologue($title, $langCode);
     
-    include("menu-reports-batch.php");
+    include("include/menu/sidebar.php");
                
     // start printing content
     echo '<div id="contentnorightbar">';

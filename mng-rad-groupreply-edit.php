@@ -204,7 +204,7 @@
         $title .= sprintf(" %s", htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8'));
     }
 
-    include ("menu-mng-rad-groups.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

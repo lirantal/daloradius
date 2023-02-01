@@ -64,7 +64,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-mng-rad-groups.php");
+    include("include/menu/sidebar.php");
 
     // start printing content
     echo '<div id="contentnorightbar">';

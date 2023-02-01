@@ -47,7 +47,7 @@
     
     print_html_prologue($title, $langCode);
     
-    include("menu-reports-hb.php");
+    include("include/menu/sidebar.php");
     
       // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used

@@ -67,7 +67,7 @@
     
     print_html_prologue($title, $langCode);
     
-    include("menu-mng-rad-hunt.php");
+    include("include/menu/sidebar.php");
     
     // start printing content
     echo '<div id="contentnorightbar">';

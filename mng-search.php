@@ -75,7 +75,7 @@
           ? sprintf("user(s) related to <em>%s</em>", $username_enc)
           : "all users") . " are shown";
 
-    include ("menu-mng-users.php");
+    include("include/menu/sidebar.php");
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
 

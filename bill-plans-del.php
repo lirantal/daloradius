@@ -121,7 +121,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-bill-plans.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($planName) && !is_array($planName)) {
         $title .= " :: " . htmlspecialchars($planName, ENT_QUOTES, 'UTF-8');

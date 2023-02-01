@@ -46,7 +46,7 @@ include('library/closedb.php');
 
 // we finally check if the access to the requested page could be granted
 if (!$access) {
-    header('Location: msg-error-permissions.php');
+    header('Location: home-error.php');
     exit;
 }
 

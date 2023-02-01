@@ -120,9 +120,8 @@
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : $default_orderType;
     
-    include("menu-reports.php");
+    include("include/menu/sidebar.php");
 
-    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 

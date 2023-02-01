@@ -51,7 +51,7 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("menu-mng-rad-attributes.php");
+    include("include/menu/sidebar.php");
     
     $cols = array(
                     "id" => t('all','VendorID'),

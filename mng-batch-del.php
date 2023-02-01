@@ -168,7 +168,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include ("menu-mng-batch.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($batch_name) && !is_array($batch_name)) {
         $title .= " :: " . htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8');

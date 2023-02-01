@@ -204,7 +204,7 @@
         $title .= " :: $operator_username_enc";
     } 
 
-    include("menu-config-operators.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

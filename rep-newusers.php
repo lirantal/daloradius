@@ -71,7 +71,7 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
-    include("menu-reports.php");
+    include("include/menu/sidebar.php");
     
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used

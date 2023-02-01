@@ -203,7 +203,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-config-backup.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

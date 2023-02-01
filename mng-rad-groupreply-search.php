@@ -53,7 +53,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-mng-rad-groups.php");
+    include("include/menu/sidebar.php");
     
     $cols = array(
                     "groupname" => t('all','Groupname'),

@@ -69,7 +69,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-mng-rad-ippool.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

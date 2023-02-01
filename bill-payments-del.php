@@ -83,7 +83,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-bill-payments.php");
+    include("include/menu/sidebar.php");
     
     if (!empty($payment_id) && !is_array($payment_id)) {
         $title .= " :: " . htmlspecialchars($payment_id, ENT_QUOTES, 'UTF-8');

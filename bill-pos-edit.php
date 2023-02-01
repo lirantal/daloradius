@@ -472,7 +472,7 @@ function refillSessionTraffic() {
         $title .= " :: $username_enc";
     }
 
-    include("menu-bill-pos.php");
+    include("include/menu/sidebar.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

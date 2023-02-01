@@ -73,7 +73,7 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("menu-mng-rad-attributes.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

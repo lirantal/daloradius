@@ -83,7 +83,7 @@
     
     print_html_prologue($title, $langCode);
     
-    include("menu-bill-payments.php");
+    include("include/menu/sidebar.php");
     
 
     // start printing content

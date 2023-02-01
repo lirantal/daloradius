@@ -195,7 +195,7 @@
         $title .= " :: $name_enc";
     } 
 
-    include("menu-mng-hs.php");
+    include("include/menu/sidebar.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

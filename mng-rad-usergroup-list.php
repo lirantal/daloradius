@@ -73,7 +73,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("menu-mng-rad-usergroup.php");
+    include("include/menu/sidebar.php");
     
                
     // start printing content

@@ -104,7 +104,7 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("menu-accounting-hotspot.php"); 
+    include("include/menu/sidebar.php");
 
     if (!empty($hotspot_enc)) {
         $title .= " :: $hotspot_enc";

@@ -90,7 +90,7 @@
     $billing_history_username = $username;
     $billing_history_billaction = $billaction;
 
-    include("menu-bill-history.php");
+    include("include/menu/sidebar.php");
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);

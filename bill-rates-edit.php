@@ -152,7 +152,7 @@
         $title .= " :: $ratename_enc";
     } 
 
-    include("menu-bill-rates.php");
+    include("include/menu/sidebar.php");
     echo '<div id="contentnorightbar">';
     
     print_title_and_help($title, $help);
