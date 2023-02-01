@@ -27,27 +27,17 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-reports-hb.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','Dashboard'), 'href' => 'rep-hb-dashboard.php', );
 
-$m_active = "Reports";
+$sections = array();
+$sections[] = array( 'title' => t('button','Dashboard'), 'descriptors' => $descriptors1 );
 
-?>
+// add sections to menu
+$menu = array(
+                'title' => 'Heartbeat',
+                'sections' => $sections,
+             );
 
-
-<?php
-    
-
-?>      
-
-            <div id="sidebar">
-                <h2>Heartbeat</h2>
-                
-                <h3>Dashboard</h3>
-                <ul class="subnav">
-                    <li>
-                        <a tabindex="1" title="<?= strip_tags(t('button','Dashboard')) ?>" href="rep-hb-dashboard.php">
-                            <b>&raquo;</b><?= t('button','Dashboard') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+menu_print($menu);

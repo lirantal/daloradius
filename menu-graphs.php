@@ -27,212 +27,98 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-graphs.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-$m_active = "Graphs";
+include_once("include/management/populate_selectbox.php");
+$username_options = get_users('CONFIG_DB_TBL_RADACCT');
 
-?>
+$timeunit_options = array(
+                            "daily" => t('all','Daily'),
+                            "monthly" => t('all','Monthly'),
+                            "yearly" => t('all','Yearly')
+                         );
+
+$sizeunit_options = array(
+                            "megabytes" => t('all','Megabytes'),
+                            "gigabytes" => t('all','Gigabytes')
+                         );
 
 
-<?php
+$timeunit_select = array(
+                            "name" => "type",
+                            "type" => "select",
+                            "selected_value" => ((isset($type)) ? $type : ""),
+                            "options" => $timeunit_options,
+                        );
+
+$sizeunit_select = array(
+                            "name" => "size",
+                            "type" => "select",
+                            "selected_value" => ((isset($size)) ? $size : ""),
+                            "options" => $sizeunit_options,
+                          );
+
+$username_input = array(
+                            "name" => "username",
+                            "type" => "text",
+                            "value" => ((isset($username)) ? $username : ""),
+                            "required" => true,
+                            "datalist" => (($autocomplete) ? $username_options : array()),
+                            "tooltipText" => t('Tooltip','Username'),
+                            "sidebar" => true
+                       );
+
+
+// define descriptors
+$descriptors1 = array();
+
+$components = array();
+$components[] = $username_input;
+$components[] = $timeunit_select;
     
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserLogins'), 'action' => 'graphs-overall_logins.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
-    include_once("include/management/autocomplete.php");
-    
-    $timeunit_options = array(
-                                "daily" => t('all','Daily'),
-                                "monthly" => t('all','Monthly'),
-                                "yearly" => t('all','Yearly')
-                             );
-    
-    $sizeunit_options = array(
-                                "megabytes" => t('all','Megabytes'),
-                                "gigabytes" => t('all','Gigabytes')
-                             );
+$components[] = $sizeunit_select;
 
-?>
-        <div id="sidebar">
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserDownloads'), 'action' => 'graphs-overall_download.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
-            <h2>Graphs</h2>
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserUploads'), 'action' => 'graphs-overall_upload.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
-            <h3>User Graph</h3>
-            <ul class="subnav">
+$components = array();
+$components[] = $timeunit_select;
 
-                <li>
-                    <a title="<?= strip_tags(t('button','UserLogins')) ?>" tabindex="1" href="javascript:document.overall_logins.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif"><?= t('button','UserLogins') ?>
-                    </a>
-                    <form name="overall_logins" action="graphs-overall_logins.php" method="GET" class="sidebar">
-                        <input tabindex="2" name="username" type="text" id="usernameLogins" list="usernames"
-                            <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                            tooltipText="<?= t('Tooltip','Username'); ?><br>"
-                            value="<?= (isset($overall_logins_username)) ? $overall_logins_username : "" ?>">
-                        
-                        <select tabindex="3" class="generic" name="type">
-<?php
-                        foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($overall_logins_type) && $overall_logins_type == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>' . "\n", $value, $selected, $label);
-                        }
-?>
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','TotalLogins'), 'action' => 'graphs-alltime_logins.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
-                        </select>
-                    </form>
-                </li>
+$components[] = $sizeunit_select;
 
-                <li>
-                    <a title="<?= strip_tags(t('button','UserDownloads')) ?>" tabindex="4" href="javascript:document.overall_download.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif"><?= t('button','UserDownloads') ?>
-                    </a>
-                    <form name="overall_download" action="graphs-overall_download.php" method="GET" class="sidebar">
-                        <input tabindex="5" name="username" type="text" id="usernameDownloads"
-                            <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                            tooltipText="<?= t('Tooltip','Username'); ?><br>"
-                            value="<?= (isset($overall_download_username)) ? $overall_download_username : "" ?>">
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','TotalTraffic'), 'action' => 'graphs-alltime_traffic_compare.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
-                        <select tabindex="6" class="generic" name="type">
-<?php
-                        foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($overall_download_type) && $overall_download_type == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-                        }
-?>
+$components = array();
+$components[] = array(
+                            "name" => "logged_users_on_date",
+                            "type" => "date",
+                            "value" => ((isset($logged_users_on_date)) ? $logged_users_on_date : date("Y-m-d")),
+                            "caption" => t('all','Date'),
+                            "tooltipText" => t('Tooltip','Date'),
+                            "sidebar" => true,
+                     );
 
-                        </select>
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','LoggedUsers'), 'action' => 'graphs-logged_users.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
-                        <select tabindex="7" class="generic" name="size">
-<?php
-                        foreach ($sizeunit_options as $value => $label) {
-                            $selected = (isset($overall_download_size) && $overall_download_size == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-                        }
-?>
+$sections = array();
+$sections[] = array( 'title' => 'User Charts', 'descriptors' => $descriptors1 );
 
-                        </select>
-                    </form>
-                </li>
+// add sections to menu
+$menu = array(
+                'title' => 'Charts',
+                'sections' => $sections,
+             );
 
-                <li>
-                    <a title="<?= strip_tags(t('button','UserUploads')) ?>" tabindex="8" href="javascript:document.overall_upload.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
-                        <?= t('button','UserUploads') ?>
-                    </a>
-                    <form name="overall_upload" action="graphs-overall_upload.php" method="GET" class="sidebar">
-                        <input tabindex="9" name="username" type="text" id="usernameUploads"
-                            <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                            tooltipText="<?= t('Tooltip','Username'); ?><br>"
-                            value="<?= (isset($overall_upload_username)) ? $overall_upload_username : "" ?>">
-                    
-                        <select tabindex="10" class="generic" name="type">
-<?php
-                        foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($overall_upload_type) && $overall_upload_type == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-                        }
-?>
-
-                        </select>
-
-                        <select tabindex="10" class="generic" name="size">
-<?php
-                        foreach ($sizeunit_options as $value => $label) {
-                            $selected = (isset($overall_upload_size) && $overall_upload_size == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-                        }
-?>
-
-                        </select>
-                    </form>
-                </li>
-                
-            </ul>
-
-            <h3>Statistics</h3>
-            <ul class="subnav">
-                <li>
-                    <a title="<?= strip_tags(t('button','TotalLogins')) ?>" tabindex="11" href="javascript:document.alltime_logins.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
-                        <?= t('button','TotalLogins') ?>
-                    </a>
-                    <form name="alltime_logins" action="graphs-alltime_logins.php" method="GET" class="sidebar">
-                        <select tabindex="12" class="generic" name="type">
-<?php
-                        foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($alltime_login_type) && $alltime_login_type == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-                        }
-?>
-
-                        </select>
-                    </form>
-                </li>
-
-                <li>
-                    <a title="<?= strip_tags(t('button','TotalTraffic')) ?>" tabindex="13" href="javascript:document.alltime_traffic_compare.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
-                        <?= t('button','TotalTraffic') ?>
-                    </a>
-                    <form name="alltime_traffic_compare" action="graphs-alltime_traffic_compare.php" method="GET" class="sidebar">
-                        <select tabindex="14" class="generic" name="type">
-<?php
-                        foreach ($timeunit_options as $value => $label) {
-                            $selected = (isset($traffic_compare_type) && $traffic_compare_type == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-                        }
-?>
-
-                        </select>
-
-                        <select tabindex="15" class="generic" name="size">
-<?php
-                        foreach ($sizeunit_options as $value => $label) {
-                            $selected = (isset($traffic_compare_size) && $traffic_compare_size == $value) ? " selected" : "";
-                            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-                        }
-?>
-
-                        </select>
-                    </form>
-                </li>
-
-                <li>
-                    <a title="<?= strip_tags(t('button','LoggedUsers')) ?>" tabindex="16" href="javascript:document.logged_users.submit();">
-                        <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/graphsGeneral.gif">
-                        <?= t('button','LoggedUsers') ?>
-                    </a>
-                    <form name="logged_users" action="graphs-logged_users.php" method="GET" class="sidebar">
-                        
-                        <label style="user-select: none" for="logged_users_on_date"><?= t('all','Date') ?></label>
-                        <input tabindex="17" type="date" name="logged_users_on_date" id="logged_users_on_date"
-                            tooltipText="<?= t('Tooltip','Date') ?>"
-                            value="<?= (isset($logged_users_on_date)) ? $logged_users_on_date : date("Y-m-d") ?>">
-                        
-                    </form>
-                </li>
-            </ul>
-        </div>
-
-<script>
-<?php
-    if ($autoComplete) {
-?>
-
-    var autoComEditElements = ["usernameLogins","usernameDownloads","usernameUploads"];
-    for (var i = 0; i < autoComEditElements.length; i++) {
-        var autoComEdit = new DHTMLSuite.autoComplete();
-        autoComEdit.add(autoComEditElements[i],
-                        'include/management/dynamicAutocomplete.php',
-                        '_small',
-                        'getAjaxAutocompleteUsernames');
-    }
-    
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-
-</script>
+menu_print($menu);

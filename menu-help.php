@@ -29,23 +29,32 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-help.php') !== false) {
 
 include_once("lang/main.php");
 
-$m_active = "Help";
 
+// define descriptors
+$descriptors1 = array();
 
+$descriptors1[] = array(
+                            'type' => 'textarea',
+                            'content' => sprintf('daloRADIUS - RADIUS Management<br>%s / %s',
+                                                 t('all', 'daloRADIUSVersion'), $configValues['DALORADIUS_DATE']),
+                            'readmore' => array( 'href' => 'https://github.com/lirantal/daloradius',
+                                                 'title' => 'Read More',
+                                                 'label' => 'Read More &raquo;',
+                                               ),
+                       );
+
+// add descriptors to a sections
+$sections = array();
+$sections[] = array( 'title' => 'Support', 'descriptors' => $descriptors1 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Help',
+                'sections' => $sections,
+             );
+
+menu_print($menu);
 
 ?>
 
-            <div id="sidebar">
 
-                <h2>Help</h2>
-
-                <h3>Support</h3>
-
-                <p class="news">
-                    daloRADIUS - RADIUS Management<br>
-                    <?= t('all', 'daloRADIUSVersion') ?> / <?= htmlspecialchars($configValues['DALORADIUS_DATE'], ENT_QUOTES, 'UTF-8') ?>
-                     
-                    <a href="https://github.com/lirantal/daloradius" class="more">Read More &raquo;</a>
-                </p>
-
-            </div><!-- #sidebar -->

@@ -29,38 +29,29 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-config.php') !== false) {
 
 include_once("lang/main.php");
 
-$m_active = "Config";
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','UserSettings'), 'href' => 'config-user.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','DatabaseSettings'), 'href' => 'config-db.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','LanguageSettings'), 'href' => 'config-lang.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','LoggingSettings'), 'href' => 'config-logging.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','InterfaceSettings'), 'href' => 'config-interface.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','MailSettings'), 'href' => 'config-mail.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
-?>
-
-        
-<?php
+$sections = array();
+$sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );
 
 
-    
-    $menu_elements = array(
-                            "config-user.php" => t('button','UserSettings'),
-                            "config-db.php" => t('button','DatabaseSettings'),
-                            "config-lang.php" => t('button','LanguageSettings'),
-                            "config-logging.php" => t('button','LoggingSettings'),
-                            "config-interface.php" => t('button','InterfaceSettings'),
-                            "config-mail.php" => t('button','MailSettings')
-                          );
-?>      
+// add sections to menu
+$menu = array(
+                'title' => 'Configuration',
+                'sections' => $sections,
+             );
 
-            <div id="sidebar">
-                <h2>Configuration</h2>
-                
-                <h3>Global Settings</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = 1;
-                foreach ($menu_elements as $href => $caption) {
-                    printf('<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b>%s</a></li>',
-                           $href, strip_tags($caption), $tabindex, $caption);
-                    $tabindex++;
-                }
-?>
-
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+menu_print($menu);

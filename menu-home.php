@@ -29,61 +29,40 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-home.php') !== false) {
 
 include_once("lang/main.php");
 
-$m_active = "Home";
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServerStatus'), 'href' => 'rep-stat-server.php', 
+                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServicesStatus'), 'href' => 'rep-stat-services.php',
+                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','LastConnectionAttempts'), 'href' => 'rep-lastconnect.php',
+                         'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
-?>
+$descriptors2 = array();
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','RadiusLog'), 'href' => 'rep-logs-radius.php', );
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','SystemLog'), 'href' => 'rep-logs-system.php', );
+
+$descriptors3 = array();
+$descriptors3[] = array(
+                            'type' => 'textarea',
+                            'content' => sprintf('daloRADIUS - RADIUS Management<br>%s / %s',
+                                                 t('all', 'daloRADIUSVersion'), $configValues['DALORADIUS_DATE']),
+                            'readmore' => array( 'href' => 'https://github.com/lirantal/daloradius',
+                                                 'title' => 'Read More',
+                                                 'label' => 'Read More &raquo;',
+                                               ),
+                      );
 
 
-<?php
-    
+$sections = array();
+$sections[] = array( 'title' => 'Status', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Logs', 'descriptors' => $descriptors2 );
+$sections[] = array( 'title' => 'Support', 'descriptors' => $descriptors3 );
 
-    
-    $status_menu_elements = array(
-                                    'rep-stat-server.php' => t('button','ServerStatus'),
-                                    'rep-stat-services.php' => t('button','ServicesStatus'),
-                                    'rep-lastconnect.php' => t('button','LastConnectionAttempts')
-                                 );
-                          
-    $logs_menu_elements = array(
-                                    'rep-logs-radius.php' => t('button','RadiusLog'),
-                                    'rep-logs-system.php' => t('button','SystemLog')
-                               );
-    
-    $element_format = '<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b>%s</a></li>';
-    
-?>      
+// add sections to menu
+$menu = array(
+                'title' => 'Home',
+                'sections' => $sections,
+             );
 
-            <div id="sidebar">
-                <h2>Home</h2>
-                
-                <h3>Status</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = 1;
-                foreach ($status_menu_elements as $href => $caption) {
-                    printf($element_format, $href, strip_tags($caption), $tabindex, $caption);
-                    $tabindex++;
-                }
-?>
-
-                </ul><!-- .subnav -->
-
-                <h3>Logs</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = count($status_menu_elements) + 1;
-                foreach ($logs_menu_elements as $href => $caption) {
-                    printf($element_format, $href, strip_tags($caption), $tabindex, $caption);
-                }
-?>
-
-                </ul><!-- .subnav -->
-    
-                <h3>Support</h3>
-
-                <p class="news">
-                    daloRADIUS<br>
-                    RADIUS Management 
-                    <a target="_blank" href="https://github.com/lirantal/daloradius" class="more">Read More &raquo;</a>
-                </p>
-            </div><!-- #sidebar -->
+menu_print($menu);

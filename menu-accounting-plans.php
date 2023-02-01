@@ -27,61 +27,66 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-plans.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Accounting";
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+include_once("include/management/populate_selectbox.php");
+$menu_plannames = get_plans();
+array_unshift($menu_plannames, "");
 
+$menu_usernames = get_users();
+array_unshift($menu_usernames, "");
 
-include_once("include/management/autocomplete.php");
+// define descriptors
+$descriptors1 = array();
+ 
+$components = array();
 
-?>    
+$components[] = array(
+                            "name" => "username",
+                            "type" => "text",
+                            "value" => ((isset($username)) ? $username : ""),
+                            "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                            "tooltipText" => t('Tooltip','usernameTooltip'),
+                            "sidebar" => true,
+                     );
 
-            <div id="sidebar">
-                <h2>Plan Accounting</h2>
-                
-                <h3>Accounting</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','PlanUsage')) ?>" href="javascript:document.acctdate.submit();">
-                            <b>&raquo;</b><?= t('button','PlanUsage') ?>
-                        </a>
-                        <form name="acctdate" action="acct-plans-usage.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="usernamePlan"
-                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText='<?= t('Tooltip','Username'); ?>'
-                                value="<?= (isset($accounting_plan_username)) ? $accounting_plan_username : "" ?>">
+$components[] = array(
+                            "name" => "startdate",
+                            "type" => "date",
+                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                            "caption" => t('all','StartingDate'),
+                     );
+                     
+$components[] = array(
+                            "name" => "enddate",
+                            "type" => "date",
+                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                            "caption" => t('all','EndingDate'),
+                     );
                             
-                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
-                            <input name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date'); ?>"
-                                value="<?= (isset($accounting_plan_startdate)) ? $accounting_plan_startdate: date("Y-m-01") ?>">
 
-                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
-                            <input name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date'); ?>"
-                                value="<?= (isset($accounting_plan_enddate)) ? $accounting_plan_enddate : date("Y-m-t") ?>">
+$components[] = array(
+                        "name" => "planname",
+                        "type" => "select",
+                        "selected_value" => ((isset($planname)) ? $planname : ""),
+                        "options" => $menu_plannames,
+                        "caption" => t('all','PlanName'),
+                     );
 
-                            <br><br>
-<?php   
-                            include('include/management/populate_selectbox.php');
-                            populate_plans("Select Plan", "planname", "generic");
-?>
-                        </form>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','PlanUsage'), 'action' => 'acct-plans-usage.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('usernamePlan','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+
+$sections = array();
+$sections[] = array( 'title' => 'Plan Accounting', 'descriptors' => $descriptors1 );
+
+
+// add sections to menu
+$menu = array(
+                'title' => 'Accounting',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

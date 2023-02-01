@@ -27,129 +27,94 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-bill-merchant.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Billing";
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+include_once("library/validation.php");
 
+$components = array();
 
+$components[] = array(
+                            "name" => "startdate",
+                            "type" => "date",
+                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                            "caption" => t('all','StartingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
+                            "sidebar" => true
+                     );
 
-?>
+$components[] = array(
+                            "name" => "enddate",
+                            "type" => "date",
+                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                            "caption" => t('all','EndingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
+                            "sidebar" => true
+                     );
 
-                <div id="sidebar">
-                    <h2>Billing</h2>
-                    
-                    <h3>Track PayPal Transactions</h3>
-                    <ul class="subnav">
-                        <li>
-                            <form name="billpaypaltransactions" action="bill-merchant-transactions.php" method="GET" class="sidebar">
-                                <input class="sidebutton" type="submit" name="submit" value="<?= t('button','ProcessQuery') ?>">
-                                
-                                <br><br>
-                                
-                                <h109><?= t('button','BetweenDates'); ?></h109><br>
-                                
-                                <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
-                                <input name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
-                                    value="<?= (!empty($billing_date_startdate)) ? $billing_date_startdate : date("Y-m-01") ?>">
+$components[] = array(
+                            "caption" => t('all','VendorType'),
+                            "type" => "select",
+                            "name" => "vendor_type",
+                            "options" => $valid_vendorTypes,
+                            "selected_value" => ((isset($billing_paypal_vendor_type)) ? $billing_paypal_vendor_type : $valid_vendorTypes[0])
+                     );
 
-                                <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
-                                <input name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
-                                    value="<?= (!empty($billing_date_enddate)) ? $billing_date_enddate : date("Y-m-t") ?>">
+$components[] = array(
+                            "caption" => t('all','PayerEmail'),
+                            "type" => "email",
+                            "name" => "payer_email",
+                            "value" => ((isset($billing_paypal_payeremail)) ? $billing_paypal_payeremail : ""),
+                     );
 
-                                <br><br>
-<?php
-                            $descr = array(
-                                            "caption" => t('all','VendorType'),
-                                            "type" => "select",
-                                            "name" => "vendor_type",
-                                            "options" => $valid_vendorTypes,
-                                            "selected_value" => ((isset($billing_paypal_vendor_type)) ? $billing_paypal_vendor_type : $valid_vendorTypes[0])
-                                          );
-                            
-                            print_form_component($descr);
-                            
-                            $descr = array(
-                                            "caption" => t('all','PayerEmail'),
-                                            "type" => "text",
-                                            "name" => "payer_email",
-                                            "value" => ((isset($billing_paypal_payeremail)) ? $billing_paypal_payeremail : ""),
-                                          );
-                                          
-                            print_form_component($descr);
+$components[] = array(
+                            "caption" => t('all','PaymentStatus'),
+                            "type" => "select",
+                            "name" => "payment_status",
+                            "options" => $valid_paymentStatus,
+                            "selected_value" => ((isset($billing_paypal_paymentstatus)) ? $billing_paypal_paymentstatus : $valid_paymentStatus[0])
+                     );
 
-                            $descr = array(
-                                            "caption" => t('all','PaymentStatus'),
-                                            "type" => "select",
-                                            "name" => "payment_status",
-                                            "options" => $valid_paymentStatus,
-                                            "selected_value" => ((isset($billing_paypal_paymentstatus)) ? $billing_paypal_paymentstatus : $valid_paymentStatus[0])
-                                          );
-                            
-                            print_form_component($descr);
+$components[] = array(
+                            "caption" => t('button','AccountingFieldsinQuery'),
+                            "type" => "select",
+                            "name" => "sqlfields[]",
+                            "id" => "sqlfields",
+                            "options" => $bill_merchant_transactions_options_all,
+                            "selected_value" => ((isset($sqlfields)) ? $sqlfields : $bill_merchant_transactions_options_default),
+                            "multiple" => true,
+                            "size" => 7,
+                            "show_controls" => true,
+                     );
 
-                            $descr = array(
-                                            "caption" => t('button','AccountingFieldsinQuery'),
-                                            "type" => "select",
-                                            "name" => "sqlfields[]",
-                                            "id" => "sqlfields",
-                                            "options" => $bill_merchant_transactions_options_all,
-                                            "selected_value" => ((isset($sqlfields)) ? $sqlfields : $bill_merchant_transactions_options_default),
-                                            "multiple" => true
-                                          );
-                            
-                            print_form_component($descr);
-                            
-?>
-                                <a style="display: inline" href="#" onclick="select('all')">Select All</a>
-                                <a style="display: inline" href="#" onclick="select('none')">Select None</a>
-                                <br><br>
+$components[] = array(
+                            "caption" => t('button','OrderBy'),
+                            "type" => "select",
+                            "name" => "orderBy",
+                            "options" => $bill_merchant_transactions_options_all,
+                            "selected_value" => ((isset($orderBy)) ? $orderBy : $bill_merchant_transactions_options_default[0])
+                     );
 
-<?php
-                            $descr = array(
-                                            "caption" => t('button','OrderBy'),
-                                            "type" => "select",
-                                            "name" => "orderBy",
-                                            "options" => $bill_merchant_transactions_options_all,
-                                            "selected_value" => ((isset($orderBy)) ? $orderBy : $bill_merchant_transactions_options_default[0])
-                                          );
-                            
-                            print_form_component($descr);
+$components[] = array(
+                            "caption" => "Order Type",
+                            "type" => "select",
+                            "name" => "orderType",
+                            "options" => array("asc" => "Ascending", "desc" => "Descending"),
+                            "selected_value" => ((isset($orderType)) ? $orderType : "asc")
+                     );
 
-                            $descr = array(
-                                            "caption" => "Order Type",
-                                            "type" => "select",
-                                            "name" => "orderType",
-                                            "options" => array("asc" => "Ascending", "desc" => "Descending"),
-                                            "selected_value" => ((isset($orderType)) ? $orderType : "asc")
-                                          );
-                            
-                            print_form_component($descr);
-?>
-                               
-                                <br><br>
-                                
-                                <input class="sidebutton" type="submit" name="submit" value="<?= t('button','ProcessQuery') ?>">
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','ProcessQuery'), 'action' => 'bill-merchant-transactions.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-                            </form>
-                        </li>
+$sections = array();
+$sections[] = array( 'title' => 'Track Merchant Transactions', 'descriptors' => $descriptors1 );
 
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+// add sections to menu
+$menu = array(
+                'title' => 'Billing',
+                'sections' => $sections,
+             );
 
-<script>
-    function select(what) {
-        var selected = (what == 'all'),
-            sqlfields = document.getElementById('sqlfields');
-    
-        for (var i = 0; i < sqlfields.options.length; i++) {
-            sqlfields.options[i].selected = selected;
-        }
-    }
-    
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+menu_print($menu);

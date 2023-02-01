@@ -27,37 +27,21 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-config-backup.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ManageBackups'), 'href' => 'config-backup-managebackups.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','CreateBackups'), 'href' => 'config-backup-createbackups.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
-$m_active = "Config";
-
-?>
-
-
-<?php
+$sections = array();
+$sections[] = array( 'title' => 'Backup Settings', 'descriptors' => $descriptors1 );
 
 
-    
-    $menu_elements = array(
-        "config-backup-managebackups.php" => array(t('button','ManageBackups'), "static/images/icons/configMaintenance.png"),
-        "config-backup-createbackups.php" => array(t('button','CreateBackups'), "static/images/icons/configMaintenance.png"),
-    );
-?>      
+// add sections to menu
+$menu = array(
+                'title' => 'Configuration',
+                'sections' => $sections,
+             );
 
-            <div id="sidebar">
-                <h2>Configuration</h2>
-                
-                <h3>Backup</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = 1;
-                foreach ($menu_elements as $href => $items) {
-                    list($caption, $src) = $items;
-                    printf('<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>',
-                           $href, strip_tags($caption), $tabindex, $src, $caption);
-                    $tabindex++;
-                }
-?>
-
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+menu_print($menu);

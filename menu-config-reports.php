@@ -27,25 +27,19 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-config-reports.php') !== false) {
     exit;
 }
 
-$m_active = "Config";
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','DashboardSettings'), 'href' => 'config-reports-dashboard.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png', ), );
 
-?>
-
-        
-<?php
+$sections = array();
+$sections[] = array( 'title' => 'Reporting Settings', 'descriptors' => $descriptors1 );
 
 
-?>      
+// add sections to menu
+$menu = array(
+                'title' => 'Configuration',
+                'sections' => $sections,
+             );
 
-            <div id="sidebar">
-                <h2>Configuration</h2>
-                
-                <h3>Reporting Settings</h3>
-                <ul class="subnav">
-                    <li>
-                        <a tabindex="1" title="<?= strip_tags(t('button','DashboardSettings')) ?>" href="config-reports-dashboard.php">
-                            <b>&raquo;</b><?= t('button','DashboardSettings') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+menu_print($menu);

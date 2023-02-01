@@ -1016,12 +1016,12 @@ fieldset h302 {
     margin: 12px auto;
     color: #484554;
     font-family: sans-serif;
-    background: #FDDDD9 url("../static/images/icons/action-error.gif") 6pt 6pt no-repeat;
+    background: #FDDDD9 url('static/images/icons/action-error.gif') 6pt 6pt no-repeat;
     
 }
 
 .warning {
-    background: #F8FEA5 url(../static/images/icons/action-warning.gif) no-repeat scroll 6pt;
+    background: #F8FEA5 url('static/images/icons/action-warning.gif') no-repeat scroll 6pt;
     border: 1px solid #EBFA1D;
     color: #484554;
     margin: 12px;
@@ -1029,7 +1029,7 @@ fieldset h302 {
 }
 
 .success {
-    background: #DFEF7A url(../static/images/icons/action-success.gif) no-repeat scroll 6pt;
+    background: #DFEF7A url('static/images/icons/action-success.gif') no-repeat scroll 6pt;
     border: 1px solid #A9C500;
     color: #484554;
     padding: 9pt 9pt 9pt 33pt;
@@ -1042,7 +1042,7 @@ fieldset h302 {
     padding: 9pt 9pt 9pt 33pt;
     color: #484554;
     font-size: 8pt;
-    background: #DFF5FE url("../static/images/icons/action-help.gif") 6pt 6pt no-repeat;
+    background: #DFF5FE url('static/images/icons/action-help.gif') 6pt 6pt no-repeat;
     margin: 1em 0px 1em 0px;
 }
 

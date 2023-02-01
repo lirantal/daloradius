@@ -27,107 +27,82 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-bill-rates.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-$m_active = "Billing";
+include_once("include/management/populate_selectbox.php");
+$menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
+$menu_ratenames = get_ratenames();
 
+$ratename_select = array(
+                            "name" => "ratename",
+                            "type" => "select",
+                            "selected_value" => ((isset($ratename)) ? $ratename : ""),
+                            "required" => true,
+                            "options" => $menu_ratenames,
+                            "caption" => t('all','RateName'),
+                            "sidebar" => true,
+                        );
 
+// define descriptors
+$descriptors1 = array();
 
-include_once("include/management/autocomplete.php");
+$components = array();
+$components[] = $ratename_select;
 
-?>
+$components[] = array(
+                        "name" => "username",
+                        "type" => "text",
+                        "value" => ((isset($username)) ? $username : ""),
+                        "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                        "tooltipText" => t('Tooltip','Username'),
+                        "sidebar" => true,
+                     );
 
-            <div id="sidebar">
+$components[] = array(
+                        "name" => "startdate",
+                        "type" => "date",
+                        "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                        "caption" => t('all','StartingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
+                        "sidebar" => true,
+                     );
+                     
+$components[] = array(
+                        "name" => "enddate",
+                        "type" => "date",
+                        "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                        "caption" => t('all','EndingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
+                        "sidebar" => true,
+                     );
 
-                <h2>Billing</h2>
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','DateAccounting'), 'action' => 'bill-rates-date.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-                <h3>Track Rates</h3>
-                
-                <ul class="subnav">
+$descriptors2 = array();                         
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewRate'), 'href' =>'bill-rates-new.php', );
 
-                <li>
-                    <a title="<?= strip_tags(t('button','DateAccounting')) ?>" href="javascript:document.billrates.submit();">
-                        <b>&raquo;</b><?= t('button','DateAccounting') ?>
-                    </a>
-                    
-                    <form name="billrates" action="bill-rates-date.php" method="GET" class="sidebar">
-                        <select name="ratename" size="1" class="generic">
-                            <option value="<?= (isset($billing_date_ratename)) ? $billing_date_ratename : "" ?>">
-                                <?php (isset($billing_date_ratename)) ? $billing_date_ratename : "Choose Rate" ?>
-                            </option>
-<?php
-                            include('library/opendb.php');
-                            $sql = sprintf("SELECT rateName FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES']);
-                            $res = $dbSocket->query($sql);
+if (count($menu_ratenames) > 0) {
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListRates'), 'href' => 'bill-rates-list.php', );
 
-                            while ($row = $res->fetchRow()) {
-                                $rateName =  htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-                                printf('<option value="%s"></option>', $rateName, $rateName);
-                            }
-                            include('library/closedb.php');
-?>
-                        </select><!-- .generic -->
+    $components = array();
+    $components[] = $ratename_select;
 
-                        <input name="username" type="text" id="username" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                            tooltipText="<?= t('Tooltip','Username'); ?><br>"
-                            value="<?php (isset($billing_date_username)) ? $billing_date_username : "" ?>">
+    $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditRate'), 'action' => 'bill-rates-edit.php', 'method' => 'GET',
+                             'form_components' => $components, );
 
-                        <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
-                        <input name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date'); ?><br>"
-                            value="<?= (isset($billing_date_startdate)) ? $billing_date_startdate : date("Y-m-01") ?>">
-                        
-                        <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
-                        <input name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date'); ?><br>"
-                            value="<?= (isset($billing_date_enddate)) ? $billing_date_enddate : date("Y-m-t") ?>">
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveRate'), 'href' => 'bill-plans-del.php', );
+}
 
-                    </form>
-                </li>
-            </ul><!-- .subnav -->
+$sections = array();
+$sections[] = array( 'title' => 'Track Rates', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Rates Management', 'descriptors' => $descriptors2 );
 
-            <h3>Rates Management</h3>
-            <ul class="subnav">
-                <li>
-                    <a title="<?= strip_tags(t('button','ListRates')) ?>" href="bill-rates-list.php">
-                        <b>&raquo;</b><?= t('button','ListRates') ?>
-                    </a>
-                </li>
-                <li>
-                    <a title="<?= strip_tags(t('button','NewRate')) ?>" href="bill-rates-new.php">
-                        <b>&raquo;</b><?= t('button','NewRate') ?>
-                    </a>
-                </li>
-                <li>
-                    <a title="<?= strip_tags(t('button','EditRate')) ?>" href="javascript:document.billratesedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditRate') ?></a>
-                    <form name="billratesedit" action="bill-rates-edit.php" method="GET" class="sidebar">
-                        <input name="ratename" type="text" id="ratename" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                            tooltipText="<?= t('Tooltip','RateName'); ?><br>"
-                            value="<?= (isset($edit_ratename)) ? $edit_ratename : "" ?>">
-                    </form>
-                </li>
-                <li>
-                    <a title="<?= strip_tags(t('button','RemoveRate')) ?>" href="bill-rates-del.php">
-                        <b>&raquo;</b><?= t('button','RemoveRate') ?>
-                    </a>
-                </li>
-            </ul><!-- .subnav -->
-        </div><!-- #sidebar -->
+// add sections to menu
+$menu = array(
+                'title' => 'Billing',
+                'sections' => $sections,
+             );
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('username','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-
-    autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('ratename','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteRateName');
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+menu_print($menu);

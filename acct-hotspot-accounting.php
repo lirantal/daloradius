@@ -25,42 +25,35 @@
     $operator = $_SESSION['operator_user'];
 
 	include('library/check_operator_perm.php');
-
-    // we partially strip some character and
-    // leave validation/escaping to other functions used later in the script
-    $hotspot = (array_key_exists('hotspot', $_POST) && isset($_POST['hotspot']))
-             ? str_replace("%", "", $_POST['hotspot']) : "";
-    
-    $hotspot_enc = (!empty($hotspot))
-                 ? htmlspecialchars($hotspot, ENT_QUOTES, 'UTF-8')
-                 : "";
-    
-    // init logging variables
-    $log = "visited page: ";
-    if (!empty($hotspot)) {
-        $logQuery = "performed query for hotspot [$hotspot] on page: ";
-    } else {
-        $logQuery = "performed query on page: ";
-    }
-    $logDebugSQL = "";
-
     include_once('library/config_read.php');
-    include_once("lang/main.php");
     
+    include_once("lang/main.php");
     include("library/layout.php");
 
-    // print HTML prologue
-    $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
-    );
+    $hotspot = (array_key_exists('hotspot', $_GET) && isset($_GET['hotspot']) && !is_array($_GET['hotspot']))
+             ? array( $_GET['hotspot'] ) : $_GET['hotspot'];
     
-    $title = t('Intro','accthotspot.php');
-    $help = t('helpPage','accthotspotaccounting');
+    $tmp = array();
+    foreach ($hotspot as $item) {
+        $item = str_replace("%", "", trim($item));
+        if (empty($item) && in_array($item, $tmp)) {
+            continue;
+        }
+        
+        $tmp[] = $item;
+    }
     
-    print_html_prologue($title, $langCode, array(), $extra_js);
-
-    include("menu-accounting-hotspot.php"); 
+    $hotspot = $tmp;
+    
+    $hotspot_enc = "";
+    if (count($hotspot) > 0) {
+        
+        $hotspot_enc = htmlspecialchars($hotspot[0], ENT_QUOTES, 'UTF-8');
+        
+        if (count($hotspot) > 1) {
+            $hotspot_enc .= ", &hellip;";
+        }
+    }
     
     $cols = array(
                     "radacctid" => t('all','ID'),
@@ -70,8 +63,8 @@
                     "acctstarttime" => t('all','StartTime'),
                     "acctstoptime" => t('all','StopTime'),
                     "acctsessiontime" => t('all','TotalTime'),
-                    "acctinputoctets" => sprintf("%s (%s)", t('all','Upload'), t('all','Bytes')),
-                    "acctoutputoctets" => sprintf("%s (%s)", t('all','Download'), t('all','Bytes')),
+                    "acctinputoctets" => t('all','Upload'),
+                    "acctoutputoctets" => t('all','Download'),
                     "acctterminatecause" => t('all','Termination'),
                     "nasipaddress" => t('all','NASIPAddress'),
                  );
@@ -89,15 +82,49 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
+    
+    // init logging variables
+    $log = "visited page: ";
+    if (!empty($hotspot)) {
+        $logQuery = "performed query for hotspot [$hotspot] on page: ";
+    } else {
+        $logQuery = "performed query on page: ";
+    }
+    $logDebugSQL = "";
 
+
+    // print HTML prologue
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
+    );
+    
+    $title = t('Intro','accthotspot.php');
+    $help = t('helpPage','accthotspotaccounting');
+    
+    print_html_prologue($title, $langCode, array(), $extra_js);
+
+    include("menu-accounting-hotspot.php"); 
+
+    if (!empty($hotspot_enc)) {
+        $title .= " :: $hotspot_enc";
+    }
+    
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
 
-    $sql_WHERE = (!empty($hotspot))
-               ? sprintf(" WHERE name LIKE '%s%%'", $dbSocket->escapeSimple($hotspot))
+    $tmp = array();
+    if (count($hotspot) > 0) {
+        foreach ($hotspot as $item) {
+            $tmp[] = $dbSocket->escapeSimple($item);
+        }
+    }
+
+    $sql_WHERE = (count($tmp) > 0)
+               ? sprintf(" WHERE name IN ('%s')", implode("', '", $tmp))
                : "";
 
     // setup php session variables for exporting
@@ -135,7 +162,14 @@
         
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (!empty($hotspot_enc) ? "&hotspot=" . urlencode($hotspot) : "");
+        $tmp = array();
+        if (count($hotspot) > 0) {
+            foreach ($hotspot as $item) {
+                $tmp[] = "hotspot[]=" . htmlspecialchars($item, ENT_QUOTES, 'UTF-8');
+            }
+        }
+        
+        $partial_query_string = (count($tmp) > 0) ? "&" . implode("&", $tmp) : "";
 ?>
     <table border="0" class="table1">
         <thead>
@@ -220,26 +254,7 @@
     
     include('library/closedb.php');
 
-?>
-        </div>
-        
-        <div id="footer">
-        
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    print_footer_and_html_epilogue();
 ?>
-        </div>
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

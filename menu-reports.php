@@ -30,144 +30,113 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-reports.php') !== false) {
 include_once("lang/main.php");
 include_once("library/validation.php");
 
-$m_active = "Reports";
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+include_once("include/management/populate_selectbox.php");
+$username_options = get_users('CONFIG_DB_TBL_RADACCT');
+$usernameOnline_options = get_online_users();
 
+$username_input = array(
+                            "name" => "username",
+                            "type" => "text",
+                            "value" => ((isset($username)) ? $username : ""),
+                            "required" => true,
+                            "datalist" => (($autocomplete) ? $usernameOnline_options : array()),
+                            "tooltipText" => t('Tooltip','Username'),
+                            "sidebar" => true,
+                       );
 
-include_once("include/management/autocomplete.php");
+$orderBy_options = array(
+                            "Time" => "Time",
+                            "Download" => "Download (bytes)",
+                            "Upload" => "Upload (bytes)",
+                        );
 
-?>      
+$date_select_components = array();
+$date_select_components[] = array(
+                                        "name" => "startdate",
+                                        "type" => "date",
+                                        "value" => ((isset($startdate)) ? $startdate : date("Y-01-01")),
+                                        "caption" => t('all','StartingDate'),
+                                 );
+                     
+$date_select_components[] = array(
+                                        "name" => "enddate",
+                                        "type" => "date",
+                                        "value" => ((isset($enddate)) ? $enddate : date("Y-01-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')))),
+                                        "caption" => t('all','EndingDate'),
+                                 );
 
-            <div id="sidebar">
-                <h2>Reports</h2>
-                
-                <h3>Users Reports</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','OnlineUsers')) ?>" href="javascript:document.reponline.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsOnlineUsers.gif">
-                            <?= t('button','OnlineUsers') ?>
-                        </a>
-                            
-                        <form name="reponline" action="rep-online.php" method="GET" class="sidebar">
-                            <input name="usernameOnline" type="text" id="usernameOnline"
-                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?> placeholder="<?= t('all','Username') ?>"
-                                tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
-                                value="<?= (isset($username_enc)) ? $username_enc : "" ?>" tabindex="1">
-                        </form>
-                    </li>                            
+// define descriptors
+$descriptors1 = array();
 
-                    <li>
-                        <a title="<?= t('button','LastConnectionAttempts') ?>" href="javascript:document.replastconnect.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLastConnection.png">
-                            <?= t('button','LastConnectionAttempts') ?>
-                        </a>
-                        
-                        <form name="replastconnect" action="rep-lastconnect.php" method="GET" class="sidebar">
-                            <input name="usernameLastConnect" type="text" id="usernameLastConnect"
-                                <?= ($autoComplete) ? 'autocomplete="off"' : "" ?> placeholder="<?= t('all','Username') ?>"
-                                tooltipText="<?= t('Tooltip','Username') ?><br><?= t('Tooltip','UsernameWildcard') ?><br>"
-                                value="<?= (isset($username_enc)) ? $username_enc : "" ?>" tabindex="2">
-<?php
-                            $descr = array(
-                                            "caption" => "RADIUS Reply",
-                                            "type" => "select",
-                                            "name" => "radiusReply",
-                                            "options" => $valid_radiusReplys,
-                                            "selected_value" => ((isset($radiusReply)) ? $radiusReply : $valid_radiusReplys[0]),
-                                            "tabindex" => 3
-                                          );
-                            
-                            print_form_component($descr);
-?>
-                            <label style="user-select: none" for="startdate_lastconnect"><?= t('all','StartingDate') ?></label>
-                            <input name="startdate" type="date" id="startdate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="4">
-                            
-                            <label style="user-select: none" for="enddate_lastconnect"><?= t('all','EndingDate') ?></label>
-                            <input name="enddate" type="date" id="enddate_lastconnect" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="5">
-                        </form>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewUsers')) ?>" href="javascript:document.repnewusers.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/userList.gif">
-                            <?= t('button','NewUsers') ?>
-                        </a>
+$components = array();
+$components[] = $username_input;
 
-                        <form name="repnewusers" action="rep-newusers.php" method="GET" class="sidebar">
-                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
-                            <input name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($startdate)) ? $startdate : date("Y-01-01") ?>" tabindex="6">
-                            
-                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
-                            <input name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="7">
-                         </form>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= strip_tags(t('button','TopUser')) ?>" href="javascript:document.topusers.submit();"><b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="static/images/icons/reportsTopUsers.png">
-                            <?= t('button','TopUser') ?>
-                        </a>
-                        
-                        <form name="topusers" action="rep-topusers.php" method="GET" class="sidebar">
-                            <input type="number" class="generic" name="limit" max="1000" min="1"
-                                value="<?= (isset($limit) && intval($limit) > 0) ? $limit : "50" ?>" tabindex="8">
-                            
-                            <label for="usernameFilter">Username Filter</label>
-                            <input name="username" type="text" id="usernameFilter" value="<?= (isset($username_enc)) ? $username_enc : "" ?>"
-                                 placeholder="<?= t('all','Username') ?>" tabindex="9">
-            
-                            <label style="user-select: none" for="startdate_topuser"><?= t('all','StartingDate') ?></label>
-                            <input name="startdate" type="date" id="startdate_topuser" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($startdate)) ? $startdate : date("Y-m-01") ?>" tabindex="10">
-                            
-                            <label style="user-select: none" for="enddate_topuser"><?= t('all','EndingDate') ?></label>
-                            <input name="enddate" type="date" id="enddate_topuser" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($enddate)) ? $enddate : date("Y-m-t") ?>" tabindex="11">
+if (count($usernameOnline_options) > 0) {
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','OnlineUsers'), 'action' => 'rep-online.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/reportsOnlineUsers.gif', ), 'form_components' => $components, );
+}
 
-                            <label for="orderBy"><?= t('button','OrderBy') ?></label>
-                            <select class="generic" id="orderBy" name="orderBy" type="text" tabindex="12">
-                                <option value="Time">Time</option>
-                                <option value="Download">Download (bytes)</option>
-                                <option value="Upload">Upload (bytes)</option>
-                            </select>
-                        </form>
-                    </li>
+$components = array();
+$username_input["datalist"] = (($autocomplete) ? $username_options : array());
+$components[] = $username_input;
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','History')) ?>" href="rep-history.php">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsHistory.png">
-                            <?= t('button','History') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+$components[] = array(
+                            "caption" => "RADIUS Reply",
+                            "name" => "radiusReply",
+                            "type" => "select",
+                            "selected_value" => ((isset($radiusReply)) ? $radiusReply : $valid_radiusReplys[0]),
+                            "options" => $valid_radiusReplys,
+                          );
 
+$components = array_merge($components, $date_select_components);
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','LastConnectionAttempts'), 'action' => 'rep-lastconnect.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/reportsLastConnection.png', ), 'form_components' => $components, );
 
-    var autoComEditElements = ["usernameOnline","usernameLastConnect"];
-    for (var i = 0; i < autoComEditElements.length; i++) {
-        var autoComEdit = new DHTMLSuite.autoComplete();
-        autoComEdit.add(autoComEditElements[i],
-                        'include/management/dynamicAutocomplete.php',
-                        '_small',
-                        'getAjaxAutocompleteUsernames');
-    }
-    
-<?php
-    }
-?>
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
-</script>
+$components = array();
+$components = $date_select_components;
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','NewUsers'), 'action' => 'rep-online.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
+
+$components = array();
+//~ $components[] = array(
+                            //~ "name" => "limit",
+                            //~ "type" => "number",
+                            //~ "value" => ((isset($limit)) ? $limit : "50"),
+                            //~ "min" => "1",
+                     //~ );
+
+$components[] = $username_input;
+$components = array_merge($components, $date_select_components);
+
+$components[] = array(
+                            "caption" => t('button','OrderBy'),
+                            "name" => "orderBy",
+                            "type" => "select",
+                            "selected_value" => ((isset($orderBy)) ? $orderBy : array_keys($orderBy_options)[0]),
+                            "options" => $orderBy_options,
+                          );
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','TopUser'), 'action' => 'rep-topusers.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/reportsTopUsers.png', ), 'form_components' => $components, );
+
+$descriptors2 = array();
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','History'), 'href' => 'rep-history.php',
+                         'img' => array( 'src' => 'static/images/icons/reportsHistory.png', ), );
+
+$sections = array();
+$sections[] = array( 'title' => 'User Reports', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Other Reports', 'descriptors' => $descriptors2 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Reports',
+                'sections' => $sections,
+             );
+
+menu_print($menu);
+

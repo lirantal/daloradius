@@ -189,26 +189,8 @@
     }
     
     include('library/closedb.php');
-?>
 
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
     include('include/config/logging.php');
-    include('page-footer.php');
+    
+    print_footer_and_html_epilogue();
 ?>
-        </div><!-- #footer -->
-    </div>
-</div>
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
-
-</body>
-</html>

@@ -27,139 +27,140 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-bill-invoice.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Billing";
-
-
-
-include_once("include/management/autocomplete.php");
-include_once("include/management/populate_selectbox.php");
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
 include('library/opendb.php');
 
 // get valid users
-$sql = sprintf("SELECT id, username FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+$sql = sprintf("SELECT id, username FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
 $res = $dbSocket->query($sql);
 $logDebugSQL .= "$sql;\n";
 
-$valid_users = array();
+$menu_users = array();
 while ($row = $res->fetchrow()) {
     list($id, $value) = $row;
+    $id = intval($id);
     
-    $valid_users["user-$id"] = $value;
+    $menu_users[$id] = $value;
 }
 
 include('library/closedb.php');
 
-?>
 
-            <div id="sidebar">
+include_once("include/management/populate_selectbox.php");
+include_once("library/validation.php");
 
-                <h2>Billing</h2>
-                
-                <h3>Invoice Management</h3>
-                <ul class="subnav">
-    
-                    <li>
-                        <a href="javascript:document.invoicelist.submit();"><b>&raquo;</b><?= t('button','ListInvoices') ?></a>
-                        
-                        <form name="invoicelist" action="bill-invoice-list.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="invoiceUsername" autocomplete="off"
-                                tooltipText="<?= t('Tooltip','Username') ?><br>"
-                                value="<?= (isset($edit_invoiceUsername)) ? $edit_invoiceUsername : "" ?>">
-<?php
-                $edit_invoice_status_id = (isset($edit_invoice_status_id)) ? $edit_invoice_status_id : "";
-                populate_invoice_status_id("Select Invoice Status","invoice_status_id","form", '', $edit_invoice_status_id);
-?>
-                        </form>
-                    </li>
+$menu_invoice_status_id = get_invoice_status_id();
+$descriptors1 = array();
 
-                    <li>
-                        <a href="javascript:document.invoicenew.submit();"><b>&raquo;</b><?= t('button','NewInvoice') ?></a>
-                        <form name="invoicenew" action="bill-invoice-new.php" method="GET" class="sidebar">
-<?php
-                        $options = $valid_users;
-                        array_unshift($options , '');
-                        $descriptor = array(
-                                                "name" => "user_id",
-                                                "caption" => t('all','Username'),
-                                                "type" => "select",
-                                                "options" => $options,
-                                                "selected_value" => (isset($user_id)) ? "user-$user_id" : "",
-                                             );
-                        print_form_component($descriptor);
-?>
-                        </form>
-                    </li>
+$components = array();
+$components[] = array(
+                        "name" => "username",
+                        "type" => "text",
+                        "value" => ((isset($username)) ? $username : ""),
+                        "datalist" => (($autocomplete) ? array_values($menu_users) : array()),
+                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "sidebar" => true,
+                     );
 
-                    <li>
-                        <a href="javascript:document.billinvoiceedit.submit();"><b>&raquo;</b><?= t('button','EditInvoice') ?></a>
-                        <form name="billinvoiceedit" action="bill-invoice-edit.php" method="GET" class="sidebar">
-                            <input name="invoice_id" type="text" id="invoiceIdEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','invoiceID') ?><br>"
-                                value="<?= (isset($edit_invoiceid)) ? $edit_invoiceid : "" ?>">
-                        </form>
-                    </li>
-                    
-                    <li><a href="bill-invoice-del.php"><b>&raquo;</b><?= t('button','RemoveInvoice') ?></a></li>
-                </ul><!-- .subnav -->
-                
-                <br>
-                
-                <h3>Invoice Report</h3>
-                <ul class="subnav">
-                    <li>
-                        <form name="billinvoicereport" action="bill-invoice-report.php" method="GET" class="sidebar">
-                            <h109><?= t('button','BetweenDates') ?></h109><br>
-                            
-                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
-                            <input name="startdate" type="text" id="startdate" tooltipText="<?= t('Tooltip','Date') ?><br>"
-                                value="<?= (isset($billinvoice_startdate)) ? $billinvoice_startdate : date("Y-m-01") ?>">
+$components[] = array(
+                        "name" => "invoice_status_id",
+                        "caption" => "Invoice Status",
+                        "type" => "select",
+                        "options" => $menu_invoice_status_id,
+                        "selected_value" => (isset($invoice_status_id)) ? $invoice_status_id : "",
+                        "tooltipText" => t('Tooltip','invoiceID'),
+                        "sidebar" => true,
+                        "integer_value" => true,
+                     );
 
-                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
-                            <input name="enddate" type="text" id="enddate" tooltipText="<?= t('Tooltip','Date') ?><br>"
-                                value="<?= (isset($billinvoice_enddate)) ? $billinvoice_enddate : date("Y-m-t") ?>">
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListInvoices'), 'action' => 'bill-invoice-list.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-                            <br>
+$components = array();
+$components[] = array(
+                        "name" => "user_id",
+                        "caption" => t('all','Username'),
+                        "type" => "select",
+                        "options" => $menu_users,
+                        "selected_value" => (isset($user_id)) ? $user_id : "",
+                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "sidebar" => true,
+                        "integer_value" => true,
+                     );
 
-<?php
-                            include_once('include/management/populate_selectbox.php');
-                            populate_invoice_status_id("All Invoice Types", "invoice_status", "form", "", "%");
-?>
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','NewInvoice'), 'action' => 'bill-invoice-new.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-                            <input name="username" type="text" id="usernameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','Username') ?><br>"
-                                value="<?= (isset($billinvoice_username) && $billinvoice_username != '%') ? $billinvoice_username : "" ?>">
-                                
-                            <br>
-                            
-                            <input class="sidebutton" type="submit" name="submit" value="<?= t('button','GenerateReport') ?>">
-                        </form>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+$components = array();
+$components[] = array(
+                        "name" => "invoice_id",
+                        "type" => "number",
+                        "value" => ((isset($invoice_id)) ? $invoice_id : ""),
+                        "min" => "1",
+                        "tooltipText" => t('Tooltip','invoiceID'),
+                        "sidebar" => true,
+                     );
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditInvoice'), 'action' => 'bill-invoice-edit.php', 'method' => 'GET',
+                         'form_components' => $components, );
+                         
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveInvoice'), 'href' =>'bill-invoice-del.php', );
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
-    /** Making usernameEdit, invoiceUsername and invoiceUsernameNew interactive **/
-    var autoComEditElements = ["usernameEdit","invoiceUsername"/*,"invoiceUsernameNew"*/];
-    for (var i = 0; i < autoComEditElements.length; i++) {
-        var autoComEdit = new DHTMLSuite.autoComplete();
-        autoComEdit.add(autoComEditElements[i],
-                        'include/management/dynamicAutocomplete.php',
-                        '_small',
-                        'getAjaxAutocompleteUsernames');
-    }
-<?php
-    }
-?>
-    
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+
+$components = array();
+
+$components[] = array(
+                            "name" => "startdate",
+                            "type" => "date",
+                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                            "caption" => t('all','StartingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
+                            "sidebar" => true
+                     );
+
+$components[] = array(
+                            "name" => "enddate",
+                            "type" => "date",
+                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                            "caption" => t('all','EndingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
+                            "sidebar" => true
+                     );
+
+$components[] = array(
+                        "name" => "invoice_status_id",
+                        "caption" => "Invoice Status",
+                        "type" => "select",
+                        "options" => $menu_invoice_status_id,
+                        "selected_value" => (isset($invoice_status_id)) ? $invoice_status_id : "",
+                        "tooltipText" => t('Tooltip','invoiceID'),
+                        "sidebar" => true,
+                        "integer_value" => true
+                     );
+
+$components[] = array(
+                        "name" => "username",
+                        "type" => "text",
+                        "value" => ((isset($username)) ? $username : ""),
+                        "datalist" => (($autocomplete) ? array_values($menu_users) : array()),
+                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "sidebar" => true
+                     );
+
+$descriptors2 = array();
+$descriptors2[] = array( 'type' => 'form', 'title' => t('button','GenerateReport'), 'action' => 'bill-invoice-report.php', 'method' => 'GET',
+                         'form_components' => $components, );
+                         
+$sections = array();
+$sections[] = array( 'title' => 'Invoice Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Invoice Report', 'descriptors' => $descriptors2 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Billing',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

@@ -475,7 +475,7 @@ function userConnectionStatus($username, $drawTable) {
     $fields = array_keys($data);
     
     foreach ($fields as $field) {
-        if (isset($row) && array_key_exists($field, $row) && !empty($row[$field])) {
+        if (array_key_exists($field, $row) && !empty($row[$field])) {
             
             if ($field == "AcctSessionTime") {
                 $value = time2str($row[$field]);

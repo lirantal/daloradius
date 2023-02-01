@@ -106,7 +106,8 @@
         /* END */
     
         // we execute and log the actual query
-        $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK']);
+        $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK'])
+             . $sql_WHERE;
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
@@ -212,12 +213,5 @@
 
     include('include/config/logging.php');
     
-    $inline_extra_js = "
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip();";
-    
-    print_footer_and_html_epilogue($inline_extra_js);
+    print_footer_and_html_epilogue();
 ?>

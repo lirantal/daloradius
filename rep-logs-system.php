@@ -27,25 +27,23 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
-    $log = "visited page: ";
-
     include_once("lang/main.php");
     include("library/layout.php");
-    
+
+    $log = "visited page: ";
+
     // parameter validation
-    $systemLineCount = (array_key_exists('systemLineCount', $_GET) && isset($_GET['systemLineCount']) &&
-                        intval($_GET['systemLineCount']) > 0)
-                     ? intval($_GET['systemLineCount']) : 50;
+    $count = (array_key_exists('count', $_GET) && isset($_GET['count']) && intval($_GET['count']) > 0)
+           ? intval($_GET['count']) : 50;
 
     // preg quoted before usage
-    $systemFilter = (array_key_exists('systemFilter', $_GET) && isset($_GET['systemFilter']))
-                  ? $_GET['systemFilter'] : "";
+    $filter = (array_key_exists('filter', $_GET) && isset($_GET['filter'])) ? $_GET['filter'] : "";
 
     
     // print HTML prologue
-    $title = t('Intro','replogssystem.php') . " :: $systemLineCount Lines Count";
-    if (!empty($systemFilter) && $systemFilter !== '.+') {
-        $title .= " with filter set to " . htmlspecialchars($systemFilter, ENT_QUOTES, 'UTF-8');
+    $title = t('Intro','replogssystem.php') . " :: $count Lines Count";
+    if (!empty($filter)) {
+        $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
     }
     $help = t('helpPage','replogssystem');
     

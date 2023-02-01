@@ -29,88 +29,79 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-attributes.php') !== false) {
 
 include_once("lang/main.php");
 
-$m_active = "Management";
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+include_once("include/management/populate_selectbox.php");
+$menu_vendors = get_vendors();
+$menu_attributes = get_attributes();
 
 
+// define descriptors
+$descriptors1 = array();
 
-include_once("include/management/autocomplete.php");
-?>
-        
-            <div id="sidebar">
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewVendorAttribute'), 'href' =>'mng-rad-attributes-new.php',
+                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
-                <h2>Management</h2>
-                
-                <h3>Attributes Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListAttributesforVendor')) ?>" href="javascript:document.mngradattributeslist.submit();">
-                            <b>&raquo;</b><?= t('button','ListAttributesforVendor') ?></a>
-                        <form name="mngradattributeslist" action="mng-rad-attributes-list.php" method="GET" class="sidebar">
-<?php
-                            include('include/management/populate_selectbox.php');
-                            populate_vendors("Select Vendor", "vendor", "generic");
-?>
-                        </form>
-                    </li>
+if (count($menu_vendors) > 0 && count($menu_attributes) > 0) {
+    array_unshift($menu_vendors, "");
+ 
+    $components = array();
+    $components[] = array(
+                            "name" => "vendor",
+                            "type" => "select",
+                            "selected_value" => ((isset($vendor)) ? $vendor : ""),
+                            "required" => true,
+                            "options" => $menu_vendors,
+                            //~ "tooltipText" => t('all','Vendor'),
+                            "sidebar" => true,
+                          );
+    
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListAttributesforVendor'), 'action' => 'mng-rad-attributes-list.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
+                             
+    $components[] = array(
+                            "name" => "attribute",
+                            "type" => "text",
+                            "selected_value" => ((isset($attribute)) ? $attribute : ""),
+                            "required" => true,
+                            "datalist" => $menu_attributes,
+                            "tooltipText" => t('Tooltip','AttributeName'),
+                            "sidebar" => true,
+                          );
+    
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditVendorAttribute'), 'action' => 'mng-rad-attributes-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+    
+    $components = array();
+    $components[] = array(
+                            "name" => "attribute",
+                            "type" => "text",
+                            "selected_value" => ((isset($attribute)) ? $attribute : ""),
+                            "required" => true,
+                            "datalist" => $menu_attributes,
+                            "tooltipText" => t('Tooltip','AttributeName'),
+                            "sidebar" => true,
+                          );
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchVendorAttribute'), 'action' =>'mng-rad-attributes-search.php', 'method' => 'GET',
+                             'form_components' => $components, );
+    
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveVendorAttribute'), 'href' => 'mng-rad-attributes-del.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+}
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewVendorAttribute')) ?>" href="mng-rad-attributes-new.php">
-                            <b>&raquo;</b><?= t('button','NewVendorAttribute') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditVendorAttribute')) ?>" href="javascript:document.mngradattributesedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditVendorAttribute') ?>
-                        </a>
-                        <form name="mngradattributesedit" action="mng-rad-attributes-edit.php" method="GET" class="sidebar">
-                            <input name="vendor" type="text" id="vendornameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','VendorName'); ?><br>"
-                            value="<?= (isset($vendor)) ? $vendor : "" ?>">
-                            <input name="attribute" type="text" id="attributenameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','AttributeName'); ?><br>" value="<?= (isset($attribute)) ? $attribute : "" ?>">
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','SearchVendorAttribute')) ?>" href="javascript:document.mngradattributessearch.submit();" >
-                            <b>&raquo;</b><?= t('button','SearchVendorAttribute') ?>
-                        </a>
-                        <form name="mngradattributessearch" action="mng-rad-attributes-search.php" method="GET" class="sidebar">
-                            <input name="attribute" type="text" id="attributenameSearch" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','AttributeName'); ?><br>" value="<?= (isset($attribute)) ? $attribute : "" ?>">
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveVendorAttribute')) ?>" href="mng-rad-attributes-del.php">
-                            <b>&raquo;</b><?= t('button','RemoveVendorAttribute') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','ImportVendorDictionary')) ?>" href="mng-rad-attributes-import.php">
-                            <b>&raquo;</b><?= t('button','ImportVendorDictionary') ?>
-                        </a>
-                    </li>
-                    
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+$descriptors2 = array();
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','ImportVendorDictionary'), 'href' =>'mng-rad-attributes-import.php',
+                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
-var autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('attributenameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteAttributes');
+$sections = array();
+$sections[] = array( 'title' => 'Attributes Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Extended Capabilities', 'descriptors' => $descriptors2 );
 
-autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('attributenameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteAttributes');
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
 
-autoComEdit = new DHTMLSuite.autoComplete();
-autoComEdit.add('vendornameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteVendorName');
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+menu_print($menu);

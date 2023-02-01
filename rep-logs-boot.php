@@ -33,13 +33,11 @@
     include("library/layout.php");
 
     // parameter validation
-    $bootLineCount = (array_key_exists('bootLineCount', $_GET) && isset($_GET['bootLineCount']) &&
-                      intval($_GET['bootLineCount']) > 0)
-                   ? intval($_GET['bootLineCount']) : 50;
+    $count = (array_key_exists('count', $_GET) && isset($_GET['count']) && intval($_GET['count']) > 0)
+           ? intval($_GET['count']) : 50;
 
     // preg quoted before usage
-    $bootFilter = (array_key_exists('bootFilter', $_GET) && isset($_GET['bootFilter']))
-                ? $_GET['bootFilter'] : "";
+    $filter = (array_key_exists('filter', $_GET) && isset($_GET['filter'])) ? $_GET['filter'] : "";
 
 
     // print HTML prologue
@@ -48,9 +46,9 @@
     
     print_html_prologue($title, $langCode);
 
-    $title .= sprintf(" :: %d Lines Count", $bootLineCount);
-    if (!empty($bootFilter) && $bootFilter !== '.+') {
-        $title .= " with filter set to " . htmlspecialchars($bootFilter, ENT_QUOTES, 'UTF-8');
+    $title .= sprintf(" :: %d Lines Count", $count);
+    if (!empty($filter)) {
+        $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
     }
 
     include("menu-reports-logs.php");

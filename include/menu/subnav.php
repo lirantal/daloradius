@@ -21,7 +21,7 @@
  */
 
 // prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/include/menu/auto_subnav.php') !== false) {
+if (strpos($_SERVER['PHP_SELF'], '/include/menu/subnav.php') !== false) {
     header("Location: ../../index.php");
     exit;
 }

@@ -27,142 +27,91 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-reports-logs.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Reports";
+$count_options = array(
+                            '20' => '20 Lines',
+                            '50' => '50 Lines',
+                            '100' => '100 Lines',
+                            '500' => '500 Lines',
+                            '1000' => '1000 Lines'
+                       );
 
-?>
+$count_select = array(
+                            "name" => "count",
+                            "type" => "select",
+                            "selected_value" => ((isset($count)) ? $count : ""),
+                            "options" => $count_options,
+                            "integer_value" => true,
+                        );
+
+$daloradius_options = array(
+                                "",
+                                "QUERY" => "Query Only",
+                                "NOTICE" => "Notice Only",
+                                "INSERT" => "SQL INSERT Only", 
+                                "SELECT" => "SQL SELECT Only",
+                           );
+
+$radius_options = array(
+                            "",
+                            "Auth" => "Auth Only",
+                            "Info" => "Info Only",
+                            "Error" => "Error Only",
+                       );
+
+$descriptors1 = array();
+
+$components = array();
+$components[] = array(
+                        "name" => "filter",
+                        "type" => "select",
+                        "selected_value" => ((isset($filter)) ? $filter : ""),
+                        "options" => $daloradius_options,
+                     );
+
+$components[] = $count_select;
+                     
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','daloRADIUSLog'), 'action' => 'rep-logs-daloradius.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
 
 
-<?php
+$components = array();
+$components[] = array(
+                        "name" => "filter",
+                        "type" => "select",
+                        "selected_value" => ((isset($filter)) ? $filter : ""),
+                        "options" => $radius_options,
+                     );
+
+$components[] = $count_select;
+                     
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','RadiusLog'), 'action' => 'rep-logs-radius.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
 
 
-    
-    function print_options($options, $selected_value="") {
-        foreach ($options as $value => $label) {
-            $selected = ($value == $selected_value) ? " selected" : "";
-            printf('<option value="%s"%s>%s</option>', $value, $selected, $label);
-        }
-    }
-    
-    $lines_output_options = array(
-                                    '20' => '20 Lines',
-                                    '50' => '50 Lines',
-                                    '100' => '100 Lines',
-                                    '500' => '500 Lines',
-                                    '1000' => '1000 Lines'
-                                 );
-    
-?>      
+$components = array();
+$components[] = array(
+                        "name" => "filter",
+                        "type" => "text",
+                        "value" => ((isset($filter)) ? $filter : ""),
+                        "tooltipText" => t('Tooltip', 'Filter'),
+                        "sidebar" => true,
+                     );
 
-            <div id="sidebar">
-                <h2>Logs</h2>
-                
-                <h3>Log Files</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','daloRADIUSLog')) ?>" href="javascript:document.daloradius_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
-                            <?= t('button','daloRADIUSLog') ?>
-                        </a>
-                        <form name="daloradius_log" action="rep-logs-daloradius.php" method="GET" class="sidebar">
-                            <select class="generic" name="daloradiusLineCount">
-<?php
-    $selected_value = (isset($daloradiusLineCount)) ? $daloradiusLineCount : "";
-    print_options($lines_output_options, $selected_value);
-?>
-                            </select><!-- .generic -->
-                            
-                            <select class="generic" name="daloradiusFilter">
-                    <?php if (isset($daloradiusFilter)) {
-                        if ($daloradiusFilter == ".") 
-                            echo "<option value='$daloradiusFilter'> Any </option>";
-                        else
-                            echo "<option value='$daloradiusFilter'> $daloradiusFilter </option>";
-                          } else {
-                        echo "<option value='.'> No filter </option>";
-                          }
-                        ?>
-                                <option value="."></option>
-                                <option value="QUERY"> Query Only </option>
-                                <option value="NOTICE"> Notice Only </option>
-                                <option value="INSERT"> SQL INSERT Only </option> 
-                                <option value="SELECT"> SQL SELECT Only </option>
-                            </select><!-- .generic -->
-                        </form>
-                    </li>
+$components[] = $count_select;
+                     
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','SystemLog'), 'action' => 'rep-logs-system.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','BootLog'), 'action' => 'rep-logs-boot.php', 'method' => 'GET',
+                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','RadiusLog')) ?>" href="javascript:document.radius_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
-                            <?= t('button','RadiusLog') ?>
-                        </a>
-                        <form name="radius_log" action="rep-logs-radius.php" method="GET" class="sidebar">
-                            <select class="generic" name="radiusLineCount">
-<?php
-                            $selected_value = (isset($radiusLineCount)) ? $radiusLineCount : "";
-                            print_options($lines_output_options, $selected_value);
-?>
-                            </select><!-- .generic -->
-                            
-                            <select class="generic" name="radiusFilter">
-                    <?php if (isset($radiusFilter)) {
-                        if ($radiusFilter == ".") 
-                            echo "<option value='$radiusFilter'> Any </option>";
-                        else
-                            echo "<option value='$radiusFilter'> $radiusFilter </option>";
-                          } else {
-                        echo "<option value='.'> No filter </option>";
-                          }
-                    ?>
-                                <option value="."></option>
-                                <option value="Auth"> Auth Only </option>
-                                <option value="Info"> Info Only </option>
-                                <option value="Error"> Error Only </option>
-                            </select><!-- .generic -->
-                        </form>
-                    </li>
+$sections = array();
+$sections[] = array( 'title' => 'Log Files', 'descriptors' => $descriptors1 );
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','SystemLog')) ?>" href="javascript:document.system_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
-                            <?= t('button','SystemLog') ?>
-                        </a>
-                        <form name="system_log" action="rep-logs-system.php" method="GET" class="sidebar">
-                            <select class="generic" name="systemLineCount">
-<?php
-                            $selected_value = (isset($systemLineCount)) ? $systemLineCount : "";
-                            print_options($lines_output_options, $selected_value);
-?>
-                            </select><!-- .generic -->
-                            <input type="text" name="systemFilter" tooltipText="<?= t('Tooltip','Filter'); ?><br>"
-                                value="<?= (isset($systemFilter)) ? $systemFilter : "" ?>">
-                        </form>
-                    </li>
+// add sections to menu
+$menu = array(
+                'title' => 'Logs',
+                'sections' => $sections,
+             );
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','BootLog')) ?>" href="javascript:document.boot_log.submit();">
-                            <b>&raquo;</b><img style="border: 0; margin-right: 5px" src="static/images/icons/reportsLogs.png">
-                            <?= t('button','BootLog') ?>
-                        </a>
-                        <form name="boot_log" action="rep-logs-boot.php" method="GET" class="sidebar">
-                            <select class="generic" name="bootLineCount">
-<?php
-                            $selected_value = (isset($bootLineCount)) ? $bootLineCount : "";
-                            print_options($lines_output_options, $selected_value);
-?>
-                            </select><!-- .generic -->
-                            <input type="text" name="bootFilter" tooltipText="<?= t('Tooltip','Filter'); ?><br>"
-                                value="<?= (isset($bootFilter)) ? $bootFilter : "" ?>">
-                        </form>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
-
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+menu_print($menu);

@@ -27,65 +27,48 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-nas.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Management";
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+include_once("include/management/populate_selectbox.php");
+$menu_nasnames = get_nas_names();
 
+// define descriptors
+$descriptors1 = array();
 
-include_once("include/management/autocomplete.php");
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewNAS'), 'href' =>'mng-rad-nas-new.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
-?>
-        
-            <div id="sidebar">
+if (count($menu_nasnames) > 0) {
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListNAS'), 'href' => 'mng-rad-nas-list.php',
+                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
-                <h2>Management</h2>
+    $components = array();
+    $components[] = array(
+                            "name" => "nasname",
+                            "type" => "text",
+                            "value" => ((isset($nasname)) ? $nasname : ""),
+                            "required" => true,
+                            "datalist" => (($autocomplete) ? $menu_nasnames : array()),
+                            "tooltipText" => t('all','NasIPHost'),
+                            "sidebar" => true,
+                          );
 
-                <h3>NAS Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a href="mng-rad-nas-list.php" title="<?= t('button','ListNAS') ?>" tabindex="1">
-                            <b>&raquo;</b><?= t('button','ListNAS') ?>
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="mng-rad-nas-new.php" title="<?= t('button','NewNAS') ?>" tabindex="2">
-                            <b>&raquo;</b><?= t('button','NewNAS') ?>
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="javascript:document.mngradnasedit.submit();" title="<?= t('button','EditNAS') ?>" tabindex="3">
-                            <b>&raquo;</b><?= t('button','EditNAS') ?>
-                        </a>
-                        
-                        <form name="mngradnasedit" action="mng-rad-nas-edit.php" method="GET" class="sidebar">
-                            <input name="nasname" type="text" id="nashostEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','NasName'); ?>" tabindex="4">
-                        </form>
-                    </li>
-                    
-                    <li>
-                        <a href="mng-rad-nas-del.php" title="<?= t('button','RemoveNAS') ?>" tabindex="5">
-                            <b>&raquo;</b><?= t('button','RemoveNAS') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditNAS'), 'action' => 'mng-rad-nas-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('nashostEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteNASHost');
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveNAS'), 'href' => 'mng-rad-nas-del.php',
+                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+}
+
+$sections = array();
+$sections[] = array( 'title' => 'NAS Management', 'descriptors' => $descriptors1 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

@@ -27,108 +27,80 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-accounting.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+include_once("library/validation.php");
+include_once("include/management/populate_selectbox.php");
+$menu_usernames = get_users('CONFIG_DB_TBL_RADACCT');
+array_unshift($menu_usernames, "");
 
-$m_active = "Accounting";
+// define descriptors
+$descriptors1 = array();
+ 
+$components = array();
 
+$components[] = array(
+                            "name" => "username",
+                            "type" => "select",
+                            "selected_value" => ((isset($username)) ? $username : ""),
+                            "options" => $menu_usernames,
+                            "caption" => t('all','Username'),
+                     );
 
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserAccounting'), 'action' => 'acct-username.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-include_once("include/management/autocomplete.php");
+$components[] = array(
+                            "name" => "startdate",
+                            "type" => "date",
+                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                            "caption" => t('all','StartingDate'),
+                     );
+                     
+$components[] = array(
+                            "name" => "enddate",
+                            "type" => "date",
+                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                            "caption" => t('all','EndingDate'),
+                     );
 
-?>    
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','DateAccounting'), 'action' => 'acct-date.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-            <div id="sidebar">
-                <h2>Accounting</h2>
-                
-                <h3>Users Accounting</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','UserAccounting')) ?>" tabindex="1" href="javascript:document.acctusername.submit();">
-                            <b>&raquo;</b><?= t('button','UserAccounting') ?>
-                        </a>
-                        
-                        <form name="acctusername" action="acct-username.php" method="GET" class="sidebar">
-                            <input tabindex="2" name="username" type="text" id="usernameAcct" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','Username') ?>"
-                                value="<?= (isset($accounting_username)) ? $accounting_username : "" ?>">
-                        </form>
-                    </li>
-
-                    <li>
-                        <a title="<?= strip_tags(t('button','IPAccounting')) ?>" tabindex="3" href="javascript:document.acctipaddress.submit();">
-                            <b>&raquo;</b><?= t('button','IPAccounting') ?>
-                        </a>
-                        
-                        <form name="acctipaddress" action="acct-ipaddress.php" method="GET" class="sidebar">
-                            <input tabindex="4" name="ipaddress" type="text" tooltipText="<?= t('Tooltip','IPAddress') ?>"
-                                value="<?= (isset($accounting_ipaddress)) ? $accounting_ipaddress : "" ?>">
-                        </form>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= strip_tags(t('button','NASIPAccounting')) ?>" tabindex="5" href="javascript:document.acctnasipaddress.submit();">
-                            <b>&raquo;</b><?= t('button','NASIPAccounting') ?>
-                        </a>
-                        
-                        <form name="acctnasipaddress" action="acct-nasipaddress.php" method="GET" class="sidebar">
-                            <input tabindex="6" name="nasipaddress" type="text" tooltipText="<?= t('Tooltip','IPAddress') ?>"
-                                value="<?= (isset($accounting_nasipaddress)) ? $accounting_nasipaddress : "" ?>">
-                        </form>
-                    </li>
-
-                    <li>
-                        <a title="<?= strip_tags(t('button','DateAccounting')) ?>" tabindex="7" href="javascript:document.acctdate.submit();">
-                            <b>&raquo;</b><?= t('button','DateAccounting') ?>
-                        </a>
-                        
-                        <form name="acctdate" action="acct-date.php" method="GET" class="sidebar">
-                            <input tabindex="8" name="username" type="text" id="usernameDate" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','Username') ?>"
-                                value="<?= (isset($accounting_date_username)) ? $accounting_date_username : ""?>">
+$components = array();
+$components[] = array(
+                            "name" => "ipaddress",
+                            "type" => "text",
+                            "value" => ((isset($ipaddress)) ? $ipaddress : ""),
+                            "tooltipText" => t('Tooltip','IPAddress'),
+                            "sidebar" => true,
+                            "pattern" => trim(LOOSE_IP_REGEX, "/"),
                             
-                            <label style="user-select: none" for="startdate"><?= t('all','StartingDate') ?></label>
-                            <input tabindex="9" name="startdate" type="date" id="startdate" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($accounting_date_startdate)) ? $accounting_date_startdate : date("Y-m-01") ?>">
-                            
-                            <label style="user-select: none" for="enddate"><?= t('all','EndingDate') ?></label>
-                            <input tabindex="10" name="enddate" type="date" id="enddate" tooltipText="<?= t('Tooltip','Date') ?>"
-                                value="<?= (isset($accounting_date_enddate)) ? $accounting_date_enddate : date("Y-m-t") ?>">
-                        </form>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= strip_tags(t('button','AllRecords')) ?>" tabindex="11" href="acct-all.php">
-                            <b>&raquo;</b><?= t('button','AllRecords') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','ActiveRecords')) ?>" tabindex="12" href="acct-active.php">
-                            <b>&raquo;</b><?= t('button','ActiveRecords') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+                     );
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','IPAccounting'), 'action' => 'acct-ipaddress.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
+$components = array();
+$components[] = array(
+                            "name" => "nasipaddress",
+                            "type" => "text",
+                            "value" => ((isset($nasipaddress)) ? $nasipaddress : ""),
+                            "tooltipText" => t('all','NASIPAddress'),
+                            "sidebar" => true,
+                            "pattern" => trim(LOOSE_IP_REGEX, "/"),
+                     );
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','NASIPAccounting'), 'action' => 'acct-nasipaddress.php', 'method' => 'GET',
+                         'form_components' => $components, );
 
-    var autoComEditElements = ["usernameDate","usernameAcct"];
-    for (var i = 0; i < autoComEditElements.length; i++) {
-        var autoComEdit = new DHTMLSuite.autoComplete();
-        autoComEdit.add(autoComEditElements[i],
-                        'include/management/dynamicAutocomplete.php',
-                        '_small',
-                        'getAjaxAutocompleteUsernames');
-    }
-    
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','AllRecords'), 'href' => 'acct-all.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ActiveRecords'), 'href' => 'acct-active.php', );
+
+$sections = array();
+$sections[] = array( 'title' => 'Users Accounting', 'descriptors' => $descriptors1 );
+
+
+// add sections to menu
+$menu = array(
+                'title' => 'Accounting',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

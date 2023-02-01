@@ -29,45 +29,25 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-batch.php') !== false) {
 
 include_once("lang/main.php");
 
-$m_active = "Management";
+// define descriptors
+$descriptors1 = array();
 
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','BatchAddUsers'), 'href' =>'mng-batch-add.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListBatches'), 'href' =>'mng-batch-list.php',
+                         'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveBatch'), 'href' =>'mng-batch-del.php',
+                         'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 
+$sections = array();
+$sections[] = array( 'title' => 'Batch Management', 'descriptors' => $descriptors1 );
 
-include_once("include/management/autocomplete.php");
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
 
-$menu_elements = array(
-    "mng-batch-list.php" => array(t('button','ListBatches'), "static/images/icons/userList.gif"),
-    "mng-batch-add.php" => array(t('button','BatchAddUsers'), "static/images/icons/userNew.gif"),
-    "mng-batch-del.php" => array(t('button','RemoveBatch'), "static/images/icons/userRemove.gif")
-);
+menu_print($menu);
 
-?>
-
-            <div id="sidebar">
-                <h2>Management</h2>
-    
-                <h3>Batch Management</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = 1;
-                foreach ($menu_elements as $href => $items) {
-                    list($caption, $src) = $items;
-                    printf('<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>',
-                           $href, strip_tags($caption), $tabindex, $src, $caption);
-                    $tabindex++;
-                }
-?>
-
-               </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
-
-<?php
-    if ($autoComplete) {
-?>
-<script>
-    /** Making dictAttributesCustom interactive **/
-    var autoComEdit = new DHTMLSuite.autoComplete();
-</script>
-<?php
-    } 
 ?>

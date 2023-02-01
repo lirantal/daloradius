@@ -27,52 +27,29 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-batch.php') !== false) {
     exit;
 }
 
-$m_active = "Reports";
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServerStatus'), 'href' => 'rep-stat-server.php', 
+                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServicesStatus'), 'href' => 'rep-stat-services.php',
+                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 
-?>
+$descriptors2 = array();
+$descriptors2[] = array( 'type' => 'link', 'label' => 'CRON Status', 'href' => 'rep-stat-cron.php', 
+                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
+$descriptors2[] = array( 'type' => 'link', 'label' => 'UPS Status', 'href' => 'rep-stat-ups.php',
+                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
+$descriptors2[] = array( 'type' => 'link', 'label' => 'RAID Status', 'href' => 'rep-stat-raid.php',
+                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 
+$sections = array();
+$sections[] = array( 'title' => 'Status', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Extended Peripherals', 'descriptors' => $descriptors2 );
 
-<?php
-    
+// add sections to menu
+$menu = array(
+                'title' => 'Status',
+                'sections' => $sections,
+             );
 
-    
-    $status_menu_elements = array(
-        "rep-stat-server.php" => array(t('button','ServerStatus'), "static/images/icons/reportsStatus.png"),
-        "rep-stat-services.php" => array(t('button','ServicesStatus'), "static/images/icons/reportsStatus.png")
-    );
-    
-    $peripherals_menu_elements = array(
-        "rep-stat-cron.php" => array("CRON Status", "static/images/icons/reportsStatus.png"),
-        "rep-stat-ups.php" => array("UPS Status", "static/images/icons/reportsStatus.png"),
-        "rep-stat-raid.php" => array("RAID Status", "static/images/icons/reportsStatus.png")
-    );
-    $element_format = '<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>';
-?>      
-
-            <div id="sidebar">
-                <h2>Status</h2>
-                
-                <h3>Status</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = 1;
-                foreach ($status_menu_elements as $href => $items) {
-                    list($caption, $src) = $items;
-                    printf($element_format, $href, strip_tags($caption), $tabindex, $src, $caption);
-                    $tabindex++;
-                }
-?>
-                </ul><!-- .subnav -->
-
-                <h3 style="margin-top: 20px">Extended Peripherals</h3>
-                <ul class="subnav">
-<?php
-$tabindex = count($status_menu_elements) + 1;
-foreach ($peripherals_menu_elements as $href => $items) {
-    list($caption, $src) = $items;
-    printf($element_format, $href, strip_tags($caption), $tabindex, $src, $caption);
-    $tabindex++;
-}
-?>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+menu_print($menu);

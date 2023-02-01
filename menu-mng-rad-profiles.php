@@ -27,87 +27,47 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-profiles.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+include_once("include/management/populate_selectbox.php");
+$menu_options = get_groups();
 
-$m_active = "Management";
+// define descriptors
+$descriptors1 = array();
 
-?>
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewProfile'), 'href' =>'mng-rad-profiles-new.php',
+                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
-<?php
+if (count($menu_options) > 0) {
+    array_unshift($menu_options, "");
     
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListProfiles'), 'href' => 'mng-rad-profiles-list.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+                             
+    $components = array();
+    $components[] = array(
+                            "name" => "profile_name",
+                            "type" => "select",
+                            "selected_value" => ((isset($profile_name)) ? $profile_name : ""),
+                            "options" => $menu_options,
+                            "title" => "Select Profile",
+                          );
+    
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditProfile'), 'action' => 'mng-rad-profiles-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
 
-    include_once("include/management/autocomplete.php");
-?>
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DuplicateProfile'), 'href' =>'mng-rad-profiles-duplicate.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), );
+    
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveProfile'), 'href' =>'mng-rad-profiles-del.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+}
 
-            <div id="sidebar">
-                <h2>Management</h2>
+$sections = array();
+$sections[] = array( 'title' => 'Profiles Management', 'descriptors' => $descriptors1 );
 
-                <h3>Profiles Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListProfiles')) ?>" href="mng-rad-profiles-list.php" tabindex="1">
-                            <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsList.png">
-                            <?= t('button','ListProfiles') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewProfile')) ?>" href="mng-rad-profiles-new.php" tabindex="2">
-                            <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsAdd.png">
-                            <?= t('button','NewProfile') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditProfile')) ?>" href="javascript:document.mngradprofileedit.submit();" tabindex="3">
-                            <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsEdit.png">
-                            <?= t('button','EditProfile') ?>
-                        </a>
-                        <form name="mngradprofileedit" action="mng-rad-profiles-edit.php" method="GET" class="sidebar">
-<?php   
-                            include_once('include/management/populate_selectbox.php');
-                            $groups = get_groups();
-                            array_unshift($groups , '');
-                            $descr = array(
-                                                "caption" => "Select Profile",
-                                                "type" => "select",
-                                                "name" => "profile_name",
-                                                "options" => $groups,
-                                                "selected_value" => ((isset($profile)) ? $profile : ""),
-                                           );
-                            
-                            print_form_component($descr);
-?>
-                        </form>
-                    </li>
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','DuplicateProfile')) ?>" href="mng-rad-profiles-duplicate.php" tabindex="4">
-                            <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsEdit.png">
-                            <?= t('button','DuplicateProfile') ?>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveProfile')) ?>" href="mng-rad-profiles-del.php" tabindex="5">
-                            <b>&raquo;</b>
-                            <img style="border: 0; margin-right: 5px" src="static/images/icons/groupsRemove.png">
-                            <?= t('button','RemoveProfile') ?>
-                        </a>
-                    </li>
-                
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
-
-<?php 
-    if ($autoComplete) {
-?>
-<script>
-    /** Making usernameEdit interactive **/
-    autoComEdit = new DHTMLSuite.autoComplete();
-</script>
-<?php
-    } 
-?>
+menu_print($menu);

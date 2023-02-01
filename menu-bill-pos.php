@@ -27,70 +27,62 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-bill-pos.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Billing";
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+include_once("include/management/populate_selectbox.php");
+$menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
+$menu_plannames = get_plans();
+
+// define descriptors
+$descriptors1 = array();
+
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUser'), 'href' =>'bill-pos-new.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
 
+if (count($menu_plannames) > 0) {
+    $components = array();
+    $components[] = array(
+                            "name" => "planname",
+                            "type" => "select",
+                            "selected_value" => ((isset($planname)) ? $planname : ""),
+                            "required" => true,
+                            "options" => $menu_plannames,
+                          );
 
-include_once("include/management/autocomplete.php");
-?>
-
-            <div id="sidebar">
-
-                <h2>Billing</h2>
-                
-                <h3>Point of Sales Management</h3>
-                <ul class="subnav">
-                
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListUsers')) ?>" href="javascript:document.billposlist.submit();">
-                            <b>&raquo;</b><?= t('button','ListUsers') ?></a>
-                        <form name="billposlist" action="bill-pos-list.php" method="GET" class="sidebar">
-                    
-<?php
-                            include 'include/management/populate_selectbox.php';
-                            populate_plans("Select Plan","planname","generic");
-?>
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewUser')) ?>" href="bill-pos-new.php">
-                            <b>&raquo;</b><?= t('button','NewUser') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditUser')) ?>" href="javascript:document.billposedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditUser') ?></a>
-                        <form name="billposedit" action="bill-pos-edit.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="usernameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','Username'); ?><br>"
-                                value="<?= (isset($edit_username)) ? $edit_username :"" ?>">
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveUsers')) ?>" href="bill-pos-del.php">
-                            <b>&raquo;</b><?= t('button','RemoveUsers') ?>
-                        </a>
-                    </li>
-                    
-            </ul><!-- .subnav -->
-        </div><!-- #sidebar -->
-
-<script>
-<?php
-if ($autoComplete) {
-?>
-    /** Making usernameEdit interactive **/
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-<?php
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListUsers'), 'action' => 'bill-pos-list.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
 }
-?>
-    
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+
+if (count($menu_usernames) > 0) {
+    $components = array();
+
+    $components[] = array(
+                            "name" => "username",
+                            "type" => "text",
+                            "value" => ((isset($username)) ? $username : ""),
+                            "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                            "tooltipText" => t('Tooltip','Username'),
+                            "sidebar" => true,
+                         );
+
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUser'), 'action' => 'bill-pos-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+
+
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveUsers'), 'href' => 'bill-pos-del.php',
+                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+}
+
+$sections = array();
+$sections[] = array( 'title' => 'Point of Sales Management', 'descriptors' => $descriptors1 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Billing',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

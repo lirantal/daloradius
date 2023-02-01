@@ -27,54 +27,37 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-reports-batch.php') !== false) {
     exit;
 }
 
-$m_active = "Reports";
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-?>
+include_once("include/management/populate_selectbox.php");
+$menu_datalist = get_batch_names();
+
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','BatchHistory'), 'href' => 'rep-batch-list.php', );
+
+$components[] = array(
+                        "name" => "batch_name",
+                        "type" => "text",
+                        "value" => ((isset($batch_name)) ? $batch_name : ""),
+                        "required" => true,
+                        "datalist" => (($autocomplete) ? $menu_datalist : array()),
+                        "tooltipText" => t('Tooltip','BatchName'),
+                        "sidebar" => true,
+                      );
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','BatchDetails'), 'action' => 'rep-batch-details.php', 'method' => 'GET',
+                         'form_components' => $components, );
+
+$sections = array();
+$sections[] = array( 'title' => 'List', 'descriptors' => $descriptors1 );
 
 
-<?php
-    
+// add sections to menu
+$menu = array(
+                'title' => 'Batch Users',
+                'sections' => $sections,
+             );
 
-    include_once("include/management/autocomplete.php");
-?>
-
-            <div id="sidebar">
-                <h2>Batch Users</h2>
-                
-                <h3>List</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','BatchHistory')) ?>" tabindex="1" href="rep-batch-list.php">
-                            <b>&raquo;</b><?= t('button','BatchHistory') ?>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a title="<?= strip_tags(t('button','BatchDetails')) ?>" tabindex="2" href="javascript:document.batch_name_details.submit();">
-                            <b>&raquo;</b><?= t('button','BatchDetails') ?>
-                        </a>
-                        <form name="batch_name_details" action="rep-batch-details.php" method="GET" class="sidebar">
-                            <input tabindex="3" name="batch_name" type="text" id="batchNameDetails" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','BatchName') ?>"
-                                value="<?= (isset($batch_name_details)) ? $batch_name_details : "" ?>">
-                        </form>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
-
-<script>
-<?php
-    if ($autoComplete) {
-?>
-    varautoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('batchNameDetails','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteBatchNames');
-
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+menu_print($menu);

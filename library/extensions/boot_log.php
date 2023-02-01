@@ -69,23 +69,28 @@ if (empty($logfile)) {
     } else {
 
         // get its content
-        $logcontent = file_get_contents($logfile);
-        if (!empty($logcontent)) {
-            $counter = $bootLineCount;
-            $filter = (!empty($bootFilter)) ? preg_quote($bootFilter, "/") : ".+";
-            $fileReversed = array_reverse(file($logfile));
-
+        $logcontent = file($logfile);
+        if ($logcontent !== false && count($logcontent) > 0) {
+            $reversed_content = array_reverse($logcontent);
+            
+            // set internal count & filter
+            $_count = (isset($count) && is_numeric($count)) ? $count : 50;
+            $_filter = (isset($filter) && !empty($filter)) ? preg_quote($filter, "/") : "";
+            
             echo '<div style="font-family: monospace">';
-            foreach ($fileReversed as $line) {
-                if (preg_match("/$filter/i", $line)) {
-                    if ($counter == 0) {
+            foreach ($reversed_content as $line) {
+                if (empty($_filter) || preg_match("/$_filter/i", $line)) {
+                    if ($_count == 0) {
                         break;
                     }
+                    
                     echo nl2br(htmlspecialchars($line, ENT_QUOTES, 'UTF-8'), false);
-                    $counter--;
-            }
+                    $_count--;
+                }
             }
             echo '</div>';
+        } else {
+            $failureMsg = sprintf("It looks like log file <strong>%s</strong> is empty.", $logfile_enc);
         }
     }
 }

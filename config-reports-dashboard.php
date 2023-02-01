@@ -145,17 +145,10 @@
 
 </form>
 
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
 <?php
-    include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
 
-</body>
-</html>
+    include('include/config/logging.php');
+
+    print_footer_and_html_epilogue();
+
+?>

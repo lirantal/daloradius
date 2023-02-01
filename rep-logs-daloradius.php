@@ -25,18 +25,21 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
-    // parameter validation
-    $daloradiusLineCount = (array_key_exists('daloradiusLineCount', $_GET) && isset($_GET['daloradiusLineCount']) &&
-                            intval($_GET['daloradiusLineCount']) > 0)
-                         ? intval($_GET['daloradiusLineCount']) : 50;
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
     
     include_once("lang/main.php");
-    
     include("library/layout.php");
+    
+    $log = "visited page: ";
+
+    // parameter validation
+    $count = (array_key_exists('count', $_GET) && isset($_GET['count']) && intval($_GET['count']) > 0)
+           ? intval($_GET['count']) : 50;
+
+    // preg quoted before usage
+    $filter = (array_key_exists('filter', $_GET) && isset($_GET['filter']) &&
+               in_array(strtoupper($_GET['filter']), array( "QUERY", "NOTICE", "INSERT", "SELECT" )))
+            ? strtoupper($_GET['filter']) : "";
 
     // print HTML prologue
     $title = t('Intro','replogsdaloradius.php');
@@ -44,7 +47,10 @@
     
     print_html_prologue($title, $langCode);
 
-    $title .= sprintf(" :: %d Lines Count", $daloradiusLineCount);
+    $title .= sprintf(" :: %d Lines Count", $count);
+    if (!empty($filter)) {
+        $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
+    }
 
     include("menu-reports-logs.php");
 

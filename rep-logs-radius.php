@@ -27,20 +27,19 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     
-    $log = "visited page: ";
-
     include_once("lang/main.php");
     include("library/layout.php");
+    
+    $log = "visited page: ";
 
     // parameter validation
-    $radiusLineCount = (array_key_exists('radiusLineCount', $_GET) && isset($_GET['radiusLineCount']) &&
-                        intval($_GET['radiusLineCount']) > 0)
-                     ? intval($_GET['radiusLineCount']) : 50;
+    $count = (array_key_exists('count', $_GET) && isset($_GET['count']) && intval($_GET['count']) > 0)
+           ? intval($_GET['count']) : 50;
 
     // preg quoted before usage
-    $radiusFilter = (array_key_exists('radiusFilter', $_GET) && isset($_GET['radiusFilter']) &&
-                     in_array($_GET['radiusFilter'], array( "Auth", "Info", "Error" )))
-                  ? $_GET['radiusFilter'] : "";
+    $filter = (array_key_exists('filter', $_GET) && isset($_GET['filter']) &&
+               in_array($_GET['filter'], array( "Auth", "Info", "Error" )))
+            ? $_GET['filter'] : "";
 
 
     // print HTML prologue
@@ -49,9 +48,9 @@
     
     print_html_prologue($title, $langCode);
 
-    $title .= sprintf(" :: %d Lines Count", $radiusLineCount);
-    if (!empty($radiusFilter) && $radiusFilter !== '.+') {
-        $title .= " with filter set to " . htmlspecialchars($radiusFilter, ENT_QUOTES, 'UTF-8');
+    $title .= sprintf(" :: %d Lines Count", $count);
+    if (!empty($filter)) {
+        $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
     }
 
     include ("menu-reports-logs.php");

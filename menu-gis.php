@@ -27,33 +27,20 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-gis.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
-
-$m_active = "Gis";
-
-?>
-
-
-<?php
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ViewMAP'), 'href' => 'gis-viewmap.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','EditMAP'), 'href' => 'gis-editmap.php', );
 
 
-?>      
+$sections = array();
+$sections[] = array( 'title' => 'GIS Mapping', 'descriptors' => $descriptors1 );
 
-            <div id="sidebar">
 
-                <h2>GIS</h2>
-                
-                <h3>GIS Mapping</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= t('button','ViewMAP') ?>" href="gis-viewmap.php" tabindex="1">
-                            <b>&raquo;</b><?= t('button','ViewMAP') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= t('button','EditMAP') ?>" href="gis-editmap.php" tabindex="2">
-                            <b>&raquo;</b><?= t('button','EditMAP') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+// add sections to menu
+$menu = array(
+                'title' => 'GIS',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

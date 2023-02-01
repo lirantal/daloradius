@@ -26,105 +26,93 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-bill-payments.php') !== false) {
     header("Location: index.php");
     exit;
 }
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-include_once("lang/main.php");
+include_once("include/management/populate_selectbox.php");
+$menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
+$menu_paymentnames = get_payment_types();
 
-$m_active = "Billing";
+$username_select = array(
+                            "name" => "username",
+                            "type" => "text",
+                            "value" => ((isset($username)) ? $username : ""),
+                            "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                            "caption" => t('all','Username'),
+                            "tooltipText" => t('Tooltip','usernameTooltip'),
+                            "sidebar" => true,
+                        );
+
+// define descriptors
+$descriptors1 = array();
+
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewPayment'), 'href' =>'bill-payments-new.php', );
+
+$components = array();
+
+$components[] = $username_select;
+
+$components[] = array(
+                        "name" => "invoice_id",
+                        "type" => "number",
+                        "value" => ((isset($invoice_id)) ? $invoice_id : ""),
+                        "min" => "1",
+                        "tooltipText" => t('Tooltip','invoiceID'),
+                        "sidebar" => true,
+                     );
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListPayments'), 'action' => 'bill-payments-list.php', 'method' => 'GET',
+                         'form_components' => $components, );
+
+$components = array();
+
+$components[] = array(
+                        "name" => "payment_id",
+                        "type" => "number",
+                        "value" => ((isset($payment_id)) ? $payment_id : ""),
+                        "min" => "1",
+                        "tooltipText" => t('Tooltip','PaymentId'),
+                        "sidebar" => true,
+                     );
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditPayment'), 'action' => 'bill-payments-edit.php', 'method' => 'GET',
+                         'form_components' => $components, );
+
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemovePayment'), 'href' =>'bill-payments-del.php', );
 
 
+$descriptors2 = array();
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewPayType'), 'href' =>'bill-payment-types-new.php', );
 
-include_once("include/management/autocomplete.php");
-?>
+if (count($menu_paymentnames) > 0) {
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListPayTypes'), 'href' => 'bill-payment-types-list.php', );
+    
+    $components = array();
+    $components[] = array(
+                                "name" => "paymentname",
+                                "type" => "select",
+                                "selected_value" => ((isset($paymentname)) ? $paymentname : ""),
+                                "required" => true,
+                                "options" => $menu_paymentnames,
+                                "caption" => t('all','PayTypeName'),
+                                "title" => t('Tooltip','PayTypeName'),
+                                "sidebar" => true,
+                            );
 
-            <div id="sidebar">
+    $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditPayType'), 'action' => 'bill-payment-types-edit.php', 'method' => 'GET',
+                             'form_components' => $components, );
+ 
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemovePayType'), 'href' => 'bill-payment-types-del.php', );
+}
 
-                <h2>Billing</h2>
+$sections = array();
+$sections[] = array( 'title' => 'Payments Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Payments Types Management', 'descriptors' => $descriptors2 );
 
-                <h3>Payments Management</h3>
-                <ul class="subnav">
+// add sections to menu
+$menu = array(
+                'title' => 'Billing',
+                'sections' => $sections,
+             );
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListPayments')) ?>" href="javascript:document.paymentslist.submit();">
-                            <b>&raquo;</b><?= t('button','ListPayments') ?>
-                        </a>
-                    
-                        <form name="paymentslist" action="bill-payments-list.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="username" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','Username'); ?><br>" value="<?= (isset($edit_username)) ? $edit_username : "" ?>">
-                            <input name="invoice_id" type="text" id="invoice_id" tooltipText="<?= t('Tooltip','invoiceID'); ?><br>"
-                                value="<?= (isset($edit_invoice_id)) ? $edit_invoice_id : "" ?>">
-                        </form>
-                    </li>
-
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewPayment')) ?>" href="bill-payments-new.php">
-                            <b>&raquo;</b><?= t('button','NewPayment') ?>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditPayment')) ?>" href="javascript:document.paymentsedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditPayment') ?></a>
-                        
-                        <form name="paymentsedit" action="bill-payments-edit.php" method="GET" class="sidebar">
-                            <input name="payment_id" type="text" id="payment_id" tooltipText="<?= t('Tooltip','PaymentId'); ?><br>"
-                                value="<?= (isset($edit_payment_id)) ? $edit_payment_id : "" ?>">
-                        </form>
-                    </li>
-
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemovePayment')) ?>" href="bill-payments-del.php">
-                            <b>&raquo;</b><?= t('button','RemovePayment') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-
-
-                <h3>Payment Types Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListPayTypes')) ?>" href="bill-payment-types-list.php">
-                            <b>&raquo;</b><?= t('button','ListPayTypes') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewPayType')) ?>" href="bill-payment-types-new.php">
-                            <b>&raquo;</b><?= t('button','NewPayType') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditPayType')) ?>" href="javascript:document.paymenttypesedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditPayType') ?>
-                        </a>
-                        
-                        <form name="paymenttypesedit" action="bill-payment-types-edit.php" method="GET" class="sidebar">
-                            <input name="paymentname" type="text" id="paymentname" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','PayTypeName'); ?><br>"
-                                value="<?= (isset($edit_paymentName)) ? $edit_paymentName : "" ?>">
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemovePayType')) ?>" href="bill-payment-types-del.php">
-                            <b>&raquo;</b><?= t('button','RemovePayType') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
-
-<script>
-<?php
-    if ($autoComplete) {
-?>
-    /** Making username interactive **/
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('username','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-<?php
-    }
-?>
-
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+menu_print($menu);

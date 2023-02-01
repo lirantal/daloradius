@@ -29,58 +29,49 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-hunt.php') !== false) {
 
 include_once("lang/main.php");
 
-$m_active = "Management";
-
-
-
-
-?>
-        
-            <div id="sidebar">
-
-                <h2>Management</h2>
-                
-                <h3>HuntGroup Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListHG')) ?>" href="mng-rad-hunt-list.php" tabindex="1">
-                            <b>&raquo;</b><?= t('button','ListHG') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewHG')) ?>" href="mng-rad-hunt-new.php" tabindex="2">
-                            <b>&raquo;</b><?= t('button','NewHG') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditHG')) ?>" href="javascript:document.mngradhuntedit.submit();" tabindex="3">
-                            <b>&raquo;</b><?= t('button','EditHG') ?>
-                        </a>
-                        <form name="mngradhuntedit" action="mng-rad-hunt-edit.php" method="GET" class="sidebar">
-<?php
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
 include_once("include/management/populate_selectbox.php");
-$menu_valid_huntgroups = get_huntgroups();
+$menu_options = get_huntgroups();
 
-$options = $menu_valid_huntgroups;
-array_unshift($options , '');
-$huntgroups_select = array(
-                                "name" => "item",
-                                "caption" => "Huntgroup item",
-                                "type" => "select",
-                                "options" => $options,
-                                "selected_value" => (isset($selected_huntgroup) ? $selected_huntgroup : ""),
-                             );
-print_form_component($huntgroups_select);
+// define descriptors
+$descriptors1 = array();
 
-?>
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveHG')) ?>" href="mng-rad-hunt-del.php" tabindex="6">
-                            <b>&raquo;</b><?= t('button','RemoveHG') ?>
-                        </a>
-                    </li>
-                    
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewHG'), 'href' =>'mng-rad-hunt-new.php',
+                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+
+if (count($menu_options) > 0) {
+    array_unshift($menu_options, "");
+    
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListHG'), 'href' => 'mng-rad-hunt-list.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+
+    $components = array();
+    $components[] = array(
+                            "name" => "item",
+                            "type" => "select",
+                            "selected_value" => ((isset($item)) ? $item : ""),
+                            "required" => true,
+                            "options" => $menu_options,
+                            "title" => "Huntgroup item",
+                          );
+    
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditHG'), 'action' => 'mng-rad-hunt-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveHG'), 'href' => 'mng-rad-hunt-del.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+}
+
+
+$sections = array();
+$sections[] = array( 'title' => 'Huntgroups Management', 'descriptors' => $descriptors1 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

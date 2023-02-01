@@ -27,101 +27,83 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-rad-realms.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Management";
-
-
-
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
 include_once("include/management/populate_selectbox.php");
-$menu_valid_proxies = get_proxies();
+$menu_options = get_realms();
 
-$options = $menu_valid_proxies;
-array_unshift($options , '');
-$proxies_select = array(
-                                "name" => "proxyname",
-                                "caption" => t('all','Proxy'),
-                                "type" => "select",
-                                "options" => $options,
-                                "selected_value" => (isset($selected_proxy) ? $selected_proxy : ""),
-                             );
+// define descriptors
+$descriptors1 = array();
 
-$menu_valid_realmnames = get_realms();
-$options = $menu_valid_realmnames;
-array_unshift($options , '');
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewRealm'), 'href' =>'mng-rad-realms-new.php',
+                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
-$realmnames_select = array(
-                                "name" => "realmname",
-                                "caption" => t('all','Realm'),
-                                "type" => "select",
-                                "options" => $options,
-                                "selected_value" => (isset($selected_realmname) ? $selected_realmname : ""),
-                             );
+if (count($menu_options) > 0) {
+    array_unshift($menu_options, "");
+    
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListRealms'), 'href' => 'mng-rad-realms-list.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
-unset($options);
-?>
-
-            <div id="sidebar">
-                <h2>Management</h2>
-                
-                <h3>Realms Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListRealms')) ?>" tabindex="1" href="mng-rad-realms-list.php">
-                            <b>&raquo;</b><?= t('button','ListRealms') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewRealm')) ?>" tabindex="2" href="mng-rad-realms-new.php">
-                            <b>&raquo;</b><?= t('button','NewRealm') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditRealm')) ?>" tabindex="3" href="javascript:document.mngradrealmedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditRealm') ?>
-                        </a>
-                        <form name="mngradrealmedit" action="mng-rad-realms-edit.php" method="GET" class="sidebar">
-<?php
-                        print_form_component($realmnames_select);
-?>
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveRealm')) ?>" tabindex="4" href="mng-rad-realms-del.php">
-                            <b>&raquo;</b><?= t('button','RemoveRealm') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
+    $components = array();
+    $components[] = array(
+                            "name" => "realmname",
+                            "type" => "select",
+                            "selected_value" => ((isset($realmname)) ? $realmname : ""),
+                            "required" => true,
+                            "options" => $menu_options,
+                            "title" => t('all','Realm'),
+                          );
+    
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditRealm'), 'action' => 'mng-rad-realms-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveRealm'), 'href' => 'mng-rad-realms-del.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+}
 
 
-                <h3>Proxys Management</h3>
-                <ul class="subnav">
+$menu_options = get_proxies();
 
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListProxys')) ?>" tabindex="5" href="mng-rad-proxys-list.php">
-                            <b>&raquo;</b><?= t('button','ListProxys') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewProxy')) ?>" tabindex="6" href="mng-rad-proxys-new.php">
-                            <b>&raquo;</b><?= t('button','NewProxy') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditProxy')) ?>" tabindex="7" href="javascript:document.mngradproxyedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditProxy') ?>
-                        </a>
-                        <form name="mngradproxyedit" action="mng-rad-proxys-edit.php" method="GET" class="sidebar">
-<?php
-                        print_form_component($proxies_select);
-?>
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveProxy')) ?>" tabindex="8" href="mng-rad-proxys-del.php">
-                            <b>&raquo;</b><?= t('button','RemoveProxy') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+// define descriptors
+$descriptors2 = array();
+
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewProxy'), 'href' =>'mng-rad-proxys-new.php',
+                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+
+if (count($menu_options) > 0) {
+    array_unshift($menu_options, "");
+    
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListProxys'), 'href' => 'mng-rad-proxys-list.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+
+    $components = array();
+    $components[] = array(
+                            "name" => "item",
+                            "type" => "select",
+                            "selected_value" => ((isset($item)) ? $item : ""),
+                            "required" => true,
+                            "options" => $menu_options,
+                            "title" => t('all','Proxy'),
+                          );
+    
+    $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditProxy'), 'action' => 'mng-rad-proxys-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveProxy'), 'href' => 'mng-rad-proxys-del.php',
+                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+}
+
+$sections = array();
+$sections[] = array( 'title' => 'Realms Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Proxies Management', 'descriptors' => $descriptors2 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
+
+menu_print($menu);
+

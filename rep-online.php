@@ -31,43 +31,9 @@
     include("library/layout.php");
 
     // validate this parameter before including menu
-    $username = (array_key_exists('usernameOnline', $_GET) && !empty(str_replace("%", "", trim($_GET['usernameOnline']))))
-              ? str_replace("%", "", trim($_GET['usernameOnline'])) : "";
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-    // feed the sidebar
-    $usernameOnline = $username_enc;
-
-    // init logging variables
-    $log = "visited page: ";
-    $logQuery = "performed query for ";
-    if (!empty($username)) {
-         $logQuery .= "username(s) starting with [$username] ";
-    } else {
-        $logQuery .= "all usernames ";
-    }
-    $logQuery .= "on page: ";
-
-
-    // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-
-    $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-
-    $title = t('Intro','reponline.php');
-    $help = t('helpPage','reponline');
-
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
-
-    include("menu-reports.php");
 
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
@@ -102,6 +68,36 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for ";
+    if (!empty($username)) {
+         $logQuery .= "username(s) starting with [$username] ";
+    } else {
+        $logQuery .= "all usernames ";
+    }
+    $logQuery .= "on page: ";
+
+
+    // print HTML prologue
+    $extra_css = array(
+        // css tabs stuff
+        "static/css/tabs.css"
+    );
+
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
+        // js tabs stuff
+        "static/js/tabs.js"
+    );
+
+    $title = t('Intro','reponline.php');
+    $help = t('helpPage','reponline');
+
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+
+    include("menu-reports.php");
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
@@ -182,7 +178,7 @@
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (!empty($username_enc) ? "&usernameOnline=" . urlencode($username_enc) : "");
+        $partial_query_string = (!empty($username_enc) ? "&username=" . urlencode($username_enc) : "");
 
         // this can be passed as form attribute and
         // printTableFormControls function parameter
@@ -333,12 +329,5 @@
 
     include('include/config/logging.php');
 
-    $inline_extra_js = "
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip()";
-
-    print_footer_and_html_epilogue($inline_extra_js);
+    print_footer_and_html_epilogue();
 ?>

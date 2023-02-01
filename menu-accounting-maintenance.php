@@ -27,33 +27,21 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-accounting-maintenance.php') !== false) 
     exit;
 }
 
-include_once("lang/main.php");
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','CleanupStaleSessions'), 'href' => 'acct-maintenance-cleanup.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','DeleteAccountingRecords'), 'href' => 'acct-maintenance-delete.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
-$m_active = "Accounting";
+$sections = array();
+$sections[] = array( 'title' => 'Maintenance', 'descriptors' => $descriptors1 );
 
 
-//~
-include_once("include/menu/auto_subnav.php");
+// add sections to menu
+$menu = array(
+                'title' => 'Accounting',
+                'sections' => $sections,
+             );
 
-$menu_elements = array(
-                        "acct-maintenance-cleanup.php" => t('button','CleanupStaleSessions'),
-                        "acct-maintenance-delete.php" => t('button','DeleteAccountingRecords'),
-                          );
-?>
-
-            <div id="sidebar">
-                <h2>Accounting</h2>
-    
-                <h3>Maintenance</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = 1;
-                foreach ($menu_elements as $href => $caption) {
-                    printf('<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b>%s</a></li>',
-                           $href, strip_tags($caption), $tabindex, $caption);
-                    $tabindex++;
-}
-?>
-
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+menu_print($menu);

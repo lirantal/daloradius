@@ -41,18 +41,9 @@
 
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-?>
-
-        </div><!-- #contentnorightbar -->
-        
-        <div id="footer">
-<?php
+    
     include('include/config/logging.php');
-    include('page-footer.php');
-?>
-        </div><!-- #footer -->
-    </div>
-</div>
 
-</body>
-</html>
+    print_footer_and_html_epilogue();
+
+?>

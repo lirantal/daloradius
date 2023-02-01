@@ -23,38 +23,27 @@
 
     include('library/checklogin.php');
     $operator = $_SESSION['operator_user'];
-    
+
     include_once('library/config_read.php');
-    
+
     include_once("lang/main.php");
-    
+
     include("library/layout.php");
 
     // print HTML prologue
     $title = "Home";
-    
+
     print_html_prologue($title, $langCode);
-    
-    include('menu-home.php');
-?>
-                <div id="contentnorightbar">
-                    <h2 id="Intro"><a href="#"></a></h2>
-                    <p>
-<?php 
+
+    include("menu-home.php");
+
+    echo '<div id="contentnorightbar">';
+    print_title_and_help($title, $help);
+
     include('library/extensions/welcome_page.php');
-?>
-                    </p>
-                </div><!-- #contentnorightbar -->
-                        
-                <div id="footer">
-<?php
-    $log = "visited page: ";
+
     include('include/config/logging.php');
-    include('page-footer.php');
+
+    print_footer_and_html_epilogue();
+
 ?>
-                </div><!-- #footer -->
-        
-            </div>
-        </div>
-    </body>
-</html>

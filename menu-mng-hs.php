@@ -29,66 +29,48 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-hs.php') !== false) {
 
 include_once("lang/main.php");
 
-?>
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+include_once("include/management/populate_selectbox.php");
+$menu_datalist = get_hotspots();
 
-<?php
-    $m_active = "Management";
+// define descriptors
+$descriptors1 = array();
+
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewHotspot'), 'href' =>'mng-hs-new.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+
+if (count($menu_datalist) > 0) {
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListHotspots'), 'href' => 'mng-hs-list.php',
+                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+
+    $components = array();
+    $components[] = array(
+                            "name" => "name",
+                            "type" => "text",
+                            "value" => ((isset($name)) ? $name : ""),
+                            "required" => true,
+                            "datalist" => (($autocomplete) ? $menu_datalist : array()),
+                            "tooltipText" => t('Tooltip','HotspotName'),
+                            "sidebar" => true
+                          );
     
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditHotspot'), 'action' => 'mng-hs-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveHotspot'), 'href' => 'mng-hs-del.php',
+                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+}
 
-    include_once("include/management/autocomplete.php");
-?>
 
-            <div id="sidebar">
+$sections = array();
+$sections[] = array( 'title' => 'Hotspots Management', 'descriptors' => $descriptors1 );
 
-                <h2>Management</h2>
-                
-                <h3>Hotspots Management</h3>
-                <ul class="subnav">
-                
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListHotspots')) ?>" tabindex="1" href="mng-hs-list.php">
-                            <b>&raquo;</b><?= t('button','ListHotspots') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewHotspot')) ?>" tabindex="2" href="mng-hs-new.php">
-                            <b>&raquo;</b><?= t('button','NewHotspot') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditHotspot')) ?>" tabindex="3" href="javascript:document.mnghsedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditHotspot') ?>
-                        </a>
-                        <form name="mnghsedit" action="mng-hs-edit.php" method="GET" class="sidebar">
-                            <input name="name" type="text"  id="hotspotEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','HotspotName'); ?><br>"
-                                value="<?= (isset($edit_hotspotname)) ? $edit_hotspotname : "" ?>">
-                        </form>
-                    </li>
-                        
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveHotspot')) ?>" tabindex="4" href="mng-hs-del.php">
-                            <b>&raquo;</b><?= t('button','RemoveHotspot') ?>
-                        </a>
-                    </li>
-                    
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
 
-<script>
-<?php
-    if ($autoComplete) {
-?>
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('hotspotEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteHotspots');
-    
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+menu_print($menu);

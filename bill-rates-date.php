@@ -27,15 +27,16 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+
     // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
     $logDebugSQL = "";
 
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
-
+    
     //setting values for the order by and order type variables
     // and in other cases we partially strip some character,
     // and leave validation/escaping to other functions used later in the script
@@ -57,6 +58,27 @@
                 preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : "";
+
+    $cols = array(
+                    "username" => t('all','Username'),
+                    "nasipaddress" => t('all','NASIPAddress'),
+                    "acctstarttime" => t('all','LastLoginTime'),
+                    "acctsessiontime" => t('all','TotalTime'),
+                    t('all','Billed')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intval($colspan / 2);
+    
+    $param_cols = array();
+    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($param_cols)))
+             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+               ? strtolower($_GET['orderType']) : "asc";
 
     //feed the sidebar variables
     $billing_date_ratename = $ratename;
@@ -81,54 +103,37 @@
 
     include("menu-bill-rates.php");
     
-    $cols = array(
-                    "username" => t('all','Username'),
-                    "nasipaddress" => t('all','NASIPAddress'),
-                    "acctstarttime" => t('all','LastLoginTime'),
-                    "acctsessiontime" => t('all','TotalTime'),
-                    t('all','Billed')
-                 );
-    $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
-    
-    $param_cols = array();
-    foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[0];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
-               ? strtolower($_GET['orderType']) : "asc";
     
     echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
-    $sql_WHERE = array();
-    $partial_query_params = array();
-
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
-        $partial_query_params[] = sprintf("startdate=%s", $startdate);
-    }
-
-    if (!empty($enddate)) {
-        $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
-        $partial_query_params[] = sprintf("enddate=%s", $enddate);
-    }
-
-    if (!empty($username)) {
-        $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($username));
-        $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
-    }
 
     if (!empty($ratename)) {
+        
+        include('library/opendb.php');
+        
+        $sql_WHERE = array();
+        $partial_query_params = array();
+
+        if (!empty($startdate)) {
+            $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
+            $partial_query_params[] = sprintf("startdate=%s", $startdate);
+        }
+
+        if (!empty($enddate)) {
+            $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
+            $partial_query_params[] = sprintf("enddate=%s", $enddate);
+        }
+
+        if (!empty($username)) {
+            $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($username));
+            $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
+        }
+        
         $sql_WHERE[] = sprintf("ratename='%s'", $dbSocket->escapeSimple($ratename));
         $partial_query_params[] = sprintf("ratename=%s", urlencode($ratename_enc));
         
 
-        include 'library/opendb.php';
         include 'include/management/pages_common.php';
         include 'include/management/pages_numbering.php';        // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
@@ -142,10 +147,8 @@
         userBillingRatesSummary($username, $startdate, $enddate, $ratename, 1);                // draw the billing rates summary table
 
 
-        include 'library/opendb.php';
-
         // get rate type
-        $sql = sprintf("SELECT rateType FROM %s WHERE rateName = '%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $ratename);
+        $sql = sprintf("SELECT rateType FROM %s WHERE rateName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $ratename);
         $res = $dbSocket->query($sql);
 
         if ($res->numRows() == 0) {
@@ -189,7 +192,7 @@
                        $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $ratename);
 
         if (count($sql_WHERE) > 0) {
-            $sql .= implode(" AND ", $sql_WHERE);
+            $sql .= " AND " . implode(" AND ", $sql_WHERE);
         }
         $res = $dbSocket->query($sql);
         $numrows = $res->numRows();
@@ -274,14 +277,14 @@
             $failureMsg = "No entries retrieved";
         }
         
+        include('library/closedb.php');
+        
     } else {
         $failureMsg = "Rate name is required";
         
     }
     
     include_once("include/management/actionMessages.php");
-
-    include('library/closedb.php');
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

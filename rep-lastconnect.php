@@ -27,15 +27,15 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+    
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
     
-    include_once("lang/main.php");
-    include("library/validation.php");
-    include("library/layout.php");
-
     // print HTML prologue
     $title = t('Intro','replastconnect.php');
     $help = t('helpPage','replastconnect');
@@ -74,15 +74,12 @@
 
     // and in other cases we partially strip some character,
     // and leave validation/escaping to other functions used later in the script
-    $usernameLastConnect = (array_key_exists('usernameLastConnect', $_GET) &&
-                            !empty(str_replace("%", "", trim($_GET['usernameLastConnect']))))
-                         ? str_replace("%", "", trim($_GET['usernameLastConnect'])) : "";
-    $username_enc = (!empty($usernameLastConnect)) ? htmlspecialchars($usernameLastConnect, ENT_QUOTES, 'UTF-8') : "";
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
-    include("menu-reports.php");
-
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
-
+    
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
     //   - for validating user input
@@ -122,6 +119,8 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : $default_orderType;
+    
+    include("menu-reports.php");
 
     
     echo '<div id="contentnorightbar">';
@@ -132,12 +131,12 @@
     include('library/opendb.php');
 
     // pa is a placeholder in the SQL statements below
-    // except for $usernameLastConnect, which has been only partially escaped,
+    // except for $username, which has been only partially escaped,
     // all other query parameters have been validated earlier.
     $sql_WHERE = array();
-    if (!empty($usernameLastConnect)) {
+    if (!empty($username)) {
         $sql_WHERE[] = sprintf("pa.%s LIKE '%s%%'", $tableSetting['postauth']['user'],
-                                                    $dbSocket->escapeSimple($usernameLastConnect));
+                                                    $dbSocket->escapeSimple($username));
     }
     $sql_WHERE[] = sprintf("pa.%s BETWEEN '%s' AND '%s'", $tableSetting['postauth']['date'],
                                                           $dbSocket->escapeSimple($startdate),
@@ -191,7 +190,7 @@
             $partial_query_params[] = sprintf("enddate=%s", $enddate);
         }
         if (!empty($username_enc)) {
-            $partial_query_params[] = sprintf("usernameLastConnect=%s", urlencode($username_enc));
+            $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
         }
         if (!empty($radiusReply)) {
             $partial_query_params[] = sprintf("radiusReply=%s", $radiusReply);

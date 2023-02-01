@@ -248,15 +248,8 @@
     }
     
     include('library/closedb.php');
-    include('include/config/logging.php');
-    
-    $inline_extra_js = "
-var tooltipObj = new DHTMLgoodies_formTooltip();
-tooltipObj.setTooltipPosition('right');
-tooltipObj.setPageBgColor('#EEEEEE');
-tooltipObj.setTooltipCornerSize(15);
-tooltipObj.initFormFieldTooltip()";
-    
-    print_footer_and_html_epilogue($inline_extra_js);
 
+    include('include/config/logging.php');
+
+    print_footer_and_html_epilogue();
 ?>

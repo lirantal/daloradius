@@ -27,54 +27,47 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-config-operators.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-$m_active = "Config";
+include_once("include/management/populate_selectbox.php");
+$menu_datalist = get_operators();
 
-?>
+// define descriptors
+$descriptors1 = array();
 
-        
-<?php
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewOperator'), 'href' =>'config-operators-new.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
+if (count($menu_datalist) > 0) {
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListOperators'), 'href' => 'config-operators-list.php',
+                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
-?>      
-
-            <div id="sidebar">
-                <h2>Configuration</h2>
+    $components = array();
+    $components[] = array(
+                            "name" => "operator_username",
+                            "type" => "text",
+                            "value" => ((isset($operator_username)) ? $operator_username : ""),
+                            "required" => true,
+                            "datalist" => (($autocomplete) ? $menu_datalist : array()),
+                            "title" => t('Tooltip','OperatorName'),
+                          );
     
-                <h3>Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= strip_tags(t('button','ListOperators')) ?>" tabindex="1" href="config-operators-list.php">
-                            <b>&raquo;</b><?= t('button','ListOperators') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','NewOperator')) ?>" tabindex="2" href="config-operators-new.php">
-                            <b>&raquo;</b><?= t('button','NewOperator') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','EditOperator')) ?>" tabindex="3" href="javascript:document.mngedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditOperator') ?>
-                        </a>
-                        <form name="mngedit" action="config-operators-edit.php" method="GET" class="sidebar">
-                            <input name="operator_username" value="<?= (isset($edit_operator_username)) ? $edit_operator_username : "" ?>"
-                                type="text" tooltipText="<?= t('Tooltip','OperatorName') ?>">
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= strip_tags(t('button','RemoveOperator')) ?>" tabindex="4" href="config-operators-del.php">
-                            <b>&raquo;</b><?= t('button','RemoveOperator') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditOperator'), 'action' => 'config-operators-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveOperator'), 'href' => 'config-operators-del.php',
+                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+}
 
-<script>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+
+$sections = array();
+$sections[] = array( 'title' => 'Operators Management', 'descriptors' => $descriptors1 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Configuration',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

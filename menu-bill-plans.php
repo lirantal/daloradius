@@ -27,63 +27,43 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-bill-plans.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
 
-$m_active = "Billing";
+include_once("include/management/populate_selectbox.php");
+$menu_planNames = get_plans();
 
+// define descriptors
+$descriptors1 = array();
 
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewPlan'), 'href' =>'bill-plans-new.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
-include_once("include/management/autocomplete.php");
-?>
+if (count($menu_planNames) > 0) {
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListPlans'), 'href' => 'bill-plans-list.php',
+                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
-            <div id="sidebar">
+    $components = array();
+    $components[] = array(
+                            "name" => "planName",
+                            "type" => "select",
+                            "selected_value" => ((isset($planName)) ? $planName : ""),
+                            "required" => true,
+                            "options" => $menu_planNames,
+                          );
 
-                <h2>Billing</h2>
-                
-                <h3>Plans Management</h3>
-                <ul class="subnav">
-                
-                    <li>
-                        <a title="<?= t('button','ListPlans') ?>" tabindex="1" href="bill-plans-list.php">
-                            <b>&raquo;</b><?= t('button','ListPlans') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= t('button','NewPlan') ?>" tabindex="2" href="bill-plans-new.php">
-                            <b>&raquo;</b><?= t('button','NewPlan') ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="<?= t('button','EditPlan') ?>" tabindex="3" href="javascript:document.billplansedit.submit();">
-                            <b>&raquo;</b><?= t('button','EditPlan') ?></a>
-                        <form name="billplansedit" action="bill-plans-edit.php" method="GET" class="sidebar">
-                            <input tabindex="4" name="planName" type="text" id="planNameEdit" <?= ($autoComplete) ? 'autocomplete="off"' : "" ?>
-                                tooltipText="<?= t('Tooltip','BillingPlanName'); ?><br>"
-                                value="<?= (isset($edit_planname)) ? $edit_planname : "" ?>">
-                        </form>
-                    </li>
-                    <li>
-                        <a title="<?= t('button','RemovePlan') ?>" tabindex="5" href="bill-plans-del.php">
-                            <b>&raquo;</b><?= t('button','RemovePlan') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditPlan'), 'action' => 'bill-plans-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
 
-<script>
-<?php
-if ($autoComplete) {
-?>
-    /** Making planNameEdit interactive **/
-    var autoComEdit = new DHTMLSuite.autoComplete();
-    autoComEdit.add('planNameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteBillingPlans');
-<?php
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemovePlan'), 'href' => 'bill-plans-del.php',
+                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }
-?>
-    
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+
+$sections = array();
+$sections[] = array( 'title' => 'Plans Management', 'descriptors' => $descriptors1 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

@@ -27,99 +27,57 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-mng-users.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-$m_active = "Managment";
+include_once("include/management/populate_selectbox.php");
+$menu_users = get_users('CONFIG_DB_TBL_DALOUSERINFO');
 
 
+// define descriptors
+$descriptors1 = array();
 
-include_once("include/management/autocomplete.php");
-?>
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUser'), 'href' =>'mng-new.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUserQuick'), 'href' =>'mng-new-quick.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
-            <div id="sidebar">
-                <h2>Management</h2>
-                
-                <h3>Users Management</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= t('button','ListUsers') ?>" tabindex="1" href="mng-list-all.php">
-                            <b>&raquo;</b><img style="margin-right:5px; border:0" src="static/images/icons/userList.gif"><?= t('button','ListUsers') ?>
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= t('button','NewUser') ?>" tabindex="2" href="mng-new.php">
-                            <b>&raquo;</b><img style="margin-right:5px; border:0" src="static/images/icons/userNew.gif"><?= t('button','NewUser') ?>
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= t('button','NewUserQuick') ?>" tabindex="3" href="mng-new-quick.php">
-                            <b>&raquo;</b><img style="margin-right:5px; border:0" src="static/images/icons/userNew.gif"><?= t('button','NewUserQuick') ?>
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= t('button','EditUser') ?>" tabindex="4" href="javascript:document.mngedit.submit();">
-                            <b>&raquo;</b><img style="margin-right:5px; border:0" src="static/images/icons/userEdit.gif"><?= t('button','EditUser') ?>
-                        </a>
-                        
-                        <form name="mngedit" action="mng-edit.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="usernameEdit" autocomplete="off"
-                                tooltipText="<?= t('Tooltip','Username'); ?> <br>" tabindex="5"
-                                value="<?= (isset($edit_username)) ? $edit_username : "" ?>">
-                        </form>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= t('button','SearchUsers') ?>" tabindex="6" href="javascript:document.mngsearch.submit();">
-                            <b>&raquo;</b><img style="margin-right:5px; border:0" src="static/images/icons/userSearch.gif"><?= t('button','SearchUsers') ?>
-                        </a>
-                        
-                        <form name="mngsearch" action="mng-search.php" method="GET" class="sidebar">
-                            <input name="username" type="text" id="usernameSearch" autocomplete="off" tabindex="7"
-                                tooltipText="<?= t('Tooltip','Username') . "<br>" . t('Tooltip','UsernameWildcard'); ?>"
-                                value="<?= (isset($search_username)) ? $search_username : "" ?>">
-                        </form>
-                    </li>
-                    
-                    <li>
-                        <a title="<?= t('button','RemoveUsers') ?>" tabindex="8" href="mng-del.php">
-                            <b>&raquo;</b><img style="margin-right:5px; border:0" src="static/images/icons/userRemove.gif"><?= t('button','RemoveUsers') ?>
-                        </a>
-                    </li>
-                </ul>
+if (count($menu_users) > 0) {
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListUsers'), 'href' => 'mng-list-all.php',
+                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
-                <br>
-                
-                <h3>Extended Capabilities</h3>
-                <ul class="subnav">
-                    <li>
-                        <a title="<?= t('button','ImportUsers') ?>" tabindex="9" href="mng-import-users.php">
-                            <b>&raquo;</b><img style="margin-right:5px; border:0" src="static/images/icons/userNew.gif"><?= t('button','ImportUsers') ?>
-                        </a>
-                    </li>
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+    $components = array();
+    $components[] = array(
+                            "name" => "username",
+                            "type" => "text",
+                            "value" => ((isset($username)) ? $username : ""),
+                            "required" => true,
+                            "datalist" => (($autocomplete) ? $menu_users : array()),
+                            "tooltipText" => t('Tooltip','usernameTooltip'),
+                            "sidebar" => true,
+                          );
 
-<script>
-<?php
-    
-    if ($autoComplete) {
-?>
-    var autoComEdit = new DHTMLSuite.autoComplete();
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUser'), 'action' => 'mng-edit.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
 
-    /** Making usernameEdit interactive **/
-    autoComEdit.add('usernameEdit','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchUsers'), 'action' => 'mng-search.php', 'method' => 'GET',
+                             'img' => array( 'src' => 'static/images/icons/userSearch.gif', ), 'form_components' => $components, );
 
-    /** Making usernameSearch interactive **/
-    autoComEdit.add('usernameSearch','include/management/dynamicAutocomplete.php','_small','getAjaxAutocompleteUsernames');
-<?php
-    }
-?>
-    var tooltipObj = new DHTMLgoodies_formTooltip();
-    tooltipObj.setTooltipPosition('right');
-    tooltipObj.setPageBgColor('#EEEEEE');
-    tooltipObj.setTooltipCornerSize(15);
-    tooltipObj.initFormFieldTooltip();
-</script>
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveUsers'), 'href' => 'mng-del.php',
+                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+}
+
+$descriptors2 = array();
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','ImportUsers'), 'href' =>'mng-import-users.php',
+                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+$sections = array();
+$sections[] = array( 'title' => 'Users Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => 'Extended Capabilities', 'descriptors' => $descriptors2 );
+
+// add sections to menu
+$menu = array(
+                'title' => 'Management',
+                'sections' => $sections,
+             );
+
+menu_print($menu);

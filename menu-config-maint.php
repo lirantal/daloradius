@@ -27,38 +27,21 @@ if (strpos($_SERVER['PHP_SELF'], '/menu-config-maint.php') !== false) {
     exit;
 }
 
-include_once("lang/main.php");
+// define descriptors
+$descriptors1 = array();
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','TestUserConnectivity'), 'href' => 'config-maint-test-user.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','DisconnectUser'), 'href' => 'config-maint-disconnect-user.php',
+                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
-$m_active = "Config";
-
-?>
-
-
-<?php
+$sections = array();
+$sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );
 
 
-    
-    $menu_elements = array(
-        "config-maint-test-user.php" => array(t('button','TestUserConnectivity'), "static/images/icons/configMaintenance.png"),
-        "config-maint-disconnect-user.php" => array(t('button','DisconnectUser'), "static/images/icons/configMaintenance.png"),
-    );
-?>      
+// add sections to menu
+$menu = array(
+                'title' => 'Configuration',
+                'sections' => $sections,
+             );
 
-            <div id="sidebar">
-
-                <h2>Configuration</h2>
-
-                <h3>Global Settings</h3>
-                <ul class="subnav">
-<?php
-                $tabindex = 1;
-                foreach ($menu_elements as $href => $items) {
-                    list($caption, $src) = $items;
-                    printf('<li><a href="%s" title="%s" tabindex="%s"><b>&raquo;</b><img style="border: 0; margin-right: 5px" src="%s">%s</a></li>',
-                           $href, strip_tags($caption), $tabindex, $src, $caption);
-                    $tabindex++;
-                }
-?>
-
-                </ul><!-- .subnav -->
-            </div><!-- #sidebar -->
+menu_print($menu);
