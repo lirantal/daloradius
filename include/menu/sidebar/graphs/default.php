@@ -30,6 +30,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/graphs/default.php') !==
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $type, $size, $username, $logged_users_on_date;
+
 include_once("include/management/populate_selectbox.php");
 $username_options = get_users('CONFIG_DB_TBL_RADACCT');
 
@@ -76,28 +78,44 @@ $descriptors1 = array();
 $components = array();
 $components[] = $username_input;
 $components[] = $timeunit_select;
-    
+
+$components[0]['id'] = "id_" . rand();
+$components[1]['id'] = "id_" . rand();
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserLogins'), 'action' => 'graphs-overall_logins.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
+                         'icon' => 'graph-up', 'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
 $components[] = $sizeunit_select;
 
+$components[0]['id'] = "id_" . rand();
+$components[1]['id'] = "id_" . rand();
+$components[2]['id'] = "id_" . rand();
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserDownloads'), 'action' => 'graphs-overall_download.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
+                         'icon' => 'graph-up', 'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
+
+$components[0]['id'] = "id_" . rand();
+$components[1]['id'] = "id_" . rand();
+$components[2]['id'] = "id_" . rand();
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserUploads'), 'action' => 'graphs-overall_upload.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
+                         'icon' => 'graph-up', 'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
 $components = array();
 $components[] = $timeunit_select;
 
+$components[0]['id'] = "id_" . rand();
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','TotalLogins'), 'action' => 'graphs-alltime_logins.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
+                         'icon' => 'graph-up', 'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
 $components[] = $sizeunit_select;
 
+$components[0]['id'] = "id_" . rand();
+$components[1]['id'] = "id_" . rand();
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','TotalTraffic'), 'action' => 'graphs-alltime_traffic_compare.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
+                         'icon' => 'graph-up', 'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
 $components = array();
 $components[] = array(
@@ -109,8 +127,10 @@ $components[] = array(
                             "sidebar" => true,
                      );
 
+$components[0]['id'] = "id_" . rand();
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','LoggedUsers'), 'action' => 'graphs-logged_users.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
+                         'icon' => 'graph-up', 'img' => array( 'src' => 'static/images/icons/graphsGeneral.gif', ), 'form_components' => $components, );
 
 $sections = array();
 $sections[] = array( 'title' => 'User Charts', 'descriptors' => $descriptors1 );

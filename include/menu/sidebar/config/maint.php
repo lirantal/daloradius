@@ -30,9 +30,9 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/config/maint.php') !== f
 // define descriptors
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','TestUserConnectivity'), 'href' => 'config-maint-test-user.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'person-exclamation', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DisconnectUser'), 'href' => 'config-maint-disconnect-user.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'person-x', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
 $sections = array();
 $sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );

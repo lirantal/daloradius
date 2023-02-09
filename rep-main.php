@@ -28,7 +28,7 @@
     $log = "visited page: ";
 
     include_once("lang/main.php");
-    
+    include("library/validation.php");
     include("library/layout.php");
 
     // print HTML prologue
@@ -37,9 +37,6 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include('include/config/logging.php');

@@ -42,15 +42,15 @@
                     "proxyname" => t('all','ProxyName'),
                     "creationdate" => t('all','CreationDate'),
                     "creationby" => t('all','CreationBy'),
-                    "updatedate" => t('all','UpdateDate'), 
+                    "updatedate" => t('all','UpdateDate'),
                     "updateby" => t('all','UpdateBy')
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
@@ -64,13 +64,10 @@
     // print HTML prologue
     $title = t('Intro','mngradproxys.php');
     $help = t('helpPage','mngradproxyslist');
-    
+
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-  
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -84,17 +81,17 @@
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-        
-        //~ id, proxyname, retry_delay, retry_count, dead_time, default_fallback, creationdate, creationby, updatedate, updateby, 
+
+        //~ id, proxyname, retry_delay, retry_count, dead_time, default_fallback, creationdate, creationby, updatedate, updateby,
 
         // we execute and log the actual query
         $sql = sprintf("SELECT id, proxyname, creationdate, creationby, updatedate, updateby
@@ -102,121 +99,103 @@
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
-        
-        // this can be passed as form attribute and 
+
+        // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-rad-proxys-del.php";
-?>
 
-<form name="listall" method="POST" action="<?= $action ?>">
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
 
-    <table border="0" class="table1">
-        <thead>
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'item[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
 
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('item[]', $action);
-?>
-                </th>
-            </tr>
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
 
-            <tr>
-<?php
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>
-            </tr>
-            
-        </thead>
-        
-        <tbody>
-<?php
 
-        // prepare table rows
-        $table_rows = array();
-        
-        $count = 1;
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
-            
+
+            $rowlen = count($row);
+
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+
             list($id, $proxyname, $creationdate, $creationby, $updatedate, $updateby) = $row;
-            
-            // preparing checkbox
+
+            // preparing checkboxes and tooltips stuff
             $id = intval($id);
             $item_id = sprintf("proxy-%d", $id);
-            $checkbox_id = sprintf("checkbox-%d", $count);
-            
-            // tooltip stuff
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-proxys-edit.php?item=%s">%s</a>',
-                                   $item_id, t('Tooltip','EditProxy'));
-            
-            $onclick = 'javascript:return false;';
-        
-            $tr = array();
-            $tr[] = sprintf('<input type="checkbox" name="item[]" value="%s" id="%s">', $item_id, $checkbox_id)
-                          . sprintf('<label for="%s">', $checkbox_id)
-                          . sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>", $onclick, $tooltipText)
-                          . $id . '</a>' . '</label>';
-        
-            // other row elements
-            $tr[] = htmlspecialchars($proxyname, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($creationdate, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($creationby, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($updatedate, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($updateby, ENT_QUOTES, 'UTF-8');
 
-            $table_rows[] = $tr;
+            $tooltip = array(
+                                'subject' => $proxyname,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-proxys-edit.php?item=%s', $item_id, ), 'label' => t('Tooltip','EditProxy'), );
+
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // create checkbox
+            $d = array( 'name' => 'item[]', 'value' => $item_id, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
+
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $creationdate, $creationby, $updatedate, $updateby );
+
+            // print table row
+            print_table_row($table_row);
 
             $count++;
 
         }
-        
-        // draw tr(s)
-        $simple_td_format = '<td>%s</td>' . "\n";
 
-        foreach ($table_rows as $tr) {
-            echo '<tr>';
-            
-            foreach ($tr as $td) {
-                printf($simple_td_format, $td);
-            }
-            
-            echo '</tr>';
-        }
-?>
-        </tbody>
-<?php
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-        
-    </table>
-    
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
+        printLinks($links, $drawNumberLinks);
 
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
 
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue();
 ?>

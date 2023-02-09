@@ -134,15 +134,10 @@
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/pages_common.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     $title = t('Intro','mngradrealmsnew.php');
@@ -154,9 +149,6 @@
         $title .= ":: $realmname_enc";
     } 
 
-    include("include/menu/sidebar.php");
-    echo '<div id="contentnorightbar">';
-    
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
@@ -253,6 +245,9 @@
 
         open_form();
 
+        // open tab wrapper
+        open_tab_wrapper();
+
         // tab 0
         open_tab($navkeys, 0, true);
 
@@ -288,6 +283,9 @@
         close_fieldset();
         
         close_tab($navkeys, 1);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         $input_descriptors3 = array();
         

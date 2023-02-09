@@ -168,13 +168,13 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
+    
     
     if (!empty($batch_name) && !is_array($batch_name)) {
         $title .= " :: " . htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8');
     }
     
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');

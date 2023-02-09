@@ -309,83 +309,38 @@ $hddfreespace = get_hdd_freespace();
 // network interfaces info
 $iflist = get_interface_list();
 
-?>
 
-<h3>General Information</h3>
-<table class="summarySection">
-  <tr>
-    <td class="summaryKey">System distro</td>
-    <td class="summaryValue"><span class="sleft"><?= get_system_name_and_version() ?></span></td>
-  </tr>
+$table1 = array( 'title' => 'General Information', 'rows' => array() );
+$table1['rows'][] = array( "System distro", get_system_name_and_version() );
+$table1['rows'][] = array( "Uptime", uptime() );
+$table1['rows'][] = array( "System Load", get_system_load() );
+$table1['rows'][] = array( "Hostname", get_hostname() );
+$table1['rows'][] = array( "Current Date", get_datetime() );
+print_simple_table($table1);
+
+
+$table2 = array( 'title' => 'Memory Information', 'rows' => array() );
+$table2['rows'][] = array( "Mem. Total", convert_ToMB($meminfo['MemTotal']) );
+$table2['rows'][] = array( "Mem. Free", convert_ToMB($meminfo['MemFree']) );
+$table2['rows'][] = array( "Mem. Used", convert_ToMB($meminfo['MemUsed']) );
+print_simple_table($table2);
+
+$table3 = array( 'title' => 'Harddrive Information', 'rows' => array() );
+$table3['rows'][] = array( "Free Drive Space", $hddfreespace );
+print_simple_table($table3);
+
+
+foreach ($iflist as $ifname) {
+    $title = "Network Interface " . $ifname;
+    $table = array( 'title' => $title, 'rows' => array() );
     
-  <tr>
-    <td class="summaryKey">Uptime</td>
-    <td class="summaryValue"><span class="sleft"><?= uptime() ?></span></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">System Load</td>
-    <td class="summaryValue"><span class="sleft"><?= get_system_load() ?></span></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">Hostname</td>
-    <td class="summaryValue"><span class="sleft"><?= get_hostname() ?></span></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">Current Date</td>
-    <td class="summaryValue"><span class="sleft"><?= get_datetime() ?></span></td>
-  </tr>
-</table>
+    $table['rows'][] = array( "Interface", $ifname );
+    $table['rows'][] = array( "IP addr", get_ip_addr($ifname) );
+    $table['rows'][] = array( "Subnet mask", get_mask_addr($ifname) );
+    $table['rows'][] = array( "MAC addr", get_mac_addr($ifname) );
+    
+    print_simple_table($table);
+}
 
 
-<h3>Memory Information</h3>
-<table class="summarySection">
-  <tr>
-    <td class="summaryKey">Mem. Total</td>
-    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($meminfo['MemTotal']) ?></span></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">Mem. Free</td>
-    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($meminfo['MemFree']) ?></span></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">Mem. Used</td>
-    <td class="summaryValue"><span class="sleft"><?= convert_ToMB($meminfo['MemUsed']) ?></span></td>
-  </tr>
-</table>
-
-
-<h3>Harddrive Information</h3>
-<table class="summarySection">
-  <tr>
-    <td class="summaryKey">Free Drive Space</td>
-    <td class="summaryValue"><span class="sleft"><?= $hddfreespace ?></span></td>
-  </tr>
-</table>
-
-<h3>Network Interfaces</h3>
-
-<?php
-    foreach ($iflist as $ifname) {
-?>
-<table class="summarySection">    
-  <tr>
-    <td class="summaryKey">Interface</td>
-    <td class="stitle"><?= $ifname ?></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">IP</td>
-    <td class="summaryValue"><span class="sleft"><?= get_ip_addr($ifname) ?></span></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">Mask</td>
-    <td class="summaryValue"><span class="sleft"><?= get_mask_addr($ifname) ?></span></td>
-  </tr>
-  <tr>
-    <td class="summaryKey">MAC address</td>
-    <td class="summaryValue"><span class="sleft"><?= get_mac_addr($ifname) ?></span></td>
-  </tr>
-</table>
-
-<?php
-    }
 ?>

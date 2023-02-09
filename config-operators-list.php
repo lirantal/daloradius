@@ -72,12 +72,8 @@
     $help = t('helpPage','configoperatorslist');
     
     print_html_prologue($title, $langCode);
-
-    include("include/menu/sidebar.php");
-
                
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
 
@@ -113,40 +109,34 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "config-operators-del.php";
-?>
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'operator_username[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
 
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('operator_username[]', $action);
-?>
-                </th>
-            </tr>
-            
-            <tr>
-<?php
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>           
-            </tr>
-        </thead>
-        
-        <tbody>
-<?php
-        $count = 1;
+
+        // closes table header, opens table body
+        print_table_middle();
+   
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -161,43 +151,46 @@
                 $auth = "[Password is hidden]";
             }
             
-            $onclick = "javascript:return false;";
-            $tooltipText = sprintf('<a class="toolTip" href="config-operators-edit.php?operator_username=%s">%s</a>', 
-                                   urlencode($username), t('Tooltip','UserEdit'));
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="operator_username[]" value="<?= $username ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>"><?= $id ?></label>
-                </td>
-                <td>
-                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                        <?= $username ?>
-                    </a>
-                </td>
-                <td><?= $auth ?></td>
-                <td><?= $fullname ?></td>
-                <td><?= $title ?></td>
-            </tr>
-<?php
+            // preparing checkboxes and tooltips stuff
+            $tooltip = array(
+                                'subject' => $username,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('config-operators-edit.php?operator_username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // create checkbox
+            $d = array( 'name' => 'operator_username[]', 'value' => $username, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
+
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $auth, $fullname, $title );
+
+            // print table row
+            print_table_row($table_row);
 
             $count++;
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        printLinks($links, $drawNumberLinks);
 
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

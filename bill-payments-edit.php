@@ -186,9 +186,9 @@
         $title .= sprintf(" (id: #%d)", $payment_id);
     }
     
-    include("include/menu/sidebar.php");
     
-    echo '<div id="contentnorightbar">';
+    
+
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');

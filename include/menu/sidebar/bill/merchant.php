@@ -27,11 +27,13 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/merchant.php') !== 
     exit;
 }
 
+include_once("library/validation.php");
 
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-include_once("library/validation.php");
+global $startdate, $enddate, $valid_vendorTypes, $billing_paypal_vendor_type, $billing_paypal_payeremail,
+       $valid_paymentStatus, $bill_merchant_transactions_options_all, $sqlfields, $orderBy, $orderType;
 
 $components = array();
 
@@ -82,7 +84,7 @@ $components[] = array(
                             "name" => "sqlfields[]",
                             "id" => "sqlfields",
                             "options" => $bill_merchant_transactions_options_all,
-                            "selected_value" => ((isset($sqlfields)) ? $sqlfields : $bill_merchant_transactions_options_default),
+                            "selected_value" => ((isset($bill_merchant_transactions_options_all)) ? $sqlfields : $bill_merchant_transactions_options_default),
                             "multiple" => true,
                             "size" => 7,
                             "show_controls" => true,
@@ -106,7 +108,7 @@ $components[] = array(
 
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ProcessQuery'), 'action' => 'bill-merchant-transactions.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'filter-circle-fill', 'form_components' => $components, );
 
 $sections = array();
 $sections[] = array( 'title' => 'Track Merchant Transactions', 'descriptors' => $descriptors1 );

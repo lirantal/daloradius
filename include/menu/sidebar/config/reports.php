@@ -30,7 +30,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/config/reports.php') !==
 // define descriptors
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DashboardSettings'), 'href' => 'config-reports-dashboard.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png', ), );
+                         'icon' => 'speedometer2', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png', ), );
 
 $sections = array();
 $sections[] = array( 'title' => 'Reporting Settings', 'descriptors' => $descriptors1 );

@@ -45,6 +45,14 @@ $pageNum = (array_key_exists('page', $_REQUEST) && isset($_REQUEST['page']) &&
 
 $offset = ($pageNum - 1) * $rowsPerPage;
 
+function printLinks($links, $drawNumberLinks) {
+    // page navigation controls are shown only if there is more than one page
+    if ($drawNumberLinks) {
+        echo '<div class="d-flex flex-row justify-content-center">';
+        echo $links;
+        echo '</div>';
+    }
+}
 
 // this function returns a string containing paged-navigation controls
 function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", $request2="", $request3="") {
@@ -52,12 +60,19 @@ function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", 
     $link_format = '<a title="%s" href="%s"><img alt="%s" src="%s" style="border: 0"></a>';
     $link_disabled_format = '<img role="link" aria-disabled="true" alt="%s" src="%s" style="border: 0">';
     
+    $link_disabled_format = '<li class="page-item disabled"><span class="page-link">%s</span></li>';
+    $link_current_format = '<li class="page-item active" aria-current="page"><span class="page-link">%s</span></li>';
+    $link_format = '<li class="page-item"><a class="page-link" href="%s">%s</a></li>';
+    
     $labels = array(
-                     'prev'  => '[Prev]',
-                     'first' => '[First]',
-                     'next'  => '[Next]',
-                     'last'  => '[Last]'
+                     'prev'  => '<i class="bi bi-caret-left-fill"></i>',
+                     'first' => '<i class="bi bi-rewind-fill"></i>',
+                     'curr' => '[Current]',
+                     'next'  => '<i class="bi bi-caret-right-fill"></i>',
+                     'last'  => '<i class="bi bi-skip-forward-fill"></i>'
                    );
+    
+    
     
     // print 'previous' link only if we're not on page one
     if ($pageNum > 1) {
@@ -66,12 +81,11 @@ function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", 
         $href_prev   = sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3);
         $href_first  = sprintf($href_format, 1, $orderBy, $orderType, $request1, $request2, $request3);
         
-        $prev  = sprintf($link_format, $labels['prev'], $href_prev, $labels['prev'], "static/images/icons/r.gif");
-        $first = sprintf($link_format, $labels['first'], $href_first, $labels['first'], "static/images/icons/rw.gif");
-        
+        $prev = sprintf($link_format, $href_prev, $labels['prev']);
+        $first = sprintf($link_format, $href_first, $labels['first']);
     } else {
-        $prev  = sprintf($link_disabled_format, $labels['prev'], "static/images/icons/r_non.gif");
-        $first = sprintf($link_disabled_format, $labels['first'], "static/images/icons/rw_non.gif");
+        $prev  = sprintf($link_disabled_format, $labels['prev']);
+        $first = sprintf($link_disabled_format, $labels['first']);
 
     }
 
@@ -81,20 +95,23 @@ function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", 
         $href_next = sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3);
         $href_last = sprintf($href_format, $maxPage, $orderBy, $orderType, $request1, $request2, $request3);
         
-        $next = sprintf($link_format, $labels['next'], $href_next, $labels['next'], "static/images/icons/f.gif");
-        $last = sprintf($link_format, $labels['last'], $href_last, $labels['last'], "static/images/icons/ff.gif");
+        $next = sprintf($link_format, $href_next, $labels['next']);
+        $last = sprintf($link_format, $href_last, $labels['last']);
 
     } else {
-        $next  = sprintf($link_disabled_format, $labels['next'], "static/images/icons/f_non.gif");    // we're on the last page, don't enable 'next' link
-        $last = sprintf($link_disabled_format, $labels['last'], "static/images/icons/ff_non.gif");    // nor 'last page' link    
+        // we're on the last page, don't enable 'next' link
+        $next  = sprintf($link_disabled_format, $labels['next']);
+        
+        // nor 'last page' link 
+        $last = sprintf($link_disabled_format, $labels['last']);
     }
 
-    $greyColorBeg = '<span style="color: #5F5A59">';
-    $greyColorEnd = '</span>';
+    $curr = sprintf($link_current_format, $pageNum);
 
-    $result = sprintf("%sPage %s%s of %s%s%s<br>", $greyColorBeg, $pageNum, $greyColorEnd, $greyColorBeg, $maxPage, $greyColorEnd)
-            . sprintf("%s %s %s %s<br>", $first, $prev, $next, $last);
-    
+    $result = '<nav><ul class="pagination pagination-sm">';
+    $result .= $first . $prev . $curr . $next . $last;
+    $result .= '</ul></nav>';
+
     return $result;
 }
 
@@ -104,25 +121,48 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $req
 }
 
 // this is an utility function used for printing a "go to <page num.>" link in the function setupNumbering_str()
-function print_link($aPageNum, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") { 
-    $link_format = '<a class="table" href="?page=%s&orderBy=%s&orderType=%s%s%s%s" style="margin: auto 3px">%s</a>';
-    $selected_link_format = '<strong style="color: #5F5A59">%s</strong>';
+function print_link($aPageNum, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {     
+    $link_format = '<li class="page-item"><a class="page-link" href="?page=%s&orderBy=%s&orderType=%s%s%s%s">%s</a></li>';
+    $selected_link_format = '<li class="page-item active" aria-current="page"><span class="page-link">%s</span></li>';
     
-    $tmp = sprintf($link_format, $aPageNum, $orderBy, $orderType, $request1, $request2, $request3, $aPageNum);
+    if ($aPageNum != $pageNum) {
+        return sprintf($link_format, $aPageNum, $orderBy, $orderType, $request1, $request2, $request3, $aPageNum);
+    }
     
-    return ($aPageNum != $pageNum) ? $tmp : sprintf($selected_link_format, $tmp);
+    return sprintf($selected_link_format, $aPageNum);
+}
+
+//~ $params = array(
+                    //~ 'num_rows' => $numrows,
+                    //~ 'rows_per_page' => $rowsPerPage,
+                    //~ 'page_num' => $pageNum,
+                    //~ 'order_by' => $orderBy,
+                    //~ 'order_type' => $orderType,
+                    //~ 'partial_query_string' => $partial_query_string
+                //~ );
+function print_page_numbering($params) {
     
+    $partial_query_string = (isset($params['partial_query_string'])) ? $params['partial_query_string'] : "";
+    
+    return setupNumbering($params['num_rows'],
+                          $params['rows_per_page'],
+                          $params['page_num'],
+                          $params['order_by'],
+                          $params['order_type'],
+                          $partial_query_string);
 }
 
 // this function returns a string containing go to page controls
 function setupNumbering_str($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {
+    $hellip = '<li class="page-item disabled"><span class="page-link">&hellip;</span></li>';
+    
     $numofpages = ceil($numrows / $rowsPerPage);
     
     if (empty($pageNum)) {
         $pageNum = 1;
     }
     
-    $result = "";
+    $result = '<nav><ul class="pagination pagination-sm">';
     
     if ($numofpages <= 20) {
         for ($i = 1; $i <= $numofpages; $i++) {
@@ -142,9 +182,9 @@ function setupNumbering_str($numrows, $rowsPerPage, $pageNum, $orderBy, $orderTy
             $result .= print_link($i + $j, $pageNum, $orderBy, $orderType, $request1, $request2, $request3);
         }
     
-        $result .= '&hellip;';
+        $result .= $hellip;
     } else if ($pageNum <= $numofpages && $pageNum >= ($numofpages-2) ) {
-        $result .= '&hellip;';
+        $result .= $hellip;
         
         $i = $numofpages;
         for ($j = -3; $j <= -1; $j++) {
@@ -152,18 +192,20 @@ function setupNumbering_str($numrows, $rowsPerPage, $pageNum, $orderBy, $orderTy
         }
 
     }  else {
-        $result .= '&hellip;';
+        $result .= $hellip;
         $i = $pageNum;
         
         for ($j = -2; $j <= 2; $j++) {
             $result .= print_link($i + $j, $pageNum, $orderBy, $orderType, $request1, $request2, $request3);
         }
         
-        $result .= '&hellip;';
+        $result .= $hellip;
     }
     
     // last page
     $result .= print_link($numofpages, $pageNum, $orderBy, $orderType, $request1, $request2, $request3);
+    
+    $result .= "</ul></nav>";
     
     return $result;
 }

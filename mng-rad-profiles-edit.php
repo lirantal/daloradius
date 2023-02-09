@@ -87,17 +87,12 @@
 
     
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     $title = t('Intro','mngradprofilesedit.php');
@@ -109,10 +104,6 @@
         $title .= " :: $profile_name_enc";
     } 
 
-    
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     
@@ -155,7 +146,7 @@
         include('library/opendb.php');
         include_once('include/management/pages_common.php');
         
-        $hashing_algorithm_notice = '<small style="font-size: 10px; color: black">'
+        $hashing_algorithm_notice = '<small class="mt-4 d-block">'
                                   . 'Notice that for supported password-like attributes, you can just specify a plaintext value. '
                                   . 'The system will take care of correctly hashing it.'
                                   . '</small>';
@@ -167,31 +158,28 @@
     
         open_form();
     
+        // open tab wrapper
+        open_tab_wrapper();
+    
         // tab 0
         open_tab($navkeys, 0, true);
 
         open_fieldset($fieldset0_descriptor);
 
-        //~ foreach ($input_descriptors0 as $input_descriptor) {
-            //~ print_form_component($input_descriptor);
-        //~ }
 
-
-        $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
-                          FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
-                         WHERE rc.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
-                                                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                   $dbSocket->escapeSimple($profile_name));
+        $sql = sprintf("SELECT rad.attribute, rad.op, rad.value, dd.type, dd.recommendedTooltip, rad.id
+                          FROM %s AS rad LEFT JOIN %s AS dd ON rad.attribute = dd.attribute AND dd.value IS NULL
+                         WHERE rad.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
+                                                    $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                                    $dbSocket->escapeSimple($profile_name));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
+        echo '<div class="container">';
+
         if ($res->numRows() == 0) {
-            echo '<div style="text-align: center">'
-               . t('messages','noCheckAttributesForGroup')
-               . '</div>';
+            printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noCheckAttributesForGroup'));
         } else {
-            
-            echo '<ul>';
             
             $editCounter = 0;
             $table = 'radgroupcheck';
@@ -205,53 +193,23 @@
                 $id__attribute = sprintf('%d__%s', $id, $row[0]);
                 $name = sprintf('editValues%s[]', $editCounter);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
+                $onclick = sprintf("location.href='mng-rad-profiles-del.php?profile_name=%s&id=%d&tablename=%s'",
+                                   urlencode($profile_name_enc), $id, $table);
                 
-                echo '<li>';
-                printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile_name=%s&id=%d&tablename=%s">',
-                       urlencode($profile_name_enc), $id, $table);
-                echo '<img src="static/images/icons/delete.png" border="0" alt="Remove"></a>';
+                $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
+                                     'id__attribute' => $id__attribute, 'type' => $type, 'value' => $row[2], 'name' => $name,
+                                     'attr_type' => $row[3], 'attr_desc' => $row[4], 'table' => $table);
                 
-                printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
-
-                printf('<input type="hidden" name="%s" value="%s">', $name, $id__attribute);            
-                printf('<input type="%s" value="%s" name="%s">', $type, $row[2], $name);
-                
-                printf('<select name="%s" class="form">', $name);
-                printf('<option value="%s">%s</option>', $row[1], $row[1]);
-                drawOptions();
-                echo '</select>';
-
-                printf('<input type="hidden" name="%s" value="%s">', $name, $table);
-
-
-                if (!empty($row[3]) || !empty($row[4])) {
-                    $divId = sprintf("%s-Tooltip-%d-%s", $row[0], $editCounter, $table);
-                    $onclick = sprintf("toggleShowDiv('%s')", $divId);
-                    printf('<img src="static/images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
-                    printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
-                    
-                    if (!empty($row[3])) {
-                        echo '<br>';
-                        printf('<i><b>Type:</b> %s</i>', $row[3]);
-                    }
-                    
-                    if (!empty($row[4])) {
-                        echo '<br>';
-                        printf('<i><b>Tooltip Description:</b> %s</i>', $row[4]);
-                    }
-                    echo '</div>';
-                }
-                
-                echo '</li>';
+                print_edit_attribute($descriptor);
                 
                 // we increment the counter for the html elements of the edit attributes
                 $editCounter++;
             }
             
-            echo '</ul>';
-            
             echo $hashing_algorithm_notice;
         }
+
+        echo '</div><!-- .container -->';
 
         close_fieldset();
         
@@ -267,21 +225,20 @@
 
         open_fieldset($fieldset1_descriptor);
 
-        $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
-                          FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
-                         WHERE rc.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
-                                                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                   $dbSocket->escapeSimple($profile_name));
+        $sql = sprintf("SELECT rad.attribute, rad.op, rad.value, dd.type, dd.recommendedTooltip, rad.id
+                          FROM %s AS rad LEFT JOIN %s AS dd ON rad.attribute = dd.attribute AND dd.value IS NULL
+                         WHERE rad.groupname='%s'", $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
+                                                    $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                                    $dbSocket->escapeSimple($profile_name));
+                                                    
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
+        echo '<div class="container">';
+
         if ($res->numRows() == 0) {
-            echo '<div style="text-align: center">'
-               . t('messages','noReplyAttributesForGroup')
-               . '</div>';
+            printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noReplyAttributesForGroup'));
         } else {
-            
-            echo '<ul>';
             
             $editCounter = 0;
             $table = 'radgroupreply';
@@ -291,56 +248,28 @@
                     $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
 
-                $id__attribute = sprintf('%s__%s', $row[5], $row[0]);
+                $id = intval($row[5]);
+                $id__attribute = sprintf('%d__%s', $id, $row[0]);
                 $name = sprintf('editValues%s[]', $editCounter);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
-                
-                echo '<li>';
-                printf('<a class="tablenovisit" href="mng-rad-profiles-del.php?profile_name=%s&id=%d&tablename=%s">',
-                       urlencode($profile_name_enc), $id, $table);
-                echo '<img src="static/images/icons/delete.png" border="0" alt="Remove"></a>';
-                
-                printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
+                $onclick = sprintf("location.href='mng-rad-profiles-del.php?profile_name=%s&id=%d&tablename=%s'",
+                                   urlencode($profile_name_enc), $id, $table);
 
-                printf('<input type="hidden" name="%s" value="%s">', $name, $id__attribute);            
-                printf('<input type="%s" value="%s" name="%s">', $type, $row[2], $name);
+                $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
+                                     'id__attribute' => $id__attribute, 'type' => $type, 'value' => $row[2], 'name' => $name,
+                                     'attr_type' => $row[3], 'attr_desc' => $row[4], 'table' => $table);
                 
-                printf('<select name="%s" class="form">', $name);
-                printf('<option value="%s">%s</option>', $row[1], $row[1]);
-                drawOptions();
-                echo '</select>';
-
-                printf('<input type="hidden" name="%s" value="%s">', $name, $table);
-
-
-                if (!empty($row[3]) || !empty($row[4])) {
-                    $divId = sprintf("%s-Tooltip-%d-%s", $row[0], $editCounter, $table);
-                    $onclick = sprintf("toggleShowDiv('%s')", $divId);
-                    printf('<img src="static/images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
-                    printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
-                    
-                    if (!empty($row[3])) {
-                        echo '<br>';
-                        printf('<i><b>Type:</b> %s</i>', $row[3]);
-                    }
-                    
-                    if (!empty($row[4])) {
-                        echo '<br>';
-                        printf('<i><b>Tooltip Description:</b> %s</i>', $row[4]);
-                    }
-                    echo '</div>';
-                }
-                
-                echo '</li>';
+                print_edit_attribute($descriptor);
                 
                 // we increment the counter for the html elements of the edit attributes
                 $editCounter++;
+                
             }
-            
-            echo '</ul>';
             
             echo $hashing_algorithm_notice;
         }
+        
+        echo '</div><!-- .container -->';
         
         close_fieldset();
         
@@ -354,6 +283,9 @@
         include_once('include/management/attributes.php');
 
         close_tab($navkeys, 2);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);

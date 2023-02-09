@@ -38,7 +38,8 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
-                    "bid" => t('all','BatchName'),
+                    "bid" => t('all','ID'),
+                    "batch_name" => t('all','BatchName'),
                     t('all','HotSpot'),
                     t('all','BatchStatus'),
                     t('all','TotalUsers'),
@@ -75,9 +76,7 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
+    // start printing content
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -132,116 +131,104 @@
         // printTableFormControls function parameter
         $action = "mng-batch-del.php";
         
-        $csrf_token = array(
-                                "name" => "csrf_token",
-                                "type" => "hidden",
-                                "value" => dalo_csrf_token(),
-                           );
-?>
-<form name="listall" method="POST" action="<?= $action ?>">
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'batch_id[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
 
-    <?= print_form_component($csrf_token); ?>
+        // print table top
+        print_table_top($form_descriptor);
 
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>';
-        }
-?>
-                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-                </td>
-
-            </tr>
-
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('batch_id[]', $action);
-?>
-                </th>
-            </tr>
-
-            <tr>
-<?php
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>
-            </tr>
-            
-        </thead>
+
+        // closes table header, opens table body
+        print_table_middle();
         
-        <tbody>
-<?php
-        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        // table content
+        $count = 0;
+        while($row = $res->fetchRow()) {
 
             //~ bh.id AS bid, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
             //~ ubi.planname, bp.plancost, bp.plancurrency, hs.name AS HotspotName, bh.creationdate, bh.creationby,
             //~ bh.updatedate, bh.updateby
+            $rowlen = count($row);
 
-            $id = intval($row['bid']);
-            $hotspot_name = htmlspecialchars($row['HotspotName'], ENT_QUOTES, 'UTF-8');
-            $batch_status = htmlspecialchars($row['batch_status'], ENT_QUOTES, 'UTF-8');
-            $plancost = htmlspecialchars($row['plancost'], ENT_QUOTES, 'UTF-8');
-            $total_users = htmlspecialchars($row['total_users'], ENT_QUOTES, 'UTF-8');
-            $active_users = htmlspecialchars($row['active_users'], ENT_QUOTES, 'UTF-8');
-            $batch_cost = htmlspecialchars(($row['active_users'] * $row['plancost']), ENT_QUOTES, 'UTF-8');
-            $plan_currency = htmlspecialchars($row['plancurrency'], ENT_QUOTES, 'UTF-8');
-        
-            $plan_name = htmlspecialchars($row['planname'], ENT_QUOTES, 'UTF-8');
-        
-            $this_batch_name = htmlspecialchars($row['batch_name'], ENT_QUOTES, 'UTF-8');
-            $this_batch_desc = htmlspecialchars($row['batch_description'], ENT_QUOTES, 'UTF-8');
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+
+            
+
+            list($id, $this_batch_name, $this_batch_desc, $batch_status, $total_users, $plan_name, $plancost,
+                 $plancurrency, $hotspot_name, $creationdate, $creationby, $updatedate, $updateby) = $row;
+
+            $batch_cost = intval($active_users) * $plancost;
+
+            if (empty($this_batch_desc)) {
+                $this_batch_desc = "(n/a)";
+            }
             
             // tooltip stuff
-            $onclick = 'javascript:return false;';
-            
-            $tooltipText = sprintf('<a class="toolTip" href="rep-batch-details.php?batch_name=%s">%s</a>',
-                                   urlencode($this_batch_name), t('Tooltip','BatchDetails'))
-                         . sprintf('<div style="margin: 15px auto" id="divContainerUserInfo"><strong>%s</strong>:<br>%s</div>',
-                                   t('all','batchDescription'), $this_batch_desc);
-?>
+            $tooltip = array(
+                                'subject' => $this_batch_name,
+                                'actions' => array(),
+                                'content' => sprintf('<strong>%s</strong>:<br>%s', t('all','batchDescription'), $this_batch_desc),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('rep-batch-details.php?batch_name=%s', urlencode($this_batch_name), ), 'label' => t('Tooltip','BatchDetails'), );
 
-            <tr>
-                <td>
-                    <input type="checkbox" name="batch_id[]" value="<?= $id ?>">
-                    <a class="tablenovisit" href="#" onclick='<?= $onclick ?>'
-                        tooltipText='<?= $tooltipText ?>'><?= $this_batch_name ?></a>
-                </td>
-                
-                <td><?= $hotspot_name ?></td>
-                <td><?= $batch_status ?></td>
-                <td><?= $total_users ?></td>
-                <td><?= $plan_name ?></td>
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
 
-                <td><?= $plancost ?></td>
-                <td><?= $batch_cost ?></td>
-                
-                <td><?= htmlspecialchars($row['creationdate'], ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= htmlspecialchars($row['creationby'], ENT_QUOTES, 'UTF-8') ?></td>
-                
-            </tr>
+            // create checkbox
+            $d = array( 'name' => 'batch_id[]', 'value' => $id, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
 
-<?php
-    }
-?>
-        </tbody>
-        
-<?php
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $hotspot_name, $batch_status, $total_users,
+                                $plan_name, $plancost, $batch_cost, $creationdate, $creationby );
+
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
+        }
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-        
-    </table>
-</form>
-
-<?php
+        printLinks($links, $drawNumberLinks);
+    
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

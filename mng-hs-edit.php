@@ -175,15 +175,10 @@
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/pages_common.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     $title = t('Intro','mnghsedit.php');
@@ -195,9 +190,6 @@
         $title .= " :: $name_enc";
     } 
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
@@ -260,6 +252,9 @@
         // open form
         open_form();
         
+        // open tab wrapper
+        open_tab_wrapper();
+        
         // open first tab (shown)
         open_tab($navkeys, 0, true);
         
@@ -284,6 +279,9 @@
         include_once('include/management/contactinfo.php');
         
         close_tab($navkeys, 1);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);

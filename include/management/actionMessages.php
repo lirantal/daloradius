@@ -33,9 +33,19 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/actionMessages.php') !== f
 }
 
 if (isset($failureMsg) && !empty($failureMsg)) {
-	printf('<div class="failure">%s</div>', $failureMsg);
+    echo <<<EOF
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <div>{$failureMsg}</div>
+    </div>
+EOF;
 }
 
 if (isset($successMsg) && !empty($successMsg)) {
-	printf('<div class="success">%s</div>', $successMsg);
+	    echo <<<EOF
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <i class="bi bi-check-square-fill me-2"></i>
+        <div>{$successMsg}</div>
+    </div>
+EOF;
 }

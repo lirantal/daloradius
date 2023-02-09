@@ -99,9 +99,6 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
     
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include('library/opendb.php');
@@ -180,27 +177,29 @@
                               ? "&" . implode("&", $partial_query_string_pieces) : "";
 
 
-        echo '<table border="0" class="table1">'
-           . '<thead>';
-            
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>' . '</tr>';
-        }
+        $descriptors = array();
+
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+        print_table_prologue($descriptors);
+
+        // print table top
+        print_table_top();
 
         // second line of table header
-        echo "<tr>";
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-        echo "</tr>";
+        
+        // closes table header, opens table body
+        print_table_middle();
 
-            
-        echo '</thead>'
-           . '<tbody>';
-
-        // inserting the values of each field from the database to the table
+        // table content
         $count = 0;
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
             printf('<tr id="row-%d">', $count);
@@ -211,13 +210,22 @@
             $count++;
         }
 
-        echo '</tbody>';
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'table_foot' => $table_foot );
 
-        // tfoot
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-
-        echo '</table>';
+        printLinks($links, $drawNumberLinks);
 
     } else {
         $failureMsg = "Nothing to display";

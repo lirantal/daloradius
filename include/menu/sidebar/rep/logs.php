@@ -27,6 +27,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/rep/logs.php') !== false
     exit;
 }
 
+global $count, $filter;
 
 $count_options = array(
                             '20' => '20 Lines',
@@ -42,6 +43,8 @@ $count_select = array(
                             "selected_value" => ((isset($count)) ? $count : ""),
                             "options" => $count_options,
                             "integer_value" => true,
+                            "caption" => "Lines count",
+                            "tooltipText" => "Show only the selected number of lines",
                         );
 
 $daloradius_options = array(
@@ -63,12 +66,15 @@ $descriptors1 = array();
 
 $components = array();
 $components[] = array(
+                        "id" => "filter_menu0",
                         "name" => "filter",
                         "type" => "select",
                         "selected_value" => ((isset($filter)) ? $filter : ""),
                         "options" => $daloradius_options,
+                        "caption" => "Filter",
                      );
 
+$count_select["id"] = "count_menu" . rand();
 $components[] = $count_select;
                      
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','daloRADIUSLog'), 'action' => 'rep-logs-daloradius.php', 'method' => 'GET',
@@ -77,12 +83,15 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','daloRADIUSLog'
 
 $components = array();
 $components[] = array(
+                        "id" => "filter_menu1",
                         "name" => "filter",
                         "type" => "select",
                         "selected_value" => ((isset($filter)) ? $filter : ""),
                         "options" => $radius_options,
+                        "caption" => "Filter",
                      );
 
+$count_select["id"] = "count_menu" . rand();
 $components[] = $count_select;
                      
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','RadiusLog'), 'action' => 'rep-logs-radius.php', 'method' => 'GET',
@@ -91,17 +100,25 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','RadiusLog'), '
 
 $components = array();
 $components[] = array(
+                        "id" => "filter_menu2",
                         "name" => "filter",
                         "type" => "text",
                         "value" => ((isset($filter)) ? $filter : ""),
+                        "caption" => "Filter",
                         "tooltipText" => t('Tooltip', 'Filter'),
                         "sidebar" => true,
                      );
 
+$count_select["id"] = "count_menu" . rand();
 $components[] = $count_select;
                      
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SystemLog'), 'action' => 'rep-logs-system.php', 'method' => 'GET',
                          'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
+              
+// update filter and count ids
+$components[0]['id'] = "filter_menu3";
+$components[1]['id'] = "count_menu" . rand();
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','BootLog'), 'action' => 'rep-logs-boot.php', 'method' => 'GET',
                          'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
 

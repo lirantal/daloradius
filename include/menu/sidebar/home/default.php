@@ -28,27 +28,39 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/home/default.php') !== f
 }
 
 
+include_once('library/config_read.php');
+
 // define descriptors
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServerStatus'), 'href' => 'rep-stat-server.php', 
-                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
+                         'icon' => 'pc', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServicesStatus'), 'href' => 'rep-stat-services.php',
-                         'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
+                         'icon' => 'server', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LastConnectionAttempts'), 'href' => 'rep-lastconnect.php',
-                         'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                         'icon' => 'clock-history', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
 $descriptors2 = array();
-$descriptors2[] = array( 'type' => 'link', 'label' => t('button','RadiusLog'), 'href' => 'rep-logs-radius.php', );
-$descriptors2[] = array( 'type' => 'link', 'label' => t('button','SystemLog'), 'href' => 'rep-logs-system.php', );
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','RadiusLog'), 'href' => 'rep-logs-radius.php',
+                         'icon' => 'file-earmark-text', );
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','SystemLog'), 'href' => 'rep-logs-system.php',
+                         'icon' => 'file-earmark-text', );
 
 $descriptors3 = array();
+
+$content = "";
+if (isset($configValues['DALORADIUS_VERSION'])) {
+    $content .= "<br>version " . $configValues['DALORADIUS_VERSION'];
+    if (!empty($configValues['DALORADIUS_DATE'])) {
+        $content .= " / " . $configValues['DALORADIUS_DATE'];
+    }
+}
+
 $descriptors3[] = array(
                             'type' => 'textarea',
-                            'content' => sprintf('daloRADIUS - RADIUS Management<br>%s / %s',
-                                                 t('all', 'daloRADIUSVersion'), $configValues['DALORADIUS_DATE']),
+                            'content' => sprintf('daloRADIUS - RADIUS Management%s', $content),
                             'readmore' => array( 'href' => 'https://github.com/lirantal/daloradius',
                                                  'title' => 'Read More',
-                                                 'label' => 'Read More &raquo;',
+                                                 'label' => 'Read More',
                                                ),
                       );
 

@@ -30,6 +30,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/rad-ippool.php') !==
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $item;
+
 include_once("include/management/populate_selectbox.php");
 $menu_options = get_ippools();
 
@@ -37,13 +39,13 @@ $menu_options = get_ippools();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewIPPool'), 'href' =>'mng-rad-ippool-new.php',
-                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
     
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListIPPools'), 'href' => 'mng-rad-ippool-list.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
     $components = array();
     $components[] = array(
@@ -52,14 +54,15 @@ if (count($menu_options) > 0) {
                             "selected_value" => ((isset($item)) ? $item : ""),
                             "required" => true,
                             "options" => $menu_options,
-                            "title" => sprintf("%s - %s", t('all','PoolName'), t('all','IPAddress')),
+                            "caption" => sprintf("%s - %s", t('all','PoolName'), t('all','IPAddress')),
+                            "tooltipText" => sprintf("Please select a %s - %s pair", t('all','PoolName'), t('all','IPAddress')),
                           );
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditIPPool'), 'action' => 'mng-rad-ippool-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
                              
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveIPPool'), 'href' => 'mng-rad-ippool-del.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }
 
 

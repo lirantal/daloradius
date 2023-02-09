@@ -121,32 +121,31 @@ if ($numrows > 0) {
     // and for being passed to setupNumbering and setupLinks functions
     $partial_query_string = sprintf("&type=%s&goto_stats=true", $type);
 
-?>
+    echo '<div style="text-align: center; margin-top: 50px">';
+    printf("<h4>%s all-time login/hit statistics</h4>", ucfirst($type));
+    $descriptors = array();
 
-<div style="text-align: center; margin-top: 50px">
-    <h4><?= ucfirst($type) . " all-time login/hit statistics" ?></h4>
-    <br>
-    <table border="0" class="table1">
-        <thead>
-<?php
-    // page numbers are shown only if there is more than one page
-    if ($drawNumberLinks) {
-        echo '<tr style="background-color: white">';
-        printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-        setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-        echo '</td>' . '</tr>';
-    }
+    $params = array(
+                        'num_rows' => $numrows,
+                        'rows_per_page' => $rowsPerPage,
+                        'page_num' => $pageNum,
+                        'order_by' => $orderBy,
+                        'order_type' => $orderType,
+                        'partial_query_string' => $partial_query_string,
+                    );
+    $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+    print_table_prologue($descriptors);
+
+    // print table top
+    print_table_top();
 
     // second line of table header
-    echo "<tr>";
     printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-    echo "</tr>";
-?>
-        </thead>
-
-        <tbody>
-<?php
-
+    
+    // closes table header, opens table body
+    print_table_middle();
+        
     $per_page_data = 0;
     while ($row = $res->fetchRow()) {
         $data = intval($row[1]);
@@ -157,50 +156,26 @@ if ($numrows > 0) {
            . "</tr>";
         $per_page_data += $data;
     }
-?>
-        </tbody>
 
-        <tfoot>
-            <tr>
+    // close tbody,
+    // print tfoot
+    // and close table + form (if any)
+    $table_foot = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $per_page_numrows,
+                            'colspan' => $colspan,
+                            'multiple_pages' => $drawNumberLinks,
+                       );
+    $descriptor = array( 'table_foot' => $table_foot );
 
-                <th scope="col" colspan="<?= $half_colspan + ($colspan % 2) ?>">
-<?php
-                    echo "displayed <strong>$per_page_numrows</strong> record(s)";
-                    if ($drawNumberLinks) {
-                        echo " out of <strong>$numrows</strong>";
-                    }
-?>
-                </th>
+    print_table_bottom($descriptor);
 
-                <th scope="col" colspan="<?= $half_colspan ?>">
-<?php
-                    echo "<strong>$per_page_data</strong> login(s)";
-                    if ($drawNumberLinks) {
-                        echo " out of <strong>$total_data</strong> login(s)";
-                    }
-?>
-                </th>
+    // get and print "links"
+    $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+    printLinks($links, $drawNumberLinks);
+    
+    echo '</div>';
 
-            </tr>
-
-<?php
-        // page navigation controls are shown only if there is more than one page
-        if ($drawNumberLinks) {
-?>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
-                    <?= setupLinks($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string); ?>
-                </th>
-            </tr>
-<?php
-        }
-?>
-        </tfoot>
-
-    </table>
-</div>
-
-<?php
 } else {
     // $numrows <= 0
     $failureMsg = "No login(s) found";

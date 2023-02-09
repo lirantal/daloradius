@@ -36,24 +36,11 @@
     include("library/layout.php");
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-    
-    $extra_js = array(
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-    
     $title = "RAID Status";
     $help = "";
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     $failureMsg = "";
@@ -69,44 +56,49 @@
         } else {
             if (count($mdstat) > 0) {
                 
-                $navbuttons = array();
+                $navkeys = array();
                 foreach($mdstat as $mddevice) {
                     $key = sprintf("%s-tab", $mddevice);
-                    $navbuttons[$key] = $mddevice;
+                    //~ $navbuttons[$key] = $mddevice;
+                    $navkeys[] = array( $mddevice, $mddevice );
                 }
                 
-                print_tab_navbuttons($navbuttons);
+                // print navbar controls
+                print_tab_header($navkeys);
+                //~ print_tab_navbuttons($navbuttons);
+                
+                // open tab wrapper
+                open_tab_wrapper();
                 
                 $counter = 0;
                 foreach($mdstat as $mddevice) {
-                    printf('<div class="tabcontent" id="%s-tab"', htmlspecialchars($mddevice, ENT_QUOTES, 'UTF-8'));
-                    
-                    if ($counter == 0) {
-                        echo ' style="display: block"';
-                    }
-                    
-                    echo '>';
+
+                    open_tab($navkeys, $counter, ($counter == 0));
                     
                     $dev = "/dev/$mddevice";
                     $cmd = sprintf("sudo /sbin/mdadm --detail %s", escapeshellarg($dev));
                     $output = "";
                     exec($cmd, $output);
 
-                    echo '<table class="summarySection">';
+                    echo '<table class="table">';
                     foreach($output as $line) {
                         list($var, $val) = split(":", $line);
                         $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8');
                         $val = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
                         
-                        printf('<tr><td class="summaryKey">%s</td>' .
-                               '<td class="summaryValue"><span class="sleft">%s</span></td></tr>', $var, $val); 
+                        printf('<tr><th scope="row" class="text-end">%s</th>' .
+                               '<td class="text-start">%s</td></tr>', $var, $val); 
                     }
-                    echo '</table>'
-                       . '</div>';
+                    echo '</table>';
+                    
+                    close_tab($navkeys, $counter);
                        
                     $counter++;
 
                 }
+                
+                // close tab wrapper
+                close_tab_wrapper();
                 
 
             } else {

@@ -32,17 +32,21 @@ include_once("library/validation.php");
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $username, $startdate, $enddate, $radiusReply, $valid_radiusReplys, $orderBy;
+
 include_once("include/management/populate_selectbox.php");
 $username_options = get_users('CONFIG_DB_TBL_RADACCT');
 $usernameOnline_options = get_online_users();
 
 $username_input = array(
+                            "id" => "username_menu",
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
                             "required" => true,
                             "datalist" => (($autocomplete) ? $usernameOnline_options : array()),
                             "tooltipText" => t('Tooltip','Username'),
+                            "caption" => t('all','Username'),
                             "sidebar" => true,
                        );
 
@@ -58,6 +62,7 @@ $date_select_components[] = array(
                                         "type" => "date",
                                         "value" => ((isset($startdate)) ? $startdate : date("Y-01-01")),
                                         "caption" => t('all','StartingDate'),
+                                        "tooltipText" => t('Tooltip','Date'),
                                  );
                      
 $date_select_components[] = array(
@@ -65,6 +70,7 @@ $date_select_components[] = array(
                                         "type" => "date",
                                         "value" => ((isset($enddate)) ? $enddate : date("Y-01-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')))),
                                         "caption" => t('all','EndingDate'),
+                                        "tooltipText" => t('Tooltip','Date'),
                                  );
 
 // define descriptors
@@ -88,6 +94,7 @@ $components[] = array(
                             "type" => "select",
                             "selected_value" => ((isset($radiusReply)) ? $radiusReply : $valid_radiusReplys[0]),
                             "options" => $valid_radiusReplys,
+                            "tooltipText" => "Filter records with the selected RADIUS Reply"
                           );
 
 $components = array_merge($components, $date_select_components);
@@ -98,16 +105,10 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','LastConnection
 $components = array();
 $components = $date_select_components;
 
-$descriptors1[] = array( 'type' => 'form', 'title' => t('button','NewUsers'), 'action' => 'rep-online.php', 'method' => 'GET',
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','NewUsers'), 'action' => 'rep-newusers.php', 'method' => 'GET',
                          'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
 
 $components = array();
-//~ $components[] = array(
-                            //~ "name" => "limit",
-                            //~ "type" => "number",
-                            //~ "value" => ((isset($limit)) ? $limit : "50"),
-                            //~ "min" => "1",
-                     //~ );
 
 $components[] = $username_input;
 $components = array_merge($components, $date_select_components);
@@ -118,6 +119,7 @@ $components[] = array(
                             "type" => "select",
                             "selected_value" => ((isset($orderBy)) ? $orderBy : array_keys($orderBy_options)[0]),
                             "options" => $orderBy_options,
+                            "tooltipText" => "You can order the results by: " . implode(" or ", array_keys($orderBy_options)),
                           );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','TopUser'), 'action' => 'rep-topusers.php', 'method' => 'GET',

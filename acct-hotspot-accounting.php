@@ -104,13 +104,10 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("include/menu/sidebar.php");
-
     if (!empty($hotspot_enc)) {
         $title .= " :: $hotspot_enc";
     }
     
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -132,11 +129,12 @@
     $_SESSION['reportQuery'] = $sql_WHERE;
     $_SESSION['reportType'] = "accountingGeneric";
 
-    $sql = sprintf("SELECT ra.RadAcctId, hs.name, ra.UserName, ra.FramedIPAddress, ra.AcctStartTime,
-                           ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets,
-                           ra.AcctTerminateCause, ra.NASIPAddress
-                      FROM %s AS ra LEFT JOIN %s AS hs ON ra.calledstationid=hs.mac",
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'])
+    
+    $sql = sprintf("SELECT ra.RadAcctId, dhs.name AS hotspot, ra.username, ra.FramedIPAddress, ra.AcctStartTime,
+                               ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets,
+                               ra.AcctTerminateCause, ra.NASIPAddress
+                          FROM %s AS ra LEFT JOIN %s AS dhs ON ra.calledstationid=dhs.mac",
+                       $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'])
          . $sql_WHERE;
     $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
@@ -170,83 +168,107 @@
         }
         
         $partial_query_string = (count($tmp) > 0) ? "&" . implode("&", $tmp) : "";
-?>
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-        // page numbers are shown only if needed
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>';
-        }
-?>
-                <td colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>" style="text-align: right">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-                </td>
-            </tr>
-            <tr>
-<?php
+        
+        $descriptors = array();
+
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
+
+        // print table top
+        print_table_top();
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>
-            </tr>
-        </thead>
         
-        <tbody>
-<?php
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
-            
-            echo '<tr>';
-            
+
+            // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                
-                // 6 (acctsessiontime),
-                // 7 (acctinputoctets),
-                // 8 (acctoutputoctets)
-                // are special cases
-                if ($i == 6) {
-                    $row[$i] = time2str($row[$i]);
-                } else if ($i == 7 || $i == 8) {
-                    $row[$i] = toxbyte($row[$i]);
-                }
-                
-                $row[$i] = (!empty($row[$i]))
-                         ? htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8')
-                         : "(n/a)";
-
-                // 2 (username) should be surrounded by <a></a>
-                if ($i != 2) {
-                    printf('<td>%s</td>', $row[$i]);
-                } else {
-                    $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo',"
-                             . sprintf("'username=%s');return false;", $row[2]);
-                    
-                    $tooltipText = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>',
-                                           urlencode($row[2]),t('Tooltip','UserEdit'))
-                                 . '<div id="divContainerUserInfo" style="margin: 30px auto">Loading...</div>';
-                                 
-                    printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
-                           $onclick, $tooltipText, $row[2]);
-                }
-
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
             
-            echo '</tr>';
+            list($radAcctId, $hotspot, $username, $framedIPAddress, $acctStartTime, $acctStopTime,
+                 $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress) = $row;
+                
+            $acctSessionTime = time2str($acctSessionTime);
+            $acctInputOctets = toxbyte($acctInputOctets);
+            $acctOutputOctets = toxbyte($acctOutputOctets);
+            
+            $ajax_id = "divContainerHotspotInfo_" . $count;
+            $param = sprintf('hotspot=%s', urlencode($hotspot));
+            $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','$ajax_id','$param')";
+            $tooltip1 = array(
+                                'subject' => $hotspot,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                             );
+            $tooltip1['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ), 'label' => t('Tooltip','HotspotEdit'), );
+            $tooltip1['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
+            
+            
+            $ajax_id = "divContainerUserInfo_" . $count;
+            $param = sprintf('username=%s', urlencode($username));
+            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $tooltip2 = array(
+                                'subject' => $username,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                             );
+            $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+            
+            $tooltip1 = get_tooltip_list_str($tooltip1);
+            $tooltip2 = get_tooltip_list_str($tooltip2);
+            
+            // define table row
+            $table_row = array( $radAcctId, $tooltip1, $tooltip2, $framedIPAddress, $acctStartTime, $acctStopTime,
+                                $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress);
+
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
         }
-?>
-        </tbody>
-        
-<?php
-        // tfoot
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
-<?php
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

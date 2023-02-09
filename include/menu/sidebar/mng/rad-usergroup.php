@@ -27,24 +27,24 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/rad-usergroup.php') 
     exit;
 }
 
-
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+global $username, $current_groupname;
 
 include_once("include/management/populate_selectbox.php");
 $menu_usernames = get_users_that_have_groups();
 $menu_groupnames = get_groups_that_have_users();
 
-
 // define descriptors
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUserGroup'), 'href' =>'mng-rad-usergroup-new.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
 if (count($menu_usernames) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListUserGroup'), 'href' => 'mng-rad-usergroup-list.php',
-                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                             'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
     $components = array();
     $components[] = array(
@@ -54,11 +54,13 @@ if (count($menu_usernames) > 0) {
                             "required" => true,
                             "datalist" => (($autocomplete) ? $menu_usernames : array()),
                             "tooltipText" => t('Tooltip','Username'),
+                            "caption" => t('all','Username'),
                             "sidebar" => true,
                           );
-    
+                          
+    $components[0]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListUsersGroup'), 'action' => 'mng-rad-usergroup-list-user.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
+                             'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
                              
     $components[] = array(
                             "name" => "current_group",
@@ -67,14 +69,16 @@ if (count($menu_usernames) > 0) {
                             "required" => true,
                             "datalist" => (($autocomplete) ? $menu_groupnames : array()),
                             "tooltipText" => t('Tooltip','GroupName'),
+                            "caption" => t('all','Groupname'),
                             "sidebar" => true,
                           );
-                          
+    
+    $components[0]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUserGroup'), 'action' => 'mng-rad-usergroup-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveUserGroup'), 'href' => 'mng-rad-usergroup-del.php',
-                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'person-fill-x', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }
 
 $sections = array();

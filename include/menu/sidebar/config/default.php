@@ -30,17 +30,17 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/config/default.php') !==
 // define descriptors
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','UserSettings'), 'href' => 'config-user.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'person-gear', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DatabaseSettings'), 'href' => 'config-db.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'database', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LanguageSettings'), 'href' => 'config-lang.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'translate', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LoggingSettings'), 'href' => 'config-logging.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'tools', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','InterfaceSettings'), 'href' => 'config-interface.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'tools', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','MailSettings'), 'href' => 'config-mail.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'envelope-at', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
 $sections = array();
 $sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );

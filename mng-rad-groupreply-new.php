@@ -108,8 +108,8 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("include/menu/sidebar.php");
-    echo '<div id="contentnorightbar">';
+    
+
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');

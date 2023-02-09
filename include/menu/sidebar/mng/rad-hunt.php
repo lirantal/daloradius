@@ -30,6 +30,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/rad-hunt.php') !== f
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $item;
+
 include_once("include/management/populate_selectbox.php");
 $menu_options = get_huntgroups();
 
@@ -37,13 +39,13 @@ $menu_options = get_huntgroups();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewHG'), 'href' =>'mng-rad-hunt-new.php',
-                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
     
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListHG'), 'href' => 'mng-rad-hunt-list.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
     $components = array();
     $components[] = array(
@@ -52,14 +54,15 @@ if (count($menu_options) > 0) {
                             "selected_value" => ((isset($item)) ? $item : ""),
                             "required" => true,
                             "options" => $menu_options,
-                            "title" => "Huntgroup item",
+                            "caption" => "Huntgroup",
+                            "tooltipText" => "Please select a Huntgroup",
                           );
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditHG'), 'action' => 'mng-rad-hunt-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
                              
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveHG'), 'href' => 'mng-rad-hunt-del.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }
 
 

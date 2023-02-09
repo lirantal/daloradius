@@ -38,6 +38,7 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
+                    "selected",
                     "id" => t('all','ID'),
                     "paymentname" => t('all','PayTypeName'),
                     t('all','PayTypeNotes')
@@ -64,11 +65,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
-
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
 
@@ -103,40 +100,34 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-payment-types-del.php";
-?>
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('paymentname[]', $action);
-?>
-                </th>
-            </tr>
-            
-            <tr>
-<?php
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'paymentname[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>           
-            </tr>
-        </thead>
         
-        <tbody>
-<?php
-        $li_style = 'margin: 7px auto';
-        $count = 1;
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -147,43 +138,47 @@
             
             list($id, $paymentName, $notes) = $row;
             
-            $tooltipText = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="bill-payment-types-edit.php?paymentname=%s">%s</a></li>',
-                                   $li_style, urlencode($paymentName), t('Tooltip','EditPayType'))
-                         . sprintf('<li style="%s"><a class="toolTip" href="bill-payment-types-del.php?paymentname=%s">%s</a></li>',
-                                   $li_style, urlencode($paymentName), t('Tooltip','RemovePayType'))
-                         . '</ul>';
-            $onclick = "javascript:return false;";
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="paymentname[]" value="<?= $paymentName ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>">
-                        <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                            <?= $id ?>
-                        </a>
-                    </label>
-                </td>
-                <td><?= $paymentName ?></td>
-                <td><?= $notes ?></td>
-            </tr>
-<?php
+            $tooltip = array(
+                                'subject' => $id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-payment-types-edit.php?paymentname=%s', urlencode($paymentName), ), 'label' => t('Tooltip','EditPayType'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-payment-types-del.php?paymentname=%s', urlencode($paymentName), ), 'label' => t('Tooltip','RemovePayType'), );
+            
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // create checkbox
+            $d = array( 'name' => 'paymentname[]', 'value' => $paymentName );
+            $checkbox = get_checkbox_str($d);
+
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $paymentName, $notes );
+
+            // print table row
+            print_table_row($table_row);
+
             $count++;
+
         }
-?>
-        </tbody>
-<?php
-        // tfoot
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        printLinks($links, $drawNumberLinks);
 
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

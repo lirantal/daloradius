@@ -44,8 +44,10 @@ $sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY 
                $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
 $res = $dbSocket->query($sql);
 
+echo '<div class="container">';
+
 if ($res->numRows() == 0) {
-    printf('<div style="text-align: center">%s</div>', t('messages','nogroupdefinedforuser'));
+    printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','nogroupdefinedforuser'));
 } else {
 
     $counter = 1;
@@ -60,25 +62,36 @@ if ($res->numRows() == 0) {
         
         list($groupname, $priority) = $row;
         
-        echo '<li class="fieldset">';
+        //~ echo '<li class="fieldset">';
         
         $id = "usergroup" . $counter;
         
-        printf('<label for="%s" class="form">%s #%s</label>', $id, t('all')[$groupTerminology], $counter);
-        printf('<input type="text" value="%s" id="%s" class="form" disabled>', $groupname, $id);
+        echo '<div class="d-flex flex-row justify-content-start align-items-center gap-2 my-1">';
+        
+        echo '<div>';
+        printf('<label for="%s" class="form-label mb-1">%s #%s</label>', $id, t('all')[$groupTerminology], $counter);
+        printf('<input type="text" value="%s" id="%s" class="form-control" disabled>', $groupname, $id);
+        echo '</div>';
+        
         printf('<input type="hidden" value="%s" name="groups[]">', $groupname);
         
         $id = "group_priority" . $counter;
         
-        printf('<label for="%s" class="form">%s</label>', $id, t('all')[$groupTerminologyPriority]);
-        printf('<input type="number" class="integer" min="0" value="%s" name="groups_priority[]" id="%s">', $priority, $id);
+        echo '<div>';
+        printf('<label for="%s" class="form-label mb-1">%s</label>', $id, t('all')[$groupTerminologyPriority]);
+        printf('<input type="number" class="form-control" min="0" value="%s" name="groups_priority[]" id="%s">', $priority, $id);
+        echo '</div>';
         
-        echo '</li>';
+        echo '</div>';
+        
+        //~ echo '</li>';
         
         $counter++;
 
     } //while
 
 } // if-else
+
+echo '</div><!-- .container -->';
 
 ?>

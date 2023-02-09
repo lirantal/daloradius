@@ -25,31 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     //include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
     
-    // init logging variables
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-    $logDebugSQL = "";
-    
-    // soft and hard delay (seconds)
-    $softDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] * 60;
-    $hardDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] * 60;
-
     include_once("lang/main.php");
-    
     include("library/layout.php");
-
-    // print HTML prologue
-    $title = t('Intro','rephbdashboard.php');
-    $help = t('helpPage','rephbdashboard');
     
-    print_html_prologue($title, $langCode);
-    
-    include("include/menu/sidebar.php");
-    
-      // the array $cols has multiple purposes:
+    // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
     //   - for validating user input
     //   - for table ordering purpose
@@ -82,7 +63,22 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
     
-    echo '<div id="contentnorightbar">';
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+    
+    // soft and hard delay (seconds)
+    $softDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] * 60;
+    $hardDelay = $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] * 60;
+
+
+    // print HTML prologue
+    $title = t('Intro','rephbdashboard.php');
+    $help = t('helpPage','rephbdashboard');
+    
+    print_html_prologue($title, $langCode);
+    
     print_title_and_help($title, $help);
     
     include('library/opendb.php');
@@ -116,32 +112,30 @@
         $logDebugSQL = "$sql;\n";
         
         $per_page_numrows = $res->numRows();
-?>
+        
+        $descriptors = array();
 
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>';
-        }
-?>
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-            </tr>
-            <tr>
-<?php
+        print_table_prologue($descriptors);
+        
+        // print table top
+        print_table_top();
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>
-            </tr>
-            
-        </thead>
+
+        // closes table header, opens table body
+        print_table_middle();
         
-        <tbody>
-<?php
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
             $rowlen = count($row);
             
@@ -152,51 +146,65 @@
 
             $content = array();
             $value = array();
-            $format = '<b>%s</b>: %s'; 
+            $format = '<strong>%s</strong>: %s'; 
 
-            // first tooltip balloon
-            $content[0] = sprintf('<a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a><br/><br/><b>%s:</b> %s',
-                                  $row['hotspotname'], t('Tooltip','HotspotEdit'), t('all','NASMAC'), $row['mac']);
-            $value[0]   = sprintf('<b>%s</b><br>', $row['hotspotname']);
+            // tooltip0
+            $tooltip = array(
+                                'subject' => $row['hotspotname'],
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($row['hotspotname']), ),
+                                           'label' => t('Tooltip','HotspotEdit'), );
+        
+            $tooltip['content'] = sprintf($format, t('all','NASMAC'), $row['mac']);
+        
+            $tooltip0 = get_tooltip_list_str($tooltip);
             
-            // second tooltip balloon
-            $content[1] = sprintf($format, t('all','WanIface'), $row['wan_iface'])
-                        . sprintf($format, t('all','WanMAC'), $row['wan_mac'])
-                        . sprintf($format, t('all','WanIP'), $row['wan_ip'])
-                        . sprintf($format, t('all','WanGateway'), $row['wan_ip']);
-                        
-            $value[1]   = sprintf($format, t('all','WanIP'), $row['wan_ip']);
             
-            // third tooltip balloon
-            $content[2] = sprintf($format, t('all','LanIface'), $row['lan_iface'])
-                        . sprintf($format, t('all','LanMAC'), $row['lan_mac'])
-                        . sprintf($format, t('all','LanIP'), $row['lan_ip']);
-                        
-            $value[2]   = sprintf($format, t('all','LanIP'), $row['lan_ip']);
-
-            // fourth tooltip balloon
-            $content[3] = sprintf($format, t('all','WifiIface'), $row['wifi_iface'])
-                        . sprintf($format, t('all','WifiMAC'), $row['wifi_mac'])
-                        . sprintf($format, t('all','WifiIP'), $row['wifi_ip'])
-                        . sprintf($format, t('all','WifiSSID'), $row['wifi_ssid'])
-                        . sprintf($format, t('all','WifiKey'), $row['wifi_key'])
-                        . sprintf($format, t('all','WifiChannel'), $row['wifi_channel']);
-
-            $value[3]   = sprintf($format, t('all','WifiSSID'), $row['wifi_ssid'])
-                        . sprintf($format, t('all','WifiKey'), $row['wifi_key']);
-
-            // create tooltip balloons
-            $tooltip = array();
-            for ($i = 0; $i <= count($content); $i++) {
-                $param = array(
-                                'content' => $content[$i],
-                                'onClick' => '',
-                                'value' => $value[$i],
-                                'divId' => '',
-                              );
-                $tooltip[] = addToolTipBalloon($param);
-            }
+            // tooltip1
+            $tooltip = array(
+                                'subject' => sprintf($format, t('all','WanIP'), $row['wan_ip']),
+                                'actions' => array(),
+                            );
             
+        
+            $tooltip['content'] = sprintf($format, t('all','WanIface'), $row['wan_iface'])
+                                . sprintf($format, t('all','WanMAC'), $row['wan_mac'])
+                                . sprintf($format, t('all','WanIP'), $row['wan_ip'])
+                                . sprintf($format, t('all','WanGateway'), $row['wan_ip']);
+                
+            $tooltip1 = get_tooltip_list_str($tooltip);
+
+            // tooltip2
+            $tooltip = array(
+                                'subject' => sprintf($format, t('all','LanIP'), $row['lan_ip']),
+                                'actions' => array(),
+                            );
+            
+        
+            $tooltip['content'] = sprintf($format, t('all','LanIface'), $row['lan_iface'])
+                                . sprintf($format, t('all','LanMAC'), $row['lan_mac'])
+                                . sprintf($format, t('all','LanIP'), $row['lan_ip']);
+                
+            $tooltip2 = get_tooltip_list_str($tooltip);
+            
+            // tooltip3
+            $tooltip = array(
+                                'subject' => (sprintf($format, t('all','WifiSSID'), $row['wifi_ssid']) .
+                                              sprintf($format, t('all','WifiKey'), $row['wifi_key'])),
+                                'actions' => array(),
+                            );
+            
+        
+            $tooltip['content'] = sprintf($format, t('all','WifiIface'), $row['wifi_iface'])
+                                . sprintf($format, t('all','WifiMAC'), $row['wifi_mac'])
+                                . sprintf($format, t('all','WifiIP'), $row['wifi_ip'])
+                                . sprintf($format, t('all','WifiSSID'), $row['wifi_ssid'])
+                                . sprintf($format, t('all','WifiKey'), $row['wifi_key'])
+                                . sprintf($format, t('all','WifiChannel'), $row['wifi_channel']);
+                
+            $tooltip3 = get_tooltip_list_str($tooltip);
+
             // calculate time delay
             // delta is given by <current time> - <check-in time>
             $delta = time() - strtotime($row['time']);
@@ -214,11 +222,11 @@
 ?>
 
         <tr>
-            <td><?= $tooltip[0] ?></td>
+            <td><?= $tooltip0 ?></td>
             <td><?= $row['firmware'] . "<br/>" . $row['firmware_revision'] ?></td>
-            <td><?= $tooltip[1] ?></td>
-            <td><?= $tooltip[2] ?></td>
-            <td><?= $tooltip[3] ?></td>
+            <td><?= $tooltip1 ?></td>
+            <td><?= $tooltip2 ?></td>
+            <td><?= $tooltip3 ?></td>
             <td><?= time2str($row['uptime']) ?></td>
             <td><?= $row['cpu'] ?></td>
             <td><?= $row['memfree'] ?></td>
@@ -229,19 +237,24 @@
 
 <?php
         }
-?>
-         </tbody>
 
-<?php
-        // tfoot
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
+        printLinks($links, $drawNumberLinks);
 
-    </table>
-
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

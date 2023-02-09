@@ -105,18 +105,23 @@ if (!in_array($detect_category, array_keys($subnav))) {
     $detect_category = "home";
 }
 
-// draw subnav elements
-echo '<ul id="subnav">';
-
 if (!empty($detect_category) && count($subnav[$detect_category]) > 0) {
 
-    foreach ($subnav[$detect_category] as $label => $href) {
-        $label = htmlspecialchars(strip_tags($label), ENT_QUOTES, 'UTF-8');
-        printf('<li><a href="%s" title="%s">%s</a></li>', urlencode($href), $label, $label);
-    }
+?>
 
-} else {
-    echo '<li>&nbsp;</li>';
+<nav class="border-bottom text-bg-light py-1">
+    <div class="d-flex">
+        <ul class="nav ms-4">
+<?php
+            foreach ($subnav[$detect_category] as $label => $href) {
+                $label = htmlspecialchars(strip_tags($label), ENT_QUOTES, 'UTF-8');
+                printf('<li><a class="nav-link link-dark px-2" href="%s">%s</a></li>', urlencode($href), $label);
+            }
+?>
+        </ul>
+    </div>
+</nav>
+
+<?php
+
 }
-
-echo '</ul><!-- #subnav -->' . "\n";

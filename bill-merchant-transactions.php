@@ -87,26 +87,13 @@
     $payer_status = (array_key_exists('payer_status', $_GET) && !empty(str_replace("%", "", trim($_GET['payer_status']))))
                   ? str_replace("%", "", trim($_GET['payer_status'])) : "";
 	
-    //feed the sidebar variables
-	$billing_date_startdate = $startdate;
-	$billing_date_enddate = $enddate;
-	$billing_paypal_payeremail = $payer_email_enc;
-	$billing_paypal_paymentstatus = $payment_status;
-	$billing_paypal_vendor_type = $vendor_type;
-
-    //~ $billing_paypal_paymentaddressstatus = $payment_address_status;
-	//~ $billing_paypal_payerstatus = $payer_status;
-	
     // print HTML prologue
     $title = t('Intro','billpaypaltransactions.php');
     $help = t('helpPage','billpaypaltransactions');
     
     print_html_prologue($title, $langCode);
     
-	include("include/menu/sidebar.php");
-	
-    echo '<div id="contentnorightbar">';
-    print_title_and_help($title, $help);
+	print_title_and_help($title, $help);
 
     // draw the billing rates summary table
     include_once('include/management/userBilling.php');
@@ -184,27 +171,30 @@
         $partial_query_string = (count($partial_query_string_pieces) > 0)
                               ? "&" . implode("&", $partial_query_string_pieces) : "";
 
-        echo '<table border="0" class="table1">'
-           . '<thead>';
+        $descriptors = array();
 
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>' . '</tr>';
-        }
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-        // second line of table header
-        echo "<tr>";
-        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-        echo "</tr>";
-
-            
-        echo '</thead>'
-           . '<tbody>';
+        print_table_prologue($descriptors);
         
-        // inserting the values of each field from the database to the table
+        // print table top
+        print_table_top();
+        
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
         $count = 0;
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
             printf('<tr id="row-%d">', $count);
@@ -215,13 +205,22 @@
             $count++;
         }
 
-        echo '</tbody>';
-        
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
 
-        echo '</table>';
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printLinks($links, $drawNumberLinks);
 
     } else {
         $failureMsg = "Nothing to display";

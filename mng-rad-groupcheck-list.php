@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -38,6 +38,8 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
+                    "selected",
+                    "id" => t('all','ID'),
                     "groupname" => t('all','Groupname'),
                     "attribute" => t('all','Attribute'),
                     "op" => t('all','Operator'),
@@ -45,10 +47,10 @@
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
@@ -61,13 +63,10 @@
     // print HTML prologue
     $title = t('Intro','mngradgroupchecklist.php');
     $help = t('helpPage','mngradgroupchecklist');
-    
+
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -80,118 +79,115 @@
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-    
+
         // we execute and log the actual query
         $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK']);
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
-                              
-        // this can be passed as form attribute and 
+
+        // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-rad-groupcheck-del.php";
-?>
 
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('record_id[]', $action);
-?>
-                </th>
-            </tr>
-            
-            <tr>
-<?php
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'record_id[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>           
-            </tr>
-        </thead>
 
-        <tbody>
-<?php
-    
-        $count = 1;
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
-        
+
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
-            
+
             list($id, $groupname, $attribute, $op, $value) = $row;
-            
-            $checkbox_value = "record-" . $id;
-            
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupcheck-edit.php?item=groupcheck-%d">%s</a>',
-                                   $id, t('button','EditGroupCheck'));
-            $onclick = 'javascript:return false;';
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="record_id[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>">
-                        <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                            <?= $groupname ?>
-                        </a>
-                    </label>
-                </td>
-                <td><?= $attribute ?></td>
-                <td><?= $op ?></td>
-                <td><?= $value ?></td>
-            </tr>
-<?php
+            $id = intval($id);
+
+            $item_id = sprintf("record-%d", $id);
+
+            $tooltip = array(
+                                'subject' => $id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-groupcheck-edit.php?item=groupcheck-%s', $id, ), 'label' => t('button','EditGroupCheck'), );
+
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // create checkbox
+            $d = array( 'name' => 'record_id[]', 'value' => $item_id );
+            $checkbox = get_checkbox_str($d);
+
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $groupname, $attribute, $op, $value );
+
+            // print table row
+            print_table_row($table_row);
 
             $count++;
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        printLinks($links, $drawNumberLinks);
 
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
 
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue();
 ?>

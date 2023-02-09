@@ -46,31 +46,6 @@
                 checkdate($m[2], $m[3], $m[1]))
              ? trim($_GET['enddate']) : "";
     
-    //feed the sidebar variables
-    $accounting_date_username = $username_enc;
-    $accounting_date_startdate = $startdate;
-    $accounting_date_enddate = $enddate;
-
-    // init logging variables
-    $log = "visited page: ";
-    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
-    $logDebugSQL = "";
-
-
-    $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
-        "static/js/pages_common.js",
-    );
-
-    // print HTML prologue
-    $title = t('Intro','acctdate.php');
-    $help = t('helpPage','acctdate');
-
-    print_html_prologue($title, $langCode, array(), $extra_js);
-    
-    include("include/menu/sidebar.php");
-
     $cols = array(
                     "radacctid" => t('all','ID'),
                     "hotspot" => t('all','HotSpot'),
@@ -94,9 +69,25 @@
     $orderType = (array_key_exists('orderType', $_GET) && !empty($_GET['orderType']) &&
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "asc";
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
+    $logDebugSQL = "";
 
 
-    echo '<div id="contentnorightbar">';
+    // print HTML prologue
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
+        "static/js/pages_common.js",
+    );
+
+    $title = t('Intro','acctdate.php');
+    $help = t('helpPage','acctdate');
+
+    print_html_prologue($title, $langCode, array(), $extra_js);
+
     print_title_and_help($title, $help);
 
     // we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
@@ -160,124 +151,124 @@
             
             $per_page_numrows = $res->numRows();
 
-    
             $partial_query_string = (count($partial_query_params) > 0)
                                   ? ("&" . implode("&", $partial_query_params)) : "";
-?>
-<table border="0" class="table1">
-    <thead>
-        <tr style="background-color: white">
-<?php
-            // page numbers are shown only if there is more than one page
-            if ($drawNumberLinks) {
-                printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-                echo '</td>';
-            }
-?>
-            <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                <input class="button" type="button" value="CSV Export"
-                    onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-            </td>
+                                  
+            $descriptors = array();
 
-        </tr>
+            $params = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $rowsPerPage,
+                                'page_num' => $pageNum,
+                                'order_by' => $orderBy,
+                                'order_type' => $orderType,
+                            );
+            $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-<?php
+
+            $descriptors['end'] = array();
+            $descriptors['end'][] = array(
+                                            'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                            'label' => 'CSV Export',
+                                            'class' => 'btn-light',
+                                         );
+            print_table_prologue($descriptors);
+
+            // print table top
+            print_table_top();
+
             // second line of table header
-            echo "<tr>";
             printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-            echo "</tr>";
-?>
-    </thead>
 
-<?php
-            echo '<tbody>';
+            // closes table header, opens table body
+            print_table_middle();
 
-            
+            // table content
+            $count = 0;
+
+
             $li_style = 'margin: 7px auto';
             $trs = array();
 
-            while ($row = $res->fetchRow()) {
-                
-                list(
-                        $radacctid, $hotspot, $username, $framedipaddress,
-                        $acctstarttime, $acctstoptime, $acctsessiontime, $acctinputoctets,
-                        $acctoutputoctets, $acctterminatecause, $nasipaddress
-                    ) = $row;
-                
-                $tr = array();
-                
-                // radacctid
-                $tr[] = intval($radacctid);
-                
-                // hotspot
-                $hotspot = htmlspecialchars($hotspot, ENT_QUOTES, 'UTF-8');
-                $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','divContainerHotspotInfo'"
-                         . sprintf(",'hotspot=%s');return false;", $hotspot);
-                $tooltip = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a></li>',
-                                   $li_style, urlencode($hotspot), t('Tooltip','HotspotEdit'))
-                         . sprintf('<li style="%s"><a class="toolTip" href="acct-hotspot-compare.php">%s</a></li>',
-                                   $li_style, t('all','Compare'))
-                         . '</ul>'
-                         . '<div style="margin: 15px auto" id="divContainerHotspotInfo">Loading...</div>';
-                
-                $tr[] = sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a>",
-                                $onclick, $tooltip, $hotspot);
-                
-                // nasipaddress
-                $tr[] = htmlspecialchars($nasipaddress, ENT_QUOTES, 'UTF-8');
-                
-                // username
-                $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
-                $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo',"
-                         . sprintf("'username=%s');return false;", $username);
-                $tooltip = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>', urlencode($username), t('Tooltip','UserEdit'))
-                         . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
-                $tr[] = sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a>",
-                                $onclick, $tooltip, $username);
-                
-                // other values
-                $tr[] = htmlspecialchars($framedipaddress, ENT_QUOTES, 'UTF-8');
-                $tr[] = htmlspecialchars($acctstarttime, ENT_QUOTES, 'UTF-8');
-                $tr[] = htmlspecialchars($acctstoptime, ENT_QUOTES, 'UTF-8');
-                $tr[] = time2str($acctsessiontime);
-                $tr[] = toxbyte($acctinputoctets);
-                $tr[] = toxbyte($acctoutputoctets);
-                $tr[] = htmlspecialchars($acctterminatecause, ENT_QUOTES, 'UTF-8');
-                
-                $trs[] = $tr;
-            }
+            while ($row = $res->fetchRow()) {                
+                $rowlen = count($row);
 
-            // draw tr(s)
-            $simple_td_format = '<td>%s</td>' . "\n";
-
-            foreach ($trs as $tr) {
-                echo '<tr>';
-                
-                foreach ($tr as $td) {
-                    printf($simple_td_format, $td);
+                // escape row elements
+                for ($i = 0; $i < $rowlen; $i++) {
+                    $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
                 
-                echo '</tr>';
+                list($radAcctId, $hotspot, $username, $framedIPAddress, $acctStartTime, $acctStopTime,
+                     $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress) = $row;
+                    
+                $acctSessionTime = time2str($acctSessionTime);
+                $acctInputOctets = toxbyte($acctInputOctets);
+                $acctOutputOctets = toxbyte($acctOutputOctets);
+
+                $ajax_id = "divContainerHotspotInfo_" . $count;
+                $param = sprintf('hotspot=%s', urlencode($hotspot));
+                $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','$ajax_id','$param')";
+                $tooltip1 = array(
+                                    'subject' => $hotspot,
+                                    'onclick' => $onclick,
+                                    'ajax_id' => $ajax_id,
+                                    'actions' => array(),
+                                 );
+                $tooltip1['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ), 'label' => t('Tooltip','HotspotEdit'), );
+                $tooltip1['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
+                
+                
+                $ajax_id = "divContainerUserInfo_" . $count;
+                $param = sprintf('username=%s', urlencode($username));
+                $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+                $tooltip2 = array(
+                                    'subject' => $username,
+                                    'onclick' => $onclick,
+                                    'ajax_id' => $ajax_id,
+                                    'actions' => array(),
+                                 );
+                $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+                
+                $tooltip1 = get_tooltip_list_str($tooltip1);
+                $tooltip2 = get_tooltip_list_str($tooltip2);
+                
+                // define table row
+                $table_row = array( $radAcctId, $tooltip1, $tooltip2, $framedIPAddress, $acctStartTime, $acctStopTime,
+                                    $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress);
+
+                // print table row
+                print_table_row($table_row);
+
+                $count++;
             }
 
-            echo '</tbody>';
+            // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'table_foot' => $table_foot );
 
-            // tfoot
-            $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-            printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+        print_table_bottom($descriptor);
 
-            echo '</table>';
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printLinks($links, $drawNumberLinks);
             
         } else {
             $failureMsg = "Nothing to display";
         }
     
+        echo '<div class="accordion m-2" id="accordion-parent">';
         include_once('include/management/userReports.php');
         userPlanInformation($username, 1);
         userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
         userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
+        echo '</div>';
     
     } else {
         $failureMsg = "Please specify a valid username";

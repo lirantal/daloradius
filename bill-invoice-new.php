@@ -21,7 +21,7 @@
  *********************************************************************************************************
  */
 
-     include("library/checklogin.php");
+    include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
@@ -159,7 +159,7 @@
     } else {
         
         // select for active plans
-        $planSelect = '<select class="form" name="itemXXXXXXX[plan]">';
+        $planSelect = '<select class="form-select" name="itemXXXXXXX[plan]">';
         
         
         $sql = sprintf("SELECT DISTINCT(planName), id
@@ -197,16 +197,16 @@ function addTableRow() {
     td1.innerHTML = plansSelect.replace("itemXXXXXXX[plan]", td1_name);
 
     var td2 = document.createElement('td');
-    td2.innerHTML = `<input type="number" min="0" step=".01" id="item\${num}_amount" name="\${td2_name}">`;
+    td2.innerHTML = `<input type="number" class="form-control" min="0" step=".01" id="item\${num}_amount" name="\${td2_name}">`;
 
 	var td3 = document.createElement('td');
-	td3.innerHTML = `<input type="number" min="0" step=".01" id="item\${num}_tax" name="\${td3_name}">`;
+	td3.innerHTML = `<input type="number"  class="form-control"min="0" step=".01" id="item\${num}_tax" name="\${td3_name}">`;
 
 	var td4 = document.createElement('td');
-	td4.innerHTML = `<input type="text" id="item\${num}_notes" name="\${td4_name}">`;
+	td4.innerHTML = `<input type="text"  class="form-control"id="item\${num}_notes" name="\${td4_name}">`;
 
 	var td5 = document.createElement('td');
-	td5.innerHTML = `<input type="button" name="remove\${num}_button" value="Remove Item" onclick="\${td5_onclick}" class="button">`;
+	td5.innerHTML = `<button type="button" name="remove\${num}_button" onclick="\${td5_onclick}" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Remove Item</button>`;
 
 	trContainer.appendChild(td1);
 	trContainer.appendChild(td2);
@@ -228,17 +228,12 @@ EOF;
     include('library/closedb.php');
     
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
 
     
@@ -251,9 +246,6 @@ EOF;
         $title .=  " :: " . $username_enc;
     }
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -350,6 +342,9 @@ EOF;
         // opening form
         open_form();
         
+        // open tab wrapper
+        open_tab_wrapper();
+        
         // tab 0
         open_tab($navkeys, 0, true);
         
@@ -379,6 +374,7 @@ EOF;
                                         "name" => "addItem",
                                         "value" => "Add Item",
                                         "onclick" => "addTableRow()",
+                                        "icon" => "plus-circle-fill",
                                       );
         
         $input_descriptors1[] = array(
@@ -391,7 +387,7 @@ EOF;
             print_form_component($input_descriptor);
         }
         
-        echo '<table class="table1" style="margin: 10px auto">'
+        echo '<table class="table table-striped table-hover my-2">'
            . '<tbody id="container">'
            . '<tr>';
         
@@ -423,15 +419,15 @@ EOF;
                                  );
         
         foreach ($input_name_value as $name => $value) {
-            printf('<td><input type="number" min="0" step=".01" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
+            printf('<td><input type="number" class="form-control" min="0" step=".01" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
                    $this_id, $name, $this_id, $name, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
         }
         
-        printf('<td><input type="text" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
+        printf('<td><input type="text" class="form-control" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
                $this_id, "notes", $this_id, "notes", htmlspecialchars($this_notes, ENT_QUOTES, 'UTF-8'));
         
         $onclick = sprintf("removeTableRow('%s')", $itemRowId);
-        printf('<td><input type="button" name="remove" value="Remove Item" onclick="%s" class="button"></td>', $onclick);
+        printf('<td><button type="button" name="remove" onclick="%s" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Remove Item</button></td>', $onclick);
         
         echo '</tr>'
            . '</tbody>'
@@ -440,6 +436,9 @@ EOF;
         close_fieldset();
         
         close_tab($navkeys, 1);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         // descriptors 2
         $input_descriptors2 = array();

@@ -186,22 +186,11 @@
 
 
     // print HTML prologue
-    $extra_css = array();
-
-    $extra_js = array(
-        "static/js/productive_funcs.js",
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
-    );
-
     $title = t('Intro','mngimportusers.php');
     $help = t('helpPage','mngimportusers');
 
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -273,23 +262,24 @@
                                         "caption" => t('all','PasswordType'),
                                         "options" => $valid_passwordTypes,
                                         "type" => "select",
-                                        "selected_value" => ((isset($failureMsg)) ? $passwordType : "")
+                                        "selected_value" => ((isset($failureMsg)) ? $passwordType : ""),
+                                        "tooltipText" => 'Notice that for supported password-like attributes, you can just specify a plaintext value. ' .
+                                                         'The system will take care of correctly hashing it.',
                                     );
 
         $input_descriptors1[] = array(
                                         "caption" => t('all','CSVData'),
                                         "type" => "textarea",
-                                        "class" => "form_fileimport",
+                                        //~ "class" => "form_fileimport",
                                         "name" => "csvdata",
+                                        "tooltipText" => 'Paste a CSV-formatted data input of users, expected format is: user,password. ' .
+                                                         'Note: any CSV fields beyond the first 2 (user and password) are ignored.',
                                         "content" => ((isset($failureMsg)) ? $csvdata : ""),
                                      );
 
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-
-        echo '<small style="color: black">Paste a CSV-formatted data input of users, expected format is: user,password<br>'
-           . '<strong>Note</strong>: any CSV fields beyond the first 2 (user and password) are ignored<br></small>';
 
         close_fieldset();
 
@@ -304,17 +294,16 @@
         $input_descriptors2[] = array(
                                         "caption" => "Simple List",
                                         "type" => "textarea",
-                                        "class" => "form_fileimport",
+                                        //~ "class" => "form_fileimport",
                                         "name" => "simpleList",
+                                        "tooltipText" => 'Paste a simple list of MAC addresses or PIN codes. ' .
+                                                         'Note: each line a single MAC address or a PIN code.',
                                         "content" => ((isset($failureMsg)) ? $simpleList : ""),
                                      );
 
         foreach ($input_descriptors2 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-
-        echo '<small style="color: black">Paste a simple list of MAC addresses or PIN codes<br>'
-           . '<strong>Note</strong>: each line a single MAC address or a PIN code<br></small>';
 
         close_fieldset();
 

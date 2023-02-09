@@ -46,24 +46,6 @@
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : "";
     
-    //feed the sidebar variables
-    $accounting_date_username = $username_enc;
-    $accounting_date_startdate = $startdate;
-    $accounting_date_enddate = $enddate;
-
-    // init logging variables
-    $log = "visited page: ";
-    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
-    $logDebugSQL = "";
-    
-    // print HTML prologue
-    $title = t('Intro','acctactive.php');
-    $help = t('helpPage','acctactive');
-
-    print_html_prologue($title, $langCode);
-    
-    include("include/menu/sidebar.php");
-
     $cols = array(
                     "username" => t('all','Username'),
                     "attribute" => t('all','Attribute'),
@@ -86,9 +68,24 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
+    $logDebugSQL = "";
+    
+    // print HTML prologue
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
+    );
+    
+    $title = t('Intro','acctactive.php');
+    $help = t('helpPage','acctactive');
 
+    print_html_prologue($title, $langCode, array(), $extra_js);
+    
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
 
@@ -122,96 +119,106 @@
         $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
-?>
-
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>';
-        }
-?>
-            </tr>
-            
-            <tr>
-<?php
-        printTableHead($cols, $orderBy, $orderType);
-?>
-            </tr>
-        </thead>
         
-        <tbody>
-<?php
-        while($row = $res->fetchRow()) {
-            $status="Active";
+        $descriptors = array();
 
-            if ($row[1] == "Expiration") {        
-                if (datediff('d', $row[2], "$currdate", false) > 0) {
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+        print_table_prologue($descriptors);
+
+        // print table top
+        print_table_top();
+
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
+
+        // closes table header, opens table body
+        print_table_middle();
+        
+        while($row = $res->fetchRow()) {
+            $rowlen = count($row);
+
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($username, $attribute, $maxtimeexpiration, $usedtime) = $row;
+            
+            
+            $status = "Active";
+
+            if ($attribute == "Expiration") {        
+                if (datediff('d', $maxtimeexpiration, $currdate, false) > 0) {
                     $status = "Expired";
                 }
-            } 
-
-            if ($row[1] == "Max-All-Session") {        
-                if ($row[3] >= $row[2]) {
+            } else if ($attribute == "Max-All-Session") {        
+                if ($usedtime >= $maxtimeexpiration) {
                     $status = "End";
                 }
             }
 
-            foreach ($row as $i => $value) {
-                $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-            }
+            $usedtime = time2str($usedtime);
 
-            echo "<tr>";
-        
-            $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username=%s');"
-                     . "return false;", $row[0]);
-        
-            $tooltip = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>', $row[2], t('Tooltip','UserEdit'))
-                         . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
-        
-            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
-                   $onclick, $tooltip, $row[0]);
-            
-            printf("<td>%s</td>", $row[1]);
-            printf("<td>%s</td>", $row[2]);
-            printf("<td>%s</td>", time2str($row[3]));
-            printf("<td>%s</td>", $status);
-
-            echo "<td>";
-
-            if ($row[1] == "Expiration") {        
-                $difference = datediff('d', $row[2], "$currdate", false);
-                if ($difference > 0)
-                    echo "<h100> " . " $difference days since expired" . "</h100> ";
-                else 
-                    echo substr($difference, 1) . " days until expiration";
-            } 
-
-            if ($row[1] == "Max-All-Session") {        
-                if ($status == "End") {
-                    echo "<h100> " . abs($row[2] - $row[3]) . " seconds overdue credit" . "</h100>";
+            $usage = "";
+            if ($attribute == "Expiration") {
+                $difference = datediff('d', $maxtimeexpiration, $currdate, false);
+                if ($difference > 0) {
+                    $usage = "<h100> " . " $difference days since expired" . "</h100> ";
                 } else {
-                    echo $row[2] - $row[3];
-                    echo " left on credit";
+                    $usage = substr($difference, 1) . " days until expiration";
+                }
+            } else if ($attribute == "Max-All-Session") {        
+                if ($status == "End") {
+                    $usage = "<h100> " . abs($maxtimeexpiration - $usedtime) . " seconds overdue credit" . "</h100>";
+                } else {
+                    $usage = abs($maxtimeexpiration - $usedtime) . " left on credit";
                 }
             } 
 
+            $ajax_id = "divContainerUserInfo_" . $count;
+            $param = sprintf('username=%s', urlencode($username));
+            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $tooltip = array(
+                                'subject' => $username,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+        
+            $tooltip = get_tooltip_list_str($tooltip);
+        
+            $table_row = array( $tooltip, $attribute, $maxtimeexpiration, $usedtime, $status, $usage );
 
-            echo "</td>"
-               . "</tr>";
+            // print table row
+            print_table_row($table_row);
         }
 
-        echo '</tbody>';
-    
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'table_foot' => $table_foot );
 
-        echo '</table>';
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
+        
     } else {
         $failureMsg = "Nothing to display";
     }

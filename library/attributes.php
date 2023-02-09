@@ -129,13 +129,13 @@ function handleAttributes($dbSocket, $subject, $skipList, $insert_only=true, $us
         // $table should be contained in $valid_tables
         // otherwise we ignore this attribute
         if (strtolower($user_or_group) === 'group') {
-            $table = (preg_match("/reply$/i", $table))
+            $table = (mb_strpos($table, 'reply') !== false)
                    ? $configValues['CONFIG_DB_TBL_RADGROUPREPLY']
                    // default: radgroupcheck
                    : $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
         } else {
             // default: user
-            $table = (preg_match("/reply$/i", $table))
+            $table = (mb_strpos($table, 'reply') !== false)
                    ? $configValues['CONFIG_DB_TBL_RADREPLY']
                    // default: radcheck
                    : $configValues['CONFIG_DB_TBL_RADCHECK'];

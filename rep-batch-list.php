@@ -49,7 +49,7 @@
                     'creationdate' => t('all','CreationDate'),
                     'creationby' => t('all','CreationBy'),
                  );
-    
+
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
 
@@ -68,16 +68,13 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
-    // print HTML prologue   
+    // print HTML prologue
     $title = t('Intro','repbatchlist.php');
     $help = t('helpPage','repbatchlist');
-    
+
     print_html_prologue($title, $langCode);
-    
-    include("include/menu/sidebar.php");
-               
+
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -88,7 +85,7 @@
     //reportQuery is assigned below to the SQL statement  in $sql
     $_SESSION['reportQuery'] = "";
     $_SESSION['reportType'] = "reportsBatchList";
-    
+
     //orig: used as maethod to get total rows - this is required for the pages_numbering.php page
     $sql = "SELECT bh.id, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
                    COUNT(DISTINCT(ra.username)) AS active_users, ubi.planname, bp.plancost, bp.plancurrency,
@@ -103,120 +100,129 @@
                          $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
                          $configValues['CONFIG_DB_TBL_RADACCT'],
                          $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-  
+
 
     // set the session variable for report query (export)
     $_SESSION['reportQuery'] = $sql;
-    
+
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-    
+
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
-?>
 
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-                if ($drawNumberLinks) {
-                    printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-                    setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-                    echo '</td>';
-                }
-?>
-                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-                </td>
-                
-            </tr>
-            
-            <tr>
-<?php
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+
+        print_table_prologue($descriptors);
+
+        // print table top
+        print_table_top();
+
+        // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>
-            </tr>
-        </thead>
-        
-        <tbody>
-<?php
-        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            $hotspot_name = htmlspecialchars($row['HotspotName'], ENT_QUOTES, 'UTF-8');
-            $batch_status = htmlspecialchars($row['batch_status'], ENT_QUOTES, 'UTF-8');
-            $plancost = htmlspecialchars($row['plancost'], ENT_QUOTES, 'UTF-8');
-            $total_users = htmlspecialchars($row['total_users'], ENT_QUOTES, 'UTF-8');
-            $active_users = htmlspecialchars($row['active_users'], ENT_QUOTES, 'UTF-8');
-            $batch_cost = htmlspecialchars(($row['active_users'] * $row['plancost']), ENT_QUOTES, 'UTF-8');
-            $plan_currency = htmlspecialchars($row['plancurrency'], ENT_QUOTES, 'UTF-8');
-        
-            $plan_name = htmlspecialchars($row['planname'], ENT_QUOTES, 'UTF-8');
-        
-            $this_batch_name = htmlspecialchars($row['batch_name'], ENT_QUOTES, 'UTF-8');
-            $this_batch_desc = htmlspecialchars($row['batch_description'], ENT_QUOTES, 'UTF-8');
-        
-            // tooltip stuff
-            $tooltipText = sprintf('<a class="toolTip" href="rep-batch-details.php?batch_name=%s">%s</a>',
-                                   urlencode($this_batch_name), t('Tooltip','BatchDetails'))
-                         . sprintf('<div style="margin: 15px auto" id="divContainerUserInfo"><strong>%s</strong>:<br>%s</div>',
-                                   t('all','batchDescription'), $this_batch_desc);
-?>
-            <tr>
-                <td>
-                    <a class="tablenovisit" href="#" onclick="javascript:return false;" tooltipText='<?= $tooltipText ?>'>
-                        <?= $this_batch_name ?>
-                    </a>
-                </td>
-                
-                <td><?= $hotspot_name ?></td>
-                <td><?= $batch_status ?></td>
-                <td><?= $total_users ?></td>
-                <td><?= $active_users ?></td>
-                <td><?= $plan_name ?></td>
 
-                <td><?= $plancost ?></td>
-                <td><?= $batch_cost ?></td>
+        // closes table header, opens table body
+        print_table_middle();
 
-                <td><?= htmlspecialchars($row['creationdate'], ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= htmlspecialchars($row['creationby'], ENT_QUOTES, 'UTF-8') ?></td>
-            </tr>
-<?php
+        // table content
+        $count = 0;
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+
+            list($id, $this_batch_name, $this_batch_desc, $batch_status, $total_users, $active_users, $plan_name,
+                 $plancost, $plancurrency, $hotspot_name, $creationdate, $creationby, $updatedate, $updateby) = $row;
+
+
+            $batch_cost = intval($active_users) * $plancost;
+
+            if (empty($this_batch_desc)) {
+                $this_batch_desc = "(n/a)";
+            }
+
+            $tooltip = array(
+                                'subject' => $this_batch_name,
+                                'actions' => array(),
+                                'content' => sprintf('<strong>%s</strong>:<br>%s', t('all','batchDescription'), $this_batch_desc),
+                            );
+
+            $tooltip['actions'][] = array( 'href' => sprintf('rep-batch-details.php?batch_name=%s', urlencode($this_batch_name), ),
+                                           'label' => t('Tooltip','BatchDetails'), );
+
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // build table row
+            $table_row = array( $tooltip, $hotspot_name, $batch_status, $total_users, $active_users,
+                                $plan_name, $plancost, $batch_cost, $creationdate, $creationby );
+
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
+
         }
-?>
-        </tbody>
-        
-<?php
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-        
-    </table>
 
-<?php
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
 
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue();
 ?>

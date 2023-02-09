@@ -28,6 +28,9 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/acct/default.php') !== f
 }
 
 include_once("library/validation.php");
+
+global $username, $startdate, $enddate, $ipaddress, $nasipaddress;
+
 include_once("include/management/populate_selectbox.php");
 $menu_usernames = get_users('CONFIG_DB_TBL_RADACCT');
 array_unshift($menu_usernames, "");
@@ -38,21 +41,25 @@ $descriptors1 = array();
 $components = array();
 
 $components[] = array(
+                            "id" => "username_menu",
                             "name" => "username",
+                            "required" => true,
                             "type" => "select",
                             "selected_value" => ((isset($username)) ? $username : ""),
                             "options" => $menu_usernames,
                             "caption" => t('all','Username'),
+                            "tooltipText" => t('Tooltip','Username'),
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','UserAccounting'), 'action' => 'acct-username.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'person-fill', 'form_components' => $components, );
 
 $components[] = array(
                             "name" => "startdate",
                             "type" => "date",
                             "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
                             "caption" => t('all','StartingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
                      );
                      
 $components[] = array(
@@ -60,38 +67,43 @@ $components[] = array(
                             "type" => "date",
                             "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
                             "caption" => t('all','EndingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','DateAccounting'), 'action' => 'acct-date.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'calendar-range', 'form_components' => $components, );
 
 $components = array();
 $components[] = array(
                             "name" => "ipaddress",
                             "type" => "text",
                             "value" => ((isset($ipaddress)) ? $ipaddress : ""),
+                            "caption" => "IP address",
                             "tooltipText" => t('Tooltip','IPAddress'),
                             "sidebar" => true,
                             "pattern" => trim(LOOSE_IP_REGEX, "/"),
                             
                      );
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','IPAccounting'), 'action' => 'acct-ipaddress.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'ethernet', 'form_components' => $components, );
 
 $components = array();
 $components[] = array(
                             "name" => "nasipaddress",
                             "type" => "text",
                             "value" => ((isset($nasipaddress)) ? $nasipaddress : ""),
+                            "caption" => "NAS IP address",
                             "tooltipText" => t('all','NASIPAddress'),
                             "sidebar" => true,
                             "pattern" => trim(LOOSE_IP_REGEX, "/"),
                      );
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','NASIPAccounting'), 'action' => 'acct-nasipaddress.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'router-fill', 'form_components' => $components, );
 
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','AllRecords'), 'href' => 'acct-all.php', );
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ActiveRecords'), 'href' => 'acct-active.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','AllRecords'), 'href' => 'acct-all.php',
+                         'icon' => 'table', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ActiveRecords'), 'href' => 'acct-active.php',
+                         'icon' => 'table', );
 
 $sections = array();
 $sections[] = array( 'title' => 'Users Accounting', 'descriptors' => $descriptors1 );

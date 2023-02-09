@@ -30,9 +30,9 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/config/backup.php') !== 
 // define descriptors
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ManageBackups'), 'href' => 'config-backup-managebackups.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'list-task', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','CreateBackups'), 'href' => 'config-backup-createbackups.php',
-                         'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'tools', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
 $sections = array();
 $sections[] = array( 'title' => 'Backup Settings', 'descriptors' => $descriptors1 );

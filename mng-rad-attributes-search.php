@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -27,6 +27,9 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
 
+    include_once("lang/main.php");
+    include("library/layout.php");
+
     // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -36,34 +39,18 @@
     $attribute = (array_key_exists('attribute', $_GET) && !empty(str_replace("%", "", trim($_GET['attribute']))))
                ? str_replace("%", "", trim($_GET['attribute'])) : "";
 
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js"
-    );
-    
-    $title = t('Intro','mngradattributessearch.php');
-    $help = t('helpPage','mngradattributessearch');
-    
-    print_html_prologue($title, $langCode, array(), $extra_js);
-
-    include("include/menu/sidebar.php");
-    
     $cols = array(
-                    "id" => t('all','VendorID'),
+                    "selected",
+                    "id" => t('all','ID'),
                     "vendor" => t('all','VendorName'),
                     "attribute" => t('all','VendorAttribute')
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
@@ -72,9 +59,22 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
+
     
-    echo '<div id="contentnorightbar">';
+    // print HTML prologue
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js"
+    );
+
+    $title = t('Intro','mngradattributessearch.php');
+    $help = t('helpPage','mngradattributessearch');
+
+    print_html_prologue($title, $langCode, array(), $extra_js);
+
+    // start printing content
     print_title_and_help($title, $help);
+
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -84,75 +84,70 @@
     if (!empty($attribute)) {
         $sql_WHERE[] = sprintf("attribute LIKE '%s%%'", $dbSocket->escapeSimple($attribute));
     }
-    
+
     // we use this simplified query just to initialize $numrows
     $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
     $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
     $res = $dbSocket->query($sql);
     $numrows = $res->fetchrow()[0];
-    
+
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-                     
+
         // we execute and log the actual query
         $sql = sprintf("SELECT id, vendor, attribute FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
         $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = (!empty($attribute))
                               ? "&attribute=" . urlencode(htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8')) : "";
-                              
-        // this can be passed as form attribute and 
+
+        // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-rad-attributes-del.php";
-?>
 
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>' . '</tr>';
-        }
-?>
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
 
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('vendor__attribute[]', $action);
-?>
-                </th>
-            </tr>
-<?php
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'vendor__attribute[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
-        echo "<tr>";
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-        echo "</tr>";
-?>
-        </thead>
-        
-        <tbody>
-<?php
-        $counter = 1;
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -163,52 +158,59 @@
 
             list($this_id, $this_vendor, $this_attribute) = $row;
             
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-attributes-edit.php?vendor=%s&attribute=%s">%s</a>',
-                                   urlencode($this_vendor), urlencode($this_attribute), t('Tooltip','AttributeEdit'))
-                         . '<div style="margin: 15px auto" id="divContainerAttributeInfo">Loading...</div>';
+            // define tooltip
+            $ajax_id = "divContainerAttributeInfo_" . $count;
+            $param = sprintf('attribute=%s', urlencode($this_attribute));
+            $onclick = "ajaxGeneric('include/management/retVendorAttributeInfo.php','retAttributeInfo','$ajax_id','$param')";
+            $tooltip = array(
+                                'subject' => $this_id,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-attributes-edit.php?vendor=%s&attribute=%s', urlencode($this_vendor), urlencode($this_attribute), ), 'label' => t('Tooltip','AttributeEdit'), );
             
-            $onclick = sprintf('javascript:ajaxGeneric("include/management/retVendorAttributeInfo.php","retAttributeInfo",'
-                             . '"divContainerAttributeInfo","attribute=%s");return false;', urlencode($this_attribute));
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="vendor__attribute[]" id="checkbox-<?= $counter ?>"
-                        value="<?= urlencode($this_vendor) . "__" . urlencode($this_attribute) ?>">
-                    <label for="checkbox-<?= $counter ?>"><?= $this_id ?></label>
-                </td>
-                <td><?= $this_vendor ?></td>
-                <td>
-                    <a class="tablenovisit" href="#" onclick='<?= $onclick ?>' tooltipText='<?= $tooltipText ?>'>
-                        <?= $this_attribute ?>
-                    </a>
-                </td>
-            </tr>
-        
-<?php
-            $counter++;
-        }
-?>
-        </tbody>
-<?php
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
-?>
-    </table>
-    
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-    
-</form>
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+            
+            // create checkbox
+            $d = array( 'name' => 'vendor__attribute[]',
+                        'value' => sprintf("%s__%s", urlencode($this_vendor), urlencode($this_attribute)));
+            $checkbox = get_checkbox_str($d);
+            
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $this_vendor, $this_attribute );
 
-<?php
+            // print table row
+            print_table_row($table_row);
+            
+            $count++;
+        }
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
 
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue();
 ?>

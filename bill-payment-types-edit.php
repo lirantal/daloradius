@@ -158,9 +158,9 @@
         $title .= ":: $paymentname_enc";
     } 
 
-    include("include/menu/sidebar.php");
     
-    echo '<div id="contentnorightbar">';
+    
+
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');

@@ -159,17 +159,12 @@
 
     
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
 
     $title = t('Intro','billplansnew.php');
@@ -177,9 +172,6 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
@@ -388,6 +380,9 @@
         
         open_form();
     
+        // open tab wrapper
+        open_tab_wrapper();
+    
         // tab 0
         open_tab($navkeys, 0, true);
     
@@ -459,6 +454,9 @@
         close_fieldset();
         
         close_tab($navkeys, 3);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         // descriptors 4
         $input_descriptors4 = array();

@@ -46,6 +46,7 @@ function populateOPs() {
     global $valid_ops;
     
     foreach ($valid_ops as $op) {
+        //~ $op = htmlspecialchars($op, ENT_QUOTES, 'UTF-8');
         printf("objOP.add(new Option('%s', '%s'));\n", $op, $op);
     }
 }
@@ -415,8 +416,7 @@ switch ($action) {
              * from the dictionary table
             /*******************************************************************************************************/
             if (!empty($RecommendedOP)) {
-                printf("objOP.add(new Option('%s', '%s'));\n",
-                       $RecommendedOP, $RecommendedOP);
+                printf("objOP.add(new Option('%s', '%s'));\n", $RecommendedOP, $RecommendedOP);
             }
             
             // then we populate the dictOP select box with the normal possible values for it:
@@ -513,9 +513,9 @@ switch ($action) {
             }
             /*******************************************************************************************************/
             
-            } else {
-                echo "alert('Error. Correct inconsistencies in your vendor/attribute dictionary, then try again.');";
-            }
+        } else {
+            echo "alert('Warning. Attribute non-existent or inconsistency in your vendor/attribute dictionary.');";
+        }
         
         break;
 }

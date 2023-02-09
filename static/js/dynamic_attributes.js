@@ -61,7 +61,7 @@ function createAttributes(index, attributesSel) {
 }
 
 
-function getValuesList(sel,valuesSel,opSel,tableSel,attrTooltip,attrType,attrHelper) {
+function getValuesList(sel, valuesSel, opSel, tableSel, attrTooltip, attrType, attrHelper) {
 
     var attributeName = document.getElementById(sel).value;
 
@@ -138,21 +138,13 @@ function addElement(enableTable, elementId) {
 
     var divContainer = document.getElementById('divContainer');
     var divCounter = document.getElementById('divCounter');
-    var num = document.getElementById('divCounter').value + 1;
+    var num = parseInt(divCounter.value) + 1;
     divCounter.value = num;
 
     var attributeDiv = document.createElement('div');
     var divIdName = `attrib${num}Div`;
     attributeDiv.setAttribute('id',divIdName);
 
-
-    if (enableTable == 1) {
-    tableElement = '&nbsp;&nbsp;<b>Target:</b>&nbsp;'
-                 + `<select id="dictTable${num}" name="dictValues${dictCounter}[]" style="width: 70px" class="form">`
-                 + '</select>';
-    } else {
-        tableElement = `<input type="hidden" id="dictTable${num}" name="dictValues${dictCounter}[]">`;
-    }
 
     // get top-page attribute's value
     var srcElem = document.getElementById(elementId);
@@ -163,29 +155,62 @@ function addElement(enableTable, elementId) {
       var elemVal = srcElem.value;
 	}
 
-    var onclick_remove = `javascript:removeElement('${divIdName}');`;
-    var onclick_info = `javascript:toggleShowDiv('dictInfo${num}');`;
+    
+    var onclick_remove = `removeElement('${divIdName}')`;
+    var onclick_info = `document.getElementById('dictInfo${num}').classList.toggle('d-none')`;
 
-    var content = "<br><fieldset>"
-                + '<b>Attribute:</b><input type="text" id="dictAttributes1" '
-                + `name="dictValues${dictCounter}[]" value="${elemVal}" ` + 'style="width: 220px" class="form">'
-                + '<b>Value:</b><input type="text" ' + `id="dictValues${num}" name="dictValues${dictCounter}[]" `
-                + 'style="width: 220px" class="form">'
-                + `<span id="dictHelper${num}"></span>`
-                + "<b>Op:</b>"
-                + `<select id="dictOP${num}" name="dictValues${dictCounter}[]" style="width: 45px" class="form"></select>`
-                + tableElement + "<br>"
-                + `<div id="dictInfo${num}" style="display:none;visibility:visible">`
-                + `<span id="dictTooltip${num}">`
-                + "<b>Description:</b></span><br>"
-                + `<span id="dictType${num}">`
-                + "<b>Type:<b/></span></div><hr>"
-                + '<a href="#top"><img src="static/images/icons/arrow_up.png" alt="^" /></a>'
-                + `<input type="button" name="removeAttributes" value="Remove" onclick="${onclick_remove}" class="button">`
-                + `<input type="button" name="infoAttribute" value="Info" onclick="${onclick_info}" class="button">`
-                + "</fieldset>";
-
-
+    var content = `<fieldset id="${divIdName}" class="d-flex flex-column">`;
+        
+        content += '<div class="d-flex flex-row justify-content-center align-items-center gap-2 my-1">';
+        
+        content += '<div class="align-self-end">'
+                + '<a class="mx-1" href="#top" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Top">'
+                + '<i class="bi bi-chevron-double-up"></i></a>'
+                + '<a class="mx-1" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove"'
+                + ` onclick="${onclick_remove}"><i class="bi bi-x-circle-fill text-danger"></i></a>`
+                + '<a class="mx-1" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Info"'
+                + ` onclick="${onclick_info}"><i class="bi bi-info-circle-fill"></i></a>`
+                + '</div>';
+        
+        content += '<div>'
+                +  `<label for="dictAttributes${num}" class="form-label mb-1">Attribute</label>`
+                +  `<input type="text" id="dictAttributes${num}" name="dictValues${dictCounter}[]" value="${elemVal}" `
+                +  ' class="form-control">'
+                +  '</div>';
+        
+        content += '<div>'
+                +  `<label for="dictValues${num}" class="form-label mb-1">Value</label>`
+                +  `<input type="text" id="dictValues${num}" name="dictValues${dictCounter}[]" `
+                +  ' class="form-control">'
+                +  '</div>';
+        
+        content += `<div><span id="dictHelper${num}"></span></div>`;
+        
+        content += '<div>'
+                +  `<label for="dictOP${num}" class="form-label mb-1"><abbr title="Operator">Op</abbr></label>`
+                + `<select id="dictOP${num}" name="dictValues${dictCounter}[]" class="form-select"></select>`
+                + '</div>';
+        
+        if (enableTable == 1) {
+            content += '<div>'
+                    +  `<label for="dictTable${num}" class="form-label mb-1">Target</label>`
+                    +  `<select id="dictTable${num}" name="dictValues${dictCounter}[]" class="form-select"></select>`
+                    +  '</div>';
+        } else {
+            content += `<input type="hidden" id="dictTable${num}" name="dictValues${dictCounter}[]">`;
+        }
+        
+        content += '</div>';
+                
+        content += `<div id="dictInfo${num}" class="d-flex flex-column justify-content-start d-none">`
+                + `<div id="dictTooltip${num}">`
+                + '<strong>Description:</strong> (n/a)</div>'
+                + `<div id="dictType${num}">`
+                + '<strong>Type:</strong> (n/a)</div>'
+                + '</div>';
+        
+        content += '</fieldset>';
+        
     attributeDiv.innerHTML = content;
     divContainer.appendChild(attributeDiv);
 

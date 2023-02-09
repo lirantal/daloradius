@@ -36,24 +36,16 @@
     $logQuery = "performed query for all accounting records on page: ";
     $logDebugSQL = "";
 
-    // print HTML prologue
-    $title = t('Intro','acctall.php');
-    $help = t('helpPage','acctall');
-
-    print_html_prologue($title, $langCode);
-    
-    include("include/menu/sidebar.php");
-
     $cols = array(
                     "radacctid" => t('all','ID'),
-                    "hotspot" => t('all','HotSpot'),
+                    "name" => t('all','HotSpot'),
                     "username" => t('all','Username'),
                     "framedipaddress" => t('all','IPAddress'),
                     "acctstarttime" => t('all','StartTime'),
                     "acctstoptime" => t('all','StopTime'),
                     "acctsessiontime" => t('all','TotalTime'),
-                    "acctinputoctets" => sprintf("%s (%s)", t('all','Upload'), t('all','Bytes')),
-                    "acctoutputoctets" => sprintf("%s (%s)", t('all','Download'), t('all','Bytes')),
+                    "acctinputoctets" => t('all','Upload'),
+                    "acctoutputoctets" => t('all','Download'),
                     "acctterminatecause" => t('all','Termination'),
                     "nasipaddress" => t('all','NASIPAddress'),
                  );
@@ -67,8 +59,18 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "asc";
+
+    // print HTML prologue
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js"
+    );
     
-    echo '<div id="contentnorightbar">';
+    $title = t('Intro','acctall.php');
+    $help = t('helpPage','acctall');
+
+    print_html_prologue($title, $langCode, array(), $extra_js);
+    
     print_title_and_help($title, $help);
     
 
@@ -107,88 +109,107 @@
         $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
-?>
+        
+        $descriptors = array();
 
-    <table border="0" class="table1">
-    <thead>
-        <tr style="background-color: white">
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>';
-        }
-?>
-            <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                <input class="button" type="button" value="CSV Export"
-                    onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-            </td>
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-        </tr>
 
-<?php
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
+
+        // print table top
+        print_table_top();
+
         // second line of table header
-        echo "<tr>";
         printTableHead($cols, $orderBy, $orderType);
-        echo "</tr>";
-?>
-    </thead>
-    
-    <tbody>
-<?php
-        $simple_td_format = '<td>%s</td>';
-        $li_style = 'margin: 7px auto';
 
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
-            foreach ($row as $i => $value) {
-                $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            $rowlen = count($row);
+
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
             
-            echo "<tr>";
-            printf($simple_td_format, $row[0]);
+            list($radAcctId, $hotspot, $username, $framedIPAddress, $acctStartTime, $acctStopTime,
+                 $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress) = $row;
+                
+            $acctSessionTime = time2str($acctSessionTime);
+            $acctInputOctets = toxbyte($acctInputOctets);
+            $acctOutputOctets = toxbyte($acctOutputOctets);
             
-            $onclick = "javascript:ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','divContainerHotspotInfo'"
-                     . sprintf(",'hotspot=%s');return false;", $row[1]);
-            $tooltip = '<ul style="list-style-type: none">'
-                     . sprintf('<li style="%s"><a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a></li>',
-                               $li_style, urlencode($row[1]), t('Tooltip','HotspotEdit'))
-                     . sprintf('<li style="%s"><a class="toolTip" href="acct-hotspot-compare.php">%s</a></li>',
-                               $li_style, t('all','Compare'))
-                     . '</ul>'
-                     . '<div style="margin: 15px auto" id="divContainerHotspotInfo">Loading...</div>';
+            $ajax_id = "divContainerHotspotInfo_" . $count;
+            $param = sprintf('hotspot=%s', urlencode($hotspot));
+            $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','$ajax_id','$param')";
+            $tooltip1 = array(
+                                'subject' => $hotspot,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                             );
+            $tooltip1['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ), 'label' => t('Tooltip','HotspotEdit'), );
+            $tooltip1['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
             
-            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
-                   $onclick, $tooltip, $row[1]);
             
-            $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo',"
-                     . sprintf("'username=%s');return false;", $row[2]);
-            $tooltip = sprintf('<a class="toolTip" href="mng-edit.php?username=%s">%s</a>', $row[2], t('Tooltip','UserEdit'))
-                     . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
-            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
-                   $onclick, $tooltip, $row[2]);
+            $ajax_id = "divContainerUserInfo_" . $count;
+            $param = sprintf('username=%s', urlencode($username));
+            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $tooltip2 = array(
+                                'subject' => $username,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                             );
+            $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+            
+            $tooltip1 = get_tooltip_list_str($tooltip1);
+            $tooltip2 = get_tooltip_list_str($tooltip2);
+            
+            // define table row
+            $table_row = array( $radAcctId, $tooltip1, $tooltip2, $framedIPAddress, $acctStartTime, $acctStopTime,
+                                $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress);
 
-            printf($simple_td_format, $row[3]);
-            printf($simple_td_format, $row[4]);
-            printf($simple_td_format, $row[5]);
-            
-            printf($simple_td_format, time2str($row[6]));
-            printf($simple_td_format, toxbyte($row[7]));
-            printf($simple_td_format, toxbyte($row[8]));
-            printf($simple_td_format, $row[9]);
-            printf($simple_td_format, $row[10]);
-        
-            echo "</tr>";
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
         
         }
 
-        echo '</tbody>';
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
 
-        // tfoot
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-
-        echo '</table>';
+        printLinks($links, $drawNumberLinks);
         
     } else {
         $failureMsg = "Nothing to display";

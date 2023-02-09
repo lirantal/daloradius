@@ -27,7 +27,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/acct/hotspot.php') !== f
     exit;
 }
 
- 
+global $hotspot;
+
 include_once("include/management/populate_selectbox.php");
 $menu_options = get_hotspots();
 array_unshift($menu_options, "");
@@ -41,16 +42,18 @@ $components[] = array(
                         "type" => "select",
                         "selected_value" => ((isset($hotspot)) ? $hotspot : ""),
                         "options" => $menu_options,
-                        "caption" => "Select Hotspot",
+                        "caption" => t('all','HotSpots'),
+                        "tooltipText" => "Please select one or multiple " . t('all','HotSpots'),
                         "multiple" => true,
                         "size" => 5,
                         "show_controls" => true,
                       );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','HotspotAccounting'), 'action' => 'acct-hotspot-accounting.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'router-fill', 'form_components' => $components, );
 
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','HotspotsComparison'), 'href' => 'acct-hotspot-compare.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','HotspotsComparison'), 'href' => 'acct-hotspot-compare.php',
+                         'icon' => 'router-fill', );
 
 $sections = array();
 $sections[] = array( 'title' => 'Hotspots Accounting', 'descriptors' => $descriptors1 );

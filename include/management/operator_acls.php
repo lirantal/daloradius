@@ -36,9 +36,9 @@ function drawOperatorACLs($operator_id = "") {
     include('library/opendb.php');
     
     // init table layout
-    echo '<table border="2" class="table1">'
+    echo '<table class="table table-striped">'
        . '<thead>'
-       . '<tr><th colspan="4">Permission to access pages</th></tr>'
+       . '<tr><th colspan="4">Permission to access sections</th></tr>'
        . '<tr>'
        . '<th>Category</th>'
        . '<th>Section</th>'
@@ -74,9 +74,9 @@ function drawOperatorACLs($operator_id = "") {
         printf('<td>%s</td><td>%s</td><td>%s</td>', $category, $section, $file);
         
         echo '<td>';
-        printf('<select name="ACL_%s">', $file);
-        printf('<option value="1"%s>Enabled</option>', (($access === 1) ? " selected" : ""));
-        printf('<option value="0"%s>Disabled</option>', (($access !== 1) ? " selected" : ""));
+        printf('<select class="form-select" name="ACL_%s">', $file);
+        printf('<option value="1"%s>Granted</option>', (($access === 1) ? " selected" : ""));
+        printf('<option value="0"%s>Denied</option>', (($access !== 1) ? " selected" : ""));
         echo '</select>'
            . '</td>'
            . '</tr>';

@@ -171,25 +171,16 @@
     
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/productive_funcs.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     $title = t('Intro','configoperatorsnew.php');
     $help = t('helpPage','configoperatorsnew');
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
-    
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     
     include_once('include/management/actionMessages.php');
     
@@ -217,18 +208,21 @@
                                      );
         
         // set navbar stuff
-        $navkeys = array( 'OperatorInfo', 'ContactInfo', 'ACLSettings', );
+        $navkeys = array( array( 'OperatorInfo', "Operator Info" ), 'ContactInfo', array( 'ACLSettings', "ACL Settings" ) );
 
         // print navbar controls
         print_tab_header($navkeys);
         
         open_form();
     
+        // open tab wrapper
+        open_tab_wrapper();
+    
         // tab 0
         open_tab($navkeys, 0, true);
     
         $fieldset0_descriptor = array(
-                                        "title" => t('title','PlanInfo')
+                                        "title" => "Operator Info"
                                      );
 
         open_fieldset($fieldset0_descriptor);
@@ -255,6 +249,9 @@
         drawOperatorACLs();
 
         close_tab($navkeys, 2);
+
+        // close tab wrapper
+        close_tab_wrapper();
 
         $input_descriptors1 = array();
 

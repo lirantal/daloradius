@@ -30,12 +30,6 @@
     include_once("lang/main.php");
     include("library/validation.php");
     include("library/layout.php");
-
-    // init loggin variables
-    $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
-    $logDebugSQL = "";
-
     
     //setting values for the order by and order type variables
     // and in other cases we partially strip some character,
@@ -80,11 +74,10 @@
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "asc";
 
-    //feed the sidebar variables
-    $billing_date_ratename = $ratename;
-    $billing_date_username = $username;
-    $billing_date_startdate = $startdate;
-    $billing_date_enddate = $enddate;
+    // init loggin variables
+    $log = "visited page: ";
+    $logQuery = "performed query for listing of records on page: ";
+    $logDebugSQL = "";
 
     
     // print HTML prologue
@@ -100,13 +93,7 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-
-    include("include/menu/sidebar.php");
-    
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-
 
     if (!empty($ratename)) {
         
@@ -215,63 +202,71 @@
 
             $partial_query_string = (count($partial_query_params) > 0)
                                   ? ("&" . implode("&", $partial_query_params)) : "";
-?>
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-            // page numbers are shown only if there is more than one page
-            if ($drawNumberLinks) {
-                printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-                echo '</td>';
-            }
-?>
-            </tr>
-            
-            <tr>
-<?php
-            printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>
-            </tr>
-        </thead>
-        
-        <tbody>
+                                  
+            $descriptors = array();
 
-<?php
+            $params = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $rowsPerPage,
+                                'page_num' => $pageNum,
+                                'order_by' => $orderBy,
+                                'order_type' => $orderType,
+                                'partial_query_string' => $partial_query_string,
+                            );
+            $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+            print_table_prologue($descriptors);
+            
+            // print table top
+            print_table_top();
+            
+            // second line of table header
+            printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+
+            // closes table header, opens table body
+            print_table_middle();
 
             $sumBilled = 0;
             $sumSession = 0;
-
-            $td_format = "<td>%s</td>";
 
             while($row = $res->fetchRow()) {
                 foreach ($row as $i => $value) {
                     $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                 }
 
+                list($username, $nasIPAddress, $acctStartTime, $sessionTime, $rateCost) = $row;
+
                 $sessionTime = $row[3];
                 $rateCost = $row[4];
-                $billed = ($sessionTime/$rateDivisor) * $rateCost;
+                $billed = ($sessionTime / $rateDivisor) * $rateCost;
                 $sumBilled += $billed;
                 $sumSession += $sessionTime;
 
-                echo "<tr>";
-                printf($td_format, $row[0]);
-                printf($td_format, $row[1]);
-                printf($td_format, $row[2]);
-                printf($td_format, time2str($row[3]));
-                printf($td_format, number_format($billed, 2));
-                echo "</tr>";
+                $sessionTime = time2str($sessionTime);
+                $billed = number_format($billed, 2);
+
+                $table_row = array($username, $nasIPAddress, $acctStartTime, $sessionTime, $billed);
+
+                print_table_row($table_row);
+
             }
 
-            echo '</tbody>';
+            // close tbody,
+            // print tfoot
+            // and close table + form (if any)
+            $table_foot = array(
+                                    'num_rows' => $numrows,
+                                    'rows_per_page' => $per_page_numrows,
+                                    'colspan' => $colspan,
+                                    'multiple_pages' => $drawNumberLinks
+                               );
+            $descriptor = array( 'table_foot' => $table_foot );
 
-            // tfoot
+            print_table_bottom($descriptor);
+
+            // get and print "links"
             $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-            printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-
-            echo '</table>';
+            printLinks($links, $drawNumberLinks);
     
         } else {
             $failureMsg = "No entries retrieved";

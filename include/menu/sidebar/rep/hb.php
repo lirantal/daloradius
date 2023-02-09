@@ -29,7 +29,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/rep/hb.php') !== false) 
 
 // define descriptors
 $descriptors1 = array();
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','Dashboard'), 'href' => 'rep-hb-dashboard.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','Dashboard'), 'href' => 'rep-hb-dashboard.php',
+                         'icon' => 'speedometer2', );
 
 $sections = array();
 $sections[] = array( 'title' => t('button','Dashboard'), 'descriptors' => $descriptors1 );

@@ -36,7 +36,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
     
     // divContainer id must begin with a letter ([A-Za-z]) and may be followed by any number of letters,
     // digits ([0-9]), hyphens ("-"), underscores ("_").
-    if (!preg_match("/[A-Za-z][A-Za-z0-9_-]+/", $_GET['divContainer'])) {
+    if (!preg_match('/[A-Za-z][A-Za-z0-9_-]+/', $_GET['divContainer'])) {
         exit;
     }
     
@@ -101,11 +101,11 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             
             // return message
             if (DB::isError($res)) {
-                $class = "failure";
-                $message = sprintf("Failed to enable %s <strong>%s</strong>.", $label, $username_list_enc);
+                $class = "danger";
+                $message = sprintf('Failed to enable %s <strong>%s</strong>.', $label, $username_list_enc);
             } else {
                 $class = "success";
-                $message = sprintf("Enabled %s <strong>%s</strong>.", $label, $username_list_enc);
+                $message = sprintf('Enabled %s <strong>%s</strong>.', $label, $username_list_enc);
             }
                 
             break;
@@ -155,18 +155,18 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                 $to_disable_list_enc = htmlspecialchars($to_disable_list, ENT_QUOTES, 'UTF-8');
             
                 if (DB::isError($res)) {
-                    $class = "failure";
-                    $message = sprintf("Failed to disable %s <strong>%s</strong>.", $label, $to_disable_list_enc);
+                    $class = "danger";
+                    $message = sprintf('Failed to disable %s <strong>%s</strong>.', $label, $to_disable_list_enc);
                 } else {
                     $class = "success";
-                    $message = sprintf("Disabled %s <strong>%s</strong>.", $label, $to_disable_list_enc);
+                    $message = sprintf('Disabled %s <strong>%s</strong>.', $label, $to_disable_list_enc);
                 }
             } else {
                 $already_disabled_enc = htmlspecialchars(implode(", ", $already_disabled), ENT_QUOTES, 'UTF-8');
                 $already_disabled_label = ((count($to_disable) > 1 || count($to_disable) == 0)) ? "users" : "user";
                 
-                $class = "failure";
-                $message = sprintf("%s <strong>%s</strong> already disabled.", $already_disabled_label, $already_disabled_enc);
+                $class = "danger";
+                $message = sprintf('%s <strong>%s</strong> already disabled.', $already_disabled_label, $already_disabled_enc);
             }
 
             break;
@@ -181,7 +181,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             $numrows = $res->numRows();
             
             if ($numrows > 0) {
-                $class = "failure";
+                $class = "danger";
                 $message = sprintf('Please note that user <strong>%s</strong> is currently disabled.',
                                    htmlspecialchars($username, ENT_QUOTES, 'UTF-8'))
                          . '<br>'
@@ -263,11 +263,11 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
 
             // return message
             if ($isErr) {
-                $class = "failure";
-                $message = sprintf("Cannot refill session time for %s <strong>%s</strong>", $label, $username_list_enc);
+                $class = "danger";
+                $message = sprintf('Cannot refill session time for %s <strong>%s</strong>', $label, $username_list_enc);
             } else {
                 $class = "success";
-                $message = sprintf("Session time for %s <strong>%s</strong> has been successfully refilled (and billed).",
+                $message = sprintf('Session time for %s <strong>%s</strong> has been successfully refilled (and billed).',
                                    $label, $username_list_enc);
             }
 
@@ -341,11 +341,11 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             
             // return message
             if ($isErr) {
-                $class = "failure";
-                $message = sprintf("Cannot refill session traffic for %s <strong>%s</strong>", $label, $username_list_enc);
+                $class = "danger";
+                $message = sprintf('Cannot refill session traffic for %s <strong>%s</strong>', $label, $username_list_enc);
             } else {
                 $class = "success";
-                $message = sprintf("Session traffic for %s <strong>%s</strong> has been successfully refilled (and billed).",
+                $message = sprintf('Session traffic for %s <strong>%s</strong> has been successfully refilled (and billed).',
                                    $label, $username_list_enc);
             }
             
@@ -357,7 +357,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
     
     // output message
     if (isset($message) && isset($class)) {
-        $div = sprintf('<div class="%s">%s</div>', $class, $message);
+        $div = sprintf('<div class="alert alert-%s d-flex align-items-center" role="alert">%s</div>', $class, $message);
         printf("document.getElementById('%s').innerHTML = '%s';", $divContainer, $div);
     }
 }

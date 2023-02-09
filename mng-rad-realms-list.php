@@ -38,6 +38,7 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
+                    "selected",
                     "realmname" => t('all','RealmName'),
                     "creationdate" => t('all','CreationDate'),
                     "creationby" => t('all','CreationBy'),
@@ -66,10 +67,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -107,41 +105,34 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-realms-del.php";
-?>
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'realmname[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
 
-<form name="listall" method="POST" action="<?= $action ?>">
-
-    <table border="0" class="table1">
-        <thead>
-
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('realmname[]', $action)
-?>
-                </th>
-            </tr>
-
-            <tr>
-<?php
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>
-            </tr>
-            
-        </thead>
-        
-        <tbody>
-<?php
+
+        // closes table header, opens table body
+        print_table_middle();
+   
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -152,37 +143,45 @@
         
             list($realmname, $creationdate, $creationby, $updatedate, $updateby) = $row;
             
-            // tooltip stuff
-            $onclick = 'javascript:return false;';
-        
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-realms-edit.php?realmname=%s">%s</a>',
-                                   urlencode($realmname), t('Tooltip','EditRealm'));
-        
-            echo "<tr>";
-            printf('<td><input type="checkbox" name="realmname[]" value="%s">', $realmname);
-            printf('<a class="tablenovisit" href="#" onclick="%s"' . "tooltipText='%s'>%s</a></td>",
-                   $onclick, $tooltipText, $realmname);
+            $tooltip = array(
+                                'subject' => $realmname,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-realms-edit.php?realmname=%s', urlencode($realmname), ), 'label' => t('Tooltip','EditRealm'), );
             
-            // simply print remaining row elements
-            for ($i = 1; $i < $rowlen; $i++) {
-                printf("<td>%s</td>", $row[$i]);
-            }
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
             
-            echo "</tr>";
-        }
-?>
-        </tbody>
-        
-<?php
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-        
-    </table>
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-</form>
+            // create checkbox
+            $d = array( 'name' => 'realmname[]', 'value' => $realmname );
+            $checkbox = get_checkbox_str($d);
 
-<?php
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $creationdate, $creationby, $updatedate, $updateby );
+
+            // print table row
+            print_table_row($table_row);
+            
+            $count++;
+        }
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

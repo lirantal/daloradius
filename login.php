@@ -40,86 +40,132 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
 
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="<?= $langCode ?>" xml:lang="<?= $langCode ?>">
-    <head>
-        <title>daloRADIUS :: Login</title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<html lang="<?= $langCode ?>">
 
-        <link rel="stylesheet" href="static/css/1.css" media="screen">
-        <link rel="stylesheet" href="static/css/style.css" media="screen">
-        
-        <script src="static/js/pages_common.js"></script>
-    </head>
+<head>
+    <title>daloRADIUS :: Login</title>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="copyright" content="Liran Tal & Filippo Lauria">
+    <meta name="robots" content="noindex">
 
-    <body onload="document.login.operator_user.focus()">
-        <div id="wrapper">
-            <div id="innerwrapper">
-                <div id="header">
-                    <h1>
-                        <a href="index.php">
-                            <img alt="daloRADIUS logo" style="border: 0" src="static/images/daloradius_small.png">
-                        </a>
-                    </h1>
-                    <h2><?= t('all','copyright1') ?></h2>
-                    <br>
-                </div><!-- #header -->
-		
-        
-                <div id="main">
-                    <h2 class="form-header"><?= t('text','LoginRequired') ?></h2>
-                    
-                     <form class="form-box" name="login" action="dologin.php" method="post">
-                            
-                        <label for="operator_user">Username</label>
-                        <input class="form-input" id="operator_user" name="operator_user" value="" type="text" tabindex="1">
-                        
-                        <label for="operator_pass">Password</label>
-                        <input class="form-input" id="operator_pass" name="operator_pass" value="" type="password" tabindex="2">
-                        
-                        <label for="location">Location</label>
-                        <select id="location" name="location" tabindex="3"
-                            class="form-input"<?= ($onlyDefaultLocation) ? " disabled" : "" ?>>
-                            <?php
-                                $defaultLocationFormat = '<option value="%s">%s</option>' . "\n";
-                                if ($onlyDefaultLocation) {
-                                    printf($defaultLocationFormat, "default", "default");
-                                } else {
-                                    $locations = array_keys($configValues['CONFIG_LOCATIONS']);
-                                    foreach ($locations as $location) {
-                                        $location = htmlspecialchars($location, ENT_QUOTES, 'UTF-8');
-                                        printf($defaultLocationFormat, $location, $location);
-                                    }
-                                }
-                            ?>
-                        </select>
-                        <input class="form-submit" type="submit" value="<?= t('text','LoginPlease') ?>" tabindex="4">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    
+    <style>
+html, body {
+  height: 100%;
+}
 
-                        <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-                    </form>
+body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.form-login {
+  max-width: 480px;
+  padding: 15px;
+}
+
+.form-login .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-login input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-login input[type="password"] {
+  margin-bottom: -1px;  
+  border-radius: 0;
+}
+
+.form-login select {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+    </style>
+</head>
+
+<body>
+    <main class="form-login w-100 m-auto">
+    <form action="dologin.php" method="POST">
+    <img class="mb-4" src="static/images/daloradius_small.png" alt="daloRADIUS" width="135" height="41">
+    <h1 class="h3 mb-3 fw-normal"><?= t('text','LoginRequired') ?></h1>
+
+    <div class="form-floating">
+    <input type="text" class="form-control" id="operator_user" name="operator_user" placeholder="Username">
+    <label for="operator_user">Username</label>
+    </div>
+    
+    <div class="form-floating">
+    <input type="password" class="form-control" id="operator_pass" name="operator_pass" placeholder="Password">
+    <label for="operator_pass">Password</label>
+    </div>
+
+    <div class="form-floating">
+        <select class="form-select" id="location" name="location" <?= ($onlyDefaultLocation) ? " disabled" : "" ?>>
+<?php
+        $defaultLocationFormat = '<option value="%s">%s</option>' . "\n";
+        if ($onlyDefaultLocation) {
+            printf($defaultLocationFormat, "default", "default");
+        } else {
+            $locations = array_keys($configValues['CONFIG_LOCATIONS']);
+            foreach ($locations as $location) {
+                $location = htmlspecialchars($location, ENT_QUOTES, 'UTF-8');
+                printf($defaultLocationFormat, $location, $location);
+            }
+        }
+?>
+        </select>
+        <label for="location">Location</label>
+    </div>
                     
-                    <small class="form-caption"><?= t('all','daloRADIUS') ?></small>
-                    
-                    <?php
-                        if (array_key_exists('operator_login_error', $_SESSION)
-                            && $_SESSION['operator_login_error'] !== false) {
-                    ?>
-                    
-                    <div id="inner-box">
-                        <h3 class="text-title error-title">Error!</h3>
-                        <?= t('messages','loginerror') ?>
-                    </div><!-- #inner-box -->
-                    
-                    <?php
-                        }
-                    ?>
-                    
-                </div><!-- #main -->
+    <button class="w-100 btn btn-lg btn-primary" type="submit"><?= t('text','LoginPlease') ?></button>
+    <small class="my-2 text-muted text-center d-block"><?= t('all','daloRADIUS') ?></small>
+    
+    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+    </form>
+    
+
+<?php
+    if (isset($_SESSION['operator_login_error']) && $_SESSION['operator_login_error'] !== false) {
+        $message = t('messages','loginerror');
+        echo <<<EOF
         
-                <div id="footer">
-                    <?php include('page-footer.php'); ?>
-                </div><!-- #footer -->
-                
-            </div><!-- #innerwrapper -->
-        </div><!-- #wrapper -->
-    </body>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="error-toast" class="toast align-items-start text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">{$message}</div>
+                <button type="button" class="btn-close m-2" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+
+window.onload = function() {
+    var errorToast = document.getElementById('error-toast');
+    var toast = new bootstrap.Toast(errorToast); toast.show();
+}
+
+    </script>
+
+EOF;
+        unset($_SESSION['operator_login_error']);
+    }
+?>
+  
+    </main>
+
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>

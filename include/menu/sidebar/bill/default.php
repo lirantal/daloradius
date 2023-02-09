@@ -27,9 +27,10 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/default.php') !== f
     exit;
 }
 
-
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+global $planname, $username;
 
 include_once("include/management/populate_selectbox.php");
 $menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
@@ -39,7 +40,7 @@ $menu_plannames = get_plans();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUser'), 'href' =>'bill-pos-new.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
 
 if (count($menu_plannames) > 0) {
@@ -50,30 +51,34 @@ if (count($menu_plannames) > 0) {
                             "selected_value" => ((isset($planname)) ? $planname : ""),
                             "required" => true,
                             "options" => $menu_plannames,
+                            "caption" => t('all','PlanName'),
+                            "tooltipText" => t('Tooltip','BillingPlanName'),
                           );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListUsers'), 'action' => 'bill-pos-list.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
 }
 
 if (count($menu_usernames) > 0) {
     $components = array();
 
     $components[] = array(
+                            "id" => "username_menu",
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
                             "datalist" => (($autocomplete) ? $menu_usernames : array()),
                             "tooltipText" => t('Tooltip','Username'),
+                            "caption" => t('all','Username'),
                             "sidebar" => true,
                          );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUser'), 'action' => 'bill-pos-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
 
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveUsers'), 'href' => 'bill-pos-del.php',
-                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'person-fill-x', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }
 
 $sections = array();

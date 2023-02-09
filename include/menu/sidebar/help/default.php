@@ -31,13 +31,20 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/help/default.php') !== f
 // define descriptors
 $descriptors1 = array();
 
+$content = "";
+if (isset($configValues['DALORADIUS_VERSION'])) {
+    $content .= "<br>version " . $configValues['DALORADIUS_VERSION'];
+    if (!empty($configValues['DALORADIUS_DATE'])) {
+        $content .= " / " . $configValues['DALORADIUS_DATE'];
+    }
+}
+
 $descriptors1[] = array(
                             'type' => 'textarea',
-                            'content' => sprintf('daloRADIUS - RADIUS Management<br>%s / %s',
-                                                 t('all', 'daloRADIUSVersion'), $configValues['DALORADIUS_DATE']),
+                            'content' => sprintf('daloRADIUS - RADIUS Management%s', $content),
                             'readmore' => array( 'href' => 'https://github.com/lirantal/daloradius',
                                                  'title' => 'Read More',
-                                                 'label' => 'Read More &raquo;',
+                                                 'label' => 'Read More',
                                                ),
                        );
 

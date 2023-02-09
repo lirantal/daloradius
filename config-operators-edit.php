@@ -184,15 +184,10 @@
     include("library/layout.php");
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/productive_funcs.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     $title = t('Intro','configoperatorsedit.php');
@@ -204,12 +199,9 @@
         $title .= " :: $operator_username_enc";
     } 
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
-    include_once('include/management/actionMessages.php');
     
+    include_once('include/management/actionMessages.php');
     
     if (!empty($operator_username)) {
         // set form component descriptors
@@ -247,6 +239,9 @@
         
         open_form();
         
+        // open tab wrapper
+        open_tab_wrapper();
+        
         // tab 0
         open_tab($navkeys, 0, true);
         
@@ -272,6 +267,9 @@
         include_once('include/management/operator_acls.php');
         drawOperatorACLs($curr_operator_id);
         close_tab($navkeys, 2);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         $input_descriptors1 = array();
         

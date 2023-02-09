@@ -36,24 +36,6 @@
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
-    $log = "visited page: ";
-    $logQuery = "performed query for ";
-    if (!empty($username)) {
-         $logQuery .= "username(s) starting with [$username] ";
-    } else {
-        $logQuery .= "all usernames ";
-    }
-    $logQuery .= "on page: ";
-
-    
-    // print HTML prologue
-    $title = t('Intro','repusername.php');
-    $help = t('helpPage','repusername') . " " . $username_enc;
-    
-    print_html_prologue($title, $langCode);
-
-    include("include/menu/sidebar.php");
-    
     $cols = array(
                     'id' => t('all','ID'),
                     'username' => t('all','Username'),
@@ -75,9 +57,23 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "asc";
+    
+    $log = "visited page: ";
+    $logQuery = "performed query for ";
+    if (!empty($username)) {
+         $logQuery .= "username(s) starting with [$username] ";
+    } else {
+        $logQuery .= "all usernames ";
+    }
+    $logQuery .= "on page: ";
 
+    
+    // print HTML prologue
+    $title = t('Intro','repusername.php');
+    $help = t('helpPage','repusername') . " " . $username_enc;
+    
+    print_html_prologue($title, $langCode);
 
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -107,19 +103,17 @@
         $numrows = $res->numRows();
         
         if ($numrows > 0) {
-?>
-<h3 style="margin-top: 10px"><?= $item['caption'] ?></h3>
-<table border="0" class="table1">
-    <thead>
-        <tr>
-<?php
+            printf('<h4 style="margin-top: 10px">%s</h4>', $item['caption']);
+            
+            // print table top
+            print_table_top();
+            
+            // second line of table header
             printTableHead($cols, $orderBy, $orderType);
-?>
-        </tr>
-    </thead>
 
-    <tbody>
-<?php
+            // closes table header, opens table body
+            print_table_middle();
+
             $csrf_token = dalo_csrf_token();
 
             while ($row = $res->fetchRow()) {
@@ -144,11 +138,8 @@
                 echo '</td>';
                 echo "</tr>";
             }
-?>
-    </tbody>
-</table>
-<?php
 
+            print_table_bottom();
         }
         
         $total_numrows += $numrows;

@@ -58,9 +58,9 @@ if (!empty($username_enc)) {
     $button_descriptors1[] = array( "onclick" => sprintf("self.location='graphs-overall_upload.php?type=monthly&username=%s'", $username_enc),
                                     "type" => "button", "value" => 'Graphs - Uploads', "name" => "graphs-uploads-button" );
                                     
-    foreach ($button_descriptors1 as $button_descriptor) {
-        print_form_component($button_descriptor);
-    }
+    //~ foreach ($button_descriptors1 as $button_descriptor) {
+        //~ print_form_component($button_descriptor);
+    //~ }
 }
 
 ?>

@@ -75,7 +75,7 @@
           ? sprintf("user(s) related to <em>%s</em>", $username_enc)
           : "all users") . " are shown";
 
-    include("include/menu/sidebar.php");
+
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
 
@@ -116,7 +116,7 @@
                ? strtolower($_GET['orderType']) : "asc";
 
 
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
     echo '<div id="returnMessages"></div>';
 
@@ -254,59 +254,92 @@
         // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-del.php";
-?>
 
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>';
-        }
-?>
-                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-                </td>
-            </tr>
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $additional_controls = array();
+        $additional_controls[] = array(
+                                'onclick' => "javascript:removeCheckbox('listall','mng-del.php')",
+                                'label' => 'Delete',
+                                'class' => 'btn-danger',
+                              );
 
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('username[]', $action);
-?>
-                    <input class="button" type="button" value="Disable"
-                        onclick="javascript:disableCheckbox('listall','include/management/userOperations.php')">
-                    <input class="button" type="button" value="Enable"
-                        onclick="javascript:enableCheckbox('listall','include/management/userOperations.php')">
+        $additional_controls[] = array(
+                                'onclick' => "disableCheckbox('listall','include/management/userOperations.php')",
+                                'label' => 'Disable',
+                                'class' => 'btn-primary',
+                              );
+        $additional_controls[] = array(
+                                'onclick' => "enableCheckbox('listall','include/management/userOperations.php')",
+                                'label' => 'Enable',
+                                'class' => 'btn-secondary',
+                              );
 
-                </th>
-            </tr>
+        $descriptors = array();
 
-            <tr>
-<?php
+        $descriptors['start'] = array( 'common_controls' => 'username[]', 'additional_controls' => $additional_controls );
+
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>
-            </tr>
-        </thead>
 
-        <tbody>
-<?php
+        // closes table header, opens table body
+        print_table_middle();
 
-        $li_style = 'margin: 7px auto';
+        // table content
         $count = 0;
+        $td_format = '<td>%s</td>';
         foreach ($records as $username => $data) {
             $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
             $type = $data['type'];
             $id = intval($data['id']);
 
+            $img_format = '<i class="bi bi-%s-circle-fill text-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>';
+
             $img = (!$data['enabled'])
-                 ? '<img title="user is disabled" src="static/images/icons/userStatusDisabled.gif" alt="[disabled]">'
-                 : '<img title="user is enabled" src="static/images/icons/userStatusActive.gif" alt="[enabled]">';
+                 ? sprintf($img_format, 'dash', 'danger', 'disabled')
+                 : sprintf($img_format, 'check', 'success', 'enabled');
+
+            $badge_icon = "";
+            switch ($type) {
+                case 'PIN':
+                    $badge_icon = "123";
+                    break;
+
+                case 'MAC':
+                    $badge_icon = "ethernet";
+                    break;
+
+                default:
+                case 'USER':
+                    $badge_icon = "person-fill";
+                    break;
+            }
+
+            $badge = sprintf('<i class="bi bi-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>',
+                             $badge_icon, strtolower($type));
 
             $auth = htmlspecialchars($data['auth'], ENT_QUOTES, 'UTF-8');
 
@@ -315,57 +348,57 @@
                        ? htmlspecialchars($data['lastlogin'], ENT_QUOTES, 'UTF-8') : "(n/a)";
             $grouplist = implode("<br>", $data['groups']);
 
-            // tooltip and ajax stuff
-            $tooltipText = '<ul style="list-style-type: none">'
-                     . sprintf('<li style="%s"><a class="toolTip" href="mng-edit.php?username=%s">%s</a></li>',
-                               $li_style, urlencode($username), t('Tooltip','UserEdit'))
-                     . sprintf('<li style="%s"><a class="toolTip" href="config-maint-test-user.php?username=%s&password=%s">%s</a></li>',
-                               $li_style, urlencode($username), urlencode($fullname), t('all','TestUser'))
-                     . sprintf('<li style="%s"><a class="toolTip" href="acct-username.php?username=%s">%s</a></li>',
-                               $li_style, urlencode($username), t('all','Accounting'))
-                     . '</ul>'
-                     . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
+            $ajax_id = "divContainerUserInfo_" . $count;
+            $param = sprintf('username=%s', urlencode($username));
+            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $tooltip = array(
+                                'subject' => sprintf('%s%s<span class="badge bg-primary ms-1">%s</span>', $img, $badge, $username),
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('acct-username.php?username=%s', urlencode($username), ), 'label' => t('all','Accounting'), );
 
-            $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo','username="
-                     . urlencode($username) . "');return false;";
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
 
-            echo '<tr>';
-            printf('<td><input type="checkbox" name="username[]" value="%s" id="checkbox-%d">', $username, $count);
-            printf('<label for="checkbox-%d">%d</label></td>', $count, $id);
-            printf('<td>%s</td>', $fullname);
-            printf('<td>%s <a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a>",
-                   $img, $onclick, $tooltipText, $username);
-            printf(' <span class="badge badge-%s">%s</span></td>', strtolower($type), $type);
+            // create checkbox
+            $d = array( 'name' => 'username[]', 'value' => $username, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
 
+            // define table row
+            $table_row = array( $checkbox, $fullname, $tooltip );
             if (!$hiddenPassword) {
-                echo '<td>'
-                   . (($type == 'USER') ? $auth : "(n/a)")
-                   . '</td>';
+                $table_row[] = ($type == 'USER') ? $auth : "(n/a)";
             }
 
-            printf('<td>%s</td>', $lastlogin);
-            printf('<td>%s</td>', $grouplist);
+            $table_row[] = $lastlogin;
+            $table_row[] = $grouplist;
 
-            echo '</tr>';
+            // print table row
+            print_table_row($table_row);
 
             $count++;
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
+        printLinks($links, $drawNumberLinks);
 
-    </table>
-
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

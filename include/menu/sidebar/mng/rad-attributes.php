@@ -27,9 +27,10 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/rad-attributes.php')
     exit;
 }
 
-
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+global $vendor, $attribute;
 
 include_once("include/management/populate_selectbox.php");
 $menu_vendors = get_vendors();
@@ -40,7 +41,7 @@ $menu_attributes = get_attributes();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewVendorAttribute'), 'href' =>'mng-rad-attributes-new.php',
-                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 if (count($menu_vendors) > 0 && count($menu_attributes) > 0) {
     array_unshift($menu_vendors, "");
@@ -52,12 +53,13 @@ if (count($menu_vendors) > 0 && count($menu_attributes) > 0) {
                             "selected_value" => ((isset($vendor)) ? $vendor : ""),
                             "required" => true,
                             "options" => $menu_vendors,
-                            //~ "tooltipText" => t('all','Vendor'),
+                            "caption" => t('all','VendorName'),
+                            "tooltipText" => t('Tooltip','VendorName'),
                             "sidebar" => true,
                           );
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListAttributesforVendor'), 'action' => 'mng-rad-attributes-list.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
+                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
                              
     $components[] = array(
                             "name" => "attribute",
@@ -69,8 +71,9 @@ if (count($menu_vendors) > 0 && count($menu_attributes) > 0) {
                             "sidebar" => true,
                           );
     
+    $components[1]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditVendorAttribute'), 'action' => 'mng-rad-attributes-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
     
     $components = array();
     $components[] = array(
@@ -82,16 +85,18 @@ if (count($menu_vendors) > 0 && count($menu_attributes) > 0) {
                             "tooltipText" => t('Tooltip','AttributeName'),
                             "sidebar" => true,
                           );
+    
+    $components[0]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchVendorAttribute'), 'action' =>'mng-rad-attributes-search.php', 'method' => 'GET',
-                             'form_components' => $components, );
+                             'icon' => 'search', 'form_components' => $components, );
     
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveVendorAttribute'), 'href' => 'mng-rad-attributes-del.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }
 
 $descriptors2 = array();
 $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ImportVendorDictionary'), 'href' =>'mng-rad-attributes-import.php',
-                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+                         'icon' => 'upload', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 $sections = array();
 $sections[] = array( 'title' => 'Attributes Management', 'descriptors' => $descriptors1 );

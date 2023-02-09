@@ -20,11 +20,15 @@
  *
  *********************************************************************************************************
  */
- 
+
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include_once('library/config_read.php');
     include('library/check_operator_perm.php');
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // init logging variables
     $log = "visited page: ";
@@ -34,30 +38,9 @@
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    include_once('library/config_read.php');
-
     $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
-    // feed the sidebar
-    $usernameList = $username_enc;
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $title = t('Intro','mngradusergrouplistuser');
-    $help = t('helpPage','mngradusergrouplistuser');
-    
-    print_html_prologue($title, $langCode);
-
-    if (!empty($username_enc)) {
-        $title .= " :: $username_enc";
-    }
-
-    include("include/menu/sidebar.php");
 
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
@@ -65,16 +48,18 @@
     //   - for table ordering purpose
     // - its value can be used for table headings presentation
     $cols = array(
+                    "selected",
+                    "mapping",
                     "groupname" => t('all','Groupname'),
                     "priority" => t('all','Priority')
                  );
 
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
@@ -84,137 +69,146 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
-    echo '<div id="contentnorightbar">';
+    // print HTML prologue
+    $title = t('Intro','mngradusergrouplistuser');
+    $help = t('helpPage','mngradusergrouplistuser');
+
+    print_html_prologue($title, $langCode);
+
+    if (!empty($username_enc)) {
+        $title .= " :: $username_enc";
+    }
+
+    // start printing content
     print_title_and_help($title, $help);
 
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
-    
+
     $sql = sprintf("SELECT COUNT(DISTINCT(groupname)) FROM %s WHERE username='%s'",
                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     $numrows = $res->fetchrow()[0];
-    
+
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-    
+
         $sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s'",
                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
-        
+
          $per_page_numrows = $res->numRows();
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = (!empty($username_enc)) ? "&username=" . urlencode($username_enc) : "";
-        
-        // this can be passed as form attribute and 
+
+        // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-rad-usergroup-del.php";
-?>
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>' . '</tr>';
-        }
-?>
 
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('usergroup[]', $action);
-?>
-                </th>
-            </tr>
-<?php
+        $descriptors = array();
+
+        $descriptors['start'] = array( 'common_controls' => 'usergroup[]' );
+
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
-        echo "<tr>";
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-        echo "</tr>";
-?>
-        </thead>
-        
-        <tbody>
-<?php
-        $li_style = 'margin: 7px auto';
-        $counter = 0;
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
-            
-            printf('<tr id="row-%d">', $counter);
-            
+
+            // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
-                
-                if ($i == 0) {
-                    $tooltipText = '<ul style="list-style-type: none">'
-                                 . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-usergroup-edit.php?username=%s&current_group=%s">%s</a></li>',
-                                           $li_style, urlencode($username_enc), urlencode($row[$i]), t('Tooltip','EditUserGroup'))
-                                 . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-usergroup-del.php?username=%s&group=%s">%s</a></li>',
-                                           $li_style, urlencode($username_enc), urlencode($row[$i]), t('Tooltip','DeleteUserGroup'))
-                                 . '</ul>';
-                    
-                    echo '<td>';
-                    printf('<input type="checkbox" name="usergroup[]" id="checkbox-%s" value="%s||%s">',
-                           $counter, $username_enc, $row[$i]);
-                    printf('<label for="checkbox-%s">', $counter);
-                    echo '<a class="tablenovisit" href="#" ' . sprintf("tooltipText='%s'>", $tooltipText);
-                    printf('%s</a>', $row[$i]);
-                    echo '</label>'
-                       . '</td>';
-                    
-                } else {
-                    printf('<td>%s</td>', $row[$i]);
-                }
-                
             }
+
+            list($groupname, $priority) = $row;
+
+            // define tooltip
+            $tooltip = array(
+                                'subject' => $count,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-usergroup-edit.php?username=%s&current_group=%s', urlencode($username_enc), urlencode($groupname) ),
+                                           'label' => t('Tooltip','EditUserGroup'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-usergroup-del.php?username=%s&group=%s', urlencode($username_enc), urlencode($groupname)),
+                                           'label' => t('Tooltip','DeleteUserGroup'), );
             
-            echo '</tr>';
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
             
-            $counter++;
+            // create checkbox
+            $d = array( 'name' => 'usergroup[]', 'value' => sprintf("%s||%s", $username_enc, $groupname) );
+            $checkbox = get_checkbox_str($d);
+
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $groupname, $priority );
+
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
+
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links, $partial_query_string);
-?>
-    </table>
-    
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
-    
-</form>
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
 
-<?php
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
-    
+
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue();
 ?>

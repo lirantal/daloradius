@@ -46,19 +46,55 @@ if (!in_array($detect_category, array_keys($nav))) {
     $detect_category = "home";
 }
 
-// draw nav elements
-echo '<ul id="nav">';
-
-foreach ($nav as $category => $arr) {
-    list($label, $href) = $arr;
-    
-    $class = ($detect_category === $category) ? 'active' : '';
-    $label = htmlspecialchars(strip_tags(trim(t('menu', $label))), ENT_QUOTES, 'UTF-8');
-    
-    printf('<li><a class="%s" href="%s" title="%s">%s</a></li>', $class, urlencode($href), $label, $label);
-
-}
-
-echo '</ul><!-- #nav -->' . "\n";
-
 ?>
+
+<header class="border-bottom">
+    <div class="row p-2">
+        <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-1 mb-lg-0 text-dark text-decoration-none">
+                <img src="static/images/daloradius_small.png">
+            </a>
+      
+            <ul class="nav col-12 col-lg-auto mx-2 me-lg-auto mb-1 justify-content-center mb-md-0">
+<?php
+                foreach ($nav as $category => $arr) {
+                    list($label, $href) = $arr;
+                    
+                    $class = ($detect_category === $category) ? 'link-active' : 'link-dark';
+                    $label = htmlspecialchars(strip_tags(trim(t('menu', $label))), ENT_QUOTES, 'UTF-8');
+                    
+                    printf('<li><a class="nav-link px-2 %s" href="%s">%s</a></li>', $class, urlencode($href), $label);
+                }
+?>
+            </ul>
+      
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" action="mng-search.php" method="GET">
+                <input name="username" type="search" class="form-control" placeholder="<?= t('button','SearchUsers') ?>" aria-label="Search"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="<?= strip_tags(t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard')) ?>">
+            </form>
+            
+            <div class="dropdown text-end dropstart">
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+                
+                <ul class="dropdown-menu text-small">
+                    <li>
+                        <span class="dropdown-item">
+                            Welcome, <strong><?= htmlspecialchars($_SESSION['operator_user'], ENT_QUOTES, 'UTF-8') ?></strong>.
+                        </span>
+                    </li>
+                    <li>
+                        <span class="dropdown-item">
+                            Location: <strong><?= htmlspecialchars($_SESSION['location_name'], ENT_QUOTES, 'UTF-8') ?></strong>.
+                        </span>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="logout.php">Log out</a></li>
+                </ul>
+            </div><!-- -dropdown text-end -->
+        </div>
+    </div><!-- .container -->
+</header>
+
