@@ -38,6 +38,7 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
+                    "selected",
                     "id" => t('all','Invoice'),
                     "contactperson" => t('all','ClientName'),
                     "date" => t('all','Date'),
@@ -89,11 +90,7 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    include("include/menu/sidebar.php");
-
-    
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
 
@@ -168,104 +165,102 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-invoice-del.php";
-?>
-
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('invoice_id[]', $action);
-?>
-                </th>
-            </tr>
-            
-            <tr>
-<?php
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'invoice_id[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
+        
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>           
-            </tr>
-        </thead>
 
-        <tbody>
-
-<?php
-
-        $count = 1;
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        // closes table header, opens table body
+        print_table_middle();
+   
+        // table content
+        $count = 0;
+        while ($row = $res->fetchRow()) {
+        
+            $rowlen = count($row);
         
             // escape row elements
-            foreach ($row as $key => $value) {
-                $row[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
-        
-            $content = sprintf('<a class="toolTip" href="bill-invoice-edit.php?invoice_id=%s">%s</a>',
-                               urlencode($row['id']), t('Tooltip','InvoiceEdit'));
-            $arr = array(
-                            'content' => $content,
-                            'onClick' => '',
-                            'value' => '#'.$row['id'],
-                            'divId' => '',
-                        );
             
-            $invoice_id = addToolTipBalloon($arr);
-
-            $content = sprintf('<a class="toolTip" href="bill-pos-edit.php?username=%s">%s</a>',
-                                urlencode($row['username']), t('Tooltip','UserEdit'));
-            $arr = array(
-                            'content' => $content,
-                            'onClick' => '',
-                            'value' => $row['contactperson'],
-                            'divId' => '',
-                        );
-
-            $contactperson = addToolTipBalloon($arr);
-                                
-            $balance = ($row['totalpayed'] - $row['totalbilled']);
-
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="invoice_id[]" value="<?= $row['id'] ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>"><?= $invoice_id ?></label>
-                </td>
-                <td><?= $contactperson ?></td>
-                <td><?= $row['date'] ?></td>
-                <td class="money"><?= $row['totalbilled'] ?></td>
-                <td class="money"><?= $row['totalpayed'] ?></td>
-                <td class="money"><?= ($balance >= 0) ? $balance : sprintf('<span style="color: red">%s</font>', $balance) ?></td>
-                <td><?= $row['status'] ?></td>
-            </tr>
-<?php
+            list($id, $date, $status_id, $type_id, $contactperson, $username, $status, $totalpayed, $totalbilled) = $row;
+            $id = intval($id);
+            
+            // define tooltip1
+            $tooltip1 = array(
+                                'subject' => sprintf("#%d", intval($id)),
+                                'actions' => array(),
+                             );
+            $tooltip1['actions'][] = array( 'href' => sprintf('bill-invoice-edit.php?invoice_id=%d', $id, ), 'label' => t('Tooltip','InvoiceEdit'), );
+            
+            // define tooltip1
+            $tooltip2 = array(
+                                'subject' => $username,
+                                'actions' => array(),
+                             );
+            $tooltip2['actions'][] = array( 'href' => sprintf('bill-pos-edit.php?username=%s', $username, ), 'label' => t('Tooltip','UserEdit'), );
+        
+            // create balance
+            $balance = $totalpayed - $totalbilled;
+            $balance = sprintf('<span class="text-%s">%s <i class="bi bi-currency-exchange"></i></span>', (($balance < 0) ? "danger" : "success"), $balance);
+            
+            // create total payed and billed
+            $totalpayed = sprintf('%s <i class="bi bi-currency-exchange"></i>', $totalpayed);
+            $totalbilled = sprintf('%s <i class="bi bi-currency-exchange"></i>', $totalbilled);
+            
+            // create checkbox
+            $d = array( 'name' => 'invoice_id[]', 'value' => $id );
+            $checkbox1 = get_checkbox_str($d);
+            
+            // create tooltips
+            $tooltip1 = get_tooltip_list_str($tooltip1);
+            $tooltip2 = get_tooltip_list_str($tooltip2);
+            
+            // define table row
+            $table_row = array( $checkbox1, $tooltip1, $tooltip2, $date, $totalbilled, $totalpayed, $balance, $status );
+            
+            // print table row
+            print_table_row($table_row);
+            
             $count++;
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        printLinks($links, $drawNumberLinks);
 
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

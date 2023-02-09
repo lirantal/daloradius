@@ -215,25 +215,12 @@
     }
     
     
-    // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-    
-    $extra_js = array(
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-    
+    // print HTML prologue    
     $title = t('Intro','configbackupcreatebackups.php');
     $help = t('helpPage','configbackupcreatebackups');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
@@ -241,8 +228,9 @@
     // set navbar stuff
     $navkeys = array( 'FreeRADIUSTables', 'daloRADIUSTables' );
 
-    // fieldset
-    
+    $options = array( "yes", "no" );
+
+    // section 0
     $toggler0_descriptor = array(
                                     "type" => "checkbox",
                                     "name" => "toggler0",
@@ -251,6 +239,26 @@
                                     "caption" => "Toggle"
                                 );
     
+    $input_descriptors0 = array();
+    $input_descriptors0[] = $toggler0_descriptor;
+    
+    
+    
+    foreach ($db_tbl_param_label as $param => $label) {
+        
+        if (!preg_match('/^CONFIG_DB_TBL_RAD/', $param)) {
+            continue;
+        }
+        
+        $input_descriptors0[] = array(
+                                        "name" => $param,
+                                        "caption" => $label,
+                                        "type" => "select",
+                                        "options" => $options
+                                     );
+    }
+    
+    // section 1
     $toggler1_descriptor = array(
                                     "type" => "checkbox",
                                     "name" => "toggler1",
@@ -259,6 +267,39 @@
                                     "caption" => "Toggle"
                                 );
     
+    $input_descriptors1 = array();
+    $input_descriptors1[] = $toggler1_descriptor;
+    
+    foreach ($db_tbl_param_label as $param => $label) {
+        
+        if (!preg_match('/^CONFIG_DB_TBL_DALO/', $param)) {
+            continue;
+        }
+        
+        $input_descriptors1[] = array(
+                                        "name" => $param,
+                                        "caption" => $label,
+                                        "type" => "select",
+                                        "options" => $options
+                                     );
+    }
+    
+    // section 2
+    $input_descriptors2 = array();
+    
+    $input_descriptors2[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+
+    $input_descriptors2[] = array(
+                                    'type' => 'submit',
+                                    'name' => 'submit',
+                                    'value' => t('buttons','apply')
+                                 );
+    
+    // fieldsets
     $fieldset0_descriptor = array(
                                     "title" => t('title','Backups'),
                                     "id" => "fieldset-0",
@@ -268,25 +309,14 @@
                                     "title" => t('title','Backups'),
                                     "id" => "fieldset-1",
                                  );
-
-    $token_descriptor = array(
-                                "name" => "csrf_token",
-                                "type" => "hidden",
-                                "value" => dalo_csrf_token(),
-                             );
-
-    $submit_descriptor = array(
-                                    'type' => 'submit',
-                                    'name' => 'submit',
-                                    'value' => t('buttons','apply')
-                                  );
-
-    $options = array( "yes", "no" );
-
+    
     // print navbar controls
     print_tab_header($navkeys);
     
     open_form();
+    
+    // open tab wrapper
+    open_tab_wrapper();
     
     // open 0-th tab (shown)
     open_tab($navkeys, 0, true);
@@ -294,22 +324,8 @@
     // open 0-th fieldset
     open_fieldset($fieldset0_descriptor);
     
-    print_form_component($toggler0_descriptor);
-    
-    foreach ($db_tbl_param_label as $param => $label) {
-        
-        if (!preg_match('/^CONFIG_DB_TBL_RAD/', $param)) {
-            continue;
-        }
-        
-        $desc = array(
-                        "name" => $param,
-                        "caption" => $label,
-                        "type" => "select",
-                        "options" => $options
-                     );
-        
-        print_form_component($desc);
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
     }
     
     close_fieldset();
@@ -321,31 +337,20 @@
     
     open_fieldset($fieldset1_descriptor);
     
-    print_form_component($toggler1_descriptor);
-    
-    foreach ($db_tbl_param_label as $param => $label) {
-        
-        if (!preg_match('/^CONFIG_DB_TBL_DALO/', $param)) {
-            continue;
-        }
-        
-        $desc = array(
-                        "name" => $param,
-                        "caption" => $label,
-                        "type" => "select",
-                        "options" => $options
-                     );
-        
-        print_form_component($desc);
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
     }
     
     close_fieldset();
     
     close_tab($navkeys, 1);
     
+    // close tab wrapper
+    close_tab_wrapper();
     
-    print_form_component($token_descriptor);
-    print_form_component($submit_descriptor);
+    foreach ($input_descriptors2 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
     
     close_form();
     

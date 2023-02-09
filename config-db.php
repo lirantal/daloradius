@@ -116,24 +116,11 @@
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-
-    $extra_js = array(
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-
     $title = t('Intro','configmain.php');
     $help = t('helpPage','configmain');
 
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -146,6 +133,9 @@
 
     // open form
     open_form();
+
+    // open tab wrapper
+    open_tab_wrapper();
 
     // tab 0
     open_tab($navkeys, 0, true);
@@ -220,6 +210,9 @@
     close_fieldset();
 
     close_tab();
+
+    // close tab wrapper
+    close_tab_wrapper();
 
     // other fields
     $input_descriptors2 = array();

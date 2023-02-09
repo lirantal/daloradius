@@ -27,18 +27,22 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/rad-groups.php') !==
     exit;
 }
 
+$options_format = "%s: [%s %s %s]";
+
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+global $groupname;
 
 include_once("include/management/populate_selectbox.php");
 $menu_groups = get_groups();
 
 // init select components
 function get_select_options($item_table, $item_prefix) {
+    global $options_format;
+    
     include('library/opendb.php');
     
-    $options_format = "%s: [%s %s %s]";
-
     $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s ORDER BY groupname, attribute DESC", $item_table);
     $res = $dbSocket->query($sql);
 
@@ -64,7 +68,6 @@ $menu_radgroupreply_select = array(
                                     'type' => 'select',
                                     'caption' => $caption,
                                     'options' => $radgroupreply_options,
-                                    'selected_value' => $selected_groupreply_item,
                                     'disabled' => (count($radgroupreply_options) == 0),
                                   );
 
@@ -73,7 +76,7 @@ $menu_radgroupcheck_select = array(
                                     'type' => 'select',
                                     'caption' => $caption,
                                     'options' => $radgroupcheck_options,
-                                    'selected_value' => $selected_groupcheck_item,
+                                    'disabled' => (count($radgroupcheck_options) == 0),
                                   );
 
 // define descriptors
@@ -98,11 +101,13 @@ if (count($menu_groups) > 0 && count($radgroupcheck_options) > 0) {
                             "sidebar" => true,
                           );
 
+    $components[0]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchGroupCheck'), 'action' => 'mng-rad-groupcheck-search.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
 
     $components = array();
     $components[] = $menu_radgroupcheck_select;
+    $components[0]['id'] = "id_" . rand();
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditGroupReply'), 'action' => 'mng-rad-groupcheck-edit.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
@@ -121,6 +126,7 @@ if (count($menu_groups) > 0 && count($radgroupreply_options) > 0) {
 
     $components = array();
     $components[] = array(
+                            "id" => "groupname_menu1",
                             "name" => "groupname",
                             "type" => "text",
                             "value" => ((isset($groupname)) ? $groupname : ""),
@@ -129,12 +135,14 @@ if (count($menu_groups) > 0 && count($radgroupreply_options) > 0) {
                             "tooltipText" => t('Tooltip','GroupName'),
                             "sidebar" => true,
                           );
-
+                          
+    $components[0]['id'] = "id_" . rand();
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','SearchGroupReply'), 'action' => 'mng-rad-groupreply-search.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
 
     $components = array();
     $components[] = $menu_radgroupreply_select;
+    $components[0]['id'] = "id_" . rand();
     
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditGroupReply'), 'action' => 'mng-rad-groupreply-edit.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );

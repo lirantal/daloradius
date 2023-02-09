@@ -85,11 +85,7 @@
         $title .=  " :: " . $planname_enc;
     }
 
-    include("include/menu/sidebar.php");
-
-
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     echo '<div id="returnMessages"></div>';
 
@@ -145,52 +141,61 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-del.php";
-?>
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $additional_controls = array();
+        $additional_controls[] = array(
+                                'onclick' => "disableCheckbox('listall','include/management/userOperations.php')",
+                                'label' => 'Disable',
+                                'class' => 'btn-primary',
+                              );
+        $additional_controls[] = array(
+                                'onclick' => "enableCheckbox('listall','include/management/userOperations.php')",
+                                'label' => 'Enable',
+                                'class' => 'btn-secondary',
+                              );
 
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('username[]', $action);
-?>
-                    <input class="button" type="button" value="Disable"
-                        onclick="javascript:disableCheckbox('listall', 'include/management/userOperations.php')">
-                    
-                    <input class="button" type="button" value="Enable"
-                        onclick="javascript:enableCheckbox('listall', 'include/management/userOperations.php')">
-                    
-                    <br>
-                    
-                    <input class="button" type="button" value="Refill Session Time"
-                        onclick="javascript:refillSessionTimeCheckbox('listall', 'include/management/userOperations.php')">
-                    <input class="button" type="button" value="Refill Session Traffic"
-                        onclick="javascript:refillSessionTrafficCheckbox('listall','include/management/userOperations.php'">
-                </th>
-            </tr>
-            
-            <tr>
-<?php
+        $additional_controls[] = array(
+                                'onclick' => "refillSessionTimeCheckbox('listall', 'include/management/userOperations.php')",
+                                'label' => 'Refill Session Time',
+                                'class' => 'btn-secondary',
+                              );
+                              
+        $additional_controls[] = array(
+                                'onclick' => "refillSessionTrafficCheckbox('listall', 'include/management/userOperations.php')",
+                                'label' => 'Refill Session Traffic',
+                                'class' => 'btn-secondary',
+                              );
+
+        $descriptors = array();
+
+        $descriptors['start'] = array( 'common_controls' => 'username[]', 'additional_controls' => $additional_controls );
+
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>           
-            </tr>
-        </thead>
-        
-        <tbody>
-<?php
-        $count = 1;
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
+        $td_format = '<td>%s</td>';
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -201,53 +206,58 @@
             
             list($username, $id, $value, $attribute, $contactperson, $billstatus, $planname, $company, $firstname, $disabled) = $row;
             
-            $img = (boolval($disabled))
-                 ? '<img title="user is disabled" src="static/images/icons/userStatusDisabled.gif" alt="[disabled]">'
-                 : '<img title="user is enabled" src="static/images/icons/userStatusActive.gif" alt="[enabled]">';
+            $img_format = '<i class="bi bi-%s-circle-fill text-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>';
+
+            $img = (!$data['enabled'])
+                 ? sprintf($img_format, 'dash', 'danger', 'disabled')
+                 : sprintf($img_format, 'check', 'success', 'enabled');
             
             $auth = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes")
                   ? "[Password is hidden]" : $value;
             
-            $tooltipText = sprintf('<a class="toolTip" href="bill-pos-edit.php?username=%s">%s</a><br><br>'
-                                 . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>',
-                                  urlencode($username), t('Tooltip','UserEdit'));
-            $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
-                             . "'divContainerUserInfo','username=%s');return false;", $username);
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="username[]" value="<?= $username ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>"><?= $id ?></label>
-                </td>
-                <td><?= $contactperson ?></td>
-                <td><?= $company ?></td>
-                <td>
-                    <?= $img ?>
-                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                        <?= $username ?>
-                    </a>
-                </td>
-                <td><?= $auth ?></td>
-                <td><?= $planname ?></td>
-            </tr>
-<?php
+            $ajax_id = "divContainerUserInfo_" . $count;
+            $param = sprintf('username=%s', urlencode($username));
+            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $tooltip = array(
+                                'subject' => sprintf('%s%s<span class="badge bg-primary ms-1">%s</span>', $img, $badge, $username),
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-pos-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+            
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+            
+            // create checkbox
+            $d = array( 'name' => 'username[]', 'value' => $username, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
+            
+            // define table row
+            $table_row = array( $checkbox, $contactperson, $company, $toopltip, $auth, $planname);
+
+            // print table row
+            print_table_row($table_row);
+
             $count++;
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        printLinks($links, $drawNumberLinks);
 
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

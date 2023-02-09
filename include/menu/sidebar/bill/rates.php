@@ -30,6 +30,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/rates.php') !== fal
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $ratename, $username, $startdate, $enddate;
+
 include_once("include/management/populate_selectbox.php");
 $menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
 $menu_ratenames = get_ratenames();
@@ -41,6 +43,7 @@ $ratename_select = array(
                             "required" => true,
                             "options" => $menu_ratenames,
                             "caption" => t('all','RateName'),
+                            "tooltipText" => t('Tooltip','RateName'),
                             "sidebar" => true,
                         );
 
@@ -51,11 +54,13 @@ $components = array();
 $components[] = $ratename_select;
 
 $components[] = array(
+                        "id" => "username_menu",
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
                         "datalist" => (($autocomplete) ? $menu_usernames : array()),
                         "tooltipText" => t('Tooltip','Username'),
+                        "caption" => t('all','Username'),
                         "sidebar" => true,
                      );
 
@@ -78,21 +83,24 @@ $components[] = array(
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','DateAccounting'), 'action' => 'bill-rates-date.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'calendar-range', 'form_components' => $components, );
 
 $descriptors2 = array();                         
-$descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewRate'), 'href' =>'bill-rates-new.php', );
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewRate'), 'href' =>'bill-rates-new.php',
+                         'icon' => 'plus-circle-fill', );
 
 if (count($menu_ratenames) > 0) {
-    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListRates'), 'href' => 'bill-rates-list.php', );
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListRates'), 'href' => 'bill-rates-list.php',
+                             'icon' => 'list', );
 
     $components = array();
     $components[] = $ratename_select;
 
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditRate'), 'action' => 'bill-rates-edit.php', 'method' => 'GET',
-                             'form_components' => $components, );
+                             'icon' => 'pencil-square', 'form_components' => $components, );
 
-    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveRate'), 'href' => 'bill-plans-del.php', );
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveRate'), 'href' => 'bill-plans-del.php',
+                             'icon' => 'x-circle-fill', );
 }
 
 $sections = array();

@@ -30,6 +30,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/hs.php') !== false) 
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $name;
+
 include_once("include/management/populate_selectbox.php");
 $menu_datalist = get_hotspots();
 
@@ -37,11 +39,11 @@ $menu_datalist = get_hotspots();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewHotspot'), 'href' =>'mng-hs-new.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
 if (count($menu_datalist) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListHotspots'), 'href' => 'mng-hs-list.php',
-                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
     $components = array();
     $components[] = array(
@@ -51,14 +53,15 @@ if (count($menu_datalist) > 0) {
                             "required" => true,
                             "datalist" => (($autocomplete) ? $menu_datalist : array()),
                             "tooltipText" => t('Tooltip','HotspotName'),
+                            "caption" => t('all','HotSpot'),
                             "sidebar" => true
                           );
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditHotspot'), 'action' => 'mng-hs-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
                              
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveHotspot'), 'href' => 'mng-hs-del.php',
-                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }
 
 

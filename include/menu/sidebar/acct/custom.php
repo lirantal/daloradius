@@ -27,11 +27,13 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/acct/custom.php') !== fa
     exit;
 }
 
+include_once("library/validation.php");
 
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-include_once("library/validation.php");
+global $startdate, $enddate, $acct_custom_query_options_all, $where_field, $operator, $accounting_custom_value,
+       $acct_custom_query_options_default, $acct_custom_query_options_all, $sqlfields, $orderBy, $orderType;
 
 $components = array();
 
@@ -72,6 +74,7 @@ $components[] = array(
 $components[] = array(
                             "type" => "text",
                             "name" => "where_value",
+                            "caption" => "Filter",
                             "tooltipText" => t('Tooltip','Filter'),
                             "sidebar" => true,
                             "value" => ((isset($accounting_custom_value)) ? $accounting_custom_value : ""),
@@ -108,7 +111,7 @@ $components[] = array(
 
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ProcessQuery'), 'action' => 'acct-custom-query.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'filter-circle-fill', 'form_components' => $components, );
 
 $sections = array();
 $sections[] = array( 'title' => 'Custom Query', 'descriptors' => $descriptors1 );

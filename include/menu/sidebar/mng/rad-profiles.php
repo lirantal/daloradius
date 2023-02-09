@@ -27,6 +27,11 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/rad-profiles.php') !
     exit;
 }
 
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+global $profile_name;
+
 include_once("include/management/populate_selectbox.php");
 $menu_options = get_groups();
 
@@ -34,13 +39,13 @@ $menu_options = get_groups();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewProfile'), 'href' =>'mng-rad-profiles-new.php',
-                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
     
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListProfiles'), 'href' => 'mng-rad-profiles-list.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
                              
     $components = array();
     $components[] = array(
@@ -48,17 +53,18 @@ if (count($menu_options) > 0) {
                             "type" => "select",
                             "selected_value" => ((isset($profile_name)) ? $profile_name : ""),
                             "options" => $menu_options,
-                            "title" => "Select Profile",
+                            "caption" => t('all','Profile'),
+                            "tooltipText" => "Please select a " . t('all','Profile'),
                           );
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditProfile'), 'action' => 'mng-rad-profiles-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DuplicateProfile'), 'href' =>'mng-rad-profiles-duplicate.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), );
+                             'icon' => 'gear', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), );
     
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveProfile'), 'href' =>'mng-rad-profiles-del.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }
 
 $sections = array();

@@ -54,6 +54,24 @@
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : "";
 
+    $cols = array(
+                    "username" => t('all','Username'),
+                    "planname" => t('all','PlanName'),
+                    "sessiontime" => t('all','UsedTime'),
+                    "plantimebank" => t('all','TotalTime'),
+                    t('all','TotalTraffic')
+                 );
+    $colspan = count($cols);
+    $half_colspan = intval($colspan / 2);
+    
+    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($cols)))
+             ? $_GET['orderBy'] : array_keys($cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+               ? strtolower($_GET['orderType']) : "asc";
+
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query";
@@ -75,15 +93,10 @@
     $logDebugSQL = "";
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/pages_common.js",
-        // js tabs stuff
-        "static/js/tabs.js",
     );
     
     $title = t('Intro','acctplans.php');
@@ -91,32 +104,6 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
-    include("include/menu/sidebar.php");
-	
-    $cols = array(
-                    "username" => t('all','Username'),
-                    "planname" => t('all','PlanName'),
-                    "sessiontime" => t('all','UsedTime'),
-                    "plantimebank" => t('all','TotalTime'),
-                    sprintf("%s (%s)", t('all','TotalTraffic'), t('all','Bytes'))
-                 );
-    $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
-    
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($cols)))
-             ? $_GET['orderBy'] : array_keys($cols)[0];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
-               ? strtolower($_GET['orderType']) : "asc";
-    
-	//feed the sidebar variables
-	$accounting_plan_username = $username;
-	$accounting_plan_startdate = $startdate;
-	$accounting_plan_enddate = $enddate;
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
 
@@ -191,42 +178,48 @@
         
         $partial_query_string = (count($partial_query_params) > 0)
                               ? ("&" . implode("&", $partial_query_params)) : "";
-?>
-<table border="0" class="table1">
-    <thead>
-        <tr style="background-color: white">
-<?php
-            // page numbers are shown only if there is more than one page
-            if ($drawNumberLinks) {
-                printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-                setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-                echo '</td>';
-            }
-?>
-            <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                <input class="button" type="button" value="CSV Export"
-                    onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-            </td>
+                              
+        $descriptors = array();
 
-        </tr>
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-<?php
-            // second line of table header
-            echo "<tr>";
-            printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-            echo "</tr>";
-?>
-    </thead>
-    
-<?php
-        echo '<tbody>';
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
 
-        $format = "<td>%s</td>";
+        // print table top
+        print_table_top();
+
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
-            list(
-                    $this_username, $this_planname, $this_sessiontime, $this_upload,
-                    $this_download, $this_plantimebank, $this_plantimetype
-                ) = $row;
+            $rowlen = count($row);
+
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list( $this_username, $this_planname, $this_sessiontime,
+                  $this_upload, $this_download, $this_plantimebank, $this_plantimetype ) = $row;
             
             $tmp = number_format(($this_sessiontime / $this_plantimebank) * 100, 2);
             $this_percentage = sprintf('<span style="color: %s">%s%%</span>', (($tmp - 100 > 0) ? "red" : "green"), $tmp);
@@ -235,42 +228,55 @@
             $this_plantimebank = time2str($this_plantimebank);
         
             $this_traffic = toxbyte( $this_upload + $this_download );
-        
-            $this_username = htmlspecialchars($this_username, ENT_QUOTES, 'UTF-8');
-            $this_planname = htmlspecialchars($this_planname, ENT_QUOTES, 'UTF-8');
             
+            $ajax_id = "divContainerUserInfo_" . $count;
+            $param = sprintf('username=%s', urlencode($username));
+            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $tooltip = array(
+                                'subject' => $username,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-pos-edit.php?username=%s', urlencode($this_username), ), 'label' => t('Tooltip','UserEdit'), );
             
-            $onclick = "javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','divContainerUserInfo',"
-                     . sprintf("'username=%s');return false;", $this_username);
+            $tooltip = get_tooltip_list_str($tooltip);
             
-            $tooltipText = sprintf('<a class=toolTip" href="bill-pos-edit.php?username=%s">%s</a>', $this_username, t('Tooltip','UserEdit'))
-                         . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
+            // define table row
+            $table_row = array( $this_username, $this_planname, $this_sessiontime, $this_plantimebank, $this_traffic );
+            
+            // print table row
+            print_table_row($table_row);
 
-            echo '<tr>';
-            printf('<td><a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>",
-                   $onclick, $tooltip, $this_username);
-            printf($format, $this_planname);
-            printf($format, $this_sessiontime);
-            printf($format, $this_percentage);
-            printf($format, $this_plantimebank);
-            printf($format, $this_traffic);
-            echo '</tr>';
+            $count++;
 
         }
 
-        echo '</tbody>';
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
 
-        // tfoot
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-
-        echo '</table>';
+        printLinks($links, $drawNumberLinks);
         
         if ($userExists) {
+            
+            echo '<div class="accordion m-2" id="accordion-parent">';
             include_once('include/management/userReports.php');
             userPlanInformation($username, 1);
             userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
             userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
+            echo '</div>';
         }
     } else {
         $failureMsg = "Nothing to display";

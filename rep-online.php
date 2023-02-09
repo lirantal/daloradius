@@ -28,6 +28,7 @@
     include_once('library/config_read.php');
 
     include_once("lang/main.php");
+    include_once("library/validation.php");
     include("library/layout.php");
 
     // validate this parameter before including menu
@@ -41,6 +42,7 @@
     //   - for table ordering purpose
     // - its value can be used for table headings presentation
     $cols = array(
+                   'selected',
                    'username' => t('all','Username'),
                    t('all','Name'),
                    'framedipaddress' => "Framed IP Address",
@@ -80,16 +82,11 @@
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
 
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/ajaxGeneric.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
 
     $title = t('Intro','reponline.php');
@@ -97,9 +94,6 @@
 
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     // set navbar stuff
@@ -111,6 +105,9 @@
 
     // print navbar controls
     print_tab_header($navkeys);
+
+    // open tab wrapper
+    open_tab_wrapper();
 
     // open first tab (shown)
     open_tab($navkeys, 0, true);
@@ -183,44 +180,42 @@
         // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-del.php";
-?>
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-        // page numbers are shown only if needed
-        if ($drawNumberLinks) {
+        
+        $descriptors = array();
 
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>';
-        }
-?>
-                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-                </td>
-            </tr>
+        $descriptors['start'] = array( 'common_controls' => 'clearSessionsUsers[]' );
 
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-                    printTableFormControls('clearSessionsUsers[]', $action);
-?>
-                </th>
-            </tr>
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-            <tr>
-<?php
+
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+
+        // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>
-            </tr>
-        </thead>
+        
+        // closes table header, opens table body
+        print_table_middle();
 
-        <tbody>
-<?php
-        $li_style = 'margin: 7px auto';
+        // table content
         $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
@@ -245,17 +240,21 @@
 
             $this_name = $this_firstname . "<br>" . $this_lastname;
 
+            $tooltip1 = "(n/d)";
             $tmp = $this_upload + $this_download;
             if ($tmp > 0) {
                 $this_upload = toxbyte($this_upload);
                 $this_download = toxbyte($this_download);
                 $this_traffic = t('all','Upload') . ": " . $this_upload
                               . "<br>"
-                              . t('all','Download') . ": " . $this_download
-                              . "<br>"
-                              . t('all','TotalTraffic') . ": <strong>" . toxbyte($tmp) . "</strong>";
-            } else {
-                $this_traffic = "(n/d)";
+                              . t('all','Download') . ": " . $this_download;
+                              
+                $tooltip1 = array(
+                                'subject' => toxbyte($tmp),
+                                'content' => $this_traffic
+                             );
+                             
+                $tooltip1 = get_tooltip_list_str($tooltip1);
             }
 
             // tooltip and ajax stuff
@@ -263,52 +262,54 @@
             $tooltip_disconnect_href = sprintf("config-maint-disconnect-user.php?username=%s&nasaddr=%s&customattributes=%s",
                                                urlencode($this_username), urlencode($this_nasipaddress), urlencode($custom_attributes));
 
-            $tooltip = '<ul style="list-style-type: none">'
-                     . sprintf('<li style="%s"><a class="toolTip" href="mng-edit.php?username=%s">%s</a></li>',
-                               $li_style, urlencode($this_username), t('Tooltip','UserEdit'))
-                     . sprintf('<li style="%s"><a class="toolTip" href="%s">%s</a></li>',
-                               $li_style, $tooltip_disconnect_href, t('all','Disconnect'))
-                     . '</ul>'
-                     . '<div style="margin: 15px auto" id="divContainerUserInfo">Loading...</div>';
-            $onclick = sprintf("javascript:ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo',"
-                             . "'divContainerUserInfo','username=%s');", urlencode($this_username));
+            $ajax_id = "divContainerUserInfo_" . $count;
+            $param = sprintf('username=%s', urlencode($this_username));
+            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $tooltip2 = array(
+                                'subject' => $this_username,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                             );
+            $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($this_username)), 'label' => t('Tooltip','UserEdit'), );
+            $tooltip2['actions'][] = array( 'href' => $tooltip_disconnect_href, 'label' => t('all','Disconnect'), );
+
+            // create tooltip
+            $tooltip2 = get_tooltip_list_str($tooltip2);
+            
+            // create checkbox
+            $d = array( 'name' => 'clearSessionsUsers[]',
+                        'value' => sprintf("%s||%s", $this_username, $this_starttime));
+            $checkbox = get_checkbox_str($d);
+
+            // define table row
+            $table_row = array(
+                                $checkbox, $tooltip2, $this_name, $this_framedipaddress, $this_calledstationid,
+                                $this_starttime, $this_sessiontime, $this_hotspot, $this_nasshortname, $tooltip1
+                              );
 
             // print table row
-            printf('<tr id="row-%d">', $count);
-
-            printf('<td><label for="checkbox-%d">', $count);
-            printf('<input type="checkbox" name="clearSessionsUsers[]" id="checkbox-%d" value="%s||%s"></label>',
-                   $count, $this_username, $this_starttime);
-            printf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>%s</a></td>", $onclick, $tooltip, $this_username);
-
-            $arr = array(
-                            $this_name, $this_framedipaddress, $this_calledstationid, $this_starttime,
-                            $this_sessiontime, $this_hotspot, $this_nasshortname, $this_traffic
-                        );
-
-            foreach ($arr as $this_elem) {
-                printf("<td>%s</td>", $this_elem);
-            }
-
-            echo "</tr>";
+            print_table_row($table_row);
 
             $count++;
         }
-?>
-        </tbody>
 
-<?php
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
+        printLinks($links, $drawNumberLinks);
 
-    </table>
-
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
@@ -326,6 +327,9 @@
     open_tab($navkeys, 2);
     printf($img_format, "library/graphs/online_nas.php", "Online NAS");
     close_tab($navkeys, 2);
+
+    // close tab wrapper
+    close_tab_wrapper();
 
     include('include/config/logging.php');
 

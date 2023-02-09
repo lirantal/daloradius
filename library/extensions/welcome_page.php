@@ -35,9 +35,9 @@ if (strpos($_SERVER['PHP_SELF'], '/library/extensions/welcome_page.php') !== fal
     <h2>daloRADIUS Web Management Server</h2>
     <h3><?= t('all', 'daloRADIUSVersion') ?> / <?= htmlspecialchars($configValues['DALORADIUS_DATE'], ENT_QUOTES, 'UTF-8') ?></h3>
     <h4>
-        <a title="Mail to Liran Tal" href="mailto:Liran Tal &lt;liran.tal@gmail.com&gt;">Liran Tal</a>
+        <a class="text-decoration-none" title="Mail to Liran Tal" href="mailto:Liran Tal &lt;liran.tal@gmail.com&gt;">Liran Tal</a>
         &amp;
-        <a title="Mail to Filippo Lauria" href="mailto:Filippo Lauria &lt;filippo.lauria@iit.cnr.it&gt;">Filippo Lauria</a>
+        <a class="text-decoration-none" title="Mail to Filippo Lauria" href="mailto:Filippo Lauria &lt;filippo.lauria@iit.cnr.it&gt;">Filippo Lauria</a>
     </h4>
     <img src="static/images/daloradius_logo.jpg" style="border: 0; margin-top: 50px">
 </div>

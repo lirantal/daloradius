@@ -69,9 +69,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
+    // start printing content
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -107,50 +105,42 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-ippool-del.php";
-?>
-<form name="listall" method="POST" action="<?= $action ?>">
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'item[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
 
-    <table border="0" class="table1">
-        <thead>
-
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('item[]', $action);
-?>
-                </th>
-            </tr>
-
-            <tr>
-<?php
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>
-            </tr>
-            
-        </thead>
-        
-        <tbody>
-<?php
-        $li_style = 'margin: 7px auto';
-        
-        // prepare table rows
-        $table_rows = array();
-        
-        $count = 1;
-        
+
+        // closes table header, opens table body
+        print_table_middle();
+   
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
             
-            $tr = array();
             
             list($id, $pool_name, $framedipaddress, $nasipaddress, $calledstationid,
                  $callingstationid, $expiry_time, $username, $pool_key) = $row;
@@ -158,68 +148,49 @@
             // preparing checkbox
             $id = intval($id);
             $item_id = sprintf("ippool-%d", $id);
-            $checkbox_id = sprintf("checkbox-%d", $count);
             
-            // tooltip stuff
-            $tooltipText = '<ul style="list-style-type: none">'
-                     . sprintf('<li style="%s">', $li_style)
-                     . sprintf('<a class="toolTip" href="mng-rad-ippool-edit.php?item=%s">%s</a></li>',
-                               $item_id, t('Tooltip','EditIPAddress'))
-                     . sprintf('<li style="%s">', $li_style)
-                     . sprintf('<a class="toolTip" href="mng-rad-ippool-del.php?item=%s">%s</a></li>',
-                               $item_id, t('Tooltip','RemoveIPAddress'))
-                     . '</ul>';
-                     
-            $onclick = 'javascript:return false;';
+            $tooltip = array(
+                                'subject' => $pool_name,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-ippool-edit.php?item=%s', $item_id, ), 'label' => t('Tooltip','EditIPAddress'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-ippool-del.php?item[]=%s', $item_id, ), 'label' => t('Tooltip','RemoveIPAddress'), );
             
-            $tr[] = sprintf('<input type="checkbox" name="item[]" value="%s" id="%s">', $item_id, $checkbox_id)
-                          . sprintf('<label for="%s">', $checkbox_id)
-                          . sprintf('<a class="tablenovisit" href="#" onclick="%s" ' . "tooltipText='%s'>", $onclick, $tooltipText)
-                          . $id . '</a>' . '</label>';
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
             
-            // other row elements
-            $tr[] = htmlspecialchars($pool_name, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($framedipaddress, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($nasipaddress, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($calledstationid, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($callingstationid, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($expiry_time, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
-            $tr[] = htmlspecialchars($pool_key, ENT_QUOTES, 'UTF-8');
+            // create checkbox
+            $d = array( 'name' => 'item[]', 'value' => $item_id, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
 
-            $table_rows[] = $tr;
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $framedipaddress, $nasipaddress, $calledstationid,
+                                $callingstationid, $expiry_time, $username, $pool_key );
 
+            // print table row
+            print_table_row($table_row);
+            
             $count++;
 
         }
         
-        // draw tr(s)
-        $simple_td_format = '<td>%s</td>' . "\n";
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
 
-        foreach ($table_rows as $tr) {
-            echo '<tr>';
-            
-            foreach ($tr as $td) {
-                printf($simple_td_format, $td);
-            }
-            
-            echo '</tr>';
-        }
-?>        
-        </tbody>
-        
-<?php
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
+        printLinks($links, $drawNumberLinks);
         
-    </table>
-    
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
-    
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

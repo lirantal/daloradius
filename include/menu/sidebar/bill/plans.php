@@ -27,6 +27,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/plans.php') !== fal
     exit;
 }
 
+global $planName;
 
 include_once("include/management/populate_selectbox.php");
 $menu_planNames = get_plans();
@@ -35,11 +36,11 @@ $menu_planNames = get_plans();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewPlan'), 'href' =>'bill-plans-new.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
 if (count($menu_planNames) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListPlans'), 'href' => 'bill-plans-list.php',
-                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                             'icon' => 'list', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
     $components = array();
     $components[] = array(
@@ -48,13 +49,15 @@ if (count($menu_planNames) > 0) {
                             "selected_value" => ((isset($planName)) ? $planName : ""),
                             "required" => true,
                             "options" => $menu_planNames,
+                            "caption" => t('all','PlanName'),
+                            "tooltipText" => t('Tooltip','BillingPlanName'),
                           );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditPlan'), 'action' => 'bill-plans-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemovePlan'), 'href' => 'bill-plans-del.php',
-                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }
 
 $sections = array();

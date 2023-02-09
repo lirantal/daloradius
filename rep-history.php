@@ -27,23 +27,9 @@
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
     
-    // init logging variables
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-    $logDebugSQL = "";
-    
     include_once("lang/main.php");
-    
     include("library/layout.php");
-
-    // print HTML prologue
-    $title = t('Intro','rephistory.php');
-    $help = t('helpPage','rephistory');
     
-    print_html_prologue($title, $langCode);
-    
-    include("include/menu/sidebar.php");
-
     // these three variable can be used for validation an presentation purpose
     $cols = array(
                     "section" => t('all','Section'), 
@@ -69,8 +55,18 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : $default_orderType;
-
-    echo '<div id="contentnorightbar">';
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+    
+    // print HTML prologue
+    $title = t('Intro','rephistory.php');
+    $help = t('helpPage','rephistory');
+    
+    print_html_prologue($title, $langCode);
+    
     print_title_and_help($title, $help);
 
     include('include/management/pages_common.php');
@@ -113,53 +109,70 @@
         $logDebugSQL .= "$sql;\n";
         
         $per_page_numrows = $res->numRows();
-?>
+        
+        $descriptors = array();
 
-          <table border="0" class="table1">
-            <thead>
-                <tr style="background-color: white">
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>';
-        }
-?>
-                </tr>
-                <tr>
-<?php
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
+
+        // print table top
+        print_table_top();
+        
+        // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>
-                </tr>
-            </thead>
-            
-            <tbody>
-<?php
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
-            
-            // ~ section, item, creationdate, creationby, updatedate, updateby
-            
-            echo "<tr>";
-            
+
+            // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                printf("<td>%s</td>", htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8'));
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
             
-            echo "</tr>";
+            // print table row
+            print_table_row($row);
+            
+            $count++;
 
         }
-?>
-            </tbody>
-            
-<?php
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-            
-        </table>
-<?php
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

@@ -203,9 +203,6 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     include_once('include/management/actionMessages.php');
@@ -251,14 +248,17 @@
         $csrf_token = dalo_csrf_token();
         $token = array( "type" => "hidden", "name" => "csrf_token", "value" => $csrf_token );
 
-        echo '<table border="0" class="table1">';
+        // print table top
+        print_table_top();
 
-        echo "<tr>";
+        // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-        echo "</tr>";
 
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
         $count = 0;
-        
         foreach ($backupInfo as $row) {
             $rowlen = count($row);
             
@@ -303,7 +303,7 @@
             $count++;
         }
 
-        echo '</table>';
+        print_table_bottom();
 
     } else {
         // no backup file(s)

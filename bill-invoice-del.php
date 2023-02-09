@@ -89,13 +89,13 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
+    
     
     if (!empty($invoice_id) && !is_array($invoice_id)) {
         $title .= " :: #" . htmlspecialchars($invoice_id, ENT_QUOTES, 'UTF-8');
     }
     
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');

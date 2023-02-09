@@ -70,9 +70,7 @@
     
     print_html_prologue($title, $langCode);
     
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
+    // start printing content
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -104,38 +102,37 @@
         
         $per_page_numrows = $res->numRows();
         
-?>
-<form name="listall" method="POST" action="mng-rad-nas-del.php">
-    <table border="0" class="table1">
-        <thead>
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('nashost[]', 'mng-rad-nas-del.php')
-?>
-                </th>
-            </tr>
-
-<?php
-        // second line of table header
-        echo "<tr>";
-        printTableHead($cols, $orderBy, $orderType);
-        echo "</tr>";
-?>  
-        </thead>
+        // this can be passed as form attribute and 
+        // printTableFormControls function parameter
+        $action = "mng-rad-nas-del.php";
         
-        <tbody>
-<?php
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'nashost[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
+
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType);
+
+        // closes table header, opens table body
+        print_table_middle();
+   
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -146,43 +143,46 @@
             
             list($id, $nasname, $shortname, $type, $ports, $secret, $server, $community, $description) = $row;
             
-            $li_style = 'margin: 7px auto';
-            $tooltipText = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-edit.php?nasname=%s">%s</a></li>',
-                                   $li_style, urlencode($nasname), t('Tooltip','EditNAS'))
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-rad-nas-del.php?nashost=%s">%s</a></li>',
-                                   $li_style, urlencode($nasname), t('Tooltip','RemoveNAS'))
-                         . '</ul>';
-            $onclick = sprintf('javascript:return false;');
-?>
-            <tr>
-                <td><input type="checkbox" name="nashost[]" value="<?= $nasname ?>"><?= $id ?></td>
-                <td>
-                    <a class="tablenovisit" href="#" onclick='<?= $onclick ?>' tooltipText='<?= $tooltipText ?>'>
-                        <?= $nasname ?>
-                    </a>
-                </td>
-<?php
-            // simply print remaining row elements
-            for ($i = 2; $i < $rowlen; $i++) {
-                echo "<td>" . $row[$i] . "</td>";
-            }
-?>
-            </tr>
-<?php
-        }
-?>
-        </tbody>
-<?php
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-</form>
+            $tooltip = array(
+                                'subject' => $nasname,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-edit.php?nasname=%s', urlencode($nasname), ), 'label' => t('button','EditNAS'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-del.php?nashost=%s', urlencode($nasname), ), 'label' => t('button','RemoveNAS'), );
+            
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+            
+            // create checkbox
+            $d = array( 'name' => 'nashost[]', 'value' => $nasname, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
 
-<?php
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $shortname, $type, $ports, $secret, $server, $community, $description );
+
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
+        }
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

@@ -30,6 +30,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/default.php') !== fa
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $username;
+
 include_once("include/management/populate_selectbox.php");
 $menu_users = get_users('CONFIG_DB_TBL_DALOUSERINFO');
 
@@ -38,13 +40,13 @@ $menu_users = get_users('CONFIG_DB_TBL_DALOUSERINFO');
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUser'), 'href' =>'mng-new.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUserQuick'), 'href' =>'mng-new-quick.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
 if (count($menu_users) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListUsers'), 'href' => 'mng-list-all.php',
-                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                             'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
     $components = array();
     $components[] = array(
@@ -54,22 +56,25 @@ if (count($menu_users) > 0) {
                             "required" => true,
                             "datalist" => (($autocomplete) ? $menu_users : array()),
                             "tooltipText" => t('Tooltip','usernameTooltip'),
+                            "caption" => t('all','Username'),
                             "sidebar" => true,
                           );
 
+    $components[0]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUser'), 'action' => 'mng-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
-
+                             'icon' => 'person-fill-gear', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+    
+    $components[0]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchUsers'), 'action' => 'mng-search.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userSearch.gif', ), 'form_components' => $components, );
+                             'icon' => 'search', 'img' => array( 'src' => 'static/images/icons/userSearch.gif', ), 'form_components' => $components, );
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveUsers'), 'href' => 'mng-del.php',
-                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'person-fill-x', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }
 
 $descriptors2 = array();
 $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ImportUsers'), 'href' =>'mng-import-users.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'upload', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 $sections = array();
 $sections[] = array( 'title' => 'Users Management', 'descriptors' => $descriptors1 );
 $sections[] = array( 'title' => 'Extended Capabilities', 'descriptors' => $descriptors2 );

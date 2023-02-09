@@ -31,6 +31,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/invoice.php') !== f
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $username, $invoice_status_id, $user_id, $startdate, $enddate;
+
 include('library/opendb.php');
 
 // get valid users
@@ -57,10 +59,12 @@ $descriptors1 = array();
 
 $components = array();
 $components[] = array(
+                        "id" => "username_menu0",
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
                         "datalist" => (($autocomplete) ? array_values($menu_users) : array()),
+                        "caption" => t('all','Username'),
                         "tooltipText" => t('Tooltip','usernameTooltip'),
                         "sidebar" => true,
                      );
@@ -77,7 +81,7 @@ $components[] = array(
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListInvoices'), 'action' => 'bill-invoice-list.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'list', 'form_components' => $components, );
 
 $components = array();
 $components[] = array(
@@ -92,7 +96,7 @@ $components[] = array(
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','NewInvoice'), 'action' => 'bill-invoice-new.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'plus-circle-fill', 'form_components' => $components, );
 
 $components = array();
 $components[] = array(
@@ -104,9 +108,10 @@ $components[] = array(
                         "sidebar" => true,
                      );
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditInvoice'), 'action' => 'bill-invoice-edit.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'pencil-square', 'form_components' => $components, );
                          
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveInvoice'), 'href' =>'bill-invoice-del.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveInvoice'), 'href' =>'bill-invoice-del.php',
+                         'icon' => 'x-circle-fill', );
 
 
 $components = array();
@@ -141,17 +146,19 @@ $components[] = array(
                      );
 
 $components[] = array(
+                        "id" => "username_menu1",
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
                         "datalist" => (($autocomplete) ? array_values($menu_users) : array()),
                         "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "caption" => t('all','Username'),
                         "sidebar" => true
                      );
 
 $descriptors2 = array();
 $descriptors2[] = array( 'type' => 'form', 'title' => t('button','GenerateReport'), 'action' => 'bill-invoice-report.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'database-gear', 'form_components' => $components, );
                          
 $sections = array();
 $sections[] = array( 'title' => 'Invoice Management', 'descriptors' => $descriptors1 );

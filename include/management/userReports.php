@@ -31,6 +31,37 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/userReports.php') !== fals
 }
 
 
+// "key", "label", "parent_id", "open"
+function open_accordion_item($descriptor) {
+    $label = $descriptor['label'];
+    $parent_id = $descriptor['parent_id'];
+    $key = (isset($descriptor['key'])) ? $descriptor['key'] : "key-" . rand();
+    $show = (isset($descriptor['open']) && $descriptor['open']) ? " show" : "";
+    $expanded = (isset($descriptor['open']) && $descriptor['open']) ? "true" : "false";
+    
+    echo <<<EOF
+<div class="accordion-item">
+    <h2 class="accordion-header" id="{$key}-head">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+            data-bs-target="#{$key}-content" aria-expanded="{$expanded}" aria-controls="{$key}-content">
+            {$label}
+        </button>
+    </h2>
+    
+    <div id="{$key}-content" class="accordion-collapse collapse{$show}" aria-labelledby="{$key}-head" data-bs-parent="#{$parent_id}">
+        <div class="accordion-body">
+EOF;
+}
+
+function close_accordion_item() {
+    echo <<<EOF
+        </div><!-- .accordion-body -->
+    </div>
+</div><!-- .accordion-item -->
+
+EOF;
+}
+
 /*
  *********************************************************************************************************
  * userSubscriptionAnalysis
@@ -250,10 +281,11 @@ function userSubscriptionAnalysis($username, $drawTable) {
         // print headings
         $labels = array("", "Global", "Monthly", "Weekly", "Daily", );
         
-        printf('<button class="accordion accordion-active" type="button">%s</button>', "Subscription Analysis");
-        echo '<div class="panel" style="display: block">';
-
-        echo '<table>'
+        // accordion
+        $d = array( 'label' => 'Subscription Analysis', 'parent_id' => 'accordion-parent', 'open' => false );
+        open_accordion_item($d);
+    
+        echo '<table class="table table-striped">'
            . '<tr>';
         
         echo '<th style="width: 25%"></th>';
@@ -284,7 +316,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
         echo '</table>';
         
         // print other table
-        echo '<table>';
+        echo '<table class="table table-striped">';
         
         foreach ($data2 as $label => $value) {
             $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
@@ -292,8 +324,9 @@ function userSubscriptionAnalysis($username, $drawTable) {
             printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>', $label, $value);
         }
         
-        echo '</table>'
-           . '</div>';
+        echo '</table>';
+        
+        close_accordion_item();
     }
 }
 
@@ -384,10 +417,11 @@ function userPlanInformation($username, $drawTable) {
      */    
     
     if ($drawTable == 1) {
-        printf('<button class="accordion accordion-active" type="button">%s</button>', "Plan Information");
-        echo '<div class="panel" style="display: block">';
-
-        echo '<table>'
+        // accordion
+        $d = array( 'label' => 'Plan Information', 'parent_id' => 'accordion-parent', 'open' => false );
+        open_accordion_item($d);
+        
+        echo '<table class="table table-striped">'
            . '<tr>';
         
         // print header
@@ -412,7 +446,7 @@ function userPlanInformation($username, $drawTable) {
         echo '</table>';
 
         // print other table
-        echo '<table>';
+        echo '<table class="table table-striped">';
         
         foreach ($data2 as $field => $arr) {
             $label = htmlspecialchars($arr["Label"], ENT_QUOTES, 'UTF-8');
@@ -421,8 +455,9 @@ function userPlanInformation($username, $drawTable) {
                    $label, $value);
         }
         
-        echo '</table>'
-           . '</div>';
+        echo '</table>';
+        
+        close_accordion_item();
     }        
 }
 
@@ -492,9 +527,12 @@ function userConnectionStatus($username, $drawTable) {
     include('library/closedb.php');
 
     if ($drawTable == 1) {
-        printf('<button class="accordion accordion-active" type="button">%s</button>', "Session Information");
-        echo '<div class="panel" style="display: block">'
-           . '<table>';
+        // accordion
+        $d = array( 'label' => 'Session Information', 'parent_id' => 'accordion-parent', 'open' => true );
+        open_accordion_item($d);
+        
+        echo '<table class="table table-striped">';
+        
         foreach ($data as $field => $arr) {
             $label = htmlspecialchars($arr["Label"], ENT_QUOTES, 'UTF-8');
             $value = htmlspecialchars($arr["Value"], ENT_QUOTES, 'UTF-8');
@@ -502,8 +540,9 @@ function userConnectionStatus($username, $drawTable) {
                    $label, $value);
         }
         
-        echo '</table>'
-           . '</div>';
+        echo '</table>';
+        
+        close_accordion_item();
     }
 }
 

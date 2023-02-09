@@ -29,7 +29,7 @@
     include_once('library/config_read.php');
     
     include_once("lang/main.php");
-    include("library/validation.php");
+    include_once("library/validation.php");
     include("library/layout.php");
 
     // we validate starting and ending dates
@@ -56,22 +56,12 @@
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-    
-    $extra_js = array(
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-    
     $title = t('Intro','repnewusers.php');
     $help = t('helpPage','repnewusers');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
     
-    include("include/menu/sidebar.php");
+    
     
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
@@ -100,7 +90,7 @@
                ? strtolower($_GET['orderType']) : "desc";
 
 
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -164,31 +154,34 @@
         // print navbar controls
         print_tab_header($navkeys);
         
+        // open tab wrapper
+        open_tab_wrapper();
+        
         // tab 0
         open_tab($navkeys, 0, true);
-?>
-                        <table border="0" class="table1">
-                            <thead>
-                                <tr style="background-color: white">
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>';
-        }
-?>
-                                </tr>
+        
+        $descriptors = array();
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-                                <tr>
-<?php
+        print_table_prologue($descriptors);
+
+        // print table top
+        print_table_top();
+
+        // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>
-                                </tr>
-                            </thead>
-                            
-                            <tbody>
-<?php
+
+        // closes table header, opens table body
+        print_table_middle();
+        
+        // table content
         $count = 0;
         while ($row = $res->fetchRow()) {
             
@@ -207,16 +200,24 @@
             
             $count++;
         }
-?>
-                            </tbody>
-                            
-<?php
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-                            
-                        </table>
-<?php
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
+
         close_tab($navkeys, 0);
         
         $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
@@ -229,6 +230,9 @@
         printf($img_format, $src, $alt);
         
         close_tab($navkeys, 1);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
     } else {
         $failureMsg = "Nothing to display";

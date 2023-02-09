@@ -26,9 +26,12 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar.php') !== false) {
     exit;
 }
 
+$autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
+                 strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
 $cat_subcat_tree = array(
                             "home" => array(),
-                            "mng" => array( "users", "batch", "hs", "rad-nas", "rad-usergroup",
+                            "mng" => array( "batch", "hs", "rad-nas", "rad-usergroup", "rad-groups",
                                             "rad-profiles", "rad-hunt", "rad-attributes", "rad-realms", "rad-ippool", ),
                             "rep" => array( "logs", "stat", "batch", "hb", ),
                             "acct" => array( "plans", "custom", "hotspot", "maintenance", ),
@@ -55,6 +58,8 @@ if ($detected_category == "mng") {
     if ($tmp[1] == "rad" && count($tmp) > 2) {
         if ($tmp[2] == "proxys") {
             $detected_subcategory = "rad-realms";
+        } else if ($tmp[2] == "groupcheck" || $tmp[2] == "groupreply") {
+            $detected_subcategory = "rad-groups";
         } else {
             $detected_subcategory = "rad-" . $tmp[2];
         }

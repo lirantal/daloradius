@@ -27,9 +27,10 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/acct/plans.php') !== fal
     exit;
 }
 
-
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+global $username, $startdate, $enddate, $planname;
 
 include_once("include/management/populate_selectbox.php");
 $menu_plannames = get_plans();
@@ -44,11 +45,13 @@ $descriptors1 = array();
 $components = array();
 
 $components[] = array(
+                            "id" => "username_menu",
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
                             "datalist" => (($autocomplete) ? $menu_usernames : array()),
-                            "tooltipText" => t('Tooltip','usernameTooltip'),
+                            "caption" => t('all','Username'),
+                            "tooltipText" => t('Tooltip','Username'),
                             "sidebar" => true,
                      );
 
@@ -57,6 +60,7 @@ $components[] = array(
                             "type" => "date",
                             "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
                             "caption" => t('all','StartingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
                      );
                      
 $components[] = array(
@@ -64,6 +68,7 @@ $components[] = array(
                             "type" => "date",
                             "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
                             "caption" => t('all','EndingDate'),
+                            "tooltipText" => t('Tooltip','Date'),
                      );
                             
 
@@ -73,10 +78,11 @@ $components[] = array(
                         "selected_value" => ((isset($planname)) ? $planname : ""),
                         "options" => $menu_plannames,
                         "caption" => t('all','PlanName'),
+                        "tooltipText" => t('Tooltip','PlanName'),
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','PlanUsage'), 'action' => 'acct-plans-usage.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'card-list', 'form_components' => $components, );
 
 
 $sections = array();

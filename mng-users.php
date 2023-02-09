@@ -37,9 +37,9 @@
 
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
+    
 
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
 
     $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';

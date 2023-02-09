@@ -51,9 +51,9 @@
         $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
     }
 
-    include("include/menu/sidebar.php");
+    
 
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
 
     include('library/extensions/boot_log.php');

@@ -43,25 +43,16 @@ function check_service($service_name) {
 
 $services_to_check = array("FreeRADIUS", "MySQL", "MariaDB", "SSHd");
 
-?>
+$table = array( 'title' => 'Service Status', 'rows' => array() );
 
-<h3>Service Status</h3>
-<table class="summarySection">
-<?php
-
-    $format = <<<EOF
-<tr>
-    <td class="summaryKey">%s</td>
-    <td class="summaryValue"><span class="sleft" style="color: %s">%s</span></td>
-</tr>
-EOF;
+foreach ($services_to_check as $service_name) {
+    $running = check_service(strtolower($service_name));
+    $class = ($running) ? "text-success" : "text-danger";
+    $label = ($running) ? "running" : "not running";
     
-    foreach ($services_to_check as $service_name) {
-        $running = check_service(strtolower($service_name));
-        $color = ($running) ? "green" : "red";
-        $label = ($running) ? "running" : "not running";
-        
-        printf($format, $service_name, $color, $label);
-    }
-?>
-</table>
+    $value = sprintf('<span class="%s">%s</span>', $class, $label);
+    
+    $table['rows'][] = array( $service_name, $value);
+}
+
+print_simple_table($table);

@@ -214,7 +214,7 @@
             ) = $row;
         
         // select for active plans
-        $planSelect = '<select class="form" name="itemXXXXXXX[plan]">';
+        $planSelect = '<select class="form-select" name="itemXXXXXXX[plan]">';
         
         
         $sql = sprintf("SELECT DISTINCT(planName), id
@@ -252,16 +252,16 @@ function addTableRow() {
     td1.innerHTML = plansSelect.replace("itemXXXXXXX[plan]", td1_name);
 
 	var td2 = document.createElement('td');
-    td2.innerHTML = `<input type="number" min="0" step=".01" id="item\${num}_amount" name="\${td2_name}">`;
+    td2.innerHTML = `<input type="number" class="form-control" min="0" step=".01" id="item\${num}_amount" name="\${td2_name}">`;
 
 	var td3 = document.createElement('td');
-	td3.innerHTML = `<input type="number" min="0" step=".01" id="item\${num}_tax" name="\${td3_name}">`;
+	td3.innerHTML = `<input type="number" class="form-control" min="0" step=".01" id="item\${num}_tax" name="\${td3_name}">`;
 
 	var td4 = document.createElement('td');
-	td4.innerHTML = `<input type="text" id="item\${num}_notes" name="\${td4_name}">`;
+	td4.innerHTML = `<input type="text" class="form-control" id="item\${num}_notes" name="\${td4_name}">`;
 
 	var td5 = document.createElement('td');
-	td5.innerHTML = `<input type="button" name="remove\${num}_button" value="Remove Item" onclick="\${td5_onclick}" class="button">`;
+	td5.innerHTML = `<button type="button" name="remove\${num}_button" onclick="\${td5_onclick}" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Remove Item</button>`;
 
 	trContainer.appendChild(td1);
 	trContainer.appendChild(td2);
@@ -284,17 +284,12 @@ EOF;
 	
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
 
     $title = t('Intro','billinvoiceedit.php');
@@ -302,9 +297,6 @@ EOF;
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js, "", $inline_extra_js);
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -330,8 +322,10 @@ EOF;
             echo implode(", ", $arr);
         }
 		
-        printf('<a href="bill-payments-new.php?payment_invoice_id=%d">%s</a> ', $invoice_id, "New Payment");
-        printf('<a href="bill-payments-list.php?payment_invoice_id=%d">%s</a>', $invoice_id, "Show Payments");
+        echo '<div class="btn-group my-3" role="group">';
+        printf('<a class="btn btn-primary" href="bill-payments-new.php?payment_invoice_id=%d">%s</a> ', $invoice_id, "New Payment");
+        printf('<a class="btn btn-secondary" href="bill-payments-list.php?payment_invoice_id=%d">%s</a>', $invoice_id, "Show Payments");
+        echo '</div>';
         
         echo '</div>';
 
@@ -422,28 +416,7 @@ EOF;
                                         "content" => $invoice_notes,
                                      );
 
-        $onclick = "window.location.href='include/common/notificationsUserInvoice.php?destination=%s&invoice_id=%d'";
-        $input_descriptors0[] = array(
-                                        "type" => "button",
-                                        "name" => "PreviewInvoice",
-                                        "value" => "Preview Invoice",
-                                        "onclick" => sprintf($onclick, 'preview', $invoice_id),
-                                      );
 
-        $input_descriptors0[] = array(
-                                        "type" => "button",
-                                        "name" => "DownloadInvoice",
-                                        "value" => "Download Invoice",
-                                        "onclick" => sprintf($onclick, 'download', $invoice_id),
-                                      );
-        
-        $input_descriptors0[] = array(
-                                        "type" => "button",
-                                        "name" => "EmailInvoice",
-                                        "value" => "Email Invoice to Customer",
-                                        "onclick" => sprintf($onclick, 'email', $invoice_id),
-                                      );
-        
         // descriptors 2
         $input_descriptors2 = array();
 
@@ -468,6 +441,9 @@ EOF;
         // opening form
         open_form();
         
+        // open tab wrapper
+        open_tab_wrapper();
+        
         // tab 0
         open_tab($navkeys, 0, true);
         
@@ -478,6 +454,49 @@ EOF;
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
+        
+        $onclick = "window.location.href='include/common/notificationsUserInvoice.php?destination=%s&invoice_id=%d'";
+        $button_descriptors1 = array();
+        $button_descriptors1[] = array(
+                                        "type" => "button",
+                                        "name" => "PreviewInvoice",
+                                        "value" => "Preview Invoice",
+                                        "onclick" => sprintf($onclick, 'preview', $invoice_id),
+                                      );
+
+        $button_descriptors1[] = array(
+                                        "type" => "button",
+                                        "name" => "DownloadInvoice",
+                                        "value" => "Download Invoice",
+                                        "onclick" => sprintf($onclick, 'download', $invoice_id),
+                                      );
+        
+        $button_descriptors1[] = array(
+                                        "type" => "button",
+                                        "name" => "EmailInvoice",
+                                        "value" => "Email Invoice to Customer",
+                                        "onclick" => sprintf($onclick, 'email', $invoice_id),
+                                      );
+        
+        // custom actions
+        echo <<<EOF
+    <div class="dropdown dropup">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Actions
+        </button>
+  
+        <ul class="dropdown-menu">
+EOF;
+
+        foreach ($button_descriptors1 as $desc) {
+            printf('<li><button class="dropdown-item" name="%s" onclick="%s">%s</button></li>', $desc['name'], $desc['onclick'], $desc['value']);
+        }
+
+
+        echo <<<EOF
+        </ul>
+    </div>
+EOF;
         
         close_fieldset();
         
@@ -497,6 +516,7 @@ EOF;
                                         "name" => "addItem",
                                         "value" => "Add Item",
                                         "onclick" => "addTableRow()",
+                                        "icon" => "plus-circle-fill",
                                       );
         
         $input_descriptors1[] = array(
@@ -509,7 +529,7 @@ EOF;
             print_form_component($input_descriptor);
         }
         
-        echo '<table style="margin: 10px auto">'
+        echo '<table class="table table-striped table-hover my-2">'
            . '<tbody id="container">'
            . '<tr>';
         
@@ -557,15 +577,15 @@ EOF;
                                          );
                 
                 foreach ($input_name_value as $name => $value) {
-                    printf('<td><input type="number" min="0" step=".01" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
+                    printf('<td><input type="number" class="form-control" min="0" step=".01" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
                            $this_id, $name, $this_id, $name, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
                 }
                 
-                printf('<td><input type="text" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
+                printf('<td><input type="text" class="form-control" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
                        $this_id, "notes", $this_id, "notes", htmlspecialchars($this_notes, ENT_QUOTES, 'UTF-8'));
                 
                 $onclick = sprintf("removeTableRow('%s')", $itemRowId);
-                printf('<td><input type="button" name="remove" value="Remove Item" onclick="%s" class="button"></td>', $onclick);
+                printf('<td><button type="button" name="remove" onclick="%s" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Remove Item</button></td>', $onclick);
                 
                 echo '</tr>' . "\n";
                 
@@ -582,6 +602,9 @@ EOF;
         close_fieldset();
         
         close_tab($navkeys, 1);
+    
+        // close tab wrapper
+        close_tab_wrapper();
     
         foreach ($input_descriptors2 as $input_descriptor) {
             print_form_component($input_descriptor);

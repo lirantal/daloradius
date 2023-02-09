@@ -30,11 +30,14 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/payments.php') !== 
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $username, $invoice_id, $payment_id, $paymentname;
+
 include_once("include/management/populate_selectbox.php");
 $menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
 $menu_paymentnames = get_payment_types();
 
 $username_select = array(
+                            "id" => "username_menu",
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
@@ -47,7 +50,8 @@ $username_select = array(
 // define descriptors
 $descriptors1 = array();
 
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewPayment'), 'href' =>'bill-payments-new.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewPayment'), 'href' =>'bill-payments-new.php',
+                         'icon' => 'plus-circle-fill', );
 
 $components = array();
 
@@ -63,7 +67,7 @@ $components[] = array(
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListPayments'), 'action' => 'bill-payments-list.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'list', 'form_components' => $components, );
 
 $components = array();
 
@@ -77,16 +81,19 @@ $components[] = array(
                      );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditPayment'), 'action' => 'bill-payments-edit.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'pencil-square', 'form_components' => $components, );
 
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemovePayment'), 'href' =>'bill-payments-del.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemovePayment'), 'href' =>'bill-payments-del.php',
+                         'icon' => 'x-circle-fill', );
 
 
 $descriptors2 = array();
-$descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewPayType'), 'href' =>'bill-payment-types-new.php', );
+$descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewPayType'), 'href' =>'bill-payment-types-new.php',
+                         'icon' => 'plus-circle-fill', );
 
 if (count($menu_paymentnames) > 0) {
-    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListPayTypes'), 'href' => 'bill-payment-types-list.php', );
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListPayTypes'), 'href' => 'bill-payment-types-list.php',
+                             'icon' => 'list', );
     
     $components = array();
     $components[] = array(
@@ -101,9 +108,10 @@ if (count($menu_paymentnames) > 0) {
                             );
 
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditPayType'), 'action' => 'bill-payment-types-edit.php', 'method' => 'GET',
-                             'form_components' => $components, );
+                             'icon' => 'pencil-square', 'form_components' => $components, );
  
-    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemovePayType'), 'href' => 'bill-payment-types-del.php', );
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemovePayType'), 'href' => 'bill-payment-types-del.php',
+                             'icon' => 'x-circle-fill', );
 }
 
 $sections = array();

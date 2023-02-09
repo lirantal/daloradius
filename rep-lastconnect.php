@@ -31,17 +31,6 @@
     include("library/validation.php");
     include("library/layout.php");
     
-    // init logging variables
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-    $logDebugSQL = "";
-    
-    // print HTML prologue
-    $title = t('Intro','replastconnect.php');
-    $help = t('helpPage','replastconnect');
-    
-    print_html_prologue($title, $langCode);
-
     // setting table-related parameters first
     switch($configValues['FREERADIUS_VERSION']) {
     case '1':
@@ -120,9 +109,17 @@
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : $default_orderType;
     
-    include("include/menu/sidebar.php");
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
+    $logDebugSQL = "";
+    
+    // print HTML prologue
+    $title = t('Intro','replastconnect.php');
+    $help = t('helpPage','replastconnect');
+    
+    print_html_prologue($title, $langCode);
 
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
 
@@ -197,36 +194,38 @@
         
         $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
 
-?>
-    <table border="0" class="table1">
-        <thead>
-            <tr style="background-color: white">
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $half_colspan + ($colspan % 2));
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>';
-        }
-?>
-                <td style="text-align: right" colspan="<?= ($drawNumberLinks) ? $half_colspan : $colspan ?>">
-                    <input class="button" type="button" value="CSV Export"
-                        onclick="location.href='include/management/fileExport.php?reportFormat=csv'">
-                </td>
+        $descriptors = array();
 
-            </tr>
-            
-            <tr>
-<?php
-        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-?>
-            </tr>
-        </thead>
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
-        <tbody>
-<?php
-        $td_format = '<td>%s</td>';
+
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
         
+        // print table top
+        print_table_top();
+        
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
             
@@ -242,32 +241,42 @@
 
             list($fullname, $user, $pass, $reply, $starttime) = $row;
 
-            echo "<tr>";
-            
-            printf($td_format, (!empty($fullname) ? $fullname : "(n/a)"));
-            printf($td_format, $user);
+            $fullname = (!empty($fullname) ? $fullname : "(n/a)");
+            $reply = sprintf('<span class="text-%s">%s</span>',
+                             (($reply == "Access-Reject") ? "danger" : "success"), $reply);
+
+            $table_row = array( $fullname, $user );
             if (!$hiddenPassword) {
-                printf($td_format, $pass);
+                $table_row[] = $pass;
             }
-            printf($td_format, $starttime);
-            
-            $reply = sprintf('<span style="color: %s">%s</span>',
-                             (($reply == "Access-Reject") ? "red" : "green"), $reply);
-            printf($td_format, $reply);
-            
-            echo "</tr>";
+        
+            $table_row[] = $reply;
+            $table_row[] = $starttime;
+
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
 
         }
-?>
-        </tbody>
 
-<?php
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
+        printLinks($links, $drawNumberLinks);
 
-    </table>
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

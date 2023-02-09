@@ -426,22 +426,15 @@ window.onload = function(){
     
     
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
-        "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
         "static/js/pages_common.js",
-        // js tabs stuff
-        "static/js/tabs.js"
+        "static/js/dynamic_attributes.js",
     );
-    
-    
     
     $title = t('Intro','mngedit.php');
     $help = t('helpPage','mngedit');
@@ -452,9 +445,6 @@ window.onload = function(){
         $title .= " :: $username_enc";
     }
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -521,21 +511,6 @@ window.onload = function(){
                                          'options' => $options,
                                          'selected_value' => ((isset($bi_planname)) ? $bi_planname : "")
                                      );
-
-        $buttons = array();
-        $buttons[] = array(
-                            'type' => 'button',
-                            'value' => 'Enable User',
-                            'onclick' => 'javascript:enableUser()',
-                            'name' => 'enableUser-button'
-                          );
-                          
-        $buttons[] = array(
-                            'type' => 'button',
-                            'value' => 'Disable User',
-                            'onclick' => 'javascript:disableUser()',
-                            'name' => 'disableUser-button'
-                          );
         
         // set navbar stuff
         $navkeys = array( 
@@ -548,6 +523,9 @@ window.onload = function(){
         
         // open form
         open_form();
+        
+        // open tab wrapper
+        open_tab_wrapper();
         
         // open first tab (shown)
         open_tab($navkeys, 0, true);
@@ -573,10 +551,44 @@ window.onload = function(){
         open_fieldset($fieldset0_descriptor);
         
         include('include/management/buttons.php');
-            
-        foreach ($buttons as $button_desc) {
-            print_input_field($button_desc);
+    
+        $button_descriptors1[] = array(
+                                        'type' => 'button',
+                                        'value' => 'Enable User',
+                                        'onclick' => 'javascript:enableUser()',
+                                        'name' => 'enableUser-button'
+                                      );
+                          
+        $button_descriptors1[] = array(
+                                        'type' => 'button',
+                                        'value' => 'Disable User',
+                                        'onclick' => 'javascript:disableUser()',
+                                        'name' => 'disableUser-button'
+                                      );
+    
+        // custom actions
+        echo <<<EOF
+    <div class="dropdown dropup">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Actions
+        </button>
+  
+        <ul class="dropdown-menu">
+EOF;
+
+        foreach ($button_descriptors1 as $desc) {
+            printf('<li><a href="#" class="dropdown-item" name="%s" onclick="%s">%s</a></li>', $desc['name'], $desc['onclick'], $desc['value']);
         }
+
+
+        echo <<<EOF
+        </ul>
+    </div>
+EOF;
+        
+        //~ foreach ($buttons as $button_desc) {
+            //~ print_input_field($button_desc);
+        //~ }
         
         close_fieldset();
         
@@ -592,7 +604,7 @@ window.onload = function(){
                                      );
         open_fieldset($fieldset1_descriptor);
         
-        $hashing_algorithm_notice = '<small style="font-size: 10px; color: black">'
+        $hashing_algorithm_notice = '<small class="mt-4 d-block">'
                                   . 'Notice that for supported password-like attributes, you can just specify a plaintext value. '
                                   . 'The system will take care of correctly hashing it.'
                                   . '</small>';
@@ -601,22 +613,19 @@ window.onload = function(){
 
         include_once('include/management/pages_common.php');
 
-        $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
-                          FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
-                         WHERE rc.username='%s' ORDER BY rc.id ASC", $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                                                     $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                                     $dbSocket->escapeSimple($username));
+        $sql = sprintf("SELECT rad.attribute, rad.op, rad.value, dd.type, dd.recommendedTooltip, rad.id
+                          FROM %s AS rad LEFT JOIN %s AS dd ON rad.attribute = dd.attribute AND dd.value IS NULL
+                         WHERE rad.username='%s' ORDER BY rad.id ASC", $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                                                       $dbSocket->escapeSimple($username));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
+        echo '<div class="container">';
+
         if ($res->numRows() == 0) {
-            echo '<div style="text-align: center">'
-               . t('messages','noCheckAttributesForUser')
-               . '</div>';
+            printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noCheckAttributesForUser'));
         } else {
-            
-            echo '<ul>';
-            
             while ($row = $res->fetchRow()) {
                 
                 foreach ($row as $i => $v) {
@@ -629,50 +638,17 @@ window.onload = function(){
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
                 $onclick = sprintf("document.getElementById('form-%d-radcheck').submit()", $id);
                 
-                echo '<li>';
-                printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
-                echo '<img src="static/images/icons/delete.png" border="0" alt="Remove"></a>';
+                $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
+                                     'id__attribute' => $id__attribute, 'type' => $type, 'value' => $row[2], 'name' => $name,
+                                     'attr_type' => $row[3], 'attr_desc' => $row[4], 'table' => 'radcheck');
                 
-                printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
-
-                printf('<input type="hidden" name="%s" value="%s">', $name, $id__attribute);            
-                printf('<input type="%s" value="%s" name="%s">', $type, $row[2], $name);
-                
-                printf('<select name="%s" class="form">', $name);
-                printf('<option value="%s">%s</option>', $row[1], $row[1]);
-                drawOptions();
-                echo '</select>';
-
-                printf('<input type="hidden" name="%s" value="radcheck">', $name);
-
-
-                if (!empty($row[3]) || !empty($row[4])) {
-                    $divId = sprintf("%s-Tooltip-%d-radcheck", $row[0], $id);
-                    $onclick = sprintf("toggleShowDiv('%s')", $divId);
-                    printf('<img src="static/images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
-                    printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
-                    
-                    if (!empty($row[3])) {
-                        echo '<br>';
-                        printf('<i><b>Type:</b> %s</i>', $row[3]);
-                    }
-                    
-                    if (!empty($row[4])) {
-                        echo '<br>';
-                        printf('<i><b>Tooltip Description:</b> %s</i>', $row[4]);
-                    }
-                    echo '</div>';
-                }
-                
-                echo '</li>';
+                print_edit_attribute($descriptor);
             }
             
-            echo '</ul>';
+            echo $hashing_algorithm_notice;
         }
         
-        echo $hashing_algorithm_notice;
-        
-        //~ print_form_component($submit_descriptor);
+        echo '</div><!-- .container -->';
         
         close_fieldset();
         
@@ -687,21 +663,19 @@ window.onload = function(){
                                      );
         open_fieldset($fieldset1_descriptor);
         
-        $sql = sprintf("SELECT rc.attribute, rc.op, rc.value, dd.type, dd.recommendedTooltip, rc.id
-                          FROM %s AS rc LEFT JOIN %s AS dd ON rc.attribute = dd.attribute AND dd.value IS NULL
-                         WHERE rc.username='%s' ORDER BY rc.id ASC", $configValues['CONFIG_DB_TBL_RADREPLY'],
-                                                                     $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                                     $dbSocket->escapeSimple($username));
+        $sql = sprintf("SELECT rad.attribute, rad.op, rad.value, dd.type, dd.recommendedTooltip, rad.id
+                          FROM %s AS rad LEFT JOIN %s AS dd ON rad.attribute = dd.attribute AND dd.value IS NULL
+                         WHERE rad.username='%s' ORDER BY rad.id ASC", $configValues['CONFIG_DB_TBL_RADREPLY'],
+                                                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
+                                                                       $dbSocket->escapeSimple($username));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
+        
+        echo '<div class="container">';
         if ($res->numRows() == 0) {
-            echo '<div style="text-align: center">'
-               . t('messages','noReplyAttributesForUser')
-               . '</div>';
+            printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noReplyAttributesForUser'));
         } else {
-            
-            echo '<ul>';
             while ($row = $res->fetchRow()) {
                 
                 foreach ($row as $i => $v) {
@@ -714,55 +688,23 @@ window.onload = function(){
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
                 $onclick = sprintf("document.getElementById('form-%d-radreply').submit()", $id);
                 
-                echo '<li>';
-                printf('<a class="tablenovisit" href="#" onclick="%s">', $onclick);
-                echo '<img src="static/images/icons/delete.png" border="0" alt="Remove"></a>';
-
-                printf('<label for="attribute" class="attributes">%s</label>', $row[0]);
-
-                printf('<input type="hidden" name="%s" value="%s">', $name, $id__attribute);            
-                printf('<input type="%s" value="%s" name="%s">', $type, $row[2], $name);
-                
-                printf('<select name="%s" class="form">', $name);
-                printf('<option value="%s">%s</option>', $row[1], $row[1]);
-                drawOptions();
-                echo '</select>';
-
-                printf('<input type="hidden" name="%s" value="radreply">', $name);
-
-                if (!empty($row[3]) || !empty($row[4])) {
-                    $divId = sprintf("%s-Tooltip-%d-radreply", $row[0], $id);
-                    $onclick = sprintf("toggleShowDiv('%s')", $divId);
-                    printf('<img src="static/images/icons/comment.png" alt="Tip" border="0" onClick="%s">', $onclick);
-                    printf('<div id="%s" style="display:none;visibility:visible" class="ToolTip2">', $divId);
-                    
-                    if (!empty($row[3])) {
-                        echo '<br>';
-                        printf('<i><b>Type:</b> %s</i>', $row[3]);
-                    }
-                    
-                    if (!empty($row[4])) {
-                        echo '<br>';
-                        printf('<i><b>Tooltip Description:</b> %s</i>', $row[4]);
-                    }
-                    echo '</div>';
-                }
-                
-                echo '</li>';
+                $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
+                                     'id__attribute' => $id__attribute, 'type' => $type, 'value' => $row[2], 'name' => $name,
+                                     'attr_type' => $row[3], 'attr_desc' => $row[4], 'table' => 'radreply');
+                                     
+                print_edit_attribute($descriptor);
             }
-            echo '</ul>';
+            
+            
+            echo $hashing_algorithm_notice;
         }
-
-        echo $hashing_algorithm_notice;
-
-        //~ print_form_component($submit_descriptor);
         
+        echo '</div><!-- .container -->';
+
         close_fieldset();
         
         close_tab($navkeys, 2);
 
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
-        
         // open 3-rd tab (not shown)
         open_tab($navkeys, 3);
         include_once('include/management/userinfo.php');
@@ -815,7 +757,7 @@ window.onload = function(){
             print_form_component($input_descriptor);
         }
 
-        echo '<small style="font-size: 10px; color: black">Manage all user-group mappings for this user '
+        echo '<small class="mt-4 d-block">Manage all user-group mappings for this user '
            . sprintf('<a href="mng-rad-usergroup-list-user.php?username=%s">here</a>.', $username_enc)
            . '</small>';
         
@@ -832,12 +774,18 @@ window.onload = function(){
         
         open_tab($navkeys, 7);
 
+        // accordion
+        echo '<div class="accordion m-2" id="accordion-parent">';
         include_once('include/management/userReports.php');
         userPlanInformation($username, 1);
         userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
         userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
+        echo '</div>';
 
         close_tab($navkeys, 7);
+
+        // close tab wrapper
+        close_tab_wrapper();
 
         print_form_component($submit_descriptor);
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -38,6 +38,7 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
+                    'id' => t('all','ID'),
                     'name' => t('all','HotSpot'),
                     'owner' => t('ContactInfo','OwnerName'),
                     'company' => t('ContactInfo','Company'),
@@ -45,10 +46,10 @@
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
@@ -63,17 +64,13 @@
         "static/js/ajax.js",
         "static/js/ajaxGeneric.js"
     );
-    
+
     $title = t('Intro','mnghslist.php');
     $help = t('helpPage','mnghslist');
-    
+
     print_html_prologue($title, $langCode, array(), $extra_js);
-    
-    include("include/menu/sidebar.php");
-    
-    
+
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -86,119 +83,117 @@
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-                     
+
         // we execute and log the actual query
-        $sql = "SELECT name, owner, company, type FROM %s ORDER BY %s %s LIMIT %s, %s";
+        $sql = "SELECT id, name, owner, company, type FROM %s ORDER BY %s %s LIMIT %s, %s";
         $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
                              $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
-        
-        // this can be passed as form attribute and 
+
+        // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-hs-del.php";
-?>
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('name[]', $action);
-?>
-                </th>
-            </tr>
-            
-            <tr>
-<?php
+
+        $descriptors = array();
+
+        $descriptors['start'] = array( 'common_controls' => 'name[]' );
+
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>           
-            </tr>
-        </thead>
-        
-        <tbody>
-<?php
-        $li_style = 'margin: 7px auto';
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
         $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
-        
+
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
-        
-            list($name, $owner, $company, $type) = $row;
-            
-            $tooltipText = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="mng-hs-edit.php?name=%s">%s</a></li>',
-                                   $li_style, urlencode($name), t('Tooltip','HotspotEdit'))
-                         . sprintf('<li style="%s"><a class="toolTip" href="acct-hotspot-compare.php">%s</a></li>',
-                                   $li_style, t('all','Compare'))
-                         . '</ul>'
-                         . '<div style="margin: 15px auto" id="divContainerHotspotInfo">Loading...</div>';
-            $onclick = sprintf('javascript:ajaxGeneric("include/management/retHotspotInfo.php","retHotspotGeneralStat",'
-                             . '"divContainerHotspotInfo","hotspot=%s");return false;', urlencode($name));
-            
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="name[]" value="<?= $name ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>">
-                        <a class="tablenovisit" href="#" onclick='<?= $onclick ?>' tooltipText='<?= $tooltipText ?>'>
-                            <?= $name ?>
-                        </a>
-                    </label>
-                </td>
-<?php
-            // simply print remaining row elements
-            for ($i = 1; $i < $rowlen; $i++) {
-                echo "<td>" . $row[$i] . "</td>";
-            }
-?>
-            </tr>
-<?php
+
+            list($id, $name, $owner, $company, $type) = $row;
+
+            $ajax_id = "divContainerHotspotInfo" . $count;
+            $param = sprintf('hotspot=%s', urlencode($name));
+            $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','$ajax_id','$param')";
+            $tooltip = array(
+                                'subject' => $name,
+                                'onclick' => $onclick,
+                                'ajax_id' => $ajax_id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($name) ), 'label' => t('Tooltip','HotspotEdit'), );
+            $tooltip['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
+
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // create checkbox
+            $d = array( 'name' => 'name[]', 'value' => $name, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
+
+            // define table row
+            $table_row = array( $checkbox, $tooltip, $owner, $company, $type );
+
+            // print table row
+            print_table_row($table_row);
+
             $count++;
         }
-?>
-        </tbody>
-<?php
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-</form>
 
-<?php
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
 
     include('include/config/logging.php');

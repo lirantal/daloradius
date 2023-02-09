@@ -29,8 +29,10 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/gis/default.php') !== fa
 
 // define descriptors
 $descriptors1 = array();
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ViewMAP'), 'href' => 'gis-viewmap.php', );
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','EditMAP'), 'href' => 'gis-editmap.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ViewMAP'), 'href' => 'gis-viewmap.php',
+                         'icon' => 'globe-europe-africa', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','EditMAP'), 'href' => 'gis-editmap.php',
+                         'icon' => 'geo-alt-fill', );
 
 
 $sections = array();

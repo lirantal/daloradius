@@ -31,11 +31,11 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/batch.php') !== fals
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','BatchAddUsers'), 'href' =>'mng-batch-add.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListBatches'), 'href' =>'mng-batch-list.php',
-                         'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                         'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveBatch'), 'href' =>'mng-batch-del.php',
-                         'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                         'icon' => 'person-fill-x', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 
 $sections = array();
 $sections[] = array( 'title' => 'Batch Management', 'descriptors' => $descriptors1 );

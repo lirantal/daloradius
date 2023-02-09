@@ -396,18 +396,13 @@
     
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
         "static/js/dynamic_attributes.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     $title = t('Intro','billposnew.php');
@@ -415,9 +410,6 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -432,8 +424,10 @@
         // print navbar controls
         print_tab_header($navkeys);
         
-        
         open_form();
+        
+        // open tab wrapper
+        open_tab_wrapper();
         
         // open 0-th tab (shown)
         open_tab($navkeys, 0, true);
@@ -529,6 +523,9 @@
         include_once('include/management/userbillinfo.php');
         
         close_tab($navkeys, 2);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         $input_descriptors1 = array();
 

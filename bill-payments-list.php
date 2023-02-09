@@ -38,6 +38,7 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
+                    "selected",
                     "id" => t('all','ID'),
                     "invoice_id" => t('all','PaymentInvoiceID'),
                     t('all','PaymentAmount'),
@@ -72,22 +73,13 @@
               ? str_replace('%', '', $_GET['username']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
-    // feed the sidebar
-    $edit_username = $username_enc;
-    $edit_invoice_id = $invoice_id;
-
-    
     // print HTML prologue    
     $title = t('Intro','paymentslist.php');
     $help = t('helpPage','paymentslist');
     
     print_html_prologue($title, $langCode);
     
-    include("include/menu/sidebar.php");
-    
-
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
 
@@ -155,40 +147,34 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-payments-del.php";
-?>
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'payment_id[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
 
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('payment_id[]', $action);
-?>
-                </th>
-            </tr>
-            
-            <tr>
-<?php
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>           
-            </tr>
-        </thead>
-        
-        <tbody>
-<?php
-        $count = 1;
+
+        // closes table header, opens table body
+        print_table_middle();
+   
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -198,60 +184,56 @@
             }
         
             list($payment_id, $invoice_id, $amount, $date, $value, $notes) = $row;
+            $payment_id = intval($payment_id);
+            $invoice_id = intval($invoice_id);
         
-            $onclick = 'javascript:return false;';
+            $tooltip1 = array(
+                                'subject' => sprintf("#%d", $payment_id),
+                                'actions' => array(),
+                             );
+            $tooltip1['actions'][] = array( 'href' => sprintf('bill-payments-edit.php?payment_id=%d', $payment_id, ), 'label' => t('Tooltip','EditPayment'), );
+            $tooltip1['actions'][] = array( 'href' => sprintf('bill-payments-del.php?payment_id=%d',$payment_id, ), 'label' => t('Tooltip','RemovePayment'), );
             
-            $li_style = 'margin: 7px auto';
-            $tooltipText1 = '<ul style="list-style-type: none">'
-                          . sprintf('<li style="%s"><a class="toolTip" href="bill-payments-edit.php?payment_id=%s">%s</a></li>',
-                                    $li_style, urlencode($payment_id), t('Tooltip','EditPayment'))
-                          . sprintf('<li style="%s"><a class="toolTip" href="bill-payments-del.php?payment_id=%s">%s</a></li>',
-                                    $li_style, urlencode($payment_id), t('Tooltip','RemovePayment'))
-                          . '</ul>';
-            
-            $tooltipText2 = sprintf('<a class="toolTip" href="bill-invoice-edit.php?invoice_id=%s">%s</a>',
-                                    urlencode($invoice_id), t('Tooltip','InvoiceEdit'));
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="payment_id[]" value="<?= $payment_id ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>">
-                        <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText1 ?>'>
-                            <?= $payment_id ?>
-                        </a>
-                    </label>
-                </td>
-                
-                <td>
-                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText2 ?>'>
-                        <?= $invoice_id ?>
-                    </a>
-                </td>
-                
-                <td class="money"><?= $amount ?></td>
-                <td><?= $date ?></td>
-                <td><?= $value ?></td>
-                <td><?= $notes ?></td>
-                
-            </tr>
-<?php
+            $tooltip2 = array(
+                                'subject' => sprintf("#%d", intval($invoice_id)),
+                                'actions' => array(),
+                             );
+            $tooltip2['actions'][] = array( 'href' => sprintf('bill-invoice-edit.php?invoice_id=%d', $invoice_id, ), 'label' => t('Tooltip','InvoiceEdit'), );
+        
+            // create tooltip
+            $tooltip1 = get_tooltip_list_str($tooltip1);
+            $tooltip2 = get_tooltip_list_str($tooltip2);
+        
+            // create checkbox
+            $d = array( 'name' => 'payment_id[]', 'value' => $item_id );
+            $checkbox = get_checkbox_str($d);
+        
+            // build table row
+            $table_row = array( $checkbox, $tooltip1, $tooltip2, $amount, $date, $value, $notes );
+
+            // print table row
+            print_table_row($table_row);
+
             $count++;
         }
-?>
-        </tbody>
+        
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
 
-<?php
-        // tfoot
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        printLinks($links, $drawNumberLinks);
 
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

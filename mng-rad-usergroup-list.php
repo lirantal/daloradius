@@ -73,11 +73,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-    
-               
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -128,58 +124,60 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-usergroup-del.php";
-?>
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>' . '</tr>';
-        }
-?>
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'usergroup[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
 
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('usergroup[]', $action);
-?>
-                </th>
-            </tr>
-<?php
         // second line of table header
         echo "<tr>";
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
         echo "</tr>";
-?>
-        </thead>
-        
-        <tbody>
-<?php
+
+        // closes table header, opens table body
+        print_table_middle();
         
         function print_user_group_prio($this_username, $this_groupname, $this_priority) {
-            $onclick='javascript:return false;';
-        
-            $li_style = 'margin: 7px auto';
-            $tooltipText_format = '<ul style="list-style-type: none">'
-                                . sprintf('<li style="%s">', $li_style) 
-                                . '<a class="toolTip" href="mng-rad-usergroup-edit.php?username=%s&current_group=%s">%s</a>'
-                                . '</li>'
-                                . sprintf('<li style="%s">', $li_style)
-                                . '<a class="toolTip" href="mng-rad-usergroup-list-user.php?username=%s&group=%s">%s</a>'
-                                . '</li>'
-                                . '</ul>';
             
-            $tooltipText = sprintf($tooltipText_format, urlencode($this_username), urlencode($this_groupname), t('Tooltip','EditUserGroup'),
-                                                        urlencode($this_username), urlencode($this_groupname), t('Tooltip','ListUserGroups'));
-            $tooltipText = sprintf("tooltipText='%s'", $tooltipText);
+            // preparing checkboxes and tooltips stuff
+            $tooltip = array(
+                                'subject' => sprintf('%s (%s)', $this_groupname, $this_priority),
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 
+                                            'href' => sprintf('mng-rad-usergroup-edit.php?username=%s&current_group=%s',
+                                                              urlencode($this_username), urlencode($this_groupname) ),
+                                            'label' => t('Tooltip','EditUserGroup'),
+                                         );
+            $tooltip['actions'][] = array(
+                                            'href' => sprintf('mng-rad-usergroup-list-user.php?username=%s&group=%s',
+                                                              urlencode($this_username), urlencode($this_groupname) ),
+                                            'label' => t('Tooltip','ListUserGroups'), );
 
-            printf('<td><a class="tablenovisit" href="#" onclick="%s" %s>%s</a> (%s)</td>', $onclick, $tooltipText, $this_groupname, $this_priority);
-            printf('<td><input type="checkbox" name="usergroup[]" value="%s||%s"></td>',
-                   urlencode($this_username), urlencode($this_groupname));
+            echo '<td>';
+            print_tooltip_list($tooltip);
+            echo '</td>';
+            
+            echo '<td>';
+            $d = array( 'name' => 'usergroup[]', 'value' => sprintf("%s||%s", $this_username, $this_groupname) );
+            print_checkbox($d);
+            echo '</td>';
+
         }
         
         while ($row0 = $res0->fetchRow()) {
@@ -235,20 +233,24 @@
                 }
             }
         }
-?>
-        </tbody>
-<?php
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
-    
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-    
-</form>
 
-<?php
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printLinks($links, $drawNumberLinks);
+
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

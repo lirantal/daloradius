@@ -27,23 +27,29 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/history.php') !== f
     exit;
 }
 
+include_once("library/validation.php");
 
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-include_once("library/validation.php");
+global $username, $billaction, $sqlfields, $orderBy, $orderType, $valid_billactions, $bill_history_query_options_default,
+       $bill_history_query_options_all;
+
+
 include_once("include/management/populate_selectbox.php");
 $menu_users = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
 
 
 $components = array();
 $components[] = array(
+                        "id" => "username_menu",
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
                         "required" => true,
                         "datalist" => (($autocomplete) ? $menu_users : array()),
                         "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "caption" => t('all','Username'),
                         "sidebar" => true
                      );
 
@@ -85,7 +91,7 @@ $components[] = array(
 
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ProcessQuery'), 'action' => 'bill-history-query.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'filter-circle-fill', 'form_components' => $components, );
 
 $sections = array();
 $sections[] = array( 'title' => 'Track Billing History', 'descriptors' => $descriptors1 );

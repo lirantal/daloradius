@@ -45,25 +45,12 @@
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-    
-    $extra_js = array(
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-    
     $title = t('Intro','graphsloggedusers.php');
     $help = t('helpPage','graphsloggedusers');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
     
-	include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
-    print_title_and_help($title, $help);
+	print_title_and_help($title, $help);
     
     // set navbar stuff
     $navkeys = array(
@@ -75,6 +62,9 @@
     print_tab_header($navkeys);
 
     $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+
+    // open tab wrapper
+    open_tab_wrapper();
 
     // tab 0
     open_tab($navkeys, 0, true);
@@ -95,6 +85,9 @@
     printf($img_format, $monthly_src, $monthly_alt);
     
     close_tab($navkeys, 1);
+    
+    // close tab wrapper
+    close_tab_wrapper();
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

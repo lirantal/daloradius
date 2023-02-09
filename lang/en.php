@@ -609,14 +609,10 @@ $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive n
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
 
-$l['Tooltip']['usernameTooltip'] = "The exact username as the user<br/>&nbsp;&nbsp;&nbsp;
-                    will use to connect to the system";
+$l['Tooltip']['usernameTooltip'] = "The exact username the user will use to connect to the system";
 $l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";                    
-$l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in<br/>&nbsp;&nbsp;&nbsp;
-                    certain systems so take extra care";
-$l['Tooltip']['groupTooltip'] = "The user will be added to this group.<br/>&nbsp;&nbsp;&nbsp;
-                    By assigning a user to a particular group<br/>&nbsp;&nbsp;&nbsp;
-                    the user is subject to the group's attributes";
+$l['Tooltip']['passwordTooltip'] = "Passwords are case sensetive in certain systems. Take extra care!";
+$l['Tooltip']['groupTooltip'] = "The user will be added to the specified group. By adding a user to a specific group they are subject to the group's attributes";
 $l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
                     The MAC Address format should be the same<br/>&nbsp;&nbsp;&nbsp;
                     as the NAS sends it. Mostly this is without<br/>&nbsp;&nbsp;&nbsp;
@@ -1810,11 +1806,16 @@ $l['messages']['gismain2'] = "error: could not open the file for writing:";
 $l['messages']['gismain3'] = "Check file permissions. The file should be writable by the webserver's user/group";
 $l['messages']['gisviewwelcome'] = "Welcome to Enginx Visual Maps";
 
-$l['messages']['loginerror'] = "<br/><br/>either of the following:<br/>
-1. bad username/password<br/>
-2. an administrator is already logged-in (only one instance is allowed) <br/>
-3. there appears to be more than one 'administrator' user in the database <br/>
-";
+$l['messages']['loginerror'] = <<<EOF
+<h5>Cannot log in.</h5>
+<p>This usually happens for one of these reasons:
+    <ul>
+        <li>wrong username and/or password;</li>
+        <li>an administrator is already logged-in<br>(only one instance is allowed);</li>
+        <li>there appears to be more than one 'administrator' user in the database.</li>
+    </ul>
+</p>
+EOF;
 
 $l['buttons']['savesettings'] = "Save Settings";
 $l['buttons']['apply'] = "Apply";

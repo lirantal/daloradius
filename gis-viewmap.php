@@ -42,13 +42,12 @@
     $help = t('helpPage','gisviewmap');
     
     $extra_css = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.css");
+    
+    // loaded at the bottom of the page
     $extra_js = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.js");
 
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode, $extra_css);
     
-    include("include/menu/sidebar.php");
-    
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     
@@ -86,12 +85,12 @@ EOF;
         
         list($id, $name, $mac, $geocode) = $row;
         
-        $popup = sprintf('<b> Hotspot Name</b>: %s<br>'
-                       . '<b>Mac Addr</b>: %s<br>'
-                       . '<b>Geo Loc</b>: %s<br>'
+        $popup = sprintf('<strong>Hotspot Name</strong>: %s<br>'
+                       . '<strong>MAC Addr</strong>: %s<br>'
+                       . '<strong>Geocode</strong>: %s<br>'
                        . '<a href=acct-hotspot-compare.php>%s</a>'
                        . '<br>'
-                       . '<a href="acct-hotspot-accounting.php?hotspot=%s">%s</a>',
+                       . '<a href="acct-hotspot-accounting.php?hotspot[]=%s">%s</a>',
                          $name, $mac, $geocode, t('Intro','accthotspotcompare.php'), $name, t('Intro','accthotspot.php'));
         
         
@@ -111,6 +110,6 @@ EOF;
 EOF;
     
     include('include/config/logging.php');
-    print_footer_and_html_epilogue($inline_extra_js);
+    print_footer_and_html_epilogue($inline_extra_js, $extra_js);
     
 ?>

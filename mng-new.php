@@ -325,18 +325,13 @@
     
     
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     $title = t('Intro','mngnew.php');
@@ -344,9 +339,6 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -356,12 +348,6 @@
         include_once('include/management/populate_selectbox.php');
         
         $input_descriptors0 = array();
-        
-        $input_descriptors0[] = array(
-                                        "name" => "csrf_token",
-                                        "type" => "hidden",
-                                        "value" => dalo_csrf_token(),
-                                     );
         
         $input_descriptors0[] = array(
                                         "type" =>"select",
@@ -439,12 +425,6 @@
                                         "tooltipText" => t('Tooltip','pincodeTooltip'),
                                         "random" => true,
                                      );
-                                     
-        $button_descriptor = array(
-                                    'type' => 'submit',
-                                    'name' => 'submit',
-                                    'value' => t('buttons','apply')
-                                  );
         
         // fieldset
         $fieldset0_descriptor = array(
@@ -473,6 +453,9 @@
         print_tab_header($navkeys);
         
         open_form();
+        
+        // open tab wrapper
+        open_tab_wrapper();
         
         // open 0-th tab (shown)
         open_tab($navkeys, 0, true);
@@ -514,12 +497,10 @@
         
         close_fieldset();
         
-        print_form_component($button_descriptor);
-        
         close_tab();
         
         
-        $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
+        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         
         // open 1-th tab (shown)
         open_tab($navkeys, 1);
@@ -536,6 +517,28 @@
         open_tab($navkeys, 3);
         include_once('include/management/attributes.php');
         close_tab($navkeys, 3);
+
+        // close tab wrapper
+        close_tab_wrapper();
+
+        $input_descriptors4 = array();
+        $input_descriptors4[] = array(
+                                        "name" => "csrf_token",
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                     );
+        
+        $input_descriptors4[] = array(
+                                        'type' => 'submit',
+                                        'name' => 'submit',
+                                        'value' => t('buttons','apply')
+                                     );
+
+        foreach ($input_descriptors4 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+
+        close_form();
 
     }
     

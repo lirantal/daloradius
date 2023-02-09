@@ -27,9 +27,10 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/mng/rad-realms.php') !==
     exit;
 }
 
-
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
+
+global $realmname, $item;
 
 include_once("include/management/populate_selectbox.php");
 $menu_options = get_realms();
@@ -38,13 +39,13 @@ $menu_options = get_realms();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewRealm'), 'href' =>'mng-rad-realms-new.php',
-                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
     
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListRealms'), 'href' => 'mng-rad-realms-list.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
     $components = array();
     $components[] = array(
@@ -53,14 +54,15 @@ if (count($menu_options) > 0) {
                             "selected_value" => ((isset($realmname)) ? $realmname : ""),
                             "required" => true,
                             "options" => $menu_options,
-                            "title" => t('all','Realm'),
+                            "caption" => t('all','Realm'),
+                            "tooltipText" => "Please select a " . t('all','Realm'),
                           );
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditRealm'), 'action' => 'mng-rad-realms-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
                              
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveRealm'), 'href' => 'mng-rad-realms-del.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }
 
 
@@ -70,13 +72,13 @@ $menu_options = get_proxies();
 $descriptors2 = array();
 
 $descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewProxy'), 'href' =>'mng-rad-proxys-new.php',
-                         'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
+                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
     
     $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListProxys'), 'href' => 'mng-rad-proxys-list.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
+                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
     $components = array();
     $components[] = array(
@@ -85,14 +87,15 @@ if (count($menu_options) > 0) {
                             "selected_value" => ((isset($item)) ? $item : ""),
                             "required" => true,
                             "options" => $menu_options,
-                            "title" => t('all','Proxy'),
+                            "caption" => t('all','Proxy'),
+                            "tooltipText" => "Please select a " . t('all','Proxy'),
                           );
     
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditProxy'), 'action' => 'mng-rad-proxys-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
                              
     $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveProxy'), 'href' => 'mng-rad-proxys-del.php',
-                             'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
+                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }
 
 $sections = array();

@@ -446,10 +446,7 @@ function refillSessionTraffic() {
                     ? 'password' : 'text';
     
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
     
     $extra_js = array(
         "static/js/ajax.js",
@@ -457,8 +454,6 @@ function refillSessionTraffic() {
         "static/js/productive_funcs.js",
         "static/js/dynamic_attributes.js",
         "static/js/pages_common.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
     
     
@@ -472,9 +467,6 @@ function refillSessionTraffic() {
         $title .= " :: $username_enc";
     }
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -494,6 +486,9 @@ function refillSessionTraffic() {
         
         
         open_form();
+        
+        // open tab wrapper
+        open_tab_wrapper();
         
         // open 0-th tab (shown)
         open_tab($navkeys, 0, true);
@@ -657,12 +652,17 @@ function refillSessionTraffic() {
         // open 5-th tab
         open_tab($navkeys, 5);
         
+        echo '<div class="accordion m-2" id="accordion-parent">';
         include_once('include/management/userReports.php');
         userPlanInformation($username, 1);
         userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
         userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
+        echo '</div>';
         
         close_tab($navkeys, 5);
+
+        // close tab wrapper
+        close_tab_wrapper();
 
         $input_descriptors2 = array();
 

@@ -25,127 +25,150 @@
     $operator = $_SESSION['operator_user'];
 
     include('library/check_operator_perm.php');
-
     include_once('library/config_read.php');
-    $log = "visited page: ";
     
-    if (isset($_POST['submit'])) {
-        
-        if (array_key_exists('config_dashboard_dalo_secretkey', $_POST) && isset($_POST['config_dashboard_dalo_secretkey'])) {
-            $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] = $_POST['config_dashboard_dalo_secretkey'];
-        }
-        
-        if (array_key_exists('config_dashboard_dalo_debug', $_POST) &&  isset($_POST['config_dashboard_dalo_debug']) &&
-            in_array($_POST['config_dashboard_dalo_debug'], array( "0", "1" ))) {
-            $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] = $_POST['config_dashboard_dalo_debug'];
-        }
-            
-        include ("library/config_write.php");
-    }    
-
     include_once("lang/main.php");
-    
     include("library/layout.php");
     
-    // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $log = "visited page: ";
     
-    $extra_js = array(
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            if (array_key_exists('CONFIG_DASHBOARD_DALO_DEBUG', $_POST) && isset($_POST['CONFIG_DASHBOARD_DALO_DEBUG'])) {
+                $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] = $_POST['CONFIG_DASHBOARD_DALO_DEBUG'];
+            }
+            
+            if (array_key_exists('CONFIG_DASHBOARD_DALO_DEBUG', $_POST) &&  isset($_POST['CONFIG_DASHBOARD_DALO_DEBUG']) &&
+                in_array($_POST['CONFIG_DASHBOARD_DALO_DEBUG'], array( "yes", "no" ))) {
+                $configValues['CONFIG_DASHBOARD_DALO_DEBUG'] = $_POST['CONFIG_DASHBOARD_DALO_DEBUG'];
+            }
+            
+            if (array_key_exists('CONFIG_DASHBOARD_DALO_DELAYHARD', $_POST) && isset($_POST['CONFIG_DASHBOARD_DALO_DELAYHARD']) &&
+                intval($_POST['CONFIG_DASHBOARD_DALO_DELAYHARD']) > 0) {
+                $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] = intval($_POST['CONFIG_DASHBOARD_DALO_DELAYHARD']);
+            }
+            
+            if (array_key_exists('CONFIG_DASHBOARD_DALO_DELAYSOFT', $_POST) && isset($_POST['CONFIG_DASHBOARD_DALO_DELAYSOFT']) &&
+                intval($_POST['CONFIG_DASHBOARD_DALO_DELAYSOFT']) > 0) {
+                $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] = intval($_POST['CONFIG_DASHBOARD_DALO_DELAYSOFT']);
+            }
+            
+            include("library/config_write.php");
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
+   
+    
+    // print HTML prologue
     $title = t('Intro','configdashboard.php');
     $help = t('helpPage','configdashboard');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
     
     // set navbar stuff
-    $navbuttons = array(
-                          'Dashboard-tab' => t('title','Dashboard'),
-                          'Settings-tab' => t('title','Settings'),
-                       );
+    $navkeys = array( 'Dashboard', 'Settings', );
 
-    print_tab_navbuttons($navbuttons);
+    // print navbar controls
+    print_tab_header($navkeys);
     
-    
-    
-    $input_descriptors1 = array();
-    $input_descriptors1[] = array( "name" => "config_dashboard_dalo_secretkey", "caption" => t('all','DashboardSecretKey'),
+   
+    $input_descriptors0 = array();
+    $input_descriptors0[] = array( "name" => "CONFIG_DASHBOARD_DALO_SECRETKEY", "caption" => t('all','DashboardSecretKey'),
                                    "type" => "text", "value" => $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] );
     
-    $input_descriptors1[] = array( "name" => "config_dashboard_dalo_debug", "caption" => t('all','DashboardDebug'),
+    $input_descriptors0[] = array( "name" => "CONFIG_DASHBOARD_DALO_DEBUG", "caption" => t('all','DashboardDebug'),
                                    "type" => "select", "selected_value" => $configValues['CONFIG_DASHBOARD_DALO_DEBUG'],
-                                   "options" => array("0", "1")
+                                   "options" => array("yes", "no")
                                  );
     
+    $input_descriptors1 = array();
+    $input_descriptors1[] = array( "name" => "CONFIG_DASHBOARD_DALO_DELAYSOFT", "caption" => t('all','DashboardDelaySoft'),
+                                   "type" => "number", "value" => $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] );
+
+    $input_descriptors1[] = array( "name" => "CONFIG_DASHBOARD_DALO_DELAYHARD", "caption" => t('all','DashboardDelayHard'),
+                                   "type" => "number", "value" => $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] );
+
     $input_descriptors2 = array();
+    $input_descriptors2[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
     
-    $input_descriptors2[] = array( "name" => "config_dashboard_dalo_delay_soft", "caption" => t('all','DashboardDelaySoft'),
-                                   "type" => "text", "value" => $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] );
+    $input_descriptors2[] = array(
+                                    "type" => "submit",
+                                    "name" => "submit",
+                                    "value" => t('buttons','apply')
+                                  );
 
-    $input_descriptors2[] = array( "name" => "config_dashboard_dalo_delay_hard", "caption" => t('all','DashboardDelayHard'),
-                                   "type" => "text", "value" => $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] );
+    $fieldset0_descriptor = array(
+                                    "title" => t('title','Dashboard'),
+                                 );           
+    $fieldset1_descriptor = array(
+                                    "title" => t('title','Settings'),
+                                 );           
 
-
-    $submit_descriptor = array(
-                                "type" => "submit",
-                                "name" => "submit",
-                                "value" => t('buttons','apply')
-                              );
-?>
-
-<form name="dashboardsettings" method="POST">
-
-    <div id="Dashboard-tab" class="tabcontent" title="<?= t('title','Dashboard') ?>" style="display: block">
-
-        <fieldset>
-            <h302><?= t('title','Dashboard') ?></h302>
-
-            <ul style="margin: 30px auto">
-<?php
-                foreach ($input_descriptors1 as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-            </ul>
-        </fieldset>
-
-    </div><!-- #Dashboard-tab -->
-                    
-    <div id="Settings-tab" class="tabcontent" title="<?= t('title','Settings') ?>">
+    open_form();
     
-        <fieldset>
-            <h302><?= t('title','Settings') ?></h302>
+    // open tab wrapper
+    open_tab_wrapper();
+    
+    // open tab 0
+    open_tab($navkeys, 0, true);
+    
+    open_fieldset($fieldset0_descriptor);
 
-            <ul style="margin: 30px auto">
-<?php
-                foreach ($input_descriptors2 as $input_descriptor) {
-                    print_form_component($input_descriptor);
-                }
-?>
-            </ul>
-        </fieldset>
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_tab($navkeys, 0);
 
-    </div><!-- #Settings-tab -->
+    // open tab 1
+    open_tab($navkeys, 1);
+    
+    open_fieldset($fieldset1_descriptor);
 
-<?php
-    print_form_component($submit_descriptor);
-?>
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_fieldset();
+    
+    close_tab($navkeys, 1);
 
-</form>
+    // close tab wrapper
+    close_tab_wrapper();
+    
+    $input_descriptors2 = array();
+    $input_descriptors2[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+    
+    $input_descriptors2[] = array(
+                                    "type" => "submit",
+                                    "name" => "submit",
+                                    "value" => t('buttons','apply')
+                                  );
 
-<?php
+    foreach ($input_descriptors2 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+
+    close_form();
 
     include('include/config/logging.php');
 

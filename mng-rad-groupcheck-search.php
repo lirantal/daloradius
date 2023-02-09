@@ -23,13 +23,15 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    
+
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
+    include_once("lang/main.php");
+    include("library/layout.php");
+
     // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for listing of records on page: ";
+    $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
     // set session's page variable
@@ -40,22 +42,9 @@
     
     $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
     
-    //feed the sidebar variables
-    $search_groupname = $groupname_enc;
-    
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
-
-    // print HTML prologue
-    $title = t('Intro','mngradgroupchecksearch.php');
-    $help = t('helpPage','mngradgroupchecksearch');
-    
-    print_html_prologue($title, $langCode);
-
-    include("include/menu/sidebar.php");
-    
     $cols = array(
+                    "selected",
+                    "id" => t('all','ID'),
                     "groupname" => t('all','Groupname'),
                     "attribute" => t('all','Attribute'),
                     "op" => t('all','Operator'),
@@ -77,8 +66,13 @@
                ? strtolower($_GET['orderType']) : "asc";
 
 
+    // print HTML prologue
+    $title = t('Intro','mngradgroupchecksearch.php');
+    $help = t('helpPage','mngradgroupchecksearch');
+    
+    print_html_prologue($title, $langCode);
+
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
     
     
@@ -121,41 +115,34 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-groupcheck-del.php";
-
-?>
-
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType, $partial_query_string);
-            echo '</td>' . '</tr>';
-        }
-?>
-
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('record_id[]', $action);
-?>
-                </th>
-            </tr>
-<?php
-        // second line of table header
-        echo "<tr>";
-        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-        echo "</tr>";
-?>
-        </thead>
         
-        <tbody>
-<?php
-    
-        $count = 1;
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'record_id[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+
+        // print table top
+        print_table_top($form_descriptor);
+        
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
+
+        // closes table header, opens table body
+        print_table_middle();
+
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -165,45 +152,49 @@
             }
             
             list($id, $groupname, $attribute, $op, $value) = $row;
-            
-            $checkbox_value = "record-" . $id;
-            
-            $tooltipText = sprintf('<a class="toolTip" href="mng-rad-groupcheck-edit.php?groupname=%s&value=%s&attribute=%s">%s</a>',
-                                   urlencode($groupname), urlencode($value), urlencode($attribute), t('button','EditGroup'));
-            $onclick = 'javascript:return false;';
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="record_id[]" value="<?= $checkbox_value ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>">
-                        <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                            <?= $groupname ?>
-                        </a>
-                    </label>
-                </td>
-                <td><?= $attribute ?></td>
-                <td><?= $op ?></td>
-                <td><?= $value ?></td>
-            </tr>
-<?php
+            $id = intval($id);
+
+            $item_id = sprintf("record-%d", $id);
+
+            $tooltip = array(
+                                'subject' => $id,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-groupcheck-edit.php?item=groupcheck-%s', $id, ), 'label' => t('button','EditGroupCheck'), );
+
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // create checkbox
+            $d = array( 'name' => 'record_id[]', 'value' => $item_id );
+            $checkbox = get_checkbox_str($d);
+
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $groupname, $attribute, $op, $value );
+
+            // print table row
+            print_table_row($table_row);
 
             $count++;
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
         $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        printLinks($links, $drawNumberLinks);
 
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
-
-</form>
-
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

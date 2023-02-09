@@ -121,13 +121,13 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
+    
     
     if (!empty($planName) && !is_array($planName)) {
         $title .= " :: " . htmlspecialchars($planName, ENT_QUOTES, 'UTF-8');
     }
     
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');

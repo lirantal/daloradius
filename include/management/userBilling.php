@@ -42,6 +42,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/userBilling.php') !== fals
  *********************************************************************************************************
  */
 function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()) {
+    global $logDebugSQL;
 
     include(dirname(__FILE__).'/../../library/opendb.php');
 
@@ -49,36 +50,35 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 
     // if provided a numeric user id then this is the user_id that we need
     if (is_numeric($userId)) {
-        $user_id = $dbSocket->escapeSimple($userId);            // sanitize variable for sql statement
+        // sanitize variable for sql statement
+        $user_id = $dbSocket->escapeSimple($userId);
     } else {
         // otherwise this is the username and we need to look up the user id from the userbillinfo table
-
         $username = $dbSocket->escapeSimple($userId);
-        $sql = 'SELECT id FROM '.$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-                ' WHERE username="'.$username.'"';
+        $sql = sprintf("SELECT id FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $username);
         $res = $dbSocket->query($sql);
-        $logDebugSQL .= $sql . "\n";
+        $logDebugSQL .= "$sql;\n";
 
         $row = $res->fetchRow();
         $user_id = $row[0];
-
     }
 
     // if something is not right with the user id (set to null, false, whatever) we abort
-    if (!$user_id)
+    if (!$user_id) {
         return false;
-
+    }
 
     $currDate = date('Y-m-d H:i:s');
     $currBy = $_SESSION['operator_user'];
 
-    if (!$invoiceInfo)
+    if (!is_array($invoiceInfo)) {
         $invoiceInfo = array();
+    }
 
     // create default invoice information if nothing was provided
     $myinvoiceInfo['date'] = $currDate;
     $myinvoiceInfo['status_id'] = 1;             // defaults to invoice status of 'open'
-    $myinvoiceInfo['type_id'] = 1;             // defaults to invoice type of 'Plans'
+    $myinvoiceInfo['type_id'] = 1;               // defaults to invoice type of 'Plans'
     $myinvoiceInfo['notes'] = 'provisioned new user from daloRADIUS platform';
     $invoiceInfo = array_merge($myinvoiceInfo, $invoiceInfo);
 
@@ -263,7 +263,7 @@ function userInvoicesStatus($user_id, $drawTable) {
 function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $drawTable) {
 
     include_once('include/management/pages_common.php');
-    include 'library/opendb.php';
+    include('library/opendb.php');
 
     $username = $dbSocket->escapeSimple($username);            // sanitize variable for sql statement
     $startdate = $dbSocket->escapeSimple($startdate);
@@ -271,160 +271,113 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
     $ratename = $dbSocket->escapeSimple($ratename);
 
     // get rate type
-    $sql = "SELECT rateType FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename'";
+    $sql = sprintf("SELECT rateType FROM %s WHERE rateName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $ratename);
     $res = $dbSocket->query($sql);
 
-    if ($res->numRows() == 0)
+    if ($res->numRows() == 0) {
         return;
+    }
+        
+    $row = $res->fetchRow();
+    list($ratetypenum, $ratetypetime) = explode("/",$row[0]);
 
-        $row = $res->fetchRow();
-        list($ratetypenum, $ratetypetime) = explode("/",$row[0]);
-
-        switch ($ratetypetime) {                                        // we need to translate any kind of time into seconds, so a minute is 60 seconds, an hour is 3600,
-                case "second":                                          // and so on...
-                        $multiplicate = 1;
-                        break;
-                case "minute":
-                        $multiplicate = 60;
-                        break;
-                case "hour":
-                        $multiplicate = 3600;
-                        break;
-                case "day":
-                        $multiplicate = 86400;
-                        break;
-                case "week":
-                        $multiplicate = 604800;
-                        break;
-                case "month":
-                        $multiplicate = 187488000;                      // a month is 31 days
-                        break;
-                default:
-                        $multiplicate = 0;
-                        break;
-        }
-
-        // then the rate cost would be the amount of seconds times the prefix multiplicator thus:
-        $rateDivisor = ($ratetypenum * $multiplicate);
-
-        $sql = "SELECT distinct(".$configValues['CONFIG_DB_TBL_RADACCT'].".username), ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress, ".
-                $configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime) AS AcctSessionTime, ".
-                $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateCost, SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets) AS AcctInputOctets, ".
-        " SUM(".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets) AS AcctOutputOctets ".
-                " FROM ".$configValues['CONFIG_DB_TBL_RADACCT'].", ".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES']." WHERE (AcctStartTime >= '$startdate') and (AcctStartTime <= '$enddate') and (UserName = '$username') and (".$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'].".rateName = '$ratename') GROUP BY UserName";
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-    $rateCost = $row['rateCost'];
-    $userUpload = toxbyte($row['AcctInputOctets']);
-    $userDownload = toxbyte($row['AcctOutputOctets']);
-    $userOnlineTime = time2str($row['AcctSessionTime']);
-    $sessionTime = $row['AcctSessionTime'];
-
-    $sumBilled = (($sessionTime/$rateDivisor)*$rateCost);
-
-        include 'library/closedb.php';
-
-        if ($drawTable == 1) {
-
-                echo "<table border='0' class='table1'>";
-                echo "
-                <thead>
-                    <tr>
-                            <th colspan='10' align='left'>
-                        <a class=\"table\" href=\"javascript:toggleShowDiv('divBillingRatesSummary')\">Billing Summary</a>
-                            </th>
-                            </tr>
-                </thead>
-                </table>
-            ";
-
-                echo "
-                        <div id='divBillingRatesSummary' style='display:none;visibility:visible'>
-                       <table border='0' class='table1'>
-                <thread>
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Username
-                        </th>
-
-                        <th scope='col' align='left'>
-                        $username
-                        </th>
-                        </tr>
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Billing for period of
-                        </th>
-
-                        <th scope='col' align='left'>
-                        $startdate until $enddate (inclusive)
-                        </th>
-                        </tr>
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Online Time
-                        </th>
-
-                        <th scope='col' align='left'>
-                        $userOnlineTime
-                        </th>
-                        </tr>
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        User Upload
-                        </th>
-
-                        <th scope='col' align='left'>
-                        $userUpload
-                        </th>
-                        </tr>
-
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        User Download
-                        </th>
-
-                        <th scope='col' align='left'>
-                        $userDownload
-                        </th>
-                        </tr>
-
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Rate Name
-                        </th>
-
-                        <th scope='col' align='left'>
-                        $ratename
-                        </th>
-                        </tr>
-
-
-                        <tr>
-                        <th scope='col' align='right'>
-                        Total Billed
-                        </th>
-
-                        <th scope='col' align='left'>
-                        $sumBilled
-                        </th>
-                        </tr>
-
-                        </table>
-
-                </div>
-            ";
-
+    // we need to translate any kind of time into seconds,
+    // so a minute is 60 seconds, an hour is 3600, and so on...
+    switch ($ratetypetime) {                                        
+        case "second":
+            $multiplicate = 1;
+            break;
+        case "minute":
+            $multiplicate = 60;
+            break;
+        case "hour":
+            $multiplicate = 3600;
+            break;
+        case "day":
+            $multiplicate = 86400;
+            break;
+        case "week":
+            $multiplicate = 604800;
+            break;
+        case "month":
+            // a month is 31 days
+            $multiplicate = 187488000;
+            break;
+        default:
+            $multiplicate = 0;
+            break;
     }
 
+    // then the rate cost would be the amount of seconds times the prefix multiplicator thus:
+    $rateDivisor = $ratetypenum * $multiplicate;
 
+    $sql = sprintf("SELECT DISTINCT(ra.username), ra.NASIPAddress, ra.AcctStartTime,
+                           SUM(ra.AcctSessionTime) AS AcctSessionTime, dbr.rateCost,
+                           SUM(ra.AcctInputOctets) AS AcctInputOctets, 
+                           SUM(ra.AcctOutputOctets) AS AcctOutputOctets
+                      FROM %s AS ra, %s AS dbr
+                     WHERE AcctStartTime >= '%s'
+                       AND AcctStartTime <= '%s'
+                       AND UserName = '%s'
+                       AND dbr.rateName = '%s'
+                     GROUP BY UserName", $configValues['CONFIG_DB_TBL_RADACCT'],
+                                         $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'],
+                                         $startdate, $enddate, $username, $ratename);
+    $res = $dbSocket->query($sql);
+    $row = $res->fetchRow();
+
+    $numrows = $res->numRows();
+
+    list($username, $nasIPAddress, $acctStartTime, $sessionTime, $rateCost, $userUpload, $userDownload) = $row;
+
+    $userUpload = toxbyte($userUpload);
+    $userDownload = toxbyte($userDownload);
+    $userOnlineTime = time2str($sessionTime);
+    $sumBilled = ( $sessionTime/ $rateDivisor ) * $rateCost;
+
+    include('library/closedb.php');
+
+    if ($numrows == 0) {
+        return;
+    }
+
+    if ($drawTable == 1) {
+        $modal_id = "modal_" . rand();
+        
+        $table = array();
+        $table['title'] = "Billing Summary";
+        
+        $table['rows'][] = array( "Username" , $username, );
+        $table['rows'][] = array( "Billing for period of" , "$startdate until $enddate (inclusive)", );
+        $table['rows'][] = array( "Online Time" , $userOnlineTime, );
+        $table['rows'][] = array( "User Upload" , $userUpload, );
+        $table['rows'][] = array( "User Download" , $userDownload, );
+        $table['rows'][] = array( "Rate Name" , $ratename, );
+        $table['rows'][] = array( "Total Billed" , $sumBilled , );
+        
+        echo <<<EOF
+<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#{$modal_id}">Show {$table['title']}</button>
+
+<div class="modal fade" id="{$modal_id}" tabindex="-1" aria-labelledby="{$modal_id}_label" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="{$modal_id}_label">{$table['title']}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <div class="modal-body">
+EOF;
+        print_simple_table($table);
+
+        echo <<<EOF
+            </div>
+        </div>
+    </div>
+</div>
+
+EOF;
+    }
 }
 
 
@@ -511,49 +464,49 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
         $userDownload = toxbyte($userDownload);
         $userOnlineTime = time2str($sessionTime);
 
-    
-        $table = array(
-                        array( "Username", "$username (email: $payer_email)" ),
-                        array( "Billing for period of", "$startdate until $enddate (inclusive)" ),
-                        array( "Online Time", $userOnlineTime ),
-                        array( "User Upload", $userUpload ),
-                        array( "User Download", $userDownload ),
-                        array( "Plan name", "$planName (planId: $planId)" ),
-                        array( "Total Plans Cost <br/> Total Transaction Fees <br/> Total Transaction Taxs",
-                               "$planTotalCost <br/> $planTotalFee <br/> $planTotalTax" ),
-                        array( "Gross Gain", "$grossGain $planCurrency" )
-                      );
-
-        echo '<table style="border: 0" class="table1">'
-           . '<thead>'
-           . '<tr>'
-           . '<th colspan="10" align="left">';
-        
-        printf('<a class="table" href="%s">Billing Summary</a>', "toggleShowDiv('divBillingPayPalSummary')");
-        
-        echo '</th>'
-           . '</tr>'
-           . '</thead>'
-           . '</table>';
-
-
-        echo '<div id="divBillingPayPalSummary" style="display:none; visibility:visible">'
-           . '<table style="border:0" class="table1">';
-        
-        foreach ($table as $tr) {
-            list($td1, $td2) = $tr;
+        if ($drawTable == 1) {
+            $modal_id = "modal_" . rand();
             
-            echo "<tr>";
-            printf('<th scope="col" align="right">%s</th>', $td1);
-            printf('<th scope="col" align="left">%s</th>', $td2);
-            echo "</tr>";
-        }
-        
-        echo '</table>'
-           . '</div>';
+            $table = array();
+            $table['title'] = "Billing Summary";
+            
+            $table['rows'] = array(
+                                        array( "Username", "$username (email: $payer_email)" ),
+                                        array( "Billing for period of", "$startdate until $enddate (inclusive)" ),
+                                        array( "Online Time", $userOnlineTime ),
+                                        array( "User Upload", $userUpload ),
+                                        array( "User Download", $userDownload ),
+                                        array( "Plan name", "$planName (planId: $planId)" ),
+                                        array( "Total Plans Cost <br/> Total Transaction Fees <br/> Total Transaction Taxs",
+                                               "$planTotalCost <br/> $planTotalFee <br/> $planTotalTax" ),
+                                        array( "Gross Gain", "$grossGain $planCurrency" )
+                                  );
+            
+            echo <<<EOF
+    <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#{$modal_id}">Show {$table['title']}</button>
 
-    }
+    <div class="modal fade" id="{$modal_id}" tabindex="-1" aria-labelledby="{$modal_id}_label" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="{$modal_id}_label">{$table['title']}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+          
+                <div class="modal-body">
+EOF;
+            print_simple_table($table);
+
+            echo <<<EOF
+                </div>
+            </div>
+        </div>
+    </div>
+
+EOF;
+        }
     
     include('library/closedb.php');
 
+    }
 }

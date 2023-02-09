@@ -29,6 +29,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/config/operators.php') !
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $operator_username;
+
 include_once("include/management/populate_selectbox.php");
 $menu_datalist = get_operators();
 
@@ -36,11 +38,11 @@ $menu_datalist = get_operators();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewOperator'), 'href' =>'config-operators-new.php',
-                         'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
 if (count($menu_datalist) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListOperators'), 'href' => 'config-operators-list.php',
-                             'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                             'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
     $components = array();
     $components[] = array(
@@ -49,14 +51,15 @@ if (count($menu_datalist) > 0) {
                             "value" => ((isset($operator_username)) ? $operator_username : ""),
                             "required" => true,
                             "datalist" => (($autocomplete) ? $menu_datalist : array()),
-                            "title" => t('Tooltip','OperatorName'),
+                            "tooltipText" => t('Tooltip','OperatorName'),
+                            "caption" => t('all','Operator'),
                           );
     
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditOperator'), 'action' => 'config-operators-edit.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'person-fill-gear', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
                              
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveOperator'), 'href' => 'config-operators-del.php',
-                             'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'person-fill-x', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }
 
 

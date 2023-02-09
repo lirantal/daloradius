@@ -83,13 +83,13 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
+    
     
     if (!empty($payment_id) && !is_array($payment_id)) {
         $title .= " :: " . htmlspecialchars($payment_id, ENT_QUOTES, 'UTF-8');
     }
     
-    echo '<div id="contentnorightbar">';
+
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');

@@ -30,12 +30,15 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/rep/batch.php') !== fals
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
+global $batch_name;
+
 include_once("include/management/populate_selectbox.php");
 $menu_datalist = get_batch_names();
 
 // define descriptors
 $descriptors1 = array();
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','BatchHistory'), 'href' => 'rep-batch-list.php', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','BatchHistory'), 'href' => 'rep-batch-list.php',
+                         'icon' => 'clock-history', );
 
 $components[] = array(
                         "name" => "batch_name",
@@ -44,11 +47,12 @@ $components[] = array(
                         "required" => true,
                         "datalist" => (($autocomplete) ? $menu_datalist : array()),
                         "tooltipText" => t('Tooltip','BatchName'),
+                        "caption" => t('all','BatchName'),
                         "sidebar" => true,
                       );
 
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','BatchDetails'), 'action' => 'rep-batch-details.php', 'method' => 'GET',
-                         'form_components' => $components, );
+                         'icon' => 'info-circle', 'form_components' => $components, );
 
 $sections = array();
 $sections[] = array( 'title' => 'List', 'descriptors' => $descriptors1 );

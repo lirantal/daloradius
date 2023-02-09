@@ -14,13 +14,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:
- *              daloRADIUS Version File
  *
- * Modification Date:
- *              Fri Apr 17 14:05:00 UTC 2020
+ * Description:          daloRADIUS Version File
+ *
+ * Modification Date:    Thu Feb 09 16:00:00 UTC 2023
+ * 
  *********************************************************************************************************
  */
 
-$configValues['DALORADIUS_VERSION'] = '1.3';
-$configValues['DALORADIUS_DATE'] = '04 Nov 2021';
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/library/version.php') !== false) {
+    header("Location: ../index.php");
+    exit;
+}
+
+$configValues['DALORADIUS_VERSION'] = '2.0 beta';
+$configValues['DALORADIUS_DATE'] = '9 Feb 2023';

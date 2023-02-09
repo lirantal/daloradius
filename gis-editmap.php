@@ -102,13 +102,12 @@
     $help = t('helpPage','giseditmap');
     
     $extra_css = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.css");
+    
+    // loaded at the bottom of the page
     $extra_js = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.js");
-
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
     
-    include("include/menu/sidebar.php");
+    print_html_prologue($title, $langCode, $extra_css);
     
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -250,5 +249,5 @@ EOF;
 EOF;
     
     include('include/config/logging.php');
-    print_footer_and_html_epilogue($inline_extra_js);
+    print_footer_and_html_epilogue($inline_extra_js, $extra_js);
 ?>

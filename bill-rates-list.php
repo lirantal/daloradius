@@ -65,11 +65,7 @@
     
     print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-
-
     // start printing content
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -104,40 +100,34 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-rates-del.php";
-?>
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                        );
+        
+        $descriptors = array();
+        $descriptors['start'] = array( 'common_controls' => 'ratename[]', );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        print_table_prologue($descriptors);
+        
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        
+        // print table top
+        print_table_top($form_descriptor);
 
-<form name="listall" method="POST" action="<?= $action ?>">
-    <table border="0" class="table1">
-        <thead>
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
-?>
-            <tr>
-                <th style="text-align: left" colspan="<?= $colspan ?>">
-<?php
-        printTableFormControls('ratename[]', $action);
-?>
-                </th>
-            </tr>
-            
-            <tr>
-<?php
         // second line of table header
         printTableHead($cols, $orderBy, $orderType);
-?>           
-            </tr>
-        </thead>
-        
-        <tbody>
-<?php
-        $li_style = 'margin: 7px auto';
-        $count = 1;
+
+        // closes table header, opens table body
+        print_table_middle();
+   
+        // table content
+        $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
         
@@ -148,46 +138,47 @@
             
             list($id, $rateName, $rateType, $rateCost) = $row;
             
-            $tooltipText = '<ul style="list-style-type: none">'
-                         . sprintf('<li style="%s"><a class="toolTip" href="bill-rates-edit.php?ratename=%s">%s</a></li>',
-                                   $li_style, urlencode($rateName), t('Tooltip','EditRate'))
-                         . sprintf('<li style="%s"><a class="toolTip" href="bill-rates-del.php?ratename=%s">%s</a></li>',
-                                   $li_style, urlencode($rateName), t('Tooltip','RemoveRate'))
-                         . '</ul>';
+            $tooltip = array(
+                                'subject' => $rateName,
+                                'actions' => array(),
+                            );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-rates-edit.php?ratename=%s', urlencode($rateName), ), 'label' => t('button','EditRate'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-rates-del.php?ratename=%s', urlencode($rateName), ), 'label' => t('button','RemoveRate'), );
             
-            $onclick = 'javascript:return false;';
-?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="ratename[]" value="<?= $rateName ?>" id="<?= "checkbox-$count" ?>">
-                    <label for="<?= "checkbox-$count" ?>"><?= $id ?></label>
-                </td>
-                <td>
-                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                        <?= $rateName ?>
-                    </a>
-                </td>
-                <td><?= $rateType ?></td>
-                <td><?= $rateCost ?></td>
-            </tr>
-<?php
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
+
+            // create checkbox
+            $d = array( 'name' => 'ratename[]', 'value' => $item_id, 'label' => $id );
+            $checkbox = get_checkbox_str($d);
+
+            // build table row
+            $table_row = array( $checkbox, $tooltip, $rateType, $rateCost );
+
+            // print table row
+            print_table_row($table_row);
+            
             $count++;
+            
         }
-?>
-        </tbody>
 
-<?php
-        // tfoot
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
 
-    <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
 
-</form>
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
 
-<?php
     } else {
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");

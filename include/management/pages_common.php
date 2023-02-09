@@ -17,7 +17,7 @@
  *
  * Description:    provides common operations on different management
  *                 pages and other categories
- * 
+ *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Evgeniy Kozhuhovskiy <ugenk@xdsl.by>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
@@ -36,7 +36,7 @@ function createPassword($length, $chars) {
     if (!$chars) {
         $chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
     }
-    
+
     srand((double)microtime()*1000000);
     $i = 0;
     $pass = '';
@@ -58,7 +58,7 @@ function toxbyte($size) {
                          "MB" => 1048576,    // Megabytes
                          "KB" => 1024        // Kilobytes
                        );
-    
+
     foreach ($magnitudes as $label => $magnitude) {
         if ($size > $magnitude) {
             $ret = round($size / $magnitude, 2);
@@ -110,11 +110,11 @@ function time2str($time) {
 }
 
 // return next billing date (Y-m-d format) based on
-// the billing recurring period and billing schedule type 
+// the billing recurring period and billing schedule type
 function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurringPeriod, $billDates = null) {
-    
+
     // initialize next bill date string (Y-m-d style)
-    
+
     if ($billDates == null) {
         $nextBillDate = "0000-00-00";
         $prevBillDate = "0000-00-00";
@@ -122,9 +122,9 @@ function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
         $nextBillDate = $billDates['nextBillDate'];
         $prevBillDate = $billDates['prevBillDate'];
     }
-    
+
     switch ($planRecurringBillingSchedule) {
-    
+
         case "Anniversary":
             switch ($planRecurringPeriod) {
                 case "Daily":
@@ -145,7 +145,7 @@ function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
                     $nextBillDate = date('Y-m-d', strtotime("+3 month"));
                     break;
                 case "Semi-Yearly":
-                    // add 6 months worth of time 
+                    // add 6 months worth of time
                     $nextBillDate = date('Y-m-d', strtotime("+6 month"));
                     break;
                 case "Yearly":
@@ -153,8 +153,8 @@ function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
                     $nextBillDate = date('Y-m-d', strtotime("+1 year"));
                     break;
             }
-            break;                        
-        
+            break;
+
         case "Fixed":
         default:
             switch ($planRecurringPeriod) {
@@ -193,29 +193,29 @@ function getNextBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
                         $quarterMonth = 6;
                     else if ( ($currMonth >= 7) && ($currMonth <= 12) )
                         $quarterMonth = 12;
-                    
+
                     $nextBillDate = date('Y-m-d', mktime(0, 0, 0, $quarterMonth, (date('t', mktime(0,0,0, $quarterMonth, 1, date('Y')))), date('Y')));
                     break;
                 case "Yearly":
                     // set to the end of the year
                     $nextBillDate = date('Y-m-d', mktime(0, 0, 0, 12, (date('t', mktime(0,0,0, 12, 1, date('Y')))), date('Y')));
                     break;
-            }                            
-            
+            }
+
             break;
-            
+
     }
-    
+
     return $nextBillDate;
-    
+
 }
 
 // return prev/start billing date (Y-m-d format) based on
-// the billing recurring period and billing schedule type 
+// the billing recurring period and billing schedule type
 function getPrevBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurringPeriod, $billDates = null) {
-    
+
     // initialize next bill date string (Y-m-d style)
-    
+
     if ($billDates == null) {
         $nextBillDate = "0000-00-00";
         $prevBillDate = "0000-00-00";
@@ -223,9 +223,9 @@ function getPrevBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
         $nextBillDate = $billDates['nextBillDate'];
         $prevBillDate = $billDates['prevBillDate'];
     }
-    
+
     switch ($planRecurringBillingSchedule) {
-    
+
         case "Anniversary":
             switch ($planRecurringPeriod) {
                 case "Daily":
@@ -246,7 +246,7 @@ function getPrevBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
                     $nextBillDate = date('Y-m-d', strtotime("+3 month"));
                     break;
                 case "Semi-Yearly":
-                    // add 6 months worth of time 
+                    // add 6 months worth of time
                     $nextBillDate = date('Y-m-d', strtotime("+6 month"));
                     break;
                 case "Yearly":
@@ -254,8 +254,8 @@ function getPrevBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
                     $nextBillDate = date('Y-m-d', strtotime("+1 year"));
                     break;
             }
-            break;                        
-        
+            break;
+
         case "Fixed":
         default:
             switch ($planRecurringPeriod) {
@@ -294,38 +294,38 @@ function getPrevBillingDate($planRecurringBillingSchedule = "Fixed", $planRecurr
                         $quarterMonth = 1;
                     else if ( ($currMonth >= 7) && ($currMonth <= 12) )
                         $quarterMonth = 6;
-                    
+
                     $nextBillDate = date('Y-m-d', mktime(0, 0, 0, $quarterMonth, 01, date('Y')));
                     break;
                 case "Yearly":
                     // set to the start of the year
                     $nextBillDate = date('Y-m-d', mktime(0, 0, 0, 01, 01, date('Y')));
                     break;
-            }                            
-            
+            }
+
             break;
-            
+
     }
-    
+
     return $nextBillDate;
-    
+
 }
 
 /*
  * wrapper function to add a tooltip balloon
- * 
+ *
  * @param        $view            array of view parameters
  * @return        $string            returns string
  */
 function addToolTipBalloon($view) {
-    
+
     if ($view['divId'])
         $viewId = '<div id="'.$view['divId'].'">Loading...</div>';
     else
         $viewId = '';
-    
+
     $sep = ($view['onClick'] != '' && substr($view['onClick'], -1) != ';' ? ';' : '');
-    
+
     $str = "<a class='tablenovisit' href='#'
                 onClick=\"".$view['onClick'].$sep."return false;\"
                 tooltipText='".$view['content']."
@@ -339,30 +339,35 @@ function addToolTipBalloon($view) {
 
 /*
  * function for printing table heading
- * 
+ *
  * @param    $cols                    an associative array in the form of "orderingType" => "caption"
  *                                    whenever the "orderingType" key is missing, the heading is simply
  *                                    printed with no ordering options
- * 
+ *
  * @param    $partial_query_string    contains the remaining part of the query string
  */
 function printTableHead($cols, $orderBy="", $orderType="asc", $partial_query_string="") {
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     if (empty($orderBy) || !in_array($orderBy, array_keys($param_cols))) {
         $orderBy = array_keys($param_cols)[0];
     }
-    
+
     if (empty($orderType) || !in_array($orderType, array( "desc", "asc" ))) {
         $orderType = "asc";
     }
 
     // a standard way of creating table heading
     foreach ($cols as $param => $caption) {
-        
+
         if (is_int($param)) {
             $ordering_controls = "";
+            
+            if ($caption === 'selected') {
+                $caption = '<abbr title="selected">sel.</abbr>';
+            }
+            
         } else {
             $title_format = 'order by %s, sort %s';
             $title_asc = sprintf($title_format, strip_tags($caption), 'ascending');
@@ -372,9 +377,13 @@ function printTableHead($cols, $orderBy="", $orderType="asc", $partial_query_str
             $href_asc = sprintf($href_format, $param, 'asc');
             $href_desc = sprintf($href_format, $param, 'desc');
 
-            $img_format = '<img src="%s" alt="%s">';
-            $img_asc = sprintf($img_format, 'static/images/icons/arrow_up.png', '^');
-            $img_desc = sprintf($img_format, 'static/images/icons/arrow_down.png', 'v');
+            //~ $img_format = '<img src="%s" alt="%s">';
+            //~ $img_asc = sprintf($img_format, 'static/images/icons/arrow_up.png', '^');
+            //~ $img_desc = sprintf($img_format, 'static/images/icons/arrow_down.png', 'v');
+
+            $img_format = '<i class="bi bi-%s ms-1 text-dark"></i>';
+            $img_asc = sprintf($img_format, 'sort-alpha-up');
+            $img_desc = sprintf($img_format, 'sort-alpha-down');
 
             $enabled_a_format = '<a title="%s" class="novisit" href="%s">%s</a>';
             $disabled_a_format = '<a title="%s" role="link" aria-disabled="true" style="opacity:0.25">%s</a>';
@@ -391,17 +400,17 @@ function printTableHead($cols, $orderBy="", $orderType="asc", $partial_query_str
                 $link_asc = sprintf($enabled_a_format, $title_asc, $href_asc, $img_asc);
                 $link_desc = sprintf($enabled_a_format, $title_asc, $href_desc, $img_desc);
             }
-            
+
             $ordering_controls = $link_asc . $link_desc;
         }
-        
+
         echo '<th>' . $caption . $ordering_controls . '</th>';
     }
 }
 
 /*
  * function for printing table heading
- * 
+ *
  * @param    $per_page_numrows    the number of records shown in the current page
  * @param    $numrows             the total number of records
  * @param    $colspan             the colspan
@@ -422,18 +431,6 @@ function printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks,
                 </th>
             </tr>
 
-<?php
-        // page navigation controls are shown only if there is more than one page
-        if ($drawNumberLinks) {
-?>
-            <tr>
-                <th scope="col" colspan="<?= $colspan ?>" style="background-color: white; text-align: center">
-                    <?= $links ?>
-                </th>
-            </tr>
-<?php
-        }
-?>
         </tfoot>
 <?php
 }
@@ -441,10 +438,10 @@ function printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks,
 /* prints common controls needed when listing records */
 function printTableFormControls($setChecked_param, $removeCheckbox_filename, $form_name='listall') {
 ?>
-    <a title="Select All" class="table" href="javascript:SetChecked(1,'<?= $setChecked_param ?>','<?= $form_name ?>')">Select All</a> 
+    <a title="Select All" class="table" href="javascript:SetChecked(1,'<?= $setChecked_param ?>','<?= $form_name ?>')">Select All</a>
     <a title="Select None" class="table" href="javascript:SetChecked(0,'<?= $setChecked_param ?>','<?= $form_name ?>')">Select None</a>
     <input class="button delete" type="button" value="Delete"
         onclick="javascript:removeCheckbox('<?= $form_name ?>','<?= $removeCheckbox_filename ?>')">
-<?php    
+<?php
 }
 ?>

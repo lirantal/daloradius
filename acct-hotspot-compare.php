@@ -79,9 +79,9 @@
     
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    include("include/menu/sidebar.php");
     
-    echo '<div id="contentnorightbar">';
+    
+
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -132,58 +132,64 @@
         // print navbar controls
         print_tab_header($navkeys);
         
+        // open tab wrapper
+        open_tab_wrapper();
+        
         // tab 0
         open_tab($navkeys, 0, true);
-?>
 
-    <table border="0" class="table1">
-        <thead>
-            
-<?php
-        // page numbers are shown only if there is more than one page
-        if ($drawNumberLinks) {
-            echo '<tr style="background-color: white">';
-            printf('<td style="text-align: left" colspan="%s">go to page: ', $colspan);
-            setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType);
-            echo '</td>' . '</tr>';
-        }
+        // print table top
+        print_table_top($form_descriptor);
 
         // second line of table header
-        echo '<tr>';
         printTableHead($cols, $orderBy, $orderType);
-        echo '</tr>';
-?>           
-            
-        </thead>
-     
-        <tbody>
-<?php
-        while ($row = $res->fetchRow()) {
-            echo '<tr>';
-            
-            printf('<td>%s</td>', htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8'));
-            printf('<td>%s</td>', htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8'));
-            printf('<td>%s</td>', htmlspecialchars($row[2], ENT_QUOTES, 'UTF-8'));
-            
-            printf('<td>%s</td>', htmlspecialchars(time2str($row[3]), ENT_QUOTES, 'UTF-8'));
-            printf('<td>%s</td>', htmlspecialchars(time2str($row[4]), ENT_QUOTES, 'UTF-8'));
-            
-            printf('<td>%s</td>', htmlspecialchars(toxbyte($row[6]), ENT_QUOTES, 'UTF-8'));
-            printf('<td>%s</td>', htmlspecialchars(toxbyte($row[8]), ENT_QUOTES, 'UTF-8'));
-            
-            echo '</tr>';
-            
-        }
-?>
-        </tbody>
         
-<?php
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printTableFoot($per_page_numrows, $numrows, $colspan, $drawNumberLinks, $links);
-?>
-    </table>
+        // closes table header, opens table body
+        print_table_middle();
+        
+        while ($row = $res->fetchRow()) {
+            
+            $rowlen = count($row);
+        
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($hotspot, $uniqueusers, $totalhits, $avgsessiontime, $totaltime,
+                 $avgInputOctets, $sumInputOctets, $avgOutputOctets, $sumOutputOctets) = $row;
+            
+            $avgsessiontime = time2str($avgsessiontime);
+            $totaltime = time2str($totaltime);
+            
+            $sumInputOctets = toxbyte($sumInputOctets);
+            $sumOutputOctets = toxbyte($sumOutputOctets);
+            
+            // build table row
+            $table_row = array( $hotspot, $uniqueusers, $totalhits, $avgsessiontime, $totaltime, $sumInputOctets, $sumOutputOctets );
 
-<?php
+            // print table row
+            print_table_row($table_row);
+
+        }
+
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+
+        $descriptor = array( 'table_foot' => $table_foot );
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        printLinks($links, $drawNumberLinks);
+
         // tab 0
         close_tab($navkeys, 0);
         
@@ -202,6 +208,9 @@
             close_tab($navkeys, $i+1);
             
         }
+    
+        // open tab wrapper
+        close_tab_wrapper();
     
     } else {
         $failureMsg = "Nothing to display";

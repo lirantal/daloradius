@@ -145,25 +145,11 @@
 
     
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-    
-    $extra_js = array(
-        // js tabs stuff
-        "static/js/tabs.js"
-    );
-    
     $title = t('Intro','configmaintdisconnectuser.php');
     $help = t('helpPage','configmaintdisconnectuser');
     
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
-    include("include/menu/sidebar.php");
-    
-
-    echo '<div id="contentnorightbar">';
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
@@ -249,6 +235,9 @@
         // open form
         open_form();
         
+        // open tab wrapper
+        open_tab_wrapper();
+        
         // open tab 0 (shown)
         open_tab($navkeys, 0, true);
 
@@ -284,6 +273,9 @@
         close_fieldset();
         
         close_tab($navkeys, 1);
+        
+        // close tab wrapper
+        close_tab_wrapper();
         
         foreach ($input_descriptors2 as $input_descriptor) {
             print_form_component($input_descriptor);
