@@ -151,7 +151,7 @@ function user_disconnect($params) {
                     );
     }
     
-    //~ $result = shell_exec($cmd);
+    $result = shell_exec($cmd);
 
     if (empty($result)) {
         return array(
@@ -260,7 +260,7 @@ function user_auth($params) {
                     );
     }
     
-    //~ $result = shell_exec($cmd);
+    $result = shell_exec($cmd);
 
     if (empty($result)) {
         return array(
