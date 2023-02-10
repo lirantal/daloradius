@@ -858,6 +858,7 @@ function print_select($select_descriptor) {
         echo ' disabled';
     }
 
+
     if (isset($select_descriptor['tooltipText'])) {
         $tooltipText = str_replace('"', "'", strip_tags($select_descriptor['tooltipText']));
 
