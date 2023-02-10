@@ -720,7 +720,7 @@ function print_input_field($input_descriptor) {
         }
     }
 
-    if (array_key_exists('tooltipText', $descriptor) && !empty($descriptor['tooltipText'])) {
+    if (array_key_exists('tooltipText', $input_descriptor) && !empty($input_descriptor['tooltipText'])) {
         $describedby_id = $input_descriptor['id'] .  '-help';
         printf(' aria-describedby="%s"', $describedby_id);
     }
@@ -859,13 +859,13 @@ function print_select($select_descriptor) {
         echo ' disabled';
     }
 
-    if (array_key_exists('tooltipText', $input_descriptor)) {
-        $tooltipText = str_replace('"', "'", strip_tags($input_descriptor['tooltipText']));
+    if (array_key_exists('tooltipText', $select_descriptor)) {
+        $tooltipText = str_replace('"', "'", strip_tags($select_descriptor['tooltipText']));
 
         if (!empty($tooltipText)) {
             printf(' placeholder="%s"', $tooltipText);
 
-            if (array_key_exists('sidebar', $input_descriptor) && $input_descriptor['sidebar'] !== false) {
+            if (array_key_exists('sidebar', $select_descriptor) && $select_descriptor['sidebar'] !== false) {
                 printf(' tooltipText="%s"', $tooltipText);
             }
         }
