@@ -92,7 +92,7 @@
                     
                     if (!DB::isError($res)) {
                         $successMsg = sprintf('Successfully added a new NAS (<strong>%s</strong>) '
-                                            . '<a href="mng-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
+                                            . '<a href="mng-rad-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
                                               $nasname_enc, urlencode($nasname_enc));
                         $logAction .= "Successfully added a new NAS [$nasname] on page: ";
                     } else {
