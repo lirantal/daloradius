@@ -26,7 +26,7 @@
     
     include('library/config_read.php');
     include('library/check_operator_perm.php');
-    
+
     include_once("lang/main.php");
     include("library/validation.php");
     include("library/layout.php");
@@ -427,17 +427,22 @@
                         }
                         
                         
-                        $exportForm .= '<fieldset><label for="ticketInformation" class="form">Description</label>'
-                                     . '<textarea class="form" id="ticketInformation" name="ticketInformation">'
+                        $describedby_id = "ticketInformationHelp";
+                        $tooltipText = "This description will be included in each printable ticket";
+                        $exportForm .= '<fieldset class="my-2"><label for="ticketInformation" class="form-label">Description</label>'
+                                     . '<div class="mb-1">'
+                                     . sprintf('<textarea class="form-control" id="ticketInformation" name="ticketInformation" aria-describedby="%s">', $describedby_id)
                                      . 'to use this card, please connect your device to the nearest ssid.' . "\n"
                                      . 'Open your web browser and enter each needed field.</textarea>'
+                                     . '</div>'
+                                     . sprintf('<div id="%s" class="form-text">%s</div>', $describedby_id, $tooltipText)
                                      .'</fieldset>'
                                      . sprintf('<input type="hidden" name="csrf_token" value="%s">', dalo_csrf_token())
                                      . '</form>';
                         $onclick = "batch_export('include/common/fileExportCSV.php')";
-                        $exportForm .= sprintf('<input style="margin: 10px" type="button" onclick="%s" value="CSV Download">', $onclick);
+                        $exportForm .= sprintf('<button class="btn btn-primary m-1" type="button" onclick="%s"><i class="bi bi-filetype-csv me-2"></i>CSV Download</button>', $onclick);
                         $onclick = "batch_export('include/common/printTickets.php')";
-                        $exportForm .= sprintf('<input style="margin: 10px" type="button" onclick="%s" value="Printable Tickets">', $onclick);
+                        $exportForm .= sprintf('<button class="btn btn-secondary m-1" type="button" onclick="%s"><i class="bi bi-filetype-pdf me-2"></i>Printable Tickets</button>', $onclick);
                                 
                         // -1 because of the header
                         $successMsg = sprintf("Created %d user(s) (batch name: <strong>%s</strong>)", count($inserted_usernames)-1, $batch_name);

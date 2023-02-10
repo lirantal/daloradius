@@ -763,7 +763,6 @@ function print_calculated_select($select_descriptor) {
         $select_descriptor['id'] = $select_descriptor['name'];
     }
 
-    //~ echo '<li class="fieldset">' . "\n";
     printf('<label for="%s" class="form-label mb-1">%s</label>', $select_descriptor['id'], $select_descriptor['caption']);
     echo '<div class="input-group">';
     printf('<input type="%s" class="form-control" name="%s" id="%s"', $select_descriptor['type'],

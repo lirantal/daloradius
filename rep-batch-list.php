@@ -26,6 +26,7 @@
 
     //~ include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+
     include_once("lang/main.php");
     include("library/layout.php");
 
@@ -168,11 +169,21 @@
             list($id, $this_batch_name, $this_batch_desc, $batch_status, $total_users, $active_users, $plan_name,
                  $plancost, $plancurrency, $hotspot_name, $creationdate, $creationby, $updatedate, $updateby) = $row;
 
-
-            $batch_cost = intval($active_users) * $plancost;
+            $total_users = intval($total_users);
+            $active_users = intval($active_users);
+            $plancost = intval($plancost);
+            $batch_cost = $active_users * $plancost;
 
             if (empty($this_batch_desc)) {
                 $this_batch_desc = "(n/a)";
+            }
+
+            if (empty($plan_name)) {
+                $plan_name = "(n/d)";
+            }
+
+            if (empty($hotspot_name)) {
+                $hotspot_name = "(n/d)";
             }
 
             $tooltip = array(

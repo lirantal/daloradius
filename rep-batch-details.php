@@ -24,28 +24,19 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include('library/config_read.php');
     //~ include('library/check_operator_perm.php');
-
-    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
 
     // validate this parameter before including menu
     $batch_name = (array_key_exists('batch_name', $_GET) && !empty(str_replace("%", "", trim($_GET['batch_name']))))
                 ? str_replace("%", "", trim($_GET['batch_name'])) : "";
     $batch_name_enc = (!empty($batch_name)) ? htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8') : "";
 
-    // feed the sidebar
-    $batch_name_details = $batch_name_enc;
-
-    $log = "visited page: ";
-    $logQuery = "performed query for batch [$batch_name] on page: ";
-    $logDebugSQL = "";
-
-    // set session's page variable
-    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
-    include_once("lang/main.php");
-
-    // first table
+     // first table
     $cols1 = array(
                     t('all','BatchName'),
                     t('all','HotSpot'),
@@ -82,8 +73,14 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
-    include("library/layout.php");
+    $log = "visited page: ";
+    $logQuery = "performed query for batch [$batch_name] on page: ";
+    $logDebugSQL = "";
 
+    // set session's page variable
+    $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
+
+   
     // print HTML prologue
     $title = t('Intro','repbatchdetails.php');
     $help = t('helpPage','repbatchdetails');
@@ -135,9 +132,6 @@
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
-
-
-
         $additional_controls = array();
         $additional_controls[] = array(
                                         'onclick' => sprintf("window.open('include/common/notificationsBatchDetails.php?batch_name=%s&destination=download')", urlencode($batch_name_enc)),
@@ -170,45 +164,55 @@
         print_table_middle();
 
         // table content
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            $hotspot_name = htmlspecialchars($row['HotspotName'], ENT_QUOTES, 'UTF-8');
-            $batch_status = htmlspecialchars($row['batch_status'], ENT_QUOTES, 'UTF-8');
-            $plancost = htmlspecialchars($row['plancost'], ENT_QUOTES, 'UTF-8');
-            $total_users = htmlspecialchars($row['total_users'], ENT_QUOTES, 'UTF-8');
-            $active_users = htmlspecialchars($row['active_users'], ENT_QUOTES, 'UTF-8');
-            $batch_cost = htmlspecialchars(($row['active_users'] * $row['plancost']), ENT_QUOTES, 'UTF-8');
-            $plan_currency = htmlspecialchars($row['plancurrency'], ENT_QUOTES, 'UTF-8');
+        $count = 0;
+        while ($row = $res->fetchRow()) {
+            $rowlen = count($row);
 
-            $plan_name = htmlspecialchars($row['planname'], ENT_QUOTES, 'UTF-8');
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+        
+        
+            list($id, $this_batch_name, $this_batch_desc, $batch_status, $total_users, $active_users, $planname,
+                 $plancost, $plancurrency, $hotspot_name, $creationdate, $creationby, $updatedate, $updateby) = $row;
+        
+            $total_users = intval($total_users);
+            $active_users = intval($active_users);
+            $plancost = intval($plancost);
 
-            $this_batch_name = htmlspecialchars($row['batch_name'], ENT_QUOTES, 'UTF-8');
-            $this_batch_desc = htmlspecialchars($row['batch_description'], ENT_QUOTES, 'UTF-8');
+            $batch_cost = $active_users * $plancost;
 
-            $onclick = 'javascript:return false;';
-            $tooltipText = sprintf('<div id="divContainerUserInfo"><b>%s</b>:<br><br>%s</div>',
-                                   t('all','batchDescription'), $this_batch_desc);
-?>
+            if (empty($this_batch_desc)) {
+                $this_batch_desc = "(n/a)";
+            }
 
-            <tr>
-                <td>
-                    <a class="tablenovisit" href="#" onclick="<?= $onclick ?>" tooltipText='<?= $tooltipText ?>'>
-                        <?= $this_batch_name ?>
-                    </a>
-                </td>
+            if (empty($plan_name)) {
+                $plan_name = "(n/d)";
+            }
 
-                <td><?= $hotspot_name ?></td>
-                <td><?= $batch_status ?></td>
-                <td><?= $total_users ?></td>
-                <td><?= $active_users ?></td>
-                <td><?= $plan_name ?></td>
+            if (empty($hotspot_name)) {
+                $hotspot_name = "(n/d)";
+            }
 
-                <td><?= $plancost ?></td>
-                <td><?= $batch_cost ?></td>
+            // tooltip stuff
+            $tooltip = array(
+                                'subject' => $this_batch_name,
+                                'actions' => array(),
+                                'content' => sprintf('<strong>%s</strong>:<br>%s', t('all','batchDescription'), $this_batch_desc),
+                            );
+            
+            // create tooltip
+            $tooltip = get_tooltip_list_str($tooltip);
 
-                <td><?= htmlspecialchars($row['creationdate'], ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= htmlspecialchars($row['creationby'], ENT_QUOTES, 'UTF-8') ?></td>
-            </tr>
-<?php
+            // build table row
+            $table_row = array( $tooltip, $hotspot_name, $batch_status, $total_users, $active_users,
+                                $plan_name, $plancost, $batch_cost, $creationdate, $creationby );
+
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
         }
 
         print_table_bottom();
