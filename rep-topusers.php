@@ -24,14 +24,14 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
+    include('library/check_operator_perm.php');
+
     include_once("lang/main.php");
-    include("library/validation.php");
+    include_once("library/validation.php");
     include("library/layout.php");
-    
-    
+
+
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
                   preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
@@ -47,7 +47,7 @@
     $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
+
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
     //   - for validating user input
@@ -81,23 +81,23 @@
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for [order by: $orderBy] on page: ";
-    
+
 
     // print HTML prologue
     $title = t('Intro','reptopusers.php');
     $help = t('helpPage','reptopusers') . " " . $orderBy;
-    
+
     print_html_prologue($title, $langCode);
-    
+
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
-    
+
     // the partial query is built starting from user input
     // and for being passed to setupNumbering and setupLinks functions
     $partial_query_params = array();
-    
+
     // creating $sql_WHERE for SQL query
     $sql_WHERE = array();
     $sql_WHERE[] = "AcctStopTime > '0000-00-00 00:00:01'";
@@ -105,50 +105,50 @@
         $partial_query_params[] = sprintf("startdate=%s", urlencode(htmlspecialchars($startdate, ENT_QUOTES, 'UTF-8')));
         $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
     }
-    
+
     if (!empty($enddate)) {
         $partial_query_params[] = sprintf("enddate=%s", urlencode(htmlspecialchars($enddate, ENT_QUOTES, 'UTF-8')));
         $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
     }
-    
+
     if (!empty($username)) {
         $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
         $sql_WHERE[] = sprintf("username LIKE '%s%%'", $dbSocket->escapeSimple($username));
     }
-    
+
     // setup php session variables for exporting
     $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
     $_SESSION['reportQuery'] = (count($sql_WHERE) > 0) ? " WHERE " . implode(" AND ", $sql_WHERE) : "";
     $_SESSION['reportType'] = "TopUsers";
-    
-    $sql = "SELECT DISTINCT(ra.username) AS username, ra.FramedIPAddress, ra.AcctStartTime, MAX(ra.AcctStopTime), 
+
+    $sql = "SELECT DISTINCT(ra.username) AS username, ra.FramedIPAddress, ra.AcctStartTime, MAX(ra.AcctStopTime),
                    SUM(ra.AcctSessionTime) AS Time, SUM(ra.AcctInputOctets) AS Upload,
                    SUM(ra.AcctOutputOctets) AS Download, ra.AcctTerminateCause, ra.NASIPAddress
             FROM " . $configValues['CONFIG_DB_TBL_RADACCT'] . " AS ra";
-    
+
     if (count($sql_WHERE) > 0) {
         $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
     }
-    
+
     $sql .= " GROUP BY username";
-    
-    
+
+
     $logDebugSQL = "$sql;\n";
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
-    
+
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-                     
+
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
@@ -180,7 +180,7 @@
                                         'class' => 'btn-light',
                                      );
         print_table_prologue($descriptors);
-        
+
         // print table top
         print_table_top();
 
@@ -199,21 +199,21 @@
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
-            
-            
+
+
             list( $username, $framedIPAddress, $acctStartTime, $maxAcctStopTime, $time,
                   $upload, $download, $acctTerminateCause, $nasIPAddress ) = $row;
-            
+
             $time = time2str($time);
             $upload = toxbyte($upload);
             $download = toxbyte($download);
-            
+
             $table_row = array( $username, $framedIPAddress, $acctStartTime, $maxAcctStopTime, $time,
                                 $upload, $download, $acctTerminateCause, $nasIPAddress );
-            
+
             // print table row
             print_table_row($table_row);
-            
+
             $count++;
         }
 
@@ -238,7 +238,7 @@
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
 
     include('include/config/logging.php');

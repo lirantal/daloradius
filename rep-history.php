@@ -24,10 +24,11 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
+    include('library/check_operator_perm.php');
+
     include_once("lang/main.php");
+    include_once("library/validation.php");
     include("library/layout.php");
     
     // these three variable can be used for validation an presentation purpose
