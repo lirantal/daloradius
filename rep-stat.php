@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -33,14 +33,11 @@
     // print HTML prologue
     $title = t('Intro','repstatus.php');
     $help = t('helpPage','repstatus');
-    
+
     print_html_prologue($title, $langCode);
 
-    
-    
-
     print_title_and_help($title, $help);
-    
+
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

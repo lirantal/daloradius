@@ -24,105 +24,92 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include_once('library/config_read.php');
     include('library/check_operator_perm.php');
 
-    include_once('library/config_read.php');
+    include_once("lang/main.php");
+    include("library/layout.php");
+
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
-    include('include/config/logging.php');
-
-    include_once("lang/main.php");
-    
-    include("library/layout.php");
 
     // print HTML prologue
     $title = "RAID Status";
     $help = "";
-    
+
     print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
 
     $failureMsg = "";
     $error = '<strong>Error</strong> accessing RAID device information';
-    
+
     if (!file_exists('/proc/mdstat')) {
         $failureMsg = $error;
     } else {
         exec("cat /proc/mdstat | awk '/md/ {print $1}'", $mdstat, $retStatus);
-        
+
         if ($retStatus !== 0) {
             $failureMsg = $error;
         } else {
             if (count($mdstat) > 0) {
-                
+
                 $navkeys = array();
                 foreach($mdstat as $mddevice) {
                     $key = sprintf("%s-tab", $mddevice);
                     //~ $navbuttons[$key] = $mddevice;
                     $navkeys[] = array( $mddevice, $mddevice );
                 }
-                
+
                 // print navbar controls
                 print_tab_header($navkeys);
                 //~ print_tab_navbuttons($navbuttons);
-                
+
                 // open tab wrapper
                 open_tab_wrapper();
-                
+
                 $counter = 0;
                 foreach($mdstat as $mddevice) {
 
                     open_tab($navkeys, $counter, ($counter == 0));
-                    
+
                     $dev = "/dev/$mddevice";
                     $cmd = sprintf("sudo /sbin/mdadm --detail %s", escapeshellarg($dev));
                     $output = "";
                     exec($cmd, $output);
 
-                    echo '<table class="table">';
+                    $table = array( 'title' => $mddevice, 'rows' => array() );
+
                     foreach($output as $line) {
                         list($var, $val) = split(":", $line);
                         $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8');
                         $val = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
-                        
-                        printf('<tr><th scope="row" class="text-end">%s</th>' .
-                               '<td class="text-start">%s</td></tr>', $var, $val); 
+
+                        $table['rows'][] = array( $var, $val );
+
                     }
-                    echo '</table>';
-                    
+
+                    print_simple_table($table);
+
                     close_tab($navkeys, $counter);
-                       
+
                     $counter++;
 
                 }
-                
+
                 // close tab wrapper
                 close_tab_wrapper();
-                
+
 
             } else {
                 $failureMsg = $error;
             }
         }
     }
-    
+
     if (!empty($failureMsg)) {
         include_once('include/management/actionMessages.php');
     }
 
-?>
-            
-        </div>
-        
-        <div id="footer">
-<?php
-    include('page-footer.php');
-?>
-        </div>
-        
-    </div>
-</div>
-
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();

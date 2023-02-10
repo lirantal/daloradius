@@ -25,11 +25,12 @@
     $operator = $_SESSION['operator_user'];
 
     include_once('library/config_read.php');
-    $log = "visited page: ";
-
+    
     include_once("lang/main.php");
-    include("library/validation.php");
+    include_once("library/validation.php");
     include("library/layout.php");
+
+    $log = "visited page: ";
 
     // print HTML prologue
     $title = t('Intro','repmain.php');

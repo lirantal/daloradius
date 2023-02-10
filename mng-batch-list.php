@@ -65,16 +65,11 @@
                ? strtolower($_GET['orderType']) : "desc";
 
 
-    // print HTML prologue
-    $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/dynamic_attributes.js"
-    );
-    
+    // print HTML prologue    
     $title = t('Intro','mngbatchlist.php');
     $help = t('helpPage','mngbatchlist');
     
-    print_html_prologue($title, $langCode, array(), $extra_js);
+    print_html_prologue($title, $langCode);
 
     // start printing content
     print_title_and_help($title, $help);
@@ -131,6 +126,16 @@
         // printTableFormControls function parameter
         $action = "mng-batch-del.php";
         
+        
+        
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $additional_controls = array();
+        $additional_controls[] = array(
+                                'onclick' => sprintf("removeCheckbox('listall','%s')", $action),
+                                'label' => 'Delete',
+                                'class' => 'btn-danger',
+                              );
+        
         // we prepare the "controls bar" (aka the table prologue bar)
         $params = array(
                             'num_rows' => $numrows,
@@ -141,7 +146,7 @@
                         );
         
         $descriptors = array();
-        $descriptors['start'] = array( 'common_controls' => 'batch_id[]', );
+        $descriptors['start'] = array( 'common_controls' => 'batch_id[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         $descriptors['end'] = array();
         $descriptors['end'][] = array(
@@ -181,10 +186,21 @@
             list($id, $this_batch_name, $this_batch_desc, $batch_status, $total_users, $plan_name, $plancost,
                  $plancurrency, $hotspot_name, $creationdate, $creationby, $updatedate, $updateby) = $row;
 
-            $batch_cost = intval($active_users) * $plancost;
+            $total_users = intval($total_users);
+            $plancost = intval($plancost);
+
+            $batch_cost = $total_users * $plancost;
 
             if (empty($this_batch_desc)) {
                 $this_batch_desc = "(n/a)";
+            }
+            
+            if (empty($plan_name)) {
+                $plan_name = "(n/d)";
+            }
+            
+            if (empty($hotspot_name)) {
+                $hotspot_name = "(n/d)";
             }
             
             // tooltip stuff
@@ -222,7 +238,7 @@
                                 'multiple_pages' => $drawNumberLinks
                            );
 
-        $descriptor = array( 'table_foot' => $table_foot );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
         print_table_bottom($descriptor);
 
         // get and print "links"

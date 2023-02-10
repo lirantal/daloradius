@@ -763,7 +763,6 @@ function print_calculated_select($select_descriptor) {
         $select_descriptor['id'] = $select_descriptor['name'];
     }
 
-    //~ echo '<li class="fieldset">' . "\n";
     printf('<label for="%s" class="form-label mb-1">%s</label>', $select_descriptor['id'], $select_descriptor['caption']);
     echo '<div class="input-group">';
     printf('<input type="%s" class="form-control" name="%s" id="%s"', $select_descriptor['type'],
@@ -859,7 +858,8 @@ function print_select($select_descriptor) {
         echo ' disabled';
     }
 
-    if (array_key_exists('tooltipText', $select_descriptor)) {
+
+    if (isset($select_descriptor['tooltipText'])) {
         $tooltipText = str_replace('"', "'", strip_tags($select_descriptor['tooltipText']));
 
         if (!empty($tooltipText)) {
