@@ -24,24 +24,21 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
-    $log = "visited page: ";
-    $logQuery = "performed query on page: ";
-    
+    include('library/check_operator_perm.php');
+
     include_once("lang/main.php");
     include("library/layout.php");
+
+    $log = "visited page: ";
+    $logQuery = "performed query on page: ";
 
 
     // print HTML prologue
     $title = "UPS Status";
     $help = "";
-    
+
     print_html_prologue($title, $langCode);
-
-    
-
 
     print_title_and_help($title, $help);
 
@@ -52,35 +49,24 @@
     $sep = ":";
     if ($retStatus !== 0) {
         $sep = "\n";
-        $failureMsg = '<strong>Error</strong> accessing UPS device information<br><br>';
+        $failureMsg = '<strong>Error</strong> accessing UPS device information';
     } else {
-?>
 
-            <h3>General Information</h3>
-            <table class="summarySection">
-
-<?php 
+        $table = array( 'title' => 'General Information', 'rows' => array() );
         foreach ($output as $line) {
-        list($var, $val) = split($sep, $line);
-        $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8');
-        $val = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
-?>
-                <tr>
-                <td class="summaryKey"><?= $var ?></td>
-                <td class="summaryValue"><span class="sleft"><?= $val ?></span></td>
-                </tr>
-<?php
+            list($var, $val) = split($sep, $line);
+            $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8');
+            $val = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
+
+            $table['rows'][] = array( $var, $val );
         }
-?>
-            </table>
-<?php
+
+        print_simple_table($table);
     }
-    
+
     if (!empty($failureMsg)) {
         include_once('include/management/actionMessages.php');
     }
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
-
-?>

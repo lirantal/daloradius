@@ -24,28 +24,24 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
-    $log = "visited page: ";
+    include('library/check_operator_perm.php');
 
     include_once("lang/main.php");
     include("library/layout.php");
 
+    $log = "visited page: ";
+
+
     // print HTML prologue
     $title = t('Intro','repstatserver.php');
     $help = t('helpPage','repstatserver');
-    
+
     print_html_prologue($title, $langCode);
 
-    
-    
-
     print_title_and_help($title, $help);
-    
+
     include('library/extensions/server_info.php');
-    
+
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
-
-?>
