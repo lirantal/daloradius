@@ -105,8 +105,16 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-nas-del.php";
+        $form_name = "form_" . rand();
         
         // we prepare the "controls bar" (aka the table prologue bar)
+        $additional_controls = array();
+        $additional_controls[] = array(
+                                'onclick' => sprintf("removeCheckbox('%s','%s')", $form_name, $action),
+                                'label' => 'Delete',
+                                'class' => 'btn-danger',
+                              );
+
         $params = array(
                             'num_rows' => $numrows,
                             'rows_per_page' => $rowsPerPage,
@@ -116,11 +124,11 @@
                         );
         
         $descriptors = array();
-        $descriptors['start'] = array( 'common_controls' => 'nashost[]', );
+        $descriptors['start'] = array( 'common_controls' => 'nashost[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         print_table_prologue($descriptors);
         
-        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
         
         // print table top
         print_table_top($form_descriptor);

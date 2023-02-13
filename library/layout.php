@@ -28,15 +28,11 @@ if (strpos($_SERVER['PHP_SELF'], '/library/layout.php') !== false) {
 
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
-    "static/css/icons/bootstrap-icons.css"
-    //~ "static/css/2.css",
-    //~ "static/css/form-field-tooltip.css",
+    "static/css/icons/bootstrap-icons.css",
 );
 
 const DEFAULT_COMMON_PROLOGUE_JS = array(
     "static/js/pages_common.js",
-    //~ "static/js/rounded-corners.js",
-    //~ "static/js/form-field-tooltip.js"
 );
 
 const DEFAULT_COMMON_EPILOGUE_JS = array(
@@ -69,7 +65,6 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="copyright" content="Liran Tal & Filippo Lauria">
 <meta name="robots" content="noindex">
-
 EOF;
 
     $css = array_merge($common_css, $extra_css);
@@ -110,7 +105,7 @@ EOF;
 
         <div class="container">
             <div class="row m-0 p-0">
-                <div class="col-sm-2 p-3 bg-light text-dark border-end">
+                <div id="sidebar" class="min-vh-100 col-sm-2 p-3 bg-light text-dark border-end">
 EOF;
 
     // printing sidebar
