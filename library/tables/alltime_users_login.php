@@ -121,7 +121,7 @@ if ($numrows > 0) {
     // and for being passed to setupNumbering and setupLinks functions
     $partial_query_string = sprintf("&type=%s&goto_stats=true", $type);
 
-    echo '<div style="text-align: center; margin-top: 50px">';
+    echo '<div class="my-3 text-center">';
     printf("<h4>%s all-time login/hit statistics</h4>", ucfirst($type));
     $descriptors = array();
 

@@ -28,15 +28,11 @@ if (strpos($_SERVER['PHP_SELF'], '/library/layout.php') !== false) {
 
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
-    "static/css/icons/bootstrap-icons.css"
-    //~ "static/css/2.css",
-    //~ "static/css/form-field-tooltip.css",
+    "static/css/icons/bootstrap-icons.css",
 );
 
 const DEFAULT_COMMON_PROLOGUE_JS = array(
     "static/js/pages_common.js",
-    //~ "static/js/rounded-corners.js",
-    //~ "static/js/form-field-tooltip.js"
 );
 
 const DEFAULT_COMMON_EPILOGUE_JS = array(
@@ -57,11 +53,12 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
     global $configValues;
 
     $lang = strtolower($lang);
+    $dir = ($lang === 'ar') ? "rtl" : "ltr";
     $title = ucfirst($title) . " :: daloRADIUS";
 
     echo <<<EOF
 <!DOCTYPE html>
-<html lang="{$lang}">
+<html lang="{$lang}" dir="{$dir}">
 <head>
 <title>{$title}</title>
 <meta charset="utf-8">
@@ -69,6 +66,11 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="copyright" content="Liran Tal & Filippo Lauria">
 <meta name="robots" content="noindex">
+
+<link rel="apple-touch-icon" sizes="180x180" href="static/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="static/images/favicon/site.webmanifest">
 
 EOF;
 
@@ -110,7 +112,7 @@ EOF;
 
         <div class="container">
             <div class="row m-0 p-0">
-                <div class="col-sm-2 p-3 bg-light text-dark border-end">
+                <div id="sidebar" class="min-vh-100 col-sm-2 p-3 bg-light text-dark border-end">
 EOF;
 
     // printing sidebar
@@ -276,7 +278,10 @@ function close_form() {
 // this function can be used for opening a fieldset (in a form)
 function open_fieldset($descriptor=array()) {
     echo '<fieldset class="mt-2"';
-
+    
+    $display = (array_key_exists('hidden', $descriptor) && $descriptor['hidden']) ? 'none' : 'block';
+    printf(' style="display: %s"', $display);
+    
     if (array_key_exists('id', $descriptor) && !empty($descriptor['id'])) {
         printf(' id="%s"', strip_tags(trim($descriptor['id'])));
     }
@@ -395,7 +400,8 @@ EOF;
 
 function print_additional_controls($descriptors) {
     foreach ($descriptors as $d) {
-        printf('<button class="btn btn-primary btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $d['class'], $d['onclick'], $d['label']);
+        $class = (isset($d['class'])) ? $d['class'] : "btn-primary";
+        printf('<button class="btn btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $class, $d['onclick'], $d['label']);
     }
 }
 
@@ -1504,7 +1510,7 @@ function print_tab_header($keywords=array(), $active=0) {
 }
 
 function open_tab_wrapper() {
-    echo '<div class="tab-content">';
+    echo '<div class="tab-content my-1">';
 }
 
 function close_tab_wrapper() {

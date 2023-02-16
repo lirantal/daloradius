@@ -43,7 +43,7 @@ $logfile_loc = array(
 $logfile = "";
 
 foreach ($logfile_loc as $tmp) {
-    if (file_exists($tmp)) { 
+    if (file_exists($tmp)) {
     $logfile = $tmp;
         break;
     }
@@ -53,10 +53,10 @@ $logfile_enc = (!empty($logfile)) ? htmlspecialchars($logfile, ENT_QUOTES, 'UTF-
 
 // check if it is empty
 if (empty($logfile)) {
-    $failureMsg = sprintf("<br><br>Error accessing log file: <strong>%s</strong><br><br>" . 
+    $failureMsg = sprintf("Error accessing log file: <strong>%s</strong><br>" .
                           "Looked for log file in <strong>%s</strong> but could not find it.<br>" .
                           "If you know where your <em>dmesg (boot) log file</em> is located, " .
-                          "specify its location in <strong>%s</strong>",
+                          "specify its location in <strong>%s</strong>.",
               $logfile_enc,
               htmlspecialchars(implode(", ", $logfile_loc), ENT_QUOTES, 'UTF-8'),
               htmlspecialchars($extension_file, ENT_QUOTES, 'UTF-8'));
@@ -64,7 +64,7 @@ if (empty($logfile)) {
 
     // check if it is readable
     if (is_readable($logfile) !== true) {
-        $failureMsg = sprintf("<br><br>Error reading log file: <strong>%s</strong>.<br><br>Is this file readable?<br>",
+        $failureMsg = sprintf("Error reading log file: <strong>%s</strong>.<br>Is this file readable?",
                               $logfile_enc);
     } else {
 
@@ -72,23 +72,23 @@ if (empty($logfile)) {
         $logcontent = file($logfile);
         if ($logcontent !== false && count($logcontent) > 0) {
             $reversed_content = array_reverse($logcontent);
-            
+
             // set internal count & filter
             $_count = (isset($count) && is_numeric($count)) ? $count : 50;
             $_filter = (isset($filter) && !empty($filter)) ? preg_quote($filter, "/") : "";
-            
-            echo '<div style="font-family: monospace">';
+
+            echo '<pre class="font-monospace my-1">';
             foreach ($reversed_content as $line) {
                 if (empty($_filter) || preg_match("/$_filter/i", $line)) {
                     if ($_count == 0) {
                         break;
                     }
-                    
-                    echo nl2br(htmlspecialchars($line, ENT_QUOTES, 'UTF-8'), false);
+
+                    echo htmlspecialchars($line, ENT_QUOTES, 'UTF-8');
                     $_count--;
                 }
             }
-            echo '</div>';
+            echo '</pre>';
         } else {
             $failureMsg = sprintf("It looks like log file <strong>%s</strong> is empty.", $logfile_enc);
         }

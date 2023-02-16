@@ -119,10 +119,19 @@
         // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-rad-usergroup-del.php";
+        $form_name = "form_" . rand();
+
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $additional_controls = array();
+        $additional_controls[] = array(
+                                'onclick' => sprintf("removeCheckbox('%s','%s')", $form_name, $action),
+                                'label' => 'Delete',
+                                'class' => 'btn-danger',
+                              );
 
         $descriptors = array();
 
-        $descriptors['start'] = array( 'common_controls' => 'usergroup[]' );
+        $descriptors['start'] = array( 'common_controls' => 'usergroup[]', 'additional_controls' => $additional_controls );
 
         $params = array(
                             'num_rows' => $numrows,
@@ -135,7 +144,7 @@
 
         print_table_prologue($descriptors);
 
-        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
 
         // print table top
         print_table_top($form_descriptor);
@@ -194,7 +203,7 @@
                                 'colspan' => $colspan,
                                 'multiple_pages' => $drawNumberLinks
                            );
-        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+        $descriptor = array( 'form' => $form_descriptor, 'table_foot' => $table_foot );
         print_table_bottom($descriptor);
 
         // get and print "links"

@@ -206,11 +206,41 @@
             
             list($username, $id, $value, $attribute, $contactperson, $billstatus, $planname, $company, $firstname, $disabled) = $row;
             
+            // we try to get the type of this user
+            if ($attribute == 'Auth-Type' && $row['auth'] == 'Accept') {
+                if (filter_var($username, FILTER_VALIDATE_MAC)) {
+                    $type = 'MAC';
+                } else {
+                    $type = 'PIN';
+                }
+            } else {
+                $type = 'USER';
+            }
+            
             $img_format = '<i class="bi bi-%s-circle-fill text-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>';
 
-            $img = (!$data['enabled'])
+            $img = ($disabled)
                  ? sprintf($img_format, 'dash', 'danger', 'disabled')
                  : sprintf($img_format, 'check', 'success', 'enabled');
+            
+            $badge_icon = "";
+            switch ($type) {
+                case 'PIN':
+                    $badge_icon = "123";
+                    break;
+
+                case 'MAC':
+                    $badge_icon = "ethernet";
+                    break;
+
+                default:
+                case 'USER':
+                    $badge_icon = "person-fill";
+                    break;
+            }
+
+            $badge = sprintf('<i class="bi bi-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>',
+                             $badge_icon, strtolower($type));
             
             $auth = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes")
                   ? "[Password is hidden]" : $value;
@@ -234,7 +264,7 @@
             $checkbox = get_checkbox_str($d);
             
             // define table row
-            $table_row = array( $checkbox, $contactperson, $company, $toopltip, $auth, $planname);
+            $table_row = array( $checkbox, $contactperson, $company, $tooltip, $auth, $planname);
 
             // print table row
             print_table_row($table_row);

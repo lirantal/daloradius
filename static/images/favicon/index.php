@@ -15,37 +15,9 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
-
-    include_once('library/config_read.php');
-    include_once("lang/main.php");
-    include("library/layout.php");
-
-    $log = "visited page: ";
-
-    // print HTML prologue
-    $title = t('Intro','mngmain.php');
-    $help = "";
-
-    print_html_prologue($title, $langCode);
-
-    print_title_and_help($title, $help);
-
-    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
-    $alt = "Total Users";
-    $src = "library/graphs/total_users.php";
-
-    printf($img_format, $src, $alt);
-
-    include('include/config/logging.php');
-
-    print_footer_and_html_epilogue();
-
-?>
+header("Location: ../../../index.php");

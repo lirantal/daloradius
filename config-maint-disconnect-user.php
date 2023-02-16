@@ -37,15 +37,15 @@
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
-    
+
+
     $valid_packetTypes = array(
                                     "disconnect" => 'PoD - Packet of Disconnect',
                                     "coa" => 'CoA - Change of Authorization'
                               );
-    
+
     include('library/opendb.php');
-        
+
     $sql = sprintf("SELECT DISTINCT(nasname), ports, shortname, CONCAT('nas-', id) FROM %s ORDER BY nasname ASC",
                    $configValues['CONFIG_DB_TBL_RADNAS']);
     $res = $dbSocket->query($sql);
@@ -56,35 +56,35 @@
         $label = sprintf("%s (%s:%d)", $row[2], $row[0], intval($row[1]));
         $valid_nas_ids[$value] = $label;
     }
-    
+
     include('library/closedb.php');
-    
+
     $radclient_path = is_radclient_present();
 
     if ($radclient_path !== false) {
-    
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
                 $required_fields = array();
-            
+
                 $username = (isset($_POST['username']) && !empty(trim($_POST['username']))) ? trim($_POST['username']) : "";
                 if (empty($username)) {
                     $required_fields['username'] = t('all','Username');
                 }
-                
+
                 $nas_id = (isset($_POST['nas_id']) && in_array(trim($_POST['nas_id']), array_keys($valid_nas_ids)))
                         ? trim($_POST['nas_id']) : "";
                 if (empty($nas_id)) {
                     $required_fields['nas_id'] = t('all','NasIPHost');
                 }
-                
+
                 if (count($required_fields) > 0) {
                     // required/invalid
                     $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
                     $logAction .= "$failureMsg on page: ";
                 } else {
-                    
+
                     $packetType = (isset($_POST['packetType']) && in_array(trim($_POST['packetType']), array_keys($valid_packetTypes)))
                                 ? trim($_POST['packetType']) : $valid_packetTypes[0];
                     $customAttributes = (array_key_exists('customAttributes', $_POST) && !empty(trim($_POST['customAttributes'])))
@@ -95,9 +95,9 @@
                     $retries = (isset($_POST['retries']) && intval($_POST['retries']) > 0) ? intval($_POST['retries']) : 3;
                     $count = (isset($_POST['count']) && intval($_POST['count']) > 0) ? intval($_POST['count']) : 1;
                     $requests = (isset($_POST['requests']) && intval($_POST['requests']) > 0) ? intval($_POST['requests']) : 1;
-                    
+
                     $simulate = (isset($_POST['simulate']) && $_POST['simulate'] === "on");
-                    
+
                     // this will be passed to user_auth function
                     $params =  array(
                                         "nas_id" => intval(str_replace("nas-", "", $nas_id)),
@@ -111,56 +111,64 @@
                                         "customAttributes" => $customAttributes,
                                         "simulate" => $simulate,
                                     );
-                                    
+
                     // disconnect user
                     $result = user_disconnect($params);
-                    
+
                     $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
-                    
+
                     if ($result["error"]) {
+                        if (!empty($failureMsg)) {
+                            $failureMsg .= str_repeat("<br>", 2);
+                        }
+
                         $failureMsg = sprintf("Cannot perform disconnect action on user [<strong>%s</strong>, reason: <strong>%s</strong>]",
                                               $username_enc, $result["output"]);
                         $logAction .= sprintf("Cannot perform disconnect action on user [%s, reason: %s] on page: ",
                                               $username, $result["output"]);
                     } else {
+                        if (!empty($successMsg)) {
+                            $successMsg .= str_repeat("<br>", 2);
+                        }
+
                         $successMsg = sprintf('Performed disconnect action on user <strong>%s</strong>.'
-                                            . '<pre style="margin: 10px auto; font-family: monospace">%s</pre>',
+                                            . '<pre class="font-monospace my-1">%s</pre>',
                                               $username_enc, $result["output"]);
                         $logAction .= sprintf("Performed disconnect action on user [%s] on page: ",
                                               $username, $result["output"]);
                     }
                 }
-            
+
             } else {
                 // csrf
                 $failureMsg = "CSRF token error";
                 $logAction .= "$failureMsg on page: ";
             }
         }
-    
+
     } else {
         $failureMsg = "Cannot perform disconnect action [radclient binary not found on the system]";
         $logAction .= "$failureMsg on page: ";
     }
 
-    
+
     // print HTML prologue
     $title = t('Intro','configmaintdisconnectuser.php');
     $help = t('helpPage','configmaintdisconnectuser');
-    
+
     print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-    
+
     if ($radclient_path !== false) {
-    
+
         include("include/management/populate_selectbox.php");
-        
+
         $options = get_online_users();
         array_unshift($options, "");
-        
+
         $input_descriptors0 = array();
         $input_descriptors0[] = array(
                                         "name" => "username",
@@ -172,7 +180,7 @@
 
         $options = $valid_packetTypes;
         array_unshift($options, "");
-        
+
         $input_descriptors0[] = array(
                                         "name" => "packetType",
                                         "caption" => t('all','PacketType'),
@@ -180,7 +188,7 @@
                                         "options" => $options,
                                         "selected_value" => ((isset($packetType)) ? $packetType : ""),
                                      );
-        
+
         $options = $valid_nas_ids;
         array_unshift($options, "");
 
@@ -192,6 +200,10 @@
                                         "selected_value" => ((isset($nas_id)) ? $nas_id : ""),
                                      );
 
+        $input_descriptors0[] = array( "name" => "customAttributes", "caption" => t('all','customAttributes'),
+                                       "type" => "textarea", "content" => ((isset($customAttributes)) ? $customAttributes : ""),
+                                     );
+
         $input_descriptors0[] = array(
                                         "name" => "simulate",
                                         "caption" => "Simulate (only show command, don't execute)",
@@ -199,10 +211,6 @@
                                         "checked" => (isset($simulate) ? $simulate : false),
                                      );
 
-        $input_descriptors0[] = array( "name" => "customAttributes", "caption" => t('all','customAttributes'),
-                                       "type" => "textarea", "content" => ((isset($customAttributes)) ? $customAttributes : ""),
-                                     );
-    
         // descriptors 1
         $input_descriptors1 = array();
         $input_descriptors1[] = array( "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"), );
@@ -210,10 +218,10 @@
         $input_descriptors1[] = array( "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0", );
         $input_descriptors1[] = array( "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1", );
         $input_descriptors1[] = array( "name" => "requests", "caption" => t('all','Requests'), "type" => "number", "value" => "3", "min" => "1", );
-    
+
         // descriptors 2
         $input_descriptors2 = array();
-        
+
         $input_descriptors2[] = array(
                                         "name" => "csrf_token",
                                         "type" => "hidden",
@@ -231,13 +239,13 @@
 
         // print navbar controls
         print_tab_header($navkeys);
-        
+
         // open form
         open_form();
-        
+
         // open tab wrapper
         open_tab_wrapper();
-        
+
         // open tab 0 (shown)
         open_tab($navkeys, 0, true);
 
@@ -247,36 +255,36 @@
                                      );
 
         open_fieldset($fieldset0_descriptor);
-        
+
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         close_tab($navkeys, 0);
 
         // open tab 1
         open_tab($navkeys, 1);
-        
+
         // open a fieldset
         $fieldset1_descriptor = array(
                                         "title" => t('title','Advanced'),
                                      );
 
         open_fieldset($fieldset1_descriptor);
-        
+
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         close_tab($navkeys, 1);
-        
+
         // close tab wrapper
         close_tab_wrapper();
-        
+
         foreach ($input_descriptors2 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
@@ -286,6 +294,6 @@
     }
 
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue();
 ?>

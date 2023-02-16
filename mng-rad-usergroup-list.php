@@ -63,9 +63,6 @@
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
-    // feed the sidebar
-    $usernameList = $username_enc;
-    
     
     // print HTML prologue
     $title = t('Intro','mngradusergrouplist');
@@ -78,14 +75,16 @@
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
-                                                          
-    $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s", $configValues['CONFIG_DB_TBL_RADUSERGROUP']);
-    if (!empty($username)) {
-        $sql .= sprintf(" WHERE username LIKE '%s%%'", $dbSocket->escapeSimple($username));
-    }
+
+    $sql0 = sprintf("SELECT DISTINCT(rug1.username), CONCAT(dui.firstname, ' ', dui.lastname) AS fullname
+                           FROM %s AS rug1 LEFT JOIN %s AS dui ON rug1.username=dui.username",
+                         $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+        if (!empty($username)) {
+            $sql0 .= sprintf(" WHERE rug1.username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+        }
     
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
+    $res = $dbSocket->query($sql0);
+    $numrows = $res->numRows();
     
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
@@ -101,18 +100,7 @@
                      
         $records = array();
         
-        $nested_query = sprintf("SELECT DISTINCT(rug.username) FROM %s AS rug", $configValues['CONFIG_DB_TBL_RADUSERGROUP']);
-        if (!empty($username)) {
-            $nested_query .= sprintf(" WHERE rug.username LIKE '%s%%'", $dbSocket->escapeSimple($username));
-        }
-        
-        $sql0 = "SELECT dui.username AS username, CONCAT(firstname, ' ', lastname) AS fullname
-                   FROM %s AS dui
-                  WHERE dui.username IN (%s)
-                  ORDER BY %s %s LIMIT %s, %s";
-        $sql0 = sprintf($sql0, $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                               $nested_query,
-                               $orderBy, $orderType, $offset, $rowsPerPage);
+        $sql0 .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res0 = $dbSocket->query($sql0);
 
         $per_page_numrows = $res0->numRows();
@@ -124,8 +112,16 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-usergroup-del.php";
-        
+        $form_name = "form_" . rand();
+
         // we prepare the "controls bar" (aka the table prologue bar)
+        $additional_controls = array();
+        $additional_controls[] = array(
+                                'onclick' => sprintf("removeCheckbox('%s','%s')", $form_name, $action),
+                                'label' => 'Delete',
+                                'class' => 'btn-danger',
+                              );
+        
         $params = array(
                             'num_rows' => $numrows,
                             'rows_per_page' => $rowsPerPage,
@@ -135,11 +131,11 @@
                         );
         
         $descriptors = array();
-        $descriptors['start'] = array( 'common_controls' => 'usergroup[]', );
+        $descriptors['start'] = array( 'common_controls' => 'usergroup[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         print_table_prologue($descriptors);
         
-        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
         
         // print table top
         print_table_top($form_descriptor);
@@ -190,7 +186,7 @@
         
             list($this_username, $fullname) = $row0;
             $records[$this_username] = array(
-                'fullname' => $fullname,
+                'fullname' => (!empty(trim($fullname))) ? $fullname : "(n/d)",
                 'groups' => array()
             );
             
@@ -210,7 +206,8 @@
                 $records[$this_username]['groups'][] = array( 'groupname' => $this_groupname, 'priority' => $this_priority );
             }
         }
-                
+        
+        
         foreach ($records as $this_username => $data) {
             $rowspan = count($data['groups']);
             $group = $data['groups'][0];
@@ -244,7 +241,7 @@
                                 'multiple_pages' => $drawNumberLinks
                            );
 
-        $descriptor = array( 'table_foot' => $table_foot );
+        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
         print_table_bottom($descriptor);
 
         // get and print "links"

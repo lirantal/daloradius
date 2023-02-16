@@ -105,6 +105,15 @@
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "mng-rad-profiles-del.php";
+        $form_name = "form_" . rand();
+
+        // we prepare the "controls bar" (aka the table prologue bar)
+        $additional_controls = array();
+        $additional_controls[] = array(
+                                'onclick' => sprintf("removeCheckbox('%s','%s')", $form_name, $action),
+                                'label' => 'Delete',
+                                'class' => 'btn-danger',
+                              );
         
         // we prepare the "controls bar" (aka the table prologue bar)
         $params = array(
@@ -116,11 +125,11 @@
                         );
         
         $descriptors = array();
-        $descriptors['start'] = array( 'common_controls' => 'profile_names[]', );
+        $descriptors['start'] = array( 'common_controls' => 'profile_names[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         print_table_prologue($descriptors);
         
-        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
         
         // print table top
         print_table_top($form_descriptor);
@@ -155,7 +164,7 @@
             $tooltip = get_tooltip_list_str($tooltip);
             
             // create checkbox
-            $d = array( 'name' => 'profile_names[]', 'value' => $groupname, 'label' => $id );
+            $d = array( 'name' => 'profile_names[]', 'value' => $groupname );
             $checkbox = get_checkbox_str($d);
 
             // build table row
@@ -178,7 +187,7 @@
                                 'multiple_pages' => $drawNumberLinks
                            );
 
-        $descriptor = array( 'table_foot' => $table_foot );
+        $descriptor = array( 'form' => $form_descriptor, 'table_foot' => $table_foot );
         print_table_bottom($descriptor);
 
         // get and print "links"

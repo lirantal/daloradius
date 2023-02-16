@@ -26,35 +26,37 @@
 
 	include('library/check_operator_perm.php');
     include_once('library/config_read.php');
-    
+
     include_once("lang/main.php");
     include("library/layout.php");
 
-    $hotspot = (array_key_exists('hotspot', $_GET) && isset($_GET['hotspot']) && !is_array($_GET['hotspot']))
-             ? array( $_GET['hotspot'] ) : $_GET['hotspot'];
-    
+    $hotspot = array();
+    if (isset($_GET['hotspot']) && !empty($_GET['hotspot'])) {
+        $hotspot = (is_array($_GET['hotspot'])) ? $_GET['hotspot'] : array( $_GET['hotspot'] );
+    }
+
     $tmp = array();
     foreach ($hotspot as $item) {
         $item = str_replace("%", "", trim($item));
         if (empty($item) && in_array($item, $tmp)) {
             continue;
         }
-        
+
         $tmp[] = $item;
     }
-    
+
     $hotspot = $tmp;
-    
+
     $hotspot_enc = "";
     if (count($hotspot) > 0) {
-        
+
         $hotspot_enc = htmlspecialchars($hotspot[0], ENT_QUOTES, 'UTF-8');
-        
+
         if (count($hotspot) > 1) {
             $hotspot_enc .= ", &hellip;";
         }
     }
-    
+
     $cols = array(
                     "radacctid" => t('all','ID'),
                     "name" => t('all','HotSpot'),
@@ -70,10 +72,10 @@
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
@@ -82,13 +84,13 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
-    
+
     // init logging variables
     $log = "visited page: ";
     if (!empty($hotspot)) {
-        $logQuery = "performed query for hotspot [$hotspot] on page: ";
+        $logQuery = sprintf("performed accounting query for %d hotspot(s) on page: ", count($hotspot));
     } else {
-        $logQuery = "performed query on page: ";
+        $logQuery = "performed accounting query on page: ";
     }
     $logDebugSQL = "";
 
@@ -98,16 +100,16 @@
         "static/js/ajax.js",
         "static/js/ajaxGeneric.js",
     );
-    
+
     $title = t('Intro','accthotspot.php');
     $help = t('helpPage','accthotspotaccounting');
-    
+
     print_html_prologue($title, $langCode, array(), $extra_js);
 
     if (!empty($hotspot_enc)) {
         $title .= " :: $hotspot_enc";
     }
-    
+
     print_title_and_help($title, $help);
 
     include('library/opendb.php');
@@ -129,7 +131,7 @@
     $_SESSION['reportQuery'] = $sql_WHERE;
     $_SESSION['reportType'] = "accountingGeneric";
 
-    
+
     $sql = sprintf("SELECT ra.RadAcctId, dhs.name AS hotspot, ra.username, ra.FramedIPAddress, ra.AcctStartTime,
                                ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets,
                                ra.AcctTerminateCause, ra.NASIPAddress
@@ -138,26 +140,26 @@
          . $sql_WHERE;
     $res = $dbSocket->query($sql);
 	$numrows = $res->numRows();
-	
+
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-                     
+
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
-        
+
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $tmp = array();
@@ -166,9 +168,9 @@
                 $tmp[] = "hotspot[]=" . htmlspecialchars($item, ENT_QUOTES, 'UTF-8');
             }
         }
-        
+
         $partial_query_string = (count($tmp) > 0) ? "&" . implode("&", $tmp) : "";
-        
+
         $descriptors = array();
 
         $params = array(
@@ -194,7 +196,7 @@
 
         // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-        
+
         // closes table header, opens table body
         print_table_middle();
 
@@ -207,14 +209,14 @@
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
-            
+
             list($radAcctId, $hotspot, $username, $framedIPAddress, $acctStartTime, $acctStopTime,
                  $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress) = $row;
-                
+
             $acctSessionTime = time2str($acctSessionTime);
             $acctInputOctets = toxbyte($acctInputOctets);
             $acctOutputOctets = toxbyte($acctOutputOctets);
-            
+
             $ajax_id = "divContainerHotspotInfo_" . $count;
             $param = sprintf('hotspot=%s', urlencode($hotspot));
             $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','$ajax_id','$param')";
@@ -226,8 +228,8 @@
                              );
             $tooltip1['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ), 'label' => t('Tooltip','HotspotEdit'), );
             $tooltip1['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
-            
-            
+
+
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($username));
             $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
@@ -238,10 +240,10 @@
                                 'actions' => array(),
                              );
             $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
-            
+
             $tooltip1 = get_tooltip_list_str($tooltip1);
             $tooltip2 = get_tooltip_list_str($tooltip2);
-            
+
             // define table row
             $table_row = array( $radAcctId, $tooltip1, $tooltip2, $framedIPAddress, $acctStartTime, $acctStopTime,
                                 $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress);
@@ -273,10 +275,10 @@
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('library/closedb.php');
 
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue();
 ?>

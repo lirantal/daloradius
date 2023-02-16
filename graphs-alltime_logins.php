@@ -68,19 +68,17 @@
     // tab 0
     open_tab($navkeys, 0, true);
 
+    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
     $alt = sprintf("%s all-time login/hit statistics", ucfirst($type));
     $src = sprintf("library/graphs/alltime_users_data.php?category=login&type=%s", $type);
-
-    echo '<div style="text-align: center; margin-top: 50px">';
-    printf('<img alt="%s" src="%s">', $alt, $src);
-    echo '</div>';
+    printf($img_format, $src, $alt);
 
     close_tab($navkeys, 0);
 
     // tab 1
     open_tab($navkeys, 1);
 
-    echo '<div style="text-align: center; margin-top: 50px">';
+    echo '<div class="my-3 text-center">';
     include('library/tables/alltime_users_login.php');
     echo '</div>';
 

@@ -231,6 +231,25 @@ function insert_single_user_group_mapping($dbSocket, $username, $groupname, $pri
     return $res == 1;
 }
 
+
+// delete all group mappings for user
+function delete_user_group_mappings($dbSocket, $username) {
+    global $configValues, $logDebugSQL;
+    
+    $username = trim($username);
+    
+    if (!user_exists($dbSocket, $username)) {
+        return false;
+    }
+    
+    $sql = sprintf("DELETE FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    return !DB::isError($res);
+}
+
 // returns all groups associated with a provided $username
 function get_user_group_mappings($dbSocket, $username) {
     global $configValues, $logDebugSQL;

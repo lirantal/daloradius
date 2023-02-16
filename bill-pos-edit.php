@@ -216,10 +216,8 @@
             $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
             $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
             
-            $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
-            $newgroups = (array_key_exists('newgroups', $_POST) && isset($_POST['newgroups'])) ? $_POST['newgroups'] : array();
-            $groups_priority = (array_key_exists('groups_priority', $_POST) && isset($_POST['groups_priority'])) ? $_POST['groups_priority'] : array();
-
+            $groups = (isset($_POST['groups']) && is_array($_POST['groups'])) ? $_POST['groups'] : array();
+            
             if (!empty($username)) {
                 
                 // insert userinfo
@@ -342,7 +340,14 @@
                     addPlanProfile($dbSocket, $username, $planName, $oldplanName);
                 } else {
                     // otherwise, we remove all profiles and assign profiles as configured in the profiles tab by the user
-                    addUserProfiles($dbSocket, $username, $planName, $oldplanName, $groups, $groups_priority, $newgroups);
+                    if (delete_user_group_mappings($dbSocket, $username)) {
+                        if (count($groups) > 0) {                    
+                            foreach ($groups as $group) {
+                                list($groupname, $priority) = $group;
+                                insert_single_user_group_mapping($dbSocket, $username, $groupname, $priority);
+                            }
+                        }
+                    }
                 }
                 
             }
@@ -584,9 +589,25 @@ function refillSessionTraffic() {
                                         'name' => 'disableUser-button'
                                       );
         
-        foreach ($button_descriptors0 as $descr) {
-            print_input_field($descr);
+        // custom actions
+        echo <<<EOF
+    <div class="dropdown dropup">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Actions
+        </button>
+  
+        <ul class="dropdown-menu">
+EOF;
+
+        foreach ($button_descriptors0 as $desc) {
+            printf('<li><a href="#" class="dropdown-item" name="%s" onclick="%s">%s</a></li>', $desc['name'], $desc['onclick'], $desc['value']);
         }
+
+
+        echo <<<EOF
+        </ul>
+    </div>
+EOF;
         
         close_fieldset();
         
@@ -595,7 +616,6 @@ function refillSessionTraffic() {
         // open 1-st tab
         open_tab($navkeys, 1);
         
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once('include/management/userinfo.php');
         
         close_tab($navkeys, 1);
@@ -603,7 +623,6 @@ function refillSessionTraffic() {
         // open 2-nd tab
         open_tab($navkeys, 2);
         
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once('include/management/userbillinfo.php');
         
         close_tab($navkeys, 2);
@@ -611,31 +630,12 @@ function refillSessionTraffic() {
         // open 3-rd tab
         open_tab($navkeys, 3);
         
-        include('library/opendb.php');
         $groupTerminology = "Profile";
         $groupTerminologyPriority = "ProfilePriority";
+        
+        include('library/opendb.php');
         include_once('include/management/groups.php');
         include('library/closedb.php');
-        
-        $input_descriptors1 = array();
-        
-        $options = get_groups();
-        array_unshift($options, '');
-        $input_descriptors1[] = array(
-                                        "type" =>"select",
-                                        "name" => "newgroups[]",
-                                        "id" => "newgroups",
-                                        "caption" => t('all','Group'),
-                                        "options" => $options,
-                                        "multiple" => true,
-                                        "size" => 5,
-                                        "selected_value" => ((isset($failureMsg)) ? $newgroups : ""),
-                                        "tooltipText" => t('Tooltip','groupTooltip')
-                                     );
-        
-        foreach ($input_descriptors1 as $input_descriptor) {
-            print_form_component($input_descriptor);
-        }
         
         close_tab($navkeys, 3);
         
@@ -697,7 +697,6 @@ EOF;
     print_back_to_previous_page();
     
     include('include/config/logging.php');
-    
     
     print_footer_and_html_epilogue($inline_extra_js);
 ?>

@@ -126,8 +126,6 @@
         // printTableFormControls function parameter
         $action = "mng-batch-del.php";
         
-        
-        
         // we prepare the "controls bar" (aka the table prologue bar)
         $additional_controls = array();
         $additional_controls[] = array(

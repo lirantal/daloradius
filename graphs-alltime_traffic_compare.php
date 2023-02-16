@@ -63,7 +63,7 @@
     // print navbar controls
     print_tab_header($navkeys);
 
-    $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
 
     // open tab wrapper
     open_tab_wrapper();

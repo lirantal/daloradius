@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Description:    returns user billing information (rates, plans, etc)
  *
  * Authors:        Liran Tal <liran@enginx.com>
@@ -153,23 +153,25 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 function userInvoicesStatus($user_id, $drawTable) {
 
     include_once('include/management/pages_common.php');
-    include 'library/opendb.php';
+    include('library/opendb.php');
 
-    $user_id = $dbSocket->escapeSimple($user_id);            // sanitize variable for sql statement
+    // sanitize variable for sql statement
+    $user_id = intval($user_id);
 
-    $sql = "SELECT COUNT(distinct(a.id)) AS TotalInvoices, a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, ".
-            " c.value AS status, COALESCE(SUM(e2.totalpayed), 0) as totalpayed, COALESCE(SUM(d2.totalbilled), 0) as totalbilled, ".
-            " SUM(a.status_id = 1) as openInvoices ".
-            " FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
-            " INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
-            " INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-            " LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) ".
-                    " as totalbilled, invoice_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
-            " GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
-            " LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ".
-            $configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
-            " WHERE (a.user_id = $user_id)".
-            " GROUP BY b.id ";
+    $sql = sprintf("SELECT COUNT(DISTINCT(a.id)) AS TotalInvoices, a.id, a.date, a.status_id, a.type_id, b.contactperson,
+                           b.username, c.value AS status, COALESCE(SUM(e2.totalpayed), 0) AS totalpayed,
+                           COALESCE(SUM(d2.totalbilled), 0) AS totalbilled, SUM(a.status_id=1) AS openInvoices
+                      FROM %s AS a INNER JOIN %s AS b ON a.user_id=b.id
+                                   INNER JOIN %s AS c ON a.status_id=c.id
+                                    LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) AS totalbilled, invoice_id
+                                                 FROM %s AS d GROUP BY d.invoice_id) AS d2 ON d2.invoice_id=a.id
+                                    LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id
+                                                 FROM %s AS e GROUP BY e.invoice_id) AS e2 ON e2.invoice_id=a.id
+                     WHERE a.user_id=%d GROUP BY b.id", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'],
+                                                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                                        $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'],
+                                                        $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
+                                                        $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $user_id);
 
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
@@ -179,71 +181,84 @@ function userInvoicesStatus($user_id, $drawTable) {
     $totalPayed = $row['totalpayed'];
     $openInvoices = $row['openInvoices'];
 
-    include 'library/closedb.php';
+    include('library/closedb.php');
 
     if ($drawTable == 1) {
-        echo '
-                <fieldset>
+        include_once("library/layout.php");
 
-                <h302> User Invoices </h302>
-                <br/>
+        $fieldset = array( 'title' => 'User Invoices' );
+        open_fieldset($fieldset);
 
-                <ul>
+        $button_descriptors0 = array();
+        $button_descriptors0[] = array(
+                                            "label" => "New Invoice",
+                                            "onclick" => sprintf("javascript:window.location='bill-invoice-new.php?user_id=%d'", $user_id),
+                                            "class" => "btn-success",
+                                      );
 
-                    <input class="button" type="button" value="New Invoice"
-                        onClick="javascript:window.location = \'bill-invoice-new.php?user_id='.$user_id.'\';" />
+        $button_descriptors0[] = array(
+                                            "label" => "Show Invoices",
+                                            "onclick" => sprintf("javascript:window.location='bill-invoice-list.php?user_id=%d'", $user_id),
+                                            "class" => "btn-primary",
+                                      );
 
-                    <input class="button" type="button" value="Show Invoices"
-                        onClick="javascript:window.location = \'bill-invoice-list.php?user_id='.$user_id.'\';" />
+        $button_descriptors0[] = array(
+                                            "label" => "Show Payments",
+                                            "onclick" => sprintf("javascript:window.location='bill-payments-list.php?user_id=%d'", $user_id),
+                                            "class" => "btn-secondary",
+                                      );
 
-                    <input class="button" type="button" value="Show Payments"
-                        onClick="javascript:window.location = \'bill-payments-list.php?user_id='.$user_id.'\';" />
+        echo '<div class="d-flex flex-row-reverse">';
+        print_additional_controls($button_descriptors0);
+        echo "</div>";
 
-                    <br/><br/>
+        $input_descriptors0 = array();
+        $input_descriptors0[] = array(
+                                        "type" =>"number",
+                                        "name" => "total_invoices",
+                                        "caption" => "Total Invoices",
+                                        "disabled" => true,
+                                        "value" => $totalInvoices,
+                                     );
 
-                    <li class="fieldset">
-                        <label for="totalInvoices" class="form">Total Invoices</label>
-                        <input type="text" value="'.$totalInvoices.'" disabled />
-                    </li>
+        $input_descriptors0[] = array(
+                                        "type" =>"number",
+                                        "name" => "open_invoices",
+                                        "caption" => "Open Invoices",
+                                        "disabled" => true,
+                                        "value" => $openInvoices,
+                                     );
 
-                    <li class="fieldset">
-                        <label for="totalbilled" class="form">Open Invoices</label>
-                        <input type="text" value="'.$openInvoices.'" disabled />
-                    </li>
+        $input_descriptors0[] = array(
+                                        "type" =>"number",
+                                        "name" => "total_billed",
+                                        "caption" => "Total Billed",
+                                        "disabled" => true,
+                                        "value" => $totalBilled,
+                                     );
 
-                    <br/>
+        $input_descriptors0[] = array(
+                                        "type" =>"number",
+                                        "name" => "total_payed",
+                                        "caption" => "Total Payed",
+                                        "disabled" => true,
+                                        "value" => $totalPayed,
+                                     );
 
-                    <li class="fieldset">
-                        <label for="totalbilled" class="form">Total Billed</label>
-                        <input type="text" value="'.$totalBilled.'" disabled />
-                    </li>
+        $input_descriptors0[] = array(
+                                        "type" =>"number",
+                                        "name" => "balance",
+                                        "caption" => "Balance",
+                                        "disabled" => true,
+                                        "value" => $totalPayed - $totalBilled,
+                                     );
 
-                    <li class="fieldset">
-                        <label for="totalbilled" class="form">Total Payed</label>
-                        <input type="text" value="'.$totalPayed.'" disabled />
-                    </li>
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
 
-                    <li class="fieldset">
-                        <label for="totalbilled" class="form">Balance</label>
-                        <input type="text" value="'.($totalPayed - $totalBilled).'" disabled />
-                    </li>
-
-
-                    <li class="fieldset">
-                    <br/>
-                    <hr><br/>
-                    <input type="submit" name="submit" value="Apply" tabindex=10000 class="button" />
-                    </li>
-
-            </ul>
-
-            </fieldset>
-
-            ';
-
+        close_fieldset();
     }
-
-
 }
 
 
@@ -277,13 +292,13 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
     if ($res->numRows() == 0) {
         return;
     }
-        
+
     $row = $res->fetchRow();
     list($ratetypenum, $ratetypetime) = explode("/",$row[0]);
 
     // we need to translate any kind of time into seconds,
     // so a minute is 60 seconds, an hour is 3600, and so on...
-    switch ($ratetypetime) {                                        
+    switch ($ratetypetime) {
         case "second":
             $multiplicate = 1;
             break;
@@ -313,7 +328,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
 
     $sql = sprintf("SELECT DISTINCT(ra.username), ra.NASIPAddress, ra.AcctStartTime,
                            SUM(ra.AcctSessionTime) AS AcctSessionTime, dbr.rateCost,
-                           SUM(ra.AcctInputOctets) AS AcctInputOctets, 
+                           SUM(ra.AcctInputOctets) AS AcctInputOctets,
                            SUM(ra.AcctOutputOctets) AS AcctOutputOctets
                       FROM %s AS ra, %s AS dbr
                      WHERE AcctStartTime >= '%s'
@@ -343,10 +358,10 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
 
     if ($drawTable == 1) {
         $modal_id = "modal_" . rand();
-        
+
         $table = array();
         $table['title'] = "Billing Summary";
-        
+
         $table['rows'][] = array( "Username" , $username, );
         $table['rows'][] = array( "Billing for period of" , "$startdate until $enddate (inclusive)", );
         $table['rows'][] = array( "Online Time" , $userOnlineTime, );
@@ -354,7 +369,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
         $table['rows'][] = array( "User Download" , $userDownload, );
         $table['rows'][] = array( "Rate Name" , $ratename, );
         $table['rows'][] = array( "Total Billed" , $sumBilled , );
-        
+
         echo <<<EOF
 <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#{$modal_id}">Show {$table['title']}</button>
 
@@ -365,7 +380,7 @@ function userBillingRatesSummary($username, $startdate, $enddate, $ratename, $dr
                 <h1 class="modal-title fs-5" id="{$modal_id}_label">{$table['title']}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-      
+
             <div class="modal-body">
 EOF;
         print_simple_table($table);
@@ -395,35 +410,35 @@ EOF;
 function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status,
                                   $payer_status, $payment_status, $vendor_type, $drawTable) {
     global $logDebugSQL;
-    
+
     include('library/opendb.php');
 
     $sql_WHERE = array();
-    
+
     if (!empty($startdate)) {
         $sql_WHERE[] = sprintf("payment_date > '%s'", $dbSocket->escapeSimple($startdate));
     }
-    
+
     if (!empty($startdate)) {
         $sql_WHERE[] = sprintf("payment_date < '%s'", $dbSocket->escapeSimple($enddate));
     }
-    
+
     if (!empty($payer_email)) {
         $sql_WHERE[] = sprintf("payer_email LIKE '%s%%'", $dbSocket->escapeSimple($payer_email));
     }
-    
+
     if (!empty($payment_status)) {
         $sql_WHERE[] = sprintf("payment_status='%s'", $dbSocket->escapeSimple($payment_status));
     }
-    
+
     if (!empty($vendor_type)) {
         $sql_WHERE[] = sprintf("vendor_type='%s'", $dbSocket->escapeSimple($vendor_type));
     }
-    
+
     if (!empty($payment_address_status)) {
         $sql_WHERE[] = sprintf("payment_address_status='%s'", $dbSocket->escapeSimple($payment_address_status));
     }
-    
+
     if (!empty($payer_status)) {
         $sql_WHERE[] = sprintf("payer_status='%s'", $dbSocket->escapeSimple($payer_status));
     }
@@ -438,38 +453,38 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                                                                                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
     if (count($sql_WHERE) > 0) {
         $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-        
+
     }
-    
+
     $sql .= " GROUP BY Username";
     $logDebugSQL .= "$sql;\n";
     $res = $dbSocket->query($sql);
 
     if ($res->numRows() > 0 && $drawTable == 1) {
-        
+
         include_once('include/management/pages_common.php');
-        
+
         $row = $res->fetchRow();
-        
+
         for ($i=0; $i < count($row); $i++) {
             $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
         }
-        
+
         list( $username, $payer_email, $planName, $planId, $planTotalCost, $planTotalFee, $planTotalTax,
               $planCurrency, $sessionTime, $userUpload, $userDownload ) = $row;
-        
+
         $grossGain = $planTotalCost - ($planTotalTax + $planTotalFee);
-        
+
         $userUpload = toxbyte($userUpload);
         $userDownload = toxbyte($userDownload);
         $userOnlineTime = time2str($sessionTime);
 
         if ($drawTable == 1) {
             $modal_id = "modal_" . rand();
-            
+
             $table = array();
             $table['title'] = "Billing Summary";
-            
+
             $table['rows'] = array(
                                         array( "Username", "$username (email: $payer_email)" ),
                                         array( "Billing for period of", "$startdate until $enddate (inclusive)" ),
@@ -481,7 +496,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                                                "$planTotalCost <br/> $planTotalFee <br/> $planTotalTax" ),
                                         array( "Gross Gain", "$grossGain $planCurrency" )
                                   );
-            
+
             echo <<<EOF
     <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#{$modal_id}">Show {$table['title']}</button>
 
@@ -492,7 +507,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
                     <h1 class="modal-title fs-5" id="{$modal_id}_label">{$table['title']}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-          
+
                 <div class="modal-body">
 EOF;
             print_simple_table($table);
@@ -505,7 +520,7 @@ EOF;
 
 EOF;
         }
-    
+
     include('library/closedb.php');
 
     }

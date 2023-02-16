@@ -250,7 +250,6 @@
         $input_descriptors0[] = array(
                                         "caption" => t('all','Dictionary'),
                                         "type" => "textarea",
-                                        "class" => "form_fileimport",
                                         "name" => "dictionary",
                                         "content" => ((isset($failureMsg)) ? $dictionary : ""),
                                      );
