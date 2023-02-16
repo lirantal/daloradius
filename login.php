@@ -38,9 +38,11 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                         && is_array($configValues['CONFIG_LOCATIONS'])
                         && count($configValues['CONFIG_LOCATIONS']) > 0);
 
+$dir = (strtolower($langCode) === 'ar') ? "rtl" : "ltr";
+
 ?>
 <!DOCTYPE html>
-<html lang="<?= $langCode ?>">
+<html lang="<?= $langCode ?>" dir="<?= $dir ?>">
 
 <head>
     <title>daloRADIUS :: Login</title>
@@ -49,6 +51,11 @@ $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="copyright" content="Liran Tal & Filippo Lauria">
     <meta name="robots" content="noindex">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon/favicon-16x16.png">
+    <link rel="manifest" href="static/images/favicon/site.webmanifest">
 
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
     
@@ -101,13 +108,13 @@ body {
     <h1 class="h3 mb-3 fw-normal"><?= t('text','LoginRequired') ?></h1>
 
     <div class="form-floating">
-    <input type="text" class="form-control" id="operator_user" name="operator_user" placeholder="Username">
-    <label for="operator_user">Username</label>
+    <input type="text" class="form-control" id="operator_user" name="operator_user" placeholder="<?= t('all','Username') ?>" required>
+    <label for="operator_user"><?= t('all','Username') ?></label>
     </div>
     
     <div class="form-floating">
-    <input type="password" class="form-control" id="operator_pass" name="operator_pass" placeholder="Password">
-    <label for="operator_pass">Password</label>
+    <input type="password" class="form-control" id="operator_pass" name="operator_pass" placeholder="<?= t('all','Password') ?>" required>
+    <label for="operator_pass"><?= t('all','Password') ?></label>
     </div>
 
     <div class="form-floating">

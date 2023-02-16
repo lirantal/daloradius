@@ -53,11 +53,12 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
     global $configValues;
 
     $lang = strtolower($lang);
+    $dir = ($lang === 'ar') ? "rtl" : "ltr";
     $title = ucfirst($title) . " :: daloRADIUS";
 
     echo <<<EOF
 <!DOCTYPE html>
-<html lang="{$lang}">
+<html lang="{$lang}" dir="{$dir}">
 <head>
 <title>{$title}</title>
 <meta charset="utf-8">
@@ -65,6 +66,12 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="copyright" content="Liran Tal & Filippo Lauria">
 <meta name="robots" content="noindex">
+
+<link rel="apple-touch-icon" sizes="180x180" href="static/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="static/images/favicon/site.webmanifest">
+
 EOF;
 
     $css = array_merge($common_css, $extra_css);
@@ -271,7 +278,10 @@ function close_form() {
 // this function can be used for opening a fieldset (in a form)
 function open_fieldset($descriptor=array()) {
     echo '<fieldset class="mt-2"';
-
+    
+    $display = (array_key_exists('hidden', $descriptor) && $descriptor['hidden']) ? 'none' : 'block';
+    printf(' style="display: %s"', $display);
+    
     if (array_key_exists('id', $descriptor) && !empty($descriptor['id'])) {
         printf(' id="%s"', strip_tags(trim($descriptor['id'])));
     }
@@ -1500,7 +1510,7 @@ function print_tab_header($keywords=array(), $active=0) {
 }
 
 function open_tab_wrapper() {
-    echo '<div class="tab-content">';
+    echo '<div class="tab-content my-1">';
 }
 
 function close_tab_wrapper() {
