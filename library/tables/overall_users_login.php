@@ -144,7 +144,7 @@ if ($is_valid) {
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = sprintf("&type=%s&username=%s&goto_stats=true", $type, $username_enc);
 
-        echo '<div style="text-align: center; margin-top: 50px">';
+        echo '<div class="my-3 text-center">';
         printf('<h4>%s login/hit statistics for user <em>%s</em></h4>', ucfirst($type), $username_enc);
         
         $descriptors = array();

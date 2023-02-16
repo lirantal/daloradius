@@ -159,7 +159,7 @@ if ($is_valid) {
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_string = sprintf("&type=%s&size=%s&username=%s&goto_stats=true", $type, $size, $username_enc);
 
-        echo '<div style="text-align: center; margin-top: 50px">';
+        echo '<div class="my-3 text-center">';
         printf("<h4>%s of traffic in upload %s produced by user %s</h4>", $size, $type, $username);
         
         $descriptors = array();
