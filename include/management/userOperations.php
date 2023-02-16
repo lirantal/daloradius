@@ -357,7 +357,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
     
     // output message
     if (isset($message) && isset($class)) {
-        $div = sprintf('<div class="alert alert-%s d-flex align-items-center" role="alert">%s</div>', $class, $message);
+        $div = sprintf('<div class="alert alert-%s" role="alert">%s</div>', $class, $message);
         printf("document.getElementById('%s').innerHTML = '%s';", $divContainer, $div);
     }
 }

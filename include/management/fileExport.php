@@ -302,38 +302,66 @@ switch ($reportType) {
 
 
 		case "reportsBatchTotalUsers":
-            $outputHeader = "Batch Name, Username, Password" . "\n";
-            $outputContent = "";
+        
+            $batch_id = intval($_SESSION['reportParams']['batch_id']);
 
-            $batch_id = $_SESSION['reportParams']['batch_id'];
+            // check if in this batch there are some Cleartext-Password attributes
+            $sql = sprintf("SELECT COUNT(ubi.username)
+                              FROM %s AS ubi, %s AS rc
+                             WHERE rc.username=ubi.username
+                               AND ubi.batch_id=%d
+                               AND rc.op=':='
+                               AND rc.attribute='Cleartext-Password'",
+                           $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                           $configValues['CONFIG_DB_TBL_RADCHECK'], $batch_id);
 
-            $sql = "SELECT ".
-                    $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id,".
-                    $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".batch_name,".
-                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username,".
-                    $configValues['CONFIG_DB_TBL_RADCHECK'].".Value ".
-
-                    " FROM ".$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].
-                    ", ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-                    ", ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-                    " WHERE ".
-                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".batch_id = $batch_id".
-                    " AND ".
-                    $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'].".id = $batch_id".
-                    " AND ".
-                    $configValues['CONFIG_DB_TBL_RADCHECK'].".Attribute LIKE '%-Password'".
-                    " AND ".
-                    "( ".$configValues['CONFIG_DB_TBL_RADCHECK'].".username = ".
-                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].".username) ";
-
-				
             $res = $dbSocket->query($sql);
-            while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-                $outputContent .= $row['batch_name'].",".$row['username'].",".$row['Value']."\n";
+            $exportableUsers = intval($res->fetchRow()[0]);
+            
+            // get batch name
+            $sql = sprintf("SELECT bh.batch_name FROM %s AS bh WHERE bh.id=%d LIMIT 1",
+                           $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $batch_id);
+            $res = $dbSocket->query($sql);
+            $batch_name = $res->fetchRow()[0];
+            
+            // get all users of this batch
+            $sql = sprintf("SELECT ubi.username, rc.attribute, rc.value
+                              FROM %s AS bh, %s AS ubi, %s AS rc
+                             WHERE rc.username = ubi.username
+                               AND ubi.batch_id=bh.id
+                               AND bh.id=%d AND rc.op=':='
+                               AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')",
+                           $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
+                           $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                           $configValues['CONFIG_DB_TBL_RADCHECK'], $batch_id);
+            $res = $dbSocket->query($sql);
+            $totalUsers = intval($res->numRows());
+            
+            // this is the output header
+            $output = sprintf("# batch name: %s, users num.: %d\n", $batch_name, $totalUsers);
+            
+            $output .= "Username";
+            if ($exportableUsers > 0) {
+                // if all passwords are not cleartext, we don't show password column
+                $output .= ",Password";
+            }
+            $output .= "\n";
+            
+            while ($row = $res->fetchRow()) {
+                
+                list($username, $attribute, $value) = $row;
+                
+                if ($attribute != "Cleartext-Password" || $attribute == "Auth-Type") {
+                    $value = "(empty)";
+                }
+                
+                $output .= $username;
+                if ($exportableUsers > 0) {
+                    $output .= ",$value";
+                }
+                $output .= "\n";
             }
             
-            $output = $outputHeader . $outputContent;
-
             break;
 
 		case "reportsInvoiceList":
