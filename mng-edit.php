@@ -116,9 +116,7 @@
             $currBy = $operator;
 
             // TODO validate user input
-            $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
-            $newgroups = (array_key_exists('newgroups', $_POST) && isset($_POST['newgroups'])) ? $_POST['newgroups'] : array();
-            $groups_priority = (array_key_exists('groups_priority', $_POST) && isset($_POST['groups_priority'])) ? $_POST['groups_priority'] : array();
+            $groups = (isset($_POST['groups']) && is_array($_POST['groups'])) ? $_POST['groups'] : array();
             
             $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
             $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
@@ -184,7 +182,7 @@
                 // dealing with attributes
                 include("library/attributes.php");
 
-                $skipList = array( "username", "submit", "oldgroups", "groups", "planName", "oldplanName", "groups_priority",
+                $skipList = array( "username", "submit", "groups", "planName", "oldplanName", 
                                    "copycontact", "firstname", "lastname", "email", "department", "company", "workphone",
                                    "homephone", "mobilephone", "address", "city", "state", "country", "zip", "notes",
                                    "changeUserInfo", "bi_contactperson", "bi_company", "bi_email", "bi_phone", "bi_address",
@@ -192,7 +190,7 @@
                                    "bi_creditcardnumber", "bi_creditcardverification", "bi_creditcardtype", "bi_creditcardexp",
                                    "bi_notes", "changeUserBillInfo", "bi_lead", "bi_coupon", "bi_ordertaker", "bi_billstatus",
                                    "bi_lastbill", "bi_nextbill", "bi_nextinvoicedue", "bi_billdue", "bi_postalinvoice", "bi_faxinvoice",
-                                   "bi_emailinvoice", "bi_planname", "newgroups", "portalLoginPassword", "enableUserPortalLogin",
+                                   "bi_emailinvoice", "bi_planname", "portalLoginPassword", "enableUserPortalLogin",
                                    "csrf_token", "submit"
                                  );
 
@@ -286,48 +284,15 @@
                     $addedBillinfo = (add_user_billing_info($dbSocket, $username, $params)) ? "updated" : "nothing to update";
                 }
                 
-                // add new user group mappings (implicitly) using priority 0
-                $user_groups = get_user_group_mappings($dbSocket, $username);
-                if (count($newgroups) > 0) {
-                    foreach ($newgroups as $groupname) {
-                        $groupname = trim($groupname);
-                        
-                        if (empty($groupname) || in_array($groupname, $user_groups)) {
-                            continue;
+                // update group mappings
+                if (delete_user_group_mappings($dbSocket, $username)) {
+                    if (count($groups) > 0) {                    
+                        foreach ($groups as $group) {
+                            list($groupname, $priority) = $group;
+                            insert_single_user_group_mapping($dbSocket, $username, $groupname, $priority);
                         }
-                        
-                        insert_single_user_group_mapping($dbSocket, $username, $groupname);
                     }
                 }
-
-                // $groups and $groups_priority are used to update existing user group mappings
-                if (count($groups) == count($groups_priority)) {
-                    // we need that these two arrays contain the exact same number of elements
-                    
-                    $updated_user_group_mappings = array();
-                    
-                    for ($i = 0; $i < count($groups); $i++) {
-                        $groupname = trim($groups[$i]);
-                        
-                        // if the groupname is empty or it is not contained
-                        // in the user group mappings we skip
-                        if (empty($groupname) || !in_array($groupname, $user_groups)) {
-                            continue;
-                        }
-                        
-                        $priority = (empty($groups_priority[$i])) ? 0 : intval($groups_priority[$i]);
-                        
-                        // if the groupname appears two times, we "reset" the priority to the default values
-                        $updated_user_group_mappings[$groupname] = (array_key_exists($groupname, $updated_user_group_mappings))
-                                                                 ? 0 : $priority;
-                    }
-                    
-                    // we now can proceed and update existing user group mappings
-                    foreach ($updated_user_group_mappings as $groupname => $priority) {
-                        update_user_group_mapping_priority($dbSocket, $username, $groupname, $priority);
-                    }
-                }
-                            
                 
                 addPlanProfile($dbSocket, $username, $planName, $oldplanName);
 
@@ -412,11 +377,7 @@ function enableUser() {
         ajaxGeneric("include/management/userOperations.php", "userEnable=true", "returnMessages", strUsername);
         return true;
     }
-}
-
-window.onload = function(){
-    ajaxGeneric("include/management/userOperations.php", "checkDisabled=true", "returnMessages", strUsername);
-};' . "\n";
+}' . "\n";
     }
 
     include('library/closedb.php');
@@ -586,10 +547,6 @@ EOF;
     </div>
 EOF;
         
-        //~ foreach ($buttons as $button_desc) {
-            //~ print_input_field($button_desc);
-        //~ }
-        
         close_fieldset();
         
         close_tab($navkeys, 0);
@@ -719,50 +676,9 @@ EOF;
         // open 5-th tab (not shown)
         open_tab($navkeys, 5);
 
-        $fieldset5_descriptor = array(
-                                        "title" => "Assign New Groups",
-                                     );
-
-        open_fieldset($fieldset5_descriptor);
-
-        include_once('include/management/populate_selectbox.php');
-        $options = get_groups();
-        array_unshift($options, '');
-
         include('library/opendb.php');
         include_once('include/management/groups.php');
-        $selected_options = get_user_group_mappings($dbSocket, $username);
         include('library/closedb.php');
-        
-        $input_descriptors5 = array();
-        
-        $input_descriptors5[] = array(
-                                        "type" =>"select",
-                                        "name" => "newgroups[]",
-                                        "id" => "groups",
-                                        "caption" => t('all','Group'),
-                                        "options" => $options,
-                                        "multiple" => true,
-                                        "size" => 5,
-                                        "selected_value" => $selected_options,
-                                        "tooltipText" => t('Tooltip','groupTooltip')
-                                     );
-        //~ $input_descriptors5[] = array(
-                                        //~ 'type' => 'submit',
-                                        //~ 'name' => 'submit',
-                                        //~ 'value' => t('buttons','apply')
-                                     //~ );
-                                     
-        foreach ($input_descriptors5 as $input_descriptor) {
-            print_form_component($input_descriptor);
-        }
-
-        echo '<small class="mt-4 d-block">Manage all user-group mappings for this user '
-           . sprintf('<a href="mng-rad-usergroup-list-user.php?username=%s">here</a>.', $username_enc)
-           . '</small>';
-        
-
-        close_fieldset();
         
         close_tab($navkeys, 5);
 
@@ -827,7 +743,14 @@ EOF;
         
         include('library/closedb.php');
 
-        $inline_extra_js = "window.onload = function() { setupAccordion() };";
+        $inline_extra_js = <<<EOF
+
+window.onload = function() {
+    setupAccordion();
+    ajaxGeneric("include/management/userOperations.php", "checkDisabled=true", "returnMessages", strUsername);
+};
+
+EOF;
 
     }
     

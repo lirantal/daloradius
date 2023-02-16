@@ -89,19 +89,22 @@
 
                     $arr = explode(",", $csvLine);
 
-                    if (count($arr) != 2) {
+                    if (count($arr) != 5) {
                         continue;
                     }
 
-                    list($username, $password) = $arr;
+                    list($username, $password, $email, $firstname, $lastname) = $arr;
                     $username = trim($username);
                     $password = trim($password);
+                    $email = trim($email);
+                    $firstname = trim($firstname);
+                    $lastname = trim($lastname);
 
                     if (strpos("%", $username) === false &&
                         preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
                         preg_match(ALL_PRINTABLE_CHARS_REGEX, $password) &&
                         !array_key_exists($username, $data)) {
-                        $data[$username] = $password;
+                        $data[$username] = array( $password, $email, $firstname, $lastname );
                     }
                 }
 
@@ -109,14 +112,26 @@
             } else if (count($simpleListData) > 0) {
 
                 $passwordType = "Auth-Type";
-
+                
                 foreach ($simpleListData as $simpleLine) {
-                    $username = trim($simpleLine);
+                    $arr = explode(",", $simpleLine);
 
-                    if (preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
-                        !array_key_exists($username, $data)) {
-                        $data[$username] = "Accept";
+                    if (count($arr) != 4) {
+                        continue;
                     }
+                    
+                    list($username, $email, $firstname, $lastname) = $arr;
+                    $username = trim($username);
+                    $email = trim($email);
+                    $firstname = trim($firstname);
+                    $lastname = trim($lastname);
+                    
+                    if (strpos("%", $username) === false &&
+                        preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
+                        !array_key_exists($username, $data)) {
+                        $data[$username] = array( "Accept", $email, $firstname, $lastname );
+                    }
+
                 }
 
             }
@@ -130,7 +145,9 @@
                 include("library/attributes.php");
 
                 $counter = 0;
-                foreach ($data as $subject => $value) {
+                foreach ($data as $subject => $arr) {
+                    list( $value, $email, $firstname, $lastname ) = $arr;
+                    
                     $value = hashPasswordAttribute($passwordType, $value);
 
                     // skipping this user if it exists or insert fails
@@ -146,6 +163,18 @@
                                         "creationdate" => $currDate,
                                         "creationby" => $currBy,
                                    );
+
+                    if (!empty($firstname) && preg_match(ALL_PRINTABLE_CHARS_REGEX, $firstname)) {
+                        $params["firstname"] = $firstname;
+                    }
+                    
+                    if (!empty($lastname) && preg_match(ALL_PRINTABLE_CHARS_REGEX, $lastname)) {
+                        $params["lastname"] = $lastname;
+                    }
+                    
+                    if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $params["email"] = $email;
+                    }
 
                     $addedUserInfo = add_user_info($dbSocket, $subject, $params);
 
@@ -270,10 +299,9 @@
         $input_descriptors1[] = array(
                                         "caption" => t('all','CSVData'),
                                         "type" => "textarea",
-                                        //~ "class" => "form_fileimport",
                                         "name" => "csvdata",
-                                        "tooltipText" => 'Paste a CSV-formatted data input of users, expected format is: user,password. ' .
-                                                         'Note: any CSV fields beyond the first 2 (user and password) are ignored.',
+                                        "tooltipText" => 'Paste a CSV-formatted data input of users, expected format is: user,password,email,firstname,lastname. ' .
+                                                         'Note: any CSV fields beyond the first 5 are ignored.',
                                         "content" => ((isset($failureMsg)) ? $csvdata : ""),
                                      );
 
@@ -294,10 +322,9 @@
         $input_descriptors2[] = array(
                                         "caption" => "Simple List",
                                         "type" => "textarea",
-                                        //~ "class" => "form_fileimport",
                                         "name" => "simpleList",
-                                        "tooltipText" => 'Paste a simple list of MAC addresses or PIN codes. ' .
-                                                         'Note: each line a single MAC address or a PIN code.',
+                                        "tooltipText" => 'Paste a CSV-formatted data input of MAC addresses or PIN codes. The expected format is: MAC address/PIN code,email,firstname,lastname. ' .
+                                                         'Note: any CSV fields beyond the first 4 are ignored.',
                                         "content" => ((isset($failureMsg)) ? $simpleList : ""),
                                      );
 

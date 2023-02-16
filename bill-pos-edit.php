@@ -216,10 +216,8 @@
             $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
             $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
             
-            $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
-            $newgroups = (array_key_exists('newgroups', $_POST) && isset($_POST['newgroups'])) ? $_POST['newgroups'] : array();
-            $groups_priority = (array_key_exists('groups_priority', $_POST) && isset($_POST['groups_priority'])) ? $_POST['groups_priority'] : array();
-
+            $groups = (isset($_POST['groups']) && is_array($_POST['groups'])) ? $_POST['groups'] : array();
+            
             if (!empty($username)) {
                 
                 // insert userinfo
@@ -342,7 +340,14 @@
                     addPlanProfile($dbSocket, $username, $planName, $oldplanName);
                 } else {
                     // otherwise, we remove all profiles and assign profiles as configured in the profiles tab by the user
-                    addUserProfiles($dbSocket, $username, $planName, $oldplanName, $groups, $groups_priority, $newgroups);
+                    if (delete_user_group_mappings($dbSocket, $username)) {
+                        if (count($groups) > 0) {                    
+                            foreach ($groups as $group) {
+                                list($groupname, $priority) = $group;
+                                insert_single_user_group_mapping($dbSocket, $username, $groupname, $priority);
+                            }
+                        }
+                    }
                 }
                 
             }
@@ -625,40 +630,12 @@ EOF;
         // open 3-rd tab
         open_tab($navkeys, 3);
         
-        include('library/opendb.php');
         $groupTerminology = "Profile";
         $groupTerminologyPriority = "ProfilePriority";
+        
+        include('library/opendb.php');
         include_once('include/management/groups.php');
-        $selected_options = get_user_group_mappings($dbSocket, $username);
         include('library/closedb.php');
-        
-        $input_descriptors1 = array();
-        
-        $options = get_groups();
-        array_unshift($options, '');
-        $input_descriptors1[] = array(
-                                        "type" =>"select",
-                                        "name" => "newgroups[]",
-                                        "id" => "newgroups",
-                                        "caption" => t('all','Group'),
-                                        "options" => $options,
-                                        "multiple" => true,
-                                        "size" => 5,
-                                        "selected_value" => $selected_options,
-                                        "tooltipText" => t('Tooltip','groupTooltip')
-                                     );
-        
-        $fieldset3_descriptor = array(
-                                        "title" => "Manage Profiles",
-                                     );
-
-        open_fieldset($fieldset3_descriptor);
-        
-        foreach ($input_descriptors1 as $input_descriptor) {
-            print_form_component($input_descriptor);
-        }
-        
-        close_fieldset();
         
         close_tab($navkeys, 3);
         

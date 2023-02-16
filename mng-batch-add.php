@@ -31,6 +31,7 @@
     include("library/validation.php");
     include("library/layout.php");
     include_once("include/management/functions.php");
+    include_once("library/attributes.php");
 
     // init logging variables
     $log = "visited page: ";
@@ -294,11 +295,6 @@
                                                           htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
                                 continue;
                             }
-                            
-                            // username does not exist
-                            include_once("library/attributes.php");
-                            
-                            
                             
                             if (!insert_single_attribute($dbSocket, $username, $attribute, ':=', $value)) {
                                 // if we fail to insert this user, we skip other queries
@@ -644,18 +640,12 @@
         
         // open 1-st tab
         open_tab($navkeys, 1);
-        
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once('include/management/userinfo.php');
-        
         close_tab($navkeys, 1);
         
         // open 2-nd tab
         open_tab($navkeys, 2);
-        
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once('include/management/userbillinfo.php');
-        
         close_tab($navkeys, 2);
         
         // open 3-rd tab

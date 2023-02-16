@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -25,24 +25,20 @@
     $operator = $_SESSION['operator_user'];
 
     include_once('library/config_read.php');
-    $log = "visited page: ";
-
     include_once("lang/main.php");
-    
     include("library/layout.php");
+
+    $log = "visited page: ";
 
     // print HTML prologue
     $title = t('Intro','mngmain.php');
     $help = "";
-    
-    print_html_prologue($title, $langCode);
 
-    
-    
+    print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
 
-    $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
     $alt = "Total Users";
     $src = "library/graphs/total_users.php";
 

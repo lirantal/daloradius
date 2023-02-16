@@ -24,27 +24,24 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
     
-    include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+    include('library/check_operator_perm.php');
+    
+    include_once("lang/main.php");
+    include("library/layout.php");
     
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include_once("lang/main.php");
     
-    include("library/layout.php");
-
     // print HTML prologue
     $title = t('Intro','mngradprofilesduplicate.php');
     $help = t('helpPage','mngradprofilesduplicate');
     
     print_html_prologue($title, $langCode);
     
-    
-    
-
     print_title_and_help($title, $help);
     
     // we use get_groups() to check for the existance of new and old profile
@@ -139,20 +136,23 @@
     include_once('include/management/actionMessages.php');
     
     $options = get_groups();
-    $input_descriptors1[] = array(
+    
+    $input_descriptors0 = array();
+    $input_descriptors0[] = array(
                                     "name" => "sourceProfile",
                                     "caption" => "Profile Name to Duplicate",
                                     "type" => "select",
                                     "options" => $options,
                                     "selected_value" => (isset($sourceProfile)) ? $sourceProfile : "",
                                  );
-    $input_descriptors1[] = array(
+    $input_descriptors0[] = array(
                                     "name" => "targetProfile",
                                     "caption" => "New Profile Name",
                                     "type" => "text",
                                     "value" => (isset($targetProfile)) ? $targetProfile : "",
                                  );
-                                 
+    
+    $input_descriptors1 = array();
     $input_descriptors1[] = array(
                                     "type" => "submit",
                                     "name" => "submit",
@@ -164,24 +164,27 @@
                                     "type" => "hidden",
                                     "value" => dalo_csrf_token(),
                                  );
-?>
+                                 
+    // open a fieldset
+    $fieldset0_descriptor = array(
+                                    "title" => t('title','ProfileInfo'),
+                                 );
+    open_form();
+    
+    open_fieldset($fieldset0_descriptor);
 
-<form method="POST">
-    <fieldset>
-        <h302><?= t('title','ProfileInfo') ?></h302>
-        
-        <ul style="margin: 30px auto">
-<?php
-            foreach ($input_descriptors1 as $input_descriptor) {
-                print_form_component($input_descriptor);
-            }
-?>
-        </ul>
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
 
-    </fieldset>
-</form>
+    close_fieldset();
+    
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+    
+    close_form();
 
-<?php
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>
