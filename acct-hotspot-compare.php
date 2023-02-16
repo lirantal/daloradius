@@ -194,7 +194,7 @@
         close_tab($navkeys, 0);
 
         $categories = array( "unique_users", "login_hits", "total_session_time", "avg_session_time", );
-        $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+        $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
 
         foreach ($categories as $i => $category) {
 

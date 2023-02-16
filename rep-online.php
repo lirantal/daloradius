@@ -271,6 +271,8 @@
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
                              );
+                             
+            $tooltip2['actions'][] = array( 'href' => sprintf('rep-online.php?username=%s', urlencode($this_username)), 'label' => "Filter this user", );
             $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($this_username)), 'label' => t('Tooltip','UserEdit'), );
             $tooltip2['actions'][] = array( 'href' => $tooltip_disconnect_href, 'label' => t('all','Disconnect'), );
 
@@ -319,7 +321,7 @@
 
     close_tab($navkeys, 0);
 
-    $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
     open_tab($navkeys, 1);
     printf($img_format, "library/graphs/online_users.php", "Online users");
     close_tab($navkeys, 1);

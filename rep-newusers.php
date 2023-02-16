@@ -220,7 +220,7 @@
 
         close_tab($navkeys, 0);
         
-        $img_format = '<div style="text-align: center; margin-top: 50px"><img src="%s" alt="%s"></div>';
+        $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
         
         // tab 1
         open_tab($navkeys, 1);

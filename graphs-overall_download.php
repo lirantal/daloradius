@@ -83,19 +83,17 @@
         // tab 0
         open_tab($navkeys, 0, true);
 
+        $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
         $src = sprintf("library/graphs/overall_users_data.php?category=download&type=%s&size=%s&user=%s", $type, $size, $username_enc);
         $alt = sprintf("traffic downloaded by user %s", $username_enc);
-
-        echo '<div style="text-align: center; margin-top: 50px">';
-        printf('<img alt="%s" src="%s">', $alt, $src);
-        echo '</div>';
-
+        printf($img_format, $src, $alt);
+        
         close_tab($navkeys, 0);
 
         // tab 1
         open_tab($navkeys, 1);
 
-        echo '<div style="text-align: center; margin-top: 50px">';
+        echo '<div class="my-3 text-center">';
         include('library/tables/overall_users_download.php');
         echo '</div>';
 
