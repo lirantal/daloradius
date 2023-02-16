@@ -39,11 +39,9 @@ $username_options = get_users('CONFIG_DB_TBL_RADACCT');
 $usernameOnline_options = get_online_users();
 
 $username_input = array(
-                            "id" => "username_menu",
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
-                            "required" => true,
                             "datalist" => (($autocomplete) ? $usernameOnline_options : array()),
                             "tooltipText" => t('Tooltip','Username'),
                             "caption" => t('all','Username'),
@@ -79,9 +77,14 @@ $descriptors1 = array();
 $components = array();
 $components[] = $username_input;
 
+// reset components IDs
+for ($i = 0; $i < count($components); $i++) {
+    $components[$i]['id'] = "id_" . rand();
+}
+
 if (count($usernameOnline_options) > 0) {
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','OnlineUsers'), 'action' => 'rep-online.php', 'method' => 'GET',
-                             'img' => array( 'src' => 'static/images/icons/reportsOnlineUsers.gif', ), 'form_components' => $components, );
+                             'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/reportsOnlineUsers.gif', ), 'form_components' => $components, );
 }
 
 $components = array();
@@ -99,14 +102,24 @@ $components[] = array(
 
 $components = array_merge($components, $date_select_components);
 
+// reset components IDs
+for ($i = 0; $i < count($components); $i++) {
+    $components[$i]['id'] = "id_" . rand();
+}
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','LastConnectionAttempts'), 'action' => 'rep-lastconnect.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/reportsLastConnection.png', ), 'form_components' => $components, );
+                         'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/reportsLastConnection.png', ), 'form_components' => $components, );
 
 $components = array();
 $components = $date_select_components;
 
+// reset components IDs
+for ($i = 0; $i < count($components); $i++) {
+    $components[$i]['id'] = "id_" . rand();
+}
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','NewUsers'), 'action' => 'rep-newusers.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
+                         'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
 
 $components = array();
 
@@ -122,12 +135,17 @@ $components[] = array(
                             "tooltipText" => "You can order the results by: " . implode(" or ", array_keys($orderBy_options)),
                           );
 
+// reset components IDs
+for ($i = 0; $i < count($components); $i++) {
+    $components[$i]['id'] = "id_" . rand();
+}
+
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','TopUser'), 'action' => 'rep-topusers.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/reportsTopUsers.png', ), 'form_components' => $components, );
+                         'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/reportsTopUsers.png', ), 'form_components' => $components, );
 
 $descriptors2 = array();
 $descriptors2[] = array( 'type' => 'link', 'label' => t('button','History'), 'href' => 'rep-history.php',
-                         'img' => array( 'src' => 'static/images/icons/reportsHistory.png', ), );
+                         'icon' => 'clock-history', 'img' => array( 'src' => 'static/images/icons/reportsHistory.png', ), );
 
 $sections = array();
 $sections[] = array( 'title' => 'User Reports', 'descriptors' => $descriptors1 );

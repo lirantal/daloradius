@@ -69,8 +69,14 @@ if (!in_array($detect_category, array_keys($nav))) {
             </ul>
       
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" action="mng-search.php" method="GET">
-                <input name="username" type="search" class="form-control" placeholder="<?= t('button','SearchUsers') ?>" aria-label="Search"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="<?= strip_tags(t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard')) ?>">
+                <div class="input-group">
+                    <button class="input-group-text btn btn-outline-secondary" id="search-icon">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <input name="username" type="search" class="form-control" placeholder="<?= t('button','SearchUsers') ?>" aria-label="Search"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" aria-describedby="search-icon"
+                        data-bs-title="<?= strip_tags(t('Tooltip','Username') . '. ' . t('Tooltip','UsernameWildcard')) ?>">
+                </div>
             </form>
             
             <div class="dropdown text-end dropstart">
